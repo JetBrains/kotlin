@@ -24,6 +24,9 @@ import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.LibraryVariant
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.TestVariant
+import com.android.build.gradle.internal.variant.BaseVariantData
+import com.android.build.gradle.internal.variant.BaseVariantOutputData
+import com.android.builder.core.VariantType
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.ConfigurationContainer
@@ -35,6 +38,7 @@ import org.gradle.api.file.SourceDirectorySet
 import kotlin.properties.Delegates
 import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
+import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import java.util.ServiceLoader
 import org.gradle.api.logging.*
@@ -288,121 +292,89 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
         project afterEvaluate { project ->
             if (project != null) {
-                val testVariants = AndroidGradleWrapper.getTestVariants(ext)
-                processVariants(testVariants, project, ext)
-                if (ext is AppExtension) {
-                    val appVariants = ext.getApplicationVariants()!!
-                    processVariants(appVariants, project, ext)
-                }
+                val plugin = (project.getPlugins().findPlugin("android")
+                                ?: project.getPlugins().findPlugin("android-library")) as BasePlugin
 
-                if (ext is LibraryExtension) {
-                    val libVariants = ext.getLibraryVariants()!!
-                    processVariants(libVariants, project, ext)
-                }
+                processVariantData(plugin.getVariantManager().getVariantDataList(), project, ext, plugin)
             }
         }
 
         project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler, project).resolveKotlinPluginDependency("kotlin-android-sdk-annotations"))
     }
 
-    private fun processVariants(variants: DefaultDomainObjectSet<out BaseVariant>, project: Project, androidExt: BaseExtension): Unit {
+    private fun processVariantData(
+            variantDataList: List<BaseVariantData<out BaseVariantOutputData>>,
+            project: Project,
+            androidExt: BaseExtension,
+            androidPlugin: BasePlugin
+    ) {
         val logger = project.getLogger()
         val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
-        val sourceSets = androidExt.getSourceSets()
-        //TODO: change to BuilderConstants.MAIN - it was relocated in 0.11 plugin
-        val mainSourceSet = sourceSets.getByName("main")
-        val testSourceSet = try {
-            sourceSets.getByName("instrumentTest")
-        } catch (e: UnknownDomainObjectException) {
-            sourceSets.getByName("androidTest")
-        }
 
         val subpluginEnvironment = loadSubplugins(project, logger)
 
-        for (variant in variants) {
-            if (variant is LibraryVariant || variant is ApkVariant) {
-                val buildTypeSourceSetName = AndroidGradleWrapper.getVariantName(variant)
+        for (variantData in variantDataList) {
+            val variantDataName = variantData.getName()
+            logger.debug("Process variant [$variantDataName]")
 
-                logger.debug("Variant build type is [$buildTypeSourceSetName]")
-                val buildTypeSourceSet = sourceSets.findByName(buildTypeSourceSetName)
+            val javaTask = variantData.javaCompileTask
 
-                val javaTask = variant.getJavaCompile()!!
-                val variantName = variant.getName()
+            val kotlinTaskName = "compile${variantDataName.capitalize()}Kotlin"
+            val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
+            if (kotlinOptions != null) {
+                kotlinTask.setProperty("kotlinOptions", kotlinOptions)
+            }
 
-                val kotlinTaskName = "compile${variantName.capitalize()}Kotlin"
-                val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
-                if (kotlinOptions != null) {
-                    kotlinTask.setProperty("kotlinOptions", kotlinOptions)
+            // store kotlin classes in separate directory. They will serve as class-path to java compiler
+            val kotlinOutputDir = File(project.getBuildDir(), "tmp/kotlin-classes/${variantDataName}")
+            kotlinTask.setProperty("kotlinDestinationDir", kotlinOutputDir)
+            kotlinTask.setDestinationDir(javaTask.getDestinationDir())
+            kotlinTask.setDescription("Compiles the ${variantDataName} kotlin.")
+            kotlinTask.setClasspath(javaTask.getClasspath())
+            kotlinTask.setDependsOn(javaTask.getDependsOn())
+
+            fun SourceDirectorySet.addSourceDirectories(additionalSourceFiles: Collection<File>) {
+                for (dir in additionalSourceFiles) {
+                    this.srcDir(dir)
+                    logger.debug("Source directory ${dir.getAbsolutePath()} was added to kotlin source for $kotlinTaskName")
                 }
+            }
 
-                // store kotlin classes in separate directory. They will serve as class-path to java compiler
-                val kotlinOutputDir = File(project.getBuildDir(), "tmp/kotlin-classes/${variantName}")
-                kotlinTask.setProperty("kotlinDestinationDir", kotlinOutputDir)
-                kotlinTask.setDestinationDir(javaTask.getDestinationDir())
-                kotlinTask.setDescription("Compiles the ${variantName} kotlin.")
-                kotlinTask.setClasspath(javaTask.getClasspath())
-                kotlinTask.setDependsOn(javaTask.getDependsOn())
+            fun configureDefaultSourceSet() {
+                val defaultSourceSet = variantData.getVariantConfiguration().getDefaultSourceSet()
+                val kotlinSourceDirectorySet = getExtension<KotlinSourceSet>(defaultSourceSet, "kotlin").getKotlin()
+                // getJavaSources should return the Java sources used for compilation
+                // We want to collect only generated files, like R-class output dir
+                // Actual java sources will be collected later
+                val additionalSourceFiles = variantData.getJavaSources().filterIsInstance(javaClass<File>())
+                kotlinSourceDirectorySet.addSourceDirectories(additionalSourceFiles)
+            }
 
-                fun processSourceSet(javaSourceSet: AndroidSourceSet): SourceDirectorySet {
-                    val javaSrcDirs = AndroidGradleWrapper.getJavaSrcDirs(javaSourceSet)
-                    val kotlinSourceSet = getExtension<KotlinSourceSet>(javaSourceSet, "kotlin")
-                    val kotlinSDS = kotlinSourceSet.getKotlin()
-                    for (dir in javaSrcDirs) {
-                        kotlinSDS.srcDir(dir)
-                    }
-                    kotlinTask.source(kotlinSDS)
-                    return kotlinSDS
-                }
+            configureDefaultSourceSet()
 
-                if (variant is TestVariant) {
-                    processSourceSet(testSourceSet)
-                } else {
-                    processSourceSet(mainSourceSet)
-                }
+            // getSortedSourceProviders should return only actual java sources, generated sources should be collected earlier
+            val providers = variantData.getVariantConfiguration().getSortedSourceProviders()
+            for (provider in providers) {
+                val javaSrcDirs = AndroidGradleWrapper.getJavaSrcDirs(provider as AndroidSourceSet)
+                val kotlinSourceSet = getExtension<KotlinSourceSet>(provider, "kotlin")
+                val kotlinSourceDirectorySet = kotlinSourceSet.getKotlin()
+                kotlinTask.source(kotlinSourceDirectorySet)
 
-                if (buildTypeSourceSet != null) {
-                    val variantSourceDirectorySet = processSourceSet(buildTypeSourceSet)
-                    for (resourceFolder in AndroidGradleWrapper.getRClassFolder(variant)) {
-                        variantSourceDirectorySet.srcDir(resourceFolder)
-                    }
-                    variantSourceDirectorySet.srcDir(variant.getGenerateBuildConfig()?.getSourceOutputDir())
-                    variantSourceDirectorySet.srcDir(variant.getAidlCompile().getSourceOutputDir())
-                    variantSourceDirectorySet.srcDir(variant.getRenderscriptCompile().getSourceOutputDir())
-                }
+                kotlinSourceDirectorySet.addSourceDirectories(javaSrcDirs)
+            }
 
-                if (variant is ApkVariant) {
-                    for (flavourName in AndroidGradleWrapper.getProductFlavorsNames(variant)) {
-                        val defaultFlavourSourceSetName = flavourName + buildTypeSourceSetName.capitalize()
-                        val defaultFlavourSourceSet = sourceSets.findByName(defaultFlavourSourceSetName)
-                        if (defaultFlavourSourceSet != null) {
-                            processSourceSet(defaultFlavourSourceSet)
-                        }
+            subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
-                        val flavourSourceSet = sourceSets.findByName(flavourName)
-                        if (flavourSourceSet != null) {
-                            processSourceSet(flavourSourceSet)
-                        }
-                    }
-                }
+            kotlinTask doFirst {
+                val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
+                val fullClasspath = (javaTask.getClasspath() + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))
+                (it as AbstractCompile).setClasspath(fullClasspath)
+            }
 
-                subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
+            javaTask.dependsOn(kotlinTaskName)
 
-                kotlinTask doFirst {
-                    var plugin = project.getPlugins().findPlugin("android")
-                    if (null == plugin) {
-                        plugin = project.getPlugins().findPlugin("android-library")
-                    }
-                    val basePlugin: BasePlugin = plugin as BasePlugin
-                    val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(basePlugin, androidExt))
-                    val fullClasspath = (javaTask.getClasspath() + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))
-                    (it as AbstractCompile).setClasspath(fullClasspath)
-                }
-
-                javaTask.dependsOn(kotlinTaskName)
-
-                javaTask doFirst  {
-                    javaTask.setClasspath(javaTask.getClasspath() + project.files(kotlinTask.property("kotlinDestinationDir")))
-                }
+            javaTask doFirst  {
+                javaTask.setClasspath(javaTask.getClasspath() + project.files(kotlinTask.property("kotlinDestinationDir")))
             }
         }
     }
