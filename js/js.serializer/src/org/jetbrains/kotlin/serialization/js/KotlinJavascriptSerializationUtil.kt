@@ -130,10 +130,7 @@ public object KotlinJavascriptSerializationUtil {
     }
 
     private fun getPackageName(filePath: String): String {
-        val lastIndexOfSep = filePath.lastIndexOf('/')
-        assert(lastIndexOfSep >= 0, "expected / in $filePath")
-        return filePath.substring(0, lastIndexOfSep).replace('/', '.')
-
+        return filePath.substringBeforeLast('/').replace('/', '.')
     }
 
     private fun getPackages(contentMap: Map<String, ByteArray>): List<String> =
