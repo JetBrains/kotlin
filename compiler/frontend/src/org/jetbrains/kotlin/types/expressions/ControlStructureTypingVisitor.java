@@ -305,18 +305,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         // See KT-6283
         JetTypeInfo bodyTypeInfo;
         if (body instanceof JetFunctionLiteralExpression) {
-            JetFunctionLiteralExpression function = (JetFunctionLiteralExpression) body;
-            JetFunctionLiteral functionLiteral = function.getFunctionLiteral();
-            if (!functionLiteral.hasParameterSpecification()) {
-                WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
-                conditionScope = writableScope;
-                bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
-                        writableScope, functionLiteral.getBodyExpression().getStatements(), CoercionStrategy.NO_COERCION, context);
-                context.trace.record(BindingContext.BLOCK, function);
-            }
-            else {
-                bodyTypeInfo = facade.getTypeInfo(body, context.replaceScope(context.scope));
-            }
+            // As a matter of fact, function literal is always unused at this point
+            bodyTypeInfo = facade.getTypeInfo(body, context.replaceScope(context.scope));
         }
         else if (body != null) {
             WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
