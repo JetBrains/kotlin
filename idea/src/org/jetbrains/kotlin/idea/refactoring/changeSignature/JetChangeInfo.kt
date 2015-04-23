@@ -45,12 +45,12 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 
 public class JetChangeInfo(
         val methodDescriptor: JetMethodDescriptor,
-        private var name: String,
-        val newReturnType: JetType?,
-        var newReturnTypeText: String,
-        var newVisibility: Visibility,
-        parameterInfos: List<JetParameterInfo>,
-        receiver: JetParameterInfo?,
+        private var name: String = methodDescriptor.getName(),
+        val newReturnType: JetType? = methodDescriptor.baseDescriptor.getReturnType(),
+        var newReturnTypeText: String = newReturnType?.let { IdeDescriptorRenderers.SOURCE_CODE.renderType(it) } ?: "",
+        var newVisibility: Visibility = methodDescriptor.getVisibility(),
+        parameterInfos: List<JetParameterInfo> = methodDescriptor.getParameters(),
+        receiver: JetParameterInfo? = methodDescriptor.receiver,
         val context: PsiElement
 ): ChangeInfo {
     var receiverParameterInfo: JetParameterInfo? = receiver
