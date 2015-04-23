@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.generators.tests.reservedWords
 
-import java.io.File
-import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
 import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil.writeFileIfContentChanged
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
+import java.io.File
+
+val MODIFIER_KEYWORDS = JetTokens.MODIFIER_KEYWORDS_ARRAY.map { it.getValue() }.toSet()
 
 val commonCases: CaseBuilder.(String, String) -> Unit = { testByName, testByRef ->
     case("val", "val $KEYWORD_MARKER: Int", " = 0", testByName)
@@ -213,7 +216,7 @@ fun box(): String {
     return "OK"
 }"""
         ) {
-            case("entry", "", "", "")
+            case("entry", "", "", "", additionalShouldBeEscaped = MODIFIER_KEYWORDS)
         }
 // -------------------------
     }
@@ -221,14 +224,25 @@ fun box(): String {
 
 // DSL
 
-class Case(val name: String, val testDeclaration: String, val testDeclarationInit: String,  val testBlock: String)
-class Suite(val name: String, val code: String, val cases: List<Case>)
+class Case(
+        val name: String,
+        val testDeclaration: String,
+        val testDeclarationInit: String,
+        val testBlock: String,
+        val additionalShouldBeEscaped: Set<String>
+)
+
+class Suite(
+        val name: String,
+        val code: String,
+        val cases: List<Case>
+)
 
 class CaseBuilder {
     val cases = arrayListOf<Case>()
 
-    fun case(name: String, testDeclaration: String, testDeclarationInit: String, testBlock: String) {
-        cases.add(Case(name, testDeclaration, testDeclarationInit, testBlock))
+    fun case(name: String, testDeclaration: String, testDeclarationInit: String, testBlock: String, additionalShouldBeEscaped: Set<String> = setOf()) {
+        cases.add(Case(name, testDeclaration, testDeclarationInit, testBlock, additionalShouldBeEscaped))
     }
 }
 
@@ -274,7 +288,9 @@ class TestDataBuilder() {
                 // Uses small portions of keywords instead of ALL_KEYWORDS to avoid a combinatorial explosion
                 // Each portion contains at least one keyword which should be escaped and at least one which should not.
                 for (keyword in nextKeywordPortion()) {
-                    val keywordWithEscapeIfNeed = if (keyword in SHOULD_BE_ESCAPED) "`$keyword`" else keyword
+                    val shouldBeEscaped = keyword in SHOULD_BE_ESCAPED || keyword in case.additionalShouldBeEscaped
+
+                    val keywordWithEscapeIfNeed = if (shouldBeEscaped) "`$keyword`" else keyword
 
                     val out = suite.code
                             .replace(DEFINITION_MARKER, case.testDeclaration + case.testDeclarationInit)
@@ -344,8 +360,8 @@ val SHOULD_NOT_BE_ESCAPED = JsFunctionScope.RESERVED_WORDS.filter { it !in SHOUL
 // all keywords by portions
 
 // cyclic keyword streams
-val s1 = SHOULD_BE_ESCAPED.cyclicStream()
-val s2 = SHOULD_NOT_BE_ESCAPED.cyclicStream()
+val s1 = SHOULD_BE_ESCAPED.cyclicSequence()
+val s2 = SHOULD_NOT_BE_ESCAPED.cyclicSequence()
 
 val PORTION_PART_SIZE = 2;
 
@@ -353,9 +369,9 @@ fun nextKeywordPortion() = s1.take(PORTION_PART_SIZE).toList() + s2.take(PORTION
 
 // CyclicStream
 
-fun <T> List<T>.cyclicStream() = CyclicStream(this)
+fun <T> List<T>.cyclicSequence() = CyclicSequence(this)
 
-class CyclicStream<T>(val c: List<T>) : Stream<T> {
+class CyclicSequence<T>(val c: List<T>) : Sequence<T> {
     var i = 0
 
     val iterator = object : Iterator<T> {
