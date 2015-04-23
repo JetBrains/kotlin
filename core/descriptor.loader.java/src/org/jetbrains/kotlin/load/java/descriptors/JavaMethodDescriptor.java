@@ -18,14 +18,13 @@ package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.JetType;
+
+import java.util.List;
 
 public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implements JavaCallableMemberDescriptor {
     private Boolean hasStableParameterNames = null;
@@ -74,7 +73,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
 
     @NotNull
     @Override
-    protected FunctionDescriptorImpl createSubstitutedCopy(
+    protected JavaMethodDescriptor createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @Nullable FunctionDescriptor original,
             @NotNull Kind kind
@@ -90,5 +89,28 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         result.setHasStableParameterNames(hasStableParameterNames());
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;
+    }
+
+    @NotNull
+    public JavaMethodDescriptor enhance(
+            @Nullable JetType enhancedReceiverType,
+            @NotNull List<ValueParameterDescriptor> enhancedValueParameters,
+            @NotNull JetType enhancedReturnType
+    ) {
+        JavaMethodDescriptor enhancedMethod = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind());
+        enhancedMethod.initialize(
+                enhancedReceiverType,
+                getDispatchReceiverParameter(),
+                getTypeParameters(),
+                enhancedValueParameters,
+                enhancedReturnType,
+                getModality(),
+                getVisibility()
+        );
+        for (FunctionDescriptor overridden : getOverriddenDescriptors()) {
+            enhancedMethod.addOverriddenDescriptor(overridden);
+        }
+
+        return enhancedMethod;
     }
 }

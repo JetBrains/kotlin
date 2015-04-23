@@ -47,30 +47,8 @@ fun <D : CallableMemberDescriptor> D.enhance(): D {
     val enhancedReturnType = parts { it.getReturnType()!!.toReturnTypePart() }.enhance()
 
     if (this is JavaMethodDescriptor) {
-        val enhancedFunction = JavaMethodDescriptor.createJavaMethod(
-                getContainingDeclaration()!!,
-                getAnnotations(),
-                getName(),
-                getSource()
-        )
-        enhancedFunction.initialize(
-                enhancedReceiverType,
-                getDispatchReceiverParameter(),
-                getTypeParameters(),
-                enhancedValueParameters,
-                enhancedReturnType,
-                getModality(),
-                getVisibility()
-        )
-        enhancedFunction.setHasStableParameterNames(hasStableParameterNames())
-        enhancedFunction.setHasSynthesizedParameterNames(hasSynthesizedParameterNames())
-
-        for (overridden in getOverriddenDescriptors()) {
-            enhancedFunction.addOverriddenDescriptor(overridden)
-        }
-
         @suppress("UNCHECKED_CAST")
-        return enhancedFunction as D
+        return this.enhance(enhancedReceiverType, enhancedValueParameters, enhancedReturnType) as D
     }
 
     return this
