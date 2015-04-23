@@ -11,7 +11,6 @@
     <orderEntry type="module" module-name="plugin-api" exported="" />
     <orderEntry type="module" module-name="frontend" exported="" />
     <orderEntry type="module" module-name="frontend.java" />
-    <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="cli" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="backend" scope="PROVIDED" />
