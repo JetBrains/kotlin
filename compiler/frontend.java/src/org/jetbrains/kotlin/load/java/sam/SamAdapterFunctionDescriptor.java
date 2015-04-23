@@ -17,6 +17,10 @@
 package org.jetbrains.kotlin.load.java.sam;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
 
@@ -24,8 +28,17 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
     private final JavaMethodDescriptor declaration;
 
     public SamAdapterFunctionDescriptor(@NotNull JavaMethodDescriptor declaration) {
-        super(declaration.getContainingDeclaration(), null, declaration.getAnnotations(),
-              declaration.getName(), Kind.SYNTHESIZED, declaration.getSource());
+        this(declaration.getContainingDeclaration(), null, Kind.SYNTHESIZED, declaration);
+    }
+
+    private SamAdapterFunctionDescriptor(
+            @NotNull DeclarationDescriptor containingDeclaration,
+            @Nullable SimpleFunctionDescriptor original,
+            @NotNull Kind kind,
+            @NotNull JavaMethodDescriptor declaration
+    ) {
+        super(containingDeclaration, original, declaration.getAnnotations(),
+              declaration.getName(), kind, declaration.getSource());
         this.declaration = declaration;
         setHasStableParameterNames(declaration.hasStableParameterNames());
         setHasSynthesizedParameterNames(declaration.hasSynthesizedParameterNames());
@@ -35,5 +48,15 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor;
     @Override
     public JavaMethodDescriptor getOriginForSam() {
         return declaration;
+    }
+
+    @NotNull
+    @Override
+    protected JavaMethodDescriptor createSubstitutedCopy(
+            @NotNull DeclarationDescriptor newOwner,
+            @Nullable FunctionDescriptor original,
+            @NotNull Kind kind
+    ) {
+        return new SamAdapterFunctionDescriptor(newOwner, (SimpleFunctionDescriptor) original, kind, declaration);
     }
 }
