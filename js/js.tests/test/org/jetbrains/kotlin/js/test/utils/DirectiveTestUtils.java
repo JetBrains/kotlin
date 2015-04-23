@@ -91,7 +91,7 @@ public class DirectiveTestUtils {
         }
     };
 
-    private abstract static class CountNodesDirective<T extends JsNode> extends DirectiveHandler {
+    private static class CountNodesDirective<T extends JsNode> extends DirectiveHandler {
 
         @NotNull
         private final Class<T> klass;
@@ -121,7 +121,9 @@ public class DirectiveTestUtils {
             assertEquals(message, expectedCount, actualCount);
         }
 
-        protected abstract int getActualCountFor(@NotNull T node, @NotNull ArgumentsHelper arguments);
+        protected int getActualCountFor(@NotNull T node, @NotNull ArgumentsHelper arguments) {
+            return 1;
+        }
     }
 
     private static final DirectiveHandler COUNT_LABELS = new CountNodesDirective<JsLabel>("CHECK_LABELS_COUNT", JsLabel.class) {
@@ -137,12 +139,7 @@ public class DirectiveTestUtils {
         }
     };
 
-    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<JsVars>("CHECK_VARS_COUNT", JsVars.class) {
-        @Override
-        protected int getActualCountFor(@NotNull JsVars node, @NotNull ArgumentsHelper arguments) {
-            return node.getVars().size();
-        }
-    };
+    private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<JsVars.JsVar>("CHECK_VARS_COUNT", JsVars.JsVar.class);
 
     private static final DirectiveHandler HAS_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_INLINE_METADATA") {
         @Override
