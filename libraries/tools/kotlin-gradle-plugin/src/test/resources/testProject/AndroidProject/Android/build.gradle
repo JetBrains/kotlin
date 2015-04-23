@@ -7,10 +7,10 @@ buildscript {
     }
     dependencies {
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:0.1-SNAPSHOT'
-        classpath 'com.android.tools.build:gradle:0.5.+'
+        classpath 'com.android.tools.build:gradle:1.1.0'
     }
 }
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 dependencies {
@@ -18,42 +18,38 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 17
-    buildToolsVersion "17.0.0"
+    compileSdkVersion 22
+    buildToolsVersion "21.1.2"
 
     kotlinOptions {
         annotations = "kotlinAnnotations"
     }
 
     sourceSets {
-        main {
-            kotlin {
-                srcDirs = ['root/kotlin']
-            }
-        }
+        main.kotlin.srcDirs += 'root/kotlin'
     }
 
     defaultConfig {
         minSdkVersion 7
-        targetSdkVersion 16
+        targetSdkVersion 22
     }
 
     buildTypes {
         jnidebug.initWith(buildTypes.debug)
         jnidebug {
-            packageNameSuffix ".jnidebug"
-            jniDebugBuild true
+            applicationIdSuffix ".jnidebug"
+            jniDebuggable true
         }
     }
 
     productFlavors {
         flavor1 {
-            packageName "com.example.flavor1"
+            applicationId "com.example.flavor1"
             versionCode 20
         }
 
         flavor2 {
-            packageName "com.example.flavor2"
+            applicationId "com.example.flavor2"
             minSdkVersion 14
         }
     }

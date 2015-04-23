@@ -8,7 +8,7 @@ Ignore("Requires Android SDK")
 class KotlinAndroidGradleIT: BaseGradleIT() {
 
         Test fun testSimpleCompile() {
-            val project = Project("AndroidProject", "1.6")
+            val project = Project("AndroidProject", "2.3")
 
             project.build("build") {
                 assertSuccessful()
