@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.components
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.MutabilityQualifier.MUTABLE
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.utils.getOrDefault
+import java.util.ArrayList
 
 enum class NullabilityQualifier {
     NULLABLE
@@ -57,7 +60,11 @@ val MUTABLE_ANNOTATIONS = listOf(
 class JavaTypeQualifiers(
         val nullability: NullabilityQualifier?,
         val mutability: MutabilityQualifier?
-)
+) {
+    companion object {
+        val NONE = JavaTypeQualifiers(null, null)
+    }
+}
 
 private fun JetType.extractQualifiers(): JavaTypeQualifiers {
     val (lower, upper) =
@@ -81,7 +88,38 @@ private fun Annotations.extractQualifiers(): JavaTypeQualifiers {
     )
 }
 
-fun JetType.computeQualifiersForOverride(fromSupertypes: Collection<JetType>, isCovariant: Boolean): JavaTypeQualifiers {
+fun JetType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<JetType>, isCovariant: Boolean): (Int) -> JavaTypeQualifiers {
+    fun JetType.toIndexed(): List<JetType> {
+        val list = ArrayList<JetType>(1)
+
+        fun add(type: JetType) {
+            list.add(type)
+            for (arg in type.getArguments()) {
+                if (arg.isStarProjection()) {
+                    list.add(arg.getType())
+                }
+                else {
+                    add(arg.getType())
+                }
+            }
+        }
+
+        add(this)
+        return list
+    }
+
+    val indexedFromSupertypes = fromSupertypes.map { it.toIndexed() }
+    val indexedThisType = this.toIndexed()
+
+    // name is a workaround for KT-7558
+    return fun _r(index: Int): JavaTypeQualifiers {
+        val qualifiers = indexedThisType.getOrDefault(index, { return@_r JavaTypeQualifiers.NONE })
+        val verticalSlice = indexedFromSupertypes.map { it.getOrDefault(index, { null }) }.filterNotNull()
+        return qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant)
+    }
+}
+
+private fun JetType.computeQualifiersForOverride(fromSupertypes: Collection<JetType>, isCovariant: Boolean): JavaTypeQualifiers {
     val nullabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().nullability }.filterNotNull().toSet()
     val mutabilityFromSupertypes = fromSupertypes.map { it.extractQualifiers().mutability }.filterNotNull().toSet()
     val own = getAnnotations().extractQualifiers()

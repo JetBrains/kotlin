@@ -16,14 +16,12 @@
 
 package org.jetbrains.kotlin.load.java.components
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.types.JetType
 
 fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
@@ -79,7 +77,7 @@ fun <D : CallableMemberDescriptor> D.enhance(): D {
 }
 
 fun <T, P : SignaturePart<T>> SignatureParts<T, P>.enhance(): T {
-    val qualifiers = fromOverride.type.computeQualifiersForOverride(this.fromOverridden.map { it.type }, fromOverride.isCovariant)
+    val qualifiers = fromOverride.type.computeIndexedQualifiersForOverride(this.fromOverridden.map { it.type }, fromOverride.isCovariant)
     return fromOverride.replaceType(fromOverride.type.enhance(qualifiers))
 }
 
@@ -98,13 +96,13 @@ trait SignaturePart<out T> {
 }
 
 fun ReceiverParameterDescriptor.toPart() = object : SignaturePart<JetType> {
-    override val type = getType()
+    override val type = this@toPart.getType() // workaround for KT-7557
 
     override fun replaceType(newType: JetType) = newType
 }
 
 fun ValueParameterDescriptor.toPart() = object : SignaturePart<ValueParameterDescriptor> {
-    override val type = getType()
+    override val type = this@toPart.getType() // workaround for KT-7557
 
     override fun replaceType(newType: JetType) = ValueParameterDescriptorImpl(
             getContainingDeclaration(),
@@ -114,7 +112,7 @@ fun ValueParameterDescriptor.toPart() = object : SignaturePart<ValueParameterDes
             getName(),
             newType,
             declaresDefaultValue(),
-            if (getVarargElementType() != null) newType.getArguments()[0].getType() else null,
+            if (getVarargElementType() != null) KotlinBuiltIns.getInstance().getArrayElementType(newType) else null,
             getSource()
     )
 }
