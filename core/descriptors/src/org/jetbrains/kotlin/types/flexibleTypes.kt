@@ -153,11 +153,13 @@ public open class DelegatingFlexibleType protected (
     }
 
     init {
-        assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
-        assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
-        assert (lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
-        assert (JetTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
-            "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
+        if (ASSERTIONS_ENABLED) { // workaround for KT-7540
+            assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
+            assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
+            assert (lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
+            assert (JetTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
+                "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
+            }
         }
     }
 
