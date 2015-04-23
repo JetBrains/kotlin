@@ -68,8 +68,11 @@ public fun collectNamedFunctions(scope: JsNode): IdentityHashMap<JsName, JsFunct
     return namedFunctions
 }
 
-public fun collectInstances<T : JsNode>(klass: Class<T>, scope: JsNode): List<T> {
-    return with(InstanceCollector(klass)) {
+kotlin.jvm.overloads
+public fun collectInstances<T : JsNode>(
+        klass: Class<T>, scope: JsNode, visitNestedDeclarations: Boolean = false
+): List<T> {
+    return with(InstanceCollector(klass, visitNestedDeclarations)) {
         accept(scope)
         collected
     }

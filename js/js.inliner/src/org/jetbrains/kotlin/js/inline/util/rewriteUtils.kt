@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.util
 
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsName
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsNode
+import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.js.inline.util.rewriters.NameReplacingVisitor
 import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
 import org.jetbrains.kotlin.js.inline.util.rewriters.ThisReplacingVisitor
@@ -30,8 +27,20 @@ public fun <T : JsNode> replaceNames(node: T, replaceMap: IdentityHashMap<JsName
     return NameReplacingVisitor(replaceMap).accept(node)!!
 }
 
-public fun replaceReturns(scope: JsNode, resultRef: JsNameRef?, breakLabel: JsNameRef?): JsNode {
-    return ReturnReplacingVisitor(resultRef, breakLabel).accept(scope)!!
+public fun replaceReturns(scope: JsBlock, resultRef: JsNameRef?, breakLabel: JsNameRef?): JsNode {
+    val visitor = ReturnReplacingVisitor(resultRef, breakLabel)
+    val withReturnReplaced = visitor.accept(scope)!!
+
+    if (breakLabel != null) {
+        val statements = scope.getStatements()
+        val last = statements.last() as? JsBreak
+
+        if (last?.getLabel()?.getName() === breakLabel.getName()) {
+            statements.remove(statements.lastIndex)
+        }
+    }
+
+    return withReturnReplaced
 }
 
 public fun replaceThisReference<T : JsNode>(node: T, replacement: JsExpression) {

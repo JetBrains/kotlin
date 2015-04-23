@@ -16,12 +16,26 @@
 
 package org.jetbrains.kotlin.js.inline.util.collectors
 
+import com.google.dart.compiler.backend.js.ast.JsFunction
 import com.google.dart.compiler.backend.js.ast.JsNode
+import com.google.dart.compiler.backend.js.ast.JsObjectLiteral
 import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
 import java.util.ArrayList
 
-class InstanceCollector<T : JsNode>(val klass: Class<T>) : RecursiveJsVisitor() {
+class InstanceCollector<T : JsNode>(val klass: Class<T>, val visitNestedDeclarations: Boolean) : RecursiveJsVisitor() {
     public val collected: MutableList<T> = ArrayList()
+
+    override fun visitFunction(x: JsFunction) {
+        if (visitNestedDeclarations) {
+            visitElement(x)
+        }
+    }
+
+    override fun visitObjectLiteral(x: JsObjectLiteral) {
+        if (visitNestedDeclarations) {
+            visitElement(x)
+        }
+    }
 
     override fun visitElement(node: JsNode) {
         if (klass.isInstance(node)) {

@@ -104,8 +104,8 @@ public class DirectiveTestUtils {
             String countStr = arguments.getNamedArgument("count");
             int expectedCount = Integer.valueOf(countStr);
 
-            JsNode scope = AstSearchUtil.getFunction(ast, functionName);
-            List<T> nodes = collectInstances(klass, scope);
+            JsFunction function = AstSearchUtil.getFunction(ast, functionName);
+            List<T> nodes = collectInstances(klass, function.getBody());
             int actualCount = 0;
 
             for (T node : nodes) {
@@ -138,6 +138,8 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_VARS = new CountNodesDirective<JsVars.JsVar>("CHECK_VARS_COUNT", JsVars.JsVar.class);
 
+    private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<JsBreak>("CHECK_BREAKS_COUNT", JsBreak.class);
+
     private static final DirectiveHandler HAS_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_INLINE_METADATA") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -166,6 +168,7 @@ public class DirectiveTestUtils {
             FUNCTIONS_HAVE_SAME_LINES,
             COUNT_LABELS,
             COUNT_VARS,
+            COUNT_BREAKS,
             HAS_INLINE_METADATA,
             HAS_NO_INLINE_METADATA
     );

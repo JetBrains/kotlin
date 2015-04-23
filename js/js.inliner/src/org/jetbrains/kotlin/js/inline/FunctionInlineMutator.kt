@@ -123,7 +123,7 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
         val returnOnTop = ContainerUtil.findInstance(body.getStatements(), javaClass<JsReturn>())
         val hasReturnOnTopLevel = returnOnTop != null
 
-        val needBreakLabel = !(returnCount == 1 && hasReturnOnTopLevel)
+        val needBreakLabel = !(returnCount == 0 || returnCount == 1 && hasReturnOnTopLevel)
         var breakLabelRef: JsNameRef? = null
 
         if (needBreakLabel) {
