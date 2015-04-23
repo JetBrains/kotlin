@@ -95,6 +95,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameArgumentsWhenParameterRenamed/parameter.test")
+    public void testRenameArgumentsWhenParameterRenamed_Parameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameArgumentsWhenParameterRenamed/parameter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameCompareTo/compareTo.test")
     public void testRenameCompareTo_CompareTo() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameCompareTo/compareTo.test");
