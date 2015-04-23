@@ -54,6 +54,14 @@ abstract class OrderedIterableTests<T : Iterable<String>>(data: T, empty: T) : I
         fails { data.elementAt(2) }
         fails { data.elementAt(-1) }
         fails { empty.elementAt(0) }
+
+        expect("foo") { data.elementAtOrElse(0, {""} )}
+        expect("zoo") { data.elementAtOrElse(-1, { "zoo" })}
+        expect("zoo") { data.elementAtOrElse(2, { "zoo" })}
+        expect("zoo") { empty.elementAtOrElse(0) { "zoo" }}
+
+        expect(null) { empty.elementAtOrNull(0) }
+
     }
 
     Test fun first() {

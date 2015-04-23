@@ -453,111 +453,176 @@ public fun <T> Stream<T>.contains(element: T): Boolean {
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun <T> Array<out T>.elementAt(index: Int): T {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun BooleanArray.elementAt(index: Int): Boolean {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun ByteArray.elementAt(index: Int): Byte {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun CharArray.elementAt(index: Int): Char {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun DoubleArray.elementAt(index: Int): Double {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun FloatArray.elementAt(index: Int): Float {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun IntArray.elementAt(index: Int): Int {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun LongArray.elementAt(index: Int): Long {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun ShortArray.elementAt(index: Int): Short {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun <T> Iterable<T>.elementAt(index: Int): T {
-    if (this is List<*>)
-        return get(index) as T
-    val iterator = iterator()
-    var count = 0
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (index == count++)
-            return element
-    }
-    throw IndexOutOfBoundsException("Collection doesn't contain element at index")
+    if (this is List<T>)
+        return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Collection doesn't contain element at index $index") }
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun <T> List<T>.elementAt(index: Int): T {
     return get(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun <T> Sequence<T>.elementAt(index: Int): T {
-    val iterator = iterator()
-    var count = 0
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (index == count++)
-            return element
-    }
-    throw IndexOutOfBoundsException("Collection doesn't contain element at index")
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index") }
 }
 
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
  */
 public fun <T> Stream<T>.elementAt(index: Int): T {
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Stream doesn't contain element at index $index") }
+}
+
+/**
+ * Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection.
+ */
+public fun String.elementAt(index: Int): Char {
+    return get(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun <T> Array<out T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun BooleanArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun ByteArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun CharArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun DoubleArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Double): Double {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun FloatArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Float): Float {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun IntArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Int): Int {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun LongArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Long): Long {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> Short): Short {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    if (this is List<T>)
+        return this.elementAtOrElse(index, defaultValue)
     val iterator = iterator()
     var count = 0
     while (iterator.hasNext()) {
@@ -565,14 +630,174 @@ public fun <T> Stream<T>.elementAt(index: Int): T {
         if (index == count++)
             return element
     }
-    throw IndexOutOfBoundsException("Collection doesn't contain element at index")
+    return defaultValue(index)
 }
 
 /**
- * Returns element at given *index*
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
  */
-public fun String.elementAt(index: Int): Char {
-    return get(index)
+public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    val iterator = iterator()
+    var count = 0
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        if (index == count++)
+            return element
+    }
+    return defaultValue(index)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun <T> Stream<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+    val iterator = iterator()
+    var count = 0
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        if (index == count++)
+            return element
+    }
+    return defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection.
+ */
+public inline fun String.elementAtOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun <T> Array<out T>.elementAtOrNull(index: Int): T? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun BooleanArray.elementAtOrNull(index: Int): Boolean? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun ByteArray.elementAtOrNull(index: Int): Byte? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun CharArray.elementAtOrNull(index: Int): Char? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun DoubleArray.elementAtOrNull(index: Int): Double? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun FloatArray.elementAtOrNull(index: Int): Float? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun IntArray.elementAtOrNull(index: Int): Int? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun LongArray.elementAtOrNull(index: Int): Long? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun ShortArray.elementAtOrNull(index: Int): Short? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
+    if (this is List<T>)
+        return this.elementAtOrNull(index)
+    val iterator = iterator()
+    var count = 0
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        if (index == count++)
+            return element
+    }
+    return null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun <T> List<T>.elementAtOrNull(index: Int): T? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun <T> Sequence<T>.elementAtOrNull(index: Int): T? {
+    val iterator = iterator()
+    var count = 0
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        if (index == count++)
+            return element
+    }
+    return null
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun <T> Stream<T>.elementAtOrNull(index: Int): T? {
+    val iterator = iterator()
+    var count = 0
+    while (iterator.hasNext()) {
+        val element = iterator.next()
+        if (index == count++)
+            return element
+    }
+    return null
+}
+
+/**
+ * Returns element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun String.elementAtOrNull(index: Int): Char? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
 }
 
 /**

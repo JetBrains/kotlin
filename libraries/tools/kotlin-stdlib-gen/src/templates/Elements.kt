@@ -176,12 +176,37 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("elementAt(index: Int)") {
-        doc { "Returns element at given *index*" }
+        val index = '$' + "index"
+        doc { "Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection." }
         returns("T")
         body {
             """
-            if (this is List<*>)
-                return get(index) as T
+            if (this is List<T>)
+                return get(index)
+
+            return elementAtOrElse(index) { throw IndexOutOfBoundsException("Collection doesn't contain element at index $index") }
+            """
+        }
+        body(Sequences) {
+            """
+            return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index") }
+            """
+        }
+        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            return get(index)
+            """
+        }
+    }
+
+    templates add f("elementAtOrElse(index: Int, defaultValue: (Int) -> T)") {
+        doc { "Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection." }
+        returns("T")
+        inline(true)
+        body {
+            """
+            if (this is List<T>)
+                return this.elementAtOrElse(index, defaultValue)
             val iterator = iterator()
             var count = 0
             while (iterator.hasNext()) {
@@ -189,7 +214,7 @@ fun elements(): List<GenericFunction> {
                 if (index == count++)
                     return element
             }
-            throw IndexOutOfBoundsException("Collection doesn't contain element at index")
+            return defaultValue(index)
             """
         }
         body(Sequences) {
@@ -201,12 +226,49 @@ fun elements(): List<GenericFunction> {
                 if (index == count++)
                     return element
             }
-            throw IndexOutOfBoundsException("Collection doesn't contain element at index")
+            return defaultValue(index)
             """
         }
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return get(index)
+            return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+            """
+        }
+    }
+
+
+    templates add f("elementAtOrNull(index: Int)") {
+        doc { "Returns element at the given [index] or `null` if the [index] is out of bounds of this collection." }
+        returns("T?")
+        body {
+            """
+            if (this is List<T>)
+                return this.elementAtOrNull(index)
+            val iterator = iterator()
+            var count = 0
+            while (iterator.hasNext()) {
+                val element = iterator.next()
+                if (index == count++)
+                    return element
+            }
+            return null
+            """
+        }
+        body(Sequences) {
+            """
+            val iterator = iterator()
+            var count = 0
+            while (iterator.hasNext()) {
+                val element = iterator.next()
+                if (index == count++)
+                    return element
+            }
+            return null
+            """
+        }
+        body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            return if (index >= 0 && index <= lastIndex) get(index) else null
             """
         }
     }
