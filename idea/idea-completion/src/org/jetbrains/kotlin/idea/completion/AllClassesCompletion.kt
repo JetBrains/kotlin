@@ -24,7 +24,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.asJava.KotlinLightClass
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -49,7 +48,7 @@ class AllClassesCompletion(val parameters: CompletionParameters,
                            val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
     fun collect(result: LookupElementsCollector) {
         //TODO: this is a temporary hack until we have built-ins in indices
-        val builtIns = JavaToKotlinClassMap.INSTANCE.allKotlinClasses() + listOf(KotlinBuiltIns.getInstance().getNothing())
+        val builtIns = JavaToKotlinClassMap.INSTANCE.allKotlinClasses()
         val filteredBuiltIns = builtIns.filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
         result.addDescriptorElements(filteredBuiltIns, suppressAutoInsertion = true)
 

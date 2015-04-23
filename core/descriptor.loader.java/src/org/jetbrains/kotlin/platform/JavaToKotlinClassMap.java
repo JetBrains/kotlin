@@ -34,7 +34,6 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     private final Map<FqName, ClassDescriptor> classDescriptorMap = new HashMap<FqName, ClassDescriptor>();
     private final Map<FqName, ClassDescriptor> classDescriptorMapForCovariantPositions = new HashMap<FqName, ClassDescriptor>();
-    private final Set<ClassDescriptor> allKotlinClasses = new LinkedHashSet<ClassDescriptor>();
 
     private JavaToKotlinClassMap() {
         init();
@@ -45,12 +44,8 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
 
         for (JvmPrimitiveType jvmType : JvmPrimitiveType.values()) {
-            PrimitiveType type = jvmType.getPrimitiveType();
-            register(jvmType.getWrapperFqName(), builtIns.getPrimitiveClassDescriptor(type));
-            allKotlinClasses.add(builtIns.getPrimitiveArrayClassDescriptor(type));
+            register(jvmType.getWrapperFqName(), builtIns.getPrimitiveClassDescriptor(jvmType.getPrimitiveType()));
         }
-
-        allKotlinClasses.add(builtIns.getUnit());
     }
 
     @Nullable
@@ -89,12 +84,10 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
 
     private void register(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
         classDescriptorMap.put(javaClassName, kotlinDescriptor);
-        allKotlinClasses.add(kotlinDescriptor);
     }
 
     private void registerCovariant(@NotNull FqName javaClassName, @NotNull ClassDescriptor kotlinDescriptor) {
         classDescriptorMapForCovariantPositions.put(javaClassName, kotlinDescriptor);
-        allKotlinClasses.add(kotlinDescriptor);
     }
 
     @NotNull
@@ -121,8 +114,22 @@ public class JavaToKotlinClassMap extends JavaToKotlinClassMapBuilder implements
         return mapPlatformClass(className.toSafe());
     }
 
+    // TODO: get rid of this method, it's unclear what it does
     @NotNull
-    public Set<ClassDescriptor> allKotlinClasses() {
-        return Collections.unmodifiableSet(allKotlinClasses);
+    public List<ClassDescriptor> allKotlinClasses() {
+        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
+
+        List<ClassDescriptor> result = new ArrayList<ClassDescriptor>();
+        result.addAll(classDescriptorMap.values());
+        result.addAll(classDescriptorMapForCovariantPositions.values());
+
+        for (PrimitiveType type : PrimitiveType.values()) {
+            result.add(builtIns.getPrimitiveArrayClassDescriptor(type));
+        }
+
+        result.add(builtIns.getUnit());
+        result.add(builtIns.getNothing());
+
+        return result;
     }
 }
