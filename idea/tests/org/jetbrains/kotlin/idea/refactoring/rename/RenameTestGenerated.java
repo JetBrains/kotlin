@@ -47,6 +47,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("automaticRenamerJavaParameter/parameter.test")
+    public void testAutomaticRenamerJavaParameter_Parameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerJavaParameter/parameter.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("automaticRenamerOverloads/package.test")
     public void testAutomaticRenamerOverloads_Package() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloads/package.test");

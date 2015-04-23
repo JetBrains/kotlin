@@ -65,7 +65,7 @@ open public class KotlinLightMethodForDeclaration(
         }, false)
     }
 
-    override fun getNavigationElement(): PsiElement = origin
+    override fun getNavigationElement(): PsiElement = getOrigin()
     override fun getOriginalElement(): PsiElement = origin
 
     override fun getDelegate(): PsiMethod = delegate
