@@ -21,10 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.translate.expression.InlineMetadata;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.kotlin.js.inline.util.UtilPackage.collectInstances;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findLinesWithPrefixesRemoved;
@@ -161,16 +158,22 @@ public class DirectiveTestUtils {
         }
     };
 
+    private static final List<DirectiveHandler> DIRECTIVE_HANDLERS = Arrays.asList(
+            FUNCTION_CONTAINS_NO_CALLS,
+            FUNCTION_NOT_CALLED,
+            FUNCTION_CALLED_IN_SCOPE,
+            FUNCTION_NOT_CALLED_IN_SCOPE,
+            FUNCTIONS_HAVE_SAME_LINES,
+            COUNT_LABELS,
+            COUNT_VARS,
+            HAS_INLINE_METADATA,
+            HAS_NO_INLINE_METADATA
+    );
+
     public static void processDirectives(@NotNull JsNode ast, @NotNull String sourceCode) throws Exception {
-        FUNCTION_CONTAINS_NO_CALLS.process(ast, sourceCode);
-        FUNCTION_NOT_CALLED.process(ast, sourceCode);
-        FUNCTION_CALLED_IN_SCOPE.process(ast, sourceCode);
-        FUNCTION_NOT_CALLED_IN_SCOPE.process(ast, sourceCode);
-        FUNCTIONS_HAVE_SAME_LINES.process(ast, sourceCode);
-        COUNT_LABELS.process(ast, sourceCode);
-        COUNT_VARS.process(ast, sourceCode);
-        HAS_INLINE_METADATA.process(ast, sourceCode);
-        HAS_NO_INLINE_METADATA.process(ast, sourceCode);
+        for (DirectiveHandler handler : DIRECTIVE_HANDLERS) {
+            handler.process(ast, sourceCode);
+        }
     }
 
     public static void checkFunctionContainsNoCalls(JsNode node, String functionName) throws Exception {
