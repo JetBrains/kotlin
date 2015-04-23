@@ -132,6 +132,13 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
 
         val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef())
         visitor.accept(body)
+
+        val statements = body.getStatements()
+        val last = statements.lastOrNull() as? JsBreak
+
+        if (last?.getLabel()?.getName() === breakLabel?.getName()) {
+            statements.remove(statements.lastIndex)
+        }
     }
 
     private fun getResultReference(): JsNameRef? {

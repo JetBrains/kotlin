@@ -69,7 +69,7 @@ public fun collectNamedFunctions(scope: JsNode): IdentityHashMap<JsName, JsFunct
 }
 
 public fun collectInstances<T : JsNode>(klass: Class<T>, scope: JsNode): List<T> {
-    return with(InstanceCollector(klass)) {
+    return with(InstanceCollector(klass, visitNestedDeclarations = false)) {
         accept(scope)
         collected
     }
