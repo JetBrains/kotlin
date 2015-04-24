@@ -50,7 +50,10 @@ public class CompileTimeConstantUtils {
 
     private final static Set<String> ARRAY_CALL_NAMES = KotlinPackage.hashSetOf(
             "kotlin.array", "kotlin.doubleArray", "kotlin.floatArray", "kotlin.longArray", "kotlin.intArray", "kotlin.charArray",
-            "kotlin.shortArray", "kotlin.byteArray", "kotlin.booleanArray");
+            "kotlin.shortArray", "kotlin.byteArray", "kotlin.booleanArray",
+            "kotlin.arrayOf", "kotlin.doubleArrayOf", "kotlin.floatArrayOf", "kotlin.longArrayOf", "kotlin.intArrayOf", "kotlin.charArrayOf",
+            "kotlin.shortArrayOf", "kotlin.byteArrayOf", "kotlin.booleanArrayOf"
+    );
 
     public static void checkConstructorParametersType(@NotNull List<JetParameter> parameters, @NotNull BindingTrace trace) {
         for (JetParameter parameter : parameters) {
