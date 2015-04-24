@@ -19,7 +19,6 @@ function
 implements
 import
 instanceof
-interface
 let
 new
 private

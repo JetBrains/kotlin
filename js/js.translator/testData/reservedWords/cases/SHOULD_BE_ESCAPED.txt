@@ -8,6 +8,7 @@ false
 for
 if
 in
+interface
 null
 package
 return
