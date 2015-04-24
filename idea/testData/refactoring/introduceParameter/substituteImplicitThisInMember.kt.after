@@ -1,0 +1,16 @@
+// WITH_DEFAULT_VALUE: false
+public inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
+
+class A(val a: Int) {
+    fun foo(i: Int): Int {
+        return i / 2
+    }
+}
+
+fun test() {
+    A(1).foo(A(1).a + A(2).a)
+    with(A(1)) {
+        foo(a + A(2).a)
+        this.foo(a + A(2).a)
+    }
+}

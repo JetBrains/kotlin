@@ -17,32 +17,63 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
+import com.intellij.util.containers.ContainerUtil;
+import gnu.trove.TIntArrayList;
+import gnu.trove.TIntProcedure;
+import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionEnginePackage;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.PsiModificationUtilPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
+    private static final Comparator<Map.Entry<PsiReference, DeclarationDescriptor>>
+            REVERSE_TEXT_OFFSET_COMPARATOR = new Comparator<Map.Entry<PsiReference, DeclarationDescriptor>>() {
+        @Override
+        public int compare(
+                @NotNull Map.Entry<PsiReference, DeclarationDescriptor> o1,
+                @NotNull Map.Entry<PsiReference, DeclarationDescriptor> o2
+        ) {
+            int offset1 = o1.getKey().getElement().getTextRange().getStartOffset();
+            int offset2 = o2.getKey().getElement().getTextRange().getStartOffset();
+            return offset1 < offset2 ? 1
+                                     : offset1 > offset2 ? -1
+                                                         : 0;
+        }
+    };
+
+    private static final Function1<JetElement, ShortenReferences.Options>
+            SHORTEN_ARGUMENTS_OPTIONS = new Function1<JetElement, ShortenReferences.Options>() {
+        @Override
+        public ShortenReferences.Options invoke(JetElement element) {
+            return new ShortenReferences.Options(true, true);
+        }
+    };
+
     private final JetFunctionDefinitionUsage<?> callee;
     private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
 
@@ -84,6 +115,111 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         return true;
     }
 
+    @Nullable
+    private JetExpression getReceiverExpressionIfMatched(
+            @NotNull ReceiverValue receiverValue,
+            @NotNull DeclarationDescriptor originalDescriptor,
+            @NotNull JetPsiFactory psiFactory
+    ) {
+        if (!receiverValue.exists()) return null;
+
+        // Replace descriptor of extension function/property with descriptor of its receiver
+        // to simplify checking against receiver value in the corresponding resolved call
+        if (originalDescriptor instanceof CallableDescriptor && !(originalDescriptor instanceof ReceiverParameterDescriptor)) {
+            ReceiverParameterDescriptor receiverParameter = ((CallableDescriptor) originalDescriptor).getExtensionReceiverParameter();
+            if (receiverParameter == null) return null;
+            originalDescriptor = receiverParameter;
+        }
+
+        boolean currentIsExtension = resolvedCall.getExtensionReceiver() == receiverValue;
+        boolean originalIsExtension =
+                originalDescriptor instanceof ReceiverParameterDescriptor &&
+                ((ReceiverParameterDescriptor) originalDescriptor).getValue() instanceof ExtensionReceiver;
+        if (currentIsExtension != originalIsExtension) return null;
+
+        JetType originalType = originalDescriptor instanceof ReceiverParameterDescriptor
+                               ? ((ReceiverParameterDescriptor) originalDescriptor).getType()
+                               : originalDescriptor instanceof ClassDescriptor
+                                 ? ((ClassDescriptor) originalDescriptor).getDefaultType()
+                                 : null;
+        if (originalType == null || !JetTypeChecker.DEFAULT.isSubtypeOf(receiverValue.getType(), originalType)) return null;
+
+        return getReceiverExpression(receiverValue, psiFactory);
+    }
+
+    @NotNull
+    private JetExpression substituteReferences(
+            @NotNull JetExpression expression,
+            @NotNull Map<PsiReference, DeclarationDescriptor> referenceMap,
+            @NotNull JetPsiFactory psiFactory
+    ) {
+        if (referenceMap.isEmpty() || resolvedCall == null) return expression;
+
+        JetExpression newExpression = (JetExpression) expression.copy();
+
+        Map<JetSimpleNameExpression, JetSimpleNameExpression> nameCounterpartMap =
+                ExtractionEnginePackage.createNameCounterpartMap(expression, newExpression);
+
+        Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();
+        // Sort by descending offset so that call arguments are replaced before call itself
+        List<Map.Entry<PsiReference, DeclarationDescriptor>> sortedEntries =
+                ContainerUtil.sorted(referenceMap.entrySet(), REVERSE_TEXT_OFFSET_COMPARATOR);
+        for (Map.Entry<PsiReference, DeclarationDescriptor> e : sortedEntries) {
+            DeclarationDescriptor descriptor = e.getValue();
+
+            JetExpression argumentExpression;
+            boolean addReceiver = false;
+            if (descriptor instanceof ValueParameterDescriptor) { // Ordinary parameter
+                // Find corresponding parameter in the current function (may differ from 'descriptor' if original function is part of override hierarchy)
+                ValueParameterDescriptor parameterDescriptor =
+                        resolvedCall.getResultingDescriptor().getValueParameters().get(((ValueParameterDescriptor) descriptor).getIndex());
+
+                ResolvedValueArgument resolvedValueArgument = valueArguments.get(parameterDescriptor);
+                if (!(resolvedValueArgument instanceof ExpressionValueArgument)) continue;
+
+                ValueArgument argument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
+                if (argument == null) continue;
+
+                argumentExpression = argument.getArgumentExpression();
+            }
+            else {
+                addReceiver = !(descriptor instanceof ReceiverParameterDescriptor);
+                argumentExpression = getReceiverExpressionIfMatched(resolvedCall.getExtensionReceiver(), descriptor, psiFactory);
+                if (argumentExpression == null) {
+                    argumentExpression = getReceiverExpressionIfMatched(resolvedCall.getDispatchReceiver(), descriptor, psiFactory);
+                }
+            }
+            if (argumentExpression == null) continue;
+
+            //noinspection SuspiciousMethodCalls
+            JetExpression expressionToReplace = nameCounterpartMap.get(e.getKey().getElement());
+            if (expressionToReplace == null) continue;
+            PsiElement parent = expressionToReplace.getParent();
+            if (parent instanceof JetThisExpression) {
+                expressionToReplace = (JetThisExpression) parent;
+            }
+
+            if (addReceiver) {
+                JetCallExpression callExpression = PsiTreeUtil.getParentOfType(expressionToReplace, JetCallExpression.class, true);
+                if (callExpression != null && PsiTreeUtil.isAncestor(callExpression.getCalleeExpression(), expressionToReplace, false)) {
+                    expressionToReplace = callExpression;
+                } else {
+                    // Do not substitute operation references in infix/prefix calls
+                    if (parent instanceof JetOperationExpression
+                        && ((JetOperationExpression) parent).getOperationReference() == expressionToReplace) {
+                        continue;
+                    }
+                }
+                expressionToReplace.replace(psiFactory.createExpression(argumentExpression.getText() + "." + expressionToReplace.getText()));
+            }
+            else {
+                expressionToReplace.replace(argumentExpression);
+            }
+        }
+
+        return newExpression;
+    }
+
     private void updateArgumentsAndReceiver(JetChangeInfo changeInfo, JetCallElement element) {
         JetValueArgumentList arguments = element.getValueArgumentList();
         assert arguments != null : "Argument list is expected: " + element.getText();
@@ -93,15 +229,25 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         StringBuilder parametersBuilder = new StringBuilder("(");
         boolean isFirst = true;
 
+        TIntArrayList indicesOfArgumentsWithDefaultValues = new TIntArrayList();
+
+        JetPsiFactory psiFactory = new JetPsiFactory(element.getProject());
+
         List<JetParameterInfo> newSignatureParameters = changeInfo.getNonReceiverParameters();
         for (JetParameterInfo parameterInfo : newSignatureParameters) {
-            if (isFirst)
+            if (isFirst) {
                 isFirst = false;
-            else
+            }
+            else {
                 parametersBuilder.append(',');
+            }
 
             JetExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
-            String defaultValueText = defaultValueForCall != null ? defaultValueForCall.getText() : "";
+            String defaultValueText = defaultValueForCall != null
+                                      ? substituteReferences(defaultValueForCall,
+                                                             parameterInfo.getDefaultValueParameterReferences(),
+                                                             psiFactory).getText()
+                                      : "";
 
             if (isNamedCall) {
                 String newName = parameterInfo.getInheritedName(callee);
@@ -112,18 +258,15 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         parametersBuilder.append(')');
-        JetValueArgumentList newArguments = JetPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
+        JetValueArgumentList newArgumentList = JetPsiFactory(getProject()).createCallArguments(parametersBuilder.toString());
 
         Map<Integer, ? extends ValueArgument> argumentMap = getParamIndexToArgumentMap(changeInfo, oldArguments);
-        int argIndex = 0;
 
         JetParameterInfo newReceiverInfo = changeInfo.getReceiverParameterInfo();
         JetParameterInfo originalReceiverInfo = changeInfo.getMethodDescriptor().getReceiver();
 
         ReceiverValue extensionReceiver = resolvedCall != null ? resolvedCall.getExtensionReceiver() : ReceiverValue.NO_RECEIVER;
         ReceiverValue dispatchReceiver = resolvedCall != null ? resolvedCall.getDispatchReceiver() : ReceiverValue.NO_RECEIVER;
-
-        JetPsiFactory psiFactory = new JetPsiFactory(element.getProject());
 
         PsiElement elementToReplace = element;
         PsiElement parent = element.getParent();
@@ -136,13 +279,17 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             && elementToReplace instanceof JetQualifiedExpression
             && dispatchReceiver instanceof ExpressionReceiver) return;
 
-        for (JetValueArgument newArgument : newArguments.getArguments()) {
-            JetParameterInfo parameterInfo = newSignatureParameters.get(argIndex++);
+        List<JetValueArgument> newArguments = newArgumentList.getArguments();
+        int actualIndex = 0;
+        for (int i = 0; i < newArguments.size(); i++) {
+            JetValueArgument newArgument = newArguments.get(i);
+            JetParameterInfo parameterInfo = newSignatureParameters.get(i);
             if (parameterInfo == originalReceiverInfo) {
                 JetExpression receiverExpression = getReceiverExpression(extensionReceiver, psiFactory);
                 if (receiverExpression != null) {
                     newArgument.replace(receiverExpression);
                 }
+                actualIndex++;
                 continue;
             }
 
@@ -166,6 +313,9 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                     newArgument.delete();
                 }
             }
+            else {
+                indicesOfArgumentsWithDefaultValues.add(actualIndex++);
+            }
         }
 
         List<JetFunctionLiteralArgument> lambdaArguments = element.getFunctionLiteralArguments();
@@ -173,10 +323,23 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             element.deleteChildRange(KotlinPackage.first(lambdaArguments), KotlinPackage.last(lambdaArguments));
         }
 
-        JetValueArgument lastArgument = KotlinPackage.lastOrNull(newArguments.getArguments());
+        JetValueArgument lastArgument = KotlinPackage.lastOrNull(newArgumentList.getArguments());
         boolean hasTrailingLambdaInArgumentListAfter = lastArgument != null && lastArgument.getArgumentExpression() instanceof JetFunctionLiteralExpression;
 
-        arguments.replace(newArguments);
+        arguments = (JetValueArgumentList) arguments.replace(newArgumentList);
+
+        final List<JetElement> argumentsToShorten = new ArrayList<JetElement>(indicesOfArgumentsWithDefaultValues.size());
+        final List<JetValueArgument> argumentList = arguments.getArguments();
+        indicesOfArgumentsWithDefaultValues.forEach(
+                new TIntProcedure() {
+                    @Override
+                    public boolean execute(int i) {
+                        argumentsToShorten.add(argumentList.get(i));
+                        return true;
+                    }
+                }
+        );
+        new ShortenReferences(SHORTEN_ARGUMENTS_OPTIONS).process(argumentsToShorten);
 
         JetElement newElement = element;
         if (newReceiverInfo != originalReceiverInfo) {

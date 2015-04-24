@@ -5,5 +5,5 @@ fun foo(a: Int, i: Int): Int {
 }
 
 fun test() {
-    foo(1, a + 1)
+    foo(1, 1 + 1)
 }

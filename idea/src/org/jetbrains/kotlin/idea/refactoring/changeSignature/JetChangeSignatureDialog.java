@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetExpressionCodeFragment;
 import org.jetbrains.kotlin.psi.JetTypeCodeFragment;
 import org.jetbrains.kotlin.types.JetType;
@@ -459,7 +460,10 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
             parameter.setCurrentTypeText(myParametersTableModel.getItems().get(i).typeCodeFragment.getText().trim());
             JetExpressionCodeFragment codeFragment =
                     (JetExpressionCodeFragment) myParametersTableModel.getItems().get(i).defaultValueCodeFragment;
-            parameter.setDefaultValueForCall(codeFragment.getContentElement());
+            JetExpression oldDefaultValue = parameter.getDefaultValueForCall();
+            if (!codeFragment.getText().equals(oldDefaultValue != null ? oldDefaultValue.getText() : "")) {
+                parameter.setDefaultValueForCall(codeFragment.getContentElement());
+            }
         }
 
         String returnTypeText = myReturnTypeCodeFragment != null ? myReturnTypeCodeFragment.getText().trim() : "";
