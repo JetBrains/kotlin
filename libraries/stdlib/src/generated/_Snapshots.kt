@@ -14,88 +14,77 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns an ArrayList of all elements
  */
 public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
-    val list = ArrayList<T>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
-    val list = ArrayList<Boolean>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun ByteArray.toArrayList(): ArrayList<Byte> {
-    val list = ArrayList<Byte>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun CharArray.toArrayList(): ArrayList<Char> {
-    val list = ArrayList<Char>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun DoubleArray.toArrayList(): ArrayList<Double> {
-    val list = ArrayList<Double>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun FloatArray.toArrayList(): ArrayList<Float> {
-    val list = ArrayList<Float>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun IntArray.toArrayList(): ArrayList<Int> {
-    val list = ArrayList<Int>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun LongArray.toArrayList(): ArrayList<Long> {
-    val list = ArrayList<Long>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun ShortArray.toArrayList(): ArrayList<Short> {
-    val list = ArrayList<Short>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.asList().toArrayList()
+}
+
+/**
+ * Returns an ArrayList of all elements
+ */
+public fun <T> Collection<T>.toArrayList(): ArrayList<T> {
+    return ArrayList(this)
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
-    return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))
+    return toCollection(ArrayList<T>())
 }
 
 /**
@@ -257,70 +246,70 @@ public fun <C : MutableCollection<in Char>> String.toCollection(collection: C): 
  * Returns a HashSet of all elements
  */
 public fun <T> Array<out T>.toHashSet(): HashSet<T> {
-    return toCollection(HashSet<T>())
+    return toCollection(HashSet<T>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun BooleanArray.toHashSet(): HashSet<Boolean> {
-    return toCollection(HashSet<Boolean>())
+    return toCollection(HashSet<Boolean>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun ByteArray.toHashSet(): HashSet<Byte> {
-    return toCollection(HashSet<Byte>())
+    return toCollection(HashSet<Byte>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun CharArray.toHashSet(): HashSet<Char> {
-    return toCollection(HashSet<Char>())
+    return toCollection(HashSet<Char>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun DoubleArray.toHashSet(): HashSet<Double> {
-    return toCollection(HashSet<Double>())
+    return toCollection(HashSet<Double>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun FloatArray.toHashSet(): HashSet<Float> {
-    return toCollection(HashSet<Float>())
+    return toCollection(HashSet<Float>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun IntArray.toHashSet(): HashSet<Int> {
-    return toCollection(HashSet<Int>())
+    return toCollection(HashSet<Int>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun LongArray.toHashSet(): HashSet<Long> {
-    return toCollection(HashSet<Long>())
+    return toCollection(HashSet<Long>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun ShortArray.toHashSet(): HashSet<Short> {
-    return toCollection(HashSet<Short>())
+    return toCollection(HashSet<Short>(mapCapacity(size())))
 }
 
 /**
  * Returns a HashSet of all elements
  */
 public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
-    return toCollection(HashSet<T>())
+    return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))
 }
 
 /**
@@ -343,7 +332,7 @@ public fun <T> Stream<T>.toHashSet(): HashSet<T> {
  * Returns a HashSet of all elements
  */
 public fun String.toHashSet(): HashSet<Char> {
-    return toCollection(HashSet<Char>())
+    return toCollection(HashSet<Char>(mapCapacity(length())))
 }
 
 /**
@@ -453,95 +442,77 @@ public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
  * Returns a List containing all elements
  */
 public fun <T> Array<out T>.toList(): List<T> {
-    val list = ArrayList<T>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun BooleanArray.toList(): List<Boolean> {
-    val list = ArrayList<Boolean>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun ByteArray.toList(): List<Byte> {
-    val list = ArrayList<Byte>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun CharArray.toList(): List<Char> {
-    val list = ArrayList<Char>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun DoubleArray.toList(): List<Double> {
-    val list = ArrayList<Double>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun FloatArray.toList(): List<Float> {
-    val list = ArrayList<Float>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun IntArray.toList(): List<Int> {
-    val list = ArrayList<Int>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun LongArray.toList(): List<Long> {
-    val list = ArrayList<Long>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun ShortArray.toList(): List<Short> {
-    val list = ArrayList<Short>(size())
-    for (item in this) list.add(item)
-    return list
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun <T> Iterable<T>.toList(): List<T> {
-    return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun <T> Sequence<T>.toList(): List<T> {
-    return toCollection(ArrayList<T>())
+    return this.toArrayList()
 }
 
 
@@ -550,21 +521,22 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns a List containing all elements
  */
 public fun <T> Stream<T>.toList(): List<T> {
-    return toCollection(ArrayList<T>())
+    return this.toArrayList()
 }
 
 /**
  * Returns a List containing all elements
  */
 public fun String.toList(): List<Char> {
-    return toCollection(ArrayList<Char>(length()))
+    return this.toArrayList()
 }
 
 /**
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
-    val result = LinkedHashMap<K, T>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -575,7 +547,8 @@ public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boolean> {
-    val result = LinkedHashMap<K, Boolean>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Boolean>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -586,7 +559,8 @@ public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boole
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
-    val result = LinkedHashMap<K, Byte>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Byte>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -597,7 +571,8 @@ public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
-    val result = LinkedHashMap<K, Char>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -608,7 +583,8 @@ public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double> {
-    val result = LinkedHashMap<K, Double>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Double>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -619,7 +595,8 @@ public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double>
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
-    val result = LinkedHashMap<K, Float>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Float>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -630,7 +607,8 @@ public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
-    val result = LinkedHashMap<K, Int>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Int>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -641,7 +619,8 @@ public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
-    val result = LinkedHashMap<K, Long>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Long>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -652,7 +631,8 @@ public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
-    val result = LinkedHashMap<K, Short>()
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, Short>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -663,7 +643,8 @@ public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
-    val result = LinkedHashMap<K, T>()
+    val capacity = (collectionSizeOrDefault(10)/.75f) + 1
+    val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
     }
@@ -698,9 +679,166 @@ public inline fun <T, K> Stream<T>.toMap(selector: (T) -> K): Map<K, T> {
  * Returns Map containing all the values from the given collection indexed by *selector*
  */
 public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
-    val result = LinkedHashMap<K, Char>()
+    val capacity = (length()/.75f) + 1
+    val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
+    val capacity = (size()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
+    val capacity = (collectionSizeOrDefault(10)/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
+    val result = LinkedHashMap<K, V>()
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <T, K, V> Stream<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
+    val result = LinkedHashMap<K, V>()
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+ */
+public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
+    val capacity = (length()/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
     }
     return result
 }
@@ -709,70 +847,70 @@ public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
  * Returns a Set of all elements
  */
 public fun <T> Array<out T>.toSet(): Set<T> {
-    return toCollection(LinkedHashSet<T>())
+    return toCollection(LinkedHashSet<T>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun BooleanArray.toSet(): Set<Boolean> {
-    return toCollection(LinkedHashSet<Boolean>())
+    return toCollection(LinkedHashSet<Boolean>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun ByteArray.toSet(): Set<Byte> {
-    return toCollection(LinkedHashSet<Byte>())
+    return toCollection(LinkedHashSet<Byte>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun CharArray.toSet(): Set<Char> {
-    return toCollection(LinkedHashSet<Char>())
+    return toCollection(LinkedHashSet<Char>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun DoubleArray.toSet(): Set<Double> {
-    return toCollection(LinkedHashSet<Double>())
+    return toCollection(LinkedHashSet<Double>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun FloatArray.toSet(): Set<Float> {
-    return toCollection(LinkedHashSet<Float>())
+    return toCollection(LinkedHashSet<Float>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun IntArray.toSet(): Set<Int> {
-    return toCollection(LinkedHashSet<Int>())
+    return toCollection(LinkedHashSet<Int>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun LongArray.toSet(): Set<Long> {
-    return toCollection(LinkedHashSet<Long>())
+    return toCollection(LinkedHashSet<Long>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun ShortArray.toSet(): Set<Short> {
-    return toCollection(LinkedHashSet<Short>())
+    return toCollection(LinkedHashSet<Short>(mapCapacity(size())))
 }
 
 /**
  * Returns a Set of all elements
  */
 public fun <T> Iterable<T>.toSet(): Set<T> {
-    return toCollection(LinkedHashSet<T>())
+    return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))
 }
 
 /**
@@ -795,7 +933,7 @@ public fun <T> Stream<T>.toSet(): Set<T> {
  * Returns a Set of all elements
  */
 public fun String.toSet(): Set<Char> {
-    return toCollection(LinkedHashSet<Char>())
+    return toCollection(LinkedHashSet<Char>(mapCapacity(length())))
 }
 
 /**
