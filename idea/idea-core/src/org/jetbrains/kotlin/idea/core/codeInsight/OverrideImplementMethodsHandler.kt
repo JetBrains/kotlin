@@ -289,25 +289,23 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
                 val builder = StringBuilder()
                 builder.append("super")
                 if (classOrObject.getDelegationSpecifiers().size() > 1) {
-                    builder.append("<").append(DescriptorRenderer.COMPACT.renderName(descriptor.getContainingDeclaration().getName())).append(">")
+                    builder.append("<").append(descriptor.getContainingDeclaration().escapedName()).append(">")
                 }
-                builder.append(".").append(DescriptorRenderer.COMPACT.renderName(descriptor.getName()))
+                builder.append(".").append(descriptor.escapedName())
 
                 if (descriptor is FunctionDescriptor) {
-                    builder.append("(")
-                    var first = true
-                    for (parameterDescriptor in descriptor.getValueParameters()) {
-                        if (!first) {
-                            builder.append(", ")
-                        }
-                        first = false
-                        builder.append(DescriptorRenderer.COMPACT.renderName(parameterDescriptor.getName()))
+                    val paramTexts = descriptor.getValueParameters().map {
+                        val renderedName = it.escapedName()
+                        if (it.getVarargElementType() != null) "*$renderedName" else renderedName
                     }
-                    builder.append(")")
+                    paramTexts.joinTo(builder, prefix="(", postfix=")")
                 }
 
                 return builder.toString()
             }
         }
+
+        fun DeclarationDescriptor.escapedName() =
+                DescriptorRenderer.COMPACT.renderName(getName())
     }
 }
