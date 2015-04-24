@@ -42,7 +42,7 @@ import java.util.Set;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
-    private SymbolUsageValidator symbolUsageValidator = SymbolUsageValidator.Empty;
+    private SymbolUsageValidator symbolUsageValidator;
 
     /**
      * @deprecated Instance of this class should be obtained from the Injector

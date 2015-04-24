@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
@@ -201,6 +202,8 @@ public class KotlinIndicesHelper(
     private fun analyzeImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
         val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
         val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
-        return QualifiedExpressionResolver().processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING).getAllDescriptors()
+        val qualifiedExpressionResolver = QualifiedExpressionResolver()
+        qualifiedExpressionResolver.setSymbolUsageValidator(SymbolUsageValidator.Empty)
+        return qualifiedExpressionResolver.processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING).getAllDescriptors()
     }
 }
