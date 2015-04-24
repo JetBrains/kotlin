@@ -12,11 +12,12 @@ import org.w3c.dom.views.*
 
 // Contains stub APIs for the W3C DOM API so we can delegate to the platform DOM instead
 
-
+deprecated("Use org.w3c.dom3 instead")
 native public trait DocumentEvent {
     public fun createEvent(arg1: String?): Event = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait Event {
     public val bubbles: Boolean
     public val cancelable: Boolean
@@ -36,12 +37,14 @@ native public trait Event {
     }
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait EventTarget {
     public fun addEventListener(arg1: String?, arg2: EventListener, arg3: Boolean): Unit = noImpl
     public fun dispatchEvent(arg1: Event?): Boolean = noImpl
     public fun removeEventListener(arg1: String?, arg2: EventListener, arg3: Boolean): Unit = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait MouseEvent: UIEvent {
     public val altKey: Boolean
     public val button: Short
@@ -56,6 +59,7 @@ native public trait MouseEvent: UIEvent {
     public fun initMouseEvent(arg1: String?, arg2: Boolean, arg3: Boolean, arg4: AbstractView, arg5: Int, arg6: Int, arg7: Int, arg8: Int, arg9: Int, arg10: Boolean, arg11: Boolean, arg12: Boolean, arg13: Boolean, arg14: Short, arg15: EventTarget): Unit = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait MutationEvent: Event {
     public val attrChange: Short
     public val attrName: String
@@ -71,6 +75,7 @@ native public trait MutationEvent: Event {
     }
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait UIEvent: Event {
     public val detail: Int
     public val view: AbstractView

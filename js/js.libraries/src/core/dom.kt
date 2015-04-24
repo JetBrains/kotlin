@@ -10,7 +10,7 @@ package org.w3c.dom
 
 // Contains stub APIs for the W3C DOM API so we can delegate to the platform DOM instead
 
-
+deprecated("Use org.w3c.dom3 instead")
 native public trait Attr: Node {
     public val name: String
     public val ownerElement: Element
@@ -20,9 +20,11 @@ native public trait Attr: Node {
     public fun isId(): Boolean = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait CDATASection: Text {
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait CharacterData: Node {
     public var data: String
     public val length: Int
@@ -33,9 +35,11 @@ native public trait CharacterData: Node {
     public fun substringData(arg1: Int, arg2: Int): String = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait Comment: CharacterData {
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait Document: Node {
     public val doctype: DocumentType
     public val documentElement: Element
@@ -66,9 +70,11 @@ native public trait Document: Node {
     public fun renameNode(arg1: Node, arg2: String?, arg3: String?): Node = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DocumentFragment: Node {
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DocumentType: Node {
     public val entities: NamedNodeMap
     public val internalSubset: String
@@ -78,6 +84,7 @@ native public trait DocumentType: Node {
     public val systemId: String
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DOMConfiguration {
     public val parameterNames: DOMStringList
     public fun canSetParameter(arg1: String?, arg2: Any): Boolean = noImpl
@@ -85,6 +92,7 @@ native public trait DOMConfiguration {
     public fun setParameter(arg1: String?, arg2: Any): Unit = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DOMError {
     public val location: DOMLocator
     public val message: String
@@ -100,10 +108,12 @@ native public trait DOMError {
     }
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DOMErrorHandler {
     public fun handleError(arg1: DOMError): Boolean = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DOMImplementation {
     public fun createDocument(arg1: String?, arg2: String?, arg3: DocumentType?): Document = noImpl
     public fun createDocumentType(arg1: String?, arg2: String?, arg3: String?): DocumentType = noImpl
@@ -111,11 +121,13 @@ native public trait DOMImplementation {
     public fun hasFeature(arg1: String?, arg2: String?): Boolean = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DOMImplementationList {
     public val length: Int
     public fun item(arg1: Int): DOMImplementation = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DOMLocator {
     public val byteOffset: Int
     public val columnNumber: Int
@@ -125,12 +137,14 @@ native public trait DOMLocator {
     public val utf16Offset: Int
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait DOMStringList {
     public val length: Int
     public fun contains(arg1: String?): Boolean = noImpl
     public fun item(arg1: Int): String = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait Element: Node {
     public val schemaTypeInfo: TypeInfo
     public val tagName: String
@@ -154,6 +168,7 @@ native public trait Element: Node {
     public fun setAttributeNodeNS(arg1: Attr): Attr = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait Entity: Node {
     public val inputEncoding: String
     public val notationName: String
@@ -163,9 +178,11 @@ native public trait Entity: Node {
     public val xmlVersion: String
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait EntityReference: Node {
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait NameList {
     public val length: Int
     public fun contains(arg1: String?): Boolean = noImpl
@@ -174,6 +191,7 @@ native public trait NameList {
     public fun getNamespaceURI(arg1: Int): String = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait NamedNodeMap {
     public val length: Int
     public fun getNamedItem(arg1: String?): Node = noImpl
@@ -185,6 +203,7 @@ native public trait NamedNodeMap {
     public fun setNamedItemNS(arg1: Node): Node = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait Node {
     public val attributes: NamedNodeMap
     public val baseURI: String
@@ -243,21 +262,25 @@ native public trait Node {
     }
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait NodeList {
     public val length: Int
     public fun item(arg1: Int): Node = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait Notation: Node {
     public val publicId: String
     public val systemId: String
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait ProcessingInstruction: Node {
     public var data: String
     public val target: String
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait Text: CharacterData {
     public val wholeText: String
     public fun isElementContentWhitespace(): Boolean = noImpl
@@ -265,6 +288,7 @@ native public trait Text: CharacterData {
     public fun splitText(arg1: Int): Text = noImpl
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait TypeInfo {
     public val typeName: String
     public val typeNamespace: String
@@ -278,6 +302,7 @@ native public trait TypeInfo {
     }
 }
 
+deprecated("Use org.w3c.dom3 instead")
 native public trait UserDataHandler {
     public fun handle(arg1: Short, arg2: String?, arg3: Any, arg4: Node, arg5: Node): Unit = noImpl
 

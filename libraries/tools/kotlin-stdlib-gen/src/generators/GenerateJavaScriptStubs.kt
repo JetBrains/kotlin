@@ -14,6 +14,7 @@ import org.w3c.dom.events.*
 * This tool generates JavaScript stubs for classes available in the JDK which are already available in the browser environment
 * such as the W3C DOM
 */
+deprecated("You shouldn't use it anymore as there is idl2k tool and DOM3 specification")
 fun generateDomAPI(file: File): Unit {
     val packageName = "org.w3c.dom"
     val imports = ""
@@ -87,6 +88,7 @@ $imports
             val interfaces = klass.getInterfaces()
             val extends = if (interfaces != null && interfaces.size == 1) ": ${interfaces[0]?.getSimpleName()}" else ""
 
+            println("deprecated(\"Use org.w3c.dom3 instead\")")
             println("native public interface ${klass.getSimpleName()}$extends {")
 
             val methods = klass.getDeclaredMethods().sortBy { it.getName()!! }
@@ -133,6 +135,7 @@ $imports
                     if (typeName == null) {
                         validMethods.add(pk.method)
                     } else {
+                        println("    deprecated(\"Use org.w3c.dom3 instead\")")
                         println("    public ${pk.kind} ${pk.name}: ${typeName}")
                     }
                 }
@@ -143,6 +146,7 @@ $imports
                     var counter = 0
                     val parameters = parameterTypes.map{ "arg${++counter}: ${parameterTypeName(it)}" }.makeString(", ")
                     val returnType = simpleTypeName(method.getReturnType())
+                    println("    deprecated(\"Use org.w3c.dom3 instead\")")
                     println("    public fun ${method.getName()}($parameters): $returnType = noImpl")
                 }
             }
@@ -160,6 +164,7 @@ $imports
                                     val value = field.get(null)
                                     if (value != null) {
                                         val fieldType = simpleTypeName(field.getType())
+                                        println("        deprecated(\"Use org.w3c.dom3 instead\")")
                                         println("        public val ${field.getName()}: $fieldType = $value")
                                     }
                                 } catch (e: Exception) {
