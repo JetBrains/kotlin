@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetWithExpressionInitializer
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
-private fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement): Boolean {
+public fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement): Boolean {
     // Inspired by GenerateMembersUtils.positionCaret()
 
     if (element is JetDeclarationWithBody && element.hasBody()) {
