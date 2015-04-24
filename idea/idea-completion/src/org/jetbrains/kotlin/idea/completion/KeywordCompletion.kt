@@ -40,7 +40,8 @@ object KeywordLookupObject
 object KeywordCompletion {
     private val NON_ACTUAL_KEYWORDS = setOf(REIFIED_KEYWORD,
                                             CAPITALIZED_THIS_KEYWORD,
-                                            TYPE_ALIAS_KEYWORD)
+                                            TYPE_ALIAS_KEYWORD,
+                                            TRAIT_KEYWORD)
     private val ALL_KEYWORDS = (KEYWORDS.getTypes() + SOFT_KEYWORDS.getTypes())
             .filter { it !in NON_ACTUAL_KEYWORDS }
             .map { it as JetKeywordToken }

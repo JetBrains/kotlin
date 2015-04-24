@@ -24,7 +24,7 @@ class Some {
 // EXIST:  protected
 // EXIST:  public
 // EXIST: set
-// EXIST:  trait
+// EXIST:  interface
 // EXIST:  val
 // EXIST:  var
 // EXIST:  vararg

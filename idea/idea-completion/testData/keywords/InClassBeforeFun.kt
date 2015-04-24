@@ -26,7 +26,7 @@ public class Test {
 // EXIST:  private
 // EXIST:  protected
 // EXIST:  public
-// EXIST:  trait
+// EXIST:  interface
 // EXIST:  val
 // EXIST:  var
 // EXIST:  vararg

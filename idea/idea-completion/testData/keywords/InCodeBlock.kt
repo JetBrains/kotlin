@@ -14,7 +14,7 @@ fun foo() {
 // EXIST: return
 // EXIST: super
 // EXIST: throw
-// EXIST: trait
+// EXIST: interface
 // EXIST: true
 // EXIST: try
 // EXIST: val
