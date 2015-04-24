@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.quickfix.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
@@ -46,6 +47,7 @@ import java.util.ArrayList
 import java.util.Collections
 
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActionHandler {
 
@@ -74,7 +76,7 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
             return false
         }
         val elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset())
-        val classOrObject = PsiTreeUtil.getParentOfType<JetClassOrObject>(elementAtCaret, javaClass<JetClassOrObject>())
+        val classOrObject = elementAtCaret?.getNonStrictParentOfType<JetClassOrObject>()
         return classOrObject != null
     }
 
@@ -82,9 +84,7 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
 
     public fun invoke(project: Project, editor: Editor, file: PsiFile, implementAll: Boolean) {
         val elementAtCaret = file.findElementAt(editor.getCaretModel().getOffset())
-        val classOrObject = PsiTreeUtil.getParentOfType<JetClassOrObject>(elementAtCaret, javaClass<JetClassOrObject>())
-
-        assert(classOrObject != null)
+        val classOrObject = elementAtCaret?.getNonStrictParentOfType<JetClassOrObject>()!!
 
         val missingImplementations = collectMethodsToGenerate(classOrObject)
         if (missingImplementations.isEmpty() && !implementAll) {
@@ -113,17 +113,20 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
         generateMethods(editor, classOrObject, selectedElements)
     }
 
-    override fun invoke(project: Project, editor: Editor, file: PsiFile) {
-        invoke(project, editor, file, false)
-    }
+    override fun invoke(project: Project, editor: Editor, file: PsiFile) = invoke(project, editor, file, false)
 
-    override fun startInWriteAction(): Boolean {
-        return false
-    }
+    override fun startInWriteAction(): Boolean = false
 
     companion object {
-
-        private val OVERRIDE_RENDERER = DescriptorRendererBuilder().setRenderDefaultValues(false).setModifiers(DescriptorRenderer.Modifier.OVERRIDE).setWithDefinedIn(false).setNameShortness(NameShortness.SOURCE_CODE_QUALIFIED).setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE).setUnitReturnType(false).setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES).build()
+        private val OVERRIDE_RENDERER = DescriptorRendererBuilder()
+                .setRenderDefaultValues(false)
+                .setModifiers(DescriptorRenderer.Modifier.OVERRIDE)
+                .setWithDefinedIn(false)
+                .setNameShortness(NameShortness.SOURCE_CODE_QUALIFIED)
+                .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE)
+                .setUnitReturnType(false)
+                .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
+                .build()
 
         private val LOG = Logger.getInstance(javaClass<OverrideImplementMethodsHandler>().getCanonicalName())
 
@@ -143,48 +146,47 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
         }
 
         public fun generateMethods(editor: Editor, classOrObject: JetClassOrObject, selectedElements: List<DescriptorClassMember>) {
-            ApplicationManager.getApplication().runWriteAction(object : Runnable {
-                override fun run() {
-                    var body = classOrObject.getBody()
-                    if (body == null) {
-                        val psiFactory = JetPsiFactory(classOrObject)
-                        classOrObject.add(psiFactory.createWhiteSpace())
-                        body = classOrObject.add(psiFactory.createEmptyClassBody()) as JetClassBody
-                    }
-
-                    var afterAnchor = findInsertAfterAnchor(editor, body)
-
-                    if (afterAnchor == null) return
-
-                    var firstGenerated: PsiElement? = null
-
-                    val elementsToCompact = ArrayList<JetElement>()
-                    for (element in generateOverridingMembers(selectedElements, classOrObject)) {
-                        val added = body!!.addAfter(element, afterAnchor)
-
-                        if (firstGenerated == null) {
-                            firstGenerated = added
-                        }
-
-                        afterAnchor = added
-                        elementsToCompact.add(added as JetElement)
-                    }
-
-                    ShortenReferences.DEFAULT.process(elementsToCompact)
-
-                    if (firstGenerated == null) return
-
-                    val project = classOrObject.getProject()
-                    val pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer<PsiElement>(firstGenerated)
-
-                    PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
-
-                    val element = pointer.getElement()
-                    if (element != null) {
-                        moveCaretIntoGeneratedElement(editor, element)
-                    }
+            runWriteAction {
+                var body = classOrObject.getBody()
+                if (body == null) {
+                    val psiFactory = JetPsiFactory(classOrObject)
+                    classOrObject.add(psiFactory.createWhiteSpace())
+                    body = classOrObject.add(psiFactory.createEmptyClassBody()) as JetClassBody
                 }
-            })
+
+                var afterAnchor = findInsertAfterAnchor(editor, body)
+
+                if (afterAnchor == null) return@runWriteAction
+
+                var firstGenerated: PsiElement? = null
+
+                val elementsToCompact = ArrayList<JetElement>()
+                for (element in generateOverridingMembers(selectedElements, classOrObject)) {
+                    val added = body!!.addAfter(element, afterAnchor)
+
+                    if (firstGenerated == null) {
+                        firstGenerated = added
+                    }
+
+                    afterAnchor = added
+                    elementsToCompact.add(added as JetElement)
+                }
+
+                ShortenReferences.DEFAULT.process(elementsToCompact)
+
+                if (firstGenerated == null) return@runWriteAction
+
+                val project = classOrObject.getProject()
+                val pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(firstGenerated)
+
+                PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+
+                val element = pointer.getElement()
+                if (element != null) {
+                    moveCaretIntoGeneratedElement(editor, element)
+                }
+
+            }
         }
 
         private fun findInsertAfterAnchor(editor: Editor, body: JetClassBody): PsiElement? {
@@ -192,11 +194,9 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
             if (afterAnchor == null) return null
 
             val offset = editor.getCaretModel().getOffset()
-            val offsetCursorElement = PsiTreeUtil.findFirstParent(body.getContainingFile().findElementAt(offset), object : Condition<PsiElement> {
-                override fun value(element: PsiElement): Boolean {
-                    return element.getParent() == body
-                }
-            })
+            val offsetCursorElement = PsiTreeUtil.findFirstParent(body.getContainingFile().findElementAt(offset)) {
+                it.getParent() == body
+            }
 
             if (offsetCursorElement is PsiWhiteSpace) {
                 return removeAfterOffset(offset, offsetCursorElement)
@@ -232,7 +232,8 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
             return whiteSpace
         }
 
-        private fun generateOverridingMembers(selectedElements: List<DescriptorClassMember>, classOrObject: JetClassOrObject): List<JetElement> {
+        private fun generateOverridingMembers(selectedElements: List<DescriptorClassMember>,
+                                              classOrObject: JetClassOrObject): List<JetElement> {
             val overridingMembers = ArrayList<JetElement>()
             for (selectedElement in selectedElements) {
                 val descriptor = selectedElement.getDescriptor()
@@ -247,7 +248,8 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
         }
 
         private fun overrideProperty(classOrObject: JetClassOrObject, descriptor: PropertyDescriptor): JetElement {
-            val newDescriptor = descriptor.copy(descriptor.getContainingDeclaration(), Modality.OPEN, descriptor.getVisibility(), descriptor.getKind(), /* copyOverrides = */ true) as PropertyDescriptor
+            val newDescriptor = descriptor.copy(descriptor.getContainingDeclaration(), Modality.OPEN, descriptor.getVisibility(),
+                                                descriptor.getKind(), /* copyOverrides = */ true) as PropertyDescriptor
             newDescriptor.addOverriddenDescriptor(descriptor)
 
             val body = StringBuilder()
@@ -261,9 +263,9 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
         }
 
         private fun overrideFunction(classOrObject: JetClassOrObject, descriptor: FunctionDescriptor): JetNamedFunction {
-            val newDescriptor = descriptor.copy(descriptor.getContainingDeclaration(), Modality.OPEN, descriptor.getVisibility(), descriptor.getKind(), /* copyOverrides = */ true)
+            val newDescriptor = descriptor.copy(descriptor.getContainingDeclaration(), Modality.OPEN, descriptor.getVisibility(),
+                                                descriptor.getKind(), /* copyOverrides = */ true)
             newDescriptor.addOverriddenDescriptor(descriptor)
-
 
             val returnType = descriptor.getReturnType()
             val builtIns = KotlinBuiltIns.getInstance()
