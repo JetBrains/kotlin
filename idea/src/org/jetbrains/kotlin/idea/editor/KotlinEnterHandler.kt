@@ -16,24 +16,26 @@
 
 package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
-import com.intellij.psi.PsiFile
-import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.util.Ref
-import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.editor.actionSystem.EditorActionHandler
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
 import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.psi.JetFile
-import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
+import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
+import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.psi.tree.TokenSet
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.actionSystem.EditorActionHandler
+import com.intellij.openapi.util.Ref
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.tree.TokenSet
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
 
 public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
     companion object {
@@ -50,6 +52,11 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
             originalHandler: EditorActionHandler?
     ): EnterHandlerDelegate.Result? {
         if (file !is JetFile) return EnterHandlerDelegate.Result.Continue
+
+        if (preprocessEnterInStringLiteral(file, editor, caretOffsetRef, caretAdvance)) {
+            return EnterHandlerDelegate.Result.DefaultForceIndent
+        }
+
         if (!CodeInsightSettings.getInstance()!!.SMART_INDENT_ON_ENTER) return EnterHandlerDelegate.Result.Continue
 
         val document = editor.getDocument()
@@ -83,5 +90,37 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
         }
 
         return EnterHandlerDelegate.Result.Continue
+    }
+
+    // We can't use the core platform logic (EnterInStringLiteralHandler) because it assumes that the string
+    // is a single token and the first character of the token is an opening quote. In the case of Kotlin,
+    // the opening quote is a separate token and the first character of the string token is just a random letter.
+    private fun preprocessEnterInStringLiteral(psiFile: PsiFile,
+                                               editor: Editor,
+                                               caretOffsetRef: Ref<Int>,
+                                               caretAdvanceRef: Ref<Int>): Boolean {
+        var caretOffset = caretOffsetRef.get()
+        val psiAtOffset = psiFile.findElementAt(caretOffset) ?: return false
+        val stringTemplate = psiAtOffset.getStrictParentOfType<JetStringTemplateExpression>() ?: return false
+        if (!stringTemplate.isSingleQuoted()) return false
+        val tokenType = psiAtOffset.getNode().getElementType()
+        when (tokenType) {
+            JetTokens.CLOSING_QUOTE, JetTokens.REGULAR_STRING_PART, JetTokens.ESCAPE_SEQUENCE,
+            JetTokens.SHORT_TEMPLATE_ENTRY_START, JetTokens.LONG_TEMPLATE_ENTRY_START -> {
+                val doc = editor.getDocument()
+                var caretAdvance = 1
+                if (stringTemplate.getParent() is JetDotQualifiedExpression) {
+                    doc.insertString(stringTemplate.getTextRange().getEndOffset(), ")")
+                    doc.insertString(stringTemplate.getTextRange().getStartOffset(), "(")
+                    caretOffset++
+                    caretAdvance++
+                }
+                doc.insertString(caretOffset, "\" + \"")
+                caretOffsetRef.set(caretOffset + 3)
+                caretAdvanceRef.set(caretAdvance)
+                return true
+            }
+        }
+        return false
     }
 }

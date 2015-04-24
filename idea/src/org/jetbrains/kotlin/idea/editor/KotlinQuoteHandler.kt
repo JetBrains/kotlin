@@ -53,6 +53,11 @@ public class KotlinQuoteHandler : QuoteHandler {
 
     override fun isInsideLiteral(iterator: HighlighterIterator): Boolean {
         val tokenType = iterator.getTokenType()
-        return tokenType == JetTokens.REGULAR_STRING_PART || tokenType == JetTokens.OPEN_QUOTE || tokenType == JetTokens.CLOSING_QUOTE || tokenType == JetTokens.SHORT_TEMPLATE_ENTRY_START || tokenType == JetTokens.LONG_TEMPLATE_ENTRY_END || tokenType == JetTokens.LONG_TEMPLATE_ENTRY_START
+        return tokenType == JetTokens.REGULAR_STRING_PART ||
+               tokenType == JetTokens.OPEN_QUOTE ||
+               tokenType == JetTokens.CLOSING_QUOTE ||
+               tokenType == JetTokens.SHORT_TEMPLATE_ENTRY_START ||
+               tokenType == JetTokens.LONG_TEMPLATE_ENTRY_END ||
+               tokenType == JetTokens.LONG_TEMPLATE_ENTRY_START
     }
 }

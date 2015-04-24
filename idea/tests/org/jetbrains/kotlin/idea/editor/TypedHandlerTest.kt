@@ -234,6 +234,54 @@ public class TypedHandlerTest : LightCodeInsightTestCase() {
             """fun f() { val a = f(<caret>) }"""
     )
 
+    public fun testSplitStringByEnter(): Unit = doCharTypeTest(
+            '\n',
+            """val s = "foo<caret>bar"""",
+            "val s = \"foo\" +\n" +
+            "        \"bar\""
+    )
+
+    public fun testSplitStringByEnter_Empty(): Unit = doCharTypeTest(
+            '\n',
+            """val s = "<caret>"""",
+            "val s = \"\" +\n" +
+            "        \"\""
+    )
+
+    public fun testSplitStringByEnter_BeforeEscapeSequence(): Unit = doCharTypeTest(
+            '\n',
+            """val s = "foo<caret>\nbar"""",
+            "val s = \"foo\" +\n" +
+            "        \"\\nbar\""
+    )
+
+    public fun testSplitStringByEnter_BeforeSubstitution(): Unit = doCharTypeTest(
+            '\n',
+            """val s = "foo<caret>${amp}bar"""",
+            "val s = \"foo\" +\n" +
+            "        \"${amp}bar\""
+    )
+
+    public fun testSplitStringByEnter_AddParentheses(): Unit = doCharTypeTest(
+            '\n',
+            """val l = "foo<caret>bar".length()""",
+            "val l = (\"foo\" +\n" +
+            "        \"bar\").length()"
+    )
+
+    public fun testSplitStringByEnter_ExistingParentheses(): Unit = doCharTypeTest(
+            '\n',
+            """val l = ("asdf" + "foo<caret>bar").length()""",
+            "val l = (\"asdf\" + \"foo\" +\n" +
+            "        \"bar\").length()"
+    )
+
+    public fun testSplitStringByEnter_TripleQuotedString(): Unit = doCharTypeTest(
+            '\n',
+            "val l = \"\"\"foo<caret>bar\"\"\"",
+            "val l = \"\"\"foo\nbar\"\"\""
+    )
+
     public fun testTypeLtInFunDeclaration() {
         doLtGtTest("fun <caret>")
     }
