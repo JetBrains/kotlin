@@ -190,10 +190,6 @@ public class KotlinToJVMBytecodeCompiler {
         }
 
         for (Module module : chunk) {
-            for (String annotationsRoot : module.getAnnotationsRoots()) {
-                configuration.add(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY, new File(annotationsRoot));
-            }
-
             configuration.add(JVMConfigurationKeys.MODULES, module);
         }
 

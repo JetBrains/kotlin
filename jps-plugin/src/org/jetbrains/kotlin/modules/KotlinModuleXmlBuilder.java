@@ -45,7 +45,6 @@ public class KotlinModuleXmlBuilder {
             List<File> sourceFiles,
             List<File> javaSourceRoots,
             Collection<File> classpathRoots,
-            List<File> annotationRoots,
             JavaModuleBuildTargetType targetType,
             Set<File> directoriesToFilterOut
     ) {
@@ -71,7 +70,6 @@ public class KotlinModuleXmlBuilder {
 
         processJavaSourceRoots(javaSourceRoots);
         processClasspath(classpathRoots, directoriesToFilterOut);
-        processAnnotationRoots(annotationRoots);
 
         closeTag(p, MODULE);
         return this;
@@ -99,13 +97,6 @@ public class KotlinModuleXmlBuilder {
                 p.popIndent();
                 p.println("-->");
             }
-        }
-    }
-
-    private void processAnnotationRoots(@NotNull List<File> files) {
-        p.println("<!-- External annotations -->");
-        for (File file : files) {
-            p.println("<", EXTERNAL_ANNOTATIONS, " ", PATH, "=\"", getEscapedPath(file), "\"/>");
         }
     }
 

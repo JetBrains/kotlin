@@ -29,7 +29,8 @@ public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }
 
-    public static final CompilerConfigurationKey<List<File>> ANNOTATIONS_PATH_KEY = CompilerConfigurationKey.create("annotations path");
+    public static final CompilerConfigurationKey<List<File>> ANNOTATIONS_PATH_KEY =
+            CompilerConfigurationKey.create("external annotations path");
 
     public static final CompilerConfigurationKey<List<AnalyzerScriptParameter>> SCRIPT_PARAMETERS =
             CompilerConfigurationKey.create("script");

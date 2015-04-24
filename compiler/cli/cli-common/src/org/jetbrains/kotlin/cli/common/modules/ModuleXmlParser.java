@@ -49,7 +49,6 @@ public class ModuleXmlParser {
     public static final String JAVA_SOURCE_ROOTS = "javaSourceRoots";
     public static final String PATH = "path";
     public static final String CLASSPATH = "classpath";
-    public static final String EXTERNAL_ANNOTATIONS = "externalAnnotations";
 
     @NotNull
     public static ModuleScriptData parseModuleScript(
@@ -58,8 +57,8 @@ public class ModuleXmlParser {
     ) {
         FileInputStream stream = null;
         try {
-            stream = new FileInputStream(xmlFile);
             //noinspection IOResourceOpenedButNotSafelyClosed
+            stream = new FileInputStream(xmlFile);
             return new ModuleXmlParser(messageCollector).parse(new BufferedInputStream(stream));
         }
         catch (FileNotFoundException e) {
@@ -163,10 +162,6 @@ public class ModuleXmlParser {
             else if (CLASSPATH.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);
                 moduleBuilder.addClasspathEntry(path);
-            }
-            else if (EXTERNAL_ANNOTATIONS.equalsIgnoreCase(qName)) {
-                String path = getAttribute(attributes, PATH, qName);
-                moduleBuilder.addAnnotationsPathEntry(path);
             }
             else if (JAVA_SOURCE_ROOTS.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);

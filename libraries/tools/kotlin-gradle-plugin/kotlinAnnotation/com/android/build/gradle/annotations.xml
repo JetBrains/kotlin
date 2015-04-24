@@ -1,5 +1,0 @@
-<root>
-    <item name='com.android.build.gradle.BaseExtension org.gradle.api.NamedDomainObjectContainer&lt;com.android.build.gradle.api.AndroidSourceSet&gt; getSourceSets()'>
-        <annotation name='org.jetbrains.annotations.NotNull'/>
-    </item>
-</root>

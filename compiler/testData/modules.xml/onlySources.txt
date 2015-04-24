@@ -3,4 +3,3 @@ name
 	outputDir=out
 	sources=[foo]
 	classpath=[]
-	annotations=[]

@@ -65,7 +65,6 @@ public abstract class AbstractModuleXmlParserTest extends TestCase {
                "\n\ttype=" + module.getModuleType() +
                "\n\toutputDir=" + module.getOutputDirectory() +
                "\n\tsources=" + module.getSourceFiles() +
-               "\n\tclasspath=" + module.getClasspathRoots() +
-               "\n\tannotations=" + module.getAnnotationsRoots();
+               "\n\tclasspath=" + module.getClasspathRoots();
     }
 }
