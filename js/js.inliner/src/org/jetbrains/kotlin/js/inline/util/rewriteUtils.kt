@@ -30,10 +30,6 @@ public fun <T : JsNode> replaceNames(node: T, replaceMap: IdentityHashMap<JsName
     return NameReplacingVisitor(replaceMap).accept(node)!!
 }
 
-public fun replaceReturns(scope: JsNode, resultRef: JsNameRef?, breakLabel: JsNameRef?): JsNode {
-    return ReturnReplacingVisitor(resultRef, breakLabel).accept(scope)!!
-}
-
 public fun replaceThisReference<T : JsNode>(node: T, replacement: JsExpression) {
     ThisReplacingVisitor(replacement).accept(node)
 }

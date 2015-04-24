@@ -30,16 +30,15 @@ class NamingContext(
 ) {
     private val renamings = IdentityHashMap<JsName, JsExpression>()
     private val declarations = ArrayList<JsVars>()
-    private var renamingApplied = false
+    private var addedDeclarations = false
 
     public fun applyRenameTo(target: JsNode): JsNode {
-        if (renamingApplied) throw RuntimeException("RenamingContext has been applied already")
+        if (!addedDeclarations) {
+            statementContext.addPrevious(declarations)
+            addedDeclarations = true
+        }
 
-        val result = replaceNames(target, renamings)
-        statementContext.addPrevious(declarations)
-        renamingApplied = true
-
-        return result
+        return replaceNames(target, renamings)
     }
 
     public fun replaceName(name: JsName, replacement: JsExpression) {

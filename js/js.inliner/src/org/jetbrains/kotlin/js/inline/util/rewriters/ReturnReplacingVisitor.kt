@@ -28,7 +28,7 @@ import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
-class ReturnReplacingVisitor(private val resultRef: JsNameRef?, private val breakLabel: JsNameRef?) : JsVisitorWithContextImpl() {
+public class ReturnReplacingVisitor(private val resultRef: JsNameRef?, private val breakLabel: JsNameRef?) : JsVisitorWithContextImpl() {
 
     /**
      * Prevents replacing returns in object literal

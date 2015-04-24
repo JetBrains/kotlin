@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.js.inline.clean.removeDefaultInitializers
 import org.jetbrains.kotlin.js.inline.context.InliningContext
 import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.*
+import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar
 import org.jetbrains.kotlin.js.translate.utils.ast.*
 
@@ -55,17 +56,11 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
         aliasArgumentsIfNeeded(namingContext, arguments, parameters)
         renameLocalNames(namingContext, invokedFunction)
         removeStatementsAfterTopReturn()
+        processReturns()
 
-        if (isResultNeeded && canBeExpression(body)) {
-            resultExpr = asExpression(body)
-            body.getStatements().clear()
-
-            /** JsExpression can be immutable, so need to reassign  */
-            resultExpr = namingContext.applyRenameTo(resultExpr!!) as JsExpression
-        }
-        else {
-            processReturns()
-            namingContext.applyRenameTo(body)
+        namingContext.applyRenameTo(body)
+        resultExpr = resultExpr?.let {
+            namingContext.applyRenameTo(it) as JsExpression
         }
     }
 
@@ -103,33 +98,29 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
         if (returnCount == 0) {
             // TODO return Unit (KT-5647)
             resultExpr = JsLiteral.UNDEFINED
+            return
         }
-        else {
-            doReplaceReturns(returnCount)
+
+        if (returnCount == 1) {
+            val statements = body.getStatements()
+            val lastTopLevelStatement = statements[statements.lastIndex]
+
+            if (lastTopLevelStatement is JsReturn) {
+                resultExpr = lastTopLevelStatement.getExpression()
+                statements.remove(statements.lastIndex)
+                return
+            }
         }
+
+        doReplaceReturns()
     }
 
-    private fun doReplaceReturns(returnCount: Int) {
-        val returnOnTop = ContainerUtil.findInstance(body.getStatements(), javaClass<JsReturn>())
-        val hasReturnOnTopLevel = returnOnTop != null
-
-        val needBreakLabel = !(returnCount == 1 && hasReturnOnTopLevel)
-        var breakLabelRef: JsNameRef? = null
-
-        if (needBreakLabel) {
-            val breakName = namingContext.getFreshName(getBreakLabel())
-            breakLabelRef = breakName.makeRef()
-            breakLabel = JsLabel(breakName)
-        }
-
+    private fun doReplaceReturns() {
         val resultReference = getResultReference()
         if (resultReference != null) {
             resultExpr = resultReference
         }
-
         assert(resultExpr == null || resultExpr is JsNameRef)
-        replaceReturns(body, resultExpr as? JsNameRef, breakLabelRef)
-    }
 
         val breakName = namingContext.getFreshName(getBreakLabel())
         breakLabel = JsLabel(breakName)
@@ -235,12 +226,7 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
                 inlineableBody = breakLabel
             }
 
-            var resultExpression: JsExpression? = null
-            if (mutator.isResultNeeded) {
-                resultExpression = mutator.resultExpr
-            }
-
-            return InlineableResult(inlineableBody, resultExpression)
+            return InlineableResult(inlineableBody, mutator.resultExpr)
         }
 
         platformStatic
@@ -269,14 +255,6 @@ class FunctionInlineMutator private (private val call: JsInvocation, private val
         private fun canBeExpression(body: JsBlock): Boolean {
             val statements = body.getStatements()
             return statements.size() == 1 && statements.get(0) is JsReturn
-        }
-
-        private fun asExpression(body: JsBlock): JsExpression {
-            assert(canBeExpression(body))
-
-            val statements = body.getStatements()
-            val returnStatement = statements.get(0) as JsReturn
-            return returnStatement.getExpression()
         }
     }
 }

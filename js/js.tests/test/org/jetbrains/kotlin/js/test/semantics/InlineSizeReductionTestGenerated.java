@@ -35,6 +35,12 @@ public class InlineSizeReductionTestGenerated extends AbstractInlineSizeReductio
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/inlineSizeReduction/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("oneTopLevelReturn.kt")
+    public void testOneTopLevelReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/oneTopLevelReturn.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("simpleReturnFunction.kt")
     public void testSimpleReturnFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/inlineSizeReduction/cases/simpleReturnFunction.kt");
