@@ -124,7 +124,8 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                         parametersToRemove.map { parameters.indexOf(it) }.sortDescending().forEach { removeParameter(it) }
                     }
 
-                    val parameterInfo = JetParameterInfo(name = newParameterName,
+                    val parameterInfo = JetParameterInfo(functionDescriptor = callableDescriptor,
+                                                         name = newParameterName,
                                                          defaultValueForCall = if (withDefaultValue) null else newArgumentValue,
                                                          defaultValueForParameter = if (withDefaultValue) newArgumentValue else null,
                                                          valOrVar = valVar)

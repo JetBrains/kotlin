@@ -30,9 +30,11 @@ import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public abstract class JetCallableParameterTableModel extends ParameterTableModelBase<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>> {
     private final Project project;
+    private final JetMethodDescriptor methodDescriptor;
 
-    protected JetCallableParameterTableModel(PsiElement context, ColumnInfo... columnInfos) {
+    protected JetCallableParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context, ColumnInfo... columnInfos) {
         super(context, context, columnInfos);
+        this.methodDescriptor = methodDescriptor;
         project = context.getProject();
     }
 
@@ -44,7 +46,7 @@ public abstract class JetCallableParameterTableModel extends ParameterTableModel
     @Override
     protected ParameterTableModelItemBase<JetParameterInfo> createRowItem(@Nullable JetParameterInfo parameterInfo) {
         if (parameterInfo == null) {
-            parameterInfo = new JetParameterInfo(-1, "", null, null, null, JetValVar.None, null);
+            parameterInfo = new JetParameterInfo(methodDescriptor.getBaseDescriptor(), -1, "", null, null, null, JetValVar.None, null);
         }
         JetPsiFactory psiFactory = JetPsiFactory(project);
         PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);

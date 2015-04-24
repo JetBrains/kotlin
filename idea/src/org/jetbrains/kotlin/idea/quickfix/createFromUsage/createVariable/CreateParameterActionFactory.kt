@@ -71,10 +71,10 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
             }
         }
 
-        val parameterInfo = JetParameterInfo(name = refExpr.getReferencedName(), type = paramType)
+        var valOrVar: JetValVar = JetValVar.None
 
         fun chooseContainingClass(it: PsiElement): JetClass? {
-            parameterInfo.valOrVar = if (varExpected) JetValVar.Var else JetValVar.Val
+            valOrVar = if (varExpected) JetValVar.Var else JetValVar.Val
             return it.parents(false).firstIsInstanceOrNull<JetClassOrObject>() as? JetClass
         }
 
@@ -112,7 +112,15 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
 
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
-        return CreateParameterFromUsageFix(functionDescriptor, context, parameterInfo, refExpr)
+        return CreateParameterFromUsageFix(
+                functionDescriptor,
+                context,
+                JetParameterInfo(functionDescriptor = functionDescriptor,
+                                 name = refExpr.getReferencedName(),
+                                 type = paramType,
+                                 valOrVar = valOrVar),
+                refExpr
+        )
     }
 }
 

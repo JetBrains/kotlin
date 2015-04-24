@@ -29,8 +29,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 public class JetPrimaryConstructorParameterTableModel extends JetCallableParameterTableModel {
-    public JetPrimaryConstructorParameterTableModel(PsiElement context) {
-        super(context,
+    public JetPrimaryConstructorParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context) {
+        super(methodDescriptor,
+              context,
               new ValVarColumn(),
               new NameColumn(context.getProject()),
               new TypeColumn(context.getProject(), JetFileType.INSTANCE),

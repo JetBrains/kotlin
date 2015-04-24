@@ -60,6 +60,7 @@ public class JetChangeSignatureData(
                 .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
                     val jetParameter = valueParameters?.get(parameterDescriptor.getIndex())
                     JetParameterInfo(
+                            functionDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.getIndex(),
                             name = parameterDescriptor.getName().asString(),
                             type = parameterDescriptor.getType(),
@@ -82,7 +83,7 @@ public class JetChangeSignatureData(
         } ?: CollectingValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
         val receiverName = JetNameSuggester.suggestNames(receiverType, validator, "receiver").first()
-        return JetParameterInfo(name = receiverName, type = receiverType)
+        return JetParameterInfo(functionDescriptor = baseDescriptor, name = receiverName, type = receiverType)
     }
 
     override val primaryFunctions: Collection<JetFunctionDefinitionUsage<PsiElement>> by Delegates.lazy {

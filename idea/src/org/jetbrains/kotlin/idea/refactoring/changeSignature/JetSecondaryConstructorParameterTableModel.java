@@ -21,8 +21,9 @@ import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import org.jetbrains.kotlin.idea.JetFileType;
 
 public class JetSecondaryConstructorParameterTableModel extends JetCallableParameterTableModel {
-    public JetSecondaryConstructorParameterTableModel(PsiElement context) {
-        super(context,
+    public JetSecondaryConstructorParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context) {
+        super(methodDescriptor,
+              context,
               new NameColumn(context.getProject()),
               new TypeColumn(context.getProject(), JetFileType.INSTANCE),
               new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(), JetFileType.INSTANCE));

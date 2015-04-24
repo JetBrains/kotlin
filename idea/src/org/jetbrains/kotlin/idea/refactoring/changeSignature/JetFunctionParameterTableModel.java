@@ -30,7 +30,8 @@ import javax.swing.table.TableCellRenderer;
 
 public class JetFunctionParameterTableModel extends JetCallableParameterTableModel {
     public JetFunctionParameterTableModel(JetMethodDescriptor methodDescriptor, PsiElement context) {
-        super(context,
+        super(methodDescriptor,
+              context,
               new NameColumn(context.getProject()),
               new TypeColumn(context.getProject(), JetFileType.INSTANCE),
               new DefaultValueColumn<JetParameterInfo, ParameterTableModelItemBase<JetParameterInfo>>(context.getProject(),

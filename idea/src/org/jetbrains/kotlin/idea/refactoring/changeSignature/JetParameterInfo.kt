@@ -16,19 +16,20 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.lang.ASTNode
-import com.intellij.refactoring.changeSignature.ParameterInfo
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import com.intellij.psi.PsiElement
+import com.intellij.refactoring.changeSignature.ParameterInfo
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetModifierList
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.types.JetType
 
 public class JetParameterInfo(
+        val functionDescriptor: FunctionDescriptor,
         val originalIndex: Int = -1,
         private var name: String,
         type: JetType? = null,

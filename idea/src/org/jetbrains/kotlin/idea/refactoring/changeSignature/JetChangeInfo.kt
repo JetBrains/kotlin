@@ -305,7 +305,8 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
         }
         else null
 
-        with(JetParameterInfo(originalIndex = oldIndex,
+        with(JetParameterInfo(functionDescriptor = functionDescriptor,
+                              originalIndex = oldIndex,
                               name = info.getName(),
                               type = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType,
                               defaultValueForCall = defaultValueExpr)) {

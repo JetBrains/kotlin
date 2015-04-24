@@ -97,9 +97,9 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
             case FUNCTION:
                 return new JetFunctionParameterTableModel(descriptor, myDefaultValueContext);
             case PRIMARY_CONSTRUCTOR:
-                return new JetPrimaryConstructorParameterTableModel(myDefaultValueContext);
+                return new JetPrimaryConstructorParameterTableModel(descriptor, myDefaultValueContext);
             case SECONDARY_CONSTRUCTOR:
-                return new JetSecondaryConstructorParameterTableModel(myDefaultValueContext);
+                return new JetSecondaryConstructorParameterTableModel(descriptor, myDefaultValueContext);
         }
         throw new AssertionError("Invalid kind: " + descriptor.getKind());
     }
