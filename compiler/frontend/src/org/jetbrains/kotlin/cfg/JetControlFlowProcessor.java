@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
@@ -315,7 +316,7 @@ public class JetControlFlowProcessor {
 
         @Override
         public void visitConstantExpression(@NotNull JetConstantExpression expression) {
-            CompileTimeConstant<?> constant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression);
+            CompileTimeConstant<?> constant = ConstantExpressionEvaluator.getConstant(expression, trace.getBindingContext());
             builder.loadConstant(expression, constant);
         }
 

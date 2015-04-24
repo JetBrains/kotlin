@@ -49,8 +49,8 @@ fun box(): String {
 
     mapWithFloatKeys.clear()
     var fNaN: Float = 0.0f / 0.0f
-    mapWithFloatKeys[dNaN] = 100
-    assertEquals(100, mapWithFloatKeys[dNaN])
+    mapWithFloatKeys[fNaN] = 100
+    assertEquals(100, mapWithFloatKeys[fNaN])
     assertEquals("number", typeof (mapWithFloatKeys.keySet().iterator().next()), "fNaN")
 
     mapWithFloatKeys.clear()

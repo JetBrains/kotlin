@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.constants.evaluate
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
@@ -30,8 +31,10 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import java.math.BigInteger
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import kotlin.platform.platformStatic
@@ -41,7 +44,8 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     companion object {
         platformStatic public fun evaluate(expression: JetExpression, trace: BindingTrace, expectedType: JetType? = TypeUtils.NO_EXPECTED_TYPE): CompileTimeConstant<*>? {
             val evaluator = ConstantExpressionEvaluator(trace)
-            return evaluator.evaluate(expression, expectedType)
+            val constant = evaluator.evaluate(expression, expectedType)
+            return if (constant !is ErrorValue) constant else null
         }
 
         platformStatic public fun isPropertyCompileTimeConstant(descriptor: VariableDescriptor): Boolean {
@@ -55,10 +59,19 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             }
             return false
         }
+
+        platformStatic public fun getConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
+            val constant = getPossiblyErrorConstant(expression, bindingContext)
+            return if (constant !is ErrorValue) constant else null
+        }
+
+        platformStatic private fun getPossiblyErrorConstant(expression: JetExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
+            return bindingContext.get(BindingContext.COMPILE_TIME_VALUE, expression)
+        }
     }
 
     private fun evaluate(expression: JetExpression, expectedType: JetType?): CompileTimeConstant<*>? {
-        val recordedCompileTimeConstant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression)
+        val recordedCompileTimeConstant = getPossiblyErrorConstant(expression, trace.getBindingContext())
         if (recordedCompileTimeConstant != null) {
             return recordedCompileTimeConstant
         }
@@ -213,6 +226,8 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             if (argumentForParameter == null) return null
 
             if (isDivisionByZero(resultingDescriptorName.asString(), argumentForParameter.value)) {
+                val parentExpression: JetExpression = PsiTreeUtil.getParentOfType(receiverExpression, javaClass())
+                trace.report(Errors.DIVISION_BY_ZERO.on(parentExpression))
                 return ErrorValue.create("Division by zero")
             }
 
@@ -235,12 +250,12 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
         return null
     }
 
-    private fun usesVariableAsConstant(expression: JetExpression) = trace.get(BindingContext.COMPILE_TIME_VALUE, expression)?.usesVariableAsConstant() ?: false
+    private fun usesVariableAsConstant(expression: JetExpression) = getConstant(expression, trace.getBindingContext())?.usesVariableAsConstant() ?: false
 
-    private fun canBeUsedInAnnotation(expression: JetExpression) = trace.get(BindingContext.COMPILE_TIME_VALUE, expression)?.canBeUsedInAnnotations() ?: false
+    private fun canBeUsedInAnnotation(expression: JetExpression) = getConstant(expression, trace.getBindingContext())?.canBeUsedInAnnotations() ?: false
 
     private fun isPureConstant(expression: JetExpression): Boolean {
-        val compileTimeConstant = trace.get(BindingContext.COMPILE_TIME_VALUE, expression)
+        val compileTimeConstant = getConstant(expression, trace.getBindingContext())
         if (compileTimeConstant is IntegerValueConstant) {
             return compileTimeConstant.isPure()
         }
@@ -444,7 +459,7 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
     }
 
     private fun createOperationArgument(expression: JetExpression, expressionType: JetType, compileTimeType: CompileTimeType<*>): OperationArgument? {
-        val evaluatedConstant = evaluate(expression, expressionType)
+        val evaluatedConstant = evaluate(expression, trace, expressionType)
         if (evaluatedConstant == null) return null
 
         if (evaluatedConstant is IntegerValueTypeConstant) {

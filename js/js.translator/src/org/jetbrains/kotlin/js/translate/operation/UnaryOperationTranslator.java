@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.types.JetType;
 
 import static org.jetbrains.kotlin.js.translate.general.Translation.translateAsExpression;
@@ -63,7 +64,7 @@ public final class UnaryOperationTranslator {
         if (operationToken == JetTokens.MINUS) {
             JetExpression baseExpression = getBaseExpression(expression);
             if (baseExpression instanceof JetConstantExpression) {
-                CompileTimeConstant<?> compileTimeValue = context.bindingContext().get(BindingContext.COMPILE_TIME_VALUE, expression);
+                CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, context.bindingContext());
                 assert compileTimeValue != null : message(expression, "Expression is not compile time value: " + expression.getText() + " ");
                 Object value = getCompileTimeValue(context.bindingContext(), expression, compileTimeValue);
                 if (value instanceof Long) {

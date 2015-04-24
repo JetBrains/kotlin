@@ -298,7 +298,7 @@ public class AnnotationResolver {
             }
         }
 
-        CompileTimeConstant<?> constant = trace.get(BindingContext.COMPILE_TIME_VALUE, argumentExpression);
+        CompileTimeConstant<?> constant = ConstantExpressionEvaluator.getConstant(argumentExpression, trace.getBindingContext());
         if (constant != null && constant.canBeUsedInAnnotations()) {
             return;
         }

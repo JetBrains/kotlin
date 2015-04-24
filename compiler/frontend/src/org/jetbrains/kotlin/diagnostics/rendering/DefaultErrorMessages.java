@@ -366,6 +366,7 @@ public class DefaultErrorMessages {
         MAP.put(TOO_MANY_ARGUMENTS, "Too many arguments for {0}", FQ_NAMES_IN_TYPES);
 
         MAP.put(CONSTANT_EXPECTED_TYPE_MISMATCH, "An {0} literal does not conform to the expected type {1}", STRING, RENDER_TYPE);
+        MAP.put(DIVISION_BY_ZERO, "Division by zero");
         MAP.put(INTEGER_OVERFLOW, "This operation has led to an overflow");
         MAP.put(INT_LITERAL_OUT_OF_RANGE, "The value is out of range");
         MAP.put(WRONG_LONG_SUFFIX, "Use 'L' instead of 'l'");

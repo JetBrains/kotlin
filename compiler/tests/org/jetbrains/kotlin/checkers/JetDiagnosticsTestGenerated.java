@@ -4404,6 +4404,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("divisionByZero.kt")
+            public void testDivisionByZero() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/divisionByZero.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("float.kt")
             public void testFloat() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/evaluate/float.kt");

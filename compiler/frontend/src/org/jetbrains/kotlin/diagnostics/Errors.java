@@ -552,6 +552,7 @@ public interface Errors {
 
     // Compile-time values
 
+    DiagnosticFactory0<JetExpression> DIVISION_BY_ZERO = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetExpression> INTEGER_OVERFLOW = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetConstantExpression> WRONG_LONG_SUFFIX = DiagnosticFactory0.create(ERROR, LONG_LITERAL_SUFFIX);
     DiagnosticFactory0<JetConstantExpression> INT_LITERAL_OUT_OF_RANGE = DiagnosticFactory0.create(ERROR);
