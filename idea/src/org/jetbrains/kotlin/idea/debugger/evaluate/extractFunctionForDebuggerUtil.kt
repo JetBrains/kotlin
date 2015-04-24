@@ -185,7 +185,19 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
 
     val elementBefore = when {
         contextElement is JetProperty && !contextElement.isLocal() -> {
-            wrapInRunFun(contextElement.getDelegateExpressionOrInitializer()!!)
+            val delegateExpressionOrInitializer = contextElement.getDelegateExpressionOrInitializer()
+            if (delegateExpressionOrInitializer != null) {
+                wrapInRunFun(delegateExpressionOrInitializer)
+            }
+            else {
+                val getter = contextElement.getGetter()!!
+                if (!getter.hasBlockBody()) {
+                    wrapInRunFun(getter.getBodyExpression()!!)
+                }
+                else {
+                    (getter.getBodyExpression() as JetBlockExpression).getStatements().first()
+                }
+            }
         }
         contextElement is JetClassOrObject -> {
             insertNewInitializer(contextElement.getBody())

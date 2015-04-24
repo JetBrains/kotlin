@@ -17,6 +17,16 @@ var aDelegate: Int by Delegates.notNull()
 //Breakpoint!
 val aLambda = { 1 + 1 }
 
+// EXPRESSION: 1 + 4
+// RESULT: 5: I
+//Breakpoint!
+val aWoBody: Int get() = 1
+
+// EXPRESSION: 1 + 5
+// RESULT: 6: I
+//Breakpoint!
+val aWoBody2: Int get() { return 1 }
+
 class A {
     init {
         // EXPRESSION: i
@@ -30,8 +40,8 @@ class A {
         }
     }
 
-    // EXPRESSION: 1 + 4
-    // RESULT: 5: I
+    // EXPRESSION: 1 + 6
+    // RESULT: 7: I
     //Breakpoint!
     val prop = 1
 }
@@ -40,6 +50,8 @@ fun main(args: Array<String>) {
     a
     aDelegate = 1
     aLambda
+    aWoBody
+    aWoBody2
 
     A().prop
 }
