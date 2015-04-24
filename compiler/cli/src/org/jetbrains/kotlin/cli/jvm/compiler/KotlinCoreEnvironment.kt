@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.google.common.collect.Sets
 import com.intellij.codeInsight.ContainerProvider
-import com.intellij.codeInsight.ExternalAnnotationsManager
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.CoreJavaFileManager
@@ -39,7 +38,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
-import com.intellij.psi.PsiManager
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.JavaClassSupersImpl
@@ -102,8 +100,6 @@ public class KotlinCoreEnvironment private constructor(
     private val sourceFiles = ArrayList<JetFile>()
     private val javaRoots = ArrayList<JavaRoot>()
 
-    private val annotationsManager: CoreExternalAnnotationsManager
-
     public val configuration: CompilerConfiguration = configuration.copy().let {
         it.setReadOnly(true)
         it
@@ -111,8 +107,6 @@ public class KotlinCoreEnvironment private constructor(
 
     init {
         val project = projectEnvironment.getProject()
-        annotationsManager = CoreExternalAnnotationsManager(project.getComponent(javaClass<PsiManager>())!!)
-        project.registerService(javaClass<ExternalAnnotationsManager>(), annotationsManager)
         project.registerService(javaClass<DeclarationProviderFactoryService>(), CliDeclarationProviderFactoryService(sourceFiles))
         project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
 
@@ -124,9 +118,6 @@ public class KotlinCoreEnvironment private constructor(
         val index = JvmDependenciesIndex(javaRoots)
         (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
 
-        for (path in configuration.getList(JVMConfigurationKeys.ANNOTATIONS_PATH_KEY)) {
-            addExternalAnnotationsRoot(path)
-        }
         sourceFiles.addAll(CompileEnvironmentUtil.getJetFiles(project, getSourceRootsCheckingForDuplicates(), {
             message ->
             report(ERROR, message)
@@ -168,14 +159,6 @@ public class KotlinCoreEnvironment private constructor(
                 val text = it.getText()
                 StringUtil.getLineBreakCount(it.getText()) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
             }
-
-    private fun addExternalAnnotationsRoot(path: File) {
-        if (!path.exists()) {
-            report(WARNING, "Annotations path entry points to a non-existent location: " + path)
-            return
-        }
-        annotationsManager.addExternalAnnotationsRoot(PathUtil.jarFileOrDirectoryToVirtualFile(path))
-    }
 
     private fun fillClasspath(configuration: CompilerConfiguration) {
         for (root in configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS)) {

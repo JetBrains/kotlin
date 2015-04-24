@@ -40,15 +40,12 @@ import java.util.List;
 
 public class TraceBasedExternalSignatureResolver implements ExternalSignatureResolver {
     @NotNull private final BindingTrace trace;
-    @NotNull private final ExternalAnnotationResolver externalAnnotationResolver;
     @NotNull private final Project project;
 
     public TraceBasedExternalSignatureResolver(
-            @NotNull ExternalAnnotationResolver externalAnnotationResolver,
             @NotNull Project project,
             @NotNull BindingTrace trace
     ) {
-        this.externalAnnotationResolver = externalAnnotationResolver;
         this.project = project;
         this.trace = trace;
     }
@@ -84,9 +81,9 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
         assert methodOrConstructor instanceof JavaMethod || methodOrConstructor instanceof JavaConstructor :
                 "Not a method or a constructor: " + methodOrConstructor.getName();
 
-        AlternativeMethodSignatureData data =
-                new AlternativeMethodSignatureData(externalAnnotationResolver, methodOrConstructor, receiverType, project, valueParameters,
-                                                   returnType, typeParameters, hasSuperMethods);
+        AlternativeMethodSignatureData data = new AlternativeMethodSignatureData(
+                methodOrConstructor, receiverType, project, valueParameters, returnType, typeParameters, hasSuperMethods
+        );
 
         if (data.isAnnotated() && !data.hasErrors()) {
             if (JvmPackage.getPLATFORM_TYPES()) {
@@ -110,8 +107,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
             @NotNull JetType returnType,
             boolean isVar
     ) {
-        AlternativeFieldSignatureData data =
-                new AlternativeFieldSignatureData(externalAnnotationResolver, field, returnType, project, isVar);
+        AlternativeFieldSignatureData data = new AlternativeFieldSignatureData(field, returnType, project, isVar);
 
         if (data.isAnnotated() && !data.hasErrors()) {
             if (JvmPackage.getPLATFORM_TYPES()) {

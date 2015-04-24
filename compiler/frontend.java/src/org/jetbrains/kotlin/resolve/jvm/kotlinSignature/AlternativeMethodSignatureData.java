@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
-import org.jetbrains.kotlin.load.java.components.ExternalAnnotationResolver;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -63,7 +62,6 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
     private Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> originalToAltTypeParameters;
 
     public AlternativeMethodSignatureData(
-            @NotNull ExternalAnnotationResolver externalAnnotationResolver,
             @NotNull JavaMember methodOrConstructor,
             @Nullable JetType receiverType,
             @NotNull Project project,
@@ -72,7 +70,7 @@ public class AlternativeMethodSignatureData extends ElementAlternativeSignatureD
             @NotNull List<TypeParameterDescriptor> methodTypeParameters,
             boolean hasSuperMethods
     ) {
-        String signature = SignaturesUtil.getKotlinSignature(externalAnnotationResolver, methodOrConstructor);
+        String signature = SignaturesUtil.getKotlinSignature(methodOrConstructor);
 
         if (signature == null) {
             setAnnotated(false);
