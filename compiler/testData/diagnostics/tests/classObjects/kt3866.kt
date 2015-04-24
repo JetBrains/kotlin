@@ -15,6 +15,6 @@ fun bar() {
     val x = X
     x.foo()
     X.foo()
-    (X <!USELESS_CAST!>as C<!>).foo()
+    (X as C).foo()
     ((if (1<2) X else Y) <!USELESS_CAST!>as C<!>).foo()
 }

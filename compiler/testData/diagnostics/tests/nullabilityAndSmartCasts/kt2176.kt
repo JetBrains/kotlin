@@ -24,6 +24,6 @@ fun f4(a: Any) {
 }
 
 fun f5(a: String) {
-    a <!USELESS_CAST!>as Any?<!>
+    a as Any?
     checkSubtype<String>(a)
 }

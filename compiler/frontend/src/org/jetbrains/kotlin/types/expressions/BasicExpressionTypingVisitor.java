@@ -250,7 +250,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         Collection<JetType> possibleTypes = DataFlowUtils.getAllPossibleTypes(
                 expression.getLeft(), context.dataFlowInfo, actualType, context);
         for (JetType possibleType : possibleTypes) {
-            if (typeChecker.isSubtypeOf(possibleType, targetType)) {
+            if (possibleType.equals(targetType)) {
                 context.trace.report(USELESS_CAST.on(expression));
                 return;
             }
