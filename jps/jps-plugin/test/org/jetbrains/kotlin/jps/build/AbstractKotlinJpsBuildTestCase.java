@@ -22,7 +22,6 @@ import org.jetbrains.jps.builders.JpsBuildTestCase;
 import org.jetbrains.jps.model.JpsDummyElement;
 import org.jetbrains.jps.model.JpsModuleRootModificationUtil;
 import org.jetbrains.jps.model.JpsProject;
-import org.jetbrains.jps.model.java.JpsAnnotationRootType;
 import org.jetbrains.jps.model.java.JpsJavaDependencyScope;
 import org.jetbrains.jps.model.java.JpsJavaLibraryType;
 import org.jetbrains.jps.model.java.JpsJavaSdkType;
@@ -73,7 +72,6 @@ public abstract class AbstractKotlinJpsBuildTestCase extends JpsBuildTestCase {
         String versionString = System.getProperty("java.version");
         JpsTypedLibrary<JpsSdk<JpsDummyElement>> jdk = myModel.getGlobal().addSdk(name, homePath, versionString, JpsJavaSdkType.INSTANCE);
         jdk.addRoot(JpsPathUtil.pathToUrl(path), JpsOrderRootType.COMPILED);
-        jdk.addRoot(JpsPathUtil.pathToUrl(PathUtil.getKotlinPathsForDistDirectory().getJdkAnnotationsPath().getAbsolutePath()), JpsAnnotationRootType.INSTANCE);
         return jdk.getProperties();
     }
 
