@@ -113,12 +113,6 @@ public class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("unnecessarySafeCall")
     }
 
-    override fun danglingFunctionLiteralArgumentSuspected(
-            trace: BindingTrace, functionLiteralArguments: MutableList<JetFunctionLiteralArgument>
-    ) {
-        unexpectedError("danglingFunctionLiteralArgumentSuspected")
-    }
-
     override fun missingReceiver(trace: BindingTrace, expectedReceiver: ReceiverParameterDescriptor) {
         unexpectedError("missingReceiver")
     }

@@ -403,8 +403,6 @@ public class DefaultErrorMessages {
 
         MAP.put(INSTANCE_ACCESS_BEFORE_SUPER_CALL, "Cannot access ''{0}'' before superclass constructor has been called", NAME);
 
-        MAP.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, "Expecting 'init' keyword before class initializer");
-
         MAP.put(ILLEGAL_SELECTOR, "Expression ''{0}'' cannot be a selector (occur after a dot)", STRING);
 
         MAP.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found");
@@ -548,10 +546,6 @@ public class DefaultErrorMessages {
         MAP.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected", (Renderer) null);
         MAP.put(NO_TYPE_ARGUMENTS_ON_RHS, "{0,choice,0#No type arguments|1#Type argument|1<{0,number,integer} type arguments} expected. " +
                                                            "Use ''{1}'' if you don''t want to pass type arguments", null, STRING);
-
-        MAP.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED,
-                "This expression is treated as an argument to the function call on the previous line. " +
-                "Separate it with a semicolon (;) if it is not intended to be an argument.");
 
         MAP.put(TYPE_PARAMETER_AS_REIFIED, "Cannot use ''{0}'' as reified type parameter. Use a class instead.", NAME);
         MAP.put(REIFIED_TYPE_PARAMETER_NO_INLINE, "Only type parameters of inline functions can be reified");

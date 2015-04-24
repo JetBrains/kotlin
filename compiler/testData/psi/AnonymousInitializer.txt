@@ -10,6 +10,8 @@ JetFile: AnonymousInitializer.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n\n  ')
       ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')

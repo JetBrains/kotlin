@@ -472,10 +472,6 @@ public class BodyResolver {
             @NotNull JetClassInitializer anonymousInitializer,
             @NotNull ClassDescriptorWithResolutionScopes classDescriptor
     ) {
-        if (!anonymousInitializer.hasInitKeyword()) {
-            trace.report(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED.on(anonymousInitializer.getOpenBraceNodeOrSelf()));
-        }
-
         JetScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();
         if (!classDescriptor.getConstructors().isEmpty()) {
             JetExpression body = anonymousInitializer.getBody();

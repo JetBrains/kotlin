@@ -839,10 +839,6 @@ public class JetParsing extends AbstractJetParsing {
             parseObject(isDefault ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED, true);
             declType = OBJECT_DECLARATION;
         }
-        else if (keywordToken == LBRACE) {
-            parseBlock();
-            declType = ANONYMOUS_INITIALIZER;
-        }
         else if (at(INIT_KEYWORD)) {
             advance(); // init
             if (at(LBRACE)) {

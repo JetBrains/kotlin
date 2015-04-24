@@ -896,6 +896,8 @@ JetFile: ShortAnnotations.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('zoo')
         PsiWhiteSpace(' ')
+        PsiElement(init)('init')
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')

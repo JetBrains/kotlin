@@ -509,13 +509,6 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
-        public void danglingFunctionLiteralArgumentSuspected(
-                @NotNull BindingTrace trace, @NotNull List<JetFunctionLiteralArgument> functionLiteralArguments
-        ) {
-            logError();
-        }
-
-        @Override
         public void invisibleMember(
                 @NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor
         ) {

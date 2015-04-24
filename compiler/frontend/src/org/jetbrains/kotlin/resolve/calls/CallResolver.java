@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import org.jetbrains.annotations.NotNull;
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.tasks.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -59,7 +57,8 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage.recordScopeAndDataFlowInfo;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
-import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.*;
+import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.CANDIDATES_WITH_WRONG_RECEIVER;
+import static org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 @SuppressWarnings("RedundantTypeArguments")
@@ -498,8 +497,8 @@ public class CallResolver {
 
             TemporaryBindingTrace taskTrace =
                     TemporaryBindingTrace.create(context.trace, "trace to resolve a task for", task.call.getCalleeExpression());
-            OverloadResolutionResultsImpl<F> results = performResolutionGuardedForExtraFunctionLiteralArguments(
-                    task.replaceBindingTrace(taskTrace), callTransformer);
+            OverloadResolutionResultsImpl<F> results = performResolution(task.replaceBindingTrace(taskTrace), callTransformer);
+
 
             allCandidates.addAll(task.getResolvedCalls());
 
@@ -541,62 +540,6 @@ public class CallResolver {
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    @NotNull
-    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> performResolutionGuardedForExtraFunctionLiteralArguments(
-            @NotNull final ResolutionTask<D, F> task,
-            @NotNull CallTransformer<D, F> callTransformer
-    ) {
-        OverloadResolutionResultsImpl<F> results = performResolution(task, callTransformer);
-
-        // If resolution fails, we should check for some of the following situations:
-        //   class A {
-        //     val foo = Bar() // The following is intended to be an anonymous initializer,
-        //                     // but is treated as a function literal argument
-        //     {
-        //       ...
-        //     }
-        //  }
-        //
-        //  fun foo() {
-        //    bar {
-        //      buzz()
-        //      {...} // intended to be a returned from the outer literal
-        //    }
-        //  }
-        ImmutableSet<OverloadResolutionResults.Code> someFailed = ImmutableSet.of(MANY_FAILED_CANDIDATES,
-                                                                        SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
-        if (someFailed.contains(results.getResultCode()) && !task.call.getFunctionLiteralArguments().isEmpty()
-                && task.contextDependency == ContextDependency.INDEPENDENT) { //For nested calls there are no such cases
-            // We have some candidates that failed for some reason
-            // And we have a suspect: the function literal argument
-            // Now, we try to remove this argument and see if it helps
-            DelegatingCall callWithoutFLArgs = new DelegatingCall(task.call) {
-                @NotNull
-                @Override
-                public List<? extends ValueArgument> getValueArguments() {
-                    return CallUtilPackage.getValueArgumentsInParentheses(task.call);
-                }
-
-                @NotNull
-                @Override
-                public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
-                    return Collections.emptyList();
-                }
-            };
-            TemporaryBindingTrace temporaryTrace =
-                    TemporaryBindingTrace.create(task.trace, "trace for resolution guarded for extra function literal arguments");
-            ResolutionTask<D, F> newTask = task.replaceContext(task.toBasic()).
-                    replaceBindingTrace(temporaryTrace).replaceCall(callWithoutFLArgs);
-
-            OverloadResolutionResultsImpl<F> resultsWithFunctionLiteralsStripped = performResolution(newTask, callTransformer);
-            if (resultsWithFunctionLiteralsStripped.isSuccess() || resultsWithFunctionLiteralsStripped.isAmbiguity()) {
-                task.tracing.danglingFunctionLiteralArgumentSuspected(task.trace, task.call.getFunctionLiteralArguments());
-            }
-        }
-
-        return results;
-    }
 
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> performResolution(
