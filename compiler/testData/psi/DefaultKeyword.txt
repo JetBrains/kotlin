@@ -229,25 +229,7 @@ JetFile: DefaultKeyword.kt
         PsiElement(object)('object')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n\n')
-  CLASS
-    PsiElement(class)('class')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('A')
-    PsiWhiteSpace(' ')
-    CLASS_BODY
-      PsiElement(LBRACE)('{')
-      PsiWhiteSpace('\n    ')
-      OBJECT_DECLARATION
-        MODIFIER_LIST
-          PsiElement(companion)('companion')
-        PsiWhiteSpace(' ')
-        PsiElement(class)('class')
-        PsiWhiteSpace(' ')
-        PsiElement(object)('object')
-      PsiWhiteSpace('\n')
-      PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n\n')
+  PsiWhiteSpace('\n\n\n')
   CLASS
     PsiComment(EOL_COMMENT)('//should be error')
     PsiWhiteSpace('\n')
