@@ -22,6 +22,16 @@ package kotlin
 public fun Char.isDefined(): Boolean = Character.isDefined(this)
 
 /**
+ * Returns `true` if this character is a letter.
+ */
+public fun Char.isLetter(): Boolean = Character.isLetter(this)
+
+/**
+ * Returns `true` if this character is a letter or digit.
+ */
+public fun Char.isLetterOrDigit(): Boolean = Character.isLetterOrDigit(this)
+
+/**
  * Returns `true` if this character (Unicode code point) is a digit.
  */
 public fun Char.isDigit(): Boolean = Character.isDigit(this)
