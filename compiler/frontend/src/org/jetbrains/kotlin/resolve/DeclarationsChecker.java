@@ -230,16 +230,9 @@ public class DeclarationsChecker {
         }
     }
     private void checkObject(JetObjectDeclaration declaration, ClassDescriptor classDescriptor) {
-        checkDeprecatedClassObjectSyntax(declaration);
         reportErrorIfHasIllegalModifier(declaration);
         if  (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor));
-        }
-    }
-
-    private void checkDeprecatedClassObjectSyntax(@NotNull JetObjectDeclaration declaration) {
-        if (declaration.getClassKeyword() != null) {
-            trace.report(DEPRECATED_CLASS_OBJECT_SYNTAX.on(declaration));
         }
     }
 

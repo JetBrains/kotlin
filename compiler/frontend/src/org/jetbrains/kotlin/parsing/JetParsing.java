@@ -821,12 +821,7 @@ public class JetParsing extends AbstractJetParsing {
         IElementType keywordToken = tt();
         IElementType declType = null;
         if (keywordToken == CLASS_KEYWORD) {
-            if (lookahead(1) == OBJECT_KEYWORD) {
-                declType = parseDeprecatedClassObject();
-            }
-            else {
-                declType = parseClass(isEnum);
-            }
+            declType = parseClass(isEnum);
         }
         else if (keywordToken == TRAIT_KEYWORD) {
             declType = parseClass(isEnum);
@@ -975,18 +970,6 @@ public class JetParsing extends AbstractJetParsing {
         myExpressionParsing.parseValueArgumentList();
 
         initializer.done(type);
-    }
-
-    /*
-     * companionObject
-     *   : modifiers "class" object
-     *   ;
-     */
-    private IElementType parseDeprecatedClassObject() {
-        assert _at(CLASS_KEYWORD) && lookahead(1) == OBJECT_KEYWORD;
-        advance(); // CLASS_KEYWORD
-        parseObject(NameParsingMode.ALLOWED, true);
-        return OBJECT_DECLARATION;
     }
 
     /*

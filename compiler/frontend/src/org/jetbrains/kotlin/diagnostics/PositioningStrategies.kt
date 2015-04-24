@@ -58,7 +58,7 @@ public object PositioningStrategies {
                 }
                 is JetObjectDeclaration -> {
                     return markRange(
-                            element.getClassKeyword() ?: element.getObjectKeyword(),
+                            element.getObjectKeyword(),
                             element.getNameIdentifier() ?: element.getObjectKeyword()
                     )
                 }

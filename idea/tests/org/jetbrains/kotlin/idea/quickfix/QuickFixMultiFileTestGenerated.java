@@ -858,12 +858,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
 
-        @TestMetadata("classObjectToDefaultMultiple.before.Main.kt")
-        public void testClassObjectToDefaultMultiple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/classObjectToDefaultMultiple.before.Main.kt");
-            doTestWithExtraFile(fileName);
-        }
-
         @TestMetadata("idea/testData/quickfix/migration/lambdaSyntax")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

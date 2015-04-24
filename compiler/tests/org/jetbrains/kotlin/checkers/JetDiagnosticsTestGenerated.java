@@ -1482,12 +1482,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("deprecatedClassObjectSyntax.kt")
-            public void testDeprecatedClassObjectSyntax() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/deprecatedClassObjectSyntax.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("importClassInClassObject.kt")
             public void testImportClassInClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/importClassInClassObject.kt");

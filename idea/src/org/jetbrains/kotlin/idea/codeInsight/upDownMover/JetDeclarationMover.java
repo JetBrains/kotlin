@@ -60,13 +60,6 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
                     }
 
                     @Override
-                    public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-                        if (declaration.isCompanion()) {
-                            memberSuspects.add(declaration.getClassKeyword());
-                        }
-                    }
-
-                    @Override
                     public void visitNamedFunction(@NotNull JetNamedFunction function) {
                         PsiElement equalsToken = function.getEqualsToken();
                         if (equalsToken != null) memberSuspects.add(equalsToken);

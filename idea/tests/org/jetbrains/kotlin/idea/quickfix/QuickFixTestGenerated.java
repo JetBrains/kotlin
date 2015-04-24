@@ -3022,12 +3022,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^before(\\w+)\\.kt$"), true);
         }
 
-        @TestMetadata("beforeClassObjectToDefaultSingle.kt")
-        public void testClassObjectToDefaultSingle() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/beforeClassObjectToDefaultSingle.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("idea/testData/quickfix/migration/lambdaSyntax")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

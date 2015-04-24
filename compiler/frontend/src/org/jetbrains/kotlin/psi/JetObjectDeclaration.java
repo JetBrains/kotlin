@@ -99,7 +99,7 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
         if (stub != null) {
             return stub.isCompanion();
         }
-        return getClassKeyword() != null || hasModifier(JetTokens.COMPANION_KEYWORD);
+        return hasModifier(JetTokens.COMPANION_KEYWORD);
     }
 
     @Override
@@ -180,11 +180,6 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
     @NotNull
     public PsiElement getObjectKeyword() {
         return findChildByType(JetTokens.OBJECT_KEYWORD);
-    }
-
-    @Nullable
-    public PsiElement getClassKeyword() {
-        return findChildByType(JetTokens.CLASS_KEYWORD);
     }
 
     @Override
