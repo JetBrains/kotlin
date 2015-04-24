@@ -55,6 +55,8 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetExpression> JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetElement>    DEPRECATED_ANNOTATION_METHOD_CALL      = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<JetElement> TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
+
     // TODO: make this a warning
     DiagnosticFactory1<JetExpression, JetExpression> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory1.create(ERROR);
 

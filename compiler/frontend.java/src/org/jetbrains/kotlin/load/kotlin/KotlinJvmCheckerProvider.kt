@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.jvm.calls.checkers.NeedSyntheticChecker
+import org.jetbrains.kotlin.resolve.jvm.calls.checkers.TraitDefaultMethodCallChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NullabilityInformationSource
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -52,7 +53,10 @@ public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
                                                ReifiedTypeParameterAnnotationChecker(),
                                                NativeFunChecker(),
                                                OverloadsAnnotationChecker()),
-        additionalCallCheckers = listOf(NeedSyntheticChecker(), JavaAnnotationCallChecker(), JavaAnnotationMethodCallChecker()),
+
+        additionalCallCheckers = listOf(NeedSyntheticChecker(), JavaAnnotationCallChecker(),
+                                        JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker()),
+
         additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker())
 )
 

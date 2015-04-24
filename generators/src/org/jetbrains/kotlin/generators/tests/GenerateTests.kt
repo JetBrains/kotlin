@@ -313,6 +313,7 @@ fun main(args: Array<String>) {
         }
     }
 
+
     testGroup("idea/tests", "idea/testData") {
 
         testClass(javaClass<AbstractJavaTypeSubstitutorTest>()) {

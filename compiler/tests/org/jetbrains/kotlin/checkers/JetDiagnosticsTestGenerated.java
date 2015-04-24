@@ -7347,6 +7347,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("traitDefaultCall.kt")
+            public void testTraitDefaultCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/traitDefaultCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("UnboxingNulls.kt")
             public void testUnboxingNulls() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/UnboxingNulls.kt");
@@ -12324,6 +12330,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("thisInToplevelFunction.kt")
             public void testThisInToplevelFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/thisInToplevelFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("traitSuperCall.kt")
+            public void testTraitSuperCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/traitSuperCall.kt");
                 doTest(fileName);
             }
         }

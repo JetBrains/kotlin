@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
+import org.jetbrains.kotlin.psi.JetSuperExpression;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -150,5 +151,16 @@ public class CallResolverUtil {
     public static boolean isInvokeCallOnExpressionWithBothReceivers(@NotNull Call call) {
         if (call.getCallType() != Call.CallType.INVOKE || isInvokeCallOnVariable(call)) return false;
         return call.getExplicitReceiver().exists() && call.getDispatchReceiver().exists();
+    }
+
+    public static JetSuperExpression getSuperCallExpression(@NotNull Call call) {
+        ReceiverValue explicitReceiver = call.getExplicitReceiver();
+        if (explicitReceiver instanceof ExpressionReceiver) {
+            JetExpression receiverExpression = ((ExpressionReceiver) explicitReceiver).getExpression();
+            if (receiverExpression instanceof JetSuperExpression) {
+                return (JetSuperExpression) receiverExpression;
+            }
+        }
+        return null;
     }
 }

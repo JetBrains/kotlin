@@ -59,6 +59,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
+import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
@@ -2257,7 +2258,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @NotNull
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
-        JetSuperExpression superCallExpression = getSuperCallExpression(call);
+        JetSuperExpression superCallExpression = CallResolverUtil.getSuperCallExpression(call);
         boolean superCall = superCallExpression != null;
 
         if (superCall && !isInterface(fd.getContainingDeclaration())) {
@@ -2272,18 +2273,6 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Callable callable = resolveToCallable(fd, superCall, resolvedCall);
 
         return callable.invokeMethodWithArguments(resolvedCall, receiver, this);
-    }
-
-    @Nullable
-    private static JetSuperExpression getSuperCallExpression(@NotNull Call call) {
-        ReceiverValue explicitReceiver = call.getExplicitReceiver();
-        if (explicitReceiver instanceof ExpressionReceiver) {
-            JetExpression receiverExpression = ((ExpressionReceiver) explicitReceiver).getExpression();
-            if (receiverExpression instanceof JetSuperExpression) {
-                return (JetSuperExpression) receiverExpression;
-            }
-        }
-        return null;
     }
 
     // Find the first parent of the current context which corresponds to a subclass of a given class
