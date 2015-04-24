@@ -14,54 +14,45 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.editor;
+package org.jetbrains.kotlin.idea.editor
 
-import com.intellij.codeInsight.editorActions.QuoteHandler;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.highlighter.HighlighterIterator;
-import com.intellij.psi.tree.IElementType;
-import org.jetbrains.kotlin.lexer.JetTokens;
+import com.intellij.codeInsight.editorActions.QuoteHandler
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.highlighter.HighlighterIterator
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.lexer.JetTokens
 
-public class KotlinQuoteHandler implements QuoteHandler {
-    @Override
-    public boolean isClosingQuote(HighlighterIterator iterator, int offset) {
-        IElementType tokenType = iterator.getTokenType();
+public class KotlinQuoteHandler : QuoteHandler {
+    override fun isClosingQuote(iterator: HighlighterIterator, offset: Int): Boolean {
+        val tokenType = iterator.getTokenType()
 
         if (tokenType == JetTokens.CHARACTER_LITERAL) {
-            int start = iterator.getStart();
-            int end = iterator.getEnd();
-            return end - start >= 1 && offset == end - 1;
+            val start = iterator.getStart()
+            val end = iterator.getEnd()
+            return end - start >= 1 && offset == end - 1
         }
         else if (tokenType == JetTokens.CLOSING_QUOTE) {
-            return true;
+            return true
         }
-        return false;
+        return false
     }
 
-    @Override
-    public boolean isOpeningQuote(HighlighterIterator iterator, int offset) {
-        IElementType tokenType = iterator.getTokenType();
+    override fun isOpeningQuote(iterator: HighlighterIterator, offset: Int): Boolean {
+        val tokenType = iterator.getTokenType()
 
         if (tokenType == JetTokens.OPEN_QUOTE) {
-            int start = iterator.getStart();
-            return offset == start;
+            val start = iterator.getStart()
+            return offset == start
         }
-        return false;
+        return false
     }
 
-    @Override
-    public boolean hasNonClosedLiteral(Editor editor, HighlighterIterator iterator, int offset) {
-      return true;
+    override fun hasNonClosedLiteral(editor: Editor, iterator: HighlighterIterator, offset: Int): Boolean {
+        return true
     }
 
-    @Override
-    public boolean isInsideLiteral(HighlighterIterator iterator) {
-        IElementType tokenType = iterator.getTokenType();
-        return tokenType == JetTokens.REGULAR_STRING_PART ||
-               tokenType == JetTokens.OPEN_QUOTE ||
-               tokenType == JetTokens.CLOSING_QUOTE ||
-               tokenType == JetTokens.SHORT_TEMPLATE_ENTRY_START ||
-               tokenType == JetTokens.LONG_TEMPLATE_ENTRY_END ||
-               tokenType == JetTokens.LONG_TEMPLATE_ENTRY_START;
+    override fun isInsideLiteral(iterator: HighlighterIterator): Boolean {
+        val tokenType = iterator.getTokenType()
+        return tokenType == JetTokens.REGULAR_STRING_PART || tokenType == JetTokens.OPEN_QUOTE || tokenType == JetTokens.CLOSING_QUOTE || tokenType == JetTokens.SHORT_TEMPLATE_ENTRY_START || tokenType == JetTokens.LONG_TEMPLATE_ENTRY_END || tokenType == JetTokens.LONG_TEMPLATE_ENTRY_START
     }
 }
