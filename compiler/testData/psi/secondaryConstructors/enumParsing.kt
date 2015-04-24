@@ -9,7 +9,7 @@ enum class A {
    abc3
 
    constructor(x: Int): this() {}
-   {
+   init {
 
    }
 }

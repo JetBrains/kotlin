@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.types.Variance;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.Collection;
-import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
@@ -191,13 +190,6 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         ASTNode callOperationNode = call.getCallOperationNode();
         assert callOperationNode != null;
         trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.getPsi(), type));
-    }
-
-    @Override
-    public void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetFunctionLiteralArgument> functionLiteralArguments) {
-        for (JetFunctionLiteralArgument functionLiteralArgument : functionLiteralArguments) {
-            trace.report(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED.on(functionLiteralArgument.getArgumentExpression()));
-        }
     }
 
     @Override

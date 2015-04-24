@@ -3,13 +3,13 @@ class Foo() {
   var b : Int get() = 1; set
   var b1 : Int get() = 1; set {1}
   val b2 : Int get
-  {
+  init {
 
   }
   val b3 : Int get {
     return 1
   }
-  val b4 : Int get; {
+  val b4 : Int get; init {
   }
 
   var b5 : Int get abstract set

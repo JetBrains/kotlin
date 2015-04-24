@@ -7,12 +7,4 @@ class A {
     init {
         x = 1
     }
-
-    val y = f()
-    {
-        x = 2
-    }
-    {
-        x = 3
-    }
 }

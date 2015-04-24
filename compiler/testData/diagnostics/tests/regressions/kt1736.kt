@@ -7,4 +7,4 @@ object Obj {
     }
 }
 
-val x = Obj.method<!TOO_MANY_ARGUMENTS, DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED!>{ -> }<!>
+val x = Obj.method<!TOO_MANY_ARGUMENTS!>{ -> }<!>

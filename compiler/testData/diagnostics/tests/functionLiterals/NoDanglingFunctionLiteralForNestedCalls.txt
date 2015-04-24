@@ -1,7 +1,0 @@
-package
-
-package baz {
-    internal fun foo(): (() -> kotlin.Unit) -> kotlin.Unit
-    internal fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
-    internal fun test(): kotlin.Unit
-}

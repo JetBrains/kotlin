@@ -4707,12 +4707,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("DanglingFunctionLiteral.kt")
-            public void testDanglingFunctionLiteral() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/DanglingFunctionLiteral.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("DeprecatedSyntax.kt")
             public void testDeprecatedSyntax() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/DeprecatedSyntax.kt");
@@ -4770,12 +4764,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("LabeledFunctionLiterals.kt")
             public void testLabeledFunctionLiterals() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/LabeledFunctionLiterals.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("NoDanglingFunctionLiteralForNestedCalls.kt")
-            public void testNoDanglingFunctionLiteralForNestedCalls() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/NoDanglingFunctionLiteralForNestedCalls.kt");
                 doTest(fileName);
             }
 
@@ -10581,12 +10569,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("errorsOnEmptyDelegationCall.kt")
             public void testErrorsOnEmptyDelegationCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/errorsOnEmptyDelegationCall.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("expectedInitKeywordOnInitializer.kt")
-            public void testExpectedInitKeywordOnInitializer() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/expectedInitKeywordOnInitializer.kt");
                 doTest(fileName);
             }
 

@@ -131,6 +131,8 @@ JetFile: enumParsing.kt
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n   ')
       ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n\n   ')

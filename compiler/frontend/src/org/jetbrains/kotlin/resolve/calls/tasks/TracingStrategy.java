@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve.calls.tasks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Collection;
-import java.util.List;
 
 public interface TracingStrategy {
     TracingStrategy EMPTY = new TracingStrategy() {
@@ -97,9 +95,6 @@ public interface TracingStrategy {
         public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type) {}
 
         @Override
-        public void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetFunctionLiteralArgument> functionLiteralArguments) {}
-
-        @Override
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {}
 
         @Override
@@ -150,8 +145,6 @@ public interface TracingStrategy {
     void unsafeCall(@NotNull BindingTrace trace, @NotNull JetType type, boolean isCallForImplicitInvoke);
 
     void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull JetType type);
-
-    void danglingFunctionLiteralArgumentSuspected(@NotNull BindingTrace trace, @NotNull List<JetFunctionLiteralArgument> functionLiteralArguments);
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor);
 

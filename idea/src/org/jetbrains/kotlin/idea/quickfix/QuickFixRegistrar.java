@@ -216,8 +216,6 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(NOT_AN_ANNOTATION_CLASS, MakeClassAnAnnotationClassFix.createFactory());
 
-        QuickFixes.factories.put(DANGLING_FUNCTION_LITERAL_ARGUMENT_SUSPECTED, AddSemicolonAfterFunctionCallFix.createFactory());
-
         JetIntentionActionsFactory changeVariableTypeFix = ChangeVariableTypeFix.createFactoryForPropertyOrReturnTypeMismatchOnOverride();
         QuickFixes.factories.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, changeVariableTypeFix);
         QuickFixes.factories.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, changeVariableTypeFix);
@@ -308,9 +306,6 @@ public class QuickFixRegistrar {
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromTypeReferenceActionFactory.INSTANCE$);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromReferenceExpressionActionFactory.INSTANCE$);
         QuickFixes.factories.put(UNRESOLVED_REFERENCE, CreateClassFromCallWithConstructorCalleeActionFactory.INSTANCE$);
-
-        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Factory);
-        QuickFixes.factories.put(INIT_KEYWORD_BEFORE_CLASS_INITIALIZER_EXPECTED, AddInitKeywordFix.Factory.createWholeProjectFixFactory());
 
         QuickFixes.factories.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, InsertDelegationCallQuickfix.InsertThisDelegationCallFactory.INSTANCE$);
 

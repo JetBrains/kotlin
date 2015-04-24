@@ -123,6 +123,8 @@ JetFile: PropertiesFollowedByInitializers.kt
           PsiElement(get)('get')
       PsiWhiteSpace('\n  ')
       ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n\n  ')
@@ -177,6 +179,8 @@ JetFile: PropertiesFollowedByInitializers.kt
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace(' ')
       ANONYMOUS_INITIALIZER
+        PsiElement(init)('init')
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n  ')

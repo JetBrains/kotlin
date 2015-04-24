@@ -17,7 +17,7 @@ class Foo {
   foo bar(1) buzz<T>(1) zoo var v : Int = 0
   foo bar(1) buzz<T>(1) zoo typealias T = Int
 
-  foo bar(1) buzz<T>(1) zoo {}
+  foo bar(1) buzz<T>(1) zoo init {}
 }
 
 fun test() {

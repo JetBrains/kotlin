@@ -848,12 +848,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Migration extends AbstractQuickFixMultiFileTest {
-        @TestMetadata("addInitKeywordMultiple.before.Main.kt")
-        public void testAddInitKeywordMultiple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/addInitKeywordMultiple.before.Main.kt");
-            doTestWithExtraFile(fileName);
-        }
-
         public void testAllFilesPresentInMigration() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }

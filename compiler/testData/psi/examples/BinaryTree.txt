@@ -151,24 +151,15 @@ JetFile: BinaryTree.kt
       PsiWhiteSpace('\n\n')
       PsiComment(EOL_COMMENT)('//  override var size : Int { get; private set; }')
       PsiWhiteSpace('\n\n  ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(this)('this')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(LPAR)('(')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('compare')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
+      SECONDARY_CONSTRUCTOR
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            PsiElement(IDENTIFIER)('compare')
+            PsiWhiteSpace(' ')
+            PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -181,10 +172,11 @@ JetFile: BinaryTree.kt
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('T')
                   PsiElement(GT)('>')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      ANONYMOUS_INITIALIZER
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          CONSTRUCTOR_DELEGATION_REFERENCE
+            <empty list>
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
@@ -212,25 +204,21 @@ JetFile: BinaryTree.kt
           PsiWhiteSpace('\n  ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n  ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(this)('this')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(LPAR)('(')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting member declaration
+      SECONDARY_CONSTRUCTOR
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         PsiElement(COLON)(':')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(this)('this')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(LPAR)('(')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          CONSTRUCTOR_DELEGATION_REFERENCE
+            PsiElement(this)('this')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              CALL_EXPRESSION
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('naturalOrder')
                 TYPE_ARGUMENT_LIST
@@ -241,13 +229,11 @@ JetFile: BinaryTree.kt
                         REFERENCE_EXPRESSION
                           PsiElement(IDENTIFIER)('T')
                   PsiElement(GT)('>')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
             PsiElement(RPAR)(')')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      ANONYMOUS_INITIALIZER
+        PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n  ')
@@ -1819,14 +1805,9 @@ JetFile: BinaryTree.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
               PsiWhiteSpace('\n\n    ')
-              PsiErrorElement:Expecting member declaration
-                PsiElement(this)('this')
-              PsiErrorElement:Expecting member declaration
-                PsiElement(LPAR)('(')
-              PsiErrorElement:Expecting member declaration
-                PsiElement(RPAR)(')')
-              PsiWhiteSpace(' ')
               ANONYMOUS_INITIALIZER
+                PsiElement(init)('init')
+                PsiWhiteSpace(' ')
                 BLOCK
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n      ')
