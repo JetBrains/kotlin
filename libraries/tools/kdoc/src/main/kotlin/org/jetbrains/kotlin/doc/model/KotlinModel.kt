@@ -1036,7 +1036,7 @@ class KClass(
     val kind: String
     get() {
         val k = descriptor.getKind()
-        return if (k == ClassKind.TRAIT) "trait"
+        return if (k == ClassKind.INTERFACE) "interface"
         else if (k == ClassKind.OBJECT) "object"
         else if (k == ClassKind.ENUM_CLASS || k == ClassKind.ENUM_ENTRY) "enum"
         else if (k == ClassKind.ANNOTATION_CLASS) "annotation"
@@ -1046,7 +1046,7 @@ class KClass(
     val kindCode: String
     get() {
         val k = descriptor.getKind()
-        return if (k == ClassKind.TRAIT) "trait"
+        return if (k == ClassKind.INTERFACE) "interface"
         else if (k == ClassKind.OBJECT) "object"
         else if (k == ClassKind.ENUM_CLASS || k == ClassKind.ENUM_ENTRY) "enum class"
         else if (k == ClassKind.ANNOTATION_CLASS) "class"
