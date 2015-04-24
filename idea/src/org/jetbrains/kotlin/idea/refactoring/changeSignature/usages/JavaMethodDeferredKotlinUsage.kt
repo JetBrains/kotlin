@@ -50,7 +50,7 @@ public class JavaConstructorDeferredUsageInDelegationCall(
 ): JavaMethodDeferredKotlinUsage<JetConstructorDelegationCall>(delegationCall) {
         override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetConstructorDelegationCall> {
                 return object : JavaMethodKotlinUsageWithDelegate<JetConstructorDelegationCall>(delegationCall, javaMethodChangeInfo) {
-                        override val delegateUsage = JetConstructorDelegationCallUsage(delegationCall)
+                        override val delegateUsage = JetConstructorDelegationCallUsage(delegationCall, javaMethodChangeInfo)
                 }
         }
 }

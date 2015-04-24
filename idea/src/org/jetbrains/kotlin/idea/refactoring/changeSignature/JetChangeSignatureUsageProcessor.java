@@ -119,7 +119,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
 
     private static void findOneMethodUsages(
             @NotNull JetFunctionDefinitionUsage<?> functionUsageInfo,
-            JetChangeInfo changeInfo,
+            final JetChangeInfo changeInfo,
             final Set<UsageInfo> result
     ) {
         boolean isInherited = functionUsageInfo.isInherited();
@@ -194,15 +194,17 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             }
         }
 
-        UsagesSearchPackage.processDelegationCallConstructorUsages(functionPsi, functionPsi.getUseScope(),
-                                                                   new Function1<JetConstructorDelegationCall, Unit>() {
-                                                                       @Override
-                                                                       public Unit invoke(JetConstructorDelegationCall element) {
-                                                                           result.add(new JetConstructorDelegationCallUsage(element));
-                                                                           return null;
-                                                                       }
-                                                                   });
-
+        UsagesSearchPackage.processDelegationCallConstructorUsages(
+                functionPsi,
+                functionPsi.getUseScope(),
+                new Function1<JetConstructorDelegationCall, Unit>() {
+                    @Override
+                    public Unit invoke(JetConstructorDelegationCall element) {
+                        result.add(new JetConstructorDelegationCallUsage(element, changeInfo));
+                        return null;
+                    }
+                }
+        );
     }
 
     private static void processInternalReferences(
