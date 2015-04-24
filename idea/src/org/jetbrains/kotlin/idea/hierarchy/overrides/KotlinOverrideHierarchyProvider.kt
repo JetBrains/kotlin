@@ -16,19 +16,23 @@
 
 package org.jetbrains.kotlin.idea.hierarchy.overrides
 
+import com.intellij.ide.hierarchy.HierarchyBrowser
+import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx
 import com.intellij.ide.hierarchy.HierarchyProvider
+import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
+import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.psi.PsiElement
-import com.intellij.ide.hierarchy.HierarchyBrowser
-import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.idea.hierarchy.HierarchyUtils
-import com.intellij.ide.hierarchy.MethodHierarchyBrowserBase
-import com.intellij.ide.hierarchy.HierarchyBrowserBaseEx
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 
 public class KotlinOverrideHierarchyProvider: HierarchyProvider {
     override fun getTarget(dataContext: DataContext): PsiElement? {
         return CommonDataKeys.PROJECT.getData(dataContext)?.let { project ->
-            HierarchyUtils.getOverrideHierarchyElement(HierarchyUtils.getCurrentElement(dataContext, project))
+            getOverrideHierarchyElement(HierarchyUtils.getCurrentElement(dataContext, project))
         }
     }
 
@@ -38,4 +42,10 @@ public class KotlinOverrideHierarchyProvider: HierarchyProvider {
     override fun browserActivated(hierarchyBrowser: HierarchyBrowser) {
         (hierarchyBrowser as HierarchyBrowserBaseEx).changeView(MethodHierarchyBrowserBase.METHOD_TYPE)
     }
+
+    private fun getOverrideHierarchyElement(element: PsiElement?): PsiElement?
+            = element?.getParentOfTypesAndPredicate() { isOverrideHierarchyElement(it) }
 }
+
+fun isOverrideHierarchyElement(element: PsiElement): Boolean
+        = element is PsiMethod || element is JetNamedFunction || element is JetProperty
