@@ -9,10 +9,15 @@ fun test() : Unit {
   checkSubtype<Int>(x as Int)
   checkSubtype<Int>(y <!USELESS_CAST!>as Int<!>)
   checkSubtype<Int?>(x <!USELESS_CAST!>as Int?<!>)
-  checkSubtype<Int?>(y <!USELESS_CAST!>as Int?<!>)
+  checkSubtype<Int?>(y as Int?)
   checkSubtype<Int?>(x <!USELESS_CAST!>as? Int<!>)
   checkSubtype<Int?>(y <!USELESS_CAST!>as? Int<!>)
   checkSubtype<Int?>(x <!USELESS_CAST!>as? Int?<!>)
-  checkSubtype<Int?>(y <!USELESS_CAST!>as? Int?<!>)
+  checkSubtype<Int?>(y as? Int?)
+
+  val <!UNUSED_VARIABLE!>s<!> = "" <!USELESS_CAST!>as Any<!>
+  ("" as String?)?.length()
+  (@data("" as String?))?.length()
+  ([data]( "" as String?))?.length()
   Unit
 }

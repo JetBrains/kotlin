@@ -13,16 +13,16 @@ class B: A()
 
 fun test(a: Any?) {
     if (a is B) {
-        (a <!USELESS_CAST!>as A<!>).foo()
+        (a as A).foo()
     }
 }
 
 fun test1(a: B) {
-    (a <!USELESS_CAST!>as A?<!>)?.foo()
+    (a as A?)?.foo()
 }
 
 fun test2(b: B?) {
     if (b != null) {
-        (b <!USELESS_CAST!>as A<!>).foo()
+        (b as A).foo()
     }
 }
