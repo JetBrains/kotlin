@@ -93,7 +93,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     }
 
     protected void doTestCompiledKotlin(@NotNull String ktFileName) throws Exception {
-        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_AND_ANNOTATIONS);
+        doTestCompiledKotlin(ktFileName, ConfigurationKind.JDK_ONLY);
     }
 
     protected void doTestCompiledKotlinWithStdlib(@NotNull String ktFileName) throws Exception {
@@ -236,7 +236,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 });
 
         JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
-                getTestRootDisposable(), ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.MOCK_JDK);
+                getTestRootDisposable(), ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK
+        );
 
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 srcFiles, compiledDir, ConfigurationKind.ALL

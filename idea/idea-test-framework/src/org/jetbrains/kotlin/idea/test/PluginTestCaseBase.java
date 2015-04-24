@@ -41,25 +41,36 @@ public class PluginTestCaseBase {
         return JetTestUtils.getHomeDirectory() + TEST_DATA_PROJECT_RELATIVE;
     }
 
+    @NotNull
     private static Sdk getSdk(String sdkHome) {
         Sdk sdk = JavaSdk.getInstance().createJdk("JDK", sdkHome, true);
         SdkModificator modificator = sdk.getSdkModificator();
-        JavaSdkImpl.attachJdkAnnotations(modificator);
-        VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(JetTestUtils.getJdkAnnotationsJar());
+        VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(getJdkAnnotationsJar());
         assert file != null;
         modificator.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(file), AnnotationOrderRootType.getInstance());
         modificator.commitChanges();
         return sdk;
     }
 
+    @NotNull
     public static Sdk mockJdk() {
         return getSdk("compiler/testData/mockJDK/jre");
     }
 
+    @NotNull
     public static Sdk fullJdk() {
         String javaHome = System.getProperty("java.home");
         assert new File(javaHome).isDirectory();
         return getSdk(javaHome);
+    }
+
+    @NotNull
+    public static File getJdkAnnotationsJar() {
+        File jdkAnnotations = new File(JetTestUtils.getHomeDirectory(), "dist/kotlinc/lib/kotlin-jdk-annotations.jar");
+        if (!jdkAnnotations.exists()) {
+            throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
+        }
+        return jdkAnnotations;
     }
 
     public static boolean isAllFilesPresentTest(@NotNull String testName) {

@@ -49,7 +49,7 @@ import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClass
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     public void doTest(@NotNull String filename) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_AND_ANNOTATIONS);
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
         blackBoxFileByFullPath(filename);
     }
 
