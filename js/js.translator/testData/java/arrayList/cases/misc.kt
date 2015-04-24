@@ -42,7 +42,7 @@ fun box(): Boolean {
     assertEquals(true, a.isEmpty(), "a.isEmpty()")
 
 
-    assertEquals(array(1, 500, 2, 3), list.copyToArray(), "list.copyToArray()")
+    assertEquals(array(1, 500, 2, 3), list.toTypedArray(), "list.copyToArray()")
     assertEquals("[1,500,2,3]", JSON.stringify(list), "JSON.stringify(list)")
     assertEquals("[1, 500, 2, 3]", list.toString(), "list.toString()")
     return true;
