@@ -49,9 +49,6 @@ enum class D {
     companion object
 }
 
-class A {
-    companion class object
-}
 
 //should be error
 class A {
