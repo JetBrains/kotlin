@@ -241,6 +241,7 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 {CHARACTER_LITERAL} { return JetTokens.CHARACTER_LITERAL; }
 
 "typealias"  { return JetTokens.TYPE_ALIAS_KEYWORD ;}
+"interface"  { return JetTokens.INTERFACE_KEYWORD ;}
 "continue"   { return JetTokens.CONTINUE_KEYWORD ;}
 "package"    { return JetTokens.PACKAGE_KEYWORD ;}
 "return"     { return JetTokens.RETURN_KEYWORD ;}

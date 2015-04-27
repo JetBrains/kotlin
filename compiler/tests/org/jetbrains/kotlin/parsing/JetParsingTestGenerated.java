@@ -355,6 +355,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("Interface.kt")
+        public void testInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Interface.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Labels.kt")
         public void testLabels() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Labels.kt");

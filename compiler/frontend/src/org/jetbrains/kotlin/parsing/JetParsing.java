@@ -44,9 +44,9 @@ public class JetParsing extends AbstractJetParsing {
         }
     }
 
-    private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
+    private static final TokenSet TOPLEVEL_OBJECT_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, PACKAGE_KEYWORD);
-    private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, CLASS_KEYWORD,
+    private static final TokenSet ENUM_MEMBER_FIRST = TokenSet.create(TYPE_ALIAS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD, CLASS_KEYWORD,
                 FUN_KEYWORD, VAL_KEYWORD, LBRACE, IDENTIFIER, OBJECT_KEYWORD);
 
     private static final TokenSet CLASS_NAME_RECOVERY_SET = TokenSet.orSet(TokenSet.create(LT, LPAR, COLON, LBRACE), TOPLEVEL_OBJECT_FIRST);
@@ -380,7 +380,7 @@ public class JetParsing extends AbstractJetParsing {
 //            declType = parsePackageBlock();
 //        }
 //        else
-        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD) {
+        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
             declType = parseClass(detector.isEnumDetected());
         }
         else if (keywordToken == FUN_KEYWORD) {
@@ -577,7 +577,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * class
-     *   : modifiers ("class" | "trait") SimpleName
+     *   : modifiers ("class" | "interface") SimpleName
      *       typeParameters?
      *         modifiers ("(" primaryConstructorParameter{","} ")")?
      *       (":" annotations delegationSpecifier{","})?
@@ -594,7 +594,7 @@ public class JetParsing extends AbstractJetParsing {
             assert _at(OBJECT_KEYWORD);
         }
         else {
-            assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD);
+            assert _atSet(CLASS_KEYWORD, TRAIT_KEYWORD, INTERFACE_KEYWORD);
         }
         advance(); // CLASS_KEYWORD, TRAIT_KEYWORD or OBJECT_KEYWORD
 
@@ -823,7 +823,7 @@ public class JetParsing extends AbstractJetParsing {
         if (keywordToken == CLASS_KEYWORD) {
             declType = parseClass(isEnum);
         }
-        else if (keywordToken == TRAIT_KEYWORD) {
+        else if (keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
             declType = parseClass(isEnum);
         }
         else if (keywordToken == FUN_KEYWORD) {
