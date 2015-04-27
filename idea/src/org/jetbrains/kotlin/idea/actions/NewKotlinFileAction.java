@@ -58,7 +58,7 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction implements
                 .setTitle(JetBundle.message("new.kotlin.file.action"))
                 .addKind("Kotlin file", JetFileType.INSTANCE.getIcon(), "Kotlin File")
                 .addKind("Class", JetIcons.CLASS, "Kotlin Class")
-                .addKind("Trait", JetIcons.TRAIT, "Kotlin Trait")
+                .addKind("Interface", JetIcons.TRAIT, "Kotlin Interface")
                 .addKind("Enum class", JetIcons.ENUM, "Kotlin Enum")
                 .addKind("Object", JetIcons.OBJECT, "Kotlin Object");
     }

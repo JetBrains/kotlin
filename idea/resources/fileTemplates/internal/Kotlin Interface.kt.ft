@@ -2,5 +2,5 @@
 
 #end
 #parse("File Header.java")
-public trait ${NAME} {
+public interface ${NAME} {
 }
