@@ -38,4 +38,6 @@ public abstract class PackageFragmentDescriptorImpl(
     override fun getSource(): SourceElement {
         return SourceElement.NO_SOURCE
     }
+
+    override fun toString(): String = "package $fqName"
 }
