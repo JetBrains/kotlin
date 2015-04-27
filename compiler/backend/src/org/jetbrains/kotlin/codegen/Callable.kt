@@ -16,14 +16,9 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.org.objectweb.asm.Type;
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public trait Callable {
     public val owner: Type

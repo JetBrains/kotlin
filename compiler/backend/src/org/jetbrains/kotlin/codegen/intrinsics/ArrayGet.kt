@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.codegen.intrinsics;
 import org.jetbrains.kotlin.codegen.AsmUtil.correctElementType
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class ArrayGet : IntrinsicMethod() {
-
     override fun toCallable(method: CallableMethod): Callable =
             createIntrinsicCallable(method) {
                 val type = correctElementType(calcReceiverType())

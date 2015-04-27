@@ -17,18 +17,20 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.org.objectweb.asm.Label
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-open class BranchedValue(val arg1: StackValue, val arg2: StackValue? = null, val operandType: Type, val opcode: Int) : StackValue(Type.BOOLEAN_TYPE) {
+open class BranchedValue(
+        val arg1: StackValue,
+        val arg2: StackValue? = null,
+        val operandType: Type,
+        val opcode: Int
+) : StackValue(Type.BOOLEAN_TYPE) {
 
-    constructor(or: BranchedValue, opcode: Int) : this(or.arg1, or.arg2, or.operandType, opcode) {
-    }
+    constructor(or: BranchedValue, opcode: Int) : this(or.arg1, or.arg2, or.operandType, opcode)
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
         val branchJumpLabel = Label()
@@ -65,7 +67,7 @@ open class BranchedValue(val arg1: StackValue, val arg2: StackValue? = null, val
 
             override fun putSelector(type: Type, v: InstructionAdapter) {
                 v.iconst(1)
-                coerceTo(type, v);
+                coerceTo(type, v)
             }
         }
 
@@ -78,7 +80,7 @@ open class BranchedValue(val arg1: StackValue, val arg2: StackValue? = null, val
 
             override fun putSelector(type: Type, v: InstructionAdapter) {
                 v.iconst(0)
-                coerceTo(type, v);
+                coerceTo(type, v)
             }
         }
 
@@ -127,8 +129,10 @@ open class BranchedValue(val arg1: StackValue, val arg2: StackValue? = null, val
     }
 }
 
-class And(arg1: StackValue, arg2: StackValue) :
-        BranchedValue(BranchedValue.condJump(arg1), BranchedValue.condJump(arg2), Type.BOOLEAN_TYPE, IFEQ) {
+class And(
+        arg1: StackValue,
+        arg2: StackValue
+) : BranchedValue(BranchedValue.condJump(arg1), BranchedValue.condJump(arg2), Type.BOOLEAN_TYPE, IFEQ) {
 
     override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
         val stayLabel = Label()
@@ -138,8 +142,10 @@ class And(arg1: StackValue, arg2: StackValue) :
     }
 }
 
-class Or(arg1: StackValue, arg2: StackValue) :
-        BranchedValue(BranchedValue.condJump(arg1), BranchedValue.condJump(arg2), Type.BOOLEAN_TYPE, IFEQ) {
+class Or(
+        arg1: StackValue,
+        arg2: StackValue
+) : BranchedValue(BranchedValue.condJump(arg1), BranchedValue.condJump(arg2), Type.BOOLEAN_TYPE, IFEQ) {
 
     override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
         val stayLabel = Label()
@@ -167,8 +173,12 @@ class CondJump(val condition: BranchedValue, op: Int) : BranchedValue(condition,
     }
 }
 
-class NumberCompare(val opToken: IElementType, operandType: Type, left: StackValue, right: StackValue) :
-        BranchedValue(left, right, operandType, NumberCompare.getNumberCompareOpcode(opToken)) {
+class NumberCompare(
+        val opToken: IElementType,
+        operandType: Type,
+        left: StackValue,
+        right: StackValue
+) : BranchedValue(left, right, operandType, NumberCompare.getNumberCompareOpcode(opToken)) {
 
     override fun patchOpcode(opcode: Int, v: InstructionAdapter): Int {
         when (operandType) {
@@ -207,8 +217,12 @@ class NumberCompare(val opToken: IElementType, operandType: Type, left: StackVal
     }
 }
 
-class ObjectCompare(val opToken: IElementType, operandType: Type, left: StackValue, right: StackValue) :
-        BranchedValue(left, right, operandType, ObjectCompare.getObjectCompareOpcode(opToken)) {
+class ObjectCompare(
+        val opToken: IElementType,
+        operandType: Type,
+        left: StackValue,
+        right: StackValue
+) : BranchedValue(left, right, operandType, ObjectCompare.getObjectCompareOpcode(opToken)) {
 
     companion object {
         fun getObjectCompareOpcode(opToken: IElementType): Int {

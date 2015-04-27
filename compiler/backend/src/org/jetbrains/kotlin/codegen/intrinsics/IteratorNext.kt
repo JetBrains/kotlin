@@ -20,17 +20,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.context.CodegenContext
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class IteratorNext : IntrinsicMethod() {
-
     private fun getIteratorName(returnType: Type): String {
         return when (returnType) {
             Type.CHAR_TYPE -> "Char"
@@ -45,13 +39,17 @@ public class IteratorNext : IntrinsicMethod() {
         }
     }
 
-
     override fun toCallable(method: CallableMethod): Callable {
         val type = AsmUtil.unboxType(method.returnType)
-        return object: IntrinsicCallable(type, listOf(), AsmTypes.OBJECT_TYPE, null) {
+        return object : IntrinsicCallable(type, listOf(), AsmTypes.OBJECT_TYPE, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 val name = getIteratorName(returnType)
-                v.invokevirtual(BUILT_INS_PACKAGE_FQ_NAME.toString() + "/" + name + "Iterator", "next" + name, "()" + returnType.getDescriptor(), false)
+                v.invokevirtual(
+                        BUILT_INS_PACKAGE_FQ_NAME.asString() + "/" + name + "Iterator",
+                        "next$name",
+                        "()" + returnType.getDescriptor(),
+                        false
+                )
             }
         }
     }

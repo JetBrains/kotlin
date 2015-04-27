@@ -20,17 +20,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.Callable;
 import org.jetbrains.kotlin.codegen.CallableMethod;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
-import org.jetbrains.kotlin.codegen.context.CodegenContext;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public abstract class IntrinsicMethod {
-
     @NotNull
-    public Callable toCallable(@NotNull FunctionDescriptor fd, boolean isSuper, @NotNull ResolvedCall resolvedCall, @NotNull ExpressionCodegen codegen) {
+    public Callable toCallable(
+            @NotNull FunctionDescriptor fd,
+            boolean isSuper,
+            @NotNull ResolvedCall resolvedCall,
+            @NotNull ExpressionCodegen codegen
+    ) {
         return toCallable(codegen.getState().getTypeMapper().mapToCallableMethod(fd, false, codegen.getContext()), isSuper, resolvedCall);
     }
 
@@ -56,5 +58,4 @@ public abstract class IntrinsicMethod {
     public Type nullOr(Type type, Type newType) {
         return type == null ? null : newType;
     }
-
 }

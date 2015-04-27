@@ -18,36 +18,36 @@ package org.jetbrains.kotlin.codegen.intrinsics
 
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class RangeTo : IntrinsicMethod() {
-
-    private fun nameToPrimitive(name: String) : Type {
-        return when (name) {
-            "Double" -> DOUBLE_TYPE;
-            "Float" -> FLOAT_TYPE
-            "Long" -> LONG_TYPE
-            "Int" -> INT_TYPE
-            "Short" -> SHORT_TYPE
-            "Char" -> CHAR_TYPE
-            "Byte" -> BYTE_TYPE
-            else -> throw IllegalStateException("RangeTo intrinsic can only work for primitive types: " + name)
-        }
-    }
+    private fun nameToPrimitive(name: String): Type =
+            when (name) {
+                "Double" -> DOUBLE_TYPE
+                "Float" -> FLOAT_TYPE
+                "Long" -> LONG_TYPE
+                "Int" -> INT_TYPE
+                "Short" -> SHORT_TYPE
+                "Char" -> CHAR_TYPE
+                "Byte" -> BYTE_TYPE
+                else -> throw IllegalStateException("RangeTo intrinsic can only work for primitive types: $name")
+            }
 
     override fun toCallable(method: CallableMethod): Callable {
         val argType = nameToPrimitive(method.returnType.getInternalName().substringAfter("kotlin/").substringBefore("Range"))
-        return object : IntrinsicCallable(method.returnType, method.valueParameterTypes.map { argType }, nullOr(method.dispatchReceiverType, argType), nullOr(method.extensionReceiverType, argType)) {
+        return object : IntrinsicCallable(
+                method.returnType,
+                method.valueParameterTypes.map { argType },
+                nullOr(method.dispatchReceiverType, argType),
+                nullOr(method.extensionReceiverType, argType)
+        ) {
             override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
                 v.anew(returnType)
                 v.dup()
-                value?.moveToTopOfStack(value!!.type, v, 2)
+                value?.moveToTopOfStack(value.type, v, 2)
             }
 
             override fun invokeIntrinsic(v: InstructionAdapter) {

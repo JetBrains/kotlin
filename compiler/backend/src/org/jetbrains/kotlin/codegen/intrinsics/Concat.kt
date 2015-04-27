@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetExpression
@@ -34,8 +33,14 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class Concat : IntrinsicMethod() {
-    fun generateImpl(codegen: ExpressionCodegen, v: InstructionAdapter, returnType: Type, element: PsiElement?, arguments: List<JetExpression>, receiver: StackValue): Type {
-
+    fun generateImpl(
+            codegen: ExpressionCodegen,
+            v: InstructionAdapter,
+            returnType: Type,
+            element: PsiElement?,
+            arguments: List<JetExpression>,
+            receiver: StackValue
+    ): Type {
         if (element is JetBinaryExpression && element.getOperationReference().getReferencedNameElementType() == JetTokens.PLUS) {
             // LHS + RHS
             genStringBuilderConstructor(v)
@@ -56,20 +61,23 @@ public class Concat : IntrinsicMethod() {
     }
 
 
-    override fun toCallable(method: CallableMethod): Callable {
-        return object : IntrinsicCallable(method) {
-            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
-                return StackValue.operation(returnType) {
-                    val arguments = resolvedCall.getCall().getValueArguments().map { it.getArgumentExpression() }
-                    val actualType = generateImpl(
-                            codegen, it, returnType,
-                            resolvedCall.getCall().getCallElement(),
-                            arguments,
-                            StackValue.receiver(resolvedCall, receiver, codegen, this)
-                    )
-                    StackValue.coerce(actualType, returnType, it)
+    override fun toCallable(method: CallableMethod): Callable =
+            object : IntrinsicCallable(method) {
+                override fun invokeMethodWithArguments(
+                        resolvedCall: ResolvedCall<*>,
+                        receiver: StackValue,
+                        codegen: ExpressionCodegen
+                ): StackValue {
+                    return StackValue.operation(returnType) {
+                        val arguments = resolvedCall.getCall().getValueArguments().map { it.getArgumentExpression() }
+                        val actualType = generateImpl(
+                                codegen, it, returnType,
+                                resolvedCall.getCall().getCallElement(),
+                                arguments,
+                                StackValue.receiver(resolvedCall, receiver, codegen, this)
+                        )
+                        StackValue.coerce(actualType, returnType, it)
+                    }
                 }
             }
-        }
-    }
 }

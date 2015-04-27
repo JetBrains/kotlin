@@ -16,31 +16,30 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetPrefixExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.org.objectweb.asm.Type
 
 public class Not : IntrinsicMethod() {
-    override fun toCallable(method: CallableMethod): Callable {
-        return object : IntrinsicCallable(method) {
-            override fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
-                val element = resolvedCall.getCall().getCallElement()
-                val stackValue =
-                        if (element is JetPrefixExpression) {
-                            codegen.gen(element.getBaseExpression())
-                        }
-                        else {
-                            StackValue.receiver(resolvedCall, receiver, codegen, this)
-                        }
-                return StackValue.not(stackValue)
+    override fun toCallable(method: CallableMethod): Callable =
+            object : IntrinsicCallable(method) {
+                override fun invokeMethodWithArguments(
+                        resolvedCall: ResolvedCall<*>,
+                        receiver: StackValue,
+                        codegen: ExpressionCodegen
+                ): StackValue {
+                    val element = resolvedCall.getCall().getCallElement()
+                    val stackValue =
+                            if (element is JetPrefixExpression) {
+                                codegen.gen(element.getBaseExpression())
+                            }
+                            else {
+                                StackValue.receiver(resolvedCall, receiver, codegen, this)
+                            }
+                    return StackValue.not(stackValue)
+                }
             }
-        }
-    }
 }

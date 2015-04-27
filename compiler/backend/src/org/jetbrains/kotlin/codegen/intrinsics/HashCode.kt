@@ -23,12 +23,15 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class HashCode : IntrinsicMethod() {
-
-    override fun toCallable(method: CallableMethod): Callable {
-        return object: IntrinsicCallable(Type.INT_TYPE, emptyList(), nullOrObject(method.dispatchReceiverType), nullOrObject(method.extensionReceiverType)) {
-            override fun invokeIntrinsic(v: InstructionAdapter) {
-                v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
+    override fun toCallable(method: CallableMethod): Callable =
+            object : IntrinsicCallable(
+                    Type.INT_TYPE,
+                    emptyList(),
+                    nullOrObject(method.dispatchReceiverType),
+                    nullOrObject(method.extensionReceiverType)
+            ) {
+                override fun invokeIntrinsic(v: InstructionAdapter) {
+                    v.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/lang/Object", "hashCode", "()I", false)
+                }
             }
-        }
-    }
 }

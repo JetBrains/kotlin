@@ -23,14 +23,17 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class ArraySet : IntrinsicMethod() {
-
     override fun toCallable(method: CallableMethod): Callable {
         val type = correctElementType(method.dispatchReceiverType)
-        return object: IntrinsicCallable(Type.VOID_TYPE, listOf(Type.INT_TYPE, type), method.dispatchReceiverType, method.extensionReceiverType) {
+        return object : IntrinsicCallable(
+                Type.VOID_TYPE,
+                listOf(Type.INT_TYPE, type),
+                method.dispatchReceiverType,
+                method.extensionReceiverType
+        ) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 v.astore(type)
             }
-
         }
     }
 }

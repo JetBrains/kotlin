@@ -23,7 +23,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 public class CompareTo : IntrinsicMethod() {
-
     private fun genInvoke(type: Type?, v: InstructionAdapter) {
         when (type) {
             Type.INT_TYPE -> v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "compare", "(II)I", false)
@@ -35,7 +34,10 @@ public class CompareTo : IntrinsicMethod() {
     }
 
     override fun toCallable(method: CallableMethod): Callable {
-        val parameterType = comparisonOperandType(method.dispatchReceiverType ?: method.extensionReceiverType, method.parameterTypes.single())
+        val parameterType = comparisonOperandType(
+                method.dispatchReceiverType ?: method.extensionReceiverType,
+                method.parameterTypes.single()
+        )
         return createBinaryIntrinsicCallable(method.returnType, parameterType, parameterType, null) {
             genInvoke(parameterType, it)
         }

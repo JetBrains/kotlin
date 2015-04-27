@@ -1922,7 +1922,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (intrinsic instanceof JavaClassProperty) {
                 //TODO: intrinsic properties (see intermediateValueForProperty)
                 Type returnType = typeMapper.mapType(memberDescriptor);
-                return ((JavaClassProperty)intrinsic).generate(this, returnType, expression, Collections.<JetExpression>emptyList(), receiver);
+                return ((JavaClassProperty) intrinsic).generate(returnType, receiver);
             }
         }
 

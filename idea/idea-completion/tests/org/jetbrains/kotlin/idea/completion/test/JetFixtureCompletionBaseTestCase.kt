@@ -18,11 +18,9 @@ package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.io.FileUtil
-import kotlin.Function1
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.project.TargetPlatform
-
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import java.io.File
 
 public abstract class JetFixtureCompletionBaseTestCase : JetLightCodeInsightFixtureTestCase() {
