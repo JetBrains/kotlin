@@ -31,7 +31,6 @@ import com.intellij.psi.PsiPackage
 import com.intellij.psi.PsiDirectory
 import org.jetbrains.kotlin.psi.psiUtil.getPackage
 import org.jetbrains.kotlin.idea.refactoring.move.getFileNameAfterMove
-import java.util.HashSet
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
+import java.util.*
 
 public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     private fun doMoveWithCheck(
@@ -68,7 +68,14 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
 
         [suppress("UNCHECKED_CAST")]
-        val elementsToSearch = elements.toList() as List<JetNamedDeclaration>
+        val elementsToSearch = elements.toSet() as Set<JetNamedDeclaration>
+
+        val sourceFile = elementsToSearch.mapTo(LinkedHashSet<JetFile>()) { it.getContainingJetFile() }.singleOrNull()
+        if (sourceFile == null) {
+            CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("move.title"), "All declarations must belong to the same file", null, project)
+            return false
+        }
+
         val targetPackageName = MoveClassesOrPackagesImpl.getInitialTargetPackageName(targetContainer, elements)
         val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
         val searchInComments = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_IN_COMMENTS
@@ -83,7 +90,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         val moveToPackage = targetContainer !is JetFile
 
         MoveKotlinTopLevelDeclarationsDialog(
-                project, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
+                project, sourceFile, elementsToSearch, targetPackageName, targetDirectory, targetFile, moveToPackage, searchInComments, searchInText, callback
         ).show()
 
         return true

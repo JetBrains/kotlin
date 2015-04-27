@@ -34,6 +34,9 @@ import com.intellij.refactoring.JavaRefactoringSettings;
 import com.intellij.refactoring.MoveDestination;
 import com.intellij.refactoring.PackageWrapper;
 import com.intellij.refactoring.RefactoringBundle;
+import com.intellij.refactoring.classMembers.DependencyMemberInfoModel;
+import com.intellij.refactoring.classMembers.MemberInfoChange;
+import com.intellij.refactoring.classMembers.UsesMemberDependencyGraph;
 import com.intellij.refactoring.move.MoveCallback;
 import com.intellij.refactoring.move.MoveHandler;
 import com.intellij.refactoring.move.moveClassesOrPackages.DestinationFolderComboBox;
@@ -43,29 +46,51 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.RecentsManager;
 import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
-import com.intellij.usageView.UsageViewUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.UIUtil;
 import kotlin.Function0;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*;
+import org.jetbrains.kotlin.idea.refactoring.ui.KotlinMemberSelectionPanel;
+import org.jetbrains.kotlin.idea.refactoring.ui.KotlinMemberSelectionTable;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
-import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private static final String RECENTS_KEY = "MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY";
 
-    private JLabel elementDescription;
+    private class MemberInfoModelImpl extends DependencyMemberInfoModel<JetNamedDeclaration, KotlinMemberInfo> {
+        public MemberInfoModelImpl() {
+            super(new UsesMemberDependencyGraph<JetNamedDeclaration, JetFile, KotlinMemberInfo>(sourceFile, null, false), WARNING);
+        }
+
+        @Override
+        @Nullable
+        public Boolean isFixedAbstract(KotlinMemberInfo member) {
+            return null;
+        }
+
+        @Override
+        public boolean isCheckedWhenDisabled(KotlinMemberInfo member) {
+            return false;
+        }
+    }
+
     private JCheckBox cbSearchInComments;
     private JCheckBox cbSearchTextOccurences;
     private JPanel mainPanel;
@@ -76,13 +101,16 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private JRadioButton rbMoveToPackage;
     private JRadioButton rbMoveToFile;
     private TextFieldWithBrowseButton fileChooser;
+    private JPanel memberInfoPanel;
+    private KotlinMemberSelectionTable memberTable;
 
-    private final List<JetNamedDeclaration> elementsToMove;
+    private final JetFile sourceFile;
     private final MoveCallback moveCallback;
 
     public MoveKotlinTopLevelDeclarationsDialog(
             @NotNull Project project,
-            @NotNull List<JetNamedDeclaration> elementsToMove,
+            @NotNull JetFile sourceFile,
+            @NotNull Set<JetNamedDeclaration> elementsToMove,
             @Nullable String targetPackageName,
             @Nullable PsiDirectory targetDirectory,
             @Nullable JetFile targetFile,
@@ -93,14 +121,12 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     ) {
         super(project, true);
 
-        this.elementsToMove = elementsToMove;
+        this.sourceFile = sourceFile;
         this.moveCallback = moveCallback;
 
         init();
 
         setTitle(MoveHandler.REFACTORING_NAME);
-
-        initElementDescription(elementsToMove);
 
         initSearchOptions(searchInComments, searchForTextOccurences);
 
@@ -110,7 +136,32 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         initMoveToButtons(moveToPackage);
 
+        initMemberInfo(elementsToMove);
+
         updateControls();
+
+        pack();
+    }
+
+    private void initMemberInfo(@NotNull final Set<JetNamedDeclaration> elementsToMove) {
+        List<KotlinMemberInfo> memberInfos = KotlinPackage.map(
+                KotlinPackage.filterIsInstance(sourceFile.getDeclarations(), JetNamedDeclaration.class),
+                new Function1<JetNamedDeclaration, KotlinMemberInfo>() {
+                    @Override
+                    public KotlinMemberInfo invoke(JetNamedDeclaration declaration) {
+                        KotlinMemberInfo memberInfo = new KotlinMemberInfo(declaration);
+                        memberInfo.setChecked(elementsToMove.contains(declaration));
+                        return memberInfo;
+                    }
+                }
+        );
+        KotlinMemberSelectionPanel selectionPanel = new KotlinMemberSelectionPanel(getTitle(), memberInfos, null);
+        memberTable = selectionPanel.getTable();
+        MemberInfoModelImpl memberInfoModel = new MemberInfoModelImpl();
+        memberInfoModel.memberInfoChanged(new MemberInfoChange<JetNamedDeclaration, KotlinMemberInfo>(memberInfos));
+        selectionPanel.getTable().setMemberInfoModel(memberInfoModel);
+        selectionPanel.getTable().addMemberInfoChangeListener(memberInfoModel);
+        memberInfoPanel.add(selectionPanel, BorderLayout.CENTER);
     }
 
     private void initPackageChooser(String targetPackageName, PsiDirectory targetDirectory) {
@@ -174,22 +225,6 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         fileChooser.addBrowseFolderListener(title, null, myProject, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
         if (targetFile != null) {
             fileChooser.setText(targetFile.getVirtualFile().getPath());
-        }
-    }
-
-    private void initElementDescription(List<JetNamedDeclaration> elementsToMove) {
-        if (elementsToMove.size() == 1) {
-            PsiElement element = elementsToMove.get(0);
-            elementDescription.setText(
-                    JetRefactoringBundle.message(
-                            "refactoring.move.specifc.element",
-                            UsageViewUtil.getType(element),
-                            UsageViewUtil.getLongName(element)
-                    )
-            );
-        }
-        else if (elementsToMove.size() > 1) {
-            elementDescription.setText(JetRefactoringBundle.message("refactoring.move.selected.elements"));
         }
     }
 
@@ -298,6 +333,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     @Nullable
     private String verifyBeforeRun() {
+        if (memberTable.getSelectedMemberInfos().isEmpty()) return "At least one member must be selected";
+
         if (isMoveToPackage()) {
             String name = getTargetPackage().trim();
             if (name.length() != 0 && !PsiNameHelper.getInstance(myProject).isQualifiedName(name)) {
@@ -312,6 +349,18 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         return null;
+    }
+
+    private List<JetNamedDeclaration> getSelectedElementsToMove() {
+        return KotlinPackage.map(
+                memberTable.getSelectedMemberInfos(),
+                new Function1<KotlinMemberInfo, JetNamedDeclaration>() {
+                    @Override
+                    public JetNamedDeclaration invoke(KotlinMemberInfo info) {
+                        return info.getMember();
+                    }
+                }
+        );
     }
 
     @Override
@@ -354,6 +403,9 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         if (target == null) return;
 
         saveRefactoringSettings();
+
+        List<JetNamedDeclaration> elementsToMove = getSelectedElementsToMove();
+
         for (PsiElement element : elementsToMove) {
             String message = target.verify(element.getContainingFile());
             if (message != null) {
