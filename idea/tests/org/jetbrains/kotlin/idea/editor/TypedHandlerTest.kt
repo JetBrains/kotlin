@@ -269,6 +269,13 @@ public class TypedHandlerTest : LightCodeInsightTestCase() {
             "        \"bar\").length()"
     )
 
+    public fun testSplitStringByEnter_ExistingParentheses(): Unit = doCharTypeTest(
+            '\n',
+            """val l = ("asdf" + "foo<caret>bar").length()""",
+            "val l = (\"asdf\" + \"foo\" +\n" +
+            "        \"bar\").length()"
+    )
+
     public fun testSplitStringByEnter_TripleQuotedString(): Unit = doCharTypeTest(
             '\n',
             "val l = \"\"\"foo<caret>bar\"\"\"",
