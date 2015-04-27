@@ -100,15 +100,15 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
         }
 
         if (codeFragment.getContext() !is JetElement) {
-            val attachments = array(attachmentByPsiFile(position.getFile()),
-                                    attachmentByPsiFile(codeFragment),
-                                    Attachment("breakpoint.info", "line: ${position.getLine()}"))
+            val attachments = arrayOf(attachmentByPsiFile(position.getFile()),
+                                      attachmentByPsiFile(codeFragment),
+                                      Attachment("breakpoint.info", "line: ${position.getLine()}"))
 
             logger.error("Trying to evaluate ${codeFragment.javaClass} with context ${codeFragment.getContext()?.javaClass}", mergeAttachments(*attachments))
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in this context")
         }
 
-        return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment as JetCodeFragment, position))
+        return ExpressionEvaluatorImpl(KotlinEvaluator(codeFragment, position))
     }
 }
 
@@ -150,9 +150,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             exception(DebuggerBundle.message("error.vm.disconnected"))
         }
         catch (e: Exception) {
-            val attachments = array(attachmentByPsiFile(sourcePosition.getFile()),
-                                    attachmentByPsiFile(codeFragment),
-                                    Attachment("breakpoint.info", "line: ${sourcePosition.getLine()}"))
+            val attachments = arrayOf(attachmentByPsiFile(sourcePosition.getFile()),
+                                      attachmentByPsiFile(codeFragment),
+                                      Attachment("breakpoint.info", "line: ${sourcePosition.getLine()}"))
             logger.error("Couldn't evaluate expression:\n" + ExceptionUtil.getThrowableText(e), mergeAttachments(*attachments))
 
             val cause = if (e.getMessage() != null) ": ${e.getMessage()}" else ""
@@ -176,8 +176,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context)
 
-            // KT-4509
-            val outputFiles = (classFileFactory : OutputFileCollection).asList()
+            val outputFiles = classFileFactory.asList()
                                     .filter { it.relativePath != "$packageInternalName.class" }
                                     .sortBy { it.relativePath.length() }
 
@@ -588,9 +587,9 @@ fun EvaluationContextImpl.findLocalVariable(name: String, asmType: Type?, checkT
                     var thisObj: Value? = thisObject.asValue()
 
                     while (result == null && thisObj != null) {
-                        result = getField(thisObj!!, name, asmType, checkType)
+                        result = getField(thisObj, name, asmType, checkType)
                         if (result == null) {
-                            thisObj = getField(thisObj!!, AsmUtil.CAPTURED_THIS_FIELD, null, false)
+                            thisObj = getField(thisObj, AsmUtil.CAPTURED_THIS_FIELD, null, false)
                         }
                     }
                     return result
@@ -626,7 +625,7 @@ fun Type.getClassDescriptor(project: Project): ClassDescriptor? {
     val jvmName = JvmClassName.byInternalName(getInternalName()).getFqNameForClassNameWithoutDollars()
 
     val platformClasses = JavaToKotlinClassMap.INSTANCE.mapPlatformClass(jvmName)
-    if (platformClasses.notEmpty) return platformClasses.first()
+    if (platformClasses.isNotEmpty()) return platformClasses.first()
 
     return runReadAction {
         val classes = JavaPsiFacade.getInstance(project).findClasses(jvmName.asString(), GlobalSearchScope.allScope(project))

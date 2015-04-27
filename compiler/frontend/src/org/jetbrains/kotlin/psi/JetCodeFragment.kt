@@ -30,6 +30,7 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.types.JetType
 import java.util.LinkedHashSet
+import java.util.regex.Pattern
 
 public abstract class JetCodeFragment(
         private val _project: Project,
@@ -96,7 +97,7 @@ public abstract class JetCodeFragment(
     }
 
     override fun importsToString(): String {
-        return myImports.join(IMPORT_SEPARATOR)
+        return myImports.join(IMPORT_SEPARATOR.pattern())
     }
 
     override fun addImportsFromString(imports: String?) {
@@ -148,7 +149,7 @@ public abstract class JetCodeFragment(
     }
 
     companion object {
-        public val IMPORT_SEPARATOR: String = ","
+        public val IMPORT_SEPARATOR: Pattern = ",".toRegex()
         public val RUNTIME_TYPE_EVALUATOR: Key<Function1<JetExpression, JetType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
     }
 }
