@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.isInlined
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
@@ -56,8 +56,8 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
     private fun getEnclosingFunction(element: JetElement): JetNamedFunction? {
         for (parent in element.parents(false)) {
             when (parent) {
-                is JetFunctionLiteral -> if (!parent.isInlined(parent.analyze())) return null
-                is JetNamedFunction -> return parent
+                is JetFunctionLiteral -> if (!InlineUtil.isInlineLambda(parent, parent.analyze(), false)) return null
+                is JetNamedFunction -> if (!InlineUtil.isInlineLambda(parent, parent.analyze(), false)) return parent
                 is JetClassOrObject -> return null
             }
         }

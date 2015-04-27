@@ -77,7 +77,7 @@ public class InlineCodegenUtil {
 
     public static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
 
-    public static final String ROOT_LABEL = "$$$$$ROOT$$$$$";
+    public static final String FIRST_FUN_LABEL = "$$$$$ROOT$$$$$";
     public static final String INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker";
     public static final String INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall";
     public static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";

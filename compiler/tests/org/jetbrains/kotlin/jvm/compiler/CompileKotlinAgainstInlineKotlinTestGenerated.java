@@ -472,6 +472,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("simpleFunctional.1.kt")
+        public void testSimpleFunctional() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/simpleFunctional.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("simpleVoid.1.kt")
         public void testSimpleVoid() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/simpleVoid.1.kt");

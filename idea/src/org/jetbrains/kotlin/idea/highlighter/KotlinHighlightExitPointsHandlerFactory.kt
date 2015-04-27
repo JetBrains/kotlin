@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.resolve.calls.callUtil.isInlined
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFactoryBase() {
     companion object {
@@ -85,8 +85,8 @@ private fun JetExpression.getRelevantFunction(): JetFunction? {
     }
     for (parent in parents(false)) {
         when (parent) {
-            is JetFunctionLiteral -> if (!parent.isInlined((parent.getParent() as JetFunctionLiteralExpression).analyze())) return parent
-            is JetNamedFunction -> return parent
+            is JetFunctionLiteral,
+            is JetNamedFunction -> if (!InlineUtil.isInlineLambda(parent as JetFunction, parent.analyze(), false)) return parent
         }
     }
     return null

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
+import com.google.common.collect.ImmutableSet;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -34,7 +35,6 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -55,10 +55,7 @@ import org.jetbrains.org.objectweb.asm.tree.LabelNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
@@ -269,33 +266,15 @@ public class InlineCodegen extends CallGenerator {
         InlineResult result = inliner.doInline(adapter, remapper, true, LabelOwner.SKIP_ALL);
         result.getReifiedTypeParametersUsages().mergeAll(reificationResult);
 
+        CallableMemberDescriptor descriptor = codegen.getContext().getContextDescriptor();
+        final Set<String> labels = getDeclarationLabels(DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor);
         LabelOwner labelOwner = new LabelOwner() {
-
-            final CallableMemberDescriptor descriptor = codegen.getContext().getContextDescriptor();
-
             @Override
             public boolean isMyLabel(@NotNull String name) {
-                if (InlineCodegenUtil.ROOT_LABEL.equals(name)) {
-                    return !isFunctionLiteral(descriptor);
-                }
-
-                //check function name if exists
-                if (descriptor.getName().asString().equals(name)) {
-                    return true;
-                }
-
-                //check functional expression labels
-                if (isFunctionExpression(descriptor)) {
-                    PsiElement element = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
-                    if (element != null && element.getParent() instanceof JetLabeledExpression) {
-                        String labelName = ((JetLabeledExpression) element.getParent()).getLabelName();
-                        return name.equals(labelName);
-                    }
-                }
-
-                return false;
+                return labels.contains(name);
             }
         };
+
         List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
         generateAndInsertFinallyBlocks(adapter, infos, ((StackValue.Local)remapper.remap(parameters.totalSize() + 1).value).index);
 
@@ -549,21 +528,33 @@ public class InlineCodegen extends CallGenerator {
 
     public void rememberClosure(JetExpression expression, Type type) {
         JetExpression lambda = JetPsiUtil.deparenthesize(expression);
-        assert isInlinableParameterExpression(lambda) :"Couldn't find inline expression in " + expression.getText();
+        assert isInlinableParameterExpression(lambda) : "Couldn't find inline expression in " + expression.getText();
 
-        String labelNameIfPresent = null;
-        PsiElement parent = lambda.getParent();
-        if (parent instanceof JetLabeledExpression) {
-            labelNameIfPresent = ((JetLabeledExpression) parent).getLabelName();
-        }
-        if (lambda instanceof JetFunctionLiteralExpression) {
-            lambda = ((JetFunctionLiteralExpression) lambda).getFunctionLiteral();
-        }
-        LambdaInfo info = new LambdaInfo(lambda, typeMapper, labelNameIfPresent);
+        LambdaInfo info = new LambdaInfo(lambda, typeMapper);
 
         ParameterInfo closureInfo = invocationParamBuilder.addNextParameter(type, true, null);
         closureInfo.setLambda(info);
         expressionMap.put(closureInfo.getIndex(), info);
+    }
+
+    @NotNull
+    protected static Set<String> getDeclarationLabels(@Nullable PsiElement lambdaOrFun, @NotNull DeclarationDescriptor descriptor) {
+        Set<String> result = new HashSet<String>();
+        if (lambdaOrFun != null) {
+            PsiElement parent = lambdaOrFun.getParent();
+            if (parent instanceof JetLabeledExpression) {
+                String labelName = ((JetLabeledExpression) parent).getLabelName();
+                assert labelName != null : "Labeled expression should have not nul label " + parent.getText();
+                result.add(labelName);
+            }
+        }
+        if (!isFunctionLiteral(descriptor)) {
+            if (!descriptor.getName().isSpecial()) {
+                result.add(descriptor.getName().asString());
+            }
+            result.add(InlineCodegenUtil.FIRST_FUN_LABEL);
+        }
+        return result;
     }
 
     private void putClosureParametersOnStack() {

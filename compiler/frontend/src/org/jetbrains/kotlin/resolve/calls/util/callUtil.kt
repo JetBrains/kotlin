@@ -179,10 +179,3 @@ public fun JetExpression.getFunctionResolvedCallWithAssert(context: BindingConte
     [suppress("UNCHECKED_CAST")]
     return resolvedCall as ResolvedCall<out FunctionDescriptor>
 }
-
-public fun JetFunctionLiteral.isInlined(bindingContext: BindingContext): Boolean {
-    val parent = this.getParent()
-    assert(parent is JetFunctionLiteralExpression) { "parent of JetFunctionLiteral is " + parent }
-
-    return InlineUtil.isInlineLambda(parent as JetFunctionLiteralExpression, bindingContext, false)
-}

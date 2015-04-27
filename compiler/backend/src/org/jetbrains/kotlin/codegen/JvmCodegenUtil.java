@@ -35,8 +35,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClass;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetFunctionLiteral;
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.JetFunction;
 import org.jetbrains.kotlin.psi.codeFragmentUtil.CodeFragmentUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -233,9 +232,8 @@ public class JvmCodegenUtil {
 
     public static boolean isLambdaWhichWillBeInlined(@NotNull BindingContext bindingContext, @NotNull DeclarationDescriptor descriptor) {
         PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
-        return declaration instanceof JetFunctionLiteral &&
-               declaration.getParent() instanceof JetFunctionLiteralExpression &&
-               InlineUtil.isInlineLambda((JetFunctionLiteralExpression) declaration.getParent(), bindingContext, false);
+        return InlineUtil.isFunctionalExpression(declaration) &&
+               InlineUtil.isInlineLambda((JetFunction)declaration, bindingContext, false);
     }
 
     @Nullable

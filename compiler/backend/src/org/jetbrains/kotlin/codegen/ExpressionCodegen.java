@@ -94,8 +94,7 @@ import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
@@ -1845,13 +1844,18 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     @Nullable
     private NonLocalReturnInfo getNonLocalReturnInfo(@NotNull CallableMemberDescriptor descriptor, @NotNull JetReturnExpression expression) {
         //call inside lambda
-        if (DescriptorUtils.isFunctionLiteral(descriptor)) {
+        if (isFunctionLiteral(descriptor) || isFunctionExpression(descriptor)) {
             if (expression.getLabelName() == null) {
-                //non labeled return couldn't be local in lambda
-                FunctionDescriptor containingFunction =
-                        BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
-                //ROOT_LABEL to prevent clashing with existing labels
-                return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), InlineCodegenUtil.ROOT_LABEL);
+                if (isFunctionLiteral(descriptor)) {
+                    //non labeled return couldn't be local in lambda
+                    FunctionDescriptor containingFunction =
+                            BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, false).getFirst();
+                    //FIRST_FUN_LABEL to prevent clashing with existing labels
+                    return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL);
+                } else {
+                    //local
+                    return null;
+                }
             }
 
             PsiElement element = bindingContext.get(LABEL_TARGET, expression.getTargetLabel());

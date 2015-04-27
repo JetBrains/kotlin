@@ -17,17 +17,19 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.psi.JetFunction
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.isInlined
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.expressions.CaptureKind
 
@@ -67,9 +69,9 @@ class CapturingInClosureChecker : CallChecker {
             context: BindingContext, scopeContainer: DeclarationDescriptor, variableParent: DeclarationDescriptor
     ): Boolean {
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer)
-        if (scopeDeclaration !is JetFunctionLiteral) return false
+        if (!InlineUtil.isFunctionalExpression(scopeDeclaration)) return false
 
-        if (scopeDeclaration.isInlined(context)) {
+        if (InlineUtil.isInlineLambda(scopeDeclaration as JetFunction, context, false)) {
             val scopeContainerParent = scopeContainer.getContainingDeclaration()
             assert(scopeContainerParent != null) { "parent is null for " + scopeContainer }
             return !isCapturedVariable(variableParent, scopeContainerParent) || isCapturedInInline(context, scopeContainerParent, variableParent)

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -27,7 +26,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
@@ -35,6 +36,7 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 
@@ -44,8 +46,8 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     private final JetTypeMapper typeMapper;
 
-    @Nullable
-    public final String labelName;
+    @NotNull
+    public final Set<String> labels;
 
     private final CalculatedClosure closure;
 
@@ -59,10 +61,11 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     private final Type closureClassType;
 
-    LambdaInfo(@NotNull JetExpression expression, @NotNull JetTypeMapper typeMapper, @Nullable String labelName) {
-        this.expression = expression;
+    LambdaInfo(@NotNull JetExpression expr, @NotNull JetTypeMapper typeMapper) {
+        this.expression = expr instanceof JetFunctionLiteralExpression ?
+                          ((JetFunctionLiteralExpression) expr).getFunctionLiteral() : expr;
+
         this.typeMapper = typeMapper;
-        this.labelName = labelName;
         BindingContext bindingContext = typeMapper.getBindingContext();
         functionDescriptor = bindingContext.get(BindingContext.FUNCTION, expression);
         assert functionDescriptor != null : "Function is not resolved to descriptor: " + expression.getText();
@@ -72,6 +75,9 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
         closure = bindingContext.get(CLOSURE, classDescriptor);
         assert closure != null : "Closure for lambda should be not null " + expression.getText();
+
+
+        labels = InlineCodegen.getDeclarationLabels(expr, functionDescriptor);
     }
 
     public SMAPAndMethodNode getNode() {
@@ -171,7 +177,7 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     @Override
     public boolean isMyLabel(@NotNull String name) {
-        return name.equals(labelName);
+        return labels.contains(name);
     }
 
 }
