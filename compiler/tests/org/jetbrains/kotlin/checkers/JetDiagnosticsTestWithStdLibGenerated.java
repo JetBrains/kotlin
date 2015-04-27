@@ -909,6 +909,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
                 doTest(fileName);
             }
 
+            @TestMetadata("kt7564.kt")
+            public void testKt7564() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/kt7564.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localVariable.kt")
             public void testLocalVariable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/callableReference/property/localVariable.kt");

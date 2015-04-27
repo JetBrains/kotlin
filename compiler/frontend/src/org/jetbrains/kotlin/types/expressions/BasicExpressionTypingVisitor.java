@@ -619,7 +619,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         JetSimpleNameExpression reference = expression.getCallableReference();
 
         boolean[] result = new boolean[1];
-        CallableDescriptor descriptor = resolveCallableReferenceTarget(lhsType, context, expression, result);
+        CallableDescriptor descriptor = resolveCallableReferenceTarget(
+                lhsType, context.replaceContextDependency(INDEPENDENT), expression, result);
 
         if (!result[0]) {
             context.trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
