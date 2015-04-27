@@ -1,7 +1,7 @@
 fun foo() {
   return
   return 1
-  return (@a 1)
+  return (a@ 1)
 
   return@
   return@ 1
@@ -10,8 +10,8 @@ fun foo() {
 
   return@a
   return@a 1
-  return@a (@a 1)
-  return@a @a 1
+  return@a (a@ 1)
+  return@a a@ 1
 
   return@@
   return@@ 1
@@ -24,7 +24,7 @@ fun foo() {
   continue@
   continue@a
 
-  a.filter @f{
+  a.filter f@{
       if (1) return
       return@f true
   }

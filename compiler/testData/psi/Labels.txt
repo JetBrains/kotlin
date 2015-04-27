@@ -29,7 +29,8 @@ JetFile: Labels.kt
           LABELED_EXPRESSION
             LABEL_QUALIFIER
               LABEL
-                PsiElement(LABEL_IDENTIFIER)('@a')
+                PsiElement(IDENTIFIER)('a')
+                PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
@@ -38,12 +39,12 @@ JetFile: Labels.kt
       RETURN
         PsiElement(return)('return')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
       PsiWhiteSpace('\n  ')
       RETURN
         PsiElement(return)('return')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
@@ -51,13 +52,13 @@ JetFile: Labels.kt
       RETURN
         PsiElement(return)('return')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
         PsiWhiteSpace(' ')
         PARENTHESIZED
           PsiElement(LPAR)('(')
           LABELED_EXPRESSION
             PsiErrorElement:Label must be named
-              PsiElement(LABEL_IDENTIFIER)('@')
+              PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
@@ -66,11 +67,11 @@ JetFile: Labels.kt
       RETURN
         PsiElement(return)('return')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
         PsiWhiteSpace(' ')
         LABELED_EXPRESSION
           PsiErrorElement:Label must be named
-            PsiElement(LABEL_IDENTIFIER)('@')
+            PsiElement(AT)('@')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
@@ -79,13 +80,15 @@ JetFile: Labels.kt
         PsiElement(return)('return')
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace('\n  ')
       RETURN
         PsiElement(return)('return')
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
@@ -94,14 +97,16 @@ JetFile: Labels.kt
         PsiElement(return)('return')
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PARENTHESIZED
           PsiElement(LPAR)('(')
           LABELED_EXPRESSION
             LABEL_QUALIFIER
               LABEL
-                PsiElement(LABEL_IDENTIFIER)('@a')
+                PsiElement(IDENTIFIER)('a')
+                PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
               PsiElement(INTEGER_LITERAL)('1')
@@ -111,12 +116,14 @@ JetFile: Labels.kt
         PsiElement(return)('return')
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         LABELED_EXPRESSION
           LABEL_QUALIFIER
             LABEL
-              PsiElement(LABEL_IDENTIFIER)('@a')
+              PsiElement(IDENTIFIER)('a')
+              PsiElement(AT)('@')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
@@ -124,18 +131,18 @@ JetFile: Labels.kt
       RETURN
         PsiElement(return)('return')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
         LABELED_EXPRESSION
           PsiErrorElement:Label must be named
-            PsiElement(LABEL_IDENTIFIER)('@')
+            PsiElement(AT)('@')
           PsiWhiteSpace('\n  ')
           RETURN
             PsiElement(return)('return')
             PsiErrorElement:Label must be named
-              PsiElement(LABEL_IDENTIFIER)('@')
+              PsiElement(AT)('@')
             LABELED_EXPRESSION
               PsiErrorElement:Label must be named
-                PsiElement(LABEL_IDENTIFIER)('@')
+                PsiElement(AT)('@')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
                 PsiElement(INTEGER_LITERAL)('1')
@@ -146,13 +153,14 @@ JetFile: Labels.kt
       BREAK
         PsiElement(break)('break')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
       PsiWhiteSpace('\n  ')
       BREAK
         PsiElement(break)('break')
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace('\n\n  ')
       CONTINUE
         PsiElement(continue)('continue')
@@ -160,13 +168,14 @@ JetFile: Labels.kt
       CONTINUE
         PsiElement(continue)('continue')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
       PsiWhiteSpace('\n  ')
       CONTINUE
         PsiElement(continue)('continue')
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace('\n\n  ')
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
@@ -180,7 +189,8 @@ JetFile: Labels.kt
             LABELED_EXPRESSION
               LABEL_QUALIFIER
                 LABEL
-                  PsiElement(LABEL_IDENTIFIER)('@f')
+                  PsiElement(IDENTIFIER)('f')
+                  PsiElement(AT)('@')
               FUNCTION_LITERAL_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
@@ -203,7 +213,8 @@ JetFile: Labels.kt
                       PsiElement(return)('return')
                       LABEL_QUALIFIER
                         LABEL
-                          PsiElement(LABEL_IDENTIFIER)('@f')
+                          PsiElement(AT)('@')
+                          PsiElement(IDENTIFIER)('f')
                       PsiWhiteSpace(' ')
                       BOOLEAN_CONSTANT
                         PsiElement(true)('true')
@@ -221,7 +232,7 @@ JetFile: Labels.kt
           FUNCTION_LITERAL_ARGUMENT
             LABELED_EXPRESSION
               PsiErrorElement:Label must be named
-                PsiElement(LABEL_IDENTIFIER)('@')
+                PsiElement(AT)('@')
               FUNCTION_LITERAL_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
@@ -243,7 +254,7 @@ JetFile: Labels.kt
                     RETURN
                       PsiElement(return)('return')
                       PsiErrorElement:Label must be named
-                        PsiElement(LABEL_IDENTIFIER)('@')
+                        PsiElement(AT)('@')
                       PsiWhiteSpace(' ')
                       BOOLEAN_CONSTANT
                         PsiElement(true)('true')
@@ -258,14 +269,15 @@ JetFile: Labels.kt
         REFERENCE_EXPRESSION
           PsiElement(this)('this')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
       PsiWhiteSpace('\n  ')
       THIS_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(this)('this')
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace('\n\n  ')
       SUPER_EXPRESSION
         REFERENCE_EXPRESSION
@@ -287,7 +299,7 @@ JetFile: Labels.kt
               PsiElement(IDENTIFIER)('A')
         PsiElement(GT)('>')
         PsiErrorElement:Label must be named
-          PsiElement(LABEL_IDENTIFIER)('@')
+          PsiElement(AT)('@')
       PsiWhiteSpace('\n  ')
       SUPER_EXPRESSION
         REFERENCE_EXPRESSION
@@ -300,6 +312,7 @@ JetFile: Labels.kt
         PsiElement(GT)('>')
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@a')
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('a')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

@@ -84,7 +84,6 @@ PLAIN_IDENTIFIER={LETTER} {IDENTIFIER_PART}*
 ESCAPED_IDENTIFIER = `[^`\n]+`
 IDENTIFIER = {PLAIN_IDENTIFIER}|{ESCAPED_IDENTIFIER}
 FIELD_IDENTIFIER = \${IDENTIFIER}
-LABEL_IDENTIFIER = \@{IDENTIFIER}?
 
 EOL_COMMENT="/""/"[^\n]*
 SHEBANG_COMMENT="#!"[^\n]*
@@ -273,7 +272,6 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 
 {FIELD_IDENTIFIER} { return JetTokens.FIELD_IDENTIFIER; }
 {IDENTIFIER} { return JetTokens.IDENTIFIER; }
-{LABEL_IDENTIFIER}   { return JetTokens.LABEL_IDENTIFIER; }
 \!in{IDENTIFIER_PART}        { yypushback(3); return JetTokens.EXCL; }
 \!is{IDENTIFIER_PART}        { yypushback(3); return JetTokens.EXCL; }
 
@@ -325,6 +323,7 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 "="          { return JetTokens.EQ        ; }
 ","          { return JetTokens.COMMA     ; }
 "#"          { return JetTokens.HASH      ; }
+"@"          { return JetTokens.AT        ; }
 
 // error fallback
 .            { return TokenType.BAD_CHARACTER; }

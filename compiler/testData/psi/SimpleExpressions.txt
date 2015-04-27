@@ -552,10 +552,10 @@ JetFile: SimpleExpressions.kt
         PsiWhiteSpace(' ')
         BREAK
           PsiElement(break)('break')
-          PsiWhiteSpace(' ')
           LABEL_QUALIFIER
             LABEL
-              PsiElement(LABEL_IDENTIFIER)('@la')
+              PsiElement(AT)('@')
+              PsiElement(IDENTIFIER)('la')
       PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       VALUE_PARAMETER
@@ -588,10 +588,10 @@ JetFile: SimpleExpressions.kt
         PsiWhiteSpace(' ')
         CONTINUE
           PsiElement(continue)('continue')
-          PsiWhiteSpace(' ')
           LABEL_QUALIFIER
             LABEL
-              PsiElement(LABEL_IDENTIFIER)('@la')
+              PsiElement(AT)('@')
+              PsiElement(IDENTIFIER)('la')
       PsiElement(COMMA)(',')
       PsiWhiteSpace('\n    ')
       VALUE_PARAMETER
@@ -700,14 +700,15 @@ JetFile: SimpleExpressions.kt
       LABELED_EXPRESSION
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@la')
+            PsiElement(IDENTIFIER)('la')
+            PsiElement(AT)('@')
         PsiWhiteSpace('\n    ')
         BREAK
           PsiElement(break)('break')
-          PsiWhiteSpace(' ')
           LABEL_QUALIFIER
             LABEL
-              PsiElement(LABEL_IDENTIFIER)('@la')
+              PsiElement(AT)('@')
+              PsiElement(IDENTIFIER)('la')
       PsiWhiteSpace('\n    ')
       CONTINUE
         PsiElement(continue)('continue')
@@ -715,13 +716,14 @@ JetFile: SimpleExpressions.kt
       LABELED_EXPRESSION
         LABEL_QUALIFIER
           LABEL
-            PsiElement(LABEL_IDENTIFIER)('@la')
+            PsiElement(IDENTIFIER)('la')
+            PsiElement(AT)('@')
         PsiWhiteSpace('\n    ')
         CONTINUE
           PsiElement(continue)('continue')
-          PsiWhiteSpace(' ')
           LABEL_QUALIFIER
             LABEL
-              PsiElement(LABEL_IDENTIFIER)('@la')
+              PsiElement(AT)('@')
+              PsiElement(IDENTIFIER)('la')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

@@ -8,7 +8,7 @@
 | Precedence | Title | Symbols |
 |------------|-------|---------|
 | Highest    | Postfix | `++`, `--`, `.`, `?.`, `?` |
-| | Prefix | `-`, `+`, `++`, `--`, `!`, [`@label`](#LabelName), `@`, `@@` |
+| | Prefix | `-`, `+`, `++`, `--`, `!`, [`labelDefinition@`](#IDENTIFIER)`@` |
 | | Type RHS | `:`, `as`, `as?` |
 | | Multiplicative | `*`, `/`, `%` |
 | | Additive | `+`, `-` |
@@ -112,8 +112,8 @@ atomicExpression
   : "(" expression ")"
   : literalConstant
   : functionLiteral
-  : "this" label?
-  : "super" ("<" type ">")? label?
+  : "this" labelReference?
+  : "super" ("<" type ">")? labelReference?
   : if
   : when
   : try
@@ -125,10 +125,12 @@ atomicExpression
   : "package" // for the root package
   ;
 
-label
-  : "@"
-  : "@@"
-  : LabelName
+labelReference
+  : "@" LabelName
+  ;
+
+labelDefinition
+  : LabelName "@"
   ;
 
 literalConstant
@@ -212,7 +214,7 @@ prefixUnaryOperation
   : "++" : "--"
   : "!"  // No ~
   : annotations // mandatory
-  : label
+  : labelDefinition
   ;
 
 postfixUnaryOperation
@@ -223,8 +225,8 @@ postfixUnaryOperation
   ;
 
 callSuffix
-  : typeArguments? valueArguments (label? functionLiteral)
-  : typeArguments (label? functionLiteral)
+  : typeArguments? valueArguments (labelDefinition? functionLiteral)
+  : typeArguments (labelDefinition? functionLiteral)
   ;
 
 memberAccessOperation
@@ -241,9 +243,9 @@ valueArguments
 
 jump
   : "throw" expression
-  : "return" label? expression?
-  : "continue" label?
-  : "break" label?
+  : "return" labelReference? expression?
+  : "continue" labelReference?
+  : "break" labelReference?
 // yield ?
   ;
 

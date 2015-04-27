@@ -71,7 +71,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             // Prefix
             MINUS, PLUS, MINUSMINUS, PLUSPLUS,
             EXCL, EXCLEXCL, // Joining complex tokens makes it necessary to put EXCLEXCL here
-            LBRACKET, LABEL_IDENTIFIER,
+            LBRACKET,
             // Atomic
 
             COLONCOLON, // callable reference
@@ -112,7 +112,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
             IDENTIFIER, // SimpleName
             FIELD_IDENTIFIER, // Field reference
 
-            PACKAGE_KEYWORD // for absolute qualified names
+            PACKAGE_KEYWORD, // for absolute qualified names
+            AT // Just for better recovery and maybe for annotations
     );
 
     private static final TokenSet STATEMENT_FIRST = TokenSet.orSet(
@@ -143,7 +144,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         POSTFIX(PLUSPLUS, MINUSMINUS, EXCLEXCL,
                 DOT, SAFE_ACCESS), // typeArguments? valueArguments : typeArguments : arrayAccess
 
-        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL, LABEL_IDENTIFIER) { // annotations
+        PREFIX(MINUS, PLUS, MINUSMINUS, PLUSPLUS, EXCL) { // annotations
 
             @Override
             public void parseHigherPrecedence(JetExpressionParsing parser) {
@@ -328,9 +329,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * label prefixExpression
      */
     private void parseLabeledExpression() {
-        assert _at(LABEL_IDENTIFIER);
         PsiBuilder.Marker expression = mark();
-        parseLabel();
+        parseLabelDefinition();
         parsePrefixExpression();
         expression.done(LABELED_EXPRESSION);
     }
@@ -351,7 +351,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
         else {
             myBuilder.disableJoiningComplexTokens();
-            if (at(LABEL_IDENTIFIER)) {
+            if (isAtLabelDefinitionOrMissingIdentifier()) {
                 myBuilder.restoreJoiningComplexTokensState();
                 parseLabeledExpression();
             }
@@ -532,10 +532,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     protected boolean parseCallWithClosure() {
         boolean success = false;
-        while ((at(LBRACE) || at(LABEL_IDENTIFIER) && lookahead(1) == LBRACE)) {
+
+        while (at(LBRACE) || isAtLabelDefinitionBeforeLBrace()) {
             PsiBuilder.Marker argument = mark();
             if (!at(LBRACE)) {
-                assert _at(LABEL_IDENTIFIER);
                 parseLabeledExpression();
             }
             else {
@@ -546,6 +546,19 @@ public class JetExpressionParsing extends AbstractJetParsing {
         }
 
         return success;
+    }
+
+    private boolean isAtLabelDefinitionBeforeLBrace() {
+        if (at(IDENTIFIER)) {
+            if (myBuilder.rawLookup(1) != AT) return false;
+            return lookahead(2) == LBRACE;
+        }
+
+        return at(AT) && lookahead(1) == LBRACE;
+    }
+
+    private boolean isAtLabelDefinitionOrMissingIdentifier() {
+        return (at(IDENTIFIER) && myBuilder.rawLookup(1) == AT) || at(AT);
     }
 
     /*
@@ -982,7 +995,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         if (declType != null) {
             // we do not attach preceding comments (non-doc) to local variables because they are likely commenting a few statements below
-            closeDeclarationWithCommentBinders(decl, declType, declType != JetNodeTypes.PROPERTY && declType != JetNodeTypes.MULTI_VARIABLE_DECLARATION);
+            closeDeclarationWithCommentBinders(decl, declType,
+                                               declType != JetNodeTypes.PROPERTY && declType != JetNodeTypes.MULTI_VARIABLE_DECLARATION);
             return true;
         }
         else {
@@ -1450,10 +1464,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(LBRACE)) {
             parseFunctionLiteral(true);
         }
-        else if (at(LABEL_IDENTIFIER) && lookahead(1) == LBRACE ) {
+        else if (isAtLabelDefinitionBeforeLBrace()) {
             PsiBuilder.Marker mark = mark();
 
-            parseLabel();
+            parseLabelDefinition();
 
             parseFunctionLiteral(true);
 
@@ -1609,7 +1623,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // BREAK_KEYWORD or CONTINUE_KEYWORD
 
-        parseLabelOnTheSameLine();
+        parseLabelReferenceWithNoWhitespace();
 
         marker.done(type);
     }
@@ -1624,7 +1638,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
         advance(); // RETURN_KEYWORD
 
-        parseLabelOnTheSameLine();
+        parseLabelReferenceWithNoWhitespace();
 
         if (atSet(EXPRESSION_FIRST) && !at(EOL_OR_SEMICOLON)) parseExpression();
 
@@ -1634,28 +1648,55 @@ public class JetExpressionParsing extends AbstractJetParsing {
     /*
      * label?
      */
-    private void parseLabelOnTheSameLine() {
-        if (!eol() && at(LABEL_IDENTIFIER)) {
-            parseLabel();
+    private void parseLabelReferenceWithNoWhitespace() {
+        if (at(AT) && !WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1))) {
+            parseLabelReference();
         }
     }
 
     /*
-     * label
+     * IDENTIFIER "@"
      */
-    private void parseLabel() {
-        assert _at(LABEL_IDENTIFIER);
-
-        String labelText = myBuilder.getTokenText();
-        if ("@".equals(labelText)) {
-            errorAndAdvance("Label must be named");
+    private void parseLabelDefinition() {
+        if (at(AT)) {
+            // recovery for empty label identifier
+            errorAndAdvance("Label must be named"); // AT
             return;
         }
 
         PsiBuilder.Marker labelWrap = mark();
+        PsiBuilder.Marker mark = mark();
+
+        assert _at(IDENTIFIER) && myBuilder.rawLookup(1) == AT : "Callers must check that current token is IDENTIFIER followed with '@'";
+
+        advance(); // IDENTIFIER
+        advance(); // AT
+
+        mark.done(LABEL);
+
+        labelWrap.done(LABEL_QUALIFIER);
+    }
+
+    /*
+     * "@" IDENTIFIER
+     */
+    private void parseLabelReference() {
+        assert _at(AT);
+
+        PsiBuilder.Marker labelWrap = mark();
 
         PsiBuilder.Marker mark = mark();
-        advance(); // LABEL_IDENTIFIER
+
+        if (myBuilder.rawLookup(1) != IDENTIFIER) {
+            errorAndAdvance("Label must be named"); // AT
+            labelWrap.drop();
+            mark.drop();
+            return;
+        }
+
+        advance(); // AT
+        advance(); // IDENTIFIER
+
         mark.done(LABEL);
 
         labelWrap.done(LABEL_QUALIFIER);
@@ -1753,7 +1794,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         advance(); // THIS_KEYWORD
         thisReference.done(REFERENCE_EXPRESSION);
 
-        parseLabelOnTheSameLine();
+        parseLabelReferenceWithNoWhitespace();
 
         mark.done(THIS_EXPRESSION);
     }
@@ -1787,7 +1828,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             }
             myBuilder.restoreNewlinesState();
         }
-        parseLabelOnTheSameLine();
+        parseLabelReferenceWithNoWhitespace();
 
         mark.done(SUPER_EXPRESSION);
     }

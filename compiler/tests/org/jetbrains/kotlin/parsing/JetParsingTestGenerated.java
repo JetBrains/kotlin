@@ -1201,6 +1201,39 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             }
         }
 
+        @TestMetadata("compiler/testData/psi/newLabels")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NewLabels extends AbstractJetParsingTest {
+            public void testAllFilesPresentInNewLabels() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/newLabels"), Pattern.compile("^(.*)\\.kts?$"), true);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/newLabels/basic.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("oldSyntaxExpressions.kt")
+            public void testOldSyntaxExpressions() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/newLabels/oldSyntaxExpressions.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("recovery.kt")
+            public void testRecovery() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/newLabels/recovery.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("spaceBeforeLabelReference.kt")
+            public void testSpaceBeforeLabelReference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/newLabels/spaceBeforeLabelReference.kt");
+                doParsingTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/psi/packages")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

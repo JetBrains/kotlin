@@ -3,9 +3,9 @@ fun a(
     a : foo = throw Foo(),
     a : foo = return 10,
     a : foo = break,
-    a : foo = break @la,
+    a : foo = break@la,
     a : foo = continue,
-    a : foo = continue @la,
+    a : foo = continue@la,
     a : foo = if (10) foo else bar,
     a : foo = if (10) foo
 ) {
@@ -13,11 +13,11 @@ fun a(
   return
   10
   break
-  @la
-  break @la
+  la@
+  break@la
   continue
-  @la
-  continue @la
+  la@
+  continue@la
   if (foo)
     if (foo)
       bar

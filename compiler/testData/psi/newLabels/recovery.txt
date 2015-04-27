@@ -1,0 +1,268 @@
+JetFile: recovery.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x2')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('c')
+        PsiWhiteSpace(' ')
+        LABELED_EXPRESSION
+          PsiErrorElement:Label must be named
+            PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace(' ')
+              PsiComment(EOL_COMMENT)('// should be no space after c')
+              PsiWhiteSpace('\n        ')
+              BLOCK
+                RETURN
+                  PsiElement(return)('return')
+                  PsiWhiteSpace(' ')
+                  INTEGER_CONSTANT
+                    PsiElement(INTEGER_LITERAL)('2')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x3')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL_ARGUMENT
+            LABELED_EXPRESSION
+              PsiErrorElement:Label must be named
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace(' ')
+                  PsiComment(EOL_COMMENT)('// no label identifier')
+                  PsiWhiteSpace('\n        ')
+                  BLOCK
+                    RETURN
+                      PsiElement(return)('return')
+                      PsiWhiteSpace(' ')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('3')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('loop2')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        PsiElement(IDENTIFIER)('i')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        PsiElement(INTEGER_LITERAL)('1')
+        PsiElement(RANGE)('..')
+        PsiElement(INTEGER_LITERAL)('100')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// should be no space after loop2')
+          PsiWhiteSpace('\n        ')
+          BLOCK
+            RETURN
+              PsiElement(return)('return')
+              PsiErrorElement:Label must be named
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('loop2')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(INTEGER_LITERAL)('5')
+            PsiWhiteSpace('\n        ')
+            RETURN
+              PsiElement(return)('return')
+              PsiWhiteSpace(' ')
+              LABELED_EXPRESSION
+                PsiErrorElement:Label must be named
+                  PsiElement(AT)('@')
+                PsiWhiteSpace(' ')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('loop2')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(INTEGER_LITERAL)('7')
+            PsiWhiteSpace('\n        ')
+            RETURN
+              PsiElement(return)('return')
+            PsiWhiteSpace('\n        ')
+            LABELED_EXPRESSION
+              PsiErrorElement:Label must be named
+                PsiElement(AT)('@')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('loop2')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(INTEGER_LITERAL)('4')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      LABELED_EXPRESSION
+        PsiErrorElement:Label must be named
+          PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        WHILE
+          PsiElement(while)('while')
+          PsiWhiteSpace(' ')
+          PsiElement(LPAR)('(')
+          CONDITION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BODY
+            BLOCK
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace('\n        ')
+              RETURN
+                PsiElement(return)('return')
+                PsiWhiteSpace(' ')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('123')
+              PsiWhiteSpace('\n    ')
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('label2')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BLOCK
+            <empty list>
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('  ')
+      PsiComment(EOL_COMMENT)('// should be no space after label2')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          LABELED_EXPRESSION
+            LABEL_QUALIFIER
+              LABEL
+                PsiElement(IDENTIFIER)('label3')
+                PsiElement(AT)('@')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('3')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(PLUS)('+')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('4')
+      PsiWhiteSpace('\n\n    ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('l1')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('bar')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('l2')
+        PsiWhiteSpace(' ')
+        PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('baz')
+      PsiWhiteSpace(' ')
+      PsiComment(EOL_COMMENT)('// binary expression with extra spaces')
+      PsiWhiteSpace('\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('foo')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(IDENTIFIER)('l3')
+            PsiWhiteSpace(' ')
+            LABELED_EXPRESSION
+              PsiErrorElement:Label must be named
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(IDENTIFIER)('baz')
+          PsiWhiteSpace(' ')
+          PsiComment(EOL_COMMENT)('// binary expression with `@ bar` parsed as wrong label')
+          PsiWhiteSpace('\n\n    ')
+          LABELED_EXPRESSION
+            LABEL_QUALIFIER
+              LABEL
+                PsiElement(IDENTIFIER)('foo')
+                PsiElement(AT)('@')
+            PsiWhiteSpace(' ')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('bar')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('baz')
+        PsiWhiteSpace(' ')
+        PsiComment(EOL_COMMENT)('// binary expression labeled `bar` and return as second arg')
+        PsiWhiteSpace('\n\n    ')
+        RETURN
+          PsiElement(return)('return')
+          PsiWhiteSpace(' ')
+          LABELED_EXPRESSION
+            PsiErrorElement:Label must be named
+              PsiElement(AT)('@')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

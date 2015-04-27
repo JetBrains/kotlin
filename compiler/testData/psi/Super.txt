@@ -76,7 +76,8 @@ JetFile: Super.kt
           PsiElement(GT)('>')
           LABEL_QUALIFIER
             LABEL
-              PsiElement(LABEL_IDENTIFIER)('@label')
+              PsiElement(AT)('@')
+              PsiElement(IDENTIFIER)('label')
         PsiElement(DOT)('.')
         CALL_EXPRESSION
           REFERENCE_EXPRESSION
