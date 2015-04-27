@@ -68,7 +68,7 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
 
             try {
                 if (isWithRuntime) {
-                    ConfigLibraryUtil.configureKotlinRuntime(
+                    ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
                             myFixture.getModule(),
                             if (fullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
                     )
@@ -85,7 +85,7 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
             }
             finally {
                 if (isWithRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntime(myFixture.getModule(), IdeaTestUtil.getMockJdk17())
+                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.getModule(), IdeaTestUtil.getMockJdk17())
                 }
             }
         }

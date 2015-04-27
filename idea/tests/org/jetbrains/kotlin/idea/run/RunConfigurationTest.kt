@@ -41,8 +41,8 @@ import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntime
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntime
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntimeAndSdk
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
@@ -91,11 +91,11 @@ class RunConfigurationTest: CodeInsightTestCase() {
     }
 
     fun testClassesAndObjects() {
-        doTest(ConfigLibraryUtil::configureKotlinRuntime)
+        doTest(ConfigLibraryUtil::configureKotlinRuntimeAndSdk)
     }
 
     fun testInJsModule() {
-        doTest(ConfigLibraryUtil::configureKotlinJsRuntime)
+        doTest(ConfigLibraryUtil::configureKotlinJsRuntimeAndSdk)
     }
 
     private fun doTest(configureRuntime: (Module, Sdk) -> Unit) {
@@ -133,7 +133,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
             Assert.assertEquals(expectedClasses, actualClasses)
         }
         finally {
-            ConfigLibraryUtil.unConfigureKotlinRuntime(createModuleResult.module, PluginTestCaseBase.mockJdk())
+            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(createModuleResult.module, PluginTestCaseBase.mockJdk())
         }
     }
 
