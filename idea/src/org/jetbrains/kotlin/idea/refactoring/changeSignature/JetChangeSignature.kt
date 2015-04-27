@@ -43,9 +43,9 @@ public trait JetChangeSignatureConfiguration {
     }
 }
 
-fun JetMethodDescriptor.modify(action: JetMutableMethodDescriptor.() -> Unit): JetMethodDescriptor {
+fun JetMethodDescriptor.modify(action: (JetMutableMethodDescriptor) -> Unit): JetMethodDescriptor {
     val newDescriptor = JetMutableMethodDescriptor(this)
-    newDescriptor.action()
+    action(newDescriptor)
     return newDescriptor
 }
 

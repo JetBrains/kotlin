@@ -51,7 +51,7 @@ public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
 
         val changeSignatureConfiguration = object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
-                return originalDescriptor.modify { renameParameter(paramIndex, newName) }
+                return originalDescriptor.modify { it.renameParameter(paramIndex, newName) }
             }
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>) = true

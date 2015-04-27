@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.org.objectweb.asm.Label
 
 class CoercionValue(
         val value: StackValue,
@@ -47,7 +46,7 @@ class CoercionValue(
 
 public class StackValueWithLeaveTask(
         val stackValue: StackValue,
-        val leaveTasks: StackValueWithLeaveTask.() -> Unit
+        val leaveTasks: (StackValue) -> Unit
 ) : StackValue(stackValue.type) {
 
     override fun putReceiver(v: InstructionAdapter, isRead: Boolean) {
@@ -56,7 +55,7 @@ public class StackValueWithLeaveTask(
 
     override fun putSelector(type: Type, v: InstructionAdapter) {
         stackValue.putSelector(type, v)
-        leaveTasks()
+        leaveTasks(stackValue)
     }
 }
 

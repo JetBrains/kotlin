@@ -24,7 +24,6 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.Stack;
-import kotlin.ExtensionFunction0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
 import kotlin.Unit;
@@ -1584,14 +1583,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             addLeaveTaskToRemoveDescriptorFromFrameMap(statement, blockEnd, leaveTasks);
         }
 
-        return new StackValueWithLeaveTask(answer, new ExtensionFunction0<StackValueWithLeaveTask, Unit>() {
+        return new StackValueWithLeaveTask(answer, new Function1<StackValue, Unit>() {
             @Override
-            public Unit invoke(StackValueWithLeaveTask wrapper) {
+            public Unit invoke(StackValue value) {
                 if (labelBlockEnd == null) {
                     v.mark(blockEnd);
                 }
                 for (Function<StackValue, Void> task : Lists.reverse(leaveTasks)) {
-                    task.fun(wrapper.getStackValue());
+                    task.fun(value);
                 }
                 return Unit.INSTANCE$;
             }

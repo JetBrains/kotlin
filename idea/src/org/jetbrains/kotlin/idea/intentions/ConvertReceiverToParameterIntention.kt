@@ -16,26 +16,26 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetNamedFunction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetTypeReference
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetTypeReference
+import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertReceiverToParameterIntention: JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Convert receiver to parameter") {
+public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Convert receiver to parameter") {
     override fun isApplicableTo(element: JetTypeReference): Boolean {
         return (element.getParent() as? JetNamedFunction)?.getReceiverTypeReference() == element
     }
 
     private fun configureChangeSignature(): JetChangeSignatureConfiguration {
-        return object: JetChangeSignatureConfiguration {
+        return object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
-                return originalDescriptor.modify { receiver = null }
+                return originalDescriptor.modify { it.receiver = null }
             }
         }
     }

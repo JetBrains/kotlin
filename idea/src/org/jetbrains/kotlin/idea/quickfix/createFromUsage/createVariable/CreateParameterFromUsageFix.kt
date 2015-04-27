@@ -16,27 +16,23 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
-import org.jetbrains.kotlin.idea.JetBundle
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
-import org.jetbrains.kotlin.resolve.BindingContext
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.BindingContext
 
 public class CreateParameterFromUsageFix(
         val functionDescriptor: FunctionDescriptor,
         val bindingContext: BindingContext,
         val parameterInfo: JetParameterInfo,
         val defaultValueContext: JetElement
-): CreateFromUsageFixBase(defaultValueContext) {
+) : CreateFromUsageFixBase(defaultValueContext) {
     override fun getText(): String {
         return JetBundle.message("create.parameter.from.usage", parameterInfo.getName())
     }
@@ -44,7 +40,7 @@ public class CreateParameterFromUsageFix(
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
         val config = object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
-                return originalDescriptor.modify { addParameter(parameterInfo) }
+                return originalDescriptor.modify { it.addParameter(parameterInfo) }
             }
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false

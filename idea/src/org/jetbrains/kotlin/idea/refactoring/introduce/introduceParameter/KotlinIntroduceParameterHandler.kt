@@ -118,10 +118,10 @@ fun IntroduceParameterDescriptor.performRefactoring() {
     runWriteAction {
         val config = object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
-                return originalDescriptor.modify {
+                return originalDescriptor.modify { methodDescriptor ->
                     if (!withDefaultValue) {
                         val parameters = callable.getValueParameters()
-                        parametersToRemove.map { parameters.indexOf(it) }.sortDescending().forEach { removeParameter(it) }
+                        parametersToRemove.map { parameters.indexOf(it) }.sortDescending().forEach { methodDescriptor.removeParameter(it) }
                     }
 
                     val parameterInfo = JetParameterInfo(functionDescriptor = callableDescriptor,
@@ -130,7 +130,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                                                          defaultValueForParameter = if (withDefaultValue) newArgumentValue else null,
                                                          valOrVar = valVar)
                     parameterInfo.currentTypeText = newParameterTypeText
-                    addParameter(parameterInfo)
+                    methodDescriptor.addParameter(parameterInfo)
                 }
             }
 

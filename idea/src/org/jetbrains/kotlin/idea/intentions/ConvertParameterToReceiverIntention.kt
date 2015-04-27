@@ -16,20 +16,19 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetNamedFunction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureConfiguration
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
+import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertParameterToReceiverIntention: JetSelfTargetingIntention<JetParameter>(javaClass(), "Convert parameter to receiver") {
+public class ConvertParameterToReceiverIntention : JetSelfTargetingIntention<JetParameter>(javaClass(), "Convert parameter to receiver") {
     override fun isApplicableTo(element: JetParameter, caretOffset: Int): Boolean {
         val identifier = element.getNameIdentifier() ?: return false
         if (!identifier.getTextRange().containsOffset(caretOffset)) return false
@@ -39,9 +38,9 @@ public class ConvertParameterToReceiverIntention: JetSelfTargetingIntention<JetP
     }
 
     private fun configureChangeSignature(parameterIndex: Int): JetChangeSignatureConfiguration {
-        return object: JetChangeSignatureConfiguration {
+        return object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
-                return originalDescriptor.modify { receiver = originalDescriptor.getParameters()[parameterIndex] }
+                return originalDescriptor.modify { it.receiver = originalDescriptor.getParameters()[parameterIndex] }
             }
         }
     }
