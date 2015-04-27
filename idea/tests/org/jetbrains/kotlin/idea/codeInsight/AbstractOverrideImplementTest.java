@@ -164,7 +164,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
         }
 
         performGenerateCommand(classOrObject,
-                               OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride)));
+                               OverrideImplementMethodsHandler.Companion.membersFromDescriptors(jetFile, Collections.singletonList(singleToOverride)));
     }
 
     private void doMultiOverrideImplement(OverrideImplementMethodsHandler handler) {
@@ -183,7 +183,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
             }
         });
 
-        performGenerateCommand(classOrObject, OverrideImplementMethodsHandler.membersFromDescriptors(jetFile, descriptorsList));
+        performGenerateCommand(classOrObject, OverrideImplementMethodsHandler.Companion.membersFromDescriptors(jetFile, descriptorsList));
     }
 
     private void generateImplementation(@NotNull final PsiMethod method) {
@@ -210,7 +210,7 @@ public abstract class AbstractOverrideImplementTest extends JetLightCodeInsightF
             new WriteCommandAction(myFixture.getProject(), myFixture.getFile()) {
                 @Override
                 protected void run(@NotNull Result result) throws Throwable {
-                    OverrideImplementMethodsHandler.generateMethods(myFixture.getEditor(), classOrObject, descriptorsToGenerate);
+                    OverrideImplementMethodsHandler.Companion.generateMethods(myFixture.getEditor(), classOrObject, descriptorsToGenerate);
                 }
             }.performCommand();
         }
