@@ -1,0 +1,82 @@
+package
+
+public/*package*/ interface Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ final class Derived</*0*/ T : kotlin.Any!> : Base, Other {
+    public/*package*/ constructor Derived</*0*/ T : kotlin.Any!>()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class DerivedWrapper : Wrapper<Derived<*>> {
+    public constructor DerivedWrapper(/*0*/ v: Derived<*>)
+    internal final override /*1*/ /*fake_override*/ val v: Derived<*>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ final class Exotic : Base, Other {
+    public/*package*/ constructor Exotic(/*0*/ x: kotlin.Int)
+    public/*package*/ final var x: kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class ExoticWrapper : Wrapper<Exotic> {
+    public constructor ExoticWrapper(/*0*/ v: Exotic)
+    internal final override /*1*/ /*fake_override*/ val v: Exotic
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class My {
+    public constructor My(/*0*/ x: kotlin.Int)
+    internal final val wrapper: Wrapper<*>!
+    internal final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal object MyBase {
+    private constructor MyBase()
+    internal final fun derived(): Derived<kotlin.String>
+    internal final fun derivedWrapper(): DerivedWrapper
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun exotic(/*0*/ x: kotlin.Int): Exotic
+    internal final fun exoticWrapper(/*0*/ x: kotlin.Int): ExoticWrapper
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ interface Other {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public/*package*/ open class Properties {
+    public/*package*/ constructor Properties()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public/*package*/ open fun </*0*/ T : kotlin.Any!> calcVal(/*0*/ initializer: (() -> T!)!): Val<T!>!
+}
+
+internal open class Wrapper</*0*/ out T : Base> {
+    public constructor Wrapper</*0*/ out T : Base>(/*0*/ v: T)
+    internal final val v: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

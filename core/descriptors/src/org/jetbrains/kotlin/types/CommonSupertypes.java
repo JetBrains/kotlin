@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
 import java.util.*;
 
@@ -297,7 +298,13 @@ public class CommonSupertypes {
 
         if (outs != null) {
             Variance projectionKind = variance == OUT_VARIANCE ? Variance.INVARIANT : OUT_VARIANCE;
-            return new TypeProjectionImpl(projectionKind, findCommonSupertype(outs, recursionDepth + 1, maxDepth));
+            JetType superType = findCommonSupertype(outs, recursionDepth + 1, maxDepth);
+            for (JetType upperBound: parameterDescriptor.getUpperBounds()) {
+                if (!TypeUtilPackage.isSubtypeOf(superType, upperBound)) {
+                    return new StarProjectionImpl(parameterDescriptor);
+                }
+            }
+            return new TypeProjectionImpl(projectionKind, superType);
         }
         if (ins != null) {
             JetType intersection = TypeIntersector.intersectTypes(getBuiltIns(parameterDescriptor), JetTypeChecker.DEFAULT, ins);

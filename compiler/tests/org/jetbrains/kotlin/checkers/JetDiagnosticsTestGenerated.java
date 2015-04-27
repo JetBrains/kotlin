@@ -11711,6 +11711,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/WrongTraceInCallResolver.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/regressions/kt7585")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Kt7585 extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInKt7585() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/regressions/kt7585"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("base.kt")
+                public void testBase() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt7585/base.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("java.kt")
+                public void testJava() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt7585/java.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("twoparents.kt")
+                public void testTwoparents() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/kt7585/twoparents.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/resolve")
