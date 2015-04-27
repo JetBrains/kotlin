@@ -31,12 +31,6 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTest {
-    @TestMetadata("AfterClassKeyword.kt")
-    public void testAfterClassKeyword() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterClassKeyword.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("AfterClassProperty.kt")
     public void testAfterClassProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/AfterClassProperty.kt");
