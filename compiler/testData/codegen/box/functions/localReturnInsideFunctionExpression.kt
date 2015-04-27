@@ -3,8 +3,8 @@ fun simple() = fun (): Boolean { return true }
 fun simpleNamed() = fun name(): Boolean { return true }
 fun simpleNamed2() = fun name(): Boolean { return@name true }
 
-fun withLabel() = @l fun (): Boolean { return@l true }
-fun withLabelNamed() = @l fun name(): Boolean { return@l true }
+fun withLabel() = l@ fun (): Boolean { return@l true }
+fun withLabelNamed() = l@ fun name(): Boolean { return@l true }
 
 fun box(): String {
     if (!simple()()) return "Test simple failed"

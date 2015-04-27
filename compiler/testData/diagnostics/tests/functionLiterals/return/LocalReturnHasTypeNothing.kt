@@ -1,5 +1,5 @@
 fun test() {
-    run1 @f{
+    run1 f@{
         (return@f 1)<!UNREACHABLE_CODE!>: Nothing<!>
     }
 }

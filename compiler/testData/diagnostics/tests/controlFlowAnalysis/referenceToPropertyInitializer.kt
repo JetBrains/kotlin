@@ -5,7 +5,7 @@ class TestFunctionLiteral {
     val sum: (Int) -> Int = { x: Int ->
         sum(x - 1) + x
     }
-    val foo: () -> Unit = @l ({ foo() })
+    val foo: () -> Unit = l@ ({ foo() })
 }
 
 open class A(val a: A)
@@ -19,7 +19,7 @@ class TestObjectLiteral {
             val y = obj
         }
     }
-    val obj1: A = @l ( object: A(<!UNINITIALIZED_VARIABLE!>obj1<!>) {
+    val obj1: A = l@ ( object: A(<!UNINITIALIZED_VARIABLE!>obj1<!>) {
         init {
             val x = <!UNINITIALIZED_VARIABLE!>obj1<!>
         }

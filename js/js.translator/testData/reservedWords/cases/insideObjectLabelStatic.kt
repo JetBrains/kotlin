@@ -6,7 +6,7 @@ object TestObject {
     val t: Int = 0
 
     fun test() {
-        testRenamed("static", { @static while (false) {} })
+        testRenamed("static", { static@ while (false) {} })
     }
 }
 

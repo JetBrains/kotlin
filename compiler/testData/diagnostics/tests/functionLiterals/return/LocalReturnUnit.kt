@@ -1,5 +1,5 @@
 fun test(a: Int) {
-    val x = run @f{
+    val x = run f@{
       if (a > 0) return@f
       else return@f Unit
     }

@@ -1,5 +1,5 @@
 fun foo() {
-    takeHandler @label {
+    takeHandler label@ {
         <caret>
     }
 }

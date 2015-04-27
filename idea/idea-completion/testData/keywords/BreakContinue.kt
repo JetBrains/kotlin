@@ -1,9 +1,9 @@
 fun foo() {
-    @myFor
+    myFor@
     for (i in 1..10) {
-        @myWhile
+        myWhile@
         while (x()) {
-            @myDo
+            myDo@
             do {
                 <caret>
             } while (y())

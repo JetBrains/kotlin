@@ -6,7 +6,7 @@ object TestObject {
     val t: Int = 0
 
     fun test() {
-        testRenamed("continue", { @`continue` while (false) {} })
+        testRenamed("continue", { `continue`@ while (false) {} })
     }
 }
 

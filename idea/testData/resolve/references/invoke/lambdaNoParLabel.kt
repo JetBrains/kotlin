@@ -3,7 +3,7 @@ class Foo {
 }
 
 fun test(f: Foo) {
-  f @f <caret>{}
+  f f@ <caret>{}
 }
 
 // REF: (in Foo).invoke(Any)

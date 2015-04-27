@@ -3,7 +3,7 @@ fun x(p: String): Boolean { return p == "abc" }
 public fun foo(p: String?, r: String?, q: String?): Int {
     while(true) {
         q!!.length()
-        @loop do {
+        loop@ do {
             while(true) {
                 p!!.length()
                 if (x(<!DEBUG_INFO_SMARTCAST!>p<!>)) break@loop

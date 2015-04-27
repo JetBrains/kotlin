@@ -20,7 +20,7 @@ fun <R> fun3(p: () -> R) {
 }
 
 fun <R> fun4(p: () -> R) {
-    Z() inlineFun @lambda {
+    Z() inlineFun lambda@ {
         return@lambda p();
     }
 }

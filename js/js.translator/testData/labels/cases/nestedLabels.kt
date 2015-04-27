@@ -7,13 +7,13 @@ fun test() {
     var i = 0
     var j = 0
 
-    @loop for (k in 1..10) {
-        @loop for (m in 1..10) {
-            if (m == 4) break @loop
+    loop@ for (k in 1..10) {
+        loop@ for (m in 1..10) {
+            if (m == 4) break@loop
             j = m
         }
 
-        if (k == 8) break @loop
+        if (k == 8) break@loop
         i = k
     }
 

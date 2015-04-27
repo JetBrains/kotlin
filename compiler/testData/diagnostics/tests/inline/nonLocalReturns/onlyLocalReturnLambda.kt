@@ -27,13 +27,13 @@ fun <R> fun3ValueArgument(p: () -> R) {
 
 
 fun <R> fun4(p: () -> R) {
-    inlineFun @lambda {
+    inlineFun lambda@ {
         return@lambda p();
     }
 }
 
 fun <R> fun4ValueArgument(p: () -> R) {
-    inlineFun (@lambda {
+    inlineFun (lambda@ {
         return@lambda p();
     })
 }

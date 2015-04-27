@@ -43,7 +43,7 @@ try { 1 if (2 > 3) { return } } finally { 2 }       <v7>: *                     
 fun t3() {
   try {
     1
-    @l{ () ->
+    l@{ () ->
         if (2 > 3) {
           return@l
         }
@@ -55,12 +55,12 @@ fun t3() {
 ---------------------
 1                                                                 <v0>: *   NEW: r(1) -> <v0>                                                                   
 { () -> if (2 > 3) { return@l } }                                 <v1>: *   NEW: r({ () -> if (2 > 3) { return@l } }) -> <v1>                                   
-@l{ () -> if (2 > 3) { return@l } }                               <v1>: *   COPY                                                                                
-{ 1 @l{ () -> if (2 > 3) { return@l } } }                         <v1>: *   COPY                                                                                
+l@{ () -> if (2 > 3) { return@l } }                               <v1>: *   COPY
+{ 1 l@{ () -> if (2 > 3) { return@l } } }                         <v1>: *   COPY
 2                                                                 <v2>: *   NEW: r(2) -> <v2>                                                                   
 { 2 }                                                             <v2>: *   COPY                                                                                
-try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v3>: *   NEW: merge(try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 }|<v1>) -> <v3>
-{ try { 1 @l{ () -> if (2 > 3) { return@l } } } finally { 2 } }   <v3>: *   COPY                                                                                
+try { 1 l@{ () -> if (2 > 3) { return@l } } } finally { 2 }       <v3>: *   NEW: merge(try { 1 l@{ () -> if (2 > 3) { return@l } } } finally { 2 }|<v1>) -> <v3>
+{ try { 1 l@{ () -> if (2 > 3) { return@l } } } finally { 2 } }   <v3>: *   COPY
 =====================
 == anonymous_0 ==
 { () ->
@@ -79,7 +79,7 @@ if (2 > 3) { return@l }   <v4>: *                      COPY
 =====================
 == t4 ==
 fun t4() {
-  @l{ () ->
+  l@{ () ->
     try {
       1
       if (2 > 3) {
@@ -92,8 +92,8 @@ fun t4() {
 }
 ---------------------
 { () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }         <v0>: *   NEW: r({ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }) -> <v0>
-@l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }       <v0>: *   COPY                                                                     
-{ @l{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } } }   <v0>: *   COPY                                                                     
+l@{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } }       <v0>: *   COPY
+{ l@{ () -> try { 1 if (2 > 3) { return@l } } finally { 2 } } }   <v0>: *   COPY
 =====================
 == anonymous_1 ==
 { () ->
@@ -122,11 +122,11 @@ try { 1 if (2 > 3) { return@l } } finally { 2 }   <v7>: *                      C
 =====================
 == t5 ==
 fun t5() {
-  @l while(true) {
+  l@ while(true) {
     try {
       1
       if (2 > 3) {
-        break @l
+        break@l
       }
     } finally {
       2
@@ -134,31 +134,31 @@ fun t5() {
   }
 }
 ---------------------
-                                                                         <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>                           
-true                                                                     <v0>: Boolean                NEW: r(true) -> <v0>                                                    
-1                                                                        <v2>: *                      NEW: r(1) -> <v2>                                                       
-2                                                                        <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>                                                       
-3                                                                        <v4>: Int                    NEW: r(3) -> <v4>                                                       
-2 > 3                                                                    <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>                          
-break @l                                                                 !<v7>: *                                                                                             
-{ break @l }                                                             !<v7>: *                     COPY                                                                    
-if (2 > 3) { break @l }                                                  <v8>: *                      NEW: merge(if (2 > 3) { break @l }|!<v7>) -> <v8>                       
-{ 1 if (2 > 3) { break @l } }                                            <v8>: *                      COPY                                                                    
-2                                                                        <v6>: *                      NEW: r(2) -> <v6>                                                       
-{ 2 }                                                                    <v6>: *                      COPY                                                                    
-try { 1 if (2 > 3) { break @l } } finally { 2 }                          <v9>: *                      NEW: merge(try { 1 if (2 > 3) { break @l } } finally { 2 }|<v8>) -> <v9>
-{ try { 1 if (2 > 3) { break @l } } finally { 2 } }                      <v9>: *                      COPY                                                                    
-while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } }          !<v10>: *                                                                                            
-@l while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } }       !<v10>: *                    COPY                                                                    
-{ @l while(true) { try { 1 if (2 > 3) { break @l } } finally { 2 } } }   !<v10>: *                    COPY                                                                    
+                                                                        <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+true                                                                    <v0>: Boolean                NEW: r(true) -> <v0>
+1                                                                       <v2>: *                      NEW: r(1) -> <v2>
+2                                                                       <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>
+3                                                                       <v4>: Int                    NEW: r(3) -> <v4>
+2 > 3                                                                   <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
+break@l                                                                 !<v7>: *                                                                                             
+{ break@l }                                                             !<v7>: *                     COPY                                                                    
+if (2 > 3) { break@l }                                                  <v8>: *                      NEW: merge(if (2 > 3) { break@l }|!<v7>) -> <v8>                       
+{ 1 if (2 > 3) { break@l } }                                            <v8>: *                      COPY                                                                    
+2                                                                       <v6>: *                      NEW: r(2) -> <v6>
+{ 2 }                                                                   <v6>: *                      COPY
+try { 1 if (2 > 3) { break@l } } finally { 2 }                          <v9>: *                      NEW: merge(try { 1 if (2 > 3) { break@l } } finally { 2 }|<v8>) -> <v9>
+{ try { 1 if (2 > 3) { break@l } } finally { 2 } }                      <v9>: *                      COPY                                                                    
+while(true) { try { 1 if (2 > 3) { break@l } } finally { 2 } }          !<v10>: *                                                                                            
+l@ while(true) { try { 1 if (2 > 3) { break@l } } finally { 2 } }       !<v10>: *                    COPY                                                                    
+{ l@ while(true) { try { 1 if (2 > 3) { break@l } } finally { 2 } } }   !<v10>: *                    COPY                                                                    
 =====================
 == t6 ==
 fun t6() {
   try {
-    @l while(true) {
+    l@ while(true) {
         1
         if (2 > 3) {
-          break @l
+          break@l
         }
       }
       5
@@ -167,32 +167,32 @@ fun t6() {
   }
 }
 ---------------------
-                                                                           <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>                                                 
-true                                                                       <v0>: Boolean                NEW: r(true) -> <v0>                                                                          
-1                                                                          <v2>: *                      NEW: r(1) -> <v2>                                                                             
-2                                                                          <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>                                                                             
-3                                                                          <v4>: Int                    NEW: r(3) -> <v4>                                                                             
-2 > 3                                                                      <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>                                                
-break @l                                                                   !<v6>: *                                                                                                                   
-{ break @l }                                                               !<v6>: *                     COPY                                                                                          
-if (2 > 3) { break @l }                                                    <v7>: *                      NEW: merge(if (2 > 3) { break @l }|!<v6>) -> <v7>                                             
-{ 1 if (2 > 3) { break @l } }                                              <v7>: *                      COPY                                                                                          
-while(true) { 1 if (2 > 3) { break @l } }                                  !<v8>: *                                                                                                                   
-@l while(true) { 1 if (2 > 3) { break @l } }                               !<v8>: *                     COPY                                                                                          
-5                                                                          <v9>: *                      NEW: r(5) -> <v9>                                                                             
-{ @l while(true) { 1 if (2 > 3) { break @l } } 5 }                         <v9>: *                      COPY                                                                                          
-2                                                                          <v10>: *                     NEW: r(2) -> <v10>                                                                            
-{ 2 }                                                                      <v10>: *                     COPY                                                                                          
-try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 }       <v11>: *                     NEW: merge(try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 }|<v9>) -> <v11>
-{ try { @l while(true) { 1 if (2 > 3) { break @l } } 5 } finally { 2 } }   <v11>: *                     COPY                                                                                          
+                                                                          <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+true                                                                      <v0>: Boolean                NEW: r(true) -> <v0>
+1                                                                         <v2>: *                      NEW: r(1) -> <v2>
+2                                                                         <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>
+3                                                                         <v4>: Int                    NEW: r(3) -> <v4>
+2 > 3                                                                     <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
+break@l                                                                   !<v6>: *                                                                                                                   
+{ break@l }                                                               !<v6>: *                     COPY                                                                                          
+if (2 > 3) { break@l }                                                    <v7>: *                      NEW: merge(if (2 > 3) { break@l }|!<v6>) -> <v7>                                             
+{ 1 if (2 > 3) { break@l } }                                              <v7>: *                      COPY
+while(true) { 1 if (2 > 3) { break@l } }                                  !<v8>: *                                                                                                                   
+l@ while(true) { 1 if (2 > 3) { break@l } }                               !<v8>: *                     COPY                                                                                          
+5                                                                         <v9>: *                      NEW: r(5) -> <v9>
+{ l@ while(true) { 1 if (2 > 3) { break@l } } 5 }                         <v9>: *                      COPY                                                                                          
+2                                                                         <v10>: *                     NEW: r(2) -> <v10>
+{ 2 }                                                                     <v10>: *                     COPY
+try { l@ while(true) { 1 if (2 > 3) { break@l } } 5 } finally { 2 }       <v11>: *                     NEW: merge(try { l@ while(true) { 1 if (2 > 3) { break@l } } 5 } finally { 2 }|<v9>) -> <v11>
+{ try { l@ while(true) { 1 if (2 > 3) { break@l } } 5 } finally { 2 } }   <v11>: *                     COPY                                                                                          
 =====================
 == t7 ==
 fun t7() {
   try {
-    @l while(true) {
+    l@ while(true) {
         1
         if (2 > 3) {
-          break @l
+          break@l
         }
       }
   } finally {
@@ -200,31 +200,31 @@ fun t7() {
   }
 }
 ---------------------
-                                                                         <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>                                                
-true                                                                     <v0>: Boolean                NEW: r(true) -> <v0>                                                                         
-1                                                                        <v2>: *                      NEW: r(1) -> <v2>                                                                            
-2                                                                        <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>                                                                            
-3                                                                        <v4>: Int                    NEW: r(3) -> <v4>                                                                            
-2 > 3                                                                    <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>                                               
-break @l                                                                 !<v6>: *                                                                                                                  
-{ break @l }                                                             !<v6>: *                     COPY                                                                                         
-if (2 > 3) { break @l }                                                  <v7>: *                      NEW: merge(if (2 > 3) { break @l }|!<v6>) -> <v7>                                            
-{ 1 if (2 > 3) { break @l } }                                            <v7>: *                      COPY                                                                                         
-while(true) { 1 if (2 > 3) { break @l } }                                !<v8>: *                                                                                                                  
-@l while(true) { 1 if (2 > 3) { break @l } }                             !<v8>: *                     COPY                                                                                         
-{ @l while(true) { 1 if (2 > 3) { break @l } } }                         !<v8>: *                     COPY                                                                                         
-2                                                                        <v9>: *                      NEW: r(2) -> <v9>                                                                            
-{ 2 }                                                                    <v9>: *                      COPY                                                                                         
-try { @l while(true) { 1 if (2 > 3) { break @l } } } finally { 2 }       <v10>: *                     NEW: merge(try { @l while(true) { 1 if (2 > 3) { break @l } } } finally { 2 }|!<v8>) -> <v10>
-{ try { @l while(true) { 1 if (2 > 3) { break @l } } } finally { 2 } }   <v10>: *                     COPY                                                                                         
+                                                                        <v1>: *                      NEW: magic[VALUE_CONSUMER](true|<v0>) -> <v1>
+true                                                                    <v0>: Boolean                NEW: r(true) -> <v0>
+1                                                                       <v2>: *                      NEW: r(1) -> <v2>
+2                                                                       <v3>: {<: Comparable<Int>}   NEW: r(2) -> <v3>
+3                                                                       <v4>: Int                    NEW: r(3) -> <v4>
+2 > 3                                                                   <v5>: Boolean                NEW: call(2 > 3, compareTo|<v3>, <v4>) -> <v5>
+break@l                                                                 !<v6>: *                                                                                                                  
+{ break@l }                                                             !<v6>: *                     COPY                                                                                         
+if (2 > 3) { break@l }                                                  <v7>: *                      NEW: merge(if (2 > 3) { break@l }|!<v6>) -> <v7>                                            
+{ 1 if (2 > 3) { break@l } }                                            <v7>: *                      COPY                                                                                         
+while(true) { 1 if (2 > 3) { break@l } }                                !<v8>: *                                                                                                                  
+l@ while(true) { 1 if (2 > 3) { break@l } }                             !<v8>: *                     COPY                                                                                         
+{ l@ while(true) { 1 if (2 > 3) { break@l } } }                         !<v8>: *                     COPY                                                                                         
+2                                                                       <v9>: *                      NEW: r(2) -> <v9>
+{ 2 }                                                                   <v9>: *                      COPY
+try { l@ while(true) { 1 if (2 > 3) { break@l } } } finally { 2 }       <v10>: *                     NEW: merge(try { l@ while(true) { 1 if (2 > 3) { break@l } } } finally { 2 }|!<v8>) -> <v10>
+{ try { l@ while(true) { 1 if (2 > 3) { break@l } } } finally { 2 } }   <v10>: *                     COPY                                                                                         
 =====================
 == t8 ==
 fun t8(a : Int) {
-  @l for (i in 1..a) {
+  l@ for (i in 1..a) {
     try {
       1
       if (2 > 3) {
-        continue @l
+        continue@l
       }
     } finally {
       2
@@ -232,34 +232,34 @@ fun t8(a : Int) {
   }
 }
 ---------------------
-                                                                                <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>                                
-                                                                                <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                          
-1                                                                               <v1>: Int                    NEW: r(1) -> <v1>                                                            
-a                                                                               <v2>: Int                    NEW: r(a) -> <v2>                                                            
-1..a                                                                            <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>                                  
-1                                                                               <v5>: *                      NEW: r(1) -> <v5>                                                            
-2                                                                               <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>                                                            
-3                                                                               <v7>: Int                    NEW: r(3) -> <v7>                                                            
-2 > 3                                                                           <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>                               
-continue @l                                                                     !<v10>: *                                                                                                 
-{ continue @l }                                                                 !<v10>: *                    COPY                                                                         
-if (2 > 3) { continue @l }                                                      <v11>: *                     NEW: merge(if (2 > 3) { continue @l }|!<v10>) -> <v11>                       
-{ 1 if (2 > 3) { continue @l } }                                                <v11>: *                     COPY                                                                         
-2                                                                               <v9>: *                      NEW: r(2) -> <v9>                                                            
-{ 2 }                                                                           <v9>: *                      COPY                                                                         
-try { 1 if (2 > 3) { continue @l } } finally { 2 }                              <v12>: *                     NEW: merge(try { 1 if (2 > 3) { continue @l } } finally { 2 }|<v11>) -> <v12>
-{ try { 1 if (2 > 3) { continue @l } } finally { 2 } }                          <v12>: *                     COPY                                                                         
-for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } }          !<v13>: *                                                                                                 
-@l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } }       !<v13>: *                    COPY                                                                         
-{ @l for (i in 1..a) { try { 1 if (2 > 3) { continue @l } } finally { 2 } } }   !<v13>: *                    COPY                                                                         
+                                                                               <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>
+                                                                               <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
+1                                                                              <v1>: Int                    NEW: r(1) -> <v1>
+a                                                                              <v2>: Int                    NEW: r(a) -> <v2>
+1..a                                                                           <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>
+1                                                                              <v5>: *                      NEW: r(1) -> <v5>
+2                                                                              <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>
+3                                                                              <v7>: Int                    NEW: r(3) -> <v7>
+2 > 3                                                                          <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
+continue@l                                                                     !<v10>: *                                                                                                 
+{ continue@l }                                                                 !<v10>: *                    COPY                                                                         
+if (2 > 3) { continue@l }                                                      <v11>: *                     NEW: merge(if (2 > 3) { continue@l }|!<v10>) -> <v11>                       
+{ 1 if (2 > 3) { continue@l } }                                                <v11>: *                     COPY                                                                         
+2                                                                              <v9>: *                      NEW: r(2) -> <v9>
+{ 2 }                                                                          <v9>: *                      COPY
+try { 1 if (2 > 3) { continue@l } } finally { 2 }                              <v12>: *                     NEW: merge(try { 1 if (2 > 3) { continue@l } } finally { 2 }|<v11>) -> <v12>
+{ try { 1 if (2 > 3) { continue@l } } finally { 2 } }                          <v12>: *                     COPY                                                                         
+for (i in 1..a) { try { 1 if (2 > 3) { continue@l } } finally { 2 } }          !<v13>: *                                                                                                 
+l@ for (i in 1..a) { try { 1 if (2 > 3) { continue@l } } finally { 2 } }       !<v13>: *                    COPY                                                                         
+{ l@ for (i in 1..a) { try { 1 if (2 > 3) { continue@l } } finally { 2 } } }   !<v13>: *                    COPY                                                                         
 =====================
 == t9 ==
 fun t9(a : Int) {
   try {
-    @l for (i in 1..a) {
+    l@ for (i in 1..a) {
         1
         if (2 > 3) {
-          continue @l
+          continue@l
         }
       }
       5
@@ -268,35 +268,35 @@ fun t9(a : Int) {
   }
 }
 ---------------------
-                                                                                  <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>                                                         
-                                                                                  <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                                                   
-1                                                                                 <v1>: Int                    NEW: r(1) -> <v1>                                                                                     
-a                                                                                 <v2>: Int                    NEW: r(a) -> <v2>                                                                                     
-1..a                                                                              <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>                                                           
-1                                                                                 <v5>: *                      NEW: r(1) -> <v5>                                                                                     
-2                                                                                 <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>                                                                                     
-3                                                                                 <v7>: Int                    NEW: r(3) -> <v7>                                                                                     
-2 > 3                                                                             <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>                                                        
-continue @l                                                                       !<v9>: *                                                                                                                           
-{ continue @l }                                                                   !<v9>: *                     COPY                                                                                                  
-if (2 > 3) { continue @l }                                                        <v10>: *                     NEW: merge(if (2 > 3) { continue @l }|!<v9>) -> <v10>                                                 
-{ 1 if (2 > 3) { continue @l } }                                                  <v10>: *                     COPY                                                                                                  
-for (i in 1..a) { 1 if (2 > 3) { continue @l } }                                  !<v11>: *                                                                                                                          
-@l for (i in 1..a) { 1 if (2 > 3) { continue @l } }                               !<v11>: *                    COPY                                                                                                  
-5                                                                                 <v12>: *                     NEW: r(5) -> <v12>                                                                                    
-{ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 }                         <v12>: *                     COPY                                                                                                  
-2                                                                                 <v13>: *                     NEW: r(2) -> <v13>                                                                                    
-{ 2 }                                                                             <v13>: *                     COPY                                                                                                  
-try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 }       <v14>: *                     NEW: merge(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 }|<v12>) -> <v14>
-{ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } 5 } finally { 2 } }   <v14>: *                     COPY                                                                                                  
+                                                                                 <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>
+                                                                                 <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
+1                                                                                <v1>: Int                    NEW: r(1) -> <v1>
+a                                                                                <v2>: Int                    NEW: r(a) -> <v2>
+1..a                                                                             <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>
+1                                                                                <v5>: *                      NEW: r(1) -> <v5>
+2                                                                                <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>
+3                                                                                <v7>: Int                    NEW: r(3) -> <v7>
+2 > 3                                                                            <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
+continue@l                                                                       !<v9>: *                                                                                                                           
+{ continue@l }                                                                   !<v9>: *                     COPY                                                                                                  
+if (2 > 3) { continue@l }                                                        <v10>: *                     NEW: merge(if (2 > 3) { continue@l }|!<v9>) -> <v10>                                                 
+{ 1 if (2 > 3) { continue@l } }                                                  <v10>: *                     COPY                                                                                                  
+for (i in 1..a) { 1 if (2 > 3) { continue@l } }                                  !<v11>: *                                                                                                                          
+l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } }                               !<v11>: *                    COPY                                                                                                  
+5                                                                                <v12>: *                     NEW: r(5) -> <v12>
+{ l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } 5 }                         <v12>: *                     COPY                                                                                                  
+2                                                                                <v13>: *                     NEW: r(2) -> <v13>
+{ 2 }                                                                            <v13>: *                     COPY
+try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } 5 } finally { 2 }       <v14>: *                     NEW: merge(try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } 5 } finally { 2 }|<v12>) -> <v14>
+{ try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } 5 } finally { 2 } }   <v14>: *                     COPY                                                                                                  
 =====================
 == t10 ==
 fun t10(a : Int) {
   try {
-    @l for (i in 1..a) {
+    l@ for (i in 1..a) {
         1
         if (2 > 3) {
-          continue @l
+          continue@l
         }
       }
   } finally {
@@ -304,26 +304,26 @@ fun t10(a : Int) {
   }
 }
 ---------------------
-                                                                                <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>                                                        
-                                                                                <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>                                                  
-1                                                                               <v1>: Int                    NEW: r(1) -> <v1>                                                                                    
-a                                                                               <v2>: Int                    NEW: r(a) -> <v2>                                                                                    
-1..a                                                                            <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>                                                          
-1                                                                               <v5>: *                      NEW: r(1) -> <v5>                                                                                    
-2                                                                               <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>                                                                                    
-3                                                                               <v7>: Int                    NEW: r(3) -> <v7>                                                                                    
-2 > 3                                                                           <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>                                                       
-continue @l                                                                     !<v9>: *                                                                                                                          
-{ continue @l }                                                                 !<v9>: *                     COPY                                                                                                 
-if (2 > 3) { continue @l }                                                      <v10>: *                     NEW: merge(if (2 > 3) { continue @l }|!<v9>) -> <v10>                                                
-{ 1 if (2 > 3) { continue @l } }                                                <v10>: *                     COPY                                                                                                 
-for (i in 1..a) { 1 if (2 > 3) { continue @l } }                                !<v11>: *                                                                                                                         
-@l for (i in 1..a) { 1 if (2 > 3) { continue @l } }                             !<v11>: *                    COPY                                                                                                 
-{ @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } }                         !<v11>: *                    COPY                                                                                                 
-2                                                                               <v12>: *                     NEW: r(2) -> <v12>                                                                                   
-{ 2 }                                                                           <v12>: *                     COPY                                                                                                 
-try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 }       <v13>: *                     NEW: merge(try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 }|!<v11>) -> <v13>
-{ try { @l for (i in 1..a) { 1 if (2 > 3) { continue @l } } } finally { 2 } }   <v13>: *                     COPY                                                                                                 
+                                                                               <v0>: Int                    NEW: magic[FAKE_INITIALIZER](a : Int) -> <v0>
+                                                                               <v4>: Int                    NEW: magic[LOOP_RANGE_ITERATION](1..a|<v3>) -> <v4>
+1                                                                              <v1>: Int                    NEW: r(1) -> <v1>
+a                                                                              <v2>: Int                    NEW: r(a) -> <v2>
+1..a                                                                           <v3>: {<: Iterable<Int>}     NEW: call(1..a, rangeTo|<v1>, <v2>) -> <v3>
+1                                                                              <v5>: *                      NEW: r(1) -> <v5>
+2                                                                              <v6>: {<: Comparable<Int>}   NEW: r(2) -> <v6>
+3                                                                              <v7>: Int                    NEW: r(3) -> <v7>
+2 > 3                                                                          <v8>: Boolean                NEW: call(2 > 3, compareTo|<v6>, <v7>) -> <v8>
+continue@l                                                                     !<v9>: *                                                                                                                          
+{ continue@l }                                                                 !<v9>: *                     COPY                                                                                                 
+if (2 > 3) { continue@l }                                                      <v10>: *                     NEW: merge(if (2 > 3) { continue@l }|!<v9>) -> <v10>                                                
+{ 1 if (2 > 3) { continue@l } }                                                <v10>: *                     COPY                                                                                                 
+for (i in 1..a) { 1 if (2 > 3) { continue@l } }                                !<v11>: *                                                                                                                         
+l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } }                             !<v11>: *                    COPY                                                                                                 
+{ l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } }                         !<v11>: *                    COPY                                                                                                 
+2                                                                              <v12>: *                     NEW: r(2) -> <v12>
+{ 2 }                                                                          <v12>: *                     COPY
+try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } } finally { 2 }       <v13>: *                     NEW: merge(try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } } finally { 2 }|!<v11>) -> <v13>
+{ try { l@ for (i in 1..a) { 1 if (2 > 3) { continue@l } } } finally { 2 } }   <v13>: *                     COPY                                                                                                 
 =====================
 == t11 ==
 fun t11() {

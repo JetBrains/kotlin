@@ -10,21 +10,21 @@ class State() {
 }
 
 inline fun test1(state: State) {
-    @loop for (i in 1..10) {
+    loop@ for (i in 1..10) {
         state.value++
         if (i == 2) break@loop
     }
 }
 
 inline fun test2(state: State) {
-    @loop for (i in 1..10) {
+    loop@ for (i in 1..10) {
         test1(state)
         if (i == 2) break@loop
     }
 }
 
 inline fun test3(state: State) {
-    @loop for (i in 1..10) {
+    loop@ for (i in 1..10) {
         test2(state)
         if (i == 2) break@loop
     }

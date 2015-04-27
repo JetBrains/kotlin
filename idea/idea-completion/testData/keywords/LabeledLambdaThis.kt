@@ -1,5 +1,5 @@
 fun foo(): String.() -> Unit {
-    return (@label {
+    return (label@ {
         f {
             <caret>
         }

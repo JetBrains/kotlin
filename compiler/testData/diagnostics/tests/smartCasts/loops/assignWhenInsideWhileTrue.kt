@@ -1,6 +1,6 @@
 public fun foo(x: String?): Int {
     var y: Any
-    @loop while (true) {
+    loop@ while (true) {
         y = when (x) {
             null -> break@loop
             "abc" -> return 0

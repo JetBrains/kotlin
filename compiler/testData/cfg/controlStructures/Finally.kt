@@ -20,7 +20,7 @@ fun t2() {
 fun t3() {
   try {
     1
-    @l{ () ->
+    l@{ () ->
         if (2 > 3) {
           return@l
         }
@@ -31,7 +31,7 @@ fun t3() {
 }
 
 fun t4() {
-  @l{ () ->
+  l@{ () ->
     try {
       1
       if (2 > 3) {
@@ -44,11 +44,11 @@ fun t4() {
 }
 
 fun t5() {
-  @l while(true) {
+  l@ while(true) {
     try {
       1
       if (2 > 3) {
-        break @l
+        break@l
       }
     } finally {
       2
@@ -58,10 +58,10 @@ fun t5() {
 
 fun t6() {
   try {
-    @l while(true) {
+    l@ while(true) {
         1
         if (2 > 3) {
-          break @l
+          break@l
         }
       }
       5
@@ -72,10 +72,10 @@ fun t6() {
 
 fun t7() {
   try {
-    @l while(true) {
+    l@ while(true) {
         1
         if (2 > 3) {
-          break @l
+          break@l
         }
       }
   } finally {
@@ -84,11 +84,11 @@ fun t7() {
 }
 
 fun t8(a : Int) {
-  @l for (i in 1..a) {
+  l@ for (i in 1..a) {
     try {
       1
       if (2 > 3) {
-        continue @l
+        continue@l
       }
     } finally {
       2
@@ -98,10 +98,10 @@ fun t8(a : Int) {
 
 fun t9(a : Int) {
   try {
-    @l for (i in 1..a) {
+    l@ for (i in 1..a) {
         1
         if (2 > 3) {
-          continue @l
+          continue@l
         }
       }
       5
@@ -112,10 +112,10 @@ fun t9(a : Int) {
 
 fun t10(a : Int) {
   try {
-    @l for (i in 1..a) {
+    l@ for (i in 1..a) {
         1
         if (2 > 3) {
-          continue @l
+          continue@l
         }
       }
   } finally {

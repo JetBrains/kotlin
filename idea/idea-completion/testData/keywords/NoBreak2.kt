@@ -1,5 +1,5 @@
 fun foo() {
-    @myFor
+    myFor@
     for (i in 1..10) {
         while (x()) {
             "abc".filter {

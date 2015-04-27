@@ -8,24 +8,24 @@ package foo
 fun myRun<R>(f: () -> R) = f()
 
 fun test0() {
-    val a = @aa 1
+    val a = aa@ 1
 
     assertEquals(1, a)
-    assertEquals(3, @l1 a + @l2 2)
+    assertEquals(3, l1@ a + l2@ 2)
 
-    val b = @bb if (true) @t "then block" else @e "else block"
+    val b = bb@ if (true) t@ "then block" else e@ "else block"
 
     assertEquals("then block", b)
 }
 
 fun test1() {
-    run @label {
+    run label@ {
         return@label false
     }
 }
 
 fun test2() {
-    myRun @label {
+    myRun label@ {
         return@label false
     }
 }
@@ -33,7 +33,7 @@ fun test2() {
 // KT-7487
 public fun test3() {
     val f = Foo()
-    f.iter @label {
+    f.iter label@ {
         return@label false
     }
 }

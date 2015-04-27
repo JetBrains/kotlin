@@ -6,7 +6,7 @@ package foo
 fun test1() {
     var `loop$` = 0
 
-    @loop for (i in 1..10) {
+    loop@ for (i in 1..10) {
         `loop$` = i
         if (i == 5) break@loop
     }
@@ -17,7 +17,7 @@ fun test1() {
 fun test2() {
     var loop = 0
 
-    @loop for (i in 1..10) {
+    loop@ for (i in 1..10) {
         loop = i
         if (i == 5) break@loop
     }

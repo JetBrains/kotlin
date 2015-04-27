@@ -5,8 +5,8 @@ public inline fun <reified T> Array(n: Int, block: (Int) -> T): Array<T> = null!
 
 fun test() {
     val ints = Array<Int?>(2, { null })
-    ints.forEach @lit {
-        if (it == null) return @lit
+    ints.forEach lit@ {
+        if (it == null) return@lit
         use(<!DEBUG_INFO_SMARTCAST!>it<!> + 5)
     }
 }

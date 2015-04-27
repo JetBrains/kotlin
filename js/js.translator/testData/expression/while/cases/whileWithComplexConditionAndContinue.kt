@@ -17,7 +17,7 @@ fun box(): String {
 
     i = 0
     global = ""
-    @labelA while(try { global += "A"; i } finally {} < 10) {
+    labelA@ while(try { global += "A"; i } finally {} < 10) {
         if (i<3) {i++; continue@labelA}
         break
     }
@@ -27,7 +27,7 @@ fun box(): String {
     i = 0
     var j = 0
     global = ""
-    @outer while(try { global += "A"; i++ } finally {}  < 3) {
+    outer@ while(try { global += "A"; i++ } finally {}  < 3) {
         j = 0
         while( try {global += "B"; j++ } finally {} < 2) {
             if (j==1) continue@outer

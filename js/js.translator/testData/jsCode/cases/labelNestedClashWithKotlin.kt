@@ -10,7 +10,7 @@ fun box(): String {
     val skipOuter = 8
 
 
-    @block for (i in range) {
+    block@ for (i in range) {
         sum += i
 
         if (i == skipOuter) break@block

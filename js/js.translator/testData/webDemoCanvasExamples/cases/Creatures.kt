@@ -241,7 +241,7 @@ class CanvasState(val canvas: HTMLCanvasElement) {
         }
 
         jq(canvas).dblclick {
-            val newCreature = Creature(mousePos(it), this @CanvasState)
+            val newCreature = Creature(mousePos(it), this@CanvasState)
             addShape(newCreature)
             valid = false
         }

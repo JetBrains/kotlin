@@ -6,7 +6,7 @@ class TestClass {
     val t: Int = 0
 
     fun test() {
-        testRenamed("case", { @case while (false) {} })
+        testRenamed("case", { case@ while (false) {} })
     }
 }
 

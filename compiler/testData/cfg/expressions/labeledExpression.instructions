@@ -1,14 +1,14 @@
 == foo ==
 fun foo(): Int {
-    val t = @x (1 + 2)
+    val t = x@ (1 + 2)
     return t
 }
 ---------------------
 L0:
   1 <START>
-  2 mark({ val t = @x (1 + 2) return t })
-    v(val t = @x (1 + 2))
-    mark(@x (1 + 2))
+  2 mark({ val t = x@ (1 + 2) return t })
+    v(val t = x@ (1 + 2))
+    mark(x@ (1 + 2))
     mark((1 + 2))
     r(1) -> <v0>
     r(2) -> <v1>

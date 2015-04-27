@@ -31,7 +31,7 @@ val commonCases: CaseBuilder.(String, String) -> Unit = { testByName, testByRef 
     $testRenamedByName
 }""", "foo(\"123\")")
 
-    case("label", "val t: Int", " = 0", "testRenamed(\"$KEYWORD_MARKER\", { @$KEYWORD_MARKER while (false) {} })")
+    case("label", "val t: Int", " = 0", "testRenamed(\"$KEYWORD_MARKER\", { $KEYWORD_MARKER@ while (false) {} })")
 }
 
 val commonCasesWithTestNotRenamed: CaseBuilder.() -> Unit = { commonCases(testNotRenamedByName, testNotRenamedByRef) }

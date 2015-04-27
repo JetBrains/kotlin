@@ -6,7 +6,7 @@ object TestObject {
     val t: Int = 0
 
     fun test() {
-        testRenamed("public", { @public while (false) {} })
+        testRenamed("public", { public@ while (false) {} })
     }
 }
 

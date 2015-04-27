@@ -1,13 +1,13 @@
 fun foo(a: Int) {
-    @A
+    A@
     while (true) {
-        @B
+        B@
         while (true) {
             if (a > 0) break@A
             if (a < 0) <selection>break@B</selection>
         }
 
-        @B
+        B@
         while (true) {
             if (a > 0) break@A
             if (a < 0) break@B

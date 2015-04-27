@@ -1,7 +1,7 @@
 //KT-5200 Mark unreachable code in lambdas
 
 fun test1(): String {
-    doCall @local {
+    doCall local@ {
         throw NullPointerException()
         <!UNREACHABLE_CODE!>"b3"<!> //unmarked
     }
@@ -10,7 +10,7 @@ fun test1(): String {
 }
 
 fun test2(nonLocal: String, b: Boolean): String {
-    doCall @local {
+    doCall local@ {
         if (b) {
             return@local "b1"
         } else {

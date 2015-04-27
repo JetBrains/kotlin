@@ -7,7 +7,7 @@ package foo
 inline fun testLabelInline(): Int {
     var a = 0
 
-    @loop for (i in 1..10) {
+    loop@ for (i in 1..10) {
         if (i == 1) continue@loop
 
         a += i
@@ -15,7 +15,7 @@ inline fun testLabelInline(): Int {
         if (i == 2) break@loop
     }
 
-    @loop for (i in 1..10) {
+    loop@ for (i in 1..10) {
         if (i == 1) continue@loop
 
         a += i
@@ -29,7 +29,7 @@ inline fun testLabelInline(): Int {
 fun testLabel(): String {
     var a = 0
 
-    @loop for (i in 1..10) {
+    loop@ for (i in 1..10) {
         if (i == 1) continue@loop
 
         a += testLabelInline()

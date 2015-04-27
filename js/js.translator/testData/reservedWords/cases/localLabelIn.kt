@@ -5,7 +5,7 @@ package foo
 fun box(): String {
     val t: Int = 0
 
-    testRenamed("in", { @`in` while (false) {} })
+    testRenamed("in", { `in`@ while (false) {} })
 
     return "OK"
 }

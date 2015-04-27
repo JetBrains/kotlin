@@ -1,6 +1,6 @@
 val flag = true
 
-val a /*: (Int) -> String */ = @l {
+val a /*: (Int) -> String */ = l@ {
     i: Int ->
     if (i == 0) return@l i.toString()
 

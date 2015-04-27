@@ -1,7 +1,7 @@
 fun x(): Boolean { return true }
 
 public fun foo(p: String?, r: String?, q: String?): Int {
-    @outer while(true) {
+    outer@ while(true) {
         q!!.length()
         do {
             if (x()) continue@outer

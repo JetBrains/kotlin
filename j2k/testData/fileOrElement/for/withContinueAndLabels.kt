@@ -2,9 +2,9 @@
 public object TestClass {
     public fun main(args: Array<String>) {
         var i = 1
-        @OuterLoop1 @OuterLoop2 while (i < 1000) {
+        OuterLoop1@ OuterLoop2@ while (i < 1000) {
             var j = 1
-            @InnerLoop while (j < 100) {
+            InnerLoop@ while (j < 100) {
                 if (j == 3) {
                     j *= 3
                     continue@InnerLoop

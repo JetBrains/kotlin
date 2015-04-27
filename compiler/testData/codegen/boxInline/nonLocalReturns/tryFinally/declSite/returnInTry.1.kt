@@ -17,7 +17,7 @@ fun test1(h: Holder): String {
 
 
 fun test2(h: Holder): String {
-    val localResult = doCall (@lambda {
+    val localResult = doCall (lambda@ {
       h.value += "OK_LOCAL"
       return@lambda "OK_LOCAL"
     }, {

@@ -3,7 +3,7 @@ fun bar(): Boolean { return true }
 public fun foo(x: String?): Int {
     var y: Int?
     y = 0
-    @loop do {
+    loop@ do {
         <!DEBUG_INFO_SMARTCAST!>y<!> += when (x) {
             null -> break@loop
             "abc" -> return 0

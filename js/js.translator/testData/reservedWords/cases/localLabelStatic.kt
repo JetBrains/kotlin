@@ -5,7 +5,7 @@ package foo
 fun box(): String {
     val t: Int = 0
 
-    testRenamed("static", { @static while (false) {} })
+    testRenamed("static", { static@ while (false) {} })
 
     return "OK"
 }

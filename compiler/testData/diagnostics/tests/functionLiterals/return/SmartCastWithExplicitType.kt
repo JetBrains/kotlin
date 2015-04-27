@@ -1,6 +1,6 @@
 // KT-6822 Smart cast doesn't work inside local returned expression in lambda
 
-val a : (Int?) -> Int = @l {
+val a : (Int?) -> Int = l@ {
     if (it != null) return@l <!DEBUG_INFO_SMARTCAST!>it<!>
     5
 }

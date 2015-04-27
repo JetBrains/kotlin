@@ -1,6 +1,6 @@
 // KT-6822 Smart cast doesn't work inside local returned expression in lambda 
 
-val a /* :(Int?) -> Int? */ = @l { it: Int? -> // but must be (Int?) -> Int
+val a /* :(Int?) -> Int? */ = l@ { it: Int? -> // but must be (Int?) -> Int
     if (it != null) return@l it
     5
 }

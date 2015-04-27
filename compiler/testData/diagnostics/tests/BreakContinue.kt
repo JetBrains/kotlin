@@ -1,8 +1,8 @@
 class C {
 
     fun f (<!UNUSED_PARAMETER!>a<!> : Boolean, <!UNUSED_PARAMETER!>b<!> : Boolean) {
-        @b while (true)
-          @a {
+        b@ while (true)
+          a@ {
             <!NOT_A_LOOP_LABEL!>break@f<!>
             break
             <!UNREACHABLE_CODE!>break@b<!>
@@ -11,8 +11,8 @@ class C {
 
         <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>
 
-        @b while (true)
-          @a {
+        b@ while (true)
+          a@ {
             <!NOT_A_LOOP_LABEL!>continue@f<!>
             continue
             <!UNREACHABLE_CODE!>continue@b<!>
@@ -42,21 +42,21 @@ class C {
     }
 
     fun containsBreakWithLabel(a: String?) {
-        @loop while(a == null) {
+        loop@ while(a == null) {
             break@loop
         }
         a?.compareTo("2")
     }
 
     fun containsIllegalBreak(a: String?) {
-        @loop while(a == null) {
+        loop@ while(a == null) {
             <!NOT_A_LOOP_LABEL!>break<!UNRESOLVED_REFERENCE!>@label<!><!>
         }
         <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("2")
     }
 
     fun containsBreakToOuterLoop(a: String?, b: String?) {
-        @loop while(b == null) {
+        loop@ while(b == null) {
             while(a == null) {
                 break@loop
             }
@@ -65,7 +65,7 @@ class C {
     }
 
     fun containsBreakInsideLoopWithLabel(a: String?, array: Array<Int>) {
-        @l while(a == null) {
+        l@ while(a == null) {
             for (el in array) {
                 break@l
             }
@@ -75,7 +75,7 @@ class C {
 
     fun unresolvedBreak(a: String?, array: Array<Int>) {
         while(a == null) {
-            @l for (el in array) {
+            l@ for (el in array) {
                 break
             }
             if (true) break else <!NOT_A_LOOP_LABEL!>break<!UNRESOLVED_REFERENCE!>@l<!><!>

@@ -12,19 +12,19 @@ noinline fun test(state: State) {
     [inline] fun test3() {
         [inline] fun test2() {
             [inline] fun test1() {
-                @loop for (i in 1..10) {
+                loop@ for (i in 1..10) {
                     state.value++
                     if (i == 2) break@loop
                 }
             }
 
-            @loop for (i in 1..10) {
+            loop@ for (i in 1..10) {
                 test1()
                 if (i == 2) break@loop
             }
         }
 
-        @loop for (i in 1..10) {
+        loop@ for (i in 1..10) {
             test2()
             if (i == 2) break@loop
         }

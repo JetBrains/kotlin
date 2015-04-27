@@ -7,7 +7,7 @@ enum class Foo {
     val t: Int = 0
 
     fun test() {
-        testRenamed("instanceof", { @instanceof while (false) {} })
+        testRenamed("instanceof", { instanceof@ while (false) {} })
     }
 }
 

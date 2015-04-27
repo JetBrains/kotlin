@@ -23,11 +23,11 @@ fun test(d: dynamic) {
 
     d.foo({ x -> } : (Int) -> Unit)
 
-    d.foo(@label { x -> })
+    d.foo(label@ { x -> })
 
-    d.foo(@label ({ x, y -> }))
+    d.foo(label@ ({ x, y -> }))
 
-    d.foo((@label ({ <!DEPRECATED_LAMBDA_SYNTAX!>(x, y: Int)<!> -> })))
+    d.foo((label@ ({ <!DEPRECATED_LAMBDA_SYNTAX!>(x, y: Int)<!> -> })))
 
     d.foo(({ x -> }))
 

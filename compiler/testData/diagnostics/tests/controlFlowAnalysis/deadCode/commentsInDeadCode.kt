@@ -12,7 +12,7 @@ fun test2() {
     <!UNREACHABLE_CODE!>bar(<!>11, todo()/*comment1*/, <!UNREACHABLE_CODE!>""/*comment2*/)<!>
 }
 fun test3() {
-    <!UNREACHABLE_CODE!>bar(<!>11, @l(todo()/*comment*/), <!UNREACHABLE_CODE!>"")<!>
+    <!UNREACHABLE_CODE!>bar(<!>11, l@(todo()/*comment*/), <!UNREACHABLE_CODE!>"")<!>
 }
 
 fun todo() = throw Exception()

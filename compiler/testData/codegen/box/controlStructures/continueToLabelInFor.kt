@@ -1,7 +1,7 @@
 fun for_int_range(): Int {
     var c = 0
-    @loop for (i in 1..10) {
-        if (c >= 5) continue @loop
+    loop@ for (i in 1..10) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -11,8 +11,8 @@ fun for_byte_range(): Int {
     var c = 0
     val from: Byte = 1
     val to: Byte = 10
-    @loop for (i in from..to) {
-        if (c >= 5) continue @loop
+    loop@ for (i in from..to) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -22,8 +22,8 @@ fun for_long_range(): Int {
     var c = 0
     val from: Long = 1
     val to: Long = 10
-    @loop for (i in from..to) {
-        if (c >= 5) continue @loop
+    loop@ for (i in from..to) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -34,8 +34,8 @@ fun for_int_list(): Int {
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     var c = 0
-    @loop for (i in a) {
-        if (c >= 5) continue @loop
+    loop@ for (i in a) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -46,8 +46,8 @@ fun for_byte_list(): Int {
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     var c = 0
-    @loop for (i in a) {
-        if (c >= 5) continue @loop
+    loop@ for (i in a) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -58,8 +58,8 @@ fun for_long_list(): Int {
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     a.add(0); a.add(0); a.add(0); a.add(0); a.add(0)
     var c = 0
-    @loop for (i in a) {
-        if (c >= 5) continue @loop
+    loop@ for (i in a) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -70,8 +70,8 @@ fun for_double_list(): Int {
     a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0)
     a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0)
     var c = 0
-    @loop for (i in a) {
-        if (c >= 5) continue @loop
+    loop@ for (i in a) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -82,8 +82,8 @@ fun for_object_list(): Int {
     a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0)
     a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0); a.add(0.0)
     var c = 0
-    @loop for (i in a) {
-        if (c >= 5) continue @loop
+    loop@ for (i in a) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -92,8 +92,8 @@ fun for_object_list(): Int {
 fun for_str_array(): Int {
     val a = arrayOfNulls<String>(10)
     var c = 0
-    @loop for (i in a) {
-        if (c >= 5) continue @loop
+    loop@ for (i in a) {
+        if (c >= 5) continue@loop
         c++
     }
     return c
@@ -102,8 +102,8 @@ fun for_str_array(): Int {
 fun for_intarray(): Int {
     val a = IntArray(10)
     var c = 0
-    @loop for (i in a) {
-        if (c >= 5) continue @loop
+    loop@ for (i in a) {
+        if (c >= 5) continue@loop
         c++
     }
     return c

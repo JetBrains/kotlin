@@ -1,8 +1,8 @@
 class C {
 
     fun f (<warning>a</warning> : Boolean, <warning>b</warning> : Boolean) {
-        @b (<error descr="[EXPRESSION_EXPECTED] While is not an expression, and only expressions are allowed here">while (true)
-          @a {
+        b@ (<error descr="[EXPRESSION_EXPECTED] While is not an expression, and only expressions are allowed here">while (true)
+          a@ {
             <error>break@f</error>
             break
             break@b
@@ -11,8 +11,8 @@ class C {
 
         <error>continue</error>
 
-        @b (<error descr="[EXPRESSION_EXPECTED] While is not an expression, and only expressions are allowed here">while (true)
-          @a {
+        b@ (<error descr="[EXPRESSION_EXPECTED] While is not an expression, and only expressions are allowed here">while (true)
+          a@ {
             <error>continue@f</error>
             continue
             continue@b

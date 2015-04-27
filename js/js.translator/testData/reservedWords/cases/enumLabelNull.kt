@@ -7,7 +7,7 @@ enum class Foo {
     val t: Int = 0
 
     fun test() {
-        testRenamed("null", { @`null` while (false) {} })
+        testRenamed("null", { `null`@ while (false) {} })
     }
 }
 

@@ -7,7 +7,7 @@ class TestClass {
         val t: Int = 0
 
         fun test() {
-            testRenamed("return", { @`return` while (false) {} })
+            testRenamed("return", { `return`@ while (false) {} })
         }
     }
 }

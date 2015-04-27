@@ -21,7 +21,7 @@ fun test1(h: Holder): String {
 
 fun test2(h: Holder): String {
     val localResult = doCall (
-            @lambda {
+            lambda@ {
                 h.value += "OK_NONLOCAL"
                 return@lambda "OK_NONLOCAL"
             }, {
@@ -51,7 +51,7 @@ fun test4(h: Holder): String {
                 h.value += "OK_NONLOCAL"
                 return "OK_NONLOCAL"
             },
-            @l2 {
+            l2@ {
                 h.value += ", OK_FINALLY"
                 return@l2 "OK_FINALLY"
             })

@@ -13,7 +13,7 @@ fun test() {
 }
 
 fun foo() {
-    val bal = @bag fun () {
+    val bal = bag@ fun () {
         val bar = fun() {
             <!RETURN_NOT_ALLOWED!>return@bag<!>
         }

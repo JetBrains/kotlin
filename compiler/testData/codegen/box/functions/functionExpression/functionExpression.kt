@@ -22,10 +22,10 @@ fun box() : String {
     if (1.a() != 2) return "test 8 failed"
     val b = ( fun Int.() = this + 1)
     if (1.b() != 2) return "test 9 failed"
-    val c = (@c fun Int.() = this + 1)
+    val c = (c@ fun Int.() = this + 1)
     if (1.c() != 2) return "test 10 failed"
 
-    val d = @d fun (): Int { return@d 4}
+    val d = d@ fun (): Int { return@d 4}
     if (d() != 4) return "test 11 failed"
 
     return "OK"

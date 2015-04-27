@@ -1,5 +1,5 @@
 fun findPairless(a : IntArray) : Int {
-  @loop for (i in a.indices) {
+  loop@ for (i in a.indices) {
     for (j in a.indices) {
       if (i != j && a[i] == a[j]) continue@loop
     }
@@ -10,7 +10,7 @@ fun findPairless(a : IntArray) : Int {
 
 fun hasDuplicates(a : IntArray) : Boolean {
   var duplicate = false
-  @loop for (i in a.indices) {
+  loop@ for (i in a.indices) {
     for (j in a.indices) {
       if (i != j && a[i] == a[j]) {
         duplicate = true

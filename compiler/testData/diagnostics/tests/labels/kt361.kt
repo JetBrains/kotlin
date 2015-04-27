@@ -1,5 +1,5 @@
 fun nonlocals(b : Boolean) {
-    @a<!UNUSED_FUNCTION_LITERAL!>{
+    a@<!UNUSED_FUNCTION_LITERAL!>{
         fun foo() {
             if (b) {
                 <!RETURN_NOT_ALLOWED!>return@a 1<!> // The label must be resolved, but an error should be reported for a non-local return

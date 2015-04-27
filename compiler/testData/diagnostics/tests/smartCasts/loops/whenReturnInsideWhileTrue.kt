@@ -1,5 +1,5 @@
 public fun foo(x: String?): Int {
-    @loop while (true) {
+    loop@ while (true) {
         when (x) {
             null -> return -1
             "abc" -> return 0

@@ -46,7 +46,7 @@ fun breakContinueInWhenWithDoWhile(i: Int, j: Int) {
 }
 
 fun labeledBreakContinue(i: Int) {
-    @outer for (y in 0..10) {
+    outer@ for (y in 0..10) {
         when (i) {
             0 -> continue@outer
             1 -> break@outer

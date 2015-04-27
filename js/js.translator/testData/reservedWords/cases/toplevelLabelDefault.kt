@@ -5,7 +5,7 @@ package foo
 val t: Int = 0
 
 fun box(): String {
-    testRenamed("default", { @default while (false) {} })
+    testRenamed("default", { default@ while (false) {} })
 
     return "OK"
 }

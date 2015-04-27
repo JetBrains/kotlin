@@ -12,7 +12,7 @@ class TraitImpl : Trait {
 
 class TestDelegate : Trait by TraitImpl() {
     fun test() {
-        testRenamed("default", { @default while (false) {} })
+        testRenamed("default", { default@ while (false) {} })
     }
 }
 

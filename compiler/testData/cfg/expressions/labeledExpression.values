@@ -1,6 +1,6 @@
 == foo ==
 fun foo(): Int {
-    val t = @x (1 + 2)
+    val t = x@ (1 + 2)
     return t
 }
 ---------------------
@@ -8,8 +8,8 @@ fun foo(): Int {
 2                                 <v1>: Int   NEW: r(2) -> <v1>
 1 + 2                             <v2>: Int   NEW: call(1 + 2, plus|<v0>, <v1>) -> <v2>
 (1 + 2)                           <v2>: Int   COPY
-@x (1 + 2)                        <v2>: Int   COPY
+x@ (1 + 2)                        <v2>: Int   COPY
 t                                 <v3>: Int   NEW: r(t) -> <v3>
 return t                          !<v4>: *
-{ val t = @x (1 + 2) return t }   !<v4>: *    COPY
+{ val t = x@ (1 + 2) return t }   !<v4>: *    COPY
 =====================

@@ -1,5 +1,5 @@
 fun inlineCallExplicitError(): String {
-    inlineFun @lamba {
+    inlineFun lamba@ {
         if (true) {
             return@lamba 2
         }
@@ -10,7 +10,7 @@ fun inlineCallExplicitError(): String {
 }
 
 fun inlineCall(): String {
-    inlineFun @lamba {
+    inlineFun lamba@ {
         if (true) {
             return@lamba 2
         }
@@ -26,7 +26,7 @@ inline fun inlineFun(s: () -> Int) {
 
 
 fun noInlineCall(): String {
-    noInline @lambda {
+    noInline lambda@ {
         if (true) {
             return@lambda 2
         }

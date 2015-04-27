@@ -22,10 +22,10 @@ class Global(val value: String)
 fun test1(intKind: Kind, extKind: Kind, holder: Holder): Global {
     holder.value = ""
     try {
-        var externalResult = doCall (@ext {
+        var externalResult = doCall (ext@ {
 
             try {
-                val internalResult = doCall (@int {
+                val internalResult = doCall (int@ {
                     try {
                         if (intKind == Kind.GLOBAL) {
                             return@test1 Global("internal -> global")

@@ -1,13 +1,13 @@
 fun test() {
 
-    @l for (i in if (true) 1..10 else <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue@l<!>) {}
+    l@ for (i in if (true) 1..10 else <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue@l<!>) {}
     for (i in if (true) 1..10 else <!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>) {}
 
     while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break<!>) {}
-    @l while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break@l<!>) {}
+    l@ while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>break@l<!>) {}
 
     do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue<!>)
-    @l do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue@l<!>)
+    l@ do {} while (<!BREAK_OR_CONTINUE_OUTSIDE_A_LOOP!>continue@l<!>)
 
     //KT-5704
     var i = 0

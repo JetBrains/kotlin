@@ -1,7 +1,7 @@
 fun box(): String {
     var x = 1
-    (@foo x)++
-    ++(@foo x)
+    (foo@ x)++
+    ++(foo@ x)
     (x: Int)++
     ++(x: Int)
 

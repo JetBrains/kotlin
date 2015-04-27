@@ -6,8 +6,8 @@ package foo
 fun testBreak() {
     var i = 0
 
-    @loop for (j in 1..10) {
-        if (j == 5) break @loop
+    loop@ for (j in 1..10) {
+        if (j == 5) break@loop
 
         i = j
     }
@@ -18,8 +18,8 @@ fun testBreak() {
 fun testContinue() {
     var sum = 0
 
-    @loop for (j in 1..5) {
-        if (j % 2 != 0) continue @loop
+    loop@ for (j in 1..5) {
+        if (j % 2 != 0) continue@loop
 
         sum += j
     }

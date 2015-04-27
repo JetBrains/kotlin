@@ -2,5 +2,5 @@
 
 fun foo() {
     [suppress("UNNECESSARY_NOT_NULL_ASSERTION")]
-    @label""<caret>!!
+    label@""<caret>!!
 }

@@ -23,7 +23,7 @@ fun test4(): Int {
 
 fun test5(): Int {
     return synchronized(this) {(): Int ->
-        return@synchronized 12
+        return @synchronized      12
     }
 }
 

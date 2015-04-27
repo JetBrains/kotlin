@@ -7,7 +7,7 @@ fun string(init: StringBuilder.() -> Unit): String{
     return answer.toString()
 }
 
-val str = string @l{
+val str = string l@{
     append("hello, ")
 
     val sub = string {

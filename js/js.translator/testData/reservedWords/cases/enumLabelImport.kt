@@ -7,7 +7,7 @@ enum class Foo {
     val t: Int = 0
 
     fun test() {
-        testRenamed("import", { @import while (false) {} })
+        testRenamed("import", { import@ while (false) {} })
     }
 }
 

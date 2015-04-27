@@ -1,5 +1,5 @@
 fun f() {
-    @loop while (true) {
+    loop@ while (true) {
         break@lo<selection>o</selection>p
     }
 }

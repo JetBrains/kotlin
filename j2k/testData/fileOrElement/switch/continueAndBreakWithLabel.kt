@@ -1,5 +1,5 @@
 fun foo() {
-    @Loop while (true) {
+    Loop@ while (true) {
         when (take()) {
             1 -> continue
             2 -> {

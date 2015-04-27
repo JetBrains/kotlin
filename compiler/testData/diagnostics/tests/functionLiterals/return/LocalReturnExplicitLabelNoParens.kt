@@ -1,5 +1,5 @@
 fun test2() {
-    val x = run @f{return@f 1}
+    val x = run f@{return@f 1}
     x: Int
 }
 

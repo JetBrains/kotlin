@@ -4,12 +4,12 @@ fun test(): String = fun (): String {
     return "fail"
 } ()
 
-fun test2(): String = (@l fun (): String {
+fun test2(): String = (l@ fun (): String {
     foo { return@l "OK" }
     return "fail"
 }) ()
 
-fun test3(): String = (@l fun bar(): String {
+fun test3(): String = (l@ fun bar(): String {
     foo { return@bar "OK" }
     return "fail"
 }) ()

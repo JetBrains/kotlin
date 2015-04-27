@@ -1,6 +1,6 @@
 // IS_APPLICABLE: true
 fun foo() {
-    bar(@l{ it * 3 })
+    bar(l@{ it * 3 })
 }
 
 fun bar(b: (Int) -> Int) {
