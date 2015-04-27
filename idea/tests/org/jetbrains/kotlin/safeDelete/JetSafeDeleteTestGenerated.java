@@ -133,6 +133,12 @@ public class JetSafeDeleteTestGenerated extends AbstractJetSafeDeleteTest {
             doObjectTest(fileName);
         }
 
+        @TestMetadata("companionObject.kt")
+        public void testCompanionObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteObject/kotlinObject/companionObject.kt");
+            doObjectTest(fileName);
+        }
+
         @TestMetadata("localObject1.kt")
         public void testLocalObject1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/safeDelete/deleteObject/kotlinObject/localObject1.kt");

@@ -20,7 +20,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Condition;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -289,7 +288,7 @@ public class JetPsiUtil {
     public static void deleteClass(@NotNull JetClassOrObject clazz) {
         CheckUtil.checkWritable(clazz);
         JetFile file = clazz.getContainingJetFile();
-        if (clazz.isLocal() || file.getDeclarations().size() > 1) {
+        if (!clazz.isTopLevel() || file.getDeclarations().size() > 1) {
             PsiElement parent = clazz.getParent();
             CodeEditUtil.removeChild(parent.getNode(), clazz.getNode());
         }
