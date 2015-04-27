@@ -43,7 +43,7 @@ class KotlinOverrideHierarchyBrowser(
             )
 
     override fun isApplicableElement(psiElement: PsiElement): Boolean =
-            isOverrideHierarchyElement(psiElement)
+            psiElement.isOverrideHierarchyElement()
 
     override fun createHierarchyTreeStructure(typeName: String, psiElement: PsiElement): HierarchyTreeStructure? =
             if (typeName == MethodHierarchyBrowserBase.METHOD_TYPE) KotlinOverrideTreeStructure(myProject, psiElement) else null

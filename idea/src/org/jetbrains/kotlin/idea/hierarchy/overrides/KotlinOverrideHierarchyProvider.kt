@@ -44,8 +44,8 @@ public class KotlinOverrideHierarchyProvider: HierarchyProvider {
     }
 
     private fun getOverrideHierarchyElement(element: PsiElement?): PsiElement?
-            = element?.getParentOfTypesAndPredicate() { isOverrideHierarchyElement(it) }
+            = element?.getParentOfTypesAndPredicate() { it.isOverrideHierarchyElement() }
 }
 
-fun isOverrideHierarchyElement(element: PsiElement): Boolean
-        = element is PsiMethod || element is JetNamedFunction || element is JetProperty
+fun PsiElement.isOverrideHierarchyElement(): Boolean
+        = this is PsiMethod || this is JetNamedFunction || this is JetProperty
