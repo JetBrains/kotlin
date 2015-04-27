@@ -39,7 +39,7 @@ class ExpressionListStatement(val expressions: List<Expression>) : Expression() 
 
 class LabeledStatement(val name: Identifier, val statement: Element) : Statement() {
     override fun generateCode(builder: CodeBuilder) {
-        builder append "@" append name append " " append statement
+        builder append name append "@" append " " append statement
     }
 }
 
