@@ -84,14 +84,14 @@ public fun <T> Collection<T>.toArrayList(): ArrayList<T> {
  * Returns an ArrayList of all elements
  */
 public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
-    return toCollection(ArrayList<T>())
+    return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
-    return toCollection(ArrayList<T>())
+    return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))
 }
 
 
@@ -100,7 +100,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns an ArrayList of all elements
  */
 public fun <T> Stream<T>.toArrayList(): ArrayList<T> {
-    return toCollection(ArrayList<T>())
+    return toCollection(ArrayList<T>(collectionSizeOrDefault(10)))
 }
 
 /**

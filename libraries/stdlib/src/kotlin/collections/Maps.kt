@@ -62,16 +62,18 @@ public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
  * very large sizes, allows support non-collection classes, and provides consistency for all map based class construction.
  */
 
-private val MAX_POWER_OF_TWO: Int = 1 shl (Integer.SIZE - 2)
+private val INT_MAX_VALUE: Int = 0x7fffffff
+private val INT_SIZE: Int = 32
+private val INT_MAX_POWER_OF_TWO: Int = 1 shl (INT_SIZE - 2)
 
 private fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
     }
-    if (expectedSize < MAX_POWER_OF_TWO) {
+    if (expectedSize < INT_MAX_POWER_OF_TWO) {
         return expectedSize + expectedSize / 3
     }
-    return Integer.MAX_VALUE // any large value
+    return INT_MAX_VALUE // any large value
 }
 
 private fun <T> mapCapacityForValues(values: Array<T>): Int {
