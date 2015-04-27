@@ -120,7 +120,11 @@ fun JetExpression.convertToIfStatement(condition: JetExpression, thenClause: Jet
 fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpression, editor: Editor) {
     val project = this.getProject()
     val occurrenceInConditional = (this.getCondition() as JetBinaryExpression).getLeft()!!
-    KotlinIntroduceVariableHandler.doRefactoring(project, editor, occurrenceInConditional, listOf(occurrenceInConditional, occurrenceInThenClause))
+    KotlinIntroduceVariableHandler.doRefactoring(project,
+                                                 editor,
+                                                 occurrenceInConditional,
+                                                 listOf(occurrenceInConditional, occurrenceInThenClause),
+                                                 null)
 }
 
 fun JetElement.replace(expressionAsString: String): PsiElement =

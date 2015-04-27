@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages;
 
+import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.util.PsiTreeUtil;
@@ -24,6 +25,8 @@ import gnu.trove.TIntArrayList;
 import gnu.trove.TIntProcedure;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
+import kotlin.Pair;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -31,9 +34,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionEnginePackage;
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.PsiModificationUtilPackage;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -45,21 +50,22 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
-    private static final Comparator<Map.Entry<PsiReference, DeclarationDescriptor>>
-            REVERSE_TEXT_OFFSET_COMPARATOR = new Comparator<Map.Entry<PsiReference, DeclarationDescriptor>>() {
+    private static final Comparator<Pair<JetElement, JetElement>>
+            REVERSED_TEXT_OFFSET_COMPARATOR = new Comparator<Pair<JetElement, JetElement>>() {
         @Override
         public int compare(
-                @NotNull Map.Entry<PsiReference, DeclarationDescriptor> o1,
-                @NotNull Map.Entry<PsiReference, DeclarationDescriptor> o2
+                @NotNull Pair<JetElement, JetElement> p1,
+                @NotNull Pair<JetElement, JetElement> p2
         ) {
-            int offset1 = o1.getKey().getElement().getTextRange().getStartOffset();
-            int offset2 = o2.getKey().getElement().getTextRange().getStartOffset();
+            int offset1 = p1.getFirst().getTextRange().getStartOffset();
+            int offset2 = p2.getFirst().getTextRange().getStartOffset();
             return offset1 < offset2 ? 1
                                      : offset1 > offset2 ? -1
                                                          : 0;
@@ -75,12 +81,14 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
     };
 
     private final JetFunctionDefinitionUsage<?> callee;
+    private final BindingContext context;
     private final ResolvedCall<? extends CallableDescriptor> resolvedCall;
 
     public JetFunctionCallUsage(@NotNull JetCallElement element, JetFunctionDefinitionUsage callee) {
         super(element);
         this.callee = callee;
-        this.resolvedCall = CallUtilPackage.getResolvedCall(element, ResolvePackage.analyze(element, BodyResolveMode.FULL));
+        this.context = ResolvePackage.analyze(element, BodyResolveMode.FULL);
+        this.resolvedCall = CallUtilPackage.getResolvedCall(element, context);
     }
 
     @Override
@@ -147,11 +155,36 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         return getReceiverExpression(receiverValue, psiFactory);
     }
 
+    private boolean needSeparateVariable(@NotNull PsiElement element) {
+        if (element instanceof JetConstantExpression) return false;
+        if (element instanceof JetThisExpression) return false;
+        if (element instanceof JetSimpleNameExpression) return false;
+
+        //noinspection SuspiciousMethodCalls
+        if (element instanceof JetBinaryExpression
+            && OperatorConventions.ASSIGNMENT_OPERATIONS.containsKey(((JetBinaryExpression) element).getOperationToken())) return true;
+
+        //noinspection SuspiciousMethodCalls
+        if (element instanceof JetUnaryExpression
+            && OperatorConventions.INCREMENT_OPERATIONS.contains(((JetUnaryExpression) element).getOperationToken())) return true;
+
+        if (element instanceof JetCallExpression) {
+            ResolvedCall<? extends CallableDescriptor> resolvedCall =
+                    CallUtilPackage.getResolvedCall((JetCallExpression) element, context);
+            return resolvedCall != null && resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor;
+        }
+
+        for (PsiElement child : element.getChildren()) {
+            if (needSeparateVariable(child)) return true;
+        }
+        return false;
+    }
+
     @NotNull
     private JetExpression substituteReferences(
             @NotNull JetExpression expression,
             @NotNull Map<PsiReference, DeclarationDescriptor> referenceMap,
-            @NotNull JetPsiFactory psiFactory
+            @NotNull final JetPsiFactory psiFactory
     ) {
         if (referenceMap.isEmpty() || resolvedCall == null) return expression;
 
@@ -161,10 +194,9 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 ExtractionEnginePackage.createNameCounterpartMap(expression, newExpression);
 
         Map<ValueParameterDescriptor, ResolvedValueArgument> valueArguments = resolvedCall.getValueArguments();
-        // Sort by descending offset so that call arguments are replaced before call itself
-        List<Map.Entry<PsiReference, DeclarationDescriptor>> sortedEntries =
-                ContainerUtil.sorted(referenceMap.entrySet(), REVERSE_TEXT_OFFSET_COMPARATOR);
-        for (Map.Entry<PsiReference, DeclarationDescriptor> e : sortedEntries) {
+
+        List<Pair<JetElement, JetElement>> replacements = new ArrayList<Pair<JetElement, JetElement>>();
+        for (Map.Entry<PsiReference, DeclarationDescriptor> e : referenceMap.entrySet()) {
             DeclarationDescriptor descriptor = e.getValue();
 
             JetExpression argumentExpression;
@@ -191,6 +223,31 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             }
             if (argumentExpression == null) continue;
 
+            //noinspection unchecked
+            if (needSeparateVariable(argumentExpression) &&
+                PsiTreeUtil.getNonStrictParentOfType(getElement(),
+                                                     JetConstructorDelegationCall.class,
+                                                     JetDelegationSpecifier.class,
+                                                     JetParameter.class) == null) {
+
+                final Ref<JetExpression> newExpressionRef = new Ref<JetExpression>();
+                KotlinIntroduceVariableHandler.doRefactoring(
+                        getProject(),
+                        null,
+                        argumentExpression,
+                        Collections.singletonList(argumentExpression),
+                        new Function1<JetProperty, Unit>() {
+                            @Override
+                            public Unit invoke(JetProperty property) {
+                                //noinspection ConstantConditions
+                                newExpressionRef.set(psiFactory.createExpression(property.getName()));
+                                return null;
+                            }
+                        }
+                );
+                argumentExpression = newExpressionRef.get();
+            }
+
             //noinspection SuspiciousMethodCalls
             JetExpression expressionToReplace = nameCounterpartMap.get(e.getKey().getElement());
             if (expressionToReplace == null) continue;
@@ -210,11 +267,22 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                         continue;
                     }
                 }
-                expressionToReplace.replace(psiFactory.createExpression(argumentExpression.getText() + "." + expressionToReplace.getText()));
+                replacements.add(
+                        new Pair<JetElement, JetElement>(
+                                expressionToReplace,
+                                psiFactory.createExpression(argumentExpression.getText() + "." + expressionToReplace.getText())
+                        )
+                );
             }
             else {
-                expressionToReplace.replace(argumentExpression);
+                replacements.add(new Pair<JetElement, JetElement>(expressionToReplace, argumentExpression));
             }
+        }
+
+        // Sort by descending offset so that call arguments are replaced before call itself
+        ContainerUtil.sort(replacements, REVERSED_TEXT_OFFSET_COMPARATOR);
+        for (Pair<JetElement, JetElement> replacement : replacements) {
+            replacement.getFirst().replace(replacement.getSecond());
         }
 
         return newExpression;

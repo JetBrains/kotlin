@@ -1,0 +1,9 @@
+// WITH_DEFAULT_VALUE: false
+
+fun foo(i: Int): Int {
+    return i / 2
+}
+
+fun test() {
+    foo(1.plus(2) * 3.minus(4))
+}

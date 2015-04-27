@@ -32,6 +32,7 @@ import com.intellij.refactoring.HelpID;
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
+import kotlin.Unit;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -81,7 +82,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         JetRefactoringUtil.SelectExpressionCallback callback = new JetRefactoringUtil.SelectExpressionCallback() {
             @Override
             public void run(@Nullable JetExpression expression) {
-                doRefactoring(project, editor, expression, null);
+                doRefactoring(project, editor, expression, null, null);
             }
         };
         try {
@@ -94,8 +95,11 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
 
     public static void doRefactoring(
-            @NotNull final Project project, final Editor editor, @Nullable JetExpression _expression,
-            @Nullable List<JetExpression> occurrencesToReplace
+            @NotNull final Project project,
+            @Nullable final Editor editor,
+            @Nullable JetExpression _expression,
+            @Nullable List<JetExpression> occurrencesToReplace,
+            @Nullable final Function1<JetProperty, Unit> onNonInteractiveFinish
     ) {
         if (_expression == null) {
             showErrorHint(project, editor, JetRefactoringBundle.message("cannot.refactor.no.expression"));
@@ -162,6 +166,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             return;
         }
         final boolean isInplaceAvailableOnDataContext =
+            editor != null &&
             editor.getSettings().isVariableInplaceRenameEnabled() &&
             !ApplicationManager.getApplication().isUnitTestMode();
 
@@ -212,19 +217,24 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         ApplicationManager.getApplication().runWriteAction(introduceRunnable);
                         JetProperty property = propertyRef.get();
                         if (property != null) {
-                            editor.getCaretModel().moveToOffset(property.getTextOffset());
-                            editor.getSelectionModel().removeSelection();
-                            if (isInplaceAvailableOnDataContext) {
-                                PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-                                PsiDocumentManager.getInstance(project).
-                                    doPostponedOperationsAndUnblockDocument(editor.getDocument());
-                                KotlinInplaceVariableIntroducer<JetProperty> variableIntroducer =
-                                    new KotlinInplaceVariableIntroducer<JetProperty>(property, editor, project, INTRODUCE_VARIABLE,
-                                                                     references.toArray(new JetExpression[references.size()]),
-                                                                     reference.get(), finalReplaceOccurrence,
-                                                                     property, /*todo*/false, /*todo*/false,
-                                                                     expressionType, finalNoTypeInference);
-                                variableIntroducer.performInplaceRefactoring(suggestedNamesSet);
+                            if (editor != null) {
+                                editor.getCaretModel().moveToOffset(property.getTextOffset());
+                                editor.getSelectionModel().removeSelection();
+                                if (isInplaceAvailableOnDataContext) {
+                                    PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+                                    PsiDocumentManager.getInstance(project).
+                                            doPostponedOperationsAndUnblockDocument(editor.getDocument());
+                                    KotlinInplaceVariableIntroducer<JetProperty> variableIntroducer =
+                                            new KotlinInplaceVariableIntroducer<JetProperty>(property, editor, project, INTRODUCE_VARIABLE,
+                                                                                             references.toArray(new JetExpression[references.size()]),
+                                                                                             reference.get(), finalReplaceOccurrence,
+                                                                                             property, /*todo*/false, /*todo*/false,
+                                                                                             expressionType, finalNoTypeInference);
+                                    variableIntroducer.performInplaceRefactoring(suggestedNamesSet);
+                                }
+                            }
+                            else if (onNonInteractiveFinish != null) {
+                                onNonInteractiveFinish.invoke(property);
                             }
                         }
                     }
