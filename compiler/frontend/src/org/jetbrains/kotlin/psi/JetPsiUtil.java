@@ -839,8 +839,7 @@ public class JetPsiUtil {
     }
 
     public static boolean isLabelIdentifierExpression(PsiElement element) {
-        return element instanceof JetSimpleNameExpression &&
-               ((JetSimpleNameExpression) element).getReferencedNameElementType() == JetTokens.LABEL_IDENTIFIER;
+        return element instanceof JetLabelReferenceExpression;
     }
 
     @Nullable

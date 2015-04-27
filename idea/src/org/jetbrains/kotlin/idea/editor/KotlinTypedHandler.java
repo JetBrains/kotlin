@@ -154,7 +154,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                 PsiElement lastElement = file.findElementAt(offset - 1);
                 if (lastElement == null) return false;
 
-                return lastElement.getNode().getElementType() == JetTokens.LABEL_IDENTIFIER;
+                return lastElement.getNode().getElementType() == JetTokens.AT;
             }
         });
     }

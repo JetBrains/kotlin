@@ -25,11 +25,7 @@ open public class JetExpressionWithLabel(node: ASTNode) : JetExpressionImpl(node
             findChildByType<JetContainerNode>(JetNodeTypes.LABEL_QUALIFIER)?.
             findChildByType(JetNodeTypes.LABEL) as? JetSimpleNameExpression
 
-    public fun getLabelName(): String? {
-        val labelElement = getTargetLabel()
-        assert(labelElement == null || labelElement.getText().startsWith("@"))
-        return labelElement?.getText()?.substring(1)
-    }
+    public fun getLabelName(): String? = getTargetLabel()?.getIdentifier()?.getText()
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D) = visitor.visitExpressionWithLabel(this, data)
 }

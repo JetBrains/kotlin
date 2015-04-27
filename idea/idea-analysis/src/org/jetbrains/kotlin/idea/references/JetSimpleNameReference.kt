@@ -87,7 +87,6 @@ public class JetSimpleNameReference(
         val psiFactory = JetPsiFactory(expression)
         val element = when (expression.getReferencedNameElementType()) {
             JetTokens.FIELD_IDENTIFIER -> psiFactory.createFieldIdentifier(newElementName)
-            JetTokens.LABEL_IDENTIFIER -> psiFactory.createClassLabel(newElementName)
             else -> {
                 val extensions = Extensions.getArea(expression.getProject()).getExtensionPoint(
                         SimpleNameReferenceExtension.EP_NAME).getExtensions()
