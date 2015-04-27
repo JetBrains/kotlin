@@ -32,11 +32,10 @@ import com.intellij.psi.tree.TokenSet
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetFunctionLiteral
-import org.jetbrains.kotlin.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
 
 public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
     companion object {
@@ -103,6 +102,7 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
         var caretOffset = caretOffsetRef.get()
         val psiAtOffset = psiFile.findElementAt(caretOffset) ?: return false
         val stringTemplate = psiAtOffset.getStrictParentOfType<JetStringTemplateExpression>() ?: return false
+        if (!stringTemplate.isSingleQuoted()) return false
         val tokenType = psiAtOffset.getNode().getElementType()
         when (tokenType) {
             JetTokens.CLOSING_QUOTE, JetTokens.REGULAR_STRING_PART, JetTokens.ESCAPE_SEQUENCE,

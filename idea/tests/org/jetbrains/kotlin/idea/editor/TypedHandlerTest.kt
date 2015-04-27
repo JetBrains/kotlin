@@ -269,6 +269,12 @@ public class TypedHandlerTest : LightCodeInsightTestCase() {
             "        \"bar\").length()"
     )
 
+    public fun testSplitStringByEnter_TripleQuotedString(): Unit = doCharTypeTest(
+            '\n',
+            "val l = \"\"\"foo<caret>bar\"\"\"",
+            "val l = \"\"\"foo\nbar\"\"\""
+    )
+
     public fun testTypeLtInFunDeclaration() {
         doLtGtTest("fun <caret>")
     }
