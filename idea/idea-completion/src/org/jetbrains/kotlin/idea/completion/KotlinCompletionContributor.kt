@@ -82,6 +82,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             else -> specialExtensionReceiverDummyIdentifier(tokenBefore)
                     ?: specialInTypeArgsDummyIdentifier(tokenBefore)
                     ?: specialInParameterListDummyIdentifier(tokenBefore)
+                    ?: specialInArgumentListDummyIdentifier(tokenBefore)
                     ?: DEFAULT_DUMMY_IDENTIFIER
         }
         context.setDummyIdentifier(dummyIdentifier)
@@ -365,6 +366,15 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (parent is JetAnnotationEntry) return null
             parent = parent.getParent()
         }
+        return null
+    }
+
+    private fun specialInArgumentListDummyIdentifier(tokenBefore: PsiElement?): String? {
+        // If we insert $ in the argument list of a delegation specifier, this will break parsing
+        // and the following block will not be attached as a body to the constructor. Therefore
+        // we need to use a regular identifier.
+        val argumentList = tokenBefore?.getNonStrictParentOfType<JetValueArgumentList>() ?: return null
+        if (argumentList.getParent() is JetConstructorDelegationCall) return CompletionUtil.DUMMY_IDENTIFIER_TRIMMED
         return null
     }
 
