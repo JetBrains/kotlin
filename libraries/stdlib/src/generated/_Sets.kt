@@ -11,73 +11,269 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun <T> Array<out T>.distinct(): Set<T> {
-    return this.toMutableSet()
+public fun <T> Array<out T>.distinct(): List<T> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun BooleanArray.distinct(): Set<Boolean> {
-    return this.toMutableSet()
+public fun BooleanArray.distinct(): List<Boolean> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun ByteArray.distinct(): Set<Byte> {
-    return this.toMutableSet()
+public fun ByteArray.distinct(): List<Byte> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun CharArray.distinct(): Set<Char> {
-    return this.toMutableSet()
+public fun CharArray.distinct(): List<Char> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun DoubleArray.distinct(): Set<Double> {
-    return this.toMutableSet()
+public fun DoubleArray.distinct(): List<Double> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun FloatArray.distinct(): Set<Float> {
-    return this.toMutableSet()
+public fun FloatArray.distinct(): List<Float> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun IntArray.distinct(): Set<Int> {
-    return this.toMutableSet()
+public fun IntArray.distinct(): List<Int> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun LongArray.distinct(): Set<Long> {
-    return this.toMutableSet()
+public fun LongArray.distinct(): List<Long> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun ShortArray.distinct(): Set<Short> {
-    return this.toMutableSet()
+public fun ShortArray.distinct(): List<Short> {
+    return this.toMutableSet().toList()
 }
 
 /**
- * Returns a set containing all distinct elements from the given collection.
+ * Returns a list containing only distinct elements from the given collection.
+ * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public fun <T> Iterable<T>.distinct(): Set<T> {
-    return this.toMutableSet()
+public fun <T> Iterable<T>.distinct(): List<T> {
+    return this.toMutableSet().toList()
+}
+
+/**
+ * Returns a sequence containing only distinct elements from the given sequence.
+ * The elements in the resulting sequence are in the same order as they were in the source sequence.
+ */
+public fun <T> Sequence<T>.distinct(): Sequence<T> {
+    return this.distinctBy { it }
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a stream containing only distinct elements from the given stream.
+ * The elements in the resulting stream are in the same order as they were in the source stream.
+ */
+public fun <T> Stream<T>.distinct(): Stream<T> {
+    return this.distinctBy { it }
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <T, K> Array<out T>.distinctBy(keySelector: (T) -> K): List<T> {
+    val set = HashSet<K>()
+    val list = ArrayList<T>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <K> BooleanArray.distinctBy(keySelector: (Boolean) -> K): List<Boolean> {
+    val set = HashSet<K>()
+    val list = ArrayList<Boolean>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <K> ByteArray.distinctBy(keySelector: (Byte) -> K): List<Byte> {
+    val set = HashSet<K>()
+    val list = ArrayList<Byte>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <K> CharArray.distinctBy(keySelector: (Char) -> K): List<Char> {
+    val set = HashSet<K>()
+    val list = ArrayList<Char>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <K> DoubleArray.distinctBy(keySelector: (Double) -> K): List<Double> {
+    val set = HashSet<K>()
+    val list = ArrayList<Double>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <K> FloatArray.distinctBy(keySelector: (Float) -> K): List<Float> {
+    val set = HashSet<K>()
+    val list = ArrayList<Float>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <K> IntArray.distinctBy(keySelector: (Int) -> K): List<Int> {
+    val set = HashSet<K>()
+    val list = ArrayList<Int>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <K> LongArray.distinctBy(keySelector: (Long) -> K): List<Long> {
+    val set = HashSet<K>()
+    val list = ArrayList<Long>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <K> ShortArray.distinctBy(keySelector: (Short) -> K): List<Short> {
+    val set = HashSet<K>()
+    val list = ArrayList<Short>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * The elements in the resulting list are in the same order as they were in the source collection.
+ */
+public inline fun <T, K> Iterable<T>.distinctBy(keySelector: (T) -> K): List<T> {
+    val set = HashSet<K>()
+    val list = ArrayList<T>()
+    for (e in this) {
+        val key = keySelector(e)
+        if (set.add(key))
+            list.add(e)
+    }
+    return list
+}
+
+/**
+ * Returns a sequence containing only distinct elements from the given sequence according to the [keySelector].
+ * The elements in the resulting sequence are in the same order as they were in the source sequence.
+ */
+public fun <T, K> Sequence<T>.distinctBy(keySelector: (T) -> K): Sequence<T> {
+    return DistinctSequence(this, keySelector)
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a stream containing only distinct elements from the given stream according to the [keySelector].
+ * The elements in the resulting stream are in the same order as they were in the source stream.
+ */
+public fun <T, K> Stream<T>.distinctBy(keySelector: (T) -> K): Stream<T> {
+    return DistinctStream(this, keySelector)
 }
 
 /**
@@ -349,6 +545,26 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
         is Collection<T> -> LinkedHashSet(this)
         else -> toCollection(LinkedHashSet<T>())
     }
+}
+
+/**
+ * Returns a mutable set containing all distinct elements from the given sequence.
+ */
+public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
+    val set = LinkedHashSet<T>()
+    for (item in this) set.add(item)
+    return set
+}
+
+
+deprecated("Migrate to using Sequence<T> and respective functions")
+/**
+ * Returns a mutable set containing all distinct elements from the given stream.
+ */
+public fun <T> Stream<T>.toMutableSet(): MutableSet<T> {
+    val set = LinkedHashSet<T>()
+    for (item in this) set.add(item)
+    return set
 }
 
 /**

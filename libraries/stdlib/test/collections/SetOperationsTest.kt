@@ -5,8 +5,13 @@ import org.junit.Test as test
 
 class SetOperationsTest {
     test fun distinct() {
-        assertEquals(listOf(1, 3, 5), listOf(1, 3, 3, 1, 5, 1, 3).distinct().toList())
-        assertTrue(listOf<Int>().distinct().none())
+        assertEquals(listOf(1, 3, 5), listOf(1, 3, 3, 1, 5, 1, 3).distinct())
+        assertTrue(listOf<Int>().distinct().isEmpty())
+    }
+
+    test fun distinctBy() {
+        assertEquals(listOf("some", "cat", "do"), arrayOf("some", "case", "cat", "do", "dog", "it").distinctBy { it.length() })
+        assertTrue(charArrayOf().distinctBy { it }.isEmpty())
     }
 
     test fun union() {

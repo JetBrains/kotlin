@@ -1,7 +1,7 @@
 package kotlin
 
-import java.util.Enumeration
-import java.util.NoSuchElementException
+import java.util.*
+import kotlin.support.AbstractIterator
 
 deprecated("Use Sequence<T> instead.")
 public interface Stream<out T> {
@@ -480,6 +480,32 @@ public class DropWhileSequence<T>(private val sequence: Sequence<T>,
         }
     }
 }
+
+deprecated("Use DistinctSequence instead and remove with streams.")
+private class DistinctStream<T, K>(private val source: Stream<T>, private val keySelector : (T) -> K) : Stream<T> by DistinctSequence<T, K>(source.toSequence(), keySelector)
+
+private class DistinctSequence<T, K>(private val source : Sequence<T>, private val keySelector : (T) -> K) : Sequence<T> {
+    override fun iterator(): Iterator<T> = DistinctIterator(source.iterator(), keySelector)
+}
+
+private class DistinctIterator<T, K>(private val source : Iterator<T>, private val keySelector : (T) -> K) : AbstractIterator<T>() {
+    private val observed = HashSet<K>()
+
+    override fun computeNext() {
+        while (source.hasNext()) {
+            val next = source.next()
+            val key = keySelector(next)
+
+            if (observed.add(key)) {
+                setNext(next)
+                return
+            }
+        }
+
+        done()
+    }
+}
+
 
 /**
  * A sequence which repeatedly calls the specified [producer] function and returns its return values, until

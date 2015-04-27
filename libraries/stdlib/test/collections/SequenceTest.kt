@@ -262,6 +262,16 @@ public class SequenceTest {
         assertEquals(listOf(0, 1, 0, 1, 2), data.flatten().toList())
     }
 
+    test fun distinct() {
+        val sequence = fibonacci().dropWhile { it < 10 }.take(20)
+        assertEquals(listOf(1, 2, 3, 0), sequence.map { it % 4 }.distinct().toList())
+    }
+
+    test fun distinctBy() {
+        val sequence = fibonacci().dropWhile { it < 10 }.take(20)
+        assertEquals(listOf(13, 34, 55, 144), sequence.distinctBy { it % 4 }.toList())
+    }
+
 
     /*
     test fun pairIterator() {
