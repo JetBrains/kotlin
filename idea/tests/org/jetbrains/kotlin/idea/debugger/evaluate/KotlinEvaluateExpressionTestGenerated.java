@@ -55,6 +55,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("boxParam.kt")
+        public void testBoxParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/boxParam.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("callableBug.kt")
         public void testCallableBug() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/callableBug.kt");
@@ -214,6 +220,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("stdlib.kt")
         public void testStdlib() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/stdlib.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
+        @TestMetadata("unboxParam.kt")
+        public void testUnboxParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/unboxParam.kt");
             doSingleBreakpointTest(fileName);
         }
 

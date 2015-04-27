@@ -212,19 +212,23 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             ClassReader(compiledData.bytecodes).accept(object : ClassVisitor(ASM5) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
                     if (name == compiledData.funName) {
-                        val args = context.getArgumentsForEval4j(compiledData.parameters.getParameterNames(), Type.getArgumentTypes(desc))
+                        val argumentTypes = Type.getArgumentTypes(desc)
+                        val args = context.getArgumentsForEval4j(compiledData.parameters.getParameterNames(), argumentTypes)
+
                         return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
                                 val breakpoints = virtualMachine.eventRequestManager().breakpointRequests()
                                 breakpoints?.forEach { it.disable() }
 
+                                val eval = JDIEval(virtualMachine,
+                                                   context.getClassLoader(),
+                                                   context.getSuspendContext().getThread()?.getThreadReference()!!,
+                                                   context.getSuspendContext().getInvokePolicy())
+
                                 resultValue = interpreterLoop(
                                         this,
-                                        makeInitialFrame(this, args),
-                                        JDIEval(virtualMachine,
-                                                context.getClassLoader(),
-                                                context.getSuspendContext().getThread()?.getThreadReference()!!,
-                                                context.getSuspendContext().getInvokePolicy())
+                                        makeInitialFrame(this, args.zip(argumentTypes).map { boxOrUnboxArgumentIfNeeded(eval, it.first, it.second) }),
+                                        eval
                                 )
 
                                 breakpoints?.forEach { it.enable() }
@@ -237,6 +241,29 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             }, 0)
 
             return resultValue ?: throw IllegalStateException("resultValue is null: cannot find method ${compiledData.funName}")
+        }
+
+        private fun boxOrUnboxArgumentIfNeeded(eval: JDIEval, argumentValue: Value, parameterType: Type): Value {
+            val argumentType = argumentValue.asmType
+
+            if (AsmUtil.isPrimitive(parameterType) && !AsmUtil.isPrimitive(argumentType)) {
+                try {
+                    val unboxedType = AsmUtil.unboxType(argumentType)
+                    if (parameterType == unboxedType) {
+                        return eval.unboxType(argumentValue, parameterType)
+                    }
+                }
+                catch(ignored: UnsupportedOperationException) {
+                }
+            }
+
+            if (!AsmUtil.isPrimitive(parameterType) && AsmUtil.isPrimitive(argumentType)) {
+                if (parameterType == AsmUtil.boxType(argumentType)) {
+                    return eval.boxType(argumentValue)
+                }
+            }
+
+            return argumentValue
         }
 
         private fun InterpreterResult.toJdiValue(vm: VirtualMachine): com.sun.jdi.Value? {
