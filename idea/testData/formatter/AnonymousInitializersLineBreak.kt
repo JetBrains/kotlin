@@ -1,14 +1,10 @@
 annotation class Ann
 class A {
-    {}{}
-
     init{}
 
     init       {}
 
     init {}
-
-    {}
 
     /* abcde */init {
 

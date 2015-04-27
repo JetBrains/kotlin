@@ -3,7 +3,7 @@ class A {
     class B {
 
     }
-    <caret>{
+    <caret>init {
 
     }
 }

@@ -3,7 +3,7 @@ package test
 open class A
 
 class MyClass() {
-    {
+    init {
         object O: A() {
 
         }

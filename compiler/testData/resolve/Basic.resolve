@@ -6,7 +6,7 @@
   ~foo~fun foo(~foo.a~a : `kotlin::Char`Char) = `foo.a`a`:kotlin::Char`
   ~fooB~fun fooB() = `foo`foo('1')`:kotlin::Char`
   ~foo.1~fun foo() : Int = (1.`kotlin::Int.plus(Int)`plus(1))`:kotlin::Int`
-  ~foo1~fun foo1() : `B`B = `B`B()`:B`
+  ~foo91~fun foo1() : `B`B = `B`B()`:B`
   ~A.a~val a : `kotlin::Int`Int
 }
 

@@ -1,6 +1,6 @@
 annotation class Ann
 class A {
-    {}{}{}
+    init{}
     fun foo1()  {
 
     }
@@ -18,7 +18,7 @@ class A {
     }
 
 
-    {}
+    init {}
 
     constructor() {
 

@@ -7,7 +7,7 @@ public class KOuter: Outer() {
         var next: Outer.A? = (this@KOuter : Outer).A()
         val myBar: String? = (this@KOuter : Outer).A().bar
 
-        {
+        init {
             (this@KOuter : Outer).A().bar = ""
         }
 

@@ -6,7 +6,7 @@ class C(~x~x : Int, ~y~val y : Int) : Base(`x`x /*parameter*/), Base1 by Base1(`
   var zy = `y`y // parameter
     get() = `y`y // property
 
-  {
+  init {
     val wx = `x`x
     val wy = `y`y
   }

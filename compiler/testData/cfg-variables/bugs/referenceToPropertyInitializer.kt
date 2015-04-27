@@ -8,7 +8,7 @@ open class A(val a: A)
 
 class TestObjectLiteral {
     val obj: A = object: A(obj) {
-        {
+        init {
             val x = obj
         }
         fun foo() {

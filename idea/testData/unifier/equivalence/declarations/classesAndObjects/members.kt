@@ -4,7 +4,7 @@ fun foo() {
         fun a(x: Int): Int = b(x) + 1
         fun b(y: Int): Int = a(y) - 1
 
-        {
+        init {
             println(1)
         }
 
@@ -16,7 +16,7 @@ fun foo() {
         val p = 1
         val q = p + 1
 
-        {
+        init {
             println(2)
         }
 
@@ -27,7 +27,7 @@ fun foo() {
     }</selection>
 
     class B {
-        {
+        init {
             println(1)
         }
 
@@ -44,7 +44,7 @@ fun foo() {
             val g = f() - 1
         }
 
-        {
+        init {
             println(2)
         }
 
@@ -61,7 +61,7 @@ fun foo() {
         fun aa(x: Int): Int = bb(x) + 1
         fun bb(y: Int): Int = aa(y) - 1
 
-        {
+        init {
             println(1)
         }
 
@@ -73,7 +73,7 @@ fun foo() {
         val p = 1
         val q = p + 1
 
-        {
+        init {
             println(2)
         }
 
@@ -87,7 +87,7 @@ fun foo() {
         fun a(x: Int): Int = b(x) + 1
         fun b(y: Int): Int = a(y) - 1
 
-        {
+        init {
             println(1)
         }
 
@@ -99,7 +99,7 @@ fun foo() {
         val q = p + 1
         val p = 1
 
-        {
+        init {
             println(2)
         }
 
@@ -113,7 +113,7 @@ fun foo() {
         fun a(x: Int): Int = b(x) + 1
         fun b(y: Int): Int = a(y) - 1
 
-        {
+        init {
             println(1)
         }
 
@@ -125,7 +125,7 @@ fun foo() {
         val p = 1
         val q = p + 1
 
-        {
+        init {
             println(2)
         }
 

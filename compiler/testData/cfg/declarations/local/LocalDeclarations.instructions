@@ -5,7 +5,7 @@ class C() {
     companion object {
         val x : Int
 
-        {
+        init {
             $x = 1
         }
 
@@ -50,7 +50,7 @@ sink:
 fun test1() {
     val a = object {
         val x : Int
-        {
+        init {
             $x = 1
         }
     }
@@ -58,27 +58,27 @@ fun test1() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ val a = object { val x : Int { $x = 1 } } })
-    v(val a = object { val x : Int { $x = 1 } })
-    mark(object { val x : Int { $x = 1 } })
+  2 mark({ val a = object { val x : Int init { $x = 1 } } })
+    v(val a = object { val x : Int init { $x = 1 } })
+    mark(object { val x : Int init { $x = 1 } })
     v(val x : Int)
   3 mark({ $x = 1 })
     magic[IMPLICIT_RECEIVER]($x) -> <v0>
     r(1) -> <v1>
     w($x|<v0>, <v1>)
-  2 r(object { val x : Int { $x = 1 } }) -> <v3>
+  2 r(object { val x : Int init { $x = 1 } }) -> <v3>
     w(a|<v3>)
 L1:
-  1 <END>                                                  NEXT:[<SINK>]
+  1 <END>                                                       NEXT:[<SINK>]
 error:
-    <ERROR>                                                PREV:[]
+    <ERROR>                                                     PREV:[]
 sink:
-    <SINK>                                                 PREV:[<ERROR>, <END>]
+    <SINK>                                                      PREV:[<ERROR>, <END>]
 =====================
 == O ==
 object O {
     val x : Int
-    {
+    init {
         $x = 1
     }
 }
@@ -176,7 +176,7 @@ fun test4() {
     val a = object {
         val x : Int
         val y : Int
-        {
+        init {
             $x = 1
         }
         fun ggg() {
@@ -187,26 +187,26 @@ fun test4() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } } })
-    v(val a = object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })
-    mark(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } })
+  2 mark({ val a = object { val x : Int val y : Int init { $x = 1 } fun ggg() { y = 10 } } })
+    v(val a = object { val x : Int val y : Int init { $x = 1 } fun ggg() { y = 10 } })
+    mark(object { val x : Int val y : Int init { $x = 1 } fun ggg() { y = 10 } })
     v(val x : Int)
     v(val y : Int)
   3 mark({ $x = 1 })
     magic[IMPLICIT_RECEIVER]($x) -> <v0>
     r(1) -> <v1>
     w($x|<v0>, <v1>)
-  2 jmp?(L2)                                                                                NEXT:[r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v3>, d(fun ggg() { y = 10 })]
-    d(fun ggg() { y = 10 })                                                                 NEXT:[<SINK>]
+  2 jmp?(L2)                                                                                     NEXT:[r(object { val x : Int val y : Int init { $x = 1 } fun ggg() { y = 10 } }) -> <v3>, d(fun ggg() { y = 10 })]
+    d(fun ggg() { y = 10 })                                                                      NEXT:[<SINK>]
 L2 [after local declaration]:
-    r(object { val x : Int val y : Int { $x = 1 } fun ggg() { y = 10 } }) -> <v3>           PREV:[jmp?(L2)]
+    r(object { val x : Int val y : Int init { $x = 1 } fun ggg() { y = 10 } }) -> <v3>           PREV:[jmp?(L2)]
     w(a|<v3>)
 L1:
-  1 <END>                                                                                   NEXT:[<SINK>]
+  1 <END>                                                                                        NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                 PREV:[]
+    <ERROR>                                                                                      PREV:[]
 sink:
-    <SINK>                                                                                  PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 })]
+    <SINK>                                                                                       PREV:[<ERROR>, <END>, d(fun ggg() { y = 10 })]
 =====================
 == ggg ==
 fun ggg() {
@@ -230,7 +230,7 @@ sink:
 fun test5() {
     val a = object {
         var x = 1
-        {
+        init {
             $x = 2
         }
         fun foo() {
@@ -244,9 +244,9 @@ fun test5() {
 ---------------------
 L0:
   1 <START>
-  2 mark({ val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } } })
-    v(val a = object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })
-    mark(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })
+  2 mark({ val a = object { var x = 1 init { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } } })
+    v(val a = object { var x = 1 init { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })
+    mark(object { var x = 1 init { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } })
     v(var x = 1)
     r(1) -> <v0>
     w(x|<v0>)
@@ -254,20 +254,20 @@ L0:
     magic[IMPLICIT_RECEIVER]($x) -> <v1>
     r(2) -> <v2>
     w($x|<v1>, <v2>)
-  2 jmp?(L2)                                                                                     NEXT:[jmp?(L5), d(fun foo() { x = 3 })]
-    d(fun foo() { x = 3 })                                                                       NEXT:[<SINK>]
+  2 jmp?(L2)                                                                                          NEXT:[jmp?(L5), d(fun foo() { x = 3 })]
+    d(fun foo() { x = 3 })                                                                            NEXT:[<SINK>]
 L2 [after local declaration]:
-    jmp?(L5)                                                                                     NEXT:[r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v4>, d(fun bar() { x = 4 })]    PREV:[jmp?(L2)]
-    d(fun bar() { x = 4 })                                                                       NEXT:[<SINK>]
+    jmp?(L5)                                                                                          NEXT:[r(object { var x = 1 init { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v4>, d(fun bar() { x = 4 })]    PREV:[jmp?(L2)]
+    d(fun bar() { x = 4 })                                                                            NEXT:[<SINK>]
 L5 [after local declaration]:
-    r(object { var x = 1 { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v4>           PREV:[jmp?(L5)]
+    r(object { var x = 1 init { $x = 2 } fun foo() { x = 3 } fun bar() { x = 4 } }) -> <v4>           PREV:[jmp?(L5)]
     w(a|<v4>)
 L1:
-  1 <END>                                                                                        NEXT:[<SINK>]
+  1 <END>                                                                                             NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                      PREV:[]
+    <ERROR>                                                                                           PREV:[]
 sink:
-    <SINK>                                                                                       PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
+    <SINK>                                                                                            PREV:[<ERROR>, <END>, d(fun foo() { x = 3 }), d(fun bar() { x = 4 })]
 =====================
 == foo ==
 fun foo() {

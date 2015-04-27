@@ -31,7 +31,7 @@ open class A(val a: A)
 == TestObjectLiteral ==
 class TestObjectLiteral {
     val obj: A = object: A(obj) {
-        {
+        init {
             val x = obj
         }
         fun foo() {
@@ -40,12 +40,12 @@ class TestObjectLiteral {
     }
 }
 ---------------------
-                                                               <v0>: TestObjectLiteral   NEW: magic[IMPLICIT_RECEIVER](obj) -> <v0>                                  
-                                                               <v3>: TestObjectLiteral   NEW: magic[IMPLICIT_RECEIVER](obj) -> <v3>                                  
-obj                                                            <v1>: {<: A}              NEW: r(obj|<v0>) -> <v1>                                                    
-A(obj)                                                         <v2>: *                   NEW: call(A(obj), <init>|<v1>) -> <v2>                                      
-obj                                                            <v4>: {<: A}              NEW: r(obj|<v3>) -> <v4>                                                    
-object: A(obj) { { val x = obj } fun foo() { val y = obj } }   <v5>: {<: A}              NEW: r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v5>
+                                                                    <v0>: TestObjectLiteral   NEW: magic[IMPLICIT_RECEIVER](obj) -> <v0>
+                                                                    <v3>: TestObjectLiteral   NEW: magic[IMPLICIT_RECEIVER](obj) -> <v3>
+obj                                                                 <v1>: {<: A}              NEW: r(obj|<v0>) -> <v1>
+A(obj)                                                              <v2>: *                   NEW: call(A(obj), <init>|<v1>) -> <v2>
+obj                                                                 <v4>: {<: A}              NEW: r(obj|<v3>) -> <v4>
+object: A(obj) { init { val x = obj } fun foo() { val y = obj } }   <v5>: {<: A}              NEW: r(object: A(obj) { init { val x = obj } fun foo() { val y = obj } }) -> <v5>
 =====================
 == foo ==
 fun foo() {

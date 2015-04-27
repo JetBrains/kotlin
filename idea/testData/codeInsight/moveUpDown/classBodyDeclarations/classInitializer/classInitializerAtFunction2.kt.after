@@ -1,6 +1,6 @@
 // MOVE: up
 class A {
-    <caret>{
+    <caret>init {
 
     }
     fun foo() {

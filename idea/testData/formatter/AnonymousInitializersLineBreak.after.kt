@@ -1,12 +1,6 @@
 annotation class Ann
 class A
 {
-    {
-    }
-
-    {
-    }
-
     init
     {
     }
@@ -16,9 +10,6 @@ class A
     }
 
     init
-    {
-    }
-
     {
     }
 

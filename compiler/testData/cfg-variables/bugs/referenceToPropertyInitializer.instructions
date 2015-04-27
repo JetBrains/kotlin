@@ -69,7 +69,7 @@ sink:
 == TestObjectLiteral ==
 class TestObjectLiteral {
     val obj: A = object: A(obj) {
-        {
+        init {
             val x = obj
         }
         fun foo() {
@@ -79,29 +79,29 @@ class TestObjectLiteral {
 }
 ---------------------
 L0:
-  1 <START>                                                                         INIT: in: {} out: {}
-    v(val obj: A = object: A(obj) { { val x = obj } fun foo() { val y = obj } })    INIT: in: {} out: {obj=D}
-    mark(object: A(obj) { { val x = obj } fun foo() { val y = obj } })              INIT: in: {obj=D} out: {obj=D}
+  1 <START>                                                                              INIT: in: {} out: {}
+    v(val obj: A = object: A(obj) { init { val x = obj } fun foo() { val y = obj } })    INIT: in: {} out: {obj=D}
+    mark(object: A(obj) { init { val x = obj } fun foo() { val y = obj } })              INIT: in: {obj=D} out: {obj=D}
     magic[IMPLICIT_RECEIVER](obj) -> <v0>
     r(obj|<v0>) -> <v1>
     mark(A(obj))
     call(A(obj), <init>|<v1>) -> <v2>
   2 mark({ val x = obj })
-    v(val x = obj)                                                                  INIT: in: {obj=D} out: {obj=D, x=D}
-    magic[IMPLICIT_RECEIVER](obj) -> <v3>                                           INIT: in: {obj=D, x=D} out: {obj=D, x=D}
+    v(val x = obj)                                                                       INIT: in: {obj=D} out: {obj=D, x=D}
+    magic[IMPLICIT_RECEIVER](obj) -> <v3>                                                INIT: in: {obj=D, x=D} out: {obj=D, x=D}
     r(obj|<v3>) -> <v4>
-    w(x|<v4>)                                                                       INIT: in: {obj=D, x=D} out: {obj=D, x=ID}
-  1 jmp?(L2)                                                                        INIT: in: {obj=D} out: {obj=D}
-    d(fun foo() { val y = obj })                                                                                                 USE: in: {obj=READ} out: {obj=READ}
+    w(x|<v4>)                                                                            INIT: in: {obj=D, x=D} out: {obj=D, x=ID}
+  1 jmp?(L2)                                                                             INIT: in: {obj=D} out: {obj=D}
+    d(fun foo() { val y = obj })                                                                                                      USE: in: {obj=READ} out: {obj=READ}
 L2 [after local declaration]:
-    r(object: A(obj) { { val x = obj } fun foo() { val y = obj } }) -> <v5>
-    w(obj|<v5>)                                                                     INIT: in: {obj=D} out: {obj=ID}
+    r(object: A(obj) { init { val x = obj } fun foo() { val y = obj } }) -> <v5>
+    w(obj|<v5>)                                                                          INIT: in: {obj=D} out: {obj=ID}
 L1:
-    <END>                                                                           INIT: in: {obj=ID} out: {obj=ID}
+    <END>                                                                                INIT: in: {obj=ID} out: {obj=ID}
 error:
-    <ERROR>                                                                         INIT: in: {} out: {}
+    <ERROR>                                                                              INIT: in: {} out: {}
 sink:
-    <SINK>                                                                          INIT: in: {obj=D} out: {obj=D}               USE: in: {} out: {}
+    <SINK>                                                                               INIT: in: {obj=D} out: {obj=D}               USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {

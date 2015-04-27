@@ -5,7 +5,7 @@ class A {
     <caret>class B {
 
     }
-    {
+    init {
 
     }
 }

@@ -5,7 +5,7 @@ trait B: A()
 class MyClass(a: A = run { trait X: A(); object: A() {} }) {
     inner trait G: A() {}
 
-    {
+    init {
         trait C: A()
     }
 

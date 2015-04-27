@@ -2,7 +2,7 @@ class A {
         fun a(x: Int): Int = b(x) + 1
         fun b(y: Int): Int = a(y) - 1
 
-        {
+        init {
             println(1)
         }
 
@@ -14,7 +14,7 @@ class A {
         val p = 1
         val q = p + 1
 
-        {
+        init {
             println(2)
         }
 
@@ -25,7 +25,7 @@ class A {
     }
 
 class B {
-        {
+        init {
             println(1)
         }
 
@@ -42,7 +42,7 @@ class B {
             val g = f() - 1
         }
 
-        {
+        init {
             println(2)
         }
 

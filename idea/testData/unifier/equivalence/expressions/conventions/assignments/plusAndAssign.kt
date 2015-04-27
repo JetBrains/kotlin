@@ -4,7 +4,7 @@ class A(val n: Int) {
 }
 
 class Foo {
-    {
+    init {
         var a = A(0)
         <selection>a += 2</selection>
         a = a + 2

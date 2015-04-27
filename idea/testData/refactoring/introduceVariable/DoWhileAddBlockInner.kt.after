@@ -1,5 +1,5 @@
 open class A() {
-    {
+    init {
         do {
             val i = 1
             println(i)

@@ -4,7 +4,7 @@ class C() {
     companion object {
         val x : Int
 
-        {
+        init {
             $x = 1
         }
 
@@ -21,7 +21,7 @@ fun doSmth(i: Int) {}
 fun test1() {
     val a = object {
         val x : Int
-        {
+        init {
             $x = 1
         }
     }
@@ -29,7 +29,7 @@ fun test1() {
 
 object O {
     val x : Int
-    {
+    init {
         $x = 1
     }
 }
@@ -52,7 +52,7 @@ fun test4() {
     val a = object {
         val x : Int
         val y : Int
-        {
+        init {
             $x = 1
         }
         fun ggg() {
@@ -64,7 +64,7 @@ fun test4() {
 fun test5() {
     val a = object {
         var x = 1
-        {
+        init {
             $x = 2
         }
         fun foo() {
