@@ -99,7 +99,7 @@ public final class ClassTranslator extends AbstractTranslator {
     }
 
     private boolean isTrait() {
-        return descriptor.getKind().equals(ClassKind.TRAIT);
+        return descriptor.getKind().equals(ClassKind.INTERFACE);
     }
 
     @NotNull

@@ -128,7 +128,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             this.modality = Modality.FINAL;
         }
         else {
-            Modality defaultModality = kind == ClassKind.TRAIT ? Modality.ABSTRACT : Modality.FINAL;
+            Modality defaultModality = kind == ClassKind.INTERFACE ? Modality.ABSTRACT : Modality.FINAL;
             this.modality = resolveModalityFromModifiers(modifierList, defaultModality);
         }
 

@@ -132,10 +132,10 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
         return body.getProperties();
     }
 
-    public boolean isTrait() {
+    public boolean isInterface() {
         KotlinClassStub stub = getStub();
         if (stub != null) {
-            return stub.isTrait();
+            return stub.isInterface();
         }
 
         return findChildByType(JetTokens.TRAIT_KEYWORD) != null ||

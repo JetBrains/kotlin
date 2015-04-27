@@ -148,7 +148,7 @@ public class DescriptorResolver {
     private boolean containsClass(Collection<JetType> result) {
         for (JetType type : result) {
             ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.TRAIT) {
+            if (descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() != ClassKind.INTERFACE) {
                 return true;
             }
         }
@@ -331,7 +331,7 @@ public class DescriptorResolver {
     public static Modality getDefaultModality(DeclarationDescriptor containingDescriptor, Visibility visibility, boolean isBodyPresent) {
         Modality defaultModality;
         if (containingDescriptor instanceof ClassDescriptor) {
-            boolean isTrait = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.TRAIT;
+            boolean isTrait = ((ClassDescriptor) containingDescriptor).getKind() == ClassKind.INTERFACE;
             boolean isDefinitelyAbstract = isTrait && !isBodyPresent;
             Modality basicModality = isTrait && !Visibilities.isPrivate(visibility) ? Modality.OPEN : Modality.FINAL;
             defaultModality = isDefinitelyAbstract ? Modality.ABSTRACT : basicModality;

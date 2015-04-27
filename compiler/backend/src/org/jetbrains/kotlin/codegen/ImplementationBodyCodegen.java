@@ -126,7 +126,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (jetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
                 isAbstract = true;
             }
-            if (jetClass.isTrait()) {
+            if (jetClass.isInterface()) {
                 isAbstract = true;
                 isInterface = true;
             }
@@ -315,7 +315,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
 
-        if (myClass instanceof JetClass && ((JetClass) myClass).isTrait()) {
+        if (myClass instanceof JetClass && ((JetClass) myClass).isInterface()) {
             return;
         }
 
@@ -437,13 +437,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         KotlinBuiltIns builtIns = getBuiltIns(descriptor);
         if (!isSubclass(descriptor, builtIns.getCollection())) return;
 
-        int access = descriptor.getKind() == ClassKind.TRAIT ?
+        int access = descriptor.getKind() == ClassKind.INTERFACE ?
                      ACC_PUBLIC | ACC_ABSTRACT :
                      ACC_PUBLIC;
         if (CodegenUtil.getDeclaredFunctionByRawSignature(descriptor, Name.identifier("toArray"), builtIns.getArray()) == null) {
             MethodVisitor mv = v.newMethod(NO_ORIGIN, access, "toArray", "()[Ljava/lang/Object;", null, null);
 
-            if (descriptor.getKind() != ClassKind.TRAIT) {
+            if (descriptor.getKind() != ClassKind.INTERFACE) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
                 mv.visitCode();
 
@@ -458,7 +458,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         if (!isGenericToArrayPresent()) {
             MethodVisitor mv = v.newMethod(NO_ORIGIN, access, "toArray", "([Ljava/lang/Object;)[Ljava/lang/Object;", null, null);
 
-            if (descriptor.getKind() != ClassKind.TRAIT) {
+            if (descriptor.getKind() != ClassKind.INTERFACE) {
                 InstructionAdapter iv = new InstructionAdapter(mv);
                 mv.visitCode();
 
@@ -1394,7 +1394,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private boolean ignoreIfTraitOrAnnotation() {
         if (myClass instanceof JetClass) {
             JetClass aClass = (JetClass) myClass;
-            if (aClass.isTrait()) {
+            if (aClass.isInterface()) {
                 return true;
             }
             if (aClass.isAnnotation()) {

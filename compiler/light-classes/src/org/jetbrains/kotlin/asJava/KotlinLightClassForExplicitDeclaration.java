@@ -25,7 +25,6 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.PsiPackage;
-import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
 import com.intellij.psi.impl.java.stubs.PsiJavaFileStub;
 import com.intellij.psi.impl.light.LightClass;
@@ -500,7 +499,7 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
     public boolean isInterface() {
         if (!(classOrObject instanceof JetClass)) return false;
         JetClass jetClass = (JetClass) classOrObject;
-        return jetClass.isTrait() || jetClass.isAnnotation();
+        return jetClass.isInterface() || jetClass.isAnnotation();
     }
 
     @Override

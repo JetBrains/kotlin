@@ -31,8 +31,8 @@ public class JetClassInfo extends JetClassOrObjectInfo<JetClass> {
         if (element instanceof JetEnumEntry) {
             this.kind = ClassKind.ENUM_ENTRY;
         }
-        else if (element.isTrait()) {
-            this.kind = ClassKind.TRAIT;
+        else if (element.isInterface()) {
+            this.kind = ClassKind.INTERFACE;
         }
         else if (element.isAnnotation()) {
             this.kind = ClassKind.ANNOTATION_CLASS;

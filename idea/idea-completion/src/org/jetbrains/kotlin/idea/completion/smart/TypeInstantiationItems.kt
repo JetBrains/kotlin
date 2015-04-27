@@ -153,7 +153,7 @@ class TypeInstantiationItems(
         val insertHandler: InsertHandler<LookupElement>
         val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier) + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse)
         if (isAbstract) {
-            val constructorParenthesis = if (classifier.getKind() != ClassKind.TRAIT) "()" else ""
+            val constructorParenthesis = if (classifier.getKind() != ClassKind.INTERFACE) "()" else ""
             itemText += constructorParenthesis
             itemText = "object: " + itemText + "{...}"
             lookupString = "object"
@@ -242,7 +242,7 @@ class TypeInstantiationItems(
     }
 
     private fun addSamConstructorItem(collection: MutableCollection<LookupElement>, `class`: ClassDescriptor, tail: Tail?) {
-        if (`class`.getKind() == ClassKind.TRAIT) {
+        if (`class`.getKind() == ClassKind.INTERFACE) {
             val container = `class`.getContainingDeclaration()
             val scope = when (container) {
                 is PackageFragmentDescriptor -> container.getMemberScope()

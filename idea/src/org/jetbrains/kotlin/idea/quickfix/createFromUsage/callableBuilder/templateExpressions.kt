@@ -111,7 +111,7 @@ private abstract class TypeExpression(public val typeCandidates: List<TypeCandid
         override val cachedLookupElements: Array<LookupElement> =
                 typeCandidates.map {
                     val descriptor = it.theType.getConstructor().getDeclarationDescriptor() as ClassDescriptor
-                    val text = it.renderedType!! + if (descriptor.getKind() == ClassKind.TRAIT) "" else "()"
+                    val text = it.renderedType!! + if (descriptor.getKind() == ClassKind.INTERFACE) "" else "()"
                     LookupElementBuilder.create(it, text)
                 }.copyToArray()
     }

@@ -145,7 +145,7 @@ public class JetChangeSignatureData(
     override fun canChangeVisibility(): Boolean {
         if (DescriptorUtils.isLocal(baseDescriptor)) return false;
         val parent = baseDescriptor.getContainingDeclaration()
-        return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.getKind() == ClassKind.TRAIT)
+        return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.getKind() == ClassKind.INTERFACE)
     }
 
     override fun canChangeParameters(): Boolean {

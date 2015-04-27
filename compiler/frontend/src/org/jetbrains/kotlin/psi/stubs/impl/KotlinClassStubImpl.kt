@@ -46,7 +46,7 @@ public class KotlinClassStubImpl(
         return FqName(stringRef)
     }
 
-    override fun isTrait() = isTrait
+    override fun isInterface() = isTrait
     override fun isEnumEntry() = isEnumEntry
     override fun isLocal() = isLocal
     override fun getName() = StringRef.toString(name)

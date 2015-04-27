@@ -216,13 +216,13 @@ class CollectionStubMethodGenerator(
     private fun generateMethodStub(signature: JvmMethodSignature, synthetic: Boolean) {
         // TODO: investigate if it makes sense to generate abstract stubs in traits
         var access = ACC_PUBLIC
-        if (descriptor.getKind() == ClassKind.TRAIT) access = access or ACC_ABSTRACT
+        if (descriptor.getKind() == ClassKind.INTERFACE) access = access or ACC_ABSTRACT
         if (synthetic) access = access or ACC_SYNTHETIC
 
         val asmMethod = signature.getAsmMethod()
         val genericSignature = if (synthetic) null else signature.getGenericsSignature()
         val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, asmMethod.getName(), asmMethod.getDescriptor(), genericSignature, null)
-        if (descriptor.getKind() != ClassKind.TRAIT) {
+        if (descriptor.getKind() != ClassKind.INTERFACE) {
             mv.visitCode()
             AsmUtil.genThrow(InstructionAdapter(mv), "java/lang/UnsupportedOperationException", "Mutating immutable collection")
             FunctionCodegen.endVisit(mv, "built-in stub for $signature", null)

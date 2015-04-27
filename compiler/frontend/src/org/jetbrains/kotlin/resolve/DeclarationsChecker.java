@@ -241,7 +241,7 @@ public class DeclarationsChecker {
         checkPrimaryConstructor(aClass, classDescriptor);
         checkTypeParameters(aClass);
 
-        if (aClass.isTrait()) {
+        if (aClass.isInterface()) {
             checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);
         }
@@ -380,7 +380,7 @@ public class DeclarationsChecker {
                 trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor));
                 return;
             }
-            if (classDescriptor.getKind() == ClassKind.TRAIT) {
+            if (classDescriptor.getKind() == ClassKind.INTERFACE) {
                 trace.report(ABSTRACT_MODIFIER_IN_TRAIT.on(property));
             }
         }
@@ -416,7 +416,7 @@ public class DeclarationsChecker {
             return;
         }
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-        boolean inTrait = containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor)containingDeclaration).getKind() == ClassKind.TRAIT;
+        boolean inTrait = containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor)containingDeclaration).getKind() == ClassKind.INTERFACE;
         JetExpression initializer = property.getInitializer();
         JetPropertyDelegate delegate = property.getDelegate();
         boolean backingFieldRequired =
@@ -473,7 +473,7 @@ public class DeclarationsChecker {
         checkDeclaredTypeInPublicMember(function, functionDescriptor);
         if (containingDescriptor instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
-            boolean inTrait = classDescriptor.getKind() == ClassKind.TRAIT;
+            boolean inTrait = classDescriptor.getKind() == ClassKind.INTERFACE;
             if (hasAbstractModifier && !classCanHaveAbstractMembers(classDescriptor)) {
                 trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName().asString(), classDescriptor));
             }

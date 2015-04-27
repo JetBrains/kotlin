@@ -82,7 +82,7 @@ class AllClassesCompletion(val parameters: CompletionParameters,
             if (psiClass!! !is KotlinLightClass) { // Kotlin class should have already been added as kotlin element before
                 val kind = when {
                     psiClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
-                    psiClass.isInterface() -> ClassKind.TRAIT
+                    psiClass.isInterface() -> ClassKind.INTERFACE
                     psiClass.isEnum() -> ClassKind.ENUM_CLASS
                     else -> ClassKind.CLASS
                 }

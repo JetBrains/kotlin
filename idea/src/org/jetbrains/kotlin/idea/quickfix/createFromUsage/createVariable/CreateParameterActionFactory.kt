@@ -92,13 +92,13 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
                         it is JetClassInitializer -> it.getParent()?.getParent() as? JetClass
                         it is JetDelegationSpecifier -> {
                             val klass = it.getStrictParentOfType<JetClass>()
-                            if (klass != null && !klass.isTrait() && klass !is JetEnumEntry) klass else null
+                            if (klass != null && !klass.isInterface() && klass !is JetEnumEntry) klass else null
                         }
                         it is JetClassBody -> {
                             val klass = it.getParent() as? JetClass
                             when {
                                 klass is JetEnumEntry -> chooseContainingClass(klass)
-                                klass != null && klass.isTrait() -> null
+                                klass != null && klass.isInterface() -> null
                                 else -> klass
                             }
                         }

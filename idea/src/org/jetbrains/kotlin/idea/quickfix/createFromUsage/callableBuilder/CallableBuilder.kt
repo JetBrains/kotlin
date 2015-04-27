@@ -452,7 +452,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val declaration : JetNamedDeclaration = when (callableInfo.kind) {
                     CallableKind.FUNCTION, CallableKind.SECONDARY_CONSTRUCTOR -> {
                         val body = when {
-                            containingElement is JetClass && containingElement.isTrait() && !config.isExtension -> ""
+                            containingElement is JetClass && containingElement.isInterface() && !config.isExtension -> ""
                             else -> "{}"
                         }
                         if (callableInfo.kind == CallableKind.FUNCTION) {

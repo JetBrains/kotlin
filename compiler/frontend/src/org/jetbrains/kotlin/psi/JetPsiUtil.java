@@ -427,7 +427,7 @@ public class JetPsiUtil {
     }
 
     public static boolean isTrait(@NotNull JetClassOrObject classOrObject) {
-        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isTrait();
+        return classOrObject instanceof JetClass && ((JetClass) classOrObject).isInterface();
     }
 
     @Nullable

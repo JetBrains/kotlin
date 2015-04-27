@@ -94,7 +94,7 @@ public class JetAddFunctionToClassifierAction implements QuestionAction {
                         }
 
                         String functionBody = "";
-                        if (typeDescriptor.getKind() != ClassKind.TRAIT && functionDescriptor.getModality() != Modality.ABSTRACT) {
+                        if (typeDescriptor.getKind() != ClassKind.INTERFACE && functionDescriptor.getModality() != Modality.ABSTRACT) {
                             functionBody = "{}";
                             JetType returnType = functionDescriptor.getReturnType();
                             if (returnType == null || !KotlinBuiltIns.isUnit(returnType)) {

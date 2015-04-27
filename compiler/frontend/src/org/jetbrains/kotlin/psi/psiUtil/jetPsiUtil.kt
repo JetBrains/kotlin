@@ -116,7 +116,7 @@ public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
                 getDeclarations()
         }
 
-public fun JetClass.isAbstract(): Boolean = isTrait() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 
 [suppress("UNCHECKED_CAST")]
 public fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement) as T
@@ -201,7 +201,7 @@ public fun <T: JetClassOrObject> StubBasedPsiElementBase<out KotlinClassOrObject
 public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
 public fun JetClass.isInheritable(): Boolean {
-    return isTrait() || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+    return isInterface() || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 }
 
 public fun JetDeclaration.isOverridable(): Boolean {
@@ -213,7 +213,7 @@ public fun JetDeclaration.isOverridable(): Boolean {
 
     if (hasModifier(JetTokens.FINAL_KEYWORD) || hasModifier(JetTokens.PRIVATE_KEYWORD)) return false
 
-    return klass.isTrait() ||
+    return klass.isInterface() ||
         hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
 }
 

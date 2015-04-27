@@ -93,7 +93,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     @NotNull
     private static TextAttributesKey textAttributesKeyForClass(@NotNull ClassDescriptor descriptor) {
         switch (descriptor.getKind()) {
-            case TRAIT:
+            case INTERFACE:
                 return JetHighlightingColors.TRAIT;
             case ANNOTATION_CLASS:
                 return JetHighlightingColors.ANNOTATION;

@@ -290,7 +290,7 @@ public class BodyResolver {
 
             @Override
             public void visitDelegationByExpressionSpecifier(@NotNull JetDelegatorByExpressionSpecifier specifier) {
-                if (descriptor.getKind() == ClassKind.TRAIT) {
+                if (descriptor.getKind() == ClassKind.INTERFACE) {
                     trace.report(DELEGATION_IN_TRAIT.on(specifier));
                 }
                 JetType supertype = trace.getBindingContext().get(BindingContext.TYPE, specifier.getTypeReference());
@@ -299,7 +299,7 @@ public class BodyResolver {
                     DeclarationDescriptor declarationDescriptor = supertype.getConstructor().getDeclarationDescriptor();
                     if (declarationDescriptor instanceof ClassDescriptor) {
                         ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
-                        if (classDescriptor.getKind() != ClassKind.TRAIT) {
+                        if (classDescriptor.getKind() != ClassKind.INTERFACE) {
                             trace.report(DELEGATION_NOT_TO_TRAIT.on(specifier.getTypeReference()));
                         }
                     }
@@ -319,13 +319,13 @@ public class BodyResolver {
             public void visitDelegationToSuperCallSpecifier(@NotNull JetDelegatorToSuperCall call) {
                 JetValueArgumentList valueArgumentList = call.getValueArgumentList();
                 PsiElement elementToMark = valueArgumentList == null ? call : valueArgumentList;
-                if (descriptor.getKind() == ClassKind.TRAIT) {
+                if (descriptor.getKind() == ClassKind.INTERFACE) {
                     trace.report(SUPERTYPE_INITIALIZED_IN_TRAIT.on(elementToMark));
                 }
                 JetTypeReference typeReference = call.getTypeReference();
                 if (typeReference == null) return;
                 if (primaryConstructor == null) {
-                    if (descriptor.getKind() != ClassKind.TRAIT) {
+                    if (descriptor.getKind() != ClassKind.INTERFACE) {
                         trace.report(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR.on(call));
                     }
                     recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
@@ -339,7 +339,7 @@ public class BodyResolver {
                     recordSupertype(typeReference, supertype);
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
-                        if (classDescriptor.getKind() == ClassKind.TRAIT) {
+                        if (classDescriptor.getKind() == ClassKind.INTERFACE) {
                             trace.report(CONSTRUCTOR_IN_TRAIT.on(elementToMark));
                         }
                         // allow only one delegating constructor
@@ -368,7 +368,7 @@ public class BodyResolver {
                     // A "singleton in supertype" diagnostic will be reported later
                     return;
                 }
-                if (descriptor.getKind() != ClassKind.TRAIT &&
+                if (descriptor.getKind() != ClassKind.INTERFACE &&
                     descriptor.getUnsubstitutedPrimaryConstructor() != null &&
                     !superClass.getConstructors().isEmpty() &&
                     !ErrorUtils.isError(superClass)
@@ -425,11 +425,11 @@ public class BodyResolver {
 
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
             if (classDescriptor != null) {
-                if (classDescriptor.getKind() != ClassKind.TRAIT) {
+                if (classDescriptor.getKind() != ClassKind.INTERFACE) {
                     if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS) {
                         trace.report(CLASS_IN_SUPERTYPE_FOR_ENUM.on(typeReference));
                     }
-                    else if (supertypeOwner.getKind() == ClassKind.TRAIT &&
+                    else if (supertypeOwner.getKind() == ClassKind.INTERFACE &&
                              !classAppeared && !TypesPackage.isDynamic(supertype) /* avoid duplicate diagnostics */) {
                         trace.report(TRAIT_WITH_SUPERCLASS.on(typeReference));
                     }

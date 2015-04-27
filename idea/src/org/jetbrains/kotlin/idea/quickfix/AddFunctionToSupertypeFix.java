@@ -97,7 +97,7 @@ public class AddFunctionToSupertypeFix extends JetHintAction<JetNamedFunction> {
     ) {
         // TODO: support for generics.
         Modality modality = typeDescriptor.getModality();
-        if (typeDescriptor.getKind() == ClassKind.TRAIT) {
+        if (typeDescriptor.getKind() == ClassKind.INTERFACE) {
             modality = Modality.OPEN;
         }
         return functionDescriptor.copy(

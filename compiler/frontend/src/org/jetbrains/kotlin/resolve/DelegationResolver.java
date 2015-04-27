@@ -196,7 +196,7 @@ public final class DelegationResolver<T extends CallableMemberDescriptor> {
     private static boolean isNotTrait(@Nullable DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             ClassKind kind = ((ClassDescriptor) descriptor).getKind();
-            return kind != ClassKind.TRAIT;
+            return kind != ClassKind.INTERFACE;
         }
         return false;
     }

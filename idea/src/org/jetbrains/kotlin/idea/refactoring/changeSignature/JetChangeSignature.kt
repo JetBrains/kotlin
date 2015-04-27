@@ -119,7 +119,7 @@ public class JetChangeSignature(project: Project,
     private fun preferContainedInClass(descriptorsForSignatureChange: Collection<FunctionDescriptor>): FunctionDescriptor {
         for (descriptor in descriptorsForSignatureChange) {
             val containingDeclaration = descriptor.getContainingDeclaration()
-            if (containingDeclaration is ClassDescriptor && containingDeclaration.getKind() != ClassKind.TRAIT) {
+            if (containingDeclaration is ClassDescriptor && containingDeclaration.getKind() != ClassKind.INTERFACE) {
                 return descriptor
             }
         }

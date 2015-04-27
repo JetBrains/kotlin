@@ -89,7 +89,7 @@ public final class JsDescriptorUtils {
                 ClassDescriptor classDescriptor = getClassDescriptorForType(type);
 
                 return !FAKE_CLASSES.contains(getFqNameSafe(classDescriptor).asString()) &&
-                       !(classDescriptor.getKind() == ClassKind.TRAIT && isNativeObject(classDescriptor));
+                       !(classDescriptor.getKind() == ClassKind.INTERFACE && isNativeObject(classDescriptor));
             }
         });
     }

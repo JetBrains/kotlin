@@ -60,7 +60,7 @@ public class JetClassElementType extends JetStubElementType<KotlinClassStub, Jet
         List<String> superNames = PsiUtilPackage.getSuperNames(psi);
         return new KotlinClassStubImpl(
                 getStubType(isEnumEntry), parentStub, StringRef.fromString(fqName != null ? fqName.asString() : null),
-                StringRef.fromString(psi.getName()), Utils.INSTANCE$.wrapStrings(superNames), psi.isTrait(), isEnumEntry,
+                StringRef.fromString(psi.getName()), Utils.INSTANCE$.wrapStrings(superNames), psi.isInterface(), isEnumEntry,
                 psi.isLocal(), psi.isTopLevel());
     }
 
@@ -69,7 +69,7 @@ public class JetClassElementType extends JetStubElementType<KotlinClassStub, Jet
         dataStream.writeName(stub.getName());
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName == null ? null : fqName.asString());
-        dataStream.writeBoolean(stub.isTrait());
+        dataStream.writeBoolean(stub.isInterface());
         dataStream.writeBoolean(stub.isEnumEntry());
         dataStream.writeBoolean(stub.isLocal());
         dataStream.writeBoolean(stub.isTopLevel());

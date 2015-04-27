@@ -568,7 +568,7 @@ public class FunctionCodegen {
 
         if (kind != OwnerKind.TRAIT_IMPL &&
             contextClass instanceof ClassDescriptor &&
-            ((ClassDescriptor) contextClass).getKind() == ClassKind.TRAIT) {
+            ((ClassDescriptor) contextClass).getKind() == ClassKind.INTERFACE) {
             return;
         }
 
@@ -812,7 +812,7 @@ public class FunctionCodegen {
                         }
 
                         String internalName = typeMapper.mapType(toClass).getInternalName();
-                        if (toClass.getKind() == ClassKind.TRAIT) {
+                        if (toClass.getKind() == ClassKind.INTERFACE) {
                             iv.invokeinterface(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor());
                         }
                         else {

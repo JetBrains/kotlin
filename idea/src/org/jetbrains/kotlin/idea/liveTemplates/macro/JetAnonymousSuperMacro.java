@@ -103,7 +103,7 @@ public class JetAnonymousSuperMacro extends Macro {
             ClassDescriptor classDescriptor = (ClassDescriptor) descriptor;
             if (!classDescriptor.getModality().isOverridable()) continue;
             ClassKind kind = classDescriptor.getKind();
-            if (kind == ClassKind.TRAIT || kind == ClassKind.CLASS) {
+            if (kind == ClassKind.INTERFACE || kind == ClassKind.CLASS) {
                 PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor);
                 if (declaration != null) {
                     result.add((PsiNamedElement) declaration);

@@ -204,7 +204,7 @@ public class LazyTopDownAnalyzer {
                                     if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
                                         trace.report(SECONDARY_CONSTRUCTOR_IN_OBJECT.on((JetSecondaryConstructor) jetDeclaration));
                                     }
-                                    else if (classDescriptor.getKind() == ClassKind.TRAIT) {
+                                    else if (classDescriptor.getKind() == ClassKind.INTERFACE) {
                                         trace.report(CONSTRUCTOR_IN_TRAIT.on(jetDeclaration));
                                     }
                                 }

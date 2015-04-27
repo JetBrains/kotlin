@@ -371,7 +371,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                 return null
             }
 
-            if (jetClass is JetClass && jetClass.isTrait()) {
+            if (jetClass is JetClass && jetClass.isInterface()) {
                 return typeMapper.mapTraitImpl(classDescriptor).getInternalName()
             }
 

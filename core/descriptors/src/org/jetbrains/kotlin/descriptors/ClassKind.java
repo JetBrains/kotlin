@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.descriptors;
 
 public enum ClassKind {
     CLASS,
-    TRAIT,
+    INTERFACE,
     ENUM_CLASS,
     ENUM_ENTRY,
     ANNOTATION_CLASS,

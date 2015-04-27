@@ -36,7 +36,7 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
         val targetElement = element.unwrapped
 
         fun elementKind() = when (targetElement) {
-            is JetClass -> if (targetElement.isTrait()) "trait" else "class"
+            is JetClass -> if (targetElement.isInterface()) "trait" else "class"
             is JetObjectDeclaration -> "object"
             is JetNamedFunction -> "function"
             is JetSecondaryConstructor -> "constructor"

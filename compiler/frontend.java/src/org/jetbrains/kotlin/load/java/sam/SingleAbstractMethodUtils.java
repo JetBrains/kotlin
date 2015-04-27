@@ -126,7 +126,7 @@ public class SingleAbstractMethodUtils {
     }
 
     private static boolean isSamInterface(@NotNull ClassDescriptor klass) {
-        if (klass.getKind() != ClassKind.TRAIT) {
+        if (klass.getKind() != ClassKind.INTERFACE) {
             return false;
         }
 

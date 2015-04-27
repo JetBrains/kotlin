@@ -142,7 +142,7 @@ public class JetIconProvider extends IconProvider implements DumbAware {
 
         if (psiElement instanceof JetClass) {
             JetClass jetClass = (JetClass) psiElement;
-            if (jetClass.isTrait()) {
+            if (jetClass.isInterface()) {
                 return JetIcons.TRAIT;
             }
 

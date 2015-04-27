@@ -123,6 +123,6 @@ public fun isImplemented(declaration: JetNamedDeclaration): Boolean {
 
     if (parent !is JetClass) return false
 
-    return (parent as JetClass).isTrait() && (declaration !is JetDeclarationWithBody || !declaration.hasBody()) && (declaration !is JetWithExpressionInitializer || !declaration.hasInitializer())
+    return (parent as JetClass).isInterface() && (declaration !is JetDeclarationWithBody || !declaration.hasBody()) && (declaration !is JetWithExpressionInitializer || !declaration.hasInitializer())
 }
 

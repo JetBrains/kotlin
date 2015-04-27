@@ -48,7 +48,7 @@ fun visibility(visibility: ProtoBuf.Visibility) = when (visibility) {
 
 public fun classKind(kind: ProtoBuf.Class.Kind): ClassKind = when (kind) {
     ProtoBuf.Class.Kind.CLASS -> ClassKind.CLASS
-    ProtoBuf.Class.Kind.TRAIT -> ClassKind.TRAIT
+    ProtoBuf.Class.Kind.TRAIT -> ClassKind.INTERFACE
     ProtoBuf.Class.Kind.ENUM_CLASS -> ClassKind.ENUM_CLASS
     ProtoBuf.Class.Kind.ENUM_ENTRY -> ClassKind.ENUM_ENTRY
     ProtoBuf.Class.Kind.ANNOTATION_CLASS -> ClassKind.ANNOTATION_CLASS

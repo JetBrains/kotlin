@@ -103,7 +103,7 @@ public class CastDiagnosticsUtil {
 
     private static boolean isTrait(@NotNull JetType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.TRAIT;
+        return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == ClassKind.INTERFACE;
     }
 
     /**

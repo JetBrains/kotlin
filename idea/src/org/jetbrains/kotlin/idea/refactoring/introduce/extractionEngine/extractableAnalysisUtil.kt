@@ -802,7 +802,7 @@ fun ExtractionData.getDefaultVisibility(): String {
     if (!isVisibilityApplicable()) return ""
 
     val parent = targetSibling.getStrictParentOfType<JetDeclaration>()
-    if (parent is JetClass && parent.isTrait()) return ""
+    if (parent is JetClass && parent.isInterface()) return ""
 
     return "private"
 }

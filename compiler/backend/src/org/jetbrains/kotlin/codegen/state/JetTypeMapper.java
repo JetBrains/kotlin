@@ -844,7 +844,7 @@ public class JetTypeMapper {
     @NotNull
     private static ClassDescriptor getTraitImplThisParameterClass(@NotNull ClassDescriptor traitDescriptor) {
         for (ClassDescriptor descriptor : DescriptorUtils.getSuperclassDescriptors(traitDescriptor)) {
-            if (descriptor.getKind() != ClassKind.TRAIT) {
+            if (descriptor.getKind() != ClassKind.INTERFACE) {
                 return descriptor;
             }
         }

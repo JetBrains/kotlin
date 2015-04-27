@@ -195,7 +195,7 @@ public class AsmUtil {
         if (functionDescriptor.getModality() == Modality.FINAL && !(functionDescriptor instanceof ConstructorDescriptor)) {
             DeclarationDescriptor containingDeclaration = functionDescriptor.getContainingDeclaration();
             if (!(containingDeclaration instanceof ClassDescriptor) ||
-                ((ClassDescriptor) containingDeclaration).getKind() != ClassKind.TRAIT) {
+                ((ClassDescriptor) containingDeclaration).getKind() != ClassKind.INTERFACE) {
                 flags |= ACC_FINAL;
             }
         }
@@ -264,7 +264,7 @@ public class AsmUtil {
 
     private static int innerAccessFlagsForModalityAndKind(@NotNull ClassDescriptor innerClass) {
         switch (innerClass.getKind()) {
-            case TRAIT:
+            case INTERFACE:
                 return ACC_ABSTRACT | ACC_INTERFACE;
             case ENUM_CLASS:
                 return ACC_FINAL | ACC_ENUM;

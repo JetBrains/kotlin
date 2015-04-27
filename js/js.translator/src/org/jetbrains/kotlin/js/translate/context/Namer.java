@@ -385,7 +385,7 @@ public final class Namer {
     @NotNull
     public JsExpression classCreateInvocation(@NotNull ClassDescriptor descriptor) {
         switch (descriptor.getKind()) {
-            case TRAIT:
+            case INTERFACE:
                 return traitCreationMethodReference();
             case ENUM_CLASS:
                 return enumClassCreationMethodReference();

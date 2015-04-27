@@ -988,7 +988,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         if (!startFromName) {
             renderAnnotations(klass, builder);
             renderVisibility(klass.getVisibility(), builder);
-            if (!(klass.getKind() == ClassKind.TRAIT && klass.getModality() == Modality.ABSTRACT
+            if (!(klass.getKind() == ClassKind.INTERFACE && klass.getModality() == Modality.ABSTRACT
                 || klass.getKind().isSingleton() && klass.getModality() == Modality.FINAL)) {
                 renderModality(klass.getModality(), builder);
             }
@@ -1056,7 +1056,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
         switch (klass.getKind()) {
             case CLASS:
                 return "class";
-            case TRAIT:
+            case INTERFACE:
                 return "trait";
             case ENUM_CLASS:
                 return "enum class";

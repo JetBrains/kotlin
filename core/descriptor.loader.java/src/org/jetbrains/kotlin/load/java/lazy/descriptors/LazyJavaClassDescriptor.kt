@@ -54,7 +54,7 @@ class LazyJavaClassDescriptor(
 
     private val kind = when {
         jClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
-        jClass.isInterface() -> ClassKind.TRAIT
+        jClass.isInterface() -> ClassKind.INTERFACE
         jClass.isEnum() -> ClassKind.ENUM_CLASS
         else -> ClassKind.CLASS
     }

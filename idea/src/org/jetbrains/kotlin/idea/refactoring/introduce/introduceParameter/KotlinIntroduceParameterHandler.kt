@@ -161,7 +161,7 @@ fun selectNewParameterContext(
 
                 (if (stopAt != null) parent.parents(withItself = false).takeWhile { it != stopAt } else parents)
                         .filter {
-                            ((it is JetClass && !it.isTrait() && it !is JetEnumEntry) || it is JetNamedFunction || it is JetSecondaryConstructor) &&
+                            ((it is JetClass && !it.isInterface() && it !is JetEnumEntry) || it is JetNamedFunction || it is JetSecondaryConstructor) &&
                             ((it as JetNamedDeclaration).getValueParameterList() != null || it.getNameIdentifier() != null)
                         }
                         .toList()

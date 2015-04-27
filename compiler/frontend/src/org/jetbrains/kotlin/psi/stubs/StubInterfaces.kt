@@ -42,7 +42,7 @@ public trait KotlinClassOrObjectStub<T : JetClassOrObject> : KotlinStubWithFqNam
 }
 
 public trait KotlinClassStub : KotlinClassOrObjectStub<JetClass> {
-    public fun isTrait(): Boolean
+    public fun isInterface(): Boolean
     public fun isEnumEntry(): Boolean
 }
 

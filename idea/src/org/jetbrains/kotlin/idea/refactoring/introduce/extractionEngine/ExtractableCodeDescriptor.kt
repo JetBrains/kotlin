@@ -347,7 +347,7 @@ enum class ExtractionTarget(val name: String) {
     companion object {
         fun checkNotTrait(descriptor: ExtractableCodeDescriptor): Boolean {
             val parent = descriptor.extractionData.targetSibling.getStrictParentOfType<JetDeclaration>()
-            return !(parent is JetClass && parent.isTrait())
+            return !(parent is JetClass && parent.isInterface())
         }
 
         fun checkSimpleBody(descriptor: ExtractableCodeDescriptor): Boolean {

@@ -58,7 +58,7 @@ public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<Jet
             }
             if (target instanceof JetClass && QuickFixUtil.canModifyElement(target)) {
                 classDeclaration = (JetClass) target;
-                return !(classDeclaration.isEnum() || classDeclaration.isTrait());
+                return !(classDeclaration.isEnum() || classDeclaration.isInterface());
             }
         }
 

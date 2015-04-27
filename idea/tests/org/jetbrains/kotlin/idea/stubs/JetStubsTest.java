@@ -50,6 +50,6 @@ public class JetStubsTest extends LightCodeInsightFixtureTestCase {
         List<JetDeclaration> declarations = ((JetFile) psiFile).getDeclarations();
         JetClass jetClass = (JetClass) declarations.get(0);
         KotlinClassStub stub = JetStubElementTypes.CLASS.createStub(jetClass, null);
-        assertEquals(true, stub.isTrait());
+        assertEquals(true, stub.isInterface());
     }
 }

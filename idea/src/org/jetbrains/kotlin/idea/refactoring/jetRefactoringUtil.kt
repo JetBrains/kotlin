@@ -510,7 +510,7 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
     val factory = PsiElementFactory.SERVICE.getInstance(klass.getProject())
     val javaClassToAdd = when (kind) {
         ClassKind.CLASS -> factory.createClass(klass.getName())
-        ClassKind.TRAIT -> factory.createInterface(klass.getName())
+        ClassKind.INTERFACE -> factory.createInterface(klass.getName())
         ClassKind.ANNOTATION_CLASS -> factory.createAnnotationType(klass.getName())
         ClassKind.ENUM_CLASS -> factory.createEnum(klass.getName())
         else -> throw AssertionError("Unexpected class kind: ${klass.getElementTextWithContext()}")

@@ -136,7 +136,7 @@ private fun collectSuperDeclarationMarkers(declaration: JetDeclaration, result: 
 }
 
 private fun collectInheritedClassMarker(element: JetClass, result: MutableCollection<LineMarkerInfo<*>>) {
-    val isTrait = element.isTrait()
+    val isTrait = element.isInterface()
     if (!(isTrait || element.hasModifier(JetTokens.OPEN_KEYWORD) || element.hasModifier(JetTokens.ABSTRACT_KEYWORD))) {
         return
     }

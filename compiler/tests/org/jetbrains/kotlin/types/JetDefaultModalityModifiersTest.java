@@ -171,7 +171,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         public void testTraitModality(String classDeclaration, Modality expectedModality) {
-            testClassModality(classDeclaration, ClassKind.TRAIT, expectedModality);
+            testClassModality(classDeclaration, ClassKind.INTERFACE, expectedModality);
         }
 
         public void testEnumModality(String classDeclaration, Modality expectedModality) {
@@ -187,7 +187,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         public void testFunctionModalityInTrait(String classWithFunction, Modality expectedModality) {
-            testFunctionModality(classWithFunction, ClassKind.TRAIT, expectedModality);
+            testFunctionModality(classWithFunction, ClassKind.INTERFACE, expectedModality);
         }
 
         public void testPropertyModalityInClass(String classWithProperty, Modality expectedModality) {
@@ -199,7 +199,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         public void testPropertyModalityInTrait(String classWithProperty, Modality expectedModality) {
-            testPropertyModality(classWithProperty, ClassKind.TRAIT, expectedModality);
+            testPropertyModality(classWithProperty, ClassKind.INTERFACE, expectedModality);
         }
 
         public void testPropertyAccessorModalityInClass(String classWithPropertyWithAccessor, Modality expectedModality) {
@@ -207,7 +207,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         public void testPropertyAccessorModalityInTrait(String classWithPropertyWithAccessor, Modality expectedModality) {
-            testPropertyAccessorModality(classWithPropertyWithAccessor, ClassKind.TRAIT, expectedModality, true);
+            testPropertyAccessorModality(classWithPropertyWithAccessor, ClassKind.INTERFACE, expectedModality, true);
         }
 
         public void testPropertyAccessorModalityInClass(String classWithPropertyWithAccessor, Modality expectedModality, boolean isGetter) {
@@ -215,7 +215,7 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         public void testPropertyAccessorModalityInTrait(String classWithPropertyWithAccessor, Modality expectedModality, boolean isGetter) {
-            testPropertyAccessorModality(classWithPropertyWithAccessor, ClassKind.TRAIT, expectedModality, isGetter);
+            testPropertyAccessorModality(classWithPropertyWithAccessor, ClassKind.INTERFACE, expectedModality, isGetter);
         }
     }
 

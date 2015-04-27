@@ -78,7 +78,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler, "MemberResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
 
-        if (kind == ClassKind.TRAIT) {
+        if (kind == ClassKind.INTERFACE) {
             setUpScopeForInitializers(this);
         }
 

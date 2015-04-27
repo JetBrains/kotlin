@@ -90,7 +90,7 @@ public class Flags {
         switch (kind) {
             case CLASS:
                 return ProtoBuf.Class.Kind.CLASS;
-            case TRAIT:
+            case INTERFACE:
                 return ProtoBuf.Class.Kind.TRAIT;
             case ENUM_CLASS:
                 return ProtoBuf.Class.Kind.ENUM_CLASS;

@@ -59,7 +59,7 @@ public class JvmCodegenUtil {
     public static boolean isInterface(DeclarationDescriptor descriptor) {
         if (descriptor instanceof ClassDescriptor) {
             ClassKind kind = ((ClassDescriptor) descriptor).getKind();
-            return kind == ClassKind.TRAIT || kind == ClassKind.ANNOTATION_CLASS;
+            return kind == ClassKind.INTERFACE || kind == ClassKind.ANNOTATION_CLASS;
         }
         return false;
     }

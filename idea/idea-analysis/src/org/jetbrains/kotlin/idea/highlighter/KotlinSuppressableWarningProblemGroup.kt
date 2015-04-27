@@ -83,7 +83,7 @@ private object DeclarationKindDetector : JetVisitor<AnnotationHostKind?, Unit?>(
 
     override fun visitDeclaration(d: JetDeclaration, _: Unit?) = null
 
-    override fun visitClass(d: JetClass, _: Unit?) = detect(d, if (d.isTrait()) "trait" else "class")
+    override fun visitClass(d: JetClass, _: Unit?) = detect(d, if (d.isInterface()) "trait" else "class")
 
     override fun visitNamedFunction(d: JetNamedFunction, _: Unit?) = detect(d, "fun")
 

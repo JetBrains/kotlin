@@ -101,7 +101,7 @@ public final class JetDescriptorIconProvider {
         }
         if (descriptor instanceof ClassDescriptor) {
             switch (((ClassDescriptor) descriptor).getKind()) {
-                case TRAIT:
+                case INTERFACE:
                     return JetIcons.TRAIT;
                 case ENUM_CLASS:
                     return JetIcons.ENUM;
