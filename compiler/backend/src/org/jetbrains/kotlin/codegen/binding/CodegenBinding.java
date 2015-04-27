@@ -128,7 +128,7 @@ public class CodegenBinding {
         ClassDescriptor descriptor = bindingContext.get(CLASS, expression);
         if (descriptor == null) {
             SimpleFunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
-            assert functionDescriptor != null;
+            assert functionDescriptor != null : "Couldn't find function descriptor for " + PsiUtilPackage.getElementTextWithContext(expression);
             return asmTypeForAnonymousClass(bindingContext, functionDescriptor);
         }
 
