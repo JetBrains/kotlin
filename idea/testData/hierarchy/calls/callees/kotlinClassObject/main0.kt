@@ -12,7 +12,7 @@ open class KClientBase {
 }
 
 class KClient: KClientBase() {
-    class <caret>object {
+    companion <caret>object {
         val bar = run {
             val localVal = packageFun("")
 
