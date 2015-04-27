@@ -32,7 +32,7 @@ class A6 {
 class A7 {
     val a: Int
 
-    {
+    init {
         a = 1
     }
 }

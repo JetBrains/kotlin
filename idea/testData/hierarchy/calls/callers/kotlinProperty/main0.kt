@@ -12,7 +12,7 @@ fun packageFun(s: String): String = KBase().name + KA().name
 val packageVal = KBase().name + KA().name
 
 class KClient {
-    {
+    init {
         KBase().name = ""
         KA().name = ""
     }
@@ -37,7 +37,7 @@ class KClient {
 
 object KClientObj {
     val a = KBase().name + KA().name
-    {
+    init {
         KBase().name = ""
         KA().name = ""
     }

@@ -4,7 +4,7 @@ class A(val n: Int) {
 }
 
 class Foo {
-    {
+    init {
         var a = Array(2) { A(it) }
         <selection>a[1] += 2</selection>
         a[1] = a[1] + 2

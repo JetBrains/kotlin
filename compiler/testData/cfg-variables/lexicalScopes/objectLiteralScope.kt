@@ -1,7 +1,7 @@
 fun foo() {
     "before"
     val bar = object {
-        {
+        init {
             val x = 1
         }
         fun foo() {

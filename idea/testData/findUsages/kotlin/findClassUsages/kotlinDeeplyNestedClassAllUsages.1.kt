@@ -6,7 +6,7 @@ public class X(bar: String? = Inner.A.bar): Inner.A() {
     var next: Inner.A? = Inner.A()
     val myBar: String? = Inner.A.bar
 
-    {
+    init {
         Inner.A.bar = ""
         Inner.A.foo()
     }

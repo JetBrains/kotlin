@@ -18,7 +18,7 @@ object B : A {}
 
 fun f() {
   ~y~val y = object : Foo(`ns.x`x) {
-    {
+    init {
       `ns.x`x + 12
     }
 

@@ -3,7 +3,7 @@ class A<in I> {
 
     private fun foo(): I = null!!
 
-    {
+    init {
         this.<caret>
     }
 }

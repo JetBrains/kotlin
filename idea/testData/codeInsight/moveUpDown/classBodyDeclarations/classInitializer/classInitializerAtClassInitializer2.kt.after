@@ -1,9 +1,9 @@
 // MOVE: up
 class A {
-    <caret>{
+    <caret>init {
 
     }
-    {
+    init {
 
     }
 }

@@ -2,7 +2,7 @@ public class X(bar: String? = Outer.A.BAR): Outer.A() {
     var next: Outer.A? = Outer.A()
     val myBar: String? = Outer.A.BAR
 
-    {
+    init {
         Outer.A.BAR = ""
         Outer.A.foos()
     }

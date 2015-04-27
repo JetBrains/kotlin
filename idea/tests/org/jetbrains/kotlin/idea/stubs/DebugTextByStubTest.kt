@@ -192,7 +192,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     }
 
     fun testClassInitializer() {
-        val tree = createStubTree("class A {\n {} }")
+        val tree = createStubTree("class A {\n init {} }")
         val initializer = tree.findChildStubByType(JetStubElementTypes.CLASS)!!.findChildStubByType(JetStubElementTypes.CLASS_BODY)!!
                 .findChildStubByType(JetStubElementTypes.ANONYMOUS_INITIALIZER)
         assertEquals("initializer in STUB: class A", JetClassInitializer(initializer as KotlinPlaceHolderStub).getDebugText())

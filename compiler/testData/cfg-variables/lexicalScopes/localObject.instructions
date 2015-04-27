@@ -2,7 +2,7 @@
 fun foo() {
     "before"
     object A {
-        {
+        init {
             val a = 1
         }
         fun foo() {
@@ -13,15 +13,15 @@ fun foo() {
 }
 ---------------------
 L0:
-  1 <START>                                                                          INIT: in: {} out: {}
-  2 mark({ "before" object A { { val a = 1 } fun foo() { val b = 2 } } "after" })
+  1 <START>                                                                               INIT: in: {} out: {}
+  2 mark({ "before" object A { init { val a = 1 } fun foo() { val b = 2 } } "after" })
     mark("before")
     r("before") -> <v0>
   3 mark({ val a = 1 })
-    v(val a = 1)                                                                     INIT: in: {} out: {a=D}
-    r(1) -> <v1>                                                                     INIT: in: {a=D} out: {a=D}
-    w(a|<v1>)                                                                        INIT: in: {a=D} out: {a=ID}
-  2 jmp?(L2)                                                                         INIT: in: {} out: {}
+    v(val a = 1)                                                                          INIT: in: {} out: {a=D}
+    r(1) -> <v1>                                                                          INIT: in: {a=D} out: {a=D}
+    w(a|<v1>)                                                                             INIT: in: {a=D} out: {a=ID}
+  2 jmp?(L2)                                                                              INIT: in: {} out: {}
     d(fun foo() { val b = 2 })
 L2 [after local declaration]:
     mark("after")
@@ -31,7 +31,7 @@ L1:
 error:
     <ERROR>
 sink:
-    <SINK>                                                                                                          USE: in: {} out: {}
+    <SINK>                                                                                                               USE: in: {} out: {}
 =====================
 == foo ==
 fun foo() {

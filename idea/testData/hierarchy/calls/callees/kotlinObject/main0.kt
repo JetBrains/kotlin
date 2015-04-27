@@ -12,7 +12,7 @@ open class KClientBase {
 }
 
 object <caret>KClient: KClientBase() {
-    {
+    init {
         fun localFun(s: String): String = packageFun(s)
 
 

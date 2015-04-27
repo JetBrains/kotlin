@@ -10,7 +10,7 @@ fun packageFun(s: String): String = s + T().KA().name
 val packageVal = T().KA().name
 
 class KClient {
-    {
+    init {
         T().KA()
     }
 

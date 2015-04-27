@@ -2,7 +2,7 @@
 fun foo() {
     "before"
     class A(val x: Int) {
-        {
+        init {
             val a = x
         }
         fun foo() {
@@ -12,12 +12,12 @@ fun foo() {
     "after"
 }
 ---------------------
-                                                                                     <v1>: Int   NEW: magic[FAKE_INITIALIZER](val x: Int) -> <v1>
-                                                                                     <v2>: A     NEW: magic[IMPLICIT_RECEIVER](x) -> <v2>        
-"before"                                                                             <v0>: *     NEW: r("before") -> <v0>                        
-x                                                                                    <v3>: Int   NEW: r(x|<v2>) -> <v3>                          
-"after"                                                                              <v4>: *     NEW: r("after") -> <v4>                         
-{ "before" class A(val x: Int) { { val a = x } fun foo() { val b = x } } "after" }   <v4>: *     COPY                                            
+                                                                                          <v1>: Int   NEW: magic[FAKE_INITIALIZER](val x: Int) -> <v1>
+                                                                                          <v2>: A     NEW: magic[IMPLICIT_RECEIVER](x) -> <v2>
+"before"                                                                                  <v0>: *     NEW: r("before") -> <v0>
+x                                                                                         <v3>: Int   NEW: r(x|<v2>) -> <v3>
+"after"                                                                                   <v4>: *     NEW: r("after") -> <v4>
+{ "before" class A(val x: Int) { init { val a = x } fun foo() { val b = x } } "after" }   <v4>: *     COPY
 =====================
 == foo ==
 fun foo() {

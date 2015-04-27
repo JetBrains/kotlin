@@ -12,7 +12,7 @@ fun packageFun(s: String): String = KBase().foo("") + KA().foo(s)
 val packageVal = KBase().foo("") + KA().foo("")
 
 class KClient {
-    {
+    init {
         KA().foo("")
         KBase().foo("")
     }

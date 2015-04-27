@@ -3,7 +3,7 @@ class A {
     fun foo() {
 
     }
-    <caret>{
+    <caret>init {
 
     }
 }

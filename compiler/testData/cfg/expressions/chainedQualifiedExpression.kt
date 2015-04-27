@@ -3,7 +3,7 @@ package test
 class JetToken
 
 public open class JetKeywordCompletionContributor() {
-    {
+    init {
         val inTopLevel = 1.0
 
         BunchKeywordRegister()

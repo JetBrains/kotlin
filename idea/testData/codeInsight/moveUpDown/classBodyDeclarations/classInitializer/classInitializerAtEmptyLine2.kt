@@ -2,7 +2,7 @@
 class A {
     val x = ""
 
-    <caret>{
+    <caret>init {
 
     }
 }

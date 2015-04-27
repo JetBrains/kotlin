@@ -3,7 +3,7 @@ package test
 open class A
 
 class MyClass() {
-    {
+    init {
         val a = object: A() {
 
         }
