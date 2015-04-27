@@ -117,7 +117,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
 
         try {
             if (isWithRuntime) {
-                ConfigLibraryUtil.configureKotlinRuntime(getModule(), PluginTestCaseBase.mockJdk());
+                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), PluginTestCaseBase.mockJdk());
             }
 
             DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
@@ -126,7 +126,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
         }
         finally {
             if (isWithRuntime) {
-                ConfigLibraryUtil.unConfigureKotlinRuntime(getModule(), getTestProjectJdk());
+                ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(getModule(), getTestProjectJdk());
             }
         }
     }
