@@ -43,15 +43,6 @@ public class HierarchyUtils {
         }
     };
 
-    public static final Function1<PsiElement, Boolean> IS_OVERRIDE_HIERARCHY_ELEMENT = new Function1<PsiElement, Boolean>() {
-        @Override
-        public Boolean invoke(@Nullable PsiElement input) {
-            return input instanceof PsiMethod ||
-                   input instanceof JetNamedFunction ||
-                   input instanceof JetProperty;
-        }
-    };
-
     public static PsiElement getCurrentElement(DataContext dataContext, Project project) {
         Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
         if (editor != null) {
@@ -71,8 +62,4 @@ public class HierarchyUtils {
         return PsiUtilPackage.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_CALL_HIERARCHY_ELEMENT);
     }
 
-    public static PsiElement getOverrideHierarchyElement(PsiElement element) {
-        //noinspection unchecked
-        return PsiUtilPackage.getParentOfTypesAndPredicate(element, false, ArrayUtil.EMPTY_CLASS_ARRAY, IS_OVERRIDE_HIERARCHY_ELEMENT);
-    }
 }
