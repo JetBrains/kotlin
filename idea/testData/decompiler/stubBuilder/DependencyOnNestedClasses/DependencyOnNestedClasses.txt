@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
-  CLASS:[fqName=test.DependencyOnNestedClasses, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=DependencyOnNestedClasses, superNames=[Nested]]
+  CLASS:[fqName=test.DependencyOnNestedClasses, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=DependencyOnNestedClasses, superNames=[Nested]]
     MODIFIER_LIST:[public final]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]

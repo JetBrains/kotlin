@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
-  CLASS:[fqName=test.TypeBoundsAndDelegationSpecifiers, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=TypeBoundsAndDelegationSpecifiers, superNames=[A, T]]
+  CLASS:[fqName=test.TypeBoundsAndDelegationSpecifiers, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeBoundsAndDelegationSpecifiers, superNames=[A, T]]
     MODIFIER_LIST:[internal final]
     TYPE_PARAMETER_LIST:
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=H]

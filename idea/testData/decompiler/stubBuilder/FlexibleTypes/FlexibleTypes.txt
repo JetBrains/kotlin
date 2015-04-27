@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
-  CLASS:[fqName=test.FlexibleTypes, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=FlexibleTypes, superNames=[]]
+  CLASS:[fqName=test.FlexibleTypes, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleTypes, superNames=[]]
     MODIFIER_LIST:[abstract internal]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]

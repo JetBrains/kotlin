@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
-  CLASS:[fqName=test.A, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=A, superNames=[]]
+  CLASS:[fqName=test.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     PRIMARY_CONSTRUCTOR:
       VALUE_PARAMETER_LIST:
         VALUE_PARAMETER:[fqName=test.A.b, hasDefaultValue=false, hasValOrVarNode=true, isMutable=false, name=b]

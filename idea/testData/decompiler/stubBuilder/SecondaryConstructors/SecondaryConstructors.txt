@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
-  CLASS:[fqName=test.SecondaryConstructors, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=SecondaryConstructors, superNames=[]]
+  CLASS:[fqName=test.SecondaryConstructors, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SecondaryConstructors, superNames=[]]
     MODIFIER_LIST:[internal final]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
@@ -38,7 +38,7 @@ PsiJetFileStubImpl[package=test]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
-      CLASS:[fqName=test.SecondaryConstructors.Inner, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Inner, superNames=[]]
+      CLASS:[fqName=test.SecondaryConstructors.Inner, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST:[inner internal final]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
@@ -73,7 +73,7 @@ PsiJetFileStubImpl[package=test]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     REFERENCE_EXPRESSION:[referencedName=G]
-      CLASS:[fqName=test.SecondaryConstructors.Nested, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Nested, superNames=[]]
+      CLASS:[fqName=test.SecondaryConstructors.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST:[internal final]
         CLASS_BODY:
           SECONDARY_CONSTRUCTOR:

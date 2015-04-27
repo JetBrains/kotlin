@@ -3,7 +3,7 @@ PsiJetFileStubImpl[package=test.class_object]
     DOT_QUALIFIED_EXPRESSION:
       REFERENCE_EXPRESSION:[referencedName=test]
       REFERENCE_EXPRESSION:[referencedName=class_object]
-  CLASS:[fqName=test.class_object.ClassObject, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=ClassObject, superNames=[]]
+  CLASS:[fqName=test.class_object.ClassObject, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassObject, superNames=[]]
     MODIFIER_LIST:[internal final]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
@@ -27,13 +27,13 @@ PsiJetFileStubImpl[package=test.class_object]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Int]
-          CLASS:[fqName=test.class_object.ClassObject.Companion.A, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=A, superNames=[]]
+          CLASS:[fqName=test.class_object.ClassObject.Companion.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[]]
             MODIFIER_LIST:[internal final]
             PRIMARY_CONSTRUCTOR:
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
             CLASS_BODY:
-              CLASS:[fqName=test.class_object.ClassObject.Companion.A.B, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=B, superNames=[]]
+              CLASS:[fqName=test.class_object.ClassObject.Companion.A.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
                 MODIFIER_LIST:[internal final]
                 PRIMARY_CONSTRUCTOR:
                   MODIFIER_LIST:[public]
@@ -69,7 +69,7 @@ PsiJetFileStubImpl[package=test.class_object]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
-      CLASS:[fqName=test.class_object.ClassObject.B, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=B, superNames=[]]
+      CLASS:[fqName=test.class_object.ClassObject.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[]]
         MODIFIER_LIST:[internal final]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[public]
@@ -78,7 +78,7 @@ PsiJetFileStubImpl[package=test.class_object]
           OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
             MODIFIER_LIST:[internal companion]
             CLASS_BODY:
-              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=C, superNames=[]]
+              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
                 MODIFIER_LIST:[internal final]
                 PRIMARY_CONSTRUCTOR:
                   MODIFIER_LIST:[public]
@@ -87,7 +87,7 @@ PsiJetFileStubImpl[package=test.class_object]
                   OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion.C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                     MODIFIER_LIST:[internal companion]
                     CLASS_BODY:
-                      CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=D, superNames=[]]
+                      CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
                         MODIFIER_LIST:[internal final]
                         PRIMARY_CONSTRUCTOR:
                           MODIFIER_LIST:[public]
@@ -111,7 +111,7 @@ PsiJetFileStubImpl[package=test.class_object]
                                     USER_TYPE:[isAbsoluteInRootPackage=false]
                                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                                     REFERENCE_EXPRESSION:[referencedName=Unit]
-                              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.Anno, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Anno, superNames=[Annotation]]
+                              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.Anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Anno, superNames=[Annotation]]
                                 MODIFIER_LIST:[annotation internal final]
                                 PRIMARY_CONSTRUCTOR:
                                   MODIFIER_LIST:[public]
@@ -124,7 +124,7 @@ PsiJetFileStubImpl[package=test.class_object]
                                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                                         REFERENCE_EXPRESSION:[referencedName=Annotation]
                                 CLASS_BODY:
-                              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=En, superNames=[Enum]]
+                              CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=En, superNames=[Enum]]
                                 MODIFIER_LIST:[enum internal final]
                                 PRIMARY_CONSTRUCTOR:
                                   MODIFIER_LIST:[private]

@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
-  CLASS:[fqName=test.ClassMembers, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=ClassMembers, superNames=[]]
+  CLASS:[fqName=test.ClassMembers, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassMembers, superNames=[]]
     MODIFIER_LIST:[abstract internal]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]

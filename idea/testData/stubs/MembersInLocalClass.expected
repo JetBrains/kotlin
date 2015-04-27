@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
   FUN:[fqName=f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=f]
     MODIFIER_LIST:[public]
-    CLASS:[fqName=null, isEnumEntry=false, isLocal=true, isTopLevel=false, isTrait=false, name=C, superNames=[]]
+    CLASS:[fqName=null, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]
       CLASS_BODY:
         FUN:[fqName=null, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
           VALUE_PARAMETER_LIST:

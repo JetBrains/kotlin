@@ -1,6 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
-  CLASS:[fqName=Delegation, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=Delegation, superNames=[T]]
+  CLASS:[fqName=Delegation, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Delegation, superNames=[T]]
     MODIFIER_LIST:[internal final]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]

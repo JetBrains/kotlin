@@ -1,6 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
-  CLASS:[fqName=C, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=C, superNames=[]]
+  CLASS:[fqName=C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]
     CLASS_BODY:
       MODIFIER_LIST:[]
         ANNOTATION:

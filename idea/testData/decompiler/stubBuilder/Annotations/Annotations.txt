@@ -1,6 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
-  CLASS:[fqName=Annotations, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=Annotations, superNames=[]]
+  CLASS:[fqName=Annotations, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotations, superNames=[]]
     MODIFIER_LIST:[public final]
       ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
         CONSTRUCTOR_CALLEE:
@@ -189,7 +189,7 @@ PsiJetFileStubImpl[package=]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
-      CLASS:[fqName=Annotations.Nested, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Nested, superNames=[]]
+      CLASS:[fqName=Annotations.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         MODIFIER_LIST:[internal final]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[private]

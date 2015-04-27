@@ -1,7 +1,7 @@
 PsiJetFileStubImpl[package=test]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=test]
-  CLASS:[fqName=test.SecondaryConstructors, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=SecondaryConstructors, superNames=[]]
+  CLASS:[fqName=test.SecondaryConstructors, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=SecondaryConstructors, superNames=[]]
     PRIMARY_CONSTRUCTOR:
       VALUE_PARAMETER_LIST:
         VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
@@ -30,7 +30,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=Int]
-      CLASS:[fqName=test.SecondaryConstructors.Inner, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Inner, superNames=[]]
+      CLASS:[fqName=test.SecondaryConstructors.Inner, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST:[inner]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
@@ -58,7 +58,7 @@ PsiJetFileStubImpl[package=test]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     REFERENCE_EXPRESSION:[referencedName=G]
-      CLASS:[fqName=test.SecondaryConstructors.Nested, isEnumEntry=false, isLocal=false, isTopLevel=false, isTrait=false, name=Nested, superNames=[]]
+      CLASS:[fqName=test.SecondaryConstructors.Nested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
         CLASS_BODY:
           SECONDARY_CONSTRUCTOR:
             MODIFIER_LIST:[]
@@ -75,5 +75,5 @@ PsiJetFileStubImpl[package=test]
           SECONDARY_CONSTRUCTOR:
             MODIFIER_LIST:[internal]
             VALUE_PARAMETER_LIST:
-  CLASS:[fqName=test.anno, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=anno, superNames=[]]
+  CLASS:[fqName=test.anno, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=anno, superNames=[]]
     MODIFIER_LIST:[annotation]
