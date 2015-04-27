@@ -240,6 +240,36 @@ public class JDIEval(
         mayThrow { obj.setValue(field, jdiValue) }
     }
 
+    public fun unboxType(boxedValue: Value, type: Type): Value {
+        val method = when (type) {
+            Type.INT_TYPE -> MethodDescription("java/lang/Integer", "intValue", "()I", false)
+            Type.BOOLEAN_TYPE -> MethodDescription("java/lang/Boolean", "booleanValue", "()Z", false)
+            Type.CHAR_TYPE -> MethodDescription("java/lang/Character", "charValue", "()C", false)
+            Type.SHORT_TYPE -> MethodDescription("java/lang/Character", "shortValue", "()S", false)
+            Type.LONG_TYPE -> MethodDescription("java/lang/Long", "longValue", "()J", false)
+            Type.BYTE_TYPE -> MethodDescription("java/lang/Byte", "byteValue", "()B", false)
+            Type.FLOAT_TYPE -> MethodDescription("java/lang/Float", "floatValue", "()F", false)
+            Type.DOUBLE_TYPE -> MethodDescription("java/lang/Double", "doubleValue", "()D", false)
+            else -> throw UnsupportedOperationException("Couldn't unbox non primitive type ${type.getInternalName()}")
+        }
+        return invokeMethod(boxedValue, method, listOf(), true)
+    }
+
+    public fun boxType(value: Value): Value {
+        val method = when (value.asmType) {
+            Type.INT_TYPE -> MethodDescription("java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false)
+            Type.BYTE_TYPE -> MethodDescription("java/lang/Byte", "valueOf", "(B)Ljava/lang/Byte;", false)
+            Type.SHORT_TYPE -> MethodDescription("java/lang/Short", "valueOf", "(S)Ljava/lang/Short;", false)
+            Type.LONG_TYPE -> MethodDescription("java/lang/Long", "valueOf", "(J)Ljava/lang/Long;", false)
+            Type.BOOLEAN_TYPE -> MethodDescription("java/lang/Boolean", "valueOf", "(Z)Ljava/lang/Boolean;", false)
+            Type.CHAR_TYPE -> MethodDescription("java/lang/Character", "valueOf", "(C)Ljava/lang/Character;", false)
+            Type.FLOAT_TYPE -> MethodDescription("java/lang/Float", "valueOf", "(F)Ljava/lang/Float;", false)
+            Type.DOUBLE_TYPE -> MethodDescription("java/lang/Double", "valueOf", "(D)Ljava/lang/Double;", false)
+            else -> throw UnsupportedOperationException("Couldn't box non primitive type ${value.asmType.getInternalName()}")
+        }
+        return invokeStaticMethod(method, listOf(value))
+    }
+
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
         if (invokespecial && methodDesc.name == "<init>") {
             // Constructor call
