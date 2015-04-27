@@ -271,14 +271,17 @@
 
             <pathconvert property="src.line" refid="src.path" pathsep=" "/>
 
-            <java classname="org.jetbrains.kotlin.cli.js.K2JSCompiler" failonerror="true" fork="true" maxmemory="${max.heap.size.for.forked.jvm}">
+            <java classname="org.jetbrains.kotlin.preloading.Preloader" failonerror="true" fork="true"
+                  maxmemory="${max.heap.size.for.forked.jvm}">
                 <classpath>
-                    <file file="${bootstrap.runtime}"/>
-                    <pathelement location="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                    <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
                 </classpath>
                 <assertions>
                     <enable/>
                 </assertions>
+                <arg value="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <arg value="org.jetbrains.kotlin.cli.js.K2JSCompiler"/>
+                <arg line="4096 notime"/>
                 <arg line="${src.line}"/>
                 <arg value="-output"/>
                 <arg value="@{output}"/>
