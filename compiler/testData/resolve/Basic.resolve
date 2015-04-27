@@ -1,6 +1,6 @@
 ~A~class A {
-  ~B~class B {
-    ~B()~this(i: Int) {}
+  ~B~class B() {
+    ~B()~constructor(i: Int) {}
   }
 
   ~foo~fun foo(~foo.a~a : `kotlin::Char`Char) = `foo.a`a`:kotlin::Char`
