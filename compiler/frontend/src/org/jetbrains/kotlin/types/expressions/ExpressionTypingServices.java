@@ -294,9 +294,10 @@ public class ExpressionTypingServices {
                 }
             }
             if (mightBeUnit) {
-                // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments
+                // ExpressionTypingVisitorForStatements should return only null or Unit for declarations and assignments,
+                // but (for correct assignment / initialization analysis) data flow info must be preserved
                 assert result.getType() == null || KotlinBuiltIns.isUnit(result.getType());
-                result = result.replaceType(expressionTypingComponents.builtIns.getUnitType()).replaceDataFlowInfo(context.dataFlowInfo);
+                result = result.replaceType(expressionTypingComponents.builtIns.getUnitType());
             }
         }
         return result;
