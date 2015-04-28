@@ -47,4 +47,9 @@ trait TraitWithImpl {
     fun foo() = 1
 }
 
-public class TraitWithDelegatedWithImpl(f: TraitWithImpl): TraitWithImpl by f
+public class TraitWithDelegatedWithImpl(f: TraitWithImpl) : TraitWithImpl by f
+
+kotlin.jvm.overloads
+public fun withJvmOverloads(i: Int, b: Boolean = false, s: String="hello") {}
+
+

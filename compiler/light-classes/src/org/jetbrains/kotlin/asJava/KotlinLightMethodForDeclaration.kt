@@ -94,14 +94,6 @@ open public class KotlinLightMethodForDeclaration(
         }
     }
 
-    override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (another is KotlinLightMethod && origin == another.getOrigin()) {
-            return true
-        }
-
-        return super<LightMethod>.isEquivalentTo(another)
-    }
-
     override fun getParameterList(): PsiParameterList = paramsList.getValue()!!
 
     override fun getTypeParameterList(): PsiTypeParameterList? = typeParamsList.getValue()
@@ -127,13 +119,22 @@ open public class KotlinLightMethodForDeclaration(
         return getTypeParameters().all { processor.execute(it, state) }
     }
 
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        if (another is KotlinLightMethod && origin == another.getOrigin() && delegate == another.getDelegate()) {
+            return true
+        }
+
+        return super<LightMethod>.isEquivalentTo(another)
+    }
+
     override fun equals(other: Any?): Boolean =
             other is KotlinLightMethodForDeclaration &&
             getName() == other.getName() &&
             origin == other.origin &&
-            getContainingClass() == other.getContainingClass()
+            getContainingClass() == other.getContainingClass() &&
+            delegate == other.getDelegate()
 
-    override fun hashCode(): Int = (getName().hashCode() * 31 + origin.hashCode()) * 31 + getContainingClass()!!.hashCode()
+    override fun hashCode(): Int = ((getName().hashCode() * 31 + origin.hashCode()) * 31 + getContainingClass()!!.hashCode()) * 31 + delegate.hashCode()
 
     override fun toString(): String = "KotlinLightMethodForDeclaration:" + getName()
 }
