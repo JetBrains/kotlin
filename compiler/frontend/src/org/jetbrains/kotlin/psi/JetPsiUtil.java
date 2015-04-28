@@ -551,6 +551,11 @@ public class JetPsiUtil {
             return true;
         }
 
+        // 'x ?: ...' case
+        if (parentExpression instanceof JetBinaryExpression && parentOperation == JetTokens.ELVIS && currentInner == ((JetBinaryExpression) parentExpression).getRight()) {
+            return false;
+        }
+
         int innerPriority = getPriority(innerExpression);
         int parentPriority = getPriority(parentExpression);
 

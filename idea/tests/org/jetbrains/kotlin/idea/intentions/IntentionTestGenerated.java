@@ -4094,6 +4094,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/ifNullToElvis")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class IfNullToElvis extends AbstractIntentionTest {
+        public void testAllFilesPresentInIfNullToElvis() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/ifNullToElvis"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("Break.kt")
+        public void testBreak() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Break.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("CommentInBlock.kt")
+        public void testCommentInBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/CommentInBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Comments.kt")
+        public void testComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Comments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Comments2.kt")
+        public void testComments2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Comments2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Continue.kt")
+        public void testContinue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Continue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("MultiStatementBlock.kt")
+        public void testMultiStatementBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/MultiStatementBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NotExit.kt")
+        public void testNotExit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/NotExit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OtherVar1.kt")
+        public void testOtherVar1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/OtherVar1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OtherVar2.kt")
+        public void testOtherVar2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/OtherVar2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Return.kt")
+        public void testReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Return.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ThrowInBlock.kt")
+        public void testThrowInBlock() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/ThrowInBlock.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/insertCurlyBracesToTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
