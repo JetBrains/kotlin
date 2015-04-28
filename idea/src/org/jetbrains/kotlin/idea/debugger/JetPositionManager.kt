@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
+import com.google.common.collect.ObjectArrays
 import com.intellij.debugger.MultiRequestPositionManager
 import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
@@ -57,8 +58,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineAnalyzerExtension
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.util.ArrayList
-import java.util.WeakHashMap
+import java.util.*
 
 class PositionedElement(val className: String?, val element: PsiElement?)
 
@@ -83,9 +83,9 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
 
         if (lineNumber >= 0) {
-            val lambdaIfInside = getLambdaIfInside(location, psiFile as JetFile, lineNumber)
+            val lambdaIfInside = getLambdaOrFunIfInside(location, psiFile as JetFile, lineNumber)
             if (lambdaIfInside != null) {
-                return SourcePosition.createFromElement(lambdaIfInside.getBodyExpression().getStatements().get(0))
+                return SourcePosition.createFromElement(lambdaIfInside.getBodyExpression())
             }
             return SourcePosition.createFromLine(psiFile, lineNumber)
         }
@@ -93,7 +93,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         throw NoDataException.INSTANCE
     }
 
-    private fun getLambdaIfInside(location: Location, file: JetFile, lineNumber: Int): JetFunctionLiteral? {
+    private fun getLambdaOrFunIfInside(location: Location, file: JetFile, lineNumber: Int): JetFunction? {
         val currentLocationFqName = location.declaringType().name()
         if (currentLocationFqName == null) return null
 
@@ -101,8 +101,15 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         val end = CodeInsightUtils.getEndLineOffset(file, lineNumber)
         if (start == null || end == null) return null
 
-        val literals = CodeInsightUtils.findElementsOfClassInRange(file, start, end, javaClass<JetFunctionLiteral>())
-        if (literals == null || literals.size() == 0) return null
+        val functionLiterals: Array<out PsiElement>? = CodeInsightUtils.findElementsOfClassInRange(file, start, end, javaClass<JetFunctionLiteral>())
+        val functionalExpression: Array<out PsiElement>? = CodeInsightUtils.findElementsOfClassInRange(file, start, end, javaClass<JetNamedFunction>())
+        val literals =
+                if (functionLiterals == null) functionalExpression
+                else if (functionalExpression == null) functionLiterals
+                else functionLiterals.plus(functionalExpression).toTypedArray()
+
+
+        if (literals == null || literals.size() == 0) return null;
 
         val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
         val typeMapper = if (!isInLibrary)
@@ -112,7 +119,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
         val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).getInternalName()
         for (literal in literals) {
-            val functionLiteral = literal as JetFunctionLiteral
+            val functionLiteral = literal as JetFunction
             if (isInlinedLambda(functionLiteral, typeMapper.getBindingContext())) {
                 continue
             }
@@ -321,6 +328,10 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                     return PositionedElement(getJvmInternalNameForPropertyOwner(typeMapper, descriptor), element)
                 }
                 element is JetNamedFunction -> {
+                    if (isInlinedLambda(element, typeMapper.getBindingContext())) {
+                        return getInternalClassNameForElement(element.getParent(), typeMapper, file, isInLibrary)
+                    }
+
                     val parent = getElementToCalculateClassName(element)
                     if (parent is JetClassOrObject) {
                         return PositionedElement(getJvmInternalNameForImpl(typeMapper, parent), element)
@@ -388,40 +399,8 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             return state.getTypeMapper()
         }
 
-        public fun isInlinedLambda(functionLiteral: JetFunctionLiteral, context: BindingContext): Boolean {
-            val functionLiteralExpression = functionLiteral.getParent()
-            if (functionLiteralExpression == null) return false
-
-            var parent = functionLiteralExpression.getParent()
-
-            var valueArgument: PsiElement = functionLiteralExpression
-            while (parent is JetParenthesizedExpression || parent is JetBinaryExpressionWithTypeRHS || parent is JetLabeledExpression) {
-                valueArgument = parent
-                parent = parent.getParent()
-            }
-
-            while (parent is ValueArgument || parent is JetValueArgumentList) {
-                parent = parent.getParent()
-            }
-
-            if (parent !is JetElement) return false
-
-            val call = (parent as JetElement).getResolvedCall(context)
-            if (call == null) return false
-
-            if (!InlineUtil.isInline(call.getResultingDescriptor())) return false
-
-            for ((valueParameterDescriptor, resolvedValueArgument) in call.getValueArguments()) {
-                for (next in resolvedValueArgument.getArguments()) {
-                    val expression = next.getArgumentExpression()
-                    if (valueArgument == expression) {
-                        return InlineAnalyzerExtension.checkInlinableParameter(
-                                valueParameterDescriptor, expression, call.getResultingDescriptor(), null
-                        )
-                    }
-                }
-            }
-            return false
+        public fun isInlinedLambda(functionLiteral: JetFunction, context: BindingContext): Boolean {
+            return InlineUtil.isInlineLambda(functionLiteral, context, false)
         }
 
         private fun createKeyForTypeMapper(file: JetFile) = PackagePartClassUtils.getPackagePartInternalName(file)

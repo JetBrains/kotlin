@@ -522,6 +522,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("inlineFunctionalExpression.kt")
+            public void testInlineFunctionalExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/inlineFunctionalExpression.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("inlineLambda.kt")
             public void testInlineLambda() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/inlineLambda.kt");
@@ -531,6 +537,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("lambdaOnSecondLine.kt")
             public void testLambdaOnSecondLine() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/lambdaOnSecondLine.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("oneLineFunctionalExpression.kt")
+            public void testOneLineFunctionalExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas/oneLineFunctionalExpression.kt");
                 doSingleBreakpointTest(fileName);
             }
 
