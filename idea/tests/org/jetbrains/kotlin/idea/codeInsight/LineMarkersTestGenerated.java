@@ -202,12 +202,6 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
             doTest(fileName);
         }
 
-        @TestMetadata("functionalExpression.kt")
-        public void testFunctionalExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/functionalExpression.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("generic.kt")
         public void testGeneric() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/generic.kt");
@@ -235,6 +229,12 @@ public class LineMarkersTestGenerated extends AbstractLineMarkersTest {
         @TestMetadata("localClass.kt")
         public void testLocalClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/localClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localFun.kt")
+        public void testLocalFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/codeInsight/lineMarker/recursiveCall/localFun.kt");
             doTest(fileName);
         }
 

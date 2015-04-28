@@ -152,7 +152,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     @Nullable
     @Override
     protected ClassDescriptor classForInnerClassRecord() {
-        return JvmCodegenUtil.isLambdaWhichWillBeInlined(bindingContext, funDescriptor) ? null : classDescriptor;
+        return JvmCodegenUtil.isArgumentWhichWillBeInlined(bindingContext, funDescriptor) ? null : classDescriptor;
     }
 
     @Override

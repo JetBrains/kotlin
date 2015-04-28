@@ -84,9 +84,8 @@ private fun JetExpression.getRelevantFunction(): JetFunction? {
         (this.getTargetLabel()?.getReference()?.resolve() as? JetFunction)?.let { return it }
     }
     for (parent in parents(false)) {
-        when (parent) {
-            is JetFunctionLiteral,
-            is JetNamedFunction -> if (!InlineUtil.isInlineLambda(parent as JetFunction, parent.analyze(), false)) return parent
+        if (InlineUtil.canBeInlineArgument(parent) && !InlineUtil.isInlinedArgument(parent as JetFunction, parent.analyze(), false)) {
+            return parent as JetFunction
         }
     }
     return null

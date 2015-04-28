@@ -174,7 +174,7 @@ public class CodegenBinding {
 
         // Note: at the moment this is needed for light classes only
         // TODO: refactor this out
-        if (enclosing != null && !JvmCodegenUtil.isLambdaWhichWillBeInlined(trace.getBindingContext(), classDescriptor)) {
+        if (enclosing != null && !JvmCodegenUtil.isArgumentWhichWillBeInlined(trace.getBindingContext(), classDescriptor)) {
             recordInnerClass(trace, enclosing, classDescriptor);
         }
     }

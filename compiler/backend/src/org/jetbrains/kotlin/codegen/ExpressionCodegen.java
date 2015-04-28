@@ -1849,7 +1849,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (isFunctionLiteral(descriptor)) {
                     //non labeled return couldn't be local in lambda
                     FunctionDescriptor containingFunction =
-                            BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, false).getFirst();
+                            BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
                     //FIRST_FUN_LABEL to prevent clashing with existing labels
                     return new NonLocalReturnInfo(typeMapper.mapReturnType(containingFunction), InlineCodegenUtil.FIRST_FUN_LABEL);
                 } else {

@@ -27,11 +27,11 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
@@ -138,35 +138,37 @@ public class CodeInsightUtils {
         return element;
     }
 
-    @Nullable
-    public static PsiElement[] findElementsOfClassInRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<? extends PsiElement> aClass) {
+    @NotNull
+    public static List<PsiElement> findElementsOfClassInRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<? extends PsiElement> ... classes) {
         PsiElement element1 = getElementAtOffsetIgnoreWhitespaceBefore(file, startOffset);
         PsiElement element2 = getElementAtOffsetIgnoreWhitespaceAfter(file, endOffset);
 
-        if (element1 == null || element2 == null) return PsiElement.EMPTY_ARRAY;
+        if (element1 == null || element2 == null) return Collections.emptyList();
 
         startOffset = element1.getTextRange().getStartOffset();
         endOffset = element2.getTextRange().getEndOffset();
 
         PsiElement parent = PsiTreeUtil.findCommonParent(element1, element2);
-        if (parent == null) return PsiElement.EMPTY_ARRAY;
+        if (parent == null) return Collections.emptyList();
 
         element1 = getTopmostParentInside(element1, parent);
-        if (startOffset != element1.getTextRange().getStartOffset()) return PsiElement.EMPTY_ARRAY;
+        if (startOffset != element1.getTextRange().getStartOffset()) return Collections.emptyList();
 
         element2 = getTopmostParentInside(element2, parent);
-        if (endOffset != element2.getTextRange().getEndOffset()) return PsiElement.EMPTY_ARRAY;
+        if (endOffset != element2.getTextRange().getEndOffset()) return Collections.emptyList();
 
         PsiElement stopElement = element2.getNextSibling();
-        List<PsiElement> array = new ArrayList<PsiElement>();
+        List<PsiElement> result = new ArrayList<PsiElement>();
         for (PsiElement currentElement = element1; currentElement != stopElement && currentElement != null; currentElement = currentElement.getNextSibling()) {
-            if (aClass.isInstance(currentElement)) {
-                array.add(currentElement);
+            for (Class aClass : classes) {
+                if (aClass.isInstance(currentElement)) {
+                    result.add(currentElement);
+                }
+                result.addAll(PsiTreeUtil.findChildrenOfType(currentElement, aClass));
             }
-            array.addAll(PsiTreeUtil.findChildrenOfType(currentElement, aClass));
         }
 
-        return PsiUtilCore.toPsiElementArray(array);
+        return result;
     }
 
     @NotNull

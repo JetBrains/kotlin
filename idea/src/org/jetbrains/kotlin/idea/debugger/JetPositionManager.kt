@@ -83,9 +83,9 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
 
         if (lineNumber >= 0) {
-            val lambdaIfInside = getLambdaOrFunIfInside(location, psiFile as JetFile, lineNumber)
-            if (lambdaIfInside != null) {
-                return SourcePosition.createFromElement(lambdaIfInside.getBodyExpression())
+            val lambdaOrFunIfInside = getLambdaOrFunIfInside(location, psiFile as JetFile, lineNumber)
+            if (lambdaOrFunIfInside != null) {
+                return SourcePosition.createFromElement(lambdaOrFunIfInside.getBodyExpression())
             }
             return SourcePosition.createFromLine(psiFile, lineNumber)
         }
@@ -101,15 +101,11 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         val end = CodeInsightUtils.getEndLineOffset(file, lineNumber)
         if (start == null || end == null) return null
 
-        val functionLiterals: Array<out PsiElement>? = CodeInsightUtils.findElementsOfClassInRange(file, start, end, javaClass<JetFunctionLiteral>())
-        val functionalExpression: Array<out PsiElement>? = CodeInsightUtils.findElementsOfClassInRange(file, start, end, javaClass<JetNamedFunction>())
-        val literals =
-                if (functionLiterals == null) functionalExpression
-                else if (functionalExpression == null) functionLiterals
-                else functionLiterals.plus(functionalExpression).toTypedArray()
+        val literalsOrFunctions = CodeInsightUtils.
+                findElementsOfClassInRange(file, start, end, javaClass<JetFunctionLiteral>(), javaClass<JetNamedFunction>()).
+                filter { JetPsiUtil.getParentCallIfPresent(it as JetExpression) != null }
 
-
-        if (literals == null || literals.size() == 0) return null;
+        if (literalsOrFunctions.isEmpty()) return null;
 
         val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
         val typeMapper = if (!isInLibrary)
@@ -118,7 +114,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             createTypeMapperForLibraryFile(file.findElementAt(start), file)
 
         val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).getInternalName()
-        for (literal in literals) {
+        for (literal in literalsOrFunctions) {
             val functionLiteral = literal as JetFunction
             if (isInlinedLambda(functionLiteral, typeMapper.getBindingContext())) {
                 continue
@@ -400,7 +396,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         }
 
         public fun isInlinedLambda(functionLiteral: JetFunction, context: BindingContext): Boolean {
-            return InlineUtil.isInlineLambda(functionLiteral, context, false)
+            return InlineUtil.isInlinedArgument(functionLiteral, context, false)
         }
 
         private fun createKeyForTypeMapper(file: JetFile) = PackagePartClassUtils.getPackagePartInternalName(file)

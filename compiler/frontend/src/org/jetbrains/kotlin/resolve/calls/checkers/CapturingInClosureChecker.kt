@@ -69,9 +69,9 @@ class CapturingInClosureChecker : CallChecker {
             context: BindingContext, scopeContainer: DeclarationDescriptor, variableParent: DeclarationDescriptor
     ): Boolean {
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer)
-        if (!InlineUtil.isFunctionalExpression(scopeDeclaration)) return false
+        if (!InlineUtil.canBeInlineArgument(scopeDeclaration)) return false
 
-        if (InlineUtil.isInlineLambda(scopeDeclaration as JetFunction, context, false)) {
+        if (InlineUtil.isInlinedArgument(scopeDeclaration as JetFunction, context, false)) {
             val scopeContainerParent = scopeContainer.getContainingDeclaration()
             assert(scopeContainerParent != null) { "parent is null for " + scopeContainer }
             return !isCapturedVariable(variableParent, scopeContainerParent) || isCapturedInInline(context, scopeContainerParent, variableParent)
