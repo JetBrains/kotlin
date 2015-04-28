@@ -110,8 +110,12 @@ public class CodeInsightUtils {
 
     @Nullable
     public static PsiElement findElementOfClassAtRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<JetExpression> aClass) {
-        PsiElement element1 = getElementAtOffsetIgnoreWhitespaceBefore(file, startOffset);
-        PsiElement element2 = getElementAtOffsetIgnoreWhitespaceAfter(file, endOffset);
+        // When selected range is this@Fo<select>o</select> we'd like to return `@Foo`
+        // But it's PSI looks like: (AT IDENTIFIER):JetLabel
+        // So if we search parent starting exactly at IDENTIFIER then we find nothing
+        // Solution is to retrieve label if we are on AT or IDENTIFIER
+        PsiElement element1 = getParentLabelOrElement(getElementAtOffsetIgnoreWhitespaceBefore(file, startOffset));
+        PsiElement element2 = getParentLabelOrElement(getElementAtOffsetIgnoreWhitespaceAfter(file, endOffset));
 
         if (element1 == null || element2 == null) return null;
 
@@ -125,6 +129,13 @@ public class CodeInsightUtils {
             return null;
         }
         return jetExpression;
+    }
+
+    private static PsiElement getParentLabelOrElement(@Nullable PsiElement element) {
+        if (element != null && element.getParent() instanceof JetLabelReferenceExpression) {
+            return element.getParent();
+        }
+        return element;
     }
 
     @Nullable
