@@ -14,74 +14,67 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.intentions;
+package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.JetType;
+import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.JetType
 
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-
-public class ReconstructTypeInCastOrIsAction extends PsiElementBaseIntentionAction {
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return JetBundle.message("replace.by.reconstructed.type.family.name");
+public class ReconstructTypeInCastOrIsAction : PsiElementBaseIntentionAction() {
+    override fun getFamilyName(): String {
+        return JetBundle.message("replace.by.reconstructed.type.family.name")
     }
 
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        JetTypeReference typeRef = PsiTreeUtil.getTopmostParentOfType(element, JetTypeReference.class);
-        assert typeRef != null : "Must be checked by isAvailable(): " + element;
+    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
+        val typeRef = PsiTreeUtil.getTopmostParentOfType<JetTypeReference>(element, javaClass<JetTypeReference>())
+        assert(typeRef != null) { "Must be checked by isAvailable(): " + element }
 
-        JetType type = getReconstructedType(typeRef);
-        JetTypeReference newType = JetPsiFactory(typeRef).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-        JetTypeReference replaced = (JetTypeReference) typeRef.replace(newType);
-        ShortenReferences.DEFAULT.process(replaced);
+        val type = getReconstructedType(typeRef)
+        val newType = JetPsiFactory(typeRef).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+        val replaced = typeRef!!.replace(newType) as JetTypeReference
+        ShortenReferences.DEFAULT.process(replaced)
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiElement element) {
-        JetTypeReference typeRef = PsiTreeUtil.getTopmostParentOfType(element, JetTypeReference.class);
-        if (typeRef == null) return false;
+    override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
+        val typeRef = PsiTreeUtil.getTopmostParentOfType<JetTypeReference>(element, javaClass<JetTypeReference>())
+        if (typeRef == null) return false
 
         // Only user types (like Foo) are interesting
-        JetTypeElement typeElement = typeRef.getTypeElement();
-        if (!(typeElement instanceof JetUserType)) return false;
+        val typeElement = typeRef.getTypeElement()
+        if (typeElement !is JetUserType) return false
 
         // If there are generic arguments already, there's nothing to reconstruct
-        if (!((JetUserType) typeElement).getTypeArguments().isEmpty()) return false;
+        if (!typeElement.getTypeArguments().isEmpty()) return false
 
         // We must be on the RHS of as/as?/is/!is or inside an is/!is-condition in when()
-        JetExpression outerExpression = PsiTreeUtil.getParentOfType(typeRef, JetExpression.class);
-        if (!(outerExpression instanceof JetBinaryExpressionWithTypeRHS)) {
-            JetWhenConditionIsPattern outerIsCondition = PsiTreeUtil.getParentOfType(typeRef, JetWhenConditionIsPattern.class);
-            if (outerIsCondition == null) return false;
+        val outerExpression = PsiTreeUtil.getParentOfType<JetExpression>(typeRef, javaClass<JetExpression>())
+        if (outerExpression !is JetBinaryExpressionWithTypeRHS) {
+            val outerIsCondition = PsiTreeUtil.getParentOfType<JetWhenConditionIsPattern>(typeRef, javaClass<JetWhenConditionIsPattern>())
+            if (outerIsCondition == null) return false
         }
 
-        JetType type = getReconstructedType(typeRef);
-        if (type == null || type.isError()) return false;
+        val type = getReconstructedType(typeRef)
+        if (type == null || type.isError()) return false
 
         // No type parameters expected => nothing to reconstruct
-        if (type.getConstructor().getParameters().isEmpty()) return false;
+        if (type.getConstructor().getParameters().isEmpty()) return false
 
-        setText(JetBundle.message("replace.by.reconstructed.type", type));
+        setText(JetBundle.message("replace.by.reconstructed.type", type))
 
-        return true;
+        return true
     }
 
-    private static JetType getReconstructedType(JetTypeReference typeRef) {
-        return ResolvePackage.analyze(typeRef, BodyResolveMode.FULL).get(BindingContext.TYPE, typeRef);
+    private fun getReconstructedType(typeRef: JetTypeReference): JetType? {
+        return typeRef.analyze(BodyResolveMode.FULL).get<JetTypeReference, JetType>(BindingContext.TYPE, typeRef)
     }
 }
