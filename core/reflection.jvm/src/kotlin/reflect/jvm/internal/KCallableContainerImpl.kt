@@ -111,7 +111,7 @@ abstract class KCallableContainerImpl {
         }
     }
 
-    /* private // KT-5786 */ fun loadJvmType(
+    private fun loadJvmType(
             type: JvmProtoBuf.JvmType,
             nameResolver: NameResolver,
             classLoader: ClassLoader,

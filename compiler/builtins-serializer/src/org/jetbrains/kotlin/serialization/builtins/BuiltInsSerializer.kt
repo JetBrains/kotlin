@@ -138,7 +138,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
               BuiltInsSerializationUtil.FallbackPaths.getStringTableFilePath(fqName))
     }
 
-    internal /* KT-5786 */ fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream, legacyFileName: String? = null) {
+    private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream, legacyFileName: String? = null) {
         totalSize += stream.size()
         totalFiles++
         File(destDir, fileName).getParentFile().mkdirs()
