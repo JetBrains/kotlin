@@ -4733,41 +4733,41 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/reconstructedType")
+    @TestMetadata("idea/testData/intentions/reconstructTypeInCastOrIs")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReconstructedType extends AbstractIntentionTest {
-        public void testAllFilesPresentInReconstructedType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/reconstructedType"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class ReconstructTypeInCastOrIs extends AbstractIntentionTest {
+        public void testAllFilesPresentInReconstructTypeInCastOrIs() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/reconstructTypeInCastOrIs"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("completeGenericType.kt")
         public void testCompleteGenericType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructedType/completeGenericType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructTypeInCastOrIs/completeGenericType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("completeType.kt")
         public void testCompleteType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructedType/completeType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructTypeInCastOrIs/completeType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("errorType.kt")
         public void testErrorType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructedType/errorType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructTypeInCastOrIs/errorType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("reconstructableType.kt")
         public void testReconstructableType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructedType/reconstructableType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructTypeInCastOrIs/reconstructableType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("typeInDeclaration.kt")
         public void testTypeInDeclaration() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructedType/typeInDeclaration.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/reconstructTypeInCastOrIs/typeInDeclaration.kt");
             doTest(fileName);
         }
     }
