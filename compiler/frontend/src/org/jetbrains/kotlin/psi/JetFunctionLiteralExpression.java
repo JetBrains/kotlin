@@ -44,12 +44,9 @@ public class JetFunctionLiteralExpression extends JetExpressionImpl {
         return getFunctionLiteral().getValueParameters();
     }
 
+    @Nullable
     public JetBlockExpression getBodyExpression() {
         return getFunctionLiteral().getBodyExpression();
-    }
-
-    public boolean hasBlockBody() {
-        return getFunctionLiteral().hasBlockBody();
     }
 
     public boolean hasDeclaredReturnType() {
