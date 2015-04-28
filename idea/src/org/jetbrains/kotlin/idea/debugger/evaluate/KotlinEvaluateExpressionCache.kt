@@ -72,9 +72,10 @@ class KotlinEvaluateExpressionCache(val project: Project) {
     }
 
     private fun canBeEvaluatedInThisContext(compiledData: CompiledDataDescriptor, context: EvaluationContextImpl): Boolean {
+        val frameVisitor = FrameVisitor(context)
         return compiledData.parameters.all { p ->
             val (name, jetType) = p
-            val value = context.findLocalVariable(name, asmType = null, checkType = false, failIfNotFound = false)
+            val value = frameVisitor.findValue(name, asmType = null, checkType = false, failIfNotFound = false)
             if (value == null) return@all false
 
             val thisDescriptor = value.asmType.getClassDescriptor(project)
