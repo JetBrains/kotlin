@@ -608,12 +608,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public JetTypeInfo visitObjectLiteralExpression(@NotNull final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
-        DelegatingBindingTrace delegatingBindingTrace = context.trace.get(TRACE_DELTAS_CACHE, expression.getObjectDeclaration());
-        if (delegatingBindingTrace != null) {
-            delegatingBindingTrace.addAllMyDataTo(context.trace);
-            JetType type = context.trace.getType(expression);
-            return TypeInfoFactoryPackage.createCheckedTypeInfo(type, context, expression);
-        }
         final JetType[] result = new JetType[1];
         final TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace,
                                                                                   "trace to resolve object literal expression", expression);
@@ -648,11 +642,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                                 expression.getObjectDeclaration(),
                                                                 components.additionalCheckerProvider,
                                                                 components.dynamicTypesSettings);
-
-        DelegatingBindingTrace cloneDelta = new DelegatingBindingTrace(
-                new BindingTraceContext().getBindingContext(), "cached delta trace for object literal expression resolve", expression);
-        temporaryTrace.addAllMyDataTo(cloneDelta);
-        context.trace.record(TRACE_DELTAS_CACHE, expression.getObjectDeclaration(), cloneDelta);
         temporaryTrace.commit();
         return TypeInfoFactoryPackage.createCheckedTypeInfo(result[0], context, expression);
     }

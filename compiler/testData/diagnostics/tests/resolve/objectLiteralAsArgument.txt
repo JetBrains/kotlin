@@ -1,0 +1,21 @@
+package
+
+internal fun foo(/*0*/ f: (kotlin.Any) -> kotlin.Int, /*1*/ a: kotlin.Any): kotlin.Int
+internal fun foo(/*0*/ f: (kotlin.Int) -> kotlin.Int, /*1*/ i: kotlin.Int): kotlin.Int
+internal fun foo(/*0*/ f: (kotlin.String) -> kotlin.Int, /*1*/ s: kotlin.String): kotlin.Int
+internal fun foo(/*0*/ a: kotlin.Any, /*1*/ f: (kotlin.Any) -> kotlin.Int): kotlin.Int
+internal fun foo(/*0*/ a: kotlin.Any, /*1*/ i: kotlin.Int): kotlin.String
+internal fun foo(/*0*/ a: kotlin.Any, /*1*/ s: kotlin.String): kotlin.String
+internal fun foo(/*0*/ i: kotlin.Int, /*1*/ f: (kotlin.Int) -> kotlin.Int): kotlin.Int
+internal fun foo(/*0*/ i: kotlin.Int, /*1*/ j: kotlin.Int): kotlin.Int
+internal fun foo(/*0*/ s: kotlin.String, /*1*/ f: (kotlin.String) -> kotlin.Int): kotlin.Int
+internal fun foo(/*0*/ s: kotlin.String, /*1*/ a: kotlin.Any): kotlin.String
+internal fun test(): kotlin.Unit
+
+internal object A {
+    private constructor A()
+    internal final val iii: kotlin.Int = 42
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
