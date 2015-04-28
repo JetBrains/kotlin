@@ -2578,6 +2578,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixCallNotAvailable.kt")
+        public void testInfixCallNotAvailable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/infixCallNotAvailable.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("parenthesizedExpression.kt")
         public void testParenthesizedExpression() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/parenthesizedExpression.kt");

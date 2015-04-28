@@ -24,34 +24,44 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-public class ConvertForEachToForLoopIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Replace with a for loop") {
-    override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
-        val functionLiteral = extractFunctionLiteral(element) ?: return false
-        if (functionLiteral.getValueParameters().size() > 1) return false
-        if (functionLiteral.getBodyExpression() == null) return false
+public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameExpression>(javaClass(), "Replace with a for loop") {
+    override fun isApplicableTo(element: JetSimpleNameExpression): Boolean {
+        if (element.getReferencedName() != "forEach") return false
 
-        if (caretOffset > functionLiteral.getTextRange().getStartOffset()) return false // not available within function literal body
+        val data = extractData(element) ?: return false
+        if (data.functionLiteral.getValueParameters().size() > 1) return false
+        if (data.functionLiteral.getBodyExpression() == null) return false
 
-        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
-        if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() != "kotlin.forEach") return false
-        return resolvedCall.getCall().getExplicitReceiver() is ExpressionReceiver
+        return true
     }
 
-    override fun applyTo(element: JetExpression, editor: Editor) {
-        val functionLiteral = extractFunctionLiteral(element)!!
-        val receiver = element.getCall(element.analyze())!!.getExplicitReceiver() as ExpressionReceiver
-        val receiverExpression = receiver.getExpression()
-        val loopText = generateLoopText(functionLiteral, receiverExpression)
-        val expressionToReplace = receiverExpression.getParent() // it's correct for both JetDotQualifiedExpression and JetBinaryExpression
+    override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
+        val (expressionToReplace, receiver, functionLiteral) = extractData(element)!!
+        val loopText = generateLoopText(functionLiteral, receiver)
         expressionToReplace.replace(JetPsiFactory(element).createExpression(loopText))
     }
 
-    private fun extractFunctionLiteral(element: JetExpression): JetFunctionLiteralExpression? {
-        return when (element) {
-            is JetCallExpression -> element.getValueArguments().singleOrNull()?.getArgumentExpression()
-            is JetBinaryExpression -> element.getRight()
+    private data class Data(
+            val expressionToReplace: JetExpression,
+            val receiver: JetExpression,
+            val functionLiteral: JetFunctionLiteralExpression
+    )
+
+    private fun extractData(nameExpr: JetSimpleNameExpression): Data? {
+        val parent = nameExpr.getParent()
+        val expression = (when (parent) {
+            is JetCallExpression -> parent.getParent() as? JetDotQualifiedExpression
+            is JetBinaryExpression -> parent
             else -> null
-        } as? JetFunctionLiteralExpression
+        } ?: return null) as JetExpression //TODO: submit bug
+
+        val resolvedCall = expression.getResolvedCall(expression.analyze()) ?: return null
+        if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() != "kotlin.forEach") return null
+
+        val receiver = resolvedCall.getCall().getExplicitReceiver() as? ExpressionReceiver ?: return null
+        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
+        val functionLiteral = argument.getArgumentExpression() as? JetFunctionLiteralExpression ?: return null
+        return Data(expression, receiver.getExpression(), functionLiteral)
     }
 
     private fun generateLoopText(functionLiteral: JetFunctionLiteralExpression, receiver: JetExpression): String {
