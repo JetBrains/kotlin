@@ -27,6 +27,7 @@ import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -37,16 +38,16 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntime
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntime
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetTreeVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntime
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntime
 import org.junit.Assert
 import java.io.File
 import java.util.ArrayList
@@ -174,7 +175,7 @@ class RunConfigurationTest: CodeInsightTestCase() {
     private fun moduleDirPath(moduleName: String) = "${getTestDataPath()}${getTestName(false)}/$moduleName"
 
     private fun getJavaRunParameters(configuration: RunConfiguration): JavaParameters {
-        val state = configuration.getState(MockExecutor, ExecutionEnvironment(MockProfile, MockExecutor, myProject!!, null))
+        val state = configuration.getState(MockExecutor, ExecutionEnvironmentBuilder.create(myProject!!, MockExecutor, MockProfile).build())
 
         Assert.assertNotNull(state)
         Assert.assertTrue(state is JavaCommandLine)
