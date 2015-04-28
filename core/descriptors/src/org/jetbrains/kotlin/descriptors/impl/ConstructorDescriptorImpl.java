@@ -127,7 +127,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
         return new ConstructorDescriptorImpl(
                 (ClassDescriptor) newOwner,
                 this,
-                Annotations.EMPTY, // TODO
+                getAnnotations(),
                 isPrimary,
                 Kind.DECLARATION,
                 SourceElement.NO_SOURCE

@@ -3516,6 +3516,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("genericConstructorUsage.kt")
+            public void testGenericConstructorUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/genericConstructorUsage.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("imports.kt")
             public void testImports() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deprecated/imports.kt");
