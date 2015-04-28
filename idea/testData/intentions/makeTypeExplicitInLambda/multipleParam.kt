@@ -6,5 +6,5 @@ class TestingUse {
 }
 
 fun main() {
-    val num = TestingUse().test4({(<caret>x, str) -> }, 5)
+    val num = TestingUse().test4({ <caret>x, str -> }, 5)
 }

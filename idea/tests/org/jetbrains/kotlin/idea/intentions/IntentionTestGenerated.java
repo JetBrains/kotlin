@@ -4411,45 +4411,15 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("paramDeclaredReturnNotDeclared.kt")
-        public void testParamDeclaredReturnNotDeclared() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/paramDeclaredReturnNotDeclared.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("returnDeclaredParamNotDeclared.kt")
-        public void testReturnDeclaredParamNotDeclared() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/returnDeclaredParamNotDeclared.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("shortenReferencesForParams.kt")
         public void testShortenReferencesForParams() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/shortenReferencesForParams.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("shortenReferencesForReceiver.kt")
-        public void testShortenReferencesForReceiver() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/shortenReferencesForReceiver.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("shortenReferencesForReturnType.kt")
-        public void testShortenReferencesForReturnType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/shortenReferencesForReturnType.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("singleParam.kt")
         public void testSingleParam() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/singleParam.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("singleParamWithReceiver.kt")
-        public void testSingleParamWithReceiver() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/singleParamWithReceiver.kt");
             doTest(fileName);
         }
 

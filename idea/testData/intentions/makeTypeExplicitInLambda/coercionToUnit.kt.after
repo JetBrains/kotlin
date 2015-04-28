@@ -5,5 +5,5 @@ public class TestingUse {
 }
 
 fun main() {
-    val coercion = TestingUse().test5({(x: Int): Unit -> x + 2}, 20)
+    val coercion = TestingUse().test5({ x: Int -> x + 2}, 20)
 }

@@ -26,47 +26,39 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(
-        "make.type.explicit.in.lambda", javaClass()) {
+public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Make types explicit in lambda") {
 
     override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
-        val openBraceOffset = element.getLeftCurlyBrace().getStartOffset()
-        val closeBraceOffset = element.getRightCurlyBrace()?.getStartOffset()
         val arrow = element.getFunctionLiteral().getArrowNode()
-        if (arrow != null && !(openBraceOffset < caretOffset && caretOffset < arrow.getStartOffset() + 2) &&
-            caretOffset != closeBraceOffset) return false
-        else if (arrow == null && caretOffset != openBraceOffset + 1 && caretOffset != closeBraceOffset) return false
+        if (arrow != null) {
+            if (caretOffset > arrow.getTextRange().getEndOffset()) return false
+            if (element.getValueParameters().all { it.getTypeReference() != null }) return false
+        }
+        else {
+            if (!element.getLeftCurlyBrace().getTextRange().containsOffset(caretOffset)) return false
+        }
 
-        val context = element.analyze()
-        val func = context[BindingContext.FUNCTION, element.getFunctionLiteral()]
-        if (func == null || ErrorUtils.containsErrorType(func)) return false
-
-        if (hasImplicitReturnType(element) && func.getReturnType() != null) return true
-        if (hasImplicitReceiverType(element) && func.getExtensionReceiverParameter()?.getType() != null) return true
-
-        val params = element.getValueParameters()
-        return params.any { it.getTypeReference() == null }
+        val functionDescriptor = element.analyze()[BindingContext.FUNCTION, element.getFunctionLiteral()] ?: return false
+        return functionDescriptor.getValueParameters().none { it.getType().isError() }
     }
 
     override fun applyTo(element: JetFunctionLiteralExpression, editor: Editor) {
-        val functionLiteral = element.getFunctionLiteral()
-        val context = element.analyze()
-        val func = context[BindingContext.FUNCTION, functionLiteral]!!
-
-        // Step 1: make the parameters types explicit
-        val valueParameters = func.getValueParameters()
-        val parameterString = valueParameters.map({descriptor -> "" + descriptor.getName() +
-                                                      ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(descriptor.getType())
-                                                  }).makeString(", ", "(", ")")
         val psiFactory = JetPsiFactory(element)
-        val newParameterList = psiFactory.createParameterList(parameterString)
+        val functionLiteral = element.getFunctionLiteral()
+        val functionDescriptor = element.analyze()[BindingContext.FUNCTION, functionLiteral]!!
+
+        val parameterString = functionDescriptor.getValueParameters()
+                .map { "${it.getName()}: ${IdeDescriptorRenderers.SOURCE_CODE.renderType(it.getType())}" }
+                .joinToString(", ")
+
+        val newParameterList = psiFactory.createFunctionLiteralParameterList(parameterString)
         val oldParameterList = functionLiteral.getValueParameterList()
         if (oldParameterList != null) {
             oldParameterList.replace(newParameterList)
         }
         else {
             val openBraceElement = functionLiteral.getLBrace()
-            val nextSibling = openBraceElement?.getNextSibling()
+            val nextSibling = openBraceElement.getNextSibling()
             val addNewline = nextSibling is PsiWhiteSpace && nextSibling.getText()?.contains("\n") ?: false
             val (whitespace, arrow) = psiFactory.createWhitespaceAndArrow()
             functionLiteral.addRangeAfter(whitespace, arrow, openBraceElement)
@@ -76,33 +68,5 @@ public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFu
             }
         }
         ShortenReferences.DEFAULT.process(element.getValueParameters())
-
-        // Step 2: make the return type explicit
-        val expectedReturnType = func.getReturnType()
-        if (hasImplicitReturnType(element) && expectedReturnType != null) {
-            val paramList = functionLiteral.getValueParameterList()
-            val returnTypeColon = psiFactory.createColon()
-            val returnTypeExpr = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedReturnType))
-            functionLiteral.addAfter(returnTypeExpr, paramList)
-            functionLiteral.addAfter(returnTypeColon, paramList)
-            ShortenReferences.DEFAULT.process(functionLiteral.getTypeReference()!!)
-        }
-
-        // Step 3: make the receiver type explicit
-        val expectedReceiverType = func.getExtensionReceiverParameter()?.getType()
-        if (hasImplicitReceiverType(element) && expectedReceiverType != null) {
-            val receiverTypeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(expectedReceiverType)
-            val dot = functionLiteral.addBefore(psiFactory.createDot(), functionLiteral.getValueParameterList())
-            functionLiteral.addBefore(psiFactory.createType(receiverTypeString), dot)
-            ShortenReferences.DEFAULT.process(functionLiteral.getReceiverTypeReference()!!)
-        }
-    }
-
-    private fun hasImplicitReturnType(element: JetFunctionLiteralExpression): Boolean {
-        return !element.hasDeclaredReturnType()
-    }
-
-    private fun hasImplicitReceiverType(element: JetFunctionLiteralExpression): Boolean {
-        return element.getFunctionLiteral().getReceiverTypeReference() == null
     }
 }

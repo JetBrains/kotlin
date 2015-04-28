@@ -1,7 +1,0 @@
-import kotlin.support.AbstractIterator
-
-fun main(c: kotlin.support.AbstractIterator<Int>) {
-    val f = {(x: Int): AbstractIterator<Int> -> c}
-}
-
-// WITH_RUNTIME

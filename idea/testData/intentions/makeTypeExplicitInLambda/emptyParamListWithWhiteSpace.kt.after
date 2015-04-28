@@ -1,6 +1,6 @@
 fun main() {
     val oom: (Int)->Int = {
-        (it: Int): Int ->
+        it: Int ->
         it * 2
     }
 }

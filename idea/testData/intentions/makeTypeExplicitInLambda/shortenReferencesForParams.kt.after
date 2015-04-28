@@ -1,7 +1,7 @@
 import kotlin.support.AbstractIterator
 
 fun main() {
-    val randomFunction: (x: kotlin.support.AbstractIterator<Int>, y: kotlin.String) -> kotlin.String = {(x: AbstractIterator<Int>, str: String): String -> str}
+    val randomFunction: (x: kotlin.support.AbstractIterator<Int>, y: kotlin.String) -> kotlin.String = { x: AbstractIterator<Int>, str: String -> str}
 }
 
 // WITH_RUNTIME

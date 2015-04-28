@@ -5,5 +5,5 @@ class TestingUse {
 }
 
 fun main() {
-    val num = TestingUse().test3({(x: Int): Int -> 2*x}, 20)
+    val num = TestingUse().test3({ x: Int -> 2*x}, 20)
 }
