@@ -848,6 +848,11 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.refactoring.move.changePackage.ChangePackageIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitGetInspection"
         displayName="Explicit 'get'"
         groupName="Kotlin"

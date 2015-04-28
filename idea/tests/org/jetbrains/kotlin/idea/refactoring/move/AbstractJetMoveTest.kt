@@ -37,6 +37,7 @@ import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.util.ActionRunner
+import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
@@ -266,6 +268,12 @@ enum class MoveAction {
 
             val options = MoveKotlinTopLevelDeclarationsOptions(listOf(elementToMove), moveTarget)
             MoveKotlinTopLevelDeclarationsProcessor(mainFile.getProject(), options).run()
+        }
+    }
+
+    CHANGE_PACKAGE_DIRECTIVE {
+        override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
+            KotlinChangePackageRefactoring(mainFile as JetFile).run(FqName(config.getString("newPackageName")))
         }
     }
 

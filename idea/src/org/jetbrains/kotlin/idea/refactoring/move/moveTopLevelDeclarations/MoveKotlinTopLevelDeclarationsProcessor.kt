@@ -72,6 +72,11 @@ trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetN
             return newElement
         }
     }
+
+    object Idle: Mover {
+        [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
+        override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile) = originalElement
+    }
 }
 
 public class MoveKotlinTopLevelDeclarationsOptions(

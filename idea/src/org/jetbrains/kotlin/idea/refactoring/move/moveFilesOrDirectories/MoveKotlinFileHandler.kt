@@ -16,27 +16,26 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
-import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiElement
-import com.intellij.usageView.UsageInfo
 import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.PsiCompiledElement
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFileHandler
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
+import com.intellij.usageView.UsageInfo
+import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
 import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
 import org.jetbrains.kotlin.idea.refactoring.move.getInternalReferencesToUpdateOnPackageNameChange
-import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
-import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.DeferredJetFileKotlinMoveTarget
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.Mover
-import org.jetbrains.kotlin.idea.codeInsight.shorten.ensureElementsToShortenIsEmptyBeforeRefactoring
+import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.getPackage
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
     private var packageNameInfo: PackageNameInfo? = null
@@ -82,10 +81,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
                         },
                         updateInternalReferences = false
                 ),
-                object: Mover {
-                    [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
-                    override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration = originalElement
-                }
+                Mover.Idle
         )
 
         this.packageNameInfo = packageNameInfo
@@ -100,29 +96,20 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
 
     override fun updateMovedFile(file: PsiFile) {
         if (file !is JetFile) return
+        val packageNameInfo = packageNameInfo ?: return
 
-        val packageNameInfo = packageNameInfo
-        if (packageNameInfo == null) return
-
-        val usages = file.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
-        postProcessMoveUsages(usages)
-
-        val packageRef = file.getPackageDirective()?.getLastReferenceExpression()?.getReference() as? JetSimpleNameReference
-        packageRef?.bindToFqName(packageNameInfo.newPackageName)
+        postProcessMoveUsages(file.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo))
+        file.getPackageDirective()?.setFqName(packageNameInfo.newPackageName)
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>?) {
         val processor = declarationMoveProcessor ?: return
-
-        val project = processor.project
-        val ensureElementsToShortenIsEmpty = project.ensureElementsToShortenIsEmptyBeforeRefactoring
-
-        try {
-            project.ensureElementsToShortenIsEmptyBeforeRefactoring = false
-            usageInfos?.let { processor.execute(it) }
-        } finally {
-            project.ensureElementsToShortenIsEmptyBeforeRefactoring = ensureElementsToShortenIsEmpty
-            clearState()
+        processor.project.runWithElementsToShortenIsEmptyIgnored {
+            try {
+                usageInfos?.let { processor.execute(it) }
+            } finally {
+                clearState()
+            }
         }
     }
 }

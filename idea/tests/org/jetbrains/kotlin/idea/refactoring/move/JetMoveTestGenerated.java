@@ -209,6 +209,18 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/changePackage/changeToDefaultPackage/changeToDefaultPackage.test")
+    public void testKotlin_changePackage_changeToDefaultPackage_ChangeToDefaultPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/changePackage/changeToDefaultPackage/changeToDefaultPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/changePackage/changeToNonDefaultPackage/changeToNonDefaultPackage.test")
+    public void testKotlin_changePackage_changeToNonDefaultPackage_ChangeToNonDefaultPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/changePackage/changeToNonDefaultPackage/changeToNonDefaultPackage.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveFile/internalReferences/internalReferences.test")
     public void testKotlin_moveFile_internalReferences_InternalReferences() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/internalReferences/internalReferences.test");

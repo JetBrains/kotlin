@@ -41,6 +41,17 @@ private var Project.elementsToShorten: MutableSet<ShorteningRequest>?
 public var Project.ensureElementsToShortenIsEmptyBeforeRefactoring: Boolean
         by NotNullableUserDataProperty(Key.create("ENSURE_ELEMENTS_TO_SHORTEN_IS_EMPTY"), true)
 
+public fun Project.runWithElementsToShortenIsEmptyIgnored(action: () -> Unit) {
+    val ensureElementsToShortenIsEmpty = ensureElementsToShortenIsEmptyBeforeRefactoring
+
+    try {
+        ensureElementsToShortenIsEmptyBeforeRefactoring = false
+        action()
+    } finally {
+        ensureElementsToShortenIsEmptyBeforeRefactoring = ensureElementsToShortenIsEmpty
+    }
+}
+
 private fun Project.getOrCreateElementsToShorten(): MutableSet<ShorteningRequest> {
     var elements = elementsToShorten
     if (elements == null) {

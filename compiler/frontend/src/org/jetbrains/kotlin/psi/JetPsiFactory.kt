@@ -284,8 +284,12 @@ public class JetPsiFactory(private val project: Project) {
         return stringTemplateExpression.getEntries()[0] as JetStringTemplateEntryWithExpression
     }
 
+    public fun createPackageDirective(fqName: FqName): JetPackageDirective {
+        return createFile("package ${fqName.asString()}").getPackageDirective()
+    }
+
     public fun createPackageDirectiveIfNeeded(fqName: FqName): JetPackageDirective? {
-        return if (fqName.isRoot()) null else createFile("package ${fqName.asString()}").getPackageDirective()
+        return if (fqName.isRoot()) null else createPackageDirective(fqName)
     }
 
     public fun createImportDirective(path: String): JetImportDirective {

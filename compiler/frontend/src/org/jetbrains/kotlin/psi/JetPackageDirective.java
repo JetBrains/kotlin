@@ -21,17 +21,20 @@ import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.Collections;
 import java.util.List;
 
-public class JetPackageDirective extends JetModifierListOwnerStub<KotlinPlaceHolderStub<JetPackageDirective>> implements JetReferenceExpression {
+public class JetPackageDirective
+        extends JetModifierListOwnerStub<KotlinPlaceHolderStub<JetPackageDirective>>
+        implements JetReferenceExpression {
     private String qualifiedNameCache = null;
 
     public JetPackageDirective(@NotNull ASTNode node) {
@@ -116,6 +119,29 @@ public class JetPackageDirective extends JetModifierListOwnerStub<KotlinPlaceHol
         return new FqName(getQualifiedNameOf(nameExpression));
     }
 
+    public void setFqName(@NotNull FqName fqName) {
+        if (fqName.isRoot()) {
+            delete();
+            return;
+        }
+
+        JetPsiFactory psiFactory = new JetPsiFactory(getProject());
+        PsiElement newExpression = psiFactory.createExpression(fqName.asString());
+        JetExpression currentExpression = getPackageNameExpression();
+        if (currentExpression != null) {
+            currentExpression.replace(newExpression);
+            return;
+        }
+
+        PsiElement keyword = getPackageKeyword();
+        if (keyword != null) {
+            addAfter(newExpression, keyword);
+            return;
+        }
+
+        replace(psiFactory.createPackageDirective(fqName));
+    }
+
     @NotNull
     public String getQualifiedName() {
         if (qualifiedNameCache == null) {
@@ -137,6 +163,11 @@ public class JetPackageDirective extends JetModifierListOwnerStub<KotlinPlaceHol
             if (e == nameExpression) break;
         }
         return builder.toString();
+    }
+
+    @Nullable
+    public PsiElement getPackageKeyword() {
+        return findChildByType(JetTokens.PACKAGE_KEYWORD);
     }
 
     @Override
