@@ -191,10 +191,15 @@ public class DescriptorUtils {
 
     @Nullable
     public static ModuleDescriptor getContainingModuleOrNull(@NotNull DeclarationDescriptor descriptor) {
-        if (descriptor instanceof PackageViewDescriptor) {
-            return ((PackageViewDescriptor) descriptor).getModule();
+        ModuleDescriptor moduleDescriptor = getParentOfType(descriptor, ModuleDescriptor.class, false);
+        if (moduleDescriptor != null) {
+            return moduleDescriptor;
         }
-        return getParentOfType(descriptor, ModuleDescriptor.class, false);
+        PackageViewDescriptor packageViewDescriptor = getParentOfType(descriptor, PackageViewDescriptor.class, false);
+        if (packageViewDescriptor != null) {
+            return packageViewDescriptor.getModule();
+        }
+        return null;
     }
 
     @Nullable
