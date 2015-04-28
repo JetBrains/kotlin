@@ -206,4 +206,9 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
     public PsiElement getConstructorKeyword() {
         return findNotNullChildByType(JetTokens.CONSTRUCTOR_KEYWORD);
     }
+
+    @Override
+    public int getTextOffset() {
+        return getConstructorKeyword().getTextRange().getStartOffset();
+    }
 }

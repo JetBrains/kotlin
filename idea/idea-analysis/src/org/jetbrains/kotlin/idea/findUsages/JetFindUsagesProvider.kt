@@ -37,6 +37,9 @@ public class JetFindUsagesProvider : FindUsagesProvider {
             is JetClass -> "class"
             is JetParameter -> "parameter"
             is JetProperty -> "property"
+            is JetTypeParameter -> "type parameter"
+            is JetSecondaryConstructor -> "constructor"
+            is JetObjectDeclaration -> "object"
             else -> ""
         }
     }
