@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm
+import org.jetbrains.kotlin.frontend.java.di.createContainerForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
@@ -55,13 +55,13 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project)
         val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
-        val injector = InjectorForTopDownAnalyzerForJvm(
+        val container = createContainerForTopDownAnalyzerForJvm(
                 moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                 providerFactory, GlobalSearchScope.allScope(environment.project)
         )
-        moduleContext.initializeModuleContents(injector.getJavaDescriptorResolver().packageFragmentProvider)
+        moduleContext.initializeModuleContents(container.javaDescriptorResolver.packageFragmentProvider)
 
-        val components = injector.getDeserializationComponentsForJava().components
+        val components = container.deserializationComponentsForJava.components
 
         val classDescriptor = components.classDeserializer.deserializeClass(clazz.classId)
                               ?: error("Class is not resolved: $clazz (classId = ${clazz.classId})")

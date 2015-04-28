@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.di.InjectorForMacros
+import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -167,7 +166,7 @@ public class ShadowedDeclarationsFilter(
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
                                                         CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
-        val callResolver = InjectorForMacros(project, moduleDescriptor).getCallResolver()
+        val callResolver = createContainerForMacros(project, moduleDescriptor).callResolver
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.getResultingCalls().map { it.getResultingDescriptor() }.toSet()
         val filtered = descriptors.filter { it in resultingDescriptors }

@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.di.InjectorForLazyLocalClassifierAnalyzer
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.frontend.di.createContainerForLazyLocalClassifierAnalyzer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -64,7 +64,7 @@ public class LocalClassifierAnalyzer(
     ) {
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
         val moduleContext = globalContext.withProject(classOrObject.getProject()).withModule(module)
-        val injector = InjectorForLazyLocalClassifierAnalyzer(
+        val container = createContainerForLazyLocalClassifierAnalyzer(
                 moduleContext,
                 context.trace,
                 additionalCheckerProvider,
@@ -83,7 +83,7 @@ public class LocalClassifierAnalyzer(
                 )
         )
 
-        injector.getLazyTopDownAnalyzer().analyzeDeclarations(
+        container.get<LazyTopDownAnalyzer>().analyzeDeclarations(
                 TopDownAnalysisMode.LocalDeclarations,
                 listOf(classOrObject),
                 context.dataFlowInfo

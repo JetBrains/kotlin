@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.di.InjectorForLazyResolve;
-import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -38,10 +36,13 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.tests.di.ContainerForTests;
+import org.jetbrains.kotlin.tests.di.DiPackage;
 
 import java.util.Collections;
 import java.util.List;
 
+import static org.jetbrains.kotlin.frontend.di.DiPackage.createLazyResolveSession;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class JetDefaultModalityModifiersTest extends JetLiteFixture {
@@ -71,9 +72,9 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         private JetScope scope;
 
         public void setUp() throws Exception {
-            InjectorForTests injector = new InjectorForTests(getProject(), root);
-            descriptorResolver = injector.getDescriptorResolver();
-            functionDescriptorResolver = injector.getFunctionDescriptorResolver();
+            ContainerForTests containerForTests = DiPackage.createContainerForTests(getProject(), root);
+            descriptorResolver = containerForTests.getDescriptorResolver();
+            functionDescriptorResolver = containerForTests.getFunctionDescriptorResolver();
             scope = createScope(KotlinBuiltIns.getInstance().getBuiltInsPackageScope());
         }
 
@@ -99,14 +100,14 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
 
         private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, JetClass aClass) {
             ModuleContext moduleContext = ContextPackage.ModuleContext(root, getProject());
-            ResolveSession resolveSession = new InjectorForLazyResolve(
+            ResolveSession resolveSession = createLazyResolveSession(
                     moduleContext,
                     new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(),
                                                             Collections.singleton(aClass.getContainingJetFile())),
                     new BindingTraceContext(),
                     AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
                     new DynamicTypesSettings()
-            ).getResolveSession();
+            );
 
             return (ClassDescriptorWithResolutionScopes) resolveSession.getClassDescriptor(aClass);
         }

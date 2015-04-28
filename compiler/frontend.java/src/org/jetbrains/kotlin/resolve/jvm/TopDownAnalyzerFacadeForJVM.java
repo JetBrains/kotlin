@@ -28,7 +28,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
-import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm;
+import org.jetbrains.kotlin.frontend.java.di.ContainerForTopDownAnalyzerForJvm;
+import org.jetbrains.kotlin.frontend.java.di.DiPackage;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
@@ -121,49 +122,44 @@ public enum TopDownAnalyzerFacadeForJVM {
         FileBasedDeclarationProviderFactory providerFactory =
                 new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles);
 
-        InjectorForTopDownAnalyzerForJvm injector = new InjectorForTopDownAnalyzerForJvm(
+        ContainerForTopDownAnalyzerForJvm container = DiPackage.createContainerForTopDownAnalyzerForJvm(
                 moduleContext,
                 trace,
                 providerFactory,
                 GlobalSearchScope.allScope(project)
         );
 
-        try {
-            List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
+        List<PackageFragmentProvider> additionalProviders = new ArrayList<PackageFragmentProvider>();
 
-            if (moduleIds != null && incrementalCacheProvider != null) {
-                for (String moduleId : moduleIds) {
-                    IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
+        if (moduleIds != null && incrementalCacheProvider != null) {
+            for (String moduleId : moduleIds) {
+                IncrementalCache incrementalCache = incrementalCacheProvider.getIncrementalCache(moduleId);
 
-                    additionalProviders.add(
-                            new IncrementalPackageFragmentProvider(
-                                    files, moduleContext.getModule(), moduleContext.getStorageManager(),
-                                    injector.getDeserializationComponentsForJava().getComponents(),
-                                    incrementalCache, moduleId
-                            )
-                    );
-                }
+                additionalProviders.add(
+                        new IncrementalPackageFragmentProvider(
+                                files, moduleContext.getModule(), moduleContext.getStorageManager(),
+                                container.getDeserializationComponentsForJava().getComponents(),
+                                incrementalCache, moduleId
+                        )
+                );
             }
-            additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
-
-            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisMode, allFiles, additionalProviders);
-
-            BindingContext bindingContext = trace.getBindingContext();
-            ModuleDescriptor module = moduleContext.getModule();
-
-            Collection<AnalysisCompletedHandlerExtension> analysisCompletedHandlerExtensions =
-                    AnalysisCompletedHandlerExtension.Companion.getInstances(moduleContext.getProject());
-
-            for (AnalysisCompletedHandlerExtension extension : analysisCompletedHandlerExtensions) {
-                AnalysisResult result = extension.analysisCompleted(project, module, bindingContext, files);
-                if (result != null) return result;
-            }
-
-            return AnalysisResult.success(bindingContext, module);
         }
-        finally {
-            injector.destroy();
+        additionalProviders.add(container.getJavaDescriptorResolver().getPackageFragmentProvider());
+
+        container.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisMode, allFiles, additionalProviders);
+
+        BindingContext bindingContext = trace.getBindingContext();
+        ModuleDescriptor module = moduleContext.getModule();
+
+        Collection<AnalysisCompletedHandlerExtension> analysisCompletedHandlerExtensions =
+                AnalysisCompletedHandlerExtension.Companion.getInstances(moduleContext.getProject());
+
+        for (AnalysisCompletedHandlerExtension extension : analysisCompletedHandlerExtensions) {
+            AnalysisResult result = extension.analysisCompleted(project, module, bindingContext, files);
+            if (result != null) return result;
         }
+
+        return AnalysisResult.success(bindingContext, module);
     }
 
     @NotNull

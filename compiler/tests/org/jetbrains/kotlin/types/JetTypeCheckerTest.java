@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
-import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -40,6 +39,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.tests.di.ContainerForTests;
+import org.jetbrains.kotlin.tests.di.DiPackage;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 
@@ -72,9 +73,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
 
         builtIns = KotlinBuiltIns.getInstance();
 
-        InjectorForTests injector = new InjectorForTests(getProject(), JetTestUtils.createEmptyModule());
-        typeResolver = injector.getTypeResolver();
-        expressionTypingServices = injector.getExpressionTypingServices();
+        ContainerForTests container = DiPackage.createContainerForTests(getProject(), JetTestUtils.createEmptyModule());
+        typeResolver = container.getTypeResolver();
+        expressionTypingServices = container.getExpressionTypingServices();
 
         scopeWithImports = getDeclarationsScope("compiler/testData/type-checker-test.kt");
     }

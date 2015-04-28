@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.di.InjectorForLazyResolve;
+import org.jetbrains.kotlin.frontend.di.DiPackage;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
@@ -250,12 +250,12 @@ public class JetSourceNavigationHelper {
                 getContainingFiles(candidates)
         );
 
-        ResolveSession resolveSession = new InjectorForLazyResolve(
+        ResolveSession resolveSession = DiPackage.createLazyResolveSession(
                 newModuleContext,
                 providerFactory,
                 new BindingTraceContext(),
                 AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
-                new DynamicTypesSettings()).getResolveSession();
+                new DynamicTypesSettings());
 
         newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());
         return resolveSession;

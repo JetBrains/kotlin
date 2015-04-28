@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.di.InjectorForMacros
+import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -38,7 +38,7 @@ public class IterableTypesDetector(
         private val loopVarType: JetType? = null
 ) {
 
-    private val injector = InjectorForMacros(project, moduleDescriptor)
+    private val container = createContainerForMacros(project, moduleDescriptor)
     private val cache = HashMap<FuzzyType, Boolean>()
     private val iteratorName = Name.identifier("iterator")
 
@@ -57,9 +57,10 @@ public class IterableTypesDetector(
 
         val expression = JetPsiFactory(project).createExpression("fake")
         val expressionReceiver = ExpressionReceiver(expression, type.type)
-        val context = ExpressionTypingContext.newContext(injector.getExpressionTypingComponents().getAdditionalCheckerProvider(),
+        val expressionTypingComponents = container.expressionTypingComponents
+        val context = ExpressionTypingContext.newContext(expressionTypingComponents.getAdditionalCheckerProvider(),
                                                          BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
-        val elementType = injector.getExpressionTypingComponents().getForLoopConventionsChecker().checkIterableConvention(expressionReceiver, context)
+        val elementType = expressionTypingComponents.getForLoopConventionsChecker().checkIterableConvention(expressionReceiver, context)
         if (elementType == null) return false
         return loopVarType == null || FuzzyType(elementType, type.freeParameters).checkIsSubtypeOf(loopVarType) != null
     }

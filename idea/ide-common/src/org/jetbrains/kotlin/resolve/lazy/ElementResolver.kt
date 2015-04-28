@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.di.InjectorForBodyResolve
+import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -369,11 +370,10 @@ public abstract class ElementResolver protected constructor(
 
     private fun createBodyResolver(resolveSession: ResolveSession, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter): BodyResolver {
         val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
-        val bodyResolve = InjectorForBodyResolve(
+        return createContainerForBodyResolve(
                 globalContext.withProject(file.getProject()).withModule(resolveSession.getModuleDescriptor()),
                 trace, getAdditionalCheckerProvider(file), statementFilter
-        )
-        return bodyResolve.getBodyResolver()
+        ).get<BodyResolver>()
     }
 
     private fun createEmptyContext(): BodyResolveContextForLazy {

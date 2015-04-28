@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.analyzer
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.di.InjectorForMacros
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo
 
 public fun JetExpression.computeTypeInfoInContext(
@@ -37,8 +37,8 @@ public fun JetExpression.computeTypeInfoInContext(
         expectedType: JetType = TypeUtils.NO_EXPECTED_TYPE,
         module: ModuleDescriptor = scope.getModule()
 ): JetTypeInfo {
-    val injectorForMacros = InjectorForMacros(getProject(), module)
-    return injectorForMacros.getExpressionTypingServices()!!.getTypeInfo(scope, this, expectedType, dataFlowInfo, trace)
+    val expressionTypingServices = createContainerForMacros(getProject(), module).expressionTypingServices
+    return expressionTypingServices.getTypeInfo(scope, this, expectedType, dataFlowInfo, trace)
 }
 
 public fun JetExpression.analyzeInContext(

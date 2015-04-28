@@ -21,7 +21,6 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -31,6 +30,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.tests.di.ContainerForTests;
+import org.jetbrains.kotlin.tests.di.DiPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
@@ -126,13 +127,13 @@ public class JetExpectedResolveDataUtil {
             JetType... parameterTypes
     ) {
         ModuleDescriptor emptyModule = JetTestUtils.createEmptyModule();
-        InjectorForTests injector = new InjectorForTests(project, emptyModule);
+        ContainerForTests container = DiPackage.createContainerForTests(project, emptyModule);
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                injector.getAdditionalCheckerProvider(), new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),
+                container.getAdditionalCheckerProvider(), new BindingTraceContext(), classDescriptor.getDefaultType().getMemberScope(),
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
-        OverloadResolutionResults<FunctionDescriptor> functions = injector.getFakeCallResolver().resolveFakeCall(
+        OverloadResolutionResults<FunctionDescriptor> functions = container.getFakeCallResolver().resolveFakeCall(
                 context, ReceiverValue.NO_RECEIVER, Name.identifier(name), null, parameterTypes);
 
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {

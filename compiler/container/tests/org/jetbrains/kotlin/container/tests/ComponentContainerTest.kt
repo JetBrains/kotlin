@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.container.tests
 
+import org.jetbrains.kotlin.container.*
 import org.junit.Test
 import java.io.Closeable
 import javax.inject.Inject

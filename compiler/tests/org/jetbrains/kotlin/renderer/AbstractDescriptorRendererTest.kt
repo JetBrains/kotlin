@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.di.InjectorForLazyResolve
+import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
@@ -49,11 +49,11 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
 
         val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject())
 
-        val resolveSession = InjectorForLazyResolve(
+        val resolveSession = createLazyResolveSession(
                 context,
                 FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                KotlinJvmCheckerProvider, DynamicTypesSettings()).getResolveSession()
+                KotlinJvmCheckerProvider, DynamicTypesSettings())
 
         context.initializeModuleContents(resolveSession.getPackageFragmentProvider())
 

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverloadUtil;
@@ -28,6 +27,8 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.tests.di.ContainerForTests;
+import org.jetbrains.kotlin.tests.di.DiPackage;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -44,8 +45,7 @@ public class JetOverloadTest extends JetLiteFixture {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        InjectorForTests injector = new InjectorForTests(getProject(), root);
-        functionDescriptorResolver = injector.getFunctionDescriptorResolver();
+        functionDescriptorResolver = DiPackage.createContainerForTests(getProject(), root).getFunctionDescriptorResolver();
     }
 
     @Override

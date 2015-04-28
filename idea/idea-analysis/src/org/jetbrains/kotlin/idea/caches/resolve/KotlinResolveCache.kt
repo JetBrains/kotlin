@@ -33,8 +33,9 @@ import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.di.InjectorForLazyBodyResolve
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
 import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
@@ -232,14 +233,13 @@ private object KotlinResolveDataProvider {
             val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.getContainingJetFile())
             val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
             val moduleContext = globalContext.withProject(project).withModule(resolveSession.getModuleDescriptor())
-            val lazyTopDownAnalyzer = InjectorForLazyBodyResolve(
+            val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                     moduleContext,
                     resolveSession,
-                    resolveSession.getScopeProvider(),
                     trace,
                     targetPlatform.getAdditionalCheckerProvider(),
                     targetPlatform.getDynamicTypesSettings()
-            ).getLazyTopDownAnalyzerForTopLevel()!!
+            ).get<LazyTopDownAnalyzerForTopLevel>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(
                     TopDownAnalysisMode.TopLevelDeclarations,

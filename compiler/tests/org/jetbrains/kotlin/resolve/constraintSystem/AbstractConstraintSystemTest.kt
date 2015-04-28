@@ -16,24 +16,23 @@
 
 package org.jetbrains.kotlin.resolve.constraintSystem
 
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.resolve.TypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.JetLiteFixture
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.di.InjectorForTests
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.tests.di.createContainerForTests
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
-import java.util.regex.Pattern
-import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraintKind
-import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest.MyConstraint
 import java.util.ArrayList
 import java.util.LinkedHashMap
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import java.util.regex.Pattern
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typePattern = """([\w|<|>|\(|\)]+)"""
@@ -55,8 +54,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     override fun setUp() {
         super.setUp()
 
-        val injector = InjectorForTests(getProject(), JetTestUtils.createEmptyModule())
-        _typeResolver = injector.getTypeResolver()!!
+        _typeResolver = createContainerForTests(getProject(), JetTestUtils.createEmptyModule()).typeResolver
         _testDeclarations = analyzeDeclarations()
     }
 

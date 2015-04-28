@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.di.InjectorForLazyResolve;
+import org.jetbrains.kotlin.frontend.di.DiPackage;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
 import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
@@ -106,19 +107,19 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 FileBasedDeclarationProviderFactory declarationFactory =
                         new FileBasedDeclarationProviderFactory(newModuleContext.getStorageManager(), jetBuiltInsFiles);
 
-                InjectorForLazyResolve injectorForLazyResolve =
-                        new InjectorForLazyResolve(
+                ResolveSession resolveSession =
+                        DiPackage.createLazyResolveSession(
                                 newModuleContext,
                                 declarationFactory, new BindingTraceContext(),
                                 AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
                                 new DynamicTypesSettings()
                         );
 
-                newModuleContext.initializeModuleContents(injectorForLazyResolve.getResolveSession().getPackageFragmentProvider());
+                newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());
 
                 if (!ApplicationManager.getApplication().isUnitTestMode()) {
                     // Use lazy initialization in tests
-                    injectorForLazyResolve.getResolveSession().forceResolveAll();
+                    resolveSession.forceResolveAll();
                 }
 
                 PackageViewDescriptor packageView = newModuleContext.getModule().getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);

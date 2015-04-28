@@ -18,13 +18,11 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.di.InjectorForMacros
+import org.jetbrains.kotlin.frontend.di.createContainerForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
@@ -70,8 +68,8 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
                 TypeUtils.NO_EXPECTED_TYPE
             }
             val dataFlow = context.getDataFlowInfo(callExpression)
-            val injector = InjectorForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
-            val resolutionResults = injector.getCallResolver().resolveFunctionCall(
+            val container = createContainerForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
+            val resolutionResults = container.callResolver.resolveFunctionCall(
                     BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)
             if (!resolutionResults.isSingleResult()) {
                 return false

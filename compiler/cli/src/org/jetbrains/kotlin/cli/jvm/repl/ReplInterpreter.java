@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.cli.jvm.repl.di.ContainerForReplWithJava;
+import org.jetbrains.kotlin.cli.jvm.repl.di.DiPackage;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
@@ -45,7 +47,6 @@ import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.di.InjectorForReplWithJava;
 import org.jetbrains.kotlin.idea.JetLanguage;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.JetParserDefinition;
@@ -118,7 +119,7 @@ public class ReplInterpreter {
             }
         };
 
-        InjectorForReplWithJava injector = new InjectorForReplWithJava(
+        ContainerForReplWithJava container = DiPackage.createContainerForReplWithJava(
                 moduleContext,
                 trace,
                 scriptDeclarationFactory,
@@ -127,13 +128,13 @@ public class ReplInterpreter {
         );
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfo.EMPTY);
-        this.topDownAnalyzer = injector.getLazyTopDownAnalyzerForTopLevel();
-        this.resolveSession = injector.getResolveSession();
+        this.topDownAnalyzer = container.getLazyTopDownAnalyzerForTopLevel();
+        this.resolveSession = container.getResolveSession();
 
         moduleContext.initializeModuleContents(new CompositePackageFragmentProvider(
                 Arrays.asList(
-                        injector.getResolveSession().getPackageFragmentProvider(),
-                        injector.getJavaDescriptorResolver().getPackageFragmentProvider()
+                        container.getResolveSession().getPackageFragmentProvider(),
+                        container.getJavaDescriptorResolver().getPackageFragmentProvider()
                 )
         ));
 

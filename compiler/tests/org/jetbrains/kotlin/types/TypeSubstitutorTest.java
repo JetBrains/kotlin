@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.name.FqName;
@@ -45,6 +44,8 @@ import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.tests.di.ContainerForTests;
+import org.jetbrains.kotlin.tests.di.DiPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +57,7 @@ import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 @SuppressWarnings("unchecked")
 public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     private JetScope scope;
-    private InjectorForTests injector;
+    private ContainerForTests container;
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
@@ -67,13 +68,13 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
     protected void setUp() throws Exception {
         super.setUp();
 
-        injector = new InjectorForTests(getProject(), JetTestUtils.createEmptyModule());
+        container = DiPackage.createContainerForTests(getProject(), JetTestUtils.createEmptyModule());
         scope = getContextScope();
     }
 
     @Override
     protected void tearDown() throws Exception {
-        injector = null;
+        container = null;
         scope = null;
         super.tearDown();
     }
@@ -140,7 +141,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         JetTypeReference jetTypeReference = JetPsiFactory(getProject()).createType(typeStr);
         AnalyzingUtils.checkForSyntacticErrors(jetTypeReference);
         BindingTrace trace = new BindingTraceContext();
-        JetType type = injector.getTypeResolver().resolveType(scope, jetTypeReference, trace, true);
+        JetType type = container.getTypeResolver().resolveType(scope, jetTypeReference, trace, true);
         if (!trace.getBindingContext().getDiagnostics().isEmpty()) {
             fail("Errors:\n" + StringUtil.join(
                     trace.getBindingContext().getDiagnostics(),

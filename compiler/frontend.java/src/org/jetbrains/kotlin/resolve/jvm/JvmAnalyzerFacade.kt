@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
+import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.psi.JetFile
@@ -66,7 +66,7 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
             val moduleInfo = platformParameters.moduleByJavaClass(javaClass)
             resolverForProject.resolverForModule(moduleInfo as M).javaDescriptorResolver
         }
-        val injector = InjectorForLazyResolveWithJava(
+        val (resolveSession, javaDescriptorResolver) = createContainerForLazyResolveWithJava(
                 moduleContext,
                 CodeAnalyzerInitializer.getInstance(project).createTrace(),
                 declarationProviderFactory,
@@ -74,8 +74,6 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
                 moduleClassResolver
         )
 
-        val resolveSession = injector.getResolveSession()!!
-        val javaDescriptorResolver = injector.getJavaDescriptorResolver()!!
         val providersForModule = listOf(resolveSession.getPackageFragmentProvider(), javaDescriptorResolver.packageFragmentProvider)
         return JvmResolverForModule(resolveSession, CompositePackageFragmentProvider(providersForModule), javaDescriptorResolver)
     }

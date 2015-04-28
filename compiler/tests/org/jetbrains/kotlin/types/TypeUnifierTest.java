@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
-import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetTypeProjection;
 import org.jetbrains.kotlin.psi.JetTypeReference;
@@ -38,6 +37,8 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetLiteFixture;
 import org.jetbrains.kotlin.test.JetTestUtils;
+import org.jetbrains.kotlin.tests.di.ContainerForTests;
+import org.jetbrains.kotlin.tests.di.DiPackage;
 
 import java.util.Map;
 import java.util.Set;
@@ -63,8 +64,7 @@ public class TypeUnifierTest extends JetLiteFixture {
 
         builtIns = KotlinBuiltIns.getInstance();
 
-        InjectorForTests injector = new InjectorForTests(getProject(), JetTestUtils.createEmptyModule());
-        typeResolver = injector.getTypeResolver();
+        typeResolver = DiPackage.createContainerForTests(getProject(), JetTestUtils.createEmptyModule()).getTypeResolver();
         x = createTypeVariable("X");
         y = createTypeVariable("Y");
         variables = Sets.newHashSet(x.getTypeConstructor(), y.getTypeConstructor());
