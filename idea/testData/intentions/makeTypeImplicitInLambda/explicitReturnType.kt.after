@@ -1,3 +1,0 @@
-fun main() {
-    val sum = { x, y -> x + y }
-}

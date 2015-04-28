@@ -1,3 +1,3 @@
 fun main() {
-    val double = { (<caret>x: Int) -> x * 2 }
+    val double = { <caret>x: Int -> x * 2 }
 }

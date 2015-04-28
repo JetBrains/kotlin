@@ -4,5 +4,5 @@ fun testing(x: Int, y: Int, f: (a: Int, b: Int) -> Int): Int {
 }
 
 fun main() {
-    val num = testing(1, 2, { x, y -> x + y <caret>})
+    val num = testing(1, 2, {<caret> x, y -> x + y })
 }

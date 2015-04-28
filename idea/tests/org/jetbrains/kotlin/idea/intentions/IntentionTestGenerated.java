@@ -4357,18 +4357,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/makeTypeImplicitInLambda"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("explicitReceiverType.kt")
-        public void testExplicitReceiverType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/explicitReceiverType.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("explicitReturnType.kt")
-        public void testExplicitReturnType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/explicitReturnType.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("invalidCursorPosition.kt")
         public void testInvalidCursorPosition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/invalidCursorPosition.kt");
@@ -4387,15 +4375,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("paramDeclaredReturnNotDeclared.kt")
-        public void testParamDeclaredReturnNotDeclared() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/paramDeclaredReturnNotDeclared.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("returnDeclaredParamNotDeclared.kt")
-        public void testReturnDeclaredParamNotDeclared() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/returnDeclaredParamNotDeclared.kt");
+        @TestMetadata("paramTypeDeclared.kt")
+        public void testParamTypeDeclared() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/paramTypeDeclared.kt");
             doTest(fileName);
         }
 

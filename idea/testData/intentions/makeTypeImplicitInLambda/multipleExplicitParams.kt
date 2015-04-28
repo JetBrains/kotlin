@@ -1,3 +1,3 @@
 fun main() {
-    val f = {<caret> (x: Int, str: String): Unit -> x }
+    val f = {<caret> x: Int, str: String -> x }
 }
