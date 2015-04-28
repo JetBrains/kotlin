@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.intentions.ReplaceItWithExplicitFunctionLiteral
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
+import org.jetbrains.kotlin.idea.intentions.isAutoCreatedItUsage
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 
 public class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler() {
@@ -34,8 +35,7 @@ public class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler()
         val simpleNameExpression = PsiTreeUtil.findElementOfClassAtOffset(
                 file, editor.getCaretModel().getOffset(), javaClass<JetSimpleNameExpression>(), false)
 
-        return simpleNameExpression != null
-                && ReplaceItWithExplicitFunctionLiteralParamIntention.isAutoCreatedIt(simpleNameExpression)
+        return simpleNameExpression != null && isAutoCreatedItUsage(simpleNameExpression)
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {

@@ -35,54 +35,27 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ReplaceItWithExplicitFunctionLiteralParamIntention() : PsiElementBaseIntentionAction() {
-    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        val simpleNameExpression = element.getStrictParentOfType<JetSimpleNameExpression>()!!
+public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameExpression>(
+        javaClass(), "Replace 'it' with explicit parameter"
+) {
+    override fun isApplicableTo(element: JetSimpleNameExpression)
+            = isAutoCreatedItUsage(element)
 
-        val simpleNameReference = simpleNameExpression.getReference() as JetReference?
-        val target = simpleNameReference?.resolveToDescriptors(simpleNameExpression.analyze(BodyResolveMode.PARTIAL))?.first()!!
+    override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
+        val reference = element.getReference() as JetReference
+        val target = reference.resolveToDescriptors(element.analyze()).first()
 
-        val funcExpr = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
+        val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
 
-        val newExpr = JetPsiFactory(simpleNameExpression).createExpression("{ it -> 42 }") as JetFunctionLiteralExpression
-        funcExpr.addRangeAfter(newExpr.getFunctionLiteral().getValueParameterList(),
-                               newExpr.getFunctionLiteral().getArrowNode()!!.getPsi(),
-                               funcExpr.getLBrace())
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+        val newExpr = JetPsiFactory(element).createExpression("{ it -> }") as JetFunctionLiteralExpression
+        functionLiteral.addRangeAfter(
+                newExpr.getFunctionLiteral().getValueParameterList(),
+                newExpr.getFunctionLiteral().getArrowNode()!!.getPsi(),
+                functionLiteral.getLBrace())
+        PsiDocumentManager.getInstance(element.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
 
-        val paramToRename = funcExpr.getValueParameters().first()
+        val paramToRename = functionLiteral.getValueParameters().single()
         editor.getCaretModel().moveToOffset(paramToRename.getTextOffset())
         VariableInplaceRenameHandler().doRename(paramToRename, editor, null)
-    }
-
-    override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
-        val simpleNameExpression = element.getStrictParentOfType<JetSimpleNameExpression>()
-        if (simpleNameExpression == null || !isAutoCreatedIt(simpleNameExpression)) {
-            return false
-        }
-
-        setText(JetBundle.message("replace.it.with.explicit.function.literal.param"))
-        return true
-    }
-
-    override fun getFamilyName(): String {
-        return JetBundle.message("replace.it.with.explicit.function.literal.param.family")
-    }
-
-    companion object {
-        fun isAutoCreatedIt(simpleNameExpression: JetSimpleNameExpression): Boolean {
-            if (simpleNameExpression.getReferencedName() != "it") {
-                return false
-            }
-
-            val bindingContext = simpleNameExpression.analyze(BodyResolveMode.PARTIAL)
-            val reference = simpleNameExpression.getReference() as JetReference?
-            val simpleNameTarget = reference?.resolveToDescriptors(bindingContext)?.firstOrNull() as? ValueParameterDescriptor?
-            if (simpleNameTarget == null || bindingContext.get(BindingContext.AUTO_CREATED_IT, simpleNameTarget) != true) {
-                return false
-            }
-
-            return true
-        }
     }
 }

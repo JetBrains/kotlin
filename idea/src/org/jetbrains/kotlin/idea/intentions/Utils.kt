@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
@@ -71,3 +73,11 @@ fun JetContainerNode.description(): String? {
 }
 
 fun TextRange.containsInside(offset: Int) = getStartOffset() < offset && offset < getEndOffset()
+
+fun isAutoCreatedItUsage(expression: JetSimpleNameExpression): Boolean {
+    if (expression.getReferencedName() != "it") return false
+    val context = expression.analyze()
+    val reference = expression.getReference() as JetReference?
+    val target = reference?.resolveToDescriptors(context)?.firstOrNull() as? ValueParameterDescriptor? ?: return false
+    return context[BindingContext.AUTO_CREATED_IT, target]
+}
