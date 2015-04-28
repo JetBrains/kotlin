@@ -1718,7 +1718,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 DelegationFieldsInfo.Field field = delegationFieldsInfo.getInfo((JetDelegatorByExpressionSpecifier) specifier);
                 generateDelegateField(field);
                 JetExpression delegateExpression = ((JetDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
-                JetType delegateExpressionType = bindingContext.getType(delegateExpression);
+                JetType delegateExpressionType = delegateExpression != null ? bindingContext.getType(delegateExpression) : null;
                 generateDelegates(getSuperClass(specifier), delegateExpressionType, field);
             }
         }
