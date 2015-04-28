@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.Function0;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
@@ -249,9 +250,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         Collection<JetType> possibleTypes = DataFlowUtils.getAllPossibleTypes(
                 expression.getLeft(), context.dataFlowInfo, actualType, context);
 
-        // Casting to a supertype may be useful to select an exact overload of a method, but is most likely
-        // useless in other contexts.
-        boolean checkExactType = expression.getParent() instanceof JetValueArgument;
+        boolean checkExactType = checkExactTypeForUselessCast(expression);
         for (JetType possibleType : possibleTypes) {
             boolean castIsUseless = checkExactType
                                     ? possibleType.equals(targetType)
@@ -264,6 +263,23 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (CastDiagnosticsUtil.isCastErased(actualType, targetType, typeChecker)) {
             context.trace.report(UNCHECKED_CAST.on(expression, actualType, targetType));
         }
+    }
+
+    // Casting an argument or a receiver to a supertype may be useful to select an exact overload of a method.
+    // Casting to a supertype in other contexts is unlikely to be useful.
+    private static boolean checkExactTypeForUselessCast(JetBinaryExpressionWithTypeRHS expression) {
+        PsiElement parent = expression.getParent();
+        while (parent instanceof JetParenthesizedExpression) {
+            parent = parent.getParent();
+        }
+        if (parent instanceof JetValueArgument) {
+            return true;
+        }
+        if (parent instanceof JetQualifiedExpression) {
+            JetExpression receiver = ((JetQualifiedExpression) parent).getReceiverExpression();
+            return PsiTreeUtil.isAncestor(receiver, expression, false);
+        }
+        return false;
     }
 
     @Override

@@ -16,5 +16,6 @@ fun test() : Unit {
   checkSubtype<Int?>(y as? Int?)
 
   val <!UNUSED_VARIABLE!>s<!> = "" <!USELESS_CAST!>as Any<!>
+  ("" as String?)?.length()
   Unit
 }
