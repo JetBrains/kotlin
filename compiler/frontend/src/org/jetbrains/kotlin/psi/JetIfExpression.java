@@ -62,4 +62,9 @@ public class JetIfExpression extends JetExpressionImpl {
     public PsiElement getElseKeyword() {
         return findChildByType(JetTokens.ELSE_KEYWORD);
     }
+
+    @NotNull
+    public PsiElement getIfKeyword() {
+        return findChildByType(JetTokens.IF_KEYWORD);
+    }
 }
