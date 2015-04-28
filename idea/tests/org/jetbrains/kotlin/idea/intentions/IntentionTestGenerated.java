@@ -5176,6 +5176,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_parameterHasExplicitType.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("notApplicable_wrongPosition.kt")
+        public void testNotApplicable_wrongPosition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceExplicitFunctionLiteralParamWithIt/notApplicable_wrongPosition.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/replaceItWithExplicitFunctionLiteralParam")

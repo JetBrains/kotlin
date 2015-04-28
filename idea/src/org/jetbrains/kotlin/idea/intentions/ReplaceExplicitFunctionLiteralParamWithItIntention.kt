@@ -21,93 +21,78 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
-    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
-        val funcExpr = findFunctionLiteralToActOn(element)!!
-        val cursorWasOverParameterList = PsiTreeUtil.getParentOfType(element, javaClass<JetParameter>()) != null
-        ParamRenamingProcessor(editor, funcExpr, cursorWasOverParameterList).run()
-    }
+    override fun getFamilyName() = "Replace explicit lambda parameter with 'it'"
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
-        val funcExpr = findFunctionLiteralToActOn(element)
-        if (funcExpr == null || funcExpr.getValueParameters().size() != 1) {
-            return false
-        }
+        val functionLiteral = targetFunctionLiteral(element, editor.getCaretModel().getOffset()) ?: return false
 
-        val parameter = funcExpr.getValueParameters().first()
-        if (parameter.getTypeReference() != null) {
-            return false
-        }
+        val parameter = functionLiteral.getValueParameters().singleOrNull() ?: return false
+        if (parameter.getTypeReference() != null) return false
 
-        setText(JetBundle.message("replace.explicit.function.literal.param.with.it", parameter.getName()))
+        setText("Replace explicit parameter '${parameter.getName()}' with 'it'")
         return true
     }
 
-    override fun getFamilyName(): String {
-        return JetBundle.message("replace.explicit.function.literal.param.with.it.family")
+    override fun invoke(project: Project, editor: Editor, element: PsiElement) {
+        val caretOffset = editor.getCaretModel().getOffset()
+        val functionLiteral = targetFunctionLiteral(element, editor.getCaretModel().getOffset())!!
+        val cursorInParameterList = functionLiteral.getValueParameterList()!!.getTextRange().containsOffset(caretOffset)
+        ParamRenamingProcessor(editor, functionLiteral, cursorInParameterList).run()
     }
 
-    private fun findFunctionLiteralToActOn(element: PsiElement): JetFunctionLiteral? {
-        if (PsiTreeUtil.getParentOfType(element, javaClass<JetFunctionLiteralExpression>()) == null) {
-            return null
+    private fun targetFunctionLiteral(element: PsiElement, caretOffset: Int): JetFunctionLiteral? {
+        val innermostFunctionLiteral = element.getParentOfType<JetFunctionLiteral>(true) ?: return null
+
+        val expression = element.getParentOfType<JetSimpleNameExpression>(true)
+        if (expression != null) {
+            val reference = expression.getReference() as JetReference?
+            val target = reference?.resolveToDescriptors(expression.analyze())?.firstOrNull() as? ParameterDescriptor ?: return null
+            val functionDescriptor = target.getContainingDeclaration() as? AnonymousFunctionDescriptor ?: return null
+            return DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? JetFunctionLiteral
         }
 
-        val expression = PsiTreeUtil.getParentOfType(element, javaClass<JetSimpleNameExpression>(), javaClass<JetParameter>())
-        if (expression == null) {
-            return null
-        }
+        val arrow = innermostFunctionLiteral.getArrowNode() ?: return null
+        if (caretOffset > arrow.getTextRange().getEndOffset()) return null
 
-        when (expression) {
-            is JetParameter -> {
-                return PsiTreeUtil.skipParentsOfType(expression, javaClass<JetParameterList>()) as? JetFunctionLiteral
-            }
-            is JetSimpleNameExpression -> {
-                val reference = expression.getReference() as JetReference?
-                val variableDescriptor = reference?.resolveToDescriptors(expression.analyze(BodyResolveMode.PARTIAL))?.firstOrNull() as? VariableDescriptor?
-                if (variableDescriptor != null) {
-                    val containingDescriptor = variableDescriptor.getContainingDeclaration()
-                    if (containingDescriptor is AnonymousFunctionDescriptor) {
-                        return DescriptorToSourceUtils.descriptorToDeclaration(containingDescriptor) as? JetFunctionLiteral
-                    }
-                }
-
-                return null
-            }
-            else -> return null
-        }
+        return innermostFunctionLiteral
     }
 
     private class ParamRenamingProcessor(
             val editor: Editor,
-            val funcLiteral: JetFunctionLiteral,
-            val cursorWasOverParameterList: Boolean) : RenameProcessor(editor.getProject(),
-                                                                       funcLiteral.getValueParameters().first(),
-                                                                       "it",
-                                                                       false,
-                                                                       false
+            val functionLiteral: JetFunctionLiteral,
+            val cursorWasInParameterList: Boolean
+    ) : RenameProcessor(editor.getProject(),
+                        functionLiteral.getValueParameters().single(),
+                        "it",
+                        false,
+                        false
     ) {
         public override fun performRefactoring(usages: Array<out UsageInfo>) {
             super.performRefactoring(usages)
-            funcLiteral.deleteChildRange(funcLiteral.getValueParameterList(), funcLiteral.getArrowNode()!!.getPsi())
-            if (cursorWasOverParameterList) {
-                editor.getCaretModel().moveToOffset(funcLiteral.getBodyExpression()!!.getTextOffset())
+
+            functionLiteral.deleteChildRange(functionLiteral.getValueParameterList(), functionLiteral.getArrowNode()!!.getPsi())
+
+            if (cursorWasInParameterList) {
+                editor.getCaretModel().moveToOffset(functionLiteral.getBodyExpression()!!.getTextOffset())
             }
 
-            CodeStyleManager.getInstance(editor.getProject()!!)!!.reformatText(funcLiteral.getContainingFile()!!,
-                                                                               funcLiteral.getTextRange()!!.getStartOffset(),
-                                                                               funcLiteral.getTextRange()!!.getEndOffset())
+            val range = functionLiteral.getTextRange()
+            CodeStyleManager.getInstance(functionLiteral.getProject()).reformatText(functionLiteral.getContainingFile(),
+                                                                                    range.getStartOffset(),
+                                                                                    range.getEndOffset())
 
         }
     }
