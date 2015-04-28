@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.LazyType
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 public data class ApproximationBounds<T>(
         public val lower: T,
@@ -56,9 +57,9 @@ private fun TypeArgument.toTypeProjection(): TypeProjection {
     fun removeProjectionIfRedundant(variance: Variance) = if (variance == typeParameter.getVariance()) Variance.INVARIANT else variance
     return when {
         inProjection == outProjection -> TypeProjectionImpl(inProjection)
-        inProjection == NOTHING && typeParameter.getVariance() != Variance.IN_VARIANCE ->
+        KotlinBuiltIns.isNothing(inProjection) && typeParameter.getVariance() != Variance.IN_VARIANCE ->
             TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
-        outProjection == NULLABLE_ANY -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.IN_VARIANCE), inProjection)
+        KotlinBuiltIns.isNullableAny(outProjection) -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.IN_VARIANCE), inProjection)
         else -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
     }
 }
@@ -66,8 +67,8 @@ private fun TypeArgument.toTypeProjection(): TypeProjection {
 private fun TypeProjection.toTypeArgument(typeParameter: TypeParameterDescriptor) =
         when (TypeSubstitutor.combine(typeParameter.getVariance(), getProjectionKind()) : Variance) {
             Variance.INVARIANT -> TypeArgument(typeParameter, getType(), getType())
-            Variance.IN_VARIANCE -> TypeArgument(typeParameter, getType(), NULLABLE_ANY)
-            Variance.OUT_VARIANCE -> TypeArgument(typeParameter, NOTHING, getType())
+            Variance.IN_VARIANCE -> TypeArgument(typeParameter, getType(), typeParameter.builtIns.getNullableAnyType())
+            Variance.OUT_VARIANCE -> TypeArgument(typeParameter, typeParameter.builtIns.getNothingType(), getType())
         }
 
 public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?): TypeProjection? {

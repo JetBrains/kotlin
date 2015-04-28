@@ -89,7 +89,7 @@ public class CompileTimeConstantChecker {
         }
 
         if (!noExpectedTypeOrError(expectedType)) {
-            JetType valueType = value.getType(KotlinBuiltIns.getInstance());
+            JetType valueType = value.getType(builtIns);
             if (!JetTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
                 return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "integer", expectedType));
             }
@@ -106,7 +106,7 @@ public class CompileTimeConstantChecker {
             return reportError(FLOAT_LITERAL_OUT_OF_RANGE.on(expression));
         }
         if (!noExpectedTypeOrError(expectedType)) {
-            JetType valueType = value.getType(KotlinBuiltIns.getInstance());
+            JetType valueType = value.getType(builtIns);
             if (!JetTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType)) {
                 return reportError(CONSTANT_EXPECTED_TYPE_MISMATCH.on(expression, "floating-point", expectedType));
             }
