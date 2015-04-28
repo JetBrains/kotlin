@@ -81,7 +81,7 @@ fun suite(): TestSuite {
                         thread = event.thread()
                         latch.countDown()
 
-                        break @mainLoop
+                        break@mainLoop
                     }
                     else -> {}
                 }

@@ -93,7 +93,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
     @entries for (orderEntry in orderEntries) {
         when (orderEntry) {
             is LibraryOrderEntry -> {
-                val library = orderEntry.getLibrary() ?: continue @entries
+                val library = orderEntry.getLibrary() ?: continue@entries
                 if (ProjectRootsUtil.isLibraryClassFile(project, virtualFile) && !isDecompiledFile) {
                     return LibraryInfo(project, library)
                 }
@@ -102,7 +102,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
                 }
             }
             is JdkOrderEntry -> {
-                val sdk = orderEntry.getJdk() ?: continue @entries
+                val sdk = orderEntry.getJdk() ?: continue@entries
                 return SdkInfo(project, sdk)
             }
         }

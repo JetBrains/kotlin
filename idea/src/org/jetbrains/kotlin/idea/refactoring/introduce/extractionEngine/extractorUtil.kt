@@ -163,7 +163,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
             for (currentValue in controlFlow.outputValues)
                 for (newValue in newControlFlow.outputValues) {
                     if ((currentValue is ExpressionValue) != (newValue is ExpressionValue)) continue
-                    if (matchValues(currentValue, newValue)) continue @outer
+                    if (matchValues(currentValue, newValue)) continue@outer
                 }
         }
 

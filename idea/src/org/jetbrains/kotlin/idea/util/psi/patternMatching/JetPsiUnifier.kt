@@ -611,7 +611,7 @@ public class JetPsiUnifier(
             @outer
             for (specifier1 in delegationInfo1.orderInsensitive) {
                 for (specifier2 in delegationInfo2.orderInsensitive) {
-                    if (doUnify(specifier1, specifier2) != UNMATCHED) continue @outer
+                    if (doUnify(specifier1, specifier2) != UNMATCHED) continue@outer
                 }
                 return UNMATCHED
             }
