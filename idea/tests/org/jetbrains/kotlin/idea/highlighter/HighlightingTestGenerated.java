@@ -71,6 +71,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Todo.kt")
+    public void testTodo() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Todo.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypesAndAnnotations.kt")
     public void testTypesAndAnnotations() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/TypesAndAnnotations.kt");
