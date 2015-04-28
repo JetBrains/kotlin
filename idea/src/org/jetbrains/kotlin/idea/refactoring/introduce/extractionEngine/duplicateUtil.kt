@@ -91,7 +91,7 @@ public fun processDuplicates(
 
     var showAll = false
 
-    @duplicateReplacersLoop
+    duplicateReplacersLoop@
     for ((i, entry) in duplicateReplacers.entrySet().withIndex()) {
         val (pattern, replacer) = entry
         if (!pattern.isValid()) continue

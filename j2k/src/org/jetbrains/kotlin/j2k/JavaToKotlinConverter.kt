@@ -255,7 +255,7 @@ public class JavaToKotlinConverter(private val project: Project,
 
     private fun processUsages(refs: Collection<ReferenceInfo>) {
         for (fileRefs in refs.groupBy { it.file }.values()) { // group by file for faster sorting
-            @ReferenceLoop
+            ReferenceLoop@
             for ((reference, target, file, processings) in fileRefs.sortBy(ReferenceComparator)) {
                 val processors = when (reference.getElement().getLanguage()) {
                     JavaLanguage.INSTANCE -> processings.map { it.javaCodeProcessor }.filterNotNull()

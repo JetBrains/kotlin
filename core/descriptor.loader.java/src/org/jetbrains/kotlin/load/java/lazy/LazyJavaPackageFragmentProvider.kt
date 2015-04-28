@@ -46,7 +46,7 @@ public class LazyJavaPackageFragmentProvider(
                 else null
             }
 
-    private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues @lambda {
+    private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues lambda@ {
         jClass: JavaClass ->
         val fqName = jClass.getFqName()
         if (fqName == null) return@lambda null

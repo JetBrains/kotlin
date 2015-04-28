@@ -505,7 +505,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     var lineBreaksPresent: Int = 0
                     var neighbor: PsiElement? = null
 
-                    @siblingsLoop
+                    siblingsLoop@
                     for (sibling in decl.siblings(forward = after, withItself = false)) {
                         when (sibling) {
                             is PsiWhiteSpace -> lineBreaksPresent += (sibling.getText() ?: "").count { it == '\n' }

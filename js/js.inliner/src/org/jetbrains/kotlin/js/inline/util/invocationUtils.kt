@@ -44,7 +44,7 @@ public fun getSimpleName(call: JsInvocation): JsName? {
 public fun getSimpleIdent(call: JsInvocation): String? {
     var qualifier: JsExpression? = call.getQualifier()
 
-    @qualifiers while (qualifier != null) {
+    qualifiers@ while (qualifier != null) {
         when (qualifier) {
             is JsInvocation -> {
                 val callableQualifier = qualifier as JsInvocation

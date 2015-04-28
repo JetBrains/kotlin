@@ -136,7 +136,7 @@ public fun interpreterLoop(
     }
 
     try {
-        @loop while (true) {
+        loop@ while (true) {
             val insnOpcode = currentInsn.getOpcode()
             val insnType = currentInsn.getType()
 

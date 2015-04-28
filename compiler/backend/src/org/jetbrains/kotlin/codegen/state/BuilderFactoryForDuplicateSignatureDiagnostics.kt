@@ -85,7 +85,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
             }
         }
 
-        @signatures
+        signatures@
         for ((rawSignature, origins) in groupedBySignature.entrySet()) {
             if (origins.size() <= 1) continue
 

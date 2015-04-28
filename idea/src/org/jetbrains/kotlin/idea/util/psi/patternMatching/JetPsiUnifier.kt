@@ -608,7 +608,7 @@ public class JetPsiUnifier(
             val delegationInfo2 = getDelegationOrderInfo(decl2)
 
             if (delegationInfo1.orderInsensitive.size() != delegationInfo2.orderInsensitive.size()) return UNMATCHED
-            @outer
+            outer@
             for (specifier1 in delegationInfo1.orderInsensitive) {
                 for (specifier2 in delegationInfo2.orderInsensitive) {
                     if (doUnify(specifier1, specifier2) != UNMATCHED) continue@outer

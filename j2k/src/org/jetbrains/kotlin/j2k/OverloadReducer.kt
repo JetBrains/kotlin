@@ -145,7 +145,7 @@ class OverloadReducer(
                 .map { it.key }
                 .sortBy { -it.getParameterList().getParametersCount() } // we will try to drop them starting from ones with more parameters
 
-        @DropCandidatesLoop
+        DropCandidatesLoop@
         for (method in dropCandidates) {
             val paramCount = method.getParameterList().getParametersCount()
             val targetInfo = equivalenceMap[method]!!

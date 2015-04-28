@@ -33,7 +33,7 @@ object PrecedingCommentsBinder : WhitespacesAndCommentsBinder {
 
         // 2. bind plain comments
         var result = tokens.size()
-        @tokens for (idx in tokens.indices.reversed()) {
+        tokens@ for (idx in tokens.indices.reversed()) {
             val tokenType = tokens[idx]
             when (tokenType) {
                 JetTokens.WHITE_SPACE -> if (StringUtil.getLineBreakCount(getter[idx]) > 1) break@tokens
@@ -72,7 +72,7 @@ object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
         if (tokens.isEmpty()) return 0
 
         var result = 0
-        @tokens for (idx in tokens.indices) {
+        tokens@ for (idx in tokens.indices) {
             val tokenType = tokens[idx]
             when (tokenType) {
                 JetTokens.WHITE_SPACE -> if (StringUtil.containsLineBreak(getter[idx])) break@tokens

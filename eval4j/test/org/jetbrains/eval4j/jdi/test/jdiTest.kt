@@ -56,7 +56,7 @@ fun suite(): TestSuite {
 
     Thread {
         val eventQueue = vm.eventQueue()
-        @mainLoop while (true) {
+        mainLoop@ while (true) {
             val eventSet = eventQueue.remove()
             for (event in eventSet.eventIterator()) {
                 when (event) {

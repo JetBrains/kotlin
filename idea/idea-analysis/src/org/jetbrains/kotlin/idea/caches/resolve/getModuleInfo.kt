@@ -90,7 +90,7 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 
     val orderEntries = projectFileIndex.getOrderEntriesForFile(virtualFile)
 
-    @entries for (orderEntry in orderEntries) {
+    entries@ for (orderEntry in orderEntries) {
         when (orderEntry) {
             is LibraryOrderEntry -> {
                 val library = orderEntry.getLibrary() ?: continue@entries

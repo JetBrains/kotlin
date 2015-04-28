@@ -34,7 +34,7 @@ object DocCommentConverter {
         val html = StringBuilder {
             appendJavadocElements(docComment.getDescriptionElements())
 
-            @tagsLoop
+            tagsLoop@
             for (tag in docComment.getTags()) {
                 when (tag.getName()) {
                     "deprecated" -> continue@tagsLoop

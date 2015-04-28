@@ -299,7 +299,7 @@ private fun createKeywordWithLabelElement(keyword: String, label: String?): Look
 fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String): Collection<LookupElement> {
     val result = ArrayList<LookupElement>()
 
-    @parentsLoop
+    parentsLoop@
     for (parent in position.parents()) {
         when (parent) {
             is JetLoopExpression -> {

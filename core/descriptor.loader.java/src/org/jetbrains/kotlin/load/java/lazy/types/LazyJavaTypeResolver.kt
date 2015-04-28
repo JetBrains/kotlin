@@ -268,7 +268,7 @@ class LazyJavaTypeResolver(
             return (descriptor as ClassDescriptor).getMemberScope(getArguments())
         }
 
-        private val nullable = c.storageManager.createLazyValue @l {
+        private val nullable = c.storageManager.createLazyValue l@ {
             when (attr.flexibility) {
                 FLEXIBLE_LOWER_BOUND -> return@l false
                 FLEXIBLE_UPPER_BOUND -> return@l true

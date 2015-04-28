@@ -57,7 +57,7 @@ public class SyntheticKotlinBlock(
         var child = subBlocks.first()
         var treeNode: ASTNode? = null
 
-        @loop
+        loop@
         while (treeNode == null) when (child) {
             is AbstractBlock -> {
                 treeNode = (child as AbstractBlock).getNode()
