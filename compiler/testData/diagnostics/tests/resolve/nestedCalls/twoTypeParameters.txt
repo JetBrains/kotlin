@@ -1,0 +1,26 @@
+package
+
+internal fun </*0*/ D, /*1*/ E : D> kotlin.List<ResolutionTask<D, E>>.bar(/*0*/ t: ResolutionTask<D, E>): ResolutionTask<D, E>
+
+internal final class ResolutionCandidate</*0*/ A> {
+    public constructor ResolutionCandidate</*0*/ A>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class ResolutionTask</*0*/ B, /*1*/ C : B> {
+    public constructor ResolutionTask</*0*/ B, /*1*/ C : B>(/*0*/ candidate: ResolutionCandidate<B>)
+    internal final val candidate: ResolutionCandidate<B>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ResolutionTaskHolder</*0*/ F, /*1*/ G : F> {
+    public constructor ResolutionTaskHolder</*0*/ F, /*1*/ G : F>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal final fun test(/*0*/ candidate: ResolutionCandidate<F>, /*1*/ tasks: kotlin.MutableList<ResolutionTask<F, G>>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

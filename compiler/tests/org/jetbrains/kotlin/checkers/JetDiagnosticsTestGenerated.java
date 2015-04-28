@@ -10231,6 +10231,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls/kt5971NestedSafeCall.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("kt7597.kt")
+                public void testKt7597() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls/kt7597.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("twoTypeParameters.kt")
+                public void testTwoTypeParameters() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/nestedCalls/twoTypeParameters.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions")

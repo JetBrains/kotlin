@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.CALL
 import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
-import org.jetbrains.kotlin.resolve.calls.model.ArgumentUnmapped
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.utils.sure
 
@@ -67,12 +64,15 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valu
 
 public fun <C: ResolutionContext<C>> Call.hasUnresolvedArguments(context: ResolutionContext<C>): Boolean {
     val arguments = getValueArguments().map { it.getArgumentExpression() }
-    return arguments.any {
-        argument ->
-        val expressionType = argument?.let { context.trace.getBindingContext().getType(it) }
-        argument != null && !ArgumentTypeResolver.isFunctionLiteralArgument(argument, context)
-                && (expressionType == null || expressionType.isError())
-    }
+    return arguments.any (fun (argument: JetExpression?): Boolean {
+        if (argument == null || ArgumentTypeResolver.isFunctionLiteralArgument(argument, context)) return false
+
+        val resolvedCall = argument.getResolvedCall(context.trace.getBindingContext()) as MutableResolvedCall<*>?
+        if (resolvedCall != null && !resolvedCall.hasInferredReturnType()) return false
+
+        val expressionType = context.trace.getBindingContext().getType(argument)
+        return expressionType == null || expressionType.isError()
+    })
 }
 
 public fun Call.getValueArgumentsInParentheses(): List<ValueArgument> = getValueArguments().filterArgsInParentheses()
