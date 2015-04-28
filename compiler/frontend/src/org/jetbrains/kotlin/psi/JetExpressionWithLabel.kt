@@ -14,35 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeTypes;
+import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.JetNodeTypes
 
-public class JetExpressionWithLabel extends JetExpressionImpl {
+open public class JetExpressionWithLabel(node: ASTNode) : JetExpressionImpl(node) {
 
-    public JetExpressionWithLabel(@NotNull ASTNode node) {
-        super(node);
-    }
-    
-    @Nullable
-    public JetSimpleNameExpression getTargetLabel() {
-        JetContainerNode qualifier = (JetContainerNode) findChildByType(JetNodeTypes.LABEL_QUALIFIER);
-        if (qualifier == null) return null;
-        return (JetSimpleNameExpression) qualifier.findChildByType(JetNodeTypes.LABEL);
+    public fun getTargetLabel(): JetSimpleNameExpression? =
+            findChildByType<JetContainerNode>(JetNodeTypes.LABEL_QUALIFIER)?.
+            findChildByType(JetNodeTypes.LABEL) as? JetSimpleNameExpression
+
+    public fun getLabelName(): String? {
+        val labelElement = getTargetLabel()
+        assert(labelElement == null || labelElement.getText().startsWith("@"))
+        return labelElement?.getText()?.substring(1)
     }
 
-    @Nullable
-    public String getLabelName() {
-        JetSimpleNameExpression labelElement = getTargetLabel();
-        assert labelElement == null || labelElement.getText().startsWith("@");
-        return labelElement == null ? null : labelElement.getText().substring(1);
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitExpressionWithLabel(this, data);
-    }
+    override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D) = visitor.visitExpressionWithLabel(this, data)
 }
