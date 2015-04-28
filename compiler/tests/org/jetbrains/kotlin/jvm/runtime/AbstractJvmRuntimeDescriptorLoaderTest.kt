@@ -197,7 +197,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
                 visitor.visitPackageViewDescriptor(this, data)
 
-        override fun getContainingDeclaration() = throw UnsupportedOperationException()
+        override fun getContainingDeclaration() = null
         override fun getOriginal() = throw UnsupportedOperationException()
         override fun substitute(substitutor: TypeSubstitutor) = throw UnsupportedOperationException()
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
