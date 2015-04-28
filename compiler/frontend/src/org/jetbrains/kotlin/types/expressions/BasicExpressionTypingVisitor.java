@@ -269,7 +269,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     // Casting to a supertype in other contexts is unlikely to be useful.
     private static boolean checkExactTypeForUselessCast(JetBinaryExpressionWithTypeRHS expression) {
         PsiElement parent = expression.getParent();
-        while (parent instanceof JetParenthesizedExpression) {
+        while (parent instanceof JetParenthesizedExpression ||
+               parent instanceof JetLabeledExpression ||
+               parent instanceof JetAnnotatedExpression) {
             parent = parent.getParent();
         }
         if (parent instanceof JetValueArgument) {
