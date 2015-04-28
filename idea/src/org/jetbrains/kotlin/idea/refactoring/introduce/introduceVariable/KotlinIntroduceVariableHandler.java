@@ -472,8 +472,9 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
                 PsiElement parent = result != null ? result.getParent() : null;
                 if (parent instanceof JetBlockStringTemplateEntry) {
-                    JetStringTemplateEntryWithExpression newEntry =
-                            RemoveCurlyBracesFromTemplateIntention.INSTANCE.convertIfApplicable((JetBlockStringTemplateEntry) parent);
+                    RemoveCurlyBracesFromTemplateIntention intention = new RemoveCurlyBracesFromTemplateIntention();
+                    JetBlockStringTemplateEntry entry = (JetBlockStringTemplateEntry) parent;
+                    JetStringTemplateEntryWithExpression newEntry = intention.isApplicableTo(entry) ? intention.applyTo(entry) : entry;
                     result = newEntry.getExpression();
                 }
 

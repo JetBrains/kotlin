@@ -22,30 +22,26 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import java.util.regex.*
 import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 
-public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBlockStringTemplateEntry>(
-        "remove.unnecessary.curly.brackets.from.string.template", javaClass()) {
-
-    companion object {
-        val INSTANCE = RemoveCurlyBracesFromTemplateIntention()
-        val pattern = Pattern.compile("[a-zA-Z0-9_].*")
-    }
-
+public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBlockStringTemplateEntry>(javaClass(), "Remove curly braces from variable") {
     override fun isApplicableTo(element: JetBlockStringTemplateEntry): Boolean {
+        if (element.getExpression() !is JetSimpleNameExpression) return false
         val nextSiblingText = element.getNextSibling()?.getText()
-        if (nextSiblingText != null && pattern.matcher(nextSiblingText).matches()) return false
-        return element.getExpression() is JetSimpleNameExpression
-    }
-
-    fun convertIfApplicable(element: JetBlockStringTemplateEntry): JetStringTemplateEntryWithExpression {
-        if (!isApplicableTo(element)) return element
-
-        val name = (element.getExpression() as JetSimpleNameExpression).getReferencedName()
-        val newEntry = JetPsiFactory(element).createSimpleNameStringTemplateEntry(name)
-        return element.replace(newEntry) as JetStringTemplateEntryWithExpression
+        return nextSiblingText == null || !pattern.matcher(nextSiblingText).matches()
     }
 
     override fun applyTo(element: JetBlockStringTemplateEntry, editor: Editor) {
-        convertIfApplicable(element)
+        applyTo(element)
+    }
+
+    public fun applyTo(element: JetBlockStringTemplateEntry): JetStringTemplateEntryWithExpression {
+        val name = (element.getExpression() as JetSimpleNameExpression).getReferencedName()
+        val newEntry = JetPsiFactory(element).createSimpleNameStringTemplateEntry(name)
+        return element.replaced(newEntry)
+    }
+
+    companion object {
+        private val pattern = Pattern.compile("[a-zA-Z0-9_].*")
     }
 }
