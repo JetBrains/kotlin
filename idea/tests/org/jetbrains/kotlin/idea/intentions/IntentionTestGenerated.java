@@ -4349,93 +4349,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/makeTypeExplicitInLambda")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class MakeTypeExplicitInLambda extends AbstractIntentionTest {
-        public void testAllFilesPresentInMakeTypeExplicitInLambda() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/makeTypeExplicitInLambda"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("coercionToUnit.kt")
-        public void testCoercionToUnit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/coercionToUnit.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("emptyParamListWithBrackets.kt")
-        public void testEmptyParamListWithBrackets() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/emptyParamListWithBrackets.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("emptyParamListWithIt.kt")
-        public void testEmptyParamListWithIt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/emptyParamListWithIt.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("emptyParamListWithWhiteSpace.kt")
-        public void testEmptyParamListWithWhiteSpace() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/emptyParamListWithWhiteSpace.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("emptyParamListWithoutItWithArrow.kt")
-        public void testEmptyParamListWithoutItWithArrow() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/emptyParamListWithoutItWithArrow.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("invalidCursorPosition.kt")
-        public void testInvalidCursorPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/invalidCursorPosition.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("lambdaWithLambdaAsParam.kt")
-        public void testLambdaWithLambdaAsParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/lambdaWithLambdaAsParam.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("manyNewlines.kt")
-        public void testManyNewlines() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/manyNewlines.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multipleParam.kt")
-        public void testMultipleParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/multipleParam.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("shortenReferencesForParams.kt")
-        public void testShortenReferencesForParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/shortenReferencesForParams.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("singleParam.kt")
-        public void testSingleParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/singleParam.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("typesAlreadyExplicit.kt")
-        public void testTypesAlreadyExplicit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/typesAlreadyExplicit.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("typesNotInferable.kt")
-        public void testTypesNotInferable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeExplicitInLambda/typesNotInferable.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/makeTypeImplicitInLambda")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5795,6 +5708,93 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+    }
+
+    @TestMetadata("idea/testData/intentions/specifyExplicitLambdaSignature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SpecifyExplicitLambdaSignature extends AbstractIntentionTest {
+        public void testAllFilesPresentInSpecifyExplicitLambdaSignature() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/specifyExplicitLambdaSignature"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("coercionToUnit.kt")
+        public void testCoercionToUnit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/coercionToUnit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyParamListWithBrackets.kt")
+        public void testEmptyParamListWithBrackets() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/emptyParamListWithBrackets.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyParamListWithIt.kt")
+        public void testEmptyParamListWithIt() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/emptyParamListWithIt.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyParamListWithWhiteSpace.kt")
+        public void testEmptyParamListWithWhiteSpace() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/emptyParamListWithWhiteSpace.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("emptyParamListWithoutItWithArrow.kt")
+        public void testEmptyParamListWithoutItWithArrow() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/emptyParamListWithoutItWithArrow.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("invalidCursorPosition.kt")
+        public void testInvalidCursorPosition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/invalidCursorPosition.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaWithLambdaAsParam.kt")
+        public void testLambdaWithLambdaAsParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/lambdaWithLambdaAsParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("manyNewlines.kt")
+        public void testManyNewlines() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/manyNewlines.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleParam.kt")
+        public void testMultipleParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/multipleParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortenReferencesForParams.kt")
+        public void testShortenReferencesForParams() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/shortenReferencesForParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleParam.kt")
+        public void testSingleParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/singleParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typesAlreadyExplicit.kt")
+        public void testTypesAlreadyExplicit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/typesAlreadyExplicit.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typesNotInferable.kt")
+        public void testTypesNotInferable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyExplicitLambdaSignature/typesNotInferable.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/specifyType")

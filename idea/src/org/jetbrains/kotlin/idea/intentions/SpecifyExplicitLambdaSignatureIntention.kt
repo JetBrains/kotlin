@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class MakeTypeExplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Make types explicit in lambda") {
+public class SpecifyExplicitLambdaSignatureIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Specify explicit lambda signature") {
 
     override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
         val arrow = element.getFunctionLiteral().getArrowNode()
