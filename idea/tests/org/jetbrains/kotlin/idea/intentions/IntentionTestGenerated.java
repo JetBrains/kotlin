@@ -4591,15 +4591,15 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("moveLambda7.kt")
-        public void testMoveLambda7() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/moveLambda7.kt");
+        @TestMetadata("moveLambda5.kt")
+        public void testMoveLambda5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/moveLambda5.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("moveLambda8.kt")
-        public void testMoveLambda8() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/moveLambda8.kt");
+        @TestMetadata("moveLambda6.kt")
+        public void testMoveLambda6() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/moveLambda6.kt");
             doTest(fileName);
         }
     }

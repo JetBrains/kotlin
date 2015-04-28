@@ -18,23 +18,25 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveLambdaOutsideParentheses
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetLabeledExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 
-public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingOffsetIndependentIntention<JetCallExpression>(
-        "move.lambda.outside.parentheses", javaClass()) {
+public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Move lambda argument out of parentheses") {
+    override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
+        val argument = element.getValueArgumentsInParentheses().lastOrNull() ?: return false
+        val expression = argument.getArgumentExpression() ?: return false
+        val functionLiteral = getFunctionLiteral(expression) ?: return false
+        if (caretOffset < argument.asElement().getTextRange().getStartOffset()) return false
+        val bodyRange = functionLiteral.getBodyExpression()?.getTextRange() ?: return true
+        return caretOffset <= bodyRange.getStartOffset() || caretOffset >= bodyRange.getEndOffset()
+    }
 
-    private fun isLambdaOrLabeledLambda(expression: JetExpression?): Boolean =
-            expression is JetFunctionLiteralExpression ||
-                    (expression is JetLabeledExpression && isLambdaOrLabeledLambda(expression.getBaseExpression()))
-
-    override fun isApplicableTo(element: JetCallExpression): Boolean {
-        val args = element.getValueArgumentsInParentheses()
-        return args.size > 0 && isLambdaOrLabeledLambda(args.last?.getArgumentExpression())
+    private fun getFunctionLiteral(expression: JetExpression?): JetFunctionLiteral? {
+        return when (expression) {
+            is JetFunctionLiteralExpression -> expression.getFunctionLiteral()
+            is JetLabeledExpression -> getFunctionLiteral(expression.getBaseExpression())
+            else -> null
+        }
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {

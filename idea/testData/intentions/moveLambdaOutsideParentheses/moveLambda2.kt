@@ -1,6 +1,6 @@
 // IS_APPLICABLE: true
 fun foo() {
-    bar<caret>(a = 2, b = { it })
+    bar(a = 2, b = {<caret> it })
 }
 
 fun bar(a: Int, b: (Int) -> Int) {

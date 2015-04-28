@@ -3,7 +3,7 @@
 // ERROR: No value passed for parameter b
 // ERROR: Unresolved reference: it
 fun foo() {
-    bar<caret>({ it })
+    bar({ it <caret>})
 }
 
 fun bar(a: Int, b: (Int) -> Int) {
