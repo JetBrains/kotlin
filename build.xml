@@ -426,14 +426,6 @@
             <arg value="core/builtins/native"/>
             <arg value="core/builtins/src"/>
         </java>
-
-        <!-- TODO: remove after bootstrap -->
-        <copy file="${output}/builtins/kotlin/.kotlin_package" tofile="${output}/builtins/kotlin/kotlin.kotlin_package"/>
-        <copy file="${output}/builtins/kotlin/.kotlin_string_table" tofile="${output}/builtins/kotlin/kotlin.kotlin_string_table"/>
-        <copy file="${output}/builtins/kotlin/internal/.kotlin_package" tofile="${output}/builtins/kotlin/internal/internal.kotlin_package"/>
-        <copy file="${output}/builtins/kotlin/internal/.kotlin_string_table" tofile="${output}/builtins/kotlin/internal/internal.kotlin_string_table"/>
-        <copy file="${output}/builtins/kotlin/reflect/.kotlin_package" tofile="${output}/builtins/kotlin/reflect/reflect.kotlin_package"/>
-        <copy file="${output}/builtins/kotlin/reflect/.kotlin_string_table" tofile="${output}/builtins/kotlin/reflect/reflect.kotlin_string_table"/>
     </target>
 
     <macrodef name="pack-compiler">
