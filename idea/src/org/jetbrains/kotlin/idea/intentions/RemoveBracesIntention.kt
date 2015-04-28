@@ -61,10 +61,10 @@ public class RemoveBracesIntention : JetSelfTargetingIntention<JetBlockExpressio
                 if (construct.getPrevSibling() is PsiWhiteSpace) {
                     construct.getPrevSibling()!!.replace(psiFactory.createNewLine())
                 }
-                val commentElement = construct.getParent()!!.addBefore(sibling as PsiComment, construct.getPrevSibling())
+                val commentElement = construct.getParent()!!.addBefore(sibling, construct.getPrevSibling())
                 construct.getParent()!!.addBefore(psiFactory.createNewLine(), commentElement)
             }
-            sibling = sibling!!.getNextSibling()
+            sibling = sibling.getNextSibling()
         }
     }
 }
