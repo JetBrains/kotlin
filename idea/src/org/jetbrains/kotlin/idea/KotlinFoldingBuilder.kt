@@ -18,11 +18,12 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.codeInsight.folding.JavaCodeFoldingSettings
 import com.intellij.lang.ASTNode
-import com.intellij.lang.folding.FoldingBuilderEx
+import com.intellij.lang.folding.CustomFoldingBuilder
 import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.JetNodeTypes
@@ -31,15 +32,13 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetImportList
-import java.util.ArrayList
 
-public class KotlinFoldingBuilder : FoldingBuilderEx(), DumbAware {
-    override fun buildFoldRegions(root: PsiElement, document: Document, quick: Boolean): Array<FoldingDescriptor> {
+public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
+    override fun buildLanguageFoldRegions(descriptors: MutableList<FoldingDescriptor>,
+                                          root: PsiElement, document: Document, quick: Boolean) {
         if (root !is JetFile) {
-            return FoldingDescriptor.EMPTY
+            return
         }
-        val descriptors = ArrayList<FoldingDescriptor>()
-
         val imports = root.getImportDirectives()
         if (imports.size() > 1) {
             val importKeyword = imports.get(0).getFirstChild()
@@ -55,7 +54,6 @@ public class KotlinFoldingBuilder : FoldingBuilderEx(), DumbAware {
         }
 
         appendDescriptors(root.getNode(), document, descriptors)
-        return descriptors.copyToArray()
     }
 
     private fun appendDescriptors(node: ASTNode, document: Document, descriptors: MutableList<FoldingDescriptor>) {
@@ -96,35 +94,32 @@ public class KotlinFoldingBuilder : FoldingBuilderEx(), DumbAware {
     private fun isOneLine(textRange: TextRange, document: Document) =
         document.getLineNumber(textRange.getStartOffset()) == document.getLineNumber(textRange.getEndOffset())
 
-    override fun getPlaceholderText(node: ASTNode): String? {
-        if (node.getElementType() == JetTokens.BLOCK_COMMENT) {
-            return "/.../"
-        }
-        if (node.getElementType() == KDocTokens.KDOC) {
-            return "/**...*/"
-        }
-        if (node.getPsi() is JetImportList) {
-            return "..."
-        }
-        return "{...}"
+    override fun getLanguagePlaceholderText(node: ASTNode, range: TextRange): String = when {
+        node.getElementType() == JetTokens.BLOCK_COMMENT -> "/.../"
+        node.getElementType() == KDocTokens.KDOC -> "/**...*/"
+        node.getPsi() is JetImportList -> "..."
+        else ->  "{...}"
     }
 
-    override fun isCollapsedByDefault(astNode: ASTNode): Boolean {
+    override fun isRegionCollapsedByDefault(node: ASTNode): Boolean {
         val settings = JavaCodeFoldingSettings.getInstance()
 
-        if (astNode.getPsi() is JetImportList) {
+        if (node.getPsi() is JetImportList) {
             return settings.isCollapseImports()
         }
 
-        val type = astNode.getElementType()
+        val type = node.getElementType()
         if (type == JetTokens.BLOCK_COMMENT || type == KDocTokens.KDOC) {
-            if (isFirstElementInFile(astNode.getPsi())) {
+            if (isFirstElementInFile(node.getPsi())) {
                 return settings.isCollapseFileHeader()
             }
         }
 
         return false
     }
+
+    override fun isCustomFoldingRoot(node: ASTNode)
+        = node.getElementType() == JetNodeTypes.BLOCK || node.getElementType() == JetNodeTypes.CLASS_BODY
 
     private fun isFirstElementInFile(element: PsiElement): Boolean {
         val parent = element.getParent()
