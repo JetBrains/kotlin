@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.checkers;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.dataFlow.DataFlowInspection;
 import com.intellij.codeInspection.nullable.NullableStuffInspection;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
@@ -26,7 +27,9 @@ import com.siyeh.ig.bugs.StaticCallOnSubclassInspection;
 import com.siyeh.ig.bugs.StaticFieldReferenceOnSubclassInspection;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.utils.UtilsPackage;
@@ -55,28 +58,54 @@ public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
         throw new IllegalArgumentException("Can't find inspection tool with identifier: " + toolString);
     }
 
-    @Override
-    protected LocalInspectionTool[] configureLocalInspectionTools() {
+    @Nullable
+    protected String getConfigFileText() {
         File configureFile = new File(getTestDataPath(), getTestName(false) + ".txt");
-
-        if (!configureFile.exists()) return DEFAULT_TOOLS;
+        if (!configureFile.exists()) return null;
 
         try {
-            String configureText = FileUtil.loadFile(configureFile, true);
-
-            InTextDirectivesUtils.assertHasUnknownPrefixes(configureText, KotlinPackage.listOf("TOOL:"));
-            List<String> toolsStrings = InTextDirectivesUtils.findListWithPrefixes(configureText, "TOOL:");
-
-            return ArrayUtil.toObjectArray(KotlinPackage.map(toolsStrings, new Function1<String, LocalInspectionTool>() {
-                @Override
-                public LocalInspectionTool invoke(String toolString) {
-                    return mapStringToTool(toolString);
-                }
-            }), LocalInspectionTool.class);
+            return FileUtil.loadFile(configureFile, true);
         }
         catch (IOException e) {
             throw UtilsPackage.rethrow(e);
         }
+    }
+
+    @Override
+    protected LocalInspectionTool[] configureLocalInspectionTools() {
+        String configFileText = getConfigFileText();
+        if (configFileText == null) return DEFAULT_TOOLS;
+
+        List<String> toolsStrings = InTextDirectivesUtils.findListWithPrefixes(configFileText, "TOOL:");
+
+        return ArrayUtil.toObjectArray(KotlinPackage.map(toolsStrings, new Function1<String, LocalInspectionTool>() {
+            @Override
+            public LocalInspectionTool invoke(String toolString) {
+                return mapStringToTool(toolString);
+            }
+        }), LocalInspectionTool.class);
+    }
+
+    @Override
+    protected Module createMainModule() throws IOException {
+        Module module = super.createMainModule();
+
+        String configFileText = getConfigFileText();
+        if (configFileText != null && InTextDirectivesUtils.isDirectiveDefined(configFileText, "// WITH_RUNTIME")) {
+            ConfigLibraryUtil.configureKotlinRuntime(module);
+        }
+
+        return module;
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Override
@@ -118,6 +147,10 @@ public class KotlinAndJavaCheckerTest extends KotlinDaemonAnalyzerTestCase {
     }
 
     public void testImplementedMethodsFromTraits() throws Exception {
+        doTest();
+    }
+
+    public void testJvmOverloadsFunctions() throws Exception {
         doTest();
     }
 
