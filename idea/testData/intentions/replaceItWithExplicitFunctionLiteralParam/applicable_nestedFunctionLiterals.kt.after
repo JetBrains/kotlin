@@ -1,2 +1,2 @@
 fun foo(i: (Int) -> Int) = 0
-val x = foo { <caret>it -> foo { x -> x + it } }
+val x = foo { it -> foo { x -> x + <caret>it } }

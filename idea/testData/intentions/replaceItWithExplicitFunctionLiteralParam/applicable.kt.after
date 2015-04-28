@@ -1,2 +1,2 @@
 fun applyTwice<A>(f: (A) -> A, x: A) = f(f(x))
-val x = applyTwice({ <caret>it -> it + 1 }, 40)
+val x = applyTwice({ it -> <caret>it + 1 }, 40)

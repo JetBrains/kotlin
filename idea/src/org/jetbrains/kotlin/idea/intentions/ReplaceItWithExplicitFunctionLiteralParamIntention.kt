@@ -55,7 +55,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTarge
         PsiDocumentManager.getInstance(element.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
 
         val paramToRename = functionLiteral.getValueParameters().single()
-        editor.getCaretModel().moveToOffset(paramToRename.getTextOffset())
+        editor.getCaretModel().moveToOffset(element.getTextOffset())
         VariableInplaceRenameHandler().doRename(paramToRename, editor, null)
     }
 }
