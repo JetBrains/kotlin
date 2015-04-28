@@ -20,15 +20,14 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 
-public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingOffsetIndependentIntention<JetParenthesizedExpression>(
-        "remove.unnecessary.parentheses", javaClass()
-) {
-    override fun isApplicableTo(element: JetParenthesizedExpression): Boolean = JetPsiUtil.areParenthesesUseless(element)
+public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingIntention<JetParenthesizedExpression>(javaClass(), "Remove unnecessary parentheses") {
+    override fun isApplicableTo(element: JetParenthesizedExpression, caretOffset: Int): Boolean {
+        val expression = element.getExpression() ?: return false
+        if (!JetPsiUtil.areParenthesesUseless(element)) return false
+        return !expression.getTextRange().containsInside(caretOffset)
+    }
 
     override fun applyTo(element: JetParenthesizedExpression, editor: Editor) {
-        with (element.getExpression()) {
-            assert (this != null, "parenthesizedExpression.getExpression() == null despite @IfNotParsed annotation")
-            element.replace(this!!)
-        }
+        element.replace(element.getExpression()!!)
     }
 }

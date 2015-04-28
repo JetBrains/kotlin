@@ -24,8 +24,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetFunctionLiteralArgument>(javaClass(), "Move lambda argument into parentheses") {
     override fun isApplicableTo(element: JetFunctionLiteralArgument, caretOffset: Int): Boolean {
         val body = element.getFunctionLiteral().getBodyExpression() ?: return true
-        val bodyRange = body.getTextRange()
-        return caretOffset <= bodyRange.getStartOffset() || caretOffset >= bodyRange.getEndOffset()
+        return !body.getTextRange().containsInside(caretOffset)
     }
 
     override fun applyTo(element: JetFunctionLiteralArgument, editor: Editor) {

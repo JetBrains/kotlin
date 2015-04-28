@@ -16,17 +16,15 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 fun specifyTypeExplicitly(declaration: JetNamedFunction, typeText: String) {
     specifyTypeExplicitly(declaration, JetPsiFactory(declaration).createType(typeText))
@@ -71,3 +69,5 @@ fun JetContainerNode.description(): String? {
     }
     return null
 }
+
+fun TextRange.containsInside(offset: Int) = getStartOffset() < offset && offset < getEndOffset()

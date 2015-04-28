@@ -28,7 +28,7 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
         val functionLiteral = getFunctionLiteral(expression) ?: return false
         if (caretOffset < argument.asElement().getTextRange().getStartOffset()) return false
         val bodyRange = functionLiteral.getBodyExpression()?.getTextRange() ?: return true
-        return caretOffset <= bodyRange.getStartOffset() || caretOffset >= bodyRange.getEndOffset()
+        return !bodyRange.containsInside(caretOffset)
     }
 
     private fun getFunctionLiteral(expression: JetExpression?): JetFunctionLiteral? {
