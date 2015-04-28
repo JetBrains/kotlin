@@ -794,7 +794,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.MakeTypeImplicitInLambdaIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveExplicitLambdaParameterTypesIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.lexer.JetTokens
 
-public class MakeTypeImplicitInLambdaIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Make types implicit in lambda (may break code)") {
+public class RemoveExplicitLambdaParameterTypesIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Remove explicit lambda parameter types (may break code)") {
     override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
         if (element.getValueParameters().none { it.getTypeReference() != null }) return false
         val arrow = element.getFunctionLiteral().getArrowNode() ?: return false

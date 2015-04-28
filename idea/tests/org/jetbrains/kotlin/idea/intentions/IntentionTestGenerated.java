@@ -4349,51 +4349,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/makeTypeImplicitInLambda")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class MakeTypeImplicitInLambda extends AbstractIntentionTest {
-        public void testAllFilesPresentInMakeTypeImplicitInLambda() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/makeTypeImplicitInLambda"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("invalidCursorPosition.kt")
-        public void testInvalidCursorPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/invalidCursorPosition.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("lambdaWithLambdaAsParam.kt")
-        public void testLambdaWithLambdaAsParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/lambdaWithLambdaAsParam.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multipleExplicitParams.kt")
-        public void testMultipleExplicitParams() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/multipleExplicitParams.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("paramTypeDeclared.kt")
-        public void testParamTypeDeclared() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/paramTypeDeclared.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("singleExplicitParam.kt")
-        public void testSingleExplicitParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/singleExplicitParam.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("typesAlreadyImplicit.kt")
-        public void testTypesAlreadyImplicit() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/makeTypeImplicitInLambda/typesAlreadyImplicit.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/moveLambdaInsideParentheses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -4906,6 +4861,51 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("unnecessaryBrackets6.kt")
         public void testUnnecessaryBrackets6() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeCurlyBracesFromTemplate/unnecessaryBrackets6.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveExplicitLambdaParameterTypes extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveExplicitLambdaParameterTypes() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitLambdaParameterTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("invalidCursorPosition.kt")
+        public void testInvalidCursorPosition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/invalidCursorPosition.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaWithLambdaAsParam.kt")
+        public void testLambdaWithLambdaAsParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/lambdaWithLambdaAsParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleExplicitParams.kt")
+        public void testMultipleExplicitParams() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/multipleExplicitParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("paramTypeDeclared.kt")
+        public void testParamTypeDeclared() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/paramTypeDeclared.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singleExplicitParam.kt")
+        public void testSingleExplicitParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/singleExplicitParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typesAlreadyImplicit.kt")
+        public void testTypesAlreadyImplicit() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitLambdaParameterTypes/typesAlreadyImplicit.kt");
             doTest(fileName);
         }
     }
