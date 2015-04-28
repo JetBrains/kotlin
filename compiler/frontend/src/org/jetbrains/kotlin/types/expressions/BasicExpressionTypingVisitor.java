@@ -62,7 +62,6 @@ import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
@@ -249,8 +248,15 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         Collection<JetType> possibleTypes = DataFlowUtils.getAllPossibleTypes(
                 expression.getLeft(), context.dataFlowInfo, actualType, context);
+
+        // Casting to a supertype may be useful to select an exact overload of a method, but is most likely
+        // useless in other contexts.
+        boolean checkExactType = expression.getParent() instanceof JetValueArgument;
         for (JetType possibleType : possibleTypes) {
-            if (possibleType.equals(targetType)) {
+            boolean castIsUseless = checkExactType
+                                    ? possibleType.equals(targetType)
+                                    : typeChecker.isSubtypeOf(possibleType, targetType);
+            if (castIsUseless) {
                 context.trace.report(USELESS_CAST.on(expression));
                 return;
             }
