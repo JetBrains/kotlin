@@ -642,8 +642,7 @@ private fun ExtractionData.inferParametersInfo(
             val extractFunctionRef =
                     options.captureLocalFunctions
                     && originalRef.getReferencedName() == originalDescriptor.getName().asString() // to forbid calls by convention
-                    && originalDescriptor is FunctionDescriptor
-                    && DescriptorUtils.isLocal(originalDescriptor)
+                    && originalDeclaration is JetNamedFunction && originalDeclaration.isLocal()
                     && (targetScope == null || originalDescriptor !in targetScope.getFunctions(originalDescriptor.getName()))
 
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
