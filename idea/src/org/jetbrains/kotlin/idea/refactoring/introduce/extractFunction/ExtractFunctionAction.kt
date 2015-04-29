@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction
 
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.lang.refactoring.RefactoringSupportProvider
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringSupportProvider
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 
 public class ExtractFunctionAction: AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
-            (provider as? JetRefactoringSupportProvider)?.getExtractFunctionHandler()
+            (provider as? KotlinRefactoringSupportProvider)?.getExtractFunctionHandler()
 }
 
 public class ExtractFunctionToScopeAction: AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
-            (provider as? JetRefactoringSupportProvider)?.getExtractFunctionToScopeHandler()
+            (provider as? KotlinRefactoringSupportProvider)?.getExtractFunctionToScopeHandler()
 }
