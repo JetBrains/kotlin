@@ -8192,6 +8192,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/types"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("arrayList.kt")
+                public void testArrayList() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/arrayList.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("returnCollection.kt")
                 public void testReturnCollection() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/returnCollection.kt");
@@ -8207,6 +8213,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("shapeMismatchInCovariantPositionGeneric.kt")
                 public void testShapeMismatchInCovariantPositionGeneric() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/shapeMismatchInCovariantPositionGeneric.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeParameter.kt")
+                public void testTypeParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/typeParameter.kt");
                     doTest(fileName);
                 }
             }

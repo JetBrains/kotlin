@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.load.java.components
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.components.MutabilityQualifier.MUTABLE
 import org.jetbrains.kotlin.load.java.components.MutabilityQualifier.READ_ONLY
 import org.jetbrains.kotlin.load.java.components.NullabilityQualifier.NOT_NULL
@@ -62,18 +64,18 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
     val shouldEnhance = position.shouldEnhance()
     if (!shouldEnhance && getArguments().isEmpty()) return Result(this, 1)
 
-    val originalClass = getConstructor().getDeclarationDescriptor() as? ClassDescriptor
+    val originalClass = getConstructor().getDeclarationDescriptor()
                         ?: return Result(this, 1)
 
     val effectiveQualifiers = qualifiers(index)
-    val enhancedClass = originalClass.enhanceMutability(effectiveQualifiers, position)
+    val enhancedClassifier = originalClass.enhanceMutability(effectiveQualifiers, position)
 
     var globalArgIndex = index + 1
     val enhancedArguments = getArguments().mapIndexed {
         localArgIndex, arg ->
         if (arg.isStarProjection()) {
             globalArgIndex++
-            TypeUtils.makeStarProjection(enhancedClass.getTypeConstructor().getParameters()[localArgIndex])
+            TypeUtils.makeStarProjection(enhancedClassifier.getTypeConstructor().getParameters()[localArgIndex])
         }
         else {
             val (enhancedType, subtreeSize) = arg.getType().enhancePossiblyFlexible(qualifiers, globalArgIndex)
@@ -87,18 +89,21 @@ private fun JetType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers, i
 
     val enhancedType = JetTypeImpl(
             getAnnotations(),
-            enhancedClass.getTypeConstructor(),
+            enhancedClassifier.getTypeConstructor(),
             this.getEnhancedNullability(effectiveQualifiers, position),
             enhancedArguments,
-            enhancedClass.getMemberScope(enhancedArguments)
+            if (enhancedClassifier is ClassDescriptor)
+                enhancedClassifier.getMemberScope(enhancedArguments)
+            else enhancedClassifier.getDefaultType().getMemberScope()
     )
     return Result(enhancedType, globalArgIndex - index)
 }
 
 private fun TypeComponentPosition.shouldEnhance() = this != TypeComponentPosition.INFLEXIBLE
 
-private fun ClassDescriptor.enhanceMutability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): ClassDescriptor {
+private fun ClassifierDescriptor.enhanceMutability(qualifiers: JavaTypeQualifiers, position: TypeComponentPosition): ClassifierDescriptor {
     if (!position.shouldEnhance()) return this
+    if (this !is ClassDescriptor) return this // mutability is not applicable for type parameters
 
     val mapping = JavaToKotlinClassMap.INSTANCE
 
