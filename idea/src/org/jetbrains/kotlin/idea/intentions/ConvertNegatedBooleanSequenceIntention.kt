@@ -63,12 +63,12 @@ public class ConvertNegatedBooleanSequenceIntention : JetSelfTargetingOffsetInde
 
         var currentItem: JetBinaryExpression? = expression
         while (currentItem != null) {
-            if (currentItem!!.getOperationToken() != firstOperator) return null //Boolean sequence must be homogenous
+            if (currentItem.getOperationToken() != firstOperator) return null //Boolean sequence must be homogeneous
 
-            val rightChild = currentItem!!.getRight() as? JetPrefixExpression ?: return null
+            val rightChild = currentItem.getRight() as? JetPrefixExpression ?: return null
             itemList.add(rightChild)
 
-            val leftChild = currentItem!!.getLeft()
+            val leftChild = currentItem.getLeft()
             when (leftChild) {
                 is JetPrefixExpression -> itemList.add(leftChild)
                 !is JetBinaryExpression -> return null
