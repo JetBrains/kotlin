@@ -124,6 +124,10 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestInplaceRename(null)
     }
 
+    public fun testLabelFromFunction() {
+        doTestInplaceRename("foo")
+    }
+
     private fun doTestInplaceRename(newName: String?) {
         configureByFile(getTestName(false) + ".kt")
         val element = TargetElementUtilBase.findTargetElement(

@@ -1,0 +1,5 @@
+fun xyzzy(): Any {
+    fun foo(): Int {
+        return@foo 1
+    }
+}

@@ -61,7 +61,11 @@ public class JetSimpleNameReference(
         return super.isReferenceTo(element)
     }
 
-    override fun getRangeInElement(): TextRange = TextRange(0, getElement().getTextLength())
+    override fun getRangeInElement(): TextRange {
+        val element = getElement().getReferencedNameElement()
+        val startOffset = getElement().getTextRange().getStartOffset()
+        return element.getTextRange().shiftRight(-startOffset)
+    }
 
     override fun canRename(): Boolean {
         if (expression.getParentOfTypeAndBranch<JetWhenConditionInRange>(strict = true){ getOperationReference() } != null) return false
