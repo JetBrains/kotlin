@@ -1,0 +1,4 @@
+fun foo(p: List<String?>, b: Boolean) {
+    var v: String? = p[0] ?: <caret>return
+    if (b) v = null
+}

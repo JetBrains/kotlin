@@ -52,9 +52,9 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
         val value = calcValue(declaration)!!
 
         if (!declaration.hasDeclaredReturnType() && declaration is JetNamedFunction) {
-            val valueType = expressionType(value)
+            val valueType = value.analyze().getType(value)
             if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
-                specifyTypeExplicitly(declaration, "Unit")
+                declaration.setType(KotlinBuiltIns.getInstance().getUnitType())
             }
         }
 
@@ -114,7 +114,7 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
 
             is JetExpression -> {
                 if (statement is JetBinaryExpression && statement.getOperationToken() == JetTokens.EQ) return null // assignment does not have value
-                val expressionType = expressionType(statement) ?: return null
+                val expressionType = statement.analyze().getType(statement) ?: return null
                 if (!KotlinBuiltIns.isUnit(expressionType) && !KotlinBuiltIns.isNothing(expressionType)) return null
                 return statement
             }

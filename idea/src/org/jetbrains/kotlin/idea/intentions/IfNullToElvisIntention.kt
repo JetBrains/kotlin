@@ -37,21 +37,24 @@ public class IfNullToElvisIntention : JetSelfTargetingOffsetIndependentIntention
         val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return false
         if (!type.isNothing()) return false
 
-        //TODO: what if implicit var's type will change?
-
         return true
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
-        val (initializer, statement, ifNullExpr) = calcData(element)!!
+        val (initializer, declaration, ifNullExpr) = calcData(element)!!
         val factory = JetPsiFactory(element)
+
+        val explicitTypeToAdd = if (declaration.isVar() && declaration.getTypeReference() == null)
+            initializer.analyze().getType(initializer)
+        else
+            null
 
         // do not loose any comments!
         val comments = element.extractComments(ifNullExpr)
 
         for (comment in comments) {
-            statement.add(factory.createWhiteSpace())
-            statement.add(comment)
+            declaration.add(factory.createWhiteSpace())
+            declaration.add(comment)
         }
 
         val elvis = factory.createExpression("a ?: b") as JetBinaryExpression
@@ -60,12 +63,16 @@ public class IfNullToElvisIntention : JetSelfTargetingOffsetIndependentIntention
         val newElvis = initializer.replaced(elvis)
         element.delete()
 
+        if (explicitTypeToAdd != null && !explicitTypeToAdd.isError()) {
+            declaration.setType(explicitTypeToAdd)
+        }
+
         editor.getCaretModel().moveToOffset(newElvis.getRight()!!.getTextOffset())
     }
 
     private data class Data(
             val initializer: JetExpression,
-            val statement: JetExpression,
+            val declaration: JetVariableDeclaration,
             val ifNullExpression: JetExpression
     )
 

@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.JetType
 
 public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarationWithBody>(
         javaClass(), "Convert to block body", firstElementOfTypeOnly = true
@@ -33,7 +32,7 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
 
         when (element) {
             is JetNamedFunction -> {
-                val returnType = functionReturnType(element) ?: return false
+                val returnType = element.returnType() ?: return false
                 if (!element.hasDeclaredReturnType() && returnType.isError()) return false// do not convert when type is implicit and unknown
                 return true
             }
@@ -53,7 +52,7 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
             val body = declaration.getBodyExpression()!!
 
             fun generateBody(returnsValue: Boolean): JetExpression {
-                val bodyType = expressionType(body)
+                val bodyType = body.analyze().getType(body)
                 val needReturn = returnsValue &&
                                  (bodyType == null || (!KotlinBuiltIns.isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
 
@@ -64,9 +63,9 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
 
             val newBody = when (declaration) {
                 is JetNamedFunction -> {
-                    val returnType = functionReturnType(declaration)!!
+                    val returnType = declaration.returnType()!!
                     if (!declaration.hasDeclaredReturnType() && !KotlinBuiltIns.isUnit(returnType)) {
-                        specifyTypeExplicitly(declaration, returnType)
+                        declaration.setType(returnType)
                     }
                     generateBody(!KotlinBuiltIns.isUnit(returnType) && !KotlinBuiltIns.isNothing(returnType))
                 }
@@ -79,6 +78,11 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
             declaration.getEqualsToken()!!.delete()
             body.replace(newBody)
             return declaration
+        }
+
+        private fun JetNamedFunction.returnType(): JetType? {
+            val descriptor = analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] ?: return null
+            return (descriptor as FunctionDescriptor).getReturnType()
         }
     }
 }

@@ -4173,6 +4173,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/ThrowInBlock.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("Var.kt")
+        public void testVar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/ifNullToElvis/Var.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/insertCurlyBracesToTemplate")

@@ -28,33 +28,11 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
 
-fun specifyTypeExplicitly(declaration: JetNamedFunction, typeText: String) {
-    specifyTypeExplicitly(declaration, JetPsiFactory(declaration).createType(typeText))
-}
-
-fun specifyTypeExplicitly(declaration: JetNamedFunction, type: JetType) {
+fun JetCallableDeclaration.setType(type: JetType) {
     if (type.isError()) return
-    val typeReference = JetPsiFactory(declaration).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
-    specifyTypeExplicitly(declaration, typeReference)
-    ShortenReferences.DEFAULT.process(declaration.getTypeReference()!!)
-}
-
-fun specifyTypeExplicitly(declaration: JetNamedFunction, typeReference: JetTypeReference) {
-    val anchor = declaration.getValueParameterList() ?: return/*incomplete declaration*/
-    declaration.addAfter(typeReference, anchor)
-    declaration.addAfter(JetPsiFactory(declaration).createColon(), anchor)
-}
-
-fun expressionType(expression: JetExpression): JetType? {
-    val bindingContext = expression.analyze()
-    return bindingContext.getType(expression)
-}
-
-fun functionReturnType(function: JetNamedFunction): JetType? {
-    val bindingContext = function.analyze()
-    val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function)
-    if (descriptor == null) return null
-    return (descriptor as FunctionDescriptor).getReturnType()
+    val typeReference = JetPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+    setTypeReference(typeReference)
+    ShortenReferences.DEFAULT.process(getTypeReference()!!)
 }
 
 fun JetContainerNode.description(): String? {
