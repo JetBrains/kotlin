@@ -62,9 +62,7 @@ public class IfNullToElvisIntention : JetSelfTargetingOffsetIndependentIntention
             declaration.add(comment)
         }
 
-        val elvis = factory.createExpression("a ?: b") as JetBinaryExpression
-        elvis.getLeft()!!.replace(initializer)
-        elvis.getRight()!!.replace(ifNullExpr)
+        val elvis = factory.createExpressionByPattern("$0 ?: $1", initializer, ifNullExpr) as JetBinaryExpression
         val newElvis = initializer.replaced(elvis)
         element.delete()
 

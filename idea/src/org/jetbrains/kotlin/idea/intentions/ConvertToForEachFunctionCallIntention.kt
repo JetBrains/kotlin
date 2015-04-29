@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetForExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>(javaClass(), "Replace with a forEach function call") {
     override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
@@ -29,16 +32,14 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
     override fun applyTo(element: JetForExpression, editor: Editor) {
         val body = element.getBody()!!
         val loopParameter = element.getLoopParameter()!!
-        val factory = JetPsiFactory(element)
 
         val functionBodyText = when (body) {
             is JetBlockExpression -> body.getStatements().map { it.getText() }.joinToString("\n")
             else -> body.getText()
         }
-        val bodyText = "${loopParameter.getText()} -> $functionBodyText"
 
-        val foreachExpression = factory.createExpression("x.forEach { $bodyText }") as JetDotQualifiedExpression
-        foreachExpression.getReceiverExpression().replace(element.getLoopRange()!!)
+        val foreachExpression = JetPsiFactory(element).createExpressionByPattern(
+                "$0.forEach{$1->$2}", element.getLoopRange()!!, loopParameter, functionBodyText)
         element.replace(foreachExpression)
     }
 }

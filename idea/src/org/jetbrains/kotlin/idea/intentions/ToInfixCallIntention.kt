@@ -18,14 +18,11 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.*
 
 public class ToInfixCallIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace with infix function call") {
     override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
-        val calleeExpr = element.getCalleeExpression() ?: return false
+        val calleeExpr = element.getCalleeExpression() as? JetSimpleNameExpression ?: return false
         if (!calleeExpr.getTextRange().containsOffset(caretOffset)) return false
 
         val dotQualified = element.getParent() as? JetDotQualifiedExpression ?: return false
@@ -46,13 +43,10 @@ public class ToInfixCallIntention : JetSelfTargetingIntention<JetCallExpression>
     override fun applyTo(element: JetCallExpression, editor: Editor) {
         val dotQualified = element.getParent() as JetDotQualifiedExpression
         val receiver = dotQualified.getReceiverExpression()
+        val argument = element.getValueArguments().single().getArgumentExpression()!!
+        val name = element.getCalleeExpression()!!.getText()
 
-        val operatorText = element.getCalleeExpression()!!.getText()
-
-        val newCall = JetPsiFactory(element).createExpression("${receiver.getText()} $operatorText x") as JetBinaryExpression
-        val argument = element.getValueArguments().single()
-        newCall.getRight()!!.replace(argument.getArgumentExpression()!!)
-
+        val newCall = JetPsiFactory(element).createExpressionByPattern("$0 $1 $2", receiver, name, argument)
         dotQualified.replace(newCall)
     }
 }

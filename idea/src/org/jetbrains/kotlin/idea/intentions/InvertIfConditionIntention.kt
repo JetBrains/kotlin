@@ -75,10 +75,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
         private fun negate(expression: JetExpression): JetExpression {
             val specialNegation = specialNegationText(expression)
             if (specialNegation != null) return specialNegation
-
-            val negationExpr = JetPsiFactory(expression).createExpression("!a") as JetPrefixExpression
-            negationExpr.getBaseExpression()!!.replace(expression)
-            return negationExpr
+            return JetPsiFactory(expression).createExpressionByPattern("!$0", expression)
         }
 
         private fun specialNegationText(expression: JetExpression): JetExpression? {
@@ -98,7 +95,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
                     if (operator !in NEGATABLE_OPERATORS) return null
                     val left = expression.getLeft() ?: return null
                     val right = expression.getRight() ?: return null
-                    return factory.createExpression(left.getText() + " " + getNegatedOperatorText(operator) + " " + right.getText())
+                    return factory.createExpressionByPattern("$0 $1 $2", left, getNegatedOperatorText(operator), right)
                 }
 
                 is JetConstantExpression -> {

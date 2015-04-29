@@ -1,8 +1,7 @@
 fun foo() {
-    val list = 1..4
-
-    <caret>for (x in list) {
+    // check that original formatting of "x+1" and "1 .. 4" is preserved
+    <caret>for (x in 1 .. 4) {
         x
-        x
+        x+1
     }
 }

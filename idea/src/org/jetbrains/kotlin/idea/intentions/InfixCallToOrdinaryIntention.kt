@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
 
 public class InfixCallToOrdinaryIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Replace infix call with ordinary call") {
     override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
@@ -30,21 +27,12 @@ public class InfixCallToOrdinaryIntention : JetSelfTargetingIntention<JetBinaryE
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        val receiverText = element.getLeft()!!.getText()
-        val argumentText = element.getRight()!!.getText()
-        val functionName = element.getOperationReference().getText()
-
-        val text = StringBuilder {
-            append(receiverText)
-            append(".")
-            append(functionName)
-            append(when (element.getRight()) {
-                       is JetFunctionLiteralExpression -> " $argumentText"
-                       is JetParenthesizedExpression -> argumentText
-                       else -> "($argumentText)"
-                   })
-        }.toString()
-
-        element.replace(JetPsiFactory(element).createExpression(text))
+        val argument = JetPsiUtil.safeDeparenthesize(element.getRight()!!)
+        val pattern = "$0.$1" + when (argument) {
+            is JetFunctionLiteralExpression -> " $2={}$"
+            else -> "($2)"
+        }
+        val replacement = JetPsiFactory(element).createExpressionByPattern(pattern, element.getLeft()!!, element.getOperationReference().getText(), argument)
+        element.replace(replacement)
     }
 }

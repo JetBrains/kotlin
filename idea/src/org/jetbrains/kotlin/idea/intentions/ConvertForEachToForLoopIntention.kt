@@ -37,8 +37,8 @@ public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependen
 
     override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
         val (expressionToReplace, receiver, functionLiteral) = extractData(element)!!
-        val loopText = generateLoopText(functionLiteral, receiver)
-        expressionToReplace.replace(JetPsiFactory(element).createExpression(loopText))
+        val loop = generateLoop(functionLiteral, receiver)
+        expressionToReplace.replace(loop)
     }
 
     private data class Data(
@@ -64,10 +64,11 @@ public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependen
         return Data(expression, receiver.getExpression(), functionLiteral)
     }
 
-    private fun generateLoopText(functionLiteral: JetFunctionLiteralExpression, receiver: JetExpression): String {
-        val loopRangeText = JetPsiUtil.safeDeparenthesize(receiver).getText()
-        val bodyText = functionLiteral.getBodyExpression()!!.getText()
-        val varText = functionLiteral.getValueParameters().singleOrNull()?.getText() ?: "it"
-        return "for ($varText in $loopRangeText) { $bodyText }"
+    private fun generateLoop(functionLiteral: JetFunctionLiteralExpression, receiver: JetExpression): JetExpression {
+        val factory = JetPsiFactory(functionLiteral)
+        val loopRange = JetPsiUtil.safeDeparenthesize(receiver)
+        val body = functionLiteral.getBodyExpression()!!
+        val parameter = functionLiteral.getValueParameters().singleOrNull()
+        return factory.createExpressionByPattern("for($0 in $1){ $2 }", parameter ?: "it", loopRange, body)
     }
 }

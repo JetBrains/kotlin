@@ -1,8 +1,7 @@
 fun foo() {
-    val list = 1..4
-
-    list.forEach { x ->
+    // check that original formatting of "x+1" and "1 .. 4" is preserved
+    (1 .. 4).forEach { x ->
         x
-        x
+        x+1
     }
 }

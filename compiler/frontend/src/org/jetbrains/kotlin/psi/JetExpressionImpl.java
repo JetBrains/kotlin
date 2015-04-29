@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.JetNodeType;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.createExpressionByPattern;
 
 public abstract class JetExpressionImpl extends JetElementImpl implements JetExpression {
     public JetExpressionImpl(@NotNull ASTNode node) {
@@ -48,7 +49,7 @@ public abstract class JetExpressionImpl extends JetElementImpl implements JetExp
         PsiElement parent = getParent();
         if (parent instanceof JetExpression && newElement instanceof JetExpression &&
             JetPsiUtil.areParenthesesNecessary((JetExpression) newElement, this, (JetExpression) parent)) {
-            return super.replace(JetPsiFactory(this).createExpression("(" + newElement.getText() + ")"));
+            return super.replace(createExpressionByPattern(JetPsiFactory(this), "($0)", newElement));
         }
         return super.replace(newElement);
     }
