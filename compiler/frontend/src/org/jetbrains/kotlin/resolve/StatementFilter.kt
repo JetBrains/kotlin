@@ -21,12 +21,15 @@ import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 
 public open class StatementFilter {
+    companion object {
+        public val NONE: StatementFilter = StatementFilter()
+    }
 
     public open val filter: ((JetElement) -> Boolean)?
         get() = null
 
-    companion object {
-        public val NONE: StatementFilter = StatementFilter()
+    override fun toString(): String {
+        return (this.javaClass).getName()
     }
 }
 
