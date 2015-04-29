@@ -781,7 +781,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithTraditionalAssignmentIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithOrdinaryAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

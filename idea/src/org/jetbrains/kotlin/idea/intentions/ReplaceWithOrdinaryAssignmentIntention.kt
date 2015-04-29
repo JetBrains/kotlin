@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 
-public class ReplaceWithTraditionalAssignmentIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Replace with traditional assignment") {
+public class ReplaceWithOrdinaryAssignmentIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Replace with ordinary assignment") {
     override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
         if (element.getOperationToken() !in JetTokens.AUGMENTED_ASSIGNMENTS) return false
         if (element.getLeft() !is JetSimpleNameExpression) return false

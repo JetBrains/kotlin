@@ -5418,35 +5418,35 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/replaceWithTraditionalAssignment")
+    @TestMetadata("idea/testData/intentions/replaceWithOrdinaryAssignment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceWithTraditionalAssignment extends AbstractIntentionTest {
-        public void testAllFilesPresentInReplaceWithTraditionalAssignment() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithTraditionalAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class ReplaceWithOrdinaryAssignment extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceWithOrdinaryAssignment() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithOrdinaryAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("complexRightExpression.kt")
         public void testComplexRightExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithTraditionalAssignment/complexRightExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOrdinaryAssignment/complexRightExpression.kt");
             doTest(fileName);
         }
 
         @TestMetadata("nonAssignmentExpression.kt")
         public void testNonAssignmentExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithTraditionalAssignment/nonAssignmentExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOrdinaryAssignment/nonAssignmentExpression.kt");
             doTest(fileName);
         }
 
         @TestMetadata("nonAugmentedAssign.kt")
         public void testNonAugmentedAssign() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithTraditionalAssignment/nonAugmentedAssign.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOrdinaryAssignment/nonAugmentedAssign.kt");
             doTest(fileName);
         }
 
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithTraditionalAssignment/simple.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOrdinaryAssignment/simple.kt");
             doTest(fileName);
         }
     }
