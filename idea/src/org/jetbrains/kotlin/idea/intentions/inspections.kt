@@ -38,5 +38,5 @@ public class RemoveExplicitTypeArgsInspection : IntentionBasedInspection<JetType
 
 public class SimplifyBinaryNegationInspection : IntentionBasedInspection<JetPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
 
-public class ReplaceWithOperatorAssignInspection : IntentionBasedInspection<JetBinaryExpression>(ReplaceWithOperatorAssignIntention())
+public class ReplaceWithOperatorAssignmentInspection : IntentionBasedInspection<JetBinaryExpression>(ReplaceWithOperatorAssignmentIntention())
 

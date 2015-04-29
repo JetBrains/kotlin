@@ -776,7 +776,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignmentIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -912,7 +912,7 @@
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignmentInspection"
         displayName="Replace with operator-assignment"
         groupName="Kotlin"
         enabledByDefault="true"

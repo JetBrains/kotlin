@@ -5355,65 +5355,65 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/replaceWithOperatorAssign")
+    @TestMetadata("idea/testData/intentions/replaceWithOperatorAssignment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceWithOperatorAssign extends AbstractIntentionTest {
-        public void testAllFilesPresentInReplaceWithOperatorAssign() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithOperatorAssign"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class ReplaceWithOperatorAssignment extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceWithOperatorAssignment() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithOperatorAssignment"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("illegalMultipleOperators.kt")
         public void testIllegalMultipleOperators() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/illegalMultipleOperators.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/illegalMultipleOperators.kt");
             doTest(fileName);
         }
 
         @TestMetadata("illegalMultipleOperatorsMiddle.kt")
         public void testIllegalMultipleOperatorsMiddle() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/illegalMultipleOperatorsMiddle.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/illegalMultipleOperatorsMiddle.kt");
             doTest(fileName);
         }
 
         @TestMetadata("invalidSubtraction.kt")
         public void testInvalidSubtraction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/invalidSubtraction.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/invalidSubtraction.kt");
             doTest(fileName);
         }
 
         @TestMetadata("multipleOperators.kt")
         public void testMultipleOperators() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/multipleOperators.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/multipleOperators.kt");
             doTest(fileName);
         }
 
         @TestMetadata("multipleOperatorsRightSideRepeat.kt")
         public void testMultipleOperatorsRightSideRepeat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/multipleOperatorsRightSideRepeat.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/multipleOperatorsRightSideRepeat.kt");
             doTest(fileName);
         }
 
         @TestMetadata("nonRepeatingAssignment.kt")
         public void testNonRepeatingAssignment() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/nonRepeatingAssignment.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/nonRepeatingAssignment.kt");
             doTest(fileName);
         }
 
         @TestMetadata("rightSideRepeat.kt")
         public void testRightSideRepeat() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/rightSideRepeat.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/rightSideRepeat.kt");
             doTest(fileName);
         }
 
         @TestMetadata("simpleAssign.kt")
         public void testSimpleAssign() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/simpleAssign.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/simpleAssign.kt");
             doTest(fileName);
         }
 
         @TestMetadata("validSubtraction.kt")
         public void testValidSubtraction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssign/validSubtraction.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/validSubtraction.kt");
             doTest(fileName);
         }
     }
