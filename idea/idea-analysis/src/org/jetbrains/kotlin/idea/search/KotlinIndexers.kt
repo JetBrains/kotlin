@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 class KotlinFilterLexer(table: OccurrenceConsumer): BaseFilterLexer(JetLexer(), table) {
     private val codeTokens = TokenSet.orSet(
             TokenSet.create(*ALL_SEARCHABLE_OPERATIONS.toTypedArray()),
-            TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER, JetTokens.LABEL_IDENTIFIER)
+            TokenSet.create(JetTokens.IDENTIFIER, JetTokens.FIELD_IDENTIFIER)
     )
 
     private val commentTokens = TokenSet.orSet(JetTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
