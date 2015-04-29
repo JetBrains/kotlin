@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBacke
 import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForReservedWords
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
-import org.jetbrains.kotlin.idea.codeInsight.AbstractInsertImportOnPasteTest
-import org.jetbrains.kotlin.idea.codeInsight.AbstractJetInspectionTest
-import org.jetbrains.kotlin.idea.codeInsight.AbstractLineMarkersTest
-import org.jetbrains.kotlin.idea.codeInsight.AbstractOutOfBlockModificationTest
+import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractCodeMoverTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
@@ -500,6 +497,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractMultiFileIntentionTest>()) {
             model("multiFileIntentions", extension = "test", singleClass = true)
+        }
+
+        testClass(javaClass<AbstractJetMultiFileInspectionTest>()) {
+            model("multiFileInspections", extension = "test", singleClass = true)
         }
 
         testClass(javaClass<AbstractConfigureProjectByChangingFileTest>()) {
