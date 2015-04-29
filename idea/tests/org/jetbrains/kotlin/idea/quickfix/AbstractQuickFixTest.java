@@ -90,7 +90,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
         }
     }
 
-    private static void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) {
+    private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) {
         if (beforeFileName.endsWith("JsRuntime.kt")) {
             ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(getModule(), getProjectJDK());
         }
