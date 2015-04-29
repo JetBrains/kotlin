@@ -7346,6 +7346,33 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/UnboxingNulls.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/j+k/types")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Types extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInTypes() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/types"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("returnCollection.kt")
+                public void testReturnCollection() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/returnCollection.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("shapeMismatchInCovariantPosition.kt")
+                public void testShapeMismatchInCovariantPosition() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/shapeMismatchInCovariantPosition.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("shapeMismatchInCovariantPositionGeneric.kt")
+                public void testShapeMismatchInCovariantPositionGeneric() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/shapeMismatchInCovariantPositionGeneric.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/jdk-annotations")

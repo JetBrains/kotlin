@@ -254,7 +254,7 @@ Enhancement rules (the result of their application is called a *propagated signa
  - collect annotations from all supertypes and the override in the subclass
  - for parts other than return type (which may be covariantly overridden) if there are conflicts (`@Nullable` together with `@NotNull` or
    `@ReadOnly` together with `@Mutable`), discard the respective annotations and issue appropriate warnings
- - for return types (only the 0-index, see below):
+ - for return types (full if the type from override is `~~`-equivalent to all from supertypes, and only 0-index (see below) otherwise)):
      - fist, take annotations from supertypes, and among them: if there's `@Nullable`, discard `@NotNull`, if there's `@Mutable` discard `@ReadOnly`
      - then if in the subtype there's `@Nullable` and in the supertype there's `@NotNull`, discard the nullability annotations (analogously,
        for mutability annotations)
@@ -366,8 +366,15 @@ fun foo(MutableList<T> p): R! // parameter propagated from superclass (@Mutable,
 the following procedure is used. First, every sub-tree of the type is assigned an index which is its zero-based position in the textual
 representation of the type (`0` is root). Example: for `A<B, C<D, E>>`, indices go as follows: `0 - A<...>, 1 - B, 2 - C<D, E>, 3 - D, 4 - E`,
 which corresponds to the left-to-right breadth-first walk of the tree representation of the type. For flexible types, both bounds are indexed
-in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`. Now, in the aforementioned procedure, annotations are collected and
-considered *at each index*, and only index 0 of the return type is considered as possibly covariant (this is done for simplicity).
+in the same way: `(A<B>..C<D>)` gives `0 - (A<B>..C<D>), 1 - B and D`. 
+
+Now, in the aforementioned procedure, annotations are collected and considered *at each index* for types other than return types. Return types
+are co-variant, thus the overriding type may not match the overridden ones in its shape (e.g. we can have `Foo<Bar>` from super, 
+and `Baz<One, Two<Three>>` in the override, where `Baz` extends `Foo<Bar>`). This makes it impossible sometimes to propagate data into 
+covariant overrides, and in such cases we resort to only looking at the head constructor (index == 0). The safe cases are detected by checking
+that the overriding type is `~~`-equivalent to all the overridden ones, which guarantees that their shapes match. For example, the overriding 
+type may be `(Mutable)List<Foo!>!` while the overridden ones may be `List<Foo>` and `List<Foo?>`, the equivalence holds and we can safely 
+assume the enhanced return type to be `List<Foo>` (subtype of both overridden ones).
 
 Example:
  - `Mutable(List)<A!>!`
