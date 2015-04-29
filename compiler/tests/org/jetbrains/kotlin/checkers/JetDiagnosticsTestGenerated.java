@@ -7372,6 +7372,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/shapeMismatchInCovariantPositionGeneric.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("typeParameter.kt")
+                public void testTypeParameter() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/types/typeParameter.kt");
+                    doTest(fileName);
+                }
             }
         }
 
