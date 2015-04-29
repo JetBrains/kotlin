@@ -47,6 +47,10 @@ public class SimpleNameReferenceRenameTest extends LightCodeInsightTestCase {
         doTest("anotherRenamed");
     }
 
+    public void testLocalFunction() throws Exception {
+        doTest("xyzzy");
+    }
+
     private void doTest(String newName) throws Exception {
         configureByFile(getTestName(true) + ".kt");
         PsiElement element = TargetElementUtilBase

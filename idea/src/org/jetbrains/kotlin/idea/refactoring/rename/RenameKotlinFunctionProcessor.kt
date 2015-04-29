@@ -44,8 +44,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
         val wrappedMethod = wrapPsiMethod(element)
         if (wrappedMethod == null) {
-            // Cancel rename
-            return null
+            return element
         }
 
         // Use java dialog to ask we should rename function with the base element
@@ -58,7 +57,10 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
-        javaMethodProcessorInstance.prepareRenaming(wrapPsiMethod(element), newName, allRenames, scope)
+        val psiMethod = wrapPsiMethod(element)
+        if (psiMethod?.getContainingClass() != null) {
+            javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)
+        }
     }
 
     private fun wrapPsiMethod(element: PsiElement?): PsiMethod? = when (element) {
