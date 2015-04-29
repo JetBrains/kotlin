@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.MutabilityQualifier.MUTABLE
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.load.java.components.NullabilityQualifier.NULLABLE
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.utils.getOrDefault
@@ -112,10 +112,22 @@ fun JetType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<JetTy
     val indexedFromSupertypes = fromSupertypes.map { it.toIndexed() }
     val indexedThisType = this.toIndexed()
 
-    return _r@ fun(index: Int): JavaTypeQualifiers {
+    // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
+    // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor
+    // (outermost type), unless the type in the subclass is interchangeable with the all the types in superclasses:
+    // e.g. we have (Mutable)List<String!>! in the subclass and { List<String!>, (Mutable)List<String>! } from superclasses
+    // Note that `this` is flexible here, so it's equal to it's bounds
+    val onlyHeadTypeConstructor = isCovariant && fromSupertypes.any { !JetTypeChecker.DEFAULT.equalTypes(it, this) }
+
+    return fun(index: Int): JavaTypeQualifiers {
+        val isHeadTypeConstructor = index == 0
+        if (!isHeadTypeConstructor && onlyHeadTypeConstructor) return JavaTypeQualifiers.NONE
+
         val qualifiers = indexedThisType.getOrDefault(index, { return JavaTypeQualifiers.NONE })
         val verticalSlice = indexedFromSupertypes.map { it.getOrDefault(index, { null }) }.filterNotNull()
-        return qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant)
+
+        // Only the head type constructor is safely co-variant
+        return qualifiers.computeQualifiersForOverride(verticalSlice, isCovariant && isHeadTypeConstructor)
     }
 }
 
