@@ -1,8 +1,8 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
-  CLASS:[fqName=a, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=a, superNames=[]]
+  CLASS:[fqName=a, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=a, superNames=[]]
     MODIFIER_LIST:[annotation]
-  CLASS:[fqName=b, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=b, superNames=[]]
+  CLASS:[fqName=b, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=b, superNames=[]]
     MODIFIER_LIST:[annotation]
     PRIMARY_CONSTRUCTOR:
       VALUE_PARAMETER_LIST:
@@ -10,11 +10,11 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=E]
-  CLASS:[fqName=E, isEnumEntry=false, isLocal=false, isTopLevel=true, isTrait=false, name=E, superNames=[]]
+  CLASS:[fqName=E, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=E, superNames=[]]
     MODIFIER_LIST:[enum]
     CLASS_BODY:
-      ENUM_ENTRY:[fqName=E.E1, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=E1, superNames=[]]
-      ENUM_ENTRY:[fqName=E.E2, isEnumEntry=true, isLocal=false, isTopLevel=false, isTrait=false, name=E2, superNames=[]]
+      ENUM_ENTRY:[fqName=E.E1, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E1, superNames=[]]
+      ENUM_ENTRY:[fqName=E.E2, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
   FUN:[fqName=types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=types]
     VALUE_PARAMETER_LIST:
       VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=param]
