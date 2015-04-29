@@ -906,10 +906,17 @@
         />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBinaryNegationInspection"
-        displayName="Simplify Negated Binary Expression"
+        displayName="Simplify negated binary expression"
         groupName="Kotlin"
         enabledByDefault="true"
-        level="WARNING"
+        level="WEAK WARNING"
+        />
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ReplaceWithOperatorAssignInspection"
+        displayName="Replace with operator-assignment"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WEAK WARNING"
         />
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"

@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceGetIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPrefixExpression
-import org.jetbrains.kotlin.psi.JetTypeArgumentList
+import org.jetbrains.kotlin.psi.*
 
 public class ExplicitGetInspection : IntentionBasedInspection<JetDotQualifiedExpression>(ReplaceGetIntention())
 
@@ -40,4 +37,6 @@ public class RemoveExplicitTypeArgsInspection : IntentionBasedInspection<JetType
 }
 
 public class SimplifyBinaryNegationInspection : IntentionBasedInspection<JetPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
+
+public class ReplaceWithOperatorAssignInspection : IntentionBasedInspection<JetBinaryExpression>(ReplaceWithOperatorAssignIntention())
 
