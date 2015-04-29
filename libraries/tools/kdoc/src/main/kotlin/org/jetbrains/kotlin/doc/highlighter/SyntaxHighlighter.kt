@@ -119,7 +119,6 @@ class SyntaxHighlighter() {
         styleMap.put(JetTokens.ESCAPE_SEQUENCE, "escape")
         styleMap.put(JetTokens.CLOSING_QUOTE, "string")
         styleMap.put(JetTokens.CHARACTER_LITERAL, "string")
-        styleMap.put(JetTokens.LABEL_IDENTIFIER, "label")
         styleMap.put(JetTokens.FIELD_IDENTIFIER, "field")
         styleMap.put(TokenType.BAD_CHARACTER, "bad")
         putAll(JetTokens.STRINGS, "string")
