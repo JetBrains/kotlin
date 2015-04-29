@@ -16,11 +16,33 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.MultiFileTestCase
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.JetTestUtils
 
 public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
+    protected fun extractCaretOffset(doc: Document): Int {
+        val offset = runWriteAction {
+            val text = StringBuilder(doc.getText())
+            val offset = text.indexOf("<caret>")
+
+            if (offset >= 0) {
+                text.delete(offset, offset + "<caret>".length())
+                doc.setText(text.toString())
+            }
+
+            offset
+        }
+
+        PsiDocumentManager.getInstance(myProject).commitAllDocuments()
+        PsiDocumentManager.getInstance(myProject).doPostponedOperationsAndUnblockDocument(doc)
+
+        return offset
+    }
+
     override fun setUp() {
         super.setUp()
         VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory())

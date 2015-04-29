@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightExitPointsTest
 import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingTest
 import org.jetbrains.kotlin.idea.imports.AbstractOptimizeImportsTest
 import org.jetbrains.kotlin.idea.intentions.AbstractIntentionTest
+import org.jetbrains.kotlin.idea.intentions.AbstractMultiFileIntentionTest
 import org.jetbrains.kotlin.idea.intentions.declarations.AbstractJoinLinesTest
 import org.jetbrains.kotlin.idea.internal.AbstractBytecodeToolWindowTest
 import org.jetbrains.kotlin.idea.kdoc.AbstractKDocHighlightingTest
@@ -495,6 +496,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractJetMoveTest>()) {
             model("refactoring/move", extension = "test", singleClass = true)
+        }
+
+        testClass(javaClass<AbstractMultiFileIntentionTest>()) {
+            model("multiFileIntentions", extension = "test", singleClass = true)
         }
 
         testClass(javaClass<AbstractConfigureProjectByChangingFileTest>()) {

@@ -56,22 +56,7 @@ import java.io.File
 
 public abstract class AbstractJetMoveTest : KotlinMultiFileTestCase() {
     protected fun doTest(path: String) {
-        fun extractCaretOffset(doc: Document): Int {
-            return runWriteAction {
-                val text = StringBuilder(doc.getText())
-                val offset = text.indexOf("<caret>")
-
-                if (offset >= 0) {
-                    text.delete(offset, offset + "<caret>".length())
-                    doc.setText(text.toString())
-                }
-
-                offset
-            }
-        }
-
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
-
 
         val action = MoveAction.valueOf(config.getString("type"))
 
