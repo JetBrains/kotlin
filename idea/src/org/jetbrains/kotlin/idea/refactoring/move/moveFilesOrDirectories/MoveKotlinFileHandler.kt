@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.psi.psiUtil.packageMatchesDirectory
 
 public class MoveKotlinFileHandler : MoveFileHandler() {
     private var packageNameInfo: PackageNameInfo? = null
@@ -44,10 +45,6 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
     private fun clearState() {
         packageNameInfo = null
         declarationMoveProcessor = null
-    }
-
-    private fun JetFile.packageMatchesDirectory(): Boolean {
-        return getPackageFqName().asString() == getParent()?.getPackage()?.getQualifiedName()
     }
 
     override fun canProcessElement(element: PsiFile?): Boolean {

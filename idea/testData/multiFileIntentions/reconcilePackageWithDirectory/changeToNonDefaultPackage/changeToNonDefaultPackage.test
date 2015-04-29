@@ -1,0 +1,5 @@
+{
+  "mainFile": "target/test.kt",
+  "intentionClass": "org.jetbrains.kotlin.idea.refactoring.move.changePackage.ChangePackageToMatchDirectoryIntention",
+  "intentionText": "Change file's package to 'target'"
+}

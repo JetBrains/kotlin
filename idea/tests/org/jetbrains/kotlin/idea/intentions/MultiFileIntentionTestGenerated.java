@@ -34,4 +34,40 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
     public void testAllFilesPresentInMultiFileIntentions() throws Exception {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileIntentions"), Pattern.compile("^(.+)\\.test$"));
     }
+
+    @TestMetadata("moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test")
+    public void testMoveFileToPackageMatchingDirectory_moveToDefaultDirectory_MoveToDefaultDirectory() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveFileToPackageMatchingDirectory/moveToDefaultDirectory/moveToDefaultDirectory.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveFileToPackageMatchingDirectory/moveToNonDefaultDirectory/moveToNonDefaultDirectory.test")
+    public void testMoveFileToPackageMatchingDirectory_moveToNonDefaultDirectory_MoveToNonDefaultDirectory() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveFileToPackageMatchingDirectory/moveToNonDefaultDirectory/moveToNonDefaultDirectory.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("moveFileToPackageMatchingDirectory/packageMatchesDirectory/packageMatchesDirectory.test")
+    public void testMoveFileToPackageMatchingDirectory_packageMatchesDirectory_PackageMatchesDirectory() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveFileToPackageMatchingDirectory/packageMatchesDirectory/packageMatchesDirectory.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reconcilePackageWithDirectory/changeToDefaultPackage/changeToDefaultPackage.test")
+    public void testReconcilePackageWithDirectory_changeToDefaultPackage_ChangeToDefaultPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/changeToDefaultPackage/changeToDefaultPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reconcilePackageWithDirectory/changeToNonDefaultPackage/changeToNonDefaultPackage.test")
+    public void testReconcilePackageWithDirectory_changeToNonDefaultPackage_ChangeToNonDefaultPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/changeToNonDefaultPackage/changeToNonDefaultPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reconcilePackageWithDirectory/packageMatchesDirectory/packageMatchesDirectory.test")
+    public void testReconcilePackageWithDirectory_packageMatchesDirectory_PackageMatchesDirectory() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileIntentions/reconcilePackageWithDirectory/packageMatchesDirectory/packageMatchesDirectory.test");
+        doTest(fileName);
+    }
 }

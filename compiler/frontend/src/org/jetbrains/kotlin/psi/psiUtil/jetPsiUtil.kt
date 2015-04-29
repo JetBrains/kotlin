@@ -41,6 +41,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.name.FqName
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression()
@@ -534,3 +535,10 @@ inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(
 
 inline fun <reified T : JetElement> PsiElement.forEachDescendantsOfType(noinline block: (T) -> Unit) =
         accept(forEachDescendantOfTypeVisitor(block))
+
+public fun PsiFile.getFqNameByDirectory(): FqName {
+    val qualifiedNameByDirectory = getParent()?.getPackage()?.getQualifiedName()
+    return qualifiedNameByDirectory?.let { FqName(it) } ?: FqName.ROOT
+}
+
+public fun JetFile.packageMatchesDirectory(): Boolean = getPackageFqName() == getFqNameByDirectory()

@@ -1,0 +1,5 @@
+{
+    "intentionClass": "org.jetbrains.kotlin.idea.refactoring.move.changePackage.MoveFileToPackageMatchingDirectoryIntention",
+    "isApplicable": "false",
+    "mainFile": "foo/bar/test.kt"
+}

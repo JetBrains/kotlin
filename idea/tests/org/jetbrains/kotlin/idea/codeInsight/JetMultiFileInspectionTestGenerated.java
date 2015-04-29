@@ -34,4 +34,10 @@ public class JetMultiFileInspectionTestGenerated extends AbstractJetMultiFileIns
     public void testAllFilesPresentInMultiFileInspections() throws Exception {
         JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileInspections"), Pattern.compile("^(.+)\\.test$"));
     }
+
+    @TestMetadata("mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test")
+    public void testMismatchedProjectAndDirectory_MismatchedProjectAndDirectory() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/multiFileInspections/mismatchedProjectAndDirectory/mismatchedProjectAndDirectory.test");
+        doTest(fileName);
+    }
 }
