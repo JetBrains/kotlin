@@ -19,24 +19,25 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.isNothing
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 
-public class IfNullToElvisIntention : JetSelfTargetingIntention<JetIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
-    override fun isApplicableTo(element: JetIfExpression, caretOffset: Int): Boolean {
-        //TODO: range!
+public class IfNullToElvisIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
+    override fun isApplicableTo(element: JetIfExpression): Boolean {
         val data = calcData(element) ?: return false
 
         val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return false
         if (!type.isNothing()) return false
+
+        //TODO: what if implicit var's type will change?
 
         return true
     }
@@ -72,6 +73,7 @@ public class IfNullToElvisIntention : JetSelfTargetingIntention<JetIfExpression>
         if (ifExpression.getElse() != null) return null
 
         val binaryExpression = ifExpression.getCondition() as? JetBinaryExpression ?: return null
+        if (binaryExpression.getOperationToken() != JetTokens.EQEQ) return null
         if (binaryExpression.getRight()?.getNode()?.getElementType() != JetNodeTypes.NULL) return null
         val left = binaryExpression.getLeft() as? JetSimpleNameExpression ?: return null
 

@@ -868,35 +868,42 @@
       <category>Kotlin</category>
     </intentionAction>
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ExplicitGetInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ExplicitGetInspection"
         displayName="Explicit 'get'"
         groupName="Kotlin"
         enabledByDefault="false"
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.IfThenToElvisInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfThenToElvisInspection"
         displayName="If-Then foldable to '?:'"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.IfThenToSafeAccessInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfThenToSafeAccessInspection"
         displayName="If-Then foldable to '?.'"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RemoveExplicitTypeArgsInspection"
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfNullToElvisInspection"
+        displayName="If-Null return/break/... foldable to '?:'"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WEAK WARNING"
+        />
+
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgsInspection"
         displayName="Type arguments are unnecessary"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimplifyBinaryNegationInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBinaryNegationInspection"
         displayName="Simplify Negated Binary Expression"
         groupName="Kotlin"
         enabledByDefault="true"
