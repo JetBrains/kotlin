@@ -31,7 +31,7 @@ public class BareJpsPluginRegistrar : ApplicationComponent {
         }
         else {
             val compileServerPlugin = CompileServerPlugin()
-            compileServerPlugin.setClasspath("jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-bare-plugin.jar")
+            compileServerPlugin.setClasspath("jps/kotlin-jps-plugin.jar;kotlin-runtime.jar;kotlin-reflect.jar;kotlin-bare-plugin.jar")
             compileServerPlugin.setPluginDescriptor(PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin.bare")))
 
             Extensions.getRootArea()

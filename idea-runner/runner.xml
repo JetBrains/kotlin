@@ -11,6 +11,7 @@
     </condition>
 
     <property name="bootstrap.runtime" location="${dependencies.dir}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
+    <property name="bootstrap.reflect" location="${dependencies.dir}/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar"/>
 
     <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${dependencies.dir}/ant-contrib.jar"/>
 
@@ -45,8 +46,15 @@
             <isset property="bootstrap.or.local.build"/>
         </condition>
 
+        <condition property="reflect.to.copy"
+                   value="${bootstrap.reflect}"
+                   else="${basedir}/../dist/kotlinc/lib/kotlin-reflect.jar">
+            <isset property="bootstrap.or.local.build"/>
+        </condition>
+
         <!--suppress AntResolveInspection -->
         <copy file="${runtime.to.copy}" tofile="${artifact.output.path}/lib/kotlin-runtime.jar"/>
+        <copy file="${reflect.to.copy}" tofile="${artifact.output.path}/lib/kotlin-reflect.jar"/>
     </target>
 
     <target name="copy-runtime-for-jps-plugin" if="bootstrap.or.local.build">
@@ -55,6 +63,7 @@
         <!--suppress AntResolveInspection -->
         <jar update="true" destfile="${artifact.output.path}/kotlin-jps-plugin.jar">
             <zipgroupfileset file="${bootstrap.runtime}"/>
+            <zipgroupfileset file="${bootstrap.reflect}"/>
         </jar>
     </target>
 </project>
