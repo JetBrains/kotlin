@@ -185,6 +185,7 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(ELSE_MISPLACED_IN_WHEN, MoveWhenElseBranchFix.createFactory());
         QuickFixes.factories.put(NO_ELSE_IN_WHEN, AddWhenElseBranchFix.createFactory());
+        QuickFixes.factories.put(BREAK_OR_CONTINUE_IN_WHEN, AddLoopLabelFix.Companion);
 
         QuickFixes.factories.put(NO_TYPE_ARGUMENTS_ON_RHS, AddStarProjectionsFix.createFactoryForIsExpression());
         QuickFixes.factories.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, AddStarProjectionsFix.createFactoryForJavaClass());
