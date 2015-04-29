@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -134,7 +132,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 isAbstract = true;
                 isInterface = true;
                 isAnnotation = true;
-                signature.getInterfaces().add("java/lang/annotation/Annotation");
             }
             else if (jetClass.isEnum()) {
                 isAbstract = hasAbstractMembers(descriptor);
@@ -152,7 +149,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             isStatic = !jetClass.isInner();
         }
         else {
-            isStatic = myClass instanceof JetObjectDeclaration && ((JetObjectDeclaration) myClass).isCompanion() ;
+            isStatic = isCompanionObject(descriptor);
             isFinal = true;
         }
 
@@ -200,14 +197,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
             access |= ACC_ENUM;
         }
-        List<String> interfaces = signature.getInterfaces();
-        v.defineClass(myClass, V1_6,
-                      access,
-                      signature.getName(),
-                      signature.getJavaGenericSignature(),
-                      signature.getSuperclassName(),
-                      ArrayUtil.toStringArray(interfaces)
+
+        v.defineClass(
+                myClass, V1_6,
+                access,
+                signature.getName(),
+                signature.getJavaGenericSignature(),
+                signature.getSuperclassName(),
+                ArrayUtil.toStringArray(signature.getInterfaces())
         );
+
         v.visitSource(myClass.getContainingFile().getName(), null);
 
         InlineCodegenUtil.initDefaultSourceMappingIfNeeded(context, this, state);
@@ -287,22 +286,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
         sw.writeSuperclassEnd();
 
-        List<JetType> interfaceSupertypes = Lists.newArrayList();
-
-        for (JetDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
-            JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-            assert superType != null : "No supertype for class: " + myClass.getText();
-            if (isInterface(superType.getConstructor().getDeclarationDescriptor())) {
-                interfaceSupertypes.add(superType);
-            }
-        }
-
         LinkedHashSet<String> superInterfaces = new LinkedHashSet<String>();
-        for (JetType supertype : interfaceSupertypes) {
-            sw.writeInterface();
-            Type jvmName = typeMapper.mapSupertype(supertype, sw);
-            sw.writeInterfaceEnd();
-            superInterfaces.add(jvmName.getInternalName());
+
+        for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
+            if (isInterface(supertype.getConstructor().getDeclarationDescriptor())) {
+                sw.writeInterface();
+                Type jvmName = typeMapper.mapSupertype(supertype, sw);
+                sw.writeInterfaceEnd();
+                superInterfaces.add(jvmName.getInternalName());
+            }
         }
 
         return new JvmClassSignature(classAsmType.getInternalName(), superClassAsmType.getInternalName(),
@@ -313,37 +305,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         superClassAsmType = OBJECT_TYPE;
         superClassType = null;
 
-        List<JetDelegationSpecifier> delegationSpecifiers = myClass.getDelegationSpecifiers();
-
-        if (myClass instanceof JetClass && ((JetClass) myClass).isInterface()) {
+        if (descriptor.getKind() == ClassKind.INTERFACE) {
             return;
         }
 
-        for (JetDelegationSpecifier specifier : delegationSpecifiers) {
-            if (specifier instanceof JetDelegatorToSuperClass || specifier instanceof JetDelegatorToSuperCall) {
-                JetType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
-                assert superType != null :
-                        String.format("No type recorded for \n---\n%s\n---\n", PsiUtilPackage.getElementTextWithContext(specifier));
-
-                ClassifierDescriptor classifierDescriptor = superType.getConstructor().getDeclarationDescriptor();
-                if (!(classifierDescriptor instanceof ClassDescriptor)) continue;
-
-                ClassDescriptor superClassDescriptor = (ClassDescriptor) classifierDescriptor;
-                if (!isInterface(superClassDescriptor)) {
-                    superClassType = superType;
-                    superClassAsmType = typeMapper.mapClass(superClassDescriptor);
-                }
-            }
-        }
-
-        if (superClassType == null) {
-            if (descriptor.getKind() == ClassKind.ENUM_CLASS) {
-                superClassType = getBuiltIns(descriptor).getEnumType(descriptor.getDefaultType());
-                superClassAsmType = typeMapper.mapType(superClassType);
-            }
-            if (descriptor.getKind() == ClassKind.ENUM_ENTRY) {
-                superClassType = descriptor.getTypeConstructor().getSupertypes().iterator().next();
-                superClassAsmType = typeMapper.mapType(superClassType);
+        for (JetType supertype : descriptor.getTypeConstructor().getSupertypes()) {
+            ClassifierDescriptor superClass = supertype.getConstructor().getDeclarationDescriptor();
+            if (superClass != null && !isInterface(superClass)) {
+                superClassAsmType = typeMapper.mapClass(superClass);
+                superClassType = supertype;
+                return;
             }
         }
     }
@@ -1057,7 +1028,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
-        if (ignoreIfTraitOrAnnotation()) return;
+        if (isTrait(descriptor) || isAnnotationClass(descriptor)) return;
 
         ConstructorDescriptor constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor();
         if (constructorDescriptor == null) return;
@@ -1391,21 +1362,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private boolean ignoreIfTraitOrAnnotation() {
-        if (myClass instanceof JetClass) {
-            JetClass aClass = (JetClass) myClass;
-            if (aClass.isInterface()) {
-                return true;
-            }
-            if (aClass.isAnnotation()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void generateTraitMethods() {
-        if (JetPsiUtil.isTrait(myClass)) return;
+        if (isTrait(descriptor)) return;
 
         for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor traitFun = entry.getKey();
