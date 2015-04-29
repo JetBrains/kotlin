@@ -33,13 +33,13 @@ JetFile: spaceBeforeLabelReference.kt
         PsiElement(return)('return')
         PsiWhiteSpace(' ')
         LABELED_EXPRESSION
-          LABEL_QUALIFIER
-            LABEL
-              PsiElement(AT)('@')
-              PsiElement(IDENTIFIER)('l2')
-          PsiWhiteSpace(' ')
-          INTEGER_CONSTANT
-            PsiElement(INTEGER_LITERAL)('1')
+          PsiErrorElement:Label must be named
+            PsiElement(AT)('@')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('l2')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         PsiElement(val)('val')
@@ -55,20 +55,20 @@ JetFile: spaceBeforeLabelReference.kt
         PsiElement(return)('return')
         PsiWhiteSpace(' ')
         LABELED_EXPRESSION
-          LABEL_QUALIFIER
-            LABEL
-              PsiElement(AT)('@')
-              PsiElement(IDENTIFIER)('l3')
-          PsiWhiteSpace('\n\n    ')
-          PROPERTY
-            PsiElement(val)('val')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('x')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('3')
+          PsiErrorElement:Label must be named
+            PsiElement(AT)('@')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('l3')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('3')
       PsiWhiteSpace('\n\n    ')
       CONTINUE
         PsiElement(continue)('continue')
@@ -111,33 +111,33 @@ JetFile: spaceBeforeLabelReference.kt
         PsiWhiteSpace(' ')
         PsiComment(BLOCK_COMMENT)('/**/')
         LABELED_EXPRESSION
-          LABEL_QUALIFIER
-            LABEL
-              PsiElement(AT)('@')
-              PsiElement(IDENTIFIER)('l6')
-          PsiWhiteSpace('\n\n    ')
-          PROPERTY
-            PsiElement(val)('val')
-            PsiWhiteSpace(' ')
-            PsiElement(IDENTIFIER)('x')
-            PsiWhiteSpace(' ')
-            PsiElement(EQ)('=')
-            PsiWhiteSpace(' ')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('8')
+          PsiErrorElement:Label must be named
+            PsiElement(AT)('@')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('l6')
+      PsiWhiteSpace('\n\n    ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('x')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('8')
       PsiWhiteSpace('\n\n    ')
       RETURN
         PsiElement(return)('return')
       PsiComment(EOL_COMMENT)('//')
       PsiWhiteSpace('\n')
       LABELED_EXPRESSION
-        LABEL_QUALIFIER
-          LABEL
-            PsiElement(AT)('@')
-            PsiElement(IDENTIFIER)('l7')
-        PsiWhiteSpace(' ')
-        INTEGER_CONSTANT
-          PsiElement(INTEGER_LITERAL)('4')
+        PsiErrorElement:Label must be named
+          PsiElement(AT)('@')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('l7')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(INTEGER_LITERAL)('4')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         PsiElement(val)('val')

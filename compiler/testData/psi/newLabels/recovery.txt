@@ -123,13 +123,13 @@ JetFile: recovery.kt
               PsiElement(return)('return')
             PsiWhiteSpace('\n        ')
             LABELED_EXPRESSION
-              LABEL_QUALIFIER
-                LABEL
-                  PsiElement(AT)('@')
-                  PsiElement(IDENTIFIER)('loop2')
-              PsiWhiteSpace(' ')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('4')
+              PsiErrorElement:Label must be named
+                PsiElement(AT)('@')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('loop2')
+            PsiWhiteSpace(' ')
+            PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+              PsiElement(INTEGER_LITERAL)('4')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')

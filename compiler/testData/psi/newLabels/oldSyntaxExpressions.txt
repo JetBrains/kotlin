@@ -13,63 +13,61 @@ JetFile: oldSyntaxExpressions.kt
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       LABELED_EXPRESSION
-        LABEL_QUALIFIER
-          LABEL
-            PsiElement(AT)('@')
-            PsiElement(IDENTIFIER)('loop1')
+        PsiErrorElement:Label must be named
+          PsiElement(AT)('@')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('loop1')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        <empty list>
+      PsiWhiteSpace(' ')
+      FOR
+        PsiElement(for)('for')
         PsiWhiteSpace(' ')
-        FOR
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            PsiElement(IDENTIFIER)('i')
-          PsiWhiteSpace(' ')
-          PsiElement(in)('in')
-          PsiWhiteSpace(' ')
-          LOOP_RANGE
-            BINARY_EXPRESSION
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-              OPERATION_REFERENCE
-                PsiElement(RANGE)('..')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('100')
-          PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BODY
-            BLOCK
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace(' ')
-              PsiElement(RBRACE)('}')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('i')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          BINARY_EXPRESSION
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('1')
+            OPERATION_REFERENCE
+              PsiElement(RANGE)('..')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('100')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x2')
         PsiElement(DOT)('.')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('filter')
-          PsiWhiteSpace(' ')
-          FUNCTION_LITERAL_ARGUMENT
-            LABELED_EXPRESSION
-              LABEL_QUALIFIER
-                LABEL
-                  PsiElement(AT)('@')
-                  PsiElement(IDENTIFIER)('f')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('filter')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(AT)('@')
+        PsiElement(IDENTIFIER)('f')
+      PsiWhiteSpace(' ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          BLOCK
+            RETURN
+              PsiElement(return)('return')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
-                FUNCTION_LITERAL
-                  PsiElement(LBRACE)('{')
-                  PsiWhiteSpace('\n        ')
-                  BLOCK
-                    RETURN
-                      PsiElement(return)('return')
-                      PsiWhiteSpace(' ')
-                      INTEGER_CONSTANT
-                        PsiElement(INTEGER_LITERAL)('2')
-                  PsiWhiteSpace('\n    ')
-                  PsiElement(RBRACE)('}')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('2')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       RETURN
         PsiElement(return)('return')
@@ -77,14 +75,16 @@ JetFile: oldSyntaxExpressions.kt
         PARENTHESIZED
           PsiElement(LPAR)('(')
           LABELED_EXPRESSION
-            LABEL_QUALIFIER
-              LABEL
-                PsiElement(AT)('@')
-                PsiElement(IDENTIFIER)('f')
-            PsiWhiteSpace(' ')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('3')
-          PsiElement(RPAR)(')')
+            PsiErrorElement:Label must be named
+              PsiElement(AT)('@')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('f')
+          PsiErrorElement:Expecting ')'
+            <empty list>
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(INTEGER_LITERAL)('3')
+        PsiElement(RPAR)(')')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         PsiElement(val)('val')

@@ -555,15 +555,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
             return lookahead(2) == LBRACE;
         }
 
-        if (at(AT) && myBuilder.rawLookup(1) == IDENTIFIER) {
-            return lookahead(2) == LBRACE;
-        }
-
         return at(AT) && lookahead(1) == LBRACE;
     }
 
     private boolean isAtLabelDefinitionOrMissingIdentifier() {
-        if (at(AT) && myBuilder.rawLookup(1) == IDENTIFIER) return true;
         return (at(IDENTIFIER) && myBuilder.rawLookup(1) == AT) || at(AT);
     }
 
@@ -1665,22 +1660,8 @@ public class JetExpressionParsing extends AbstractJetParsing {
      */
     private void parseLabelDefinition() {
         if (at(AT)) {
-            // recovery for old label syntax or empty label identifier
-            if (myBuilder.rawLookup(1) == IDENTIFIER) {
-                PsiBuilder.Marker labelWrap = mark();
-                PsiBuilder.Marker mark = mark();
-
-                advance(); // AT
-                advance(); // IDENTIFIER
-
-                mark.done(LABEL);
-
-                labelWrap.done(LABEL_QUALIFIER);
-                return;
-            }
-            else {
-                errorAndAdvance("Label must be named"); // AT
-            }
+            // recovery for empty label identifier
+            errorAndAdvance("Label must be named"); // AT
             return;
         }
 
