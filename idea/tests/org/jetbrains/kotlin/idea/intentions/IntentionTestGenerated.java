@@ -5393,12 +5393,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("firstParameterLabeled.kt")
-        public void testFirstParameterLabeled() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/firstParameterLabeled.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("functionLiteralArgument.kt")
         public void testFunctionLiteralArgument() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/functionLiteralArgument.kt");

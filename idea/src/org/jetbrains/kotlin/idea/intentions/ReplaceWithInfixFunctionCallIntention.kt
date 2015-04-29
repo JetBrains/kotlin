@@ -16,92 +16,42 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetCallExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import com.intellij.codeInsight.hint.HintManager
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
 
-public open class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>("replace.with.infix.function.call.intention", javaClass()) {
+public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace with infix function call") {
     override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
-        val calleeExpr = element.getCalleeExpression()
-        if (calleeExpr == null) return false
+        val calleeExpr = element.getCalleeExpression() ?: return false
+        if (!calleeExpr.getTextRange().containsOffset(caretOffset)) return false
 
-        val textRange = calleeExpr.getTextRange()
-        if (textRange == null) return false
+        val dotQualified = element.getParent() as? JetDotQualifiedExpression ?: return false
 
-        if (caretOffset !in textRange) return false
+        if (element.getTypeArgumentList() != null) return false
 
-        val parent = element.getParent()
+        val argument = element.getValueArguments().singleOrNull() ?: return false
+        if (argument.isNamed()) return false
+        if (argument.getArgumentExpression() == null) return false
 
-        if (parent is JetDotQualifiedExpression) {
-            val typeArguments = element.getTypeArgumentList()
-            val valueArguments = element.getValueArgumentList()
-            val functionLiteralArguments = element.getFunctionLiteralArguments()
-            val numOfTotalValueArguments = (valueArguments?.getArguments()?.size() ?: 0) + functionLiteralArguments.size()
+        val receiver = dotQualified.getReceiverExpression()
+        if (element.analyze().getType(receiver) == null) return false
 
-            if (typeArguments?.getArguments()?.size() ?: 0 == 0 &&
-                    numOfTotalValueArguments == 1) {
-
-                if (valueArguments?.getArguments()?.size() == 1 && valueArguments?.getArguments()?.first()?.isNamed() ?: false) {
-                    val file = element.getContainingJetFile()
-                    val bindingContext = file.analyzeFully()
-                    val resolvedCall = element.getResolvedCall(bindingContext)
-                    val valueArgumentsMap = resolvedCall?.getValueArguments()
-                    val firstArgument = valueArguments?.getArguments()?.first()
-
-                    return valueArgumentsMap?.keySet()?.any { it.getName().asString() == firstArgument?.getArgumentName()?.getText() && it.getIndex() == 0 } ?: false
-                } else {
-                    return true
-                }
-            } else {
-                return false
-            }
-        } else {
-            return false
-        }
-    }
-
-    open fun intentionFailed(editor: Editor, messageID: String) {
-        val message = "Intention failed: ${JetBundle.message("replace.with.infix.function.call.intention.error.$messageID")}"
-        HintManager.getInstance().showErrorHint(editor, message)
+        return true
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
-        val parent = element.getParent() as JetDotQualifiedExpression
-        val receiver = parent.getReceiverExpression()
-        val leftHandText = parent.getReceiverExpression().getText()
-        val rightHandTextStringBuilder = StringBuilder()
+        val dotQualified = element.getParent() as JetDotQualifiedExpression
+        val receiver = dotQualified.getReceiverExpression()
+
         val operatorText = element.getCalleeExpression()!!.getText()
-        val valueArguments = element.getValueArgumentList()?.getArguments() ?: listOf<JetValueArgument>()
-        val functionLiteralArguments = element.getFunctionLiteralArguments()
-        val bindingContext = parent.analyze()
-        val receiverType = bindingContext.getType(receiver)
-        if (receiverType == null) {
-            if (bindingContext[BindingContext.QUALIFIER, receiver] != null) {
-                intentionFailed(editor, "package.call")
-                return
-            }
-            intentionFailed(editor, "resolution.failed")
-            return
-        }
 
-        rightHandTextStringBuilder.append(
-                if (valueArguments.size() > 0)
-                    JetPsiUnparsingUtils.parenthesizeIfNeeded(valueArguments.first().getArgumentExpression())
-                else
-                    functionLiteralArguments.first().getText()
-        )
+        val newCall = JetPsiFactory(element).createExpression("${receiver.getText()} $operatorText x") as JetBinaryExpression
+        val argument = element.getValueArguments().single()
+        newCall.getRight()!!.replace(argument.getArgumentExpression()!!)
 
-        val replacement = JetPsiFactory(element).createExpression("$leftHandText $operatorText ${rightHandTextStringBuilder.toString()}")
-
-        parent.replace(replacement)
+        dotQualified.replace(newCall)
     }
 }
