@@ -14,86 +14,71 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring;
+package org.jetbrains.kotlin.idea.refactoring
 
-import com.intellij.lang.refactoring.RefactoringSupportProvider;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringActionHandler;
-import com.intellij.refactoring.changeSignature.ChangeSignatureHandler;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureHandler;
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler;
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceLambdaParameterHandler;
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterHandler;
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler;
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
-import org.jetbrains.kotlin.idea.refactoring.safeDelete.SafeDeletePackage;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.lang.refactoring.RefactoringSupportProvider
+import com.intellij.psi.PsiElement
+import com.intellij.refactoring.RefactoringActionHandler
+import com.intellij.refactoring.changeSignature.ChangeSignatureHandler
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignatureHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractKotlinFunctionHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceLambdaParameterHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.KotlinIntroducePropertyHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.idea.refactoring.safeDelete.*
+import org.jetbrains.kotlin.psi.*
 
-public class JetRefactoringSupportProvider extends RefactoringSupportProvider {
-    @Override
-    public boolean isSafeDeleteAvailable(@NotNull PsiElement element) {
-        return SafeDeletePackage.canDeleteElement(element);
+public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
+    override fun isSafeDeleteAvailable(element: PsiElement): Boolean {
+        return element.canDeleteElement()
     }
 
-    @Override
-    public RefactoringActionHandler getIntroduceVariableHandler() {
-        return new KotlinIntroduceVariableHandler();
+    override fun getIntroduceVariableHandler(): RefactoringActionHandler? {
+        return KotlinIntroduceVariableHandler()
     }
 
-    @Nullable
-    @Override
-    public RefactoringActionHandler getIntroduceParameterHandler() {
-        return new KotlinIntroduceParameterHandler();
+    override fun getIntroduceParameterHandler(): RefactoringActionHandler? {
+        return KotlinIntroduceParameterHandler()
     }
 
-    @NotNull
-    public RefactoringActionHandler getIntroduceLambdaParameterHandler() {
-        return new KotlinIntroduceLambdaParameterHandler();
+    public fun getIntroduceLambdaParameterHandler(): RefactoringActionHandler {
+        return KotlinIntroduceLambdaParameterHandler()
     }
 
-    @NotNull
-    public RefactoringActionHandler getIntroducePropertyHandler() {
-        return new KotlinIntroducePropertyHandler();
+    public fun getIntroducePropertyHandler(): RefactoringActionHandler {
+        return KotlinIntroducePropertyHandler()
     }
 
-    @NotNull
-    public RefactoringActionHandler getExtractFunctionHandler() {
-        return new ExtractKotlinFunctionHandler();
+    public fun getExtractFunctionHandler(): RefactoringActionHandler {
+        return ExtractKotlinFunctionHandler()
     }
 
-    @NotNull
-    public RefactoringActionHandler getExtractFunctionToScopeHandler() {
-        return new ExtractKotlinFunctionHandler(true, ExtractKotlinFunctionHandler.InteractiveExtractionHelper.INSTANCE$);
+    public fun getExtractFunctionToScopeHandler(): RefactoringActionHandler {
+        return ExtractKotlinFunctionHandler(true, ExtractKotlinFunctionHandler.InteractiveExtractionHelper)
     }
 
-    @Override
-    public boolean isInplaceRenameAvailable(@NotNull PsiElement element, PsiElement context) {
-        if (element instanceof JetProperty) {
-            JetProperty property = (JetProperty) element;
-            if (property.isLocal()) return true;
+    override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
+        if (element is JetProperty) {
+            if (element.isLocal()) return true
         }
-        else if (element instanceof JetFunction) {
-            JetFunction function = (JetFunction) element;
-            if (function.isLocal()) return true;
+        else if (element is JetFunction) {
+            if (element.isLocal()) return true
         }
-        else if (element instanceof JetParameter) {
-            PsiElement parent = element.getParent();
-            if (parent instanceof JetForExpression) {
-                return true;
+        else if (element is JetParameter) {
+            val parent = element.getParent()
+            if (parent is JetForExpression) {
+                return true
             }
-            if (parent instanceof JetParameterList) {
-                PsiElement grandparent = parent.getParent();
-                return grandparent instanceof JetCatchClause || grandparent instanceof JetFunctionLiteral;
+            if (parent is JetParameterList) {
+                val grandparent = parent.getParent()
+                return grandparent is JetCatchClause || grandparent is JetFunctionLiteral
             }
         }
-        return false;
+        return false
     }
 
-    @Nullable
-    @Override
-    public ChangeSignatureHandler getChangeSignatureHandler() {
-        return new JetChangeSignatureHandler();
+    override fun getChangeSignatureHandler(): ChangeSignatureHandler? {
+        return JetChangeSignatureHandler()
     }
 }

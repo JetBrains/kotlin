@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable
 
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.lang.refactoring.RefactoringSupportProvider
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringSupportProvider
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 
 public class IntroducePropertyAction : AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
-            (provider as? JetRefactoringSupportProvider)?.getIntroducePropertyHandler()
+            (provider as? KotlinRefactoringSupportProvider)?.getIntroducePropertyHandler()
 }

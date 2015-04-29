@@ -241,7 +241,7 @@
                              implementationClass="org.jetbrains.kotlin.psi.psiUtil.JetStringTemplateExpressionManipulator"/>
     <fileStructureGroupRuleProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinDeclarationGroupRuleProvider"/>
     <importFilteringRule implementation="org.jetbrains.kotlin.idea.findUsages.JetImportFilteringRule"/>
-    <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.kotlin.idea.refactoring.JetRefactoringSupportProvider"/>
+    <lang.refactoringSupport language="jet" implementationClass="org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider"/>
     <lang.surroundDescriptor language="jet"
                              implementationClass="org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression.KotlinExpressionSurroundDescriptor"/>
     <lang.surroundDescriptor language="jet"
