@@ -22,11 +22,12 @@ import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 
-public class ReplaceWithTraditionalAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Replace with traditional assignment") {
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        return element.getOperationToken() in JetTokens.AUGMENTED_ASSIGNMENTS
-               && element.getLeft() is JetSimpleNameExpression
-               && element.getRight() != null
+public class ReplaceWithTraditionalAssignmentIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Replace with traditional assignment") {
+    override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
+        if (element.getOperationToken() !in JetTokens.AUGMENTED_ASSIGNMENTS) return false
+        if (element.getLeft() !is JetSimpleNameExpression) return false
+        if (element.getRight() == null) return false
+        return element.getOperationReference().getTextRange().containsOffset(caretOffset)
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
