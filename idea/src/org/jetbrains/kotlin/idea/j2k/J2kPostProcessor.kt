@@ -18,16 +18,14 @@ package org.jetbrains.kotlin.idea.j2k
 
 import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
 import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
@@ -141,6 +139,15 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                             return
                         }
                     }
+
+                    run {
+                        val intention = IfNullToElvisIntention()
+                        if (intention.isApplicableTo(expression)) {
+                            intention.applyTo(expression)
+                            return
+                        }
+                    }
+
                 }
             }
         })

@@ -41,6 +41,11 @@ public class IfNullToElvisIntention : JetSelfTargetingOffsetIndependentIntention
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
+        val newElvis = applyTo(element)
+        editor.getCaretModel().moveToOffset(newElvis.getRight()!!.getTextOffset())
+    }
+
+    public fun applyTo(element: JetIfExpression): JetBinaryExpression {
         val (initializer, declaration, ifNullExpr) = calcData(element)!!
         val factory = JetPsiFactory(element)
 
@@ -67,7 +72,7 @@ public class IfNullToElvisIntention : JetSelfTargetingOffsetIndependentIntention
             declaration.setType(explicitTypeToAdd)
         }
 
-        editor.getCaretModel().moveToOffset(newElvis.getRight()!!.getTextOffset())
+        return newElvis
     }
 
     private data class Data(

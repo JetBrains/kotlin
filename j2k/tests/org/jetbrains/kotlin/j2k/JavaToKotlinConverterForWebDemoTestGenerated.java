@@ -937,6 +937,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/codeSimplifications"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("IfNullReturnToElvis.java")
+        public void testIfNullReturnToElvis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/IfNullReturnToElvis.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("IfToElvis.java")
         public void testIfToElvis() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/codeSimplifications/IfToElvis.java");
