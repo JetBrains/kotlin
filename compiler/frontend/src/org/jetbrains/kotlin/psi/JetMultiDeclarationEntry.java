@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.search.LocalSearchScope;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,5 +135,14 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
     @Override
     public FqName getFqName() {
         return null;
+    }
+
+    @NotNull
+    @Override
+    public SearchScope getUseScope() {
+        JetElement enclosingBlock = JetPsiUtil.getEnclosingElementForLocalDeclaration(this, false);
+        if (enclosingBlock != null) return new LocalSearchScope(enclosingBlock);
+
+        return super.getUseScope();
     }
 }

@@ -30,55 +30,44 @@ import org.jetbrains.kotlin.idea.refactoring.safeDelete.*
 import org.jetbrains.kotlin.psi.*
 
 public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
-    override fun isSafeDeleteAvailable(element: PsiElement): Boolean {
-        return element.canDeleteElement()
-    }
+    override fun isSafeDeleteAvailable(element: PsiElement) = element.canDeleteElement()
 
-    override fun getIntroduceVariableHandler(): RefactoringActionHandler? {
-        return KotlinIntroduceVariableHandler()
-    }
+    override fun getIntroduceVariableHandler() = KotlinIntroduceVariableHandler()
 
-    override fun getIntroduceParameterHandler(): RefactoringActionHandler? {
-        return KotlinIntroduceParameterHandler()
-    }
+    override fun getIntroduceParameterHandler() = KotlinIntroduceParameterHandler()
 
-    public fun getIntroduceLambdaParameterHandler(): RefactoringActionHandler {
-        return KotlinIntroduceLambdaParameterHandler()
-    }
+    public fun getIntroduceLambdaParameterHandler(): RefactoringActionHandler = KotlinIntroduceLambdaParameterHandler()
 
-    public fun getIntroducePropertyHandler(): RefactoringActionHandler {
-        return KotlinIntroducePropertyHandler()
-    }
+    public fun getIntroducePropertyHandler(): RefactoringActionHandler = KotlinIntroducePropertyHandler()
 
-    public fun getExtractFunctionHandler(): RefactoringActionHandler {
-        return ExtractKotlinFunctionHandler()
-    }
+    public fun getExtractFunctionHandler(): RefactoringActionHandler =
+            ExtractKotlinFunctionHandler()
 
-    public fun getExtractFunctionToScopeHandler(): RefactoringActionHandler {
-        return ExtractKotlinFunctionHandler(true, ExtractKotlinFunctionHandler.InteractiveExtractionHelper)
-    }
+    public fun getExtractFunctionToScopeHandler(): RefactoringActionHandler =
+            ExtractKotlinFunctionHandler(true, ExtractKotlinFunctionHandler.InteractiveExtractionHelper)
 
     override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
-        if (element is JetProperty) {
-            if (element.isLocal()) return true
-        }
-        else if (element is JetFunction) {
-            if (element.isLocal()) return true
-        }
-        else if (element is JetParameter) {
-            val parent = element.getParent()
-            if (parent is JetForExpression) {
-                return true
+        when (element) {
+            is JetProperty -> {
+                if (element.isLocal()) return true
             }
-            if (parent is JetParameterList) {
-                val grandparent = parent.getParent()
-                return grandparent is JetCatchClause || grandparent is JetFunctionLiteral
+            is JetMultiDeclarationEntry -> return true
+            is JetFunction -> {
+                if (element.isLocal()) return true
+            }
+            is JetParameter -> {
+                val parent = element.getParent()
+                if (parent is JetForExpression) {
+                    return true
+                }
+                if (parent is JetParameterList) {
+                    val grandparent = parent.getParent()
+                    return grandparent is JetCatchClause || grandparent is JetFunctionLiteral
+                }
             }
         }
         return false
     }
 
-    override fun getChangeSignatureHandler(): ChangeSignatureHandler? {
-        return JetChangeSignatureHandler()
-    }
+    override fun getChangeSignatureHandler() = JetChangeSignatureHandler()
 }
