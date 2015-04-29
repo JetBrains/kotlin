@@ -1,3 +1,3 @@
 fun foo(x: Int) {
-    <caret>x compareTo 1
+    x <caret>compareTo 1
 }

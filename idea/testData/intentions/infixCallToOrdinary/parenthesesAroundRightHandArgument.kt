@@ -1,3 +1,3 @@
 fun foo(x: String) {
-    <caret>x plus ("1" + "2")
+    x plus<caret> ("1" + "2")
 }

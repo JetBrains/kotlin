@@ -2,5 +2,5 @@ trait Foo {
     fun foo(f: (Int) -> Unit)
 }
 fun foo(x: Foo) {
-    <caret>x foo { it * 2 }
+    x <caret>foo { it * 2 }
 }

@@ -1,3 +1,3 @@
 fun foo(x: Int) {
-    (<caret>x shl 1).minus()
+    (x <caret>shl 1).minus()
 }

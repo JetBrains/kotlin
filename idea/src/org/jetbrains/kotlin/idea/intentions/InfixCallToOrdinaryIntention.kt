@@ -23,26 +23,28 @@ import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 
-public class InfixCallToOrdinaryIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Replace infix call with ordinary call") {
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        return element.getLeft() != null && element.getRight() != null && element.getOperationToken() == JetTokens.IDENTIFIER
+public class InfixCallToOrdinaryIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Replace infix call with ordinary call") {
+    override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
+        if (element.getOperationToken() != JetTokens.IDENTIFIER || element.getLeft() == null || element.getRight() == null) return false
+        return element.getOperationReference().getTextRange().containsOffset(caretOffset)
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
         val receiverText = element.getLeft()!!.getText()
         val argumentText = element.getRight()!!.getText()
         val functionName = element.getOperationReference().getText()
-        val replacementExpressionStringBuilder = StringBuilder("$receiverText.$functionName")
 
-        replacementExpressionStringBuilder.append(
-                when (element.getRight()) {
-                    is JetFunctionLiteralExpression -> " $argumentText"
-                    is JetParenthesizedExpression -> argumentText
-                    else -> "($argumentText)"
-                }
-        )
+        val text = StringBuilder {
+            append(receiverText)
+            append(".")
+            append(functionName)
+            append(when (element.getRight()) {
+                       is JetFunctionLiteralExpression -> " $argumentText"
+                       is JetParenthesizedExpression -> argumentText
+                       else -> "($argumentText)"
+                   })
+        }.toString()
 
-        val replacement = JetPsiFactory(element).createExpression(replacementExpressionStringBuilder.toString())
-        element.replace(replacement)
+        element.replace(JetPsiFactory(element).createExpression(text))
     }
 }
