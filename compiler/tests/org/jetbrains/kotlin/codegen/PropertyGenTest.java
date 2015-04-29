@@ -23,7 +23,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.*;
 
-import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
+import static org.jetbrains.kotlin.codegen.CodegenTestUtil.findDeclaredMethodByName;
+import static org.jetbrains.kotlin.codegen.CodegenTestUtil.findDeclaredMethodByNameOrNull;
 
 public class PropertyGenTest extends CodegenTestCase {
     @Override
@@ -90,9 +91,9 @@ public class PropertyGenTest extends CodegenTestCase {
     }
 
     public void testFieldGetter() throws Exception {
-        loadText("val now: Long get() = System.currentTimeMillis(); fun foo() = now");
+        loadText("val now: Long get() = 42L; fun foo() = now");
         Method method = generateFunction("foo");
-        assertIsCurrentTime((Long) method.invoke(null));
+        assertEquals(Long.valueOf(42), method.invoke(null));
     }
 
     public void testFieldSetter() throws Exception {
@@ -129,13 +130,6 @@ public class PropertyGenTest extends CodegenTestCase {
         Method setter = findDeclaredMethodByName(aClass, "setter");
         setter.invoke(instance);
         assertEquals(610, getFoo.invoke(instance));
-    }
-
-    public void testInitializersForTopLevelProperties() throws Exception {
-        loadText("val x = System.currentTimeMillis()");
-        Method method = generateFunction("getX");
-        method.setAccessible(true);
-        assertIsCurrentTime((Long) method.invoke(null));
     }
 
     public void testPropertyReceiverOnStack() throws Exception {

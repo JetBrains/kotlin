@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.intellij.openapi.util.SystemInfo;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,14 +107,6 @@ public class CodegenTestUtil {
             }
         }
         return null;
-    }
-
-    public static void assertIsCurrentTime(long returnValue) {
-        long currentTime = System.currentTimeMillis();
-        long diff = Math.abs(returnValue - currentTime);
-        long toleratedDifference = SystemInfo.isWindows ? 15 : 1;
-        assertTrue("Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)",
-                diff <= toleratedDifference);
     }
 
     @NotNull

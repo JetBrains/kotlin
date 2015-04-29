@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.CodegenTestUtil.assertIsCurrentTime;
-
 public class PackageGenTest extends CodegenTestCase {
 
     @Override
@@ -60,8 +58,13 @@ public class PackageGenTest extends CodegenTestCase {
     public void testCurrentTime() throws Exception {
         loadText("fun f() : Long { return System.currentTimeMillis(); }");
         Method main = generateFunction();
-        long returnValue = (Long) main.invoke(null);
-        assertIsCurrentTime(returnValue);
+        long actual = (Long) main.invoke(null);
+        long expected = System.currentTimeMillis();
+        long diff = Math.abs(actual - expected);
+        assertTrue(
+                "Difference with current time: " + diff + " (this test is a bad one: it may fail even if the generated code is correct)",
+                diff <= 100
+        );
     }
 
     public void testIdentityHashCode() throws Exception {

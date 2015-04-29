@@ -158,13 +158,11 @@ public class PrimitiveTypesTest extends CodegenTestCase {
     }
 
     public void testCastOnStack() throws Exception {
-        loadText("fun foo(): Double = System.currentTimeMillis().toDouble()");
+        loadText("fun foo(l: Long): Double = l.toDouble()");
         Class<?> mainClass = generatePackagePartClass();
-        Method main = mainClass.getDeclaredMethod("foo");
-        double currentTimeMillis = (double) System.currentTimeMillis();
-        double result = (Double) main.invoke(null);
-        double delta = Math.abs(currentTimeMillis - result);
-        assertTrue(delta <= 1.0);
+        Method main = mainClass.getDeclaredMethod("foo", long.class);
+        double result = (Double) main.invoke(null, 42L);
+        assertTrue(Math.abs(42L - result) <= 1e-9);
     }
 
     public void testNeg() throws Exception {
