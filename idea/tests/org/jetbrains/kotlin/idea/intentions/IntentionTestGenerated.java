@@ -4181,6 +4181,51 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/infixCallToOrdinary")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class InfixCallToOrdinary extends AbstractIntentionTest {
+        public void testAllFilesPresentInInfixCallToOrdinary() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/infixCallToOrdinary"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("functionCallAfterInfixCall.kt")
+        public void testFunctionCallAfterInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/infixCallToOrdinary/functionCallAfterInfixCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionLiteralArgument.kt")
+        public void testFunctionLiteralArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/infixCallToOrdinary/functionLiteralArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonApplicableBinaryOperation.kt")
+        public void testNonApplicableBinaryOperation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/infixCallToOrdinary/nonApplicableBinaryOperation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullAssertedCall.kt")
+        public void testNullAssertedCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/infixCallToOrdinary/nullAssertedCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parenthesesAroundRightHandArgument.kt")
+        public void testParenthesesAroundRightHandArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/infixCallToOrdinary/parenthesesAroundRightHandArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleInfixFunctionCall.kt")
+        public void testSimpleInfixFunctionCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/infixCallToOrdinary/simpleInfixFunctionCall.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/insertCurlyBracesToTemplate")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5306,51 +5351,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("notApplicable_parameterExplicitlyNamedIt.kt")
         public void testNotApplicable_parameterExplicitlyNamedIt() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceItWithExplicitFunctionLiteralParam/notApplicable_parameterExplicitlyNamedIt.kt");
-            doTest(fileName);
-        }
-    }
-
-    @TestMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceWithDotQualifiedMethodCall extends AbstractIntentionTest {
-        public void testAllFilesPresentInReplaceWithDotQualifiedMethodCall() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithDotQualifiedMethodCall"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("functionCallAfterInfixCall.kt")
-        public void testFunctionCallAfterInfixCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall/functionCallAfterInfixCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("functionLiteralArgument.kt")
-        public void testFunctionLiteralArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall/functionLiteralArgument.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nonApplicableBinaryOperation.kt")
-        public void testNonApplicableBinaryOperation() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall/nonApplicableBinaryOperation.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullAssertedCall.kt")
-        public void testNullAssertedCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall/nullAssertedCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("parenthesesAroundRightHandArgument.kt")
-        public void testParenthesesAroundRightHandArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall/parenthesesAroundRightHandArgument.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simpleInfixFunctionCall.kt")
-        public void testSimpleInfixFunctionCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithDotQualifiedMethodCall/simpleInfixFunctionCall.kt");
             doTest(fileName);
         }
     }

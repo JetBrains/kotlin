@@ -719,7 +719,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithDotQualifiedMethodCallIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
