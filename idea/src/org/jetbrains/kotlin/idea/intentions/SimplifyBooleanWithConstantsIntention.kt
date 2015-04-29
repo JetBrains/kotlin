@@ -17,10 +17,6 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -29,6 +25,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.psiUtil.copied
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.*
 
 public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(
         "simplify.boolean.with.constants", javaClass()) {
@@ -101,9 +98,8 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
                 if (simpleRight.canBeReducedToTrue() || simpleRight.canBeReducedToFalse())
                     return toSimplifiedBooleanBinaryExpressionWithConstantOperand(simpleRight, simpleLeft, op)
 
-                val opText = element.getOperationReference().getText()
-                if (opText == null) return element.copied()
-                return psiFactory.createBinaryExpression(simpleLeft, opText, simpleRight)
+                val opText = element.getOperationReference().getText() ?: return element.copied()
+                return psiFactory.createExpressionByPattern("$0 $opText $1", simpleLeft, simpleRight)
             }
             else -> return element.copied()
         }

@@ -16,14 +16,11 @@
 
 package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
 
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 public open class ReplaceContainsIntention : AttributeCallReplacementIntention("replace.contains.with.in") {
@@ -56,9 +53,8 @@ public open class ReplaceContainsIntention : AttributeCallReplacementIntention("
             }
         }
 
-        call.element.replace(psiFactory.createBinaryExpression(
+        call.element.replace(psiFactory.createExpressionByPattern("$0 in $1",
                 argument,
-                "in",
                 call.element.getReceiverExpression()
         ))
     }

@@ -17,22 +17,23 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.LocalTimeCounter
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder.Target
-import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.resolve.ImportPath
 import java.io.PrintWriter
 import java.io.StringWriter
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.PsiComment
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
 public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
@@ -326,13 +327,6 @@ public class JetPsiFactory(private val project: Project) {
 
     public fun createFieldIdentifier(fieldName: String): JetExpression {
         return createExpression("$" + fieldName)
-    }
-
-    public fun createBinaryExpression(lhs: JetExpression, op: String, rhs: JetExpression): JetBinaryExpression {
-        val expression = createExpression("a $op b") as JetBinaryExpression
-        expression.getLeft().replace(lhs)
-        expression.getRight().replace(rhs)
-        return expression
     }
 
     public fun createTypeCodeFragment(text: String, context: PsiElement?): JetTypeCodeFragment {

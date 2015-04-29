@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.intentions.declarations.DeclarationUtils;
 import org.jetbrains.kotlin.psi.*;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.createExpressionByPattern;
 
 public class BranchedUnfoldingUtils {
     private BranchedUnfoldingUtils() {
@@ -95,8 +96,8 @@ public class BranchedUnfoldingUtils {
 
         //noinspection ConstantConditions
         JetPsiFactory psiFactory = JetPsiFactory(assignment);
-        thenExpr.replace(psiFactory.createBinaryExpression(lhs, op, thenExpr));
-        elseExpr.replace(psiFactory.createBinaryExpression(lhs, op, elseExpr));
+        thenExpr.replace(createExpressionByPattern(psiFactory, "$0 $1 $2", lhs, op, thenExpr));
+        elseExpr.replace(createExpressionByPattern(psiFactory, "$0 $1 $2", lhs, op, elseExpr));
 
         PsiElement resultElement = assignment.replace(newIfExpression);
 
@@ -119,7 +120,7 @@ public class BranchedUnfoldingUtils {
             assertNotNull(currExpr);
 
             //noinspection ConstantConditions
-            currExpr.replace(JetPsiFactory(assignment).createBinaryExpression(lhs, op, currExpr));
+            currExpr.replace(createExpressionByPattern(JetPsiFactory(assignment), "$0 $1 $2", lhs, op, currExpr));
         }
 
         PsiElement resultElement = assignment.replace(newWhenExpression);

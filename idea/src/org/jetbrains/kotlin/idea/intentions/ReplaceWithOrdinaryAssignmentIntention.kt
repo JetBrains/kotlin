@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 public class ReplaceWithOrdinaryAssignmentIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Replace with ordinary assignment") {
     override fun isApplicableTo(element: JetBinaryExpression, caretOffset: Int): Boolean {
@@ -39,7 +40,6 @@ public class ReplaceWithOrdinaryAssignmentIntention : JetSelfTargetingIntention<
         assert(assignOpText.endsWith("="))
         val operationText = assignOpText.substring(0, assignOpText.length() - 1)
 
-        val expression = factory.createBinaryExpression(left, operationText, right)
-        element.replace(factory.createBinaryExpression(left, "=", expression))
+        element.replace(factory.createExpressionByPattern("$0 = $0 $operationText $1", left, right))
     }
 }

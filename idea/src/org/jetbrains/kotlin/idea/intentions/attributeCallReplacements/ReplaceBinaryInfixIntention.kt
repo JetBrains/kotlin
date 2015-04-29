@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 public open class ReplaceBinaryInfixIntention : AttributeCallReplacementIntention("replace.binary.operator.with.infix") {
 
@@ -49,11 +50,10 @@ public open class ReplaceBinaryInfixIntention : AttributeCallReplacementIntentio
     override fun replaceCall(call: CallDescription, editor: Editor) {
         val argument = (handleErrors(editor, call.getPositionalArguments()) ?: return)[0].getArgumentExpression()
 
+        val operation = lookup(call.functionName)!! // Lookup must succeed
         call.element.replace(
-                JetPsiFactory(call.element).createBinaryExpression(
-                        call.element.getReceiverExpression(),
-                        lookup(call.functionName)!!,  // Lookup must succeed
-                        argument
+                JetPsiFactory(call.element).createExpressionByPattern("$0 $operation $1",
+                        call.element.getReceiverExpression(), argument
                 )
         )
     }

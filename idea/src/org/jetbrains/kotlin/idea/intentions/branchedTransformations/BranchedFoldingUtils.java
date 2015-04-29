@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.createExpressionByPattern;
 
 public class BranchedFoldingUtils {
     private BranchedFoldingUtils() {
@@ -172,8 +173,8 @@ public class BranchedFoldingUtils {
         String op = thenAssignment.getOperationReference().getText();
         JetSimpleNameExpression lhs = (JetSimpleNameExpression) thenAssignment.getLeft();
 
-        JetBinaryExpression assignment = JetPsiFactory(ifExpression).createBinaryExpression(lhs, op, ifExpression);
-        JetIfExpression newIfExpression = (JetIfExpression)assignment.getRight();
+        JetExpression assignment = createExpressionByPattern(JetPsiFactory(ifExpression), "$0 $1 $2", lhs, op, ifExpression);
+        JetIfExpression newIfExpression = (JetIfExpression)((JetBinaryExpression)assignment).getRight();
 
         assertNotNull(newIfExpression);
 
@@ -276,8 +277,8 @@ public class BranchedFoldingUtils {
         String op = firstAssignment.getOperationReference().getText();
         JetSimpleNameExpression lhs = (JetSimpleNameExpression) firstAssignment.getLeft();
 
-        JetBinaryExpression assignment = JetPsiFactory(whenExpression).createBinaryExpression(lhs, op, whenExpression);
-        JetWhenExpression newWhenExpression = (JetWhenExpression)assignment.getRight();
+        JetExpression assignment = createExpressionByPattern(JetPsiFactory(whenExpression), "$0 $1 $2", lhs, op, whenExpression);
+        JetWhenExpression newWhenExpression = (JetWhenExpression)((JetBinaryExpression)assignment).getRight();
 
         assertNotNull(newWhenExpression);
 

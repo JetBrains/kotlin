@@ -16,19 +16,12 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetPrefixExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
-import org.jetbrains.kotlin.psi.JetOperationExpression
-import org.jetbrains.kotlin.psi.JetIsExpression
-import org.jetbrains.kotlin.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.*
 
 public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIndependentIntention<JetPrefixExpression>("simplify.negated.binary.expression", javaClass()) {
 
@@ -85,7 +78,7 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIn
                                 "${expression.getLeftHandSide().getText() ?: ""} ${invertedOperation.getValue()} ${expression.getTypeReference()?.getText() ?: ""}"
                         )
                     }
-                    is JetBinaryExpression -> psiFactory.createBinaryExpression(
+                    is JetBinaryExpression -> psiFactory.createExpressionByPattern("$0 $1 $2",
                             expression.getLeft(),
                             invertedOperation.getValue(),
                             expression.getRight()

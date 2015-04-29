@@ -19,13 +19,8 @@ package org.jetbrains.kotlin.idea.joinLines
 import com.intellij.codeInsight.editorActions.JoinRawLinesHandlerDelegate
 import com.intellij.openapi.editor.Document
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBlockExpression
-import org.jetbrains.kotlin.psi.JetContainerNode
-import org.jetbrains.kotlin.psi.JetWhenEntry
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.*
 
 public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
@@ -54,7 +49,7 @@ public class JoinBlockIntoSingleStatementHandler : JoinRawLinesHandlerDelegate {
             val condition2 = statement.getCondition()
             val body = statement.getThen()
             if (condition1 != null && condition2 != null && body != null) {
-                val newCondition = JetPsiFactory(pparent).createBinaryExpression(condition1, "&&", condition2)
+                val newCondition = JetPsiFactory(pparent).createExpressionByPattern("$0 && $1", condition1, condition2)
                 condition1.replace(newCondition)
                 val newBody = block.replace(body)
                 return newBody.getTextRange()!!.getStartOffset()

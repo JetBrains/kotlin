@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
+import static org.jetbrains.kotlin.psi.PsiPackage.createExpressionByPattern;
 
 public class DeclarationUtils {
     private DeclarationUtils() {
@@ -62,9 +62,7 @@ public class DeclarationUtils {
 
         JetPsiFactory psiFactory = JetPsiFactory(property);
         //noinspection ConstantConditions, unchecked
-        JetBinaryExpression newInitializer = psiFactory.createBinaryExpression(
-                psiFactory.createSimpleName(property.getName()), "=", initializer
-        );
+        JetExpression newInitializer = createExpressionByPattern(psiFactory, "$0 = $1", property.getName(), initializer);
 
         newInitializer = (JetBinaryExpression) parent.addAfter(newInitializer, property);
         parent.addAfter(psiFactory.createNewLine(), property);
@@ -85,6 +83,6 @@ public class DeclarationUtils {
             ShortenReferences.DEFAULT.process(property.getTypeReference());
         }
 
-        return newInitializer;
+        return (JetBinaryExpression) newInitializer;
     }
 }

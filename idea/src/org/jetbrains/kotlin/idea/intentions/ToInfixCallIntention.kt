@@ -46,7 +46,7 @@ public class ToInfixCallIntention : JetSelfTargetingIntention<JetCallExpression>
         val argument = element.getValueArguments().single().getArgumentExpression()!!
         val name = element.getCalleeExpression()!!.getText()
 
-        val newCall = JetPsiFactory(element).createExpressionByPattern("$0 $1 $2", receiver, name, argument)
+        val newCall = JetPsiFactory(element).createExpressionByPattern("$0 $name $1", receiver, argument)
         dotQualified.replace(newCall)
     }
 }

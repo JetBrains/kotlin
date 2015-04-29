@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
 import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.psiUtil.copied
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Flip binary expression") {
@@ -62,10 +64,11 @@ public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinary
         }
         val left = leftSubject(element)!!
         val right = rightSubject(element)!!
-        val psiFactory = JetPsiFactory(element)
-        left.replace(psiFactory.createExpression(right.getText()))
-        right.replace(psiFactory.createExpression(left.getText()))
-        element.replace(psiFactory.createBinaryExpression(element.getLeft()!!, convertedOperator, element.getRight()!!))
+        val rightCopy = right.copied()
+        val leftCopy = left.copied()
+        left.replace(rightCopy)
+        right.replace(leftCopy)
+        element.replace(JetPsiFactory(element).createExpressionByPattern("$0 $convertedOperator $1" , element.getLeft()!!, element.getRight()!!))
     }
 
     private fun leftSubject(element: JetBinaryExpression): JetExpression? {
