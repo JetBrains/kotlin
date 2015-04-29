@@ -562,6 +562,8 @@ public class JetPsiUtil {
             return true;
         }
 
+        if (parentExpression instanceof JetLabeledExpression) return false;
+
         // 'x ?: ...' case
         if (parentExpression instanceof JetBinaryExpression && parentOperation == JetTokens.ELVIS && currentInner == ((JetBinaryExpression) parentExpression).getRight()) {
             return false;

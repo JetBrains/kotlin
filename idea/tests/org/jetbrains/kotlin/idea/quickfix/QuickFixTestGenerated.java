@@ -5418,6 +5418,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/when"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
 
+        @TestMetadata("breakInWhen.kt")
+        public void testBreakInWhen() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/when/breakInWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("continueInWhen.kt")
+        public void testContinueInWhen() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/when/continueInWhen.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("continueInWhenWithLabel.kt")
+        public void testContinueInWhenWithLabel() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/when/continueInWhenWithLabel.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("elseNotLastInWhen.kt")
         public void testElseNotLastInWhen() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/when/elseNotLastInWhen.kt");
