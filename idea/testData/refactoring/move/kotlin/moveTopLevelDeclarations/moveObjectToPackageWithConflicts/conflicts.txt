@@ -1,4 +1,4 @@
 Object a.Test uses package-private class a.Foo
 Object a.Test uses package-private function a.foo
 Package-private object a.Test will no longer be accessible from method J.bar()
-Package-private object a.Test will no longer be accessible from property a.bar.t
+Package-private object a.Test will no longer be accessible from variable a.bar.t

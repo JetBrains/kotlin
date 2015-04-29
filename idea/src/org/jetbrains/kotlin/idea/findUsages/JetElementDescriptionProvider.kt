@@ -40,9 +40,10 @@ public class JetElementDescriptionProvider : ElementDescriptionProvider {
             is JetObjectDeclaration -> "object"
             is JetNamedFunction -> "function"
             is JetSecondaryConstructor -> "constructor"
-            is JetProperty -> "property"
+            is JetProperty -> if (targetElement.isLocal()) "variable" else "property"
             is JetTypeParameter -> "type parameter"
             is JetParameter -> "parameter"
+            is JetMultiDeclarationEntry -> "variable"
             else -> null
         }
 

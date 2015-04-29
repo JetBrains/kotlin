@@ -128,6 +128,10 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         doTestInplaceRename("foo")
     }
 
+    public fun testMultiDeclaration() {
+        doTestInplaceRename("foo")
+    }
+
     private fun doTestInplaceRename(newName: String?) {
         configureByFile(getTestName(false) + ".kt")
         val element = TargetElementUtilBase.findTargetElement(
