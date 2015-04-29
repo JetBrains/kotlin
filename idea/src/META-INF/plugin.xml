@@ -724,7 +724,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.ReplaceWithInfixFunctionCallIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.ToInfixCallIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

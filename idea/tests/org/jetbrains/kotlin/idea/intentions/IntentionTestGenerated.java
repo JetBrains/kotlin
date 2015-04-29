@@ -5355,123 +5355,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/replaceWithInfixFunctionCall")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ReplaceWithInfixFunctionCall extends AbstractIntentionTest {
-        public void testAllFilesPresentInReplaceWithInfixFunctionCall() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceWithInfixFunctionCall"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("binaryExpressionArgument.kt")
-        public void testBinaryExpressionArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/binaryExpressionArgument.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("caretInsideCalleeExpr.kt")
-        public void testCaretInsideCalleeExpr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/caretInsideCalleeExpr.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("caretInsideReceiverExpr.kt")
-        public void testCaretInsideReceiverExpr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/caretInsideReceiverExpr.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("doubleFunctionCall.kt")
-        public void testDoubleFunctionCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/doubleFunctionCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("doubleFunctionCallWithoutParentheses.kt")
-        public void testDoubleFunctionCallWithoutParentheses() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/doubleFunctionCallWithoutParentheses.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("functionLiteralArgument.kt")
-        public void testFunctionLiteralArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/functionLiteralArgument.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("functionSafeCall.kt")
-        public void testFunctionSafeCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/functionSafeCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("inapplicableCaretPosition.kt")
-        public void testInapplicableCaretPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/inapplicableCaretPosition.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("multipleArguments.kt")
-        public void testMultipleArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/multipleArguments.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("namedArgument.kt")
-        public void testNamedArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/namedArgument.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("nullAssertedReceiver.kt")
-        public void testNullAssertedReceiver() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/nullAssertedReceiver.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("packageFunctionCall.kt")
-        public void testPackageFunctionCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/packageFunctionCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("propertyAccess.kt")
-        public void testPropertyAccess() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/propertyAccess.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("secondParameterLabeled.kt")
-        public void testSecondParameterLabeled() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/secondParameterLabeled.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simpleArgumentAndFunctionLiteralArgument.kt")
-        public void testSimpleArgumentAndFunctionLiteralArgument() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/simpleArgumentAndFunctionLiteralArgument.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("simpleMethodCall.kt")
-        public void testSimpleMethodCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/simpleMethodCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("singlePackageFunctionCall.kt")
-        public void testSinglePackageFunctionCall() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/singlePackageFunctionCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("zeroArguments.kt")
-        public void testZeroArguments() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithInfixFunctionCall/zeroArguments.kt");
-            doTest(fileName);
-        }
-    }
-
     @TestMetadata("idea/testData/intentions/replaceWithOperatorAssign")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -6411,6 +6294,123 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("xor.kt")
         public void testXor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/xor.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/toInfixCall")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ToInfixCall extends AbstractIntentionTest {
+        public void testAllFilesPresentInToInfixCall() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/toInfixCall"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("binaryExpressionArgument.kt")
+        public void testBinaryExpressionArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/binaryExpressionArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("caretInsideCalleeExpr.kt")
+        public void testCaretInsideCalleeExpr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/caretInsideCalleeExpr.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("caretInsideReceiverExpr.kt")
+        public void testCaretInsideReceiverExpr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/caretInsideReceiverExpr.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubleFunctionCall.kt")
+        public void testDoubleFunctionCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/doubleFunctionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doubleFunctionCallWithoutParentheses.kt")
+        public void testDoubleFunctionCallWithoutParentheses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/doubleFunctionCallWithoutParentheses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionLiteralArgument.kt")
+        public void testFunctionLiteralArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/functionLiteralArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionSafeCall.kt")
+        public void testFunctionSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/functionSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableCaretPosition.kt")
+        public void testInapplicableCaretPosition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/inapplicableCaretPosition.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multipleArguments.kt")
+        public void testMultipleArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/multipleArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("namedArgument.kt")
+        public void testNamedArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/namedArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nullAssertedReceiver.kt")
+        public void testNullAssertedReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/nullAssertedReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageFunctionCall.kt")
+        public void testPackageFunctionCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/packageFunctionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyAccess.kt")
+        public void testPropertyAccess() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/propertyAccess.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondParameterLabeled.kt")
+        public void testSecondParameterLabeled() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/secondParameterLabeled.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleArgumentAndFunctionLiteralArgument.kt")
+        public void testSimpleArgumentAndFunctionLiteralArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/simpleArgumentAndFunctionLiteralArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleMethodCall.kt")
+        public void testSimpleMethodCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/simpleMethodCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("singlePackageFunctionCall.kt")
+        public void testSinglePackageFunctionCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/singlePackageFunctionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("zeroArguments.kt")
+        public void testZeroArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/zeroArguments.kt");
             doTest(fileName);
         }
     }

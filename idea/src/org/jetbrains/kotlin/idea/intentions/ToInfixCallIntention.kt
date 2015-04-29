@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
-public class ReplaceWithInfixFunctionCallIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace with infix function call") {
+public class ToInfixCallIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace with infix function call") {
     override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
         val calleeExpr = element.getCalleeExpression() ?: return false
         if (!calleeExpr.getTextRange().containsOffset(caretOffset)) return false
