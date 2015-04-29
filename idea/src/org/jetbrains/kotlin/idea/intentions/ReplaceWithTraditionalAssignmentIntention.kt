@@ -16,43 +16,29 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 
-public class ReplaceWithTraditionalAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>("replace.with.traditional.assignment.intention", javaClass()) {
+public class ReplaceWithTraditionalAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Replace with traditional assignment") {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        fun checkForNullSafety(element: JetBinaryExpression): Boolean = element.getLeft() != null && element.getRight() != null && element.getOperationToken() != null
-
-        fun checkValidity(element: JetBinaryExpression): Boolean {
-            return element.getLeft() is JetSimpleNameExpression &&
-                    JetTokens.AUGMENTED_ASSIGNMENTS.contains(element.getOperationToken())
-        }
-
-        return checkForNullSafety(element) && checkValidity(element)
+        return element.getOperationToken() in JetTokens.AUGMENTED_ASSIGNMENTS
+               && element.getLeft() is JetSimpleNameExpression
+               && element.getRight() != null
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        fun buildReplacement(element: JetBinaryExpression): String {
-            val replacementStringBuilder = StringBuilder("${element.getLeft()!!.getText()} = ${element.getLeft()!!.getText()} ")
+        val left = element.getLeft()!!
+        val right = element.getRight()!!
+        val factory = JetPsiFactory(element)
 
-            replacementStringBuilder.append(
-                    when {
-                        element.getOperationToken() == JetTokens.PLUSEQ -> "+"
-                        element.getOperationToken() == JetTokens.MINUSEQ -> "-"
-                        element.getOperationToken() == JetTokens.MULTEQ -> "*"
-                        element.getOperationToken() == JetTokens.DIVEQ -> "/"
-                        element.getOperationToken() == JetTokens.PERC -> "%"
-                        else -> ""
-                    }
-            ).append(" ${JetPsiUnparsingUtils.parenthesizeIfNeeded(element.getRight())}")
+        val assignOpText = element.getOperationReference().getText()
+        assert(assignOpText.endsWith("="))
+        val operationText = assignOpText.substring(0, assignOpText.length() - 1)
 
-            return replacementStringBuilder.toString()
-        }
-
-        element.replace(JetPsiFactory(element).createExpression(buildReplacement(element)))
+        val expression = factory.createBinaryExpression(left, operationText, right)
+        element.replace(factory.createBinaryExpression(left, "=", expression))
     }
 }
