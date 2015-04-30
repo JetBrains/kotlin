@@ -38,15 +38,16 @@ import org.gradle.api.file.SourceDirectorySet
 import kotlin.properties.Delegates
 import org.gradle.api.tasks.Delete
 import groovy.lang.Closure
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import java.util.ServiceLoader
 import org.gradle.api.logging.*
 import java.net.URL
 import java.util.jar.Manifest
+import java.lang.ref.WeakReference
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
-
 
 abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val project: ProjectInternal,
@@ -300,23 +301,39 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
         (ext as ExtensionAware).getExtensions().add("kotlinOptions", tasksProvider.kotlinJVMOptionsClass)
 
+        fun addConfiguration(name: String): Configuration =
+                project.getConfigurations().create(name)
+
+        val kotlinAptConfiguration = addConfiguration("kotlinApt")
+        val kotlinAptAndroidTestConfiguration = addConfiguration("kotlinAptAndroidTest")
+        val kotlinAptTestConfiguration = addConfiguration("kotlinAptTest")
+
+        val aptConfigurations = mapOf(
+                "base" to kotlinAptConfiguration,
+                "androidTest" to kotlinAptAndroidTestConfiguration,
+                "unitTest" to kotlinAptTestConfiguration)
+
         project afterEvaluate { project ->
             if (project != null) {
                 val plugin = (project.getPlugins().findPlugin("android")
                                 ?: project.getPlugins().findPlugin("android-library")) as BasePlugin
 
-                processVariantData(plugin.getVariantManager().getVariantDataList(), project, ext, plugin)
+                val aptConfigurationDependencyFiles = aptConfigurations.mapValues { it.getValue().resolve() }
+
+                processVariantData(plugin.getVariantManager().getVariantDataList(), project, ext, plugin, aptConfigurationDependencyFiles)
             }
         }
 
-        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler, project).resolveKotlinPluginDependency("kotlin-android-sdk-annotations"))
+        project.getExtensions().add(DEFAULT_ANNOTATIONS, GradleUtils(scriptHandler, project)
+                .resolveKotlinPluginDependency("kotlin-android-sdk-annotations"))
     }
 
     private fun processVariantData(
             variantDataList: List<BaseVariantData<out BaseVariantOutputData>>,
             project: Project,
             androidExt: BaseExtension,
-            androidPlugin: BasePlugin
+            androidPlugin: BasePlugin,
+            aptConfigurations: Map<String, Set<File>>
     ) {
         val logger = project.getLogger()
         val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
@@ -375,12 +392,25 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
+            fun filesForConfigurations(configurationIds: Array<String>): Set<File> {
+                return configurationIds.flatMap { aptConfigurations[it]?.toList() ?: listOf() }.distinct()
+            }
+
+            val aptFiles = filesForConfigurations(when (variantData.getType()) {
+                VariantType.UNIT_TEST -> arrayOf("base", "unitTest")
+                VariantType.ANDROID_TEST -> arrayOf("base", "androidTest")
+                else -> arrayOf("base")
+            })
+
+            kotlinTask.setProperty("aptFiles", aptFiles)
+
             kotlinTask doFirst {
                 val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
                 val fullClasspath = (javaTask.getClasspath() + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))
                 (it as AbstractCompile).setClasspath(fullClasspath)
             }
 
+            kotlinTask.getExtensions().getExtraProperties().set("javaTask", WeakReference(javaTask))
             javaTask.dependsOn(kotlinTaskName)
 
             javaTask doFirst  {
