@@ -9,6 +9,6 @@ public trait TypeParamOfClassSubstituted {
 
     public trait Super</*0*/ T> {
         public abstract fun dummy(): kotlin.Unit
-        org.jetbrains.annotations.NotNull() public abstract fun foo(): T!
+        org.jetbrains.annotations.NotNull() public abstract fun foo(): T
     }
 }
