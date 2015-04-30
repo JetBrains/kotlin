@@ -4552,7 +4552,7 @@ companion object {
     val FILTER_ACCEPT : Short = 1
     val FILTER_REJECT : Short = 2
     val FILTER_SKIP : Short = 3
-    val SHOW_ALL : Int = 0xFFFFFFFF
+    val SHOW_ALL : Int = noImpl
     val SHOW_ELEMENT : Int = 0x1
     val SHOW_ATTRIBUTE : Int = 0x2
     val SHOW_TEXT : Int = 0x4
