@@ -49,6 +49,11 @@ public class ClassBuilderFactories {
         public byte[] asBytes(ClassBuilder builder) {
             throw new IllegalStateException();
         }
+
+        @Override
+        public void close() {
+            throw new IllegalStateException();
+        }
     };
 
     @NotNull
@@ -79,6 +84,11 @@ public class ClassBuilderFactories {
         public byte[] asBytes(ClassBuilder builder) {
             return ((TraceBuilder) builder).binary.toByteArray();
         }
+
+        @Override
+        public void close() {
+
+        }
     };
 
     @NotNull
@@ -104,6 +114,11 @@ public class ClassBuilderFactories {
         public byte[] asBytes(ClassBuilder builder) {
             ClassWriter visitor = (ClassWriter) builder.getVisitor();
             return visitor.toByteArray();
+        }
+
+        @Override
+        public void close() {
+
         }
     };
 

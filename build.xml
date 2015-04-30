@@ -90,6 +90,7 @@
         <include name="compiler/frontend.java/src"/>
         <include name="compiler/light-classes/src"/>
         <include name="compiler/plugin-api/src"/>
+        <include name="plugins/annotation-collector/src"/>
         <include name="compiler/serialization/src"/>
         <include name="compiler/util/src"/>
         <include name="js/js.dart-ast/src"/>
@@ -116,6 +117,7 @@
         <include name="util.runtime/**"/>
         <include name="light-classes/**"/>
         <include name="plugin-api/**"/>
+        <include name="annotation-collector/**"/>
         <include name="builtins-serializer/**"/>
         <include name="js.dart-ast/**"/>
         <include name="js.translator/**"/>
@@ -200,6 +202,7 @@
             <fileset dir="compiler/frontend.java/src"/>
             <fileset dir="compiler/light-classes/src"/>
             <fileset dir="compiler/plugin-api/src"/>
+            <fileset dir="plugins/annotation-collector/src"/>
             <fileset dir="compiler/serialization/src"/>
             <fileset dir="compiler/util/src"/>
             <fileset dir="js/js.dart-ast/src"/>

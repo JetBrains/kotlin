@@ -20,5 +20,8 @@
         <extensionPoint name="simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="classBuilderInterceptorExtension"
+                        interface="org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension"
+                        area="IDEA_PROJECT"/>
     </extensionPoints>
 </idea-plugin>

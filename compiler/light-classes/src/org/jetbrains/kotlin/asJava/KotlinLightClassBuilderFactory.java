@@ -52,4 +52,9 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
     public byte[] asBytes(ClassBuilder builder) {
         throw new UnsupportedOperationException("asBytes is not implemented"); // TODO
     }
+
+    @Override
+    public void close() {
+
+    }
 }

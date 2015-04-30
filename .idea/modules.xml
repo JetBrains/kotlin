@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/plugins/android-jps-plugin/android-jps-plugin.iml" filepath="$PROJECT_DIR$/plugins/android-jps-plugin/android-jps-plugin.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/android-studio/android-studio.iml" filepath="$PROJECT_DIR$/android-studio/android-studio.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/compiler/android-tests/android-tests.iml" filepath="$PROJECT_DIR$/compiler/android-tests/android-tests.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/plugins/annotation-collector/annotation-collector.iml" filepath="$PROJECT_DIR$/plugins/annotation-collector/annotation-collector.iml" group="plugins" />
       <module fileurl="file://$PROJECT_DIR$/ant/ant.iml" filepath="$PROJECT_DIR$/ant/ant.iml" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend/backend.iml" filepath="$PROJECT_DIR$/compiler/backend/backend.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/backend-common/backend-common.iml" filepath="$PROJECT_DIR$/compiler/backend-common/backend-common.iml" group="compiler" />

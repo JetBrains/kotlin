@@ -50,4 +50,9 @@ public class OptimizationClassBuilderFactory implements ClassBuilderFactory {
     public byte[] asBytes(ClassBuilder builder) {
         return delegate.asBytes(((OptimizationClassBuilder) builder).getDelegate());
     }
+
+    @Override
+    public void close() {
+        delegate.close();
+    }
 }

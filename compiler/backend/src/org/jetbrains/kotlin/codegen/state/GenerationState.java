@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
+import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory;
 import org.jetbrains.kotlin.codegen.when.MappingsClassesForWhenByEnum;
@@ -138,6 +139,9 @@ public class GenerationState {
     @Nullable
     private final File outDirectory; // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
 
+    @NotNull
+    private final ClassBuilderFactory interceptedBuilderFactory;
+
     public GenerationState(
             @NotNull Project project,
             @NotNull ClassBuilderFactory builderFactory,
@@ -187,9 +191,20 @@ public class GenerationState {
             builderFactory = new OptimizationClassBuilderFactory(builderFactory);
         }
 
+        ClassBuilderFactory interceptedBuilderFactory = new BuilderFactoryForDuplicateSignatureDiagnostics(
+                builderFactory, this.bindingContext, diagnostics);
+
+        Collection<ClassBuilderInterceptorExtension> interceptExtensions =
+                ClassBuilderInterceptorExtension.Companion.getInstances(project);
+
+        for (ClassBuilderInterceptorExtension extension : interceptExtensions) {
+            interceptedBuilderFactory = extension.interceptClassBuilderFactory(interceptedBuilderFactory, bindingContext, diagnostics);
+        }
+
+        this.interceptedBuilderFactory = interceptedBuilderFactory;
+
         this.diagnostics = diagnostics;
-        this.classFileFactory = new ClassFileFactory(this, new BuilderFactoryForDuplicateSignatureDiagnostics(
-                builderFactory, this.bindingContext, diagnostics));
+        this.classFileFactory = new ClassFileFactory(this, interceptedBuilderFactory);
 
         this.disableCallAssertions = disableCallAssertions;
         this.disableParamAssertions = disableParamAssertions;
@@ -306,6 +321,7 @@ public class GenerationState {
     }
 
     public void destroy() {
+        interceptedBuilderFactory.close();
     }
 
     @Nullable

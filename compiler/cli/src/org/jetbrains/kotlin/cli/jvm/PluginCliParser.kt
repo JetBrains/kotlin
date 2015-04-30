@@ -21,6 +21,8 @@ import java.util.jar.JarFile
 import java.util.jar.Attributes
 import java.util.regex.Pattern
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.annotation.AnnotationCollectorCommandLineProcessor
+import org.jetbrains.kotlin.annotation.AnnotationCollectorComponentRegistrar
 import java.net.URLClassLoader
 import java.net.URL
 import java.io.File
@@ -45,10 +47,9 @@ public object PluginCliParser {
                 javaClass.getClassLoader()
         )
 
-        configuration.addAll(
-                ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS,
-                ServiceLoader.load(javaClass<ComponentRegistrar>(), classLoader).toList()
-        )
+        val componentRegistrars = ServiceLoader.load(javaClass<ComponentRegistrar>(), classLoader).toArrayList()
+        componentRegistrars.add(AnnotationCollectorComponentRegistrar())
+        configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
         processPluginOptions(arguments, configuration, classLoader)
     }
@@ -63,7 +64,8 @@ public object PluginCliParser {
             it.pluginId
         } ?: mapOf()
 
-        val commandLineProcessors = ServiceLoader.load(javaClass<CommandLineProcessor>(), classLoader).toList()
+        val commandLineProcessors = ServiceLoader.load(javaClass<CommandLineProcessor>(), classLoader).toArrayList()
+        commandLineProcessors.add(AnnotationCollectorCommandLineProcessor())
 
         for (processor in commandLineProcessors) {
             val declaredOptions = processor.pluginOptions.valuesToMap { it.name }
