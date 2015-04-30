@@ -61,7 +61,11 @@ private fun handleSpecialTypes(repository: Repository, type: String): String {
     } else if (type.startsWith("sequence")) {
         return "Any" // TODO how do we handle sequences?
     } else if (type in repository.typeDefs) {
-        return "dynamic"
+        val typedef = repository.typeDefs[type]!!
+
+        return if (!typedef.types.startsWith("Union<")) mapType(repository, typedef.types)
+            else if (splitUnionType(typedef.types).size() == 1) mapType(repository, splitUnionType(typedef.types).first())
+            else typedef.name
     } else if (type in repository.enums) {
         return "String"
     } else if (type.endsWith("Callback")) {

@@ -46,7 +46,7 @@ enum class GenerateDefinitionType {
 
 data class GenerateFunction(val name: String, val returnType: String, val arguments: List<GenerateAttribute>, val native : NativeGetterOrSetter)
 data class GenerateFunctionCall(val name: String, val arguments: List<String>)
-class GenerateTraitOrClass(val name: String,
+data class GenerateTraitOrClass(val name: String,
                            val type : GenerateDefinitionType,
                            val superTypes: List<String>,
                            val memberAttributes: List<GenerateAttribute>,

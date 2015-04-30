@@ -89,7 +89,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
     return GenerateTraitOrClass(iface.name, entityType, iface.superTypes,
             memberAttributes = (iface.mapAttributes(repository) + extensions.flatMap { it.mapAttributes(repository) }).distinct().toList(),
             memberFunctions = (iface.mapOperations(repository) + extensions.flatMap { it.mapOperations(repository) }).distinct().toList(),
-            constnats = iface.constants.map {it.mapConstant(repository)},
+            constnats = (iface.constants.map {it.mapConstant(repository)} + extensions.flatMap { it.constants.map {it.mapConstant(repository)} }.distinct().toList()),
             constructor = constructorFunction,
             superConstructorCalls = constructorSuperCalls
     )
@@ -124,23 +124,31 @@ private fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
                 .toSet()
                 .map { UnionType(it) }
 
-fun generateUnionTypeTraits(allUnionTypes : Iterable<UnionType>): List<GenerateTraitOrClass> =
-    allUnionTypes.map { GenerateTraitOrClass(
-            name = it.name,
-            type = GenerateDefinitionType.TRAIT,
-            superTypes = emptyList(),
-            memberAttributes = emptyList(),
-            memberFunctions = emptyList(),
-            constnats = emptyList(),
-            constructor = null,
-            superConstructorCalls = emptyList()
-    ) }
+fun mapUnionType(it : UnionType) = GenerateTraitOrClass(
+        name = it.name,
+        type = GenerateDefinitionType.TRAIT,
+        superTypes = emptyList(),
+        memberAttributes = emptyList(),
+        memberFunctions = emptyList(),
+        constnats = emptyList(),
+        constructor = null,
+        superConstructorCalls = emptyList()
+)
+
+fun generateUnionTypeTraits(allUnionTypes : Iterable<UnionType>): List<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)
 
 fun mapDefinitions(repository: Repository, definitions: Iterable<InterfaceDefinition>) =
         definitions.filter { "NoInterfaceObject" !in it.extendedAttributes.map { it.call } }.map { generateTrait(repository, it) }
 
-private fun <O : Appendable> O.renderAttributeDeclaration(allTypes: Set<String>, arg: GenerateAttribute, override: Boolean) {
-    append("    ")
+
+private fun <O: Appendable> O.indent(level : Int) {
+    for (i in 1..level) {
+        append("    ")
+    }
+}
+
+private fun <O : Appendable> O.renderAttributeDeclaration(allTypes: Set<String>, arg: GenerateAttribute, override: Boolean, level : Int = 1) {
+    indent(level)
 
     if (override) {
         append("override ")
@@ -158,10 +166,12 @@ private fun <O : Appendable> O.renderAttributeDeclaration(allTypes: Set<String>,
 
     appendln()
     if (arg.getterNoImpl) {
-        appendln("        get() = noImpl")
+        indent(level + 1)
+        appendln("get() = noImpl")
     }
     if (arg.setterNoImpl) {
-        appendln("        set(value) = noImpl")
+        indent(level + 1)
+        appendln("set(value) = noImpl")
     }
 }
 
@@ -189,7 +199,7 @@ private fun <O : Appendable> O.renderArgumentsDeclaration(allTypes: Set<String>,
 private fun renderCall(call: GenerateFunctionCall) = "${call.name}(${call.arguments.join(", ")})"
 
 private fun <O : Appendable> O.renderFunction(allTypes: Set<String>, f: GenerateFunction, override: Boolean) {
-    append("    ")
+    indent(1)
 
     when (f.native) {
         NativeGetterOrSetter.GETTER -> append("nativeGetter ")
@@ -205,7 +215,7 @@ private fun <O : Appendable> O.renderFunction(allTypes: Set<String>, f: Generate
     appendln(") : ${f.returnType.mapUnknownType(allTypes)} = noImpl")
 }
 
-fun <O : Appendable> O.render(allTypes: Map<String, GenerateTraitOrClass>, classesToUnions : Map<String, List<UnionType>>, iface: GenerateTraitOrClass, markerAnnotation : Boolean = false) {
+fun <O : Appendable> O.render(allTypes: Map<String, GenerateTraitOrClass>, classesToUnions : Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation : Boolean = false) {
     val superTypes = iface.allSuperTypes(allTypes).filter { it.name != "" }
     val superTypesNames = superTypes.map { it.name }.toSet()
 
@@ -229,7 +239,7 @@ fun <O : Appendable> O.render(allTypes: Map<String, GenerateTraitOrClass>, class
     val superTypesWithCalls =
             iface.superConstructorCalls.filter { it.name in superTypesNames }.map { renderCall(it) } +
                     iface.superTypes.filter { it !in superCalls && it in superTypesNames } +
-                    (classesToUnions[iface.name]?.map {it.name} ?: emptyList())
+                    (classesToUnions[iface.name] ?: emptyList())
 
     if (superTypesWithCalls.isNotEmpty()) {
         superTypesWithCalls.joinTo(this, ", ", " : ")
@@ -248,28 +258,41 @@ fun <O : Appendable> O.render(allTypes: Map<String, GenerateTraitOrClass>, class
         renderFunction(allTypes.keySet(), it, it.proto in superProtos)
     }
     if (iface.constnats.isNotEmpty()) {
+        indent(1)
         appendln("companion object {")
         iface.constnats.forEach {
-            renderAttributeDeclaration(allTypes.keySet(), it, false)
+            renderAttributeDeclaration(allTypes.keySet(), it, override = false, level = 2)
         }
+        indent(1)
         appendln("}")
     }
 
     appendln("}")
 }
 
-fun <O : Appendable> O.render(ifaces: List<GenerateTraitOrClass>) {
+fun <O : Appendable> O.render(ifaces: List<GenerateTraitOrClass>, typedefs : Iterable<TypedefDefinition>) {
     val all = ifaces.groupBy { it.name }.mapValues { it.getValue().single() }
     val unionTypes = collectUnionTypes(all)
     val unionTypeTraits = generateUnionTypeTraits(unionTypes)
     val allUnions = unionTypeTraits.groupBy { it.name }.mapValues { it.getValue().single() }
-    val classesToUnions = unionTypes.flatMap { unionType -> unionType.types.map { it to unionType } }.groupBy { it.first }.mapValues { it.getValue().map { it.second } }
+    val typedefsToBeGenerated = typedefs.filter {it.types.startsWith("Union<")}
+            .map { UnionType(splitUnionType(it.types)) to it.name }
+            .filter { it.first.types.all { type -> type in all} }
+    val typedefsClasses = typedefsToBeGenerated.groupBy { it.second }.mapValues { mapUnionType(it.value.first().first).copy(name = it.key) }
 
+    val classesToUnions = unionTypes.flatMap { unionType -> unionType.types.map { it to unionType } }.groupBy { it.first }.mapValues { it.getValue().map { it.second.name} } +
+        typedefsToBeGenerated.flatMap { typedef -> typedef.first.types.map { it to typedef.second }  }.groupBy { it.first }.mapValues { it.getValue().map {it.second} }
+
+    val allTypes = all + allUnions + typedefsClasses
     ifaces.forEach {
-        render(all + allUnions, classesToUnions, it)
+        render(allTypes, classesToUnions, it)
     }
 
     unionTypeTraits.forEach {
-        render(all, emptyMap(), it, markerAnnotation = true)
+        render(allTypes, emptyMap(), it, markerAnnotation = true)
+    }
+
+    typedefsClasses.values().forEach {
+        render(allTypes, emptyMap(), it, markerAnnotation = true)
     }
 }

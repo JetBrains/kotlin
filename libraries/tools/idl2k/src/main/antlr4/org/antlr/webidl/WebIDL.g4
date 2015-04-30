@@ -103,6 +103,7 @@ interfaceMember
 	| readWriteAttribute
 	| readWriteMaplike
 	| readWriteSetlike
+	| typedef
 ;
 
 dictionary

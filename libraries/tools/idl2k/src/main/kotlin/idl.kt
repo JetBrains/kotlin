@@ -46,7 +46,7 @@ enum class DefinitionType {
     DICTIONARY
 }
 trait Definition
-data class TypedefDefinition(val from : String, val to : String) : Definition
+data class TypedefDefinition(val types: String, val name: String) : Definition
 data class InterfaceDefinition(val name : String, val extendedAttributes: List<ExtendedAttribute>, val operations : List<Operation>, val attributes : List<Attribute>, val superTypes : List<String>, val constants : List<Constant>, val dictionary : Boolean = false) : Definition
 data class ExtensionInterfaceDefinition(val name : String, val implements : String) : Definition
 data class EnumDefinition(val name : String) : Definition
@@ -256,7 +256,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>) : WebID
     private val attributes = ArrayList<Attribute>()
     private var readOnly : Boolean = false
     private val inherited = ArrayList<String>()
-    private var singleType : String? = null
+    private var typedefType: String? = null
     private var implements : String? = null
     private val constants = ArrayList<Constant>()
 
@@ -264,7 +264,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>) : WebID
         DefinitionType.INTERFACE -> InterfaceDefinition(name, extendedAttributes, operations, attributes, inherited, constants)
         DefinitionType.DICTIONARY -> InterfaceDefinition(name, extendedAttributes, operations, attributes, inherited, constants, true)
         DefinitionType.EXTENSION_INTERFACE -> ExtensionInterfaceDefinition(name, implements ?: "")
-        DefinitionType.TYPEDEF -> TypedefDefinition(singleType ?: "", name)
+        DefinitionType.TYPEDEF -> TypedefDefinition(typedefType ?: "", name)
         DefinitionType.ENUM -> EnumDefinition(name)
     }
 
@@ -281,9 +281,23 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>) : WebID
     }
 
     override fun visitTypedef(ctx: WebIDLParser.TypedefContext): Definition {
+        if (name != "") { // TODO temporary workaround for local typedefs
+            return defaultResult()
+        }
+
         type = DefinitionType.TYPEDEF
         name = getName(ctx)
-        visitChildren(ctx)
+
+        typedefType = ctx.accept(object : WebIDLBaseVisitor<String>() {
+            private var foundType = ""
+
+            override fun defaultResult() : String = foundType
+
+            override fun visitType(ctx: WebIDLParser.TypeContext): String {
+                foundType = TypeVisitor().visit(ctx)
+                return defaultResult()
+            }
+        })
 
         return defaultResult()
     }
@@ -335,11 +349,6 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>) : WebID
             visitChildren(ctx)
         }
 
-        return defaultResult()
-    }
-
-    override fun visitSingleType(ctx: SingleTypeContext): Definition {
-        singleType = ctx.getText()
         return defaultResult()
     }
 
@@ -423,7 +432,7 @@ fun parseIDL(reader : Reader) : Repository {
 
     return Repository(
             declarations.filterIsInstance<InterfaceDefinition>().filter {it.name.isEmpty().not()}.groupBy { it.name }.mapValues { it.getValue().reduce(::merge) },
-            declarations.filterIsInstance<TypedefDefinition>().groupBy { it.to }.mapValues { it.getValue().first() },
+            declarations.filterIsInstance<TypedefDefinition>().groupBy { it.name }.mapValues { it.getValue().first() },
             declarations.filterIsInstance<ExtensionInterfaceDefinition>().groupBy { it.name }.mapValues { it.getValue().map {it.implements} },
             declarations.filterIsInstance<EnumDefinition>().groupBy { it.name }.mapValues { it.getValue().reduce {a, b -> a} }
     )

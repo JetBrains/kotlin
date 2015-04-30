@@ -11,11 +11,15 @@ fun main(args: Array<String>) {
     idl.lineSequence().forEachIndexed { i, line ->
         println("${i.toString().padStart(4, ' ')}: ${line}")
     }
+
     println()
+    defs.typeDefs.values().forEach { typedef ->
+        println(typedef)
+    }
 
     val definitions = mapDefinitions(defs, defs.interfaces.values())
 
-    File("../../../js/js.libraries/src/core/dom3.kt").writer().use { w ->
+    File("../../../js/js.libraries/src/core/dom.kt").writer().use { w ->
         w.appendln("/*")
         w.appendln(" * Generated file")
         w.appendln(" * DO NOT EDIT")
@@ -27,6 +31,6 @@ fun main(args: Array<String>) {
         w.appendln("package org.w3c.dom")
         w.appendln()
 
-        w.render(definitions)
+        w.render(definitions, defs.typeDefs.values())
     }
 }

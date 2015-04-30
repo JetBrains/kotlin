@@ -19,7 +19,8 @@ val urls = listOf(
         "http://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html",
         "https://raw.githubusercontent.com/whatwg/fetch/master/Overview.src.html",
         "http://www.w3.org/TR/vibration/",
-        "http://dev.w3.org/csswg/cssom/"
+        "http://dev.w3.org/csswg/cssom/",
+        "https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl"
 )
 
 private fun extractIDLText(url: String, out: StringBuilder) {
@@ -45,9 +46,11 @@ private fun extractIDLText(url: String, out: StringBuilder) {
 fun getAllIDLs(): String =
     StringBuilder {
         urls.forEach {
-            extractIDLText(it, this)
+            if (it.endsWith(".idl")) {
+                appendln(URL(it).readText())
+            } else {
+                extractIDLText(it, this)
+            }
         }
-
-//        appendln(constantPart)
     }.toString()
 
