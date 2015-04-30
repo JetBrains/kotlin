@@ -36,6 +36,9 @@
     <component>
       <implementation-class>org.jetbrains.kotlin.idea.configuration.ui.AbsentJdkAnnotationsComponent</implementation-class>
     </component>
+      <component>
+          <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager</implementation-class>
+      </component>
   </project-components>
 
  <application-components>
@@ -46,6 +49,12 @@
    <component>
      <implementation-class>org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginComponent</implementation-class>
    </component>
+
+   <component>
+       <interface-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptMetaFileSystem</interface-class>
+       <implementation-class>org.jetbrains.kotlin.idea.js.KotlinJavaScriptMetaFileSystem</implementation-class>
+   </component>
+
  </application-components>
 
   <module-components>
@@ -995,6 +1004,7 @@
 
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
+    <treeStructureProvider implementation="org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryContentsTreeStructureProvider"/>
   </extensions>
 
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>

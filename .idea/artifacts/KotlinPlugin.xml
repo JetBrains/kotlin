@@ -43,6 +43,7 @@
           <element id="module-output" name="idea-completion" />
           <element id="module-output" name="idea-core" />
           <element id="module-output" name="annotation-collector" />
+          <element id="module-output" name="idea-js" />
         </element>
         <element id="library" level="project" name="javax.inject" />
         <element id="directory" name="jps">
