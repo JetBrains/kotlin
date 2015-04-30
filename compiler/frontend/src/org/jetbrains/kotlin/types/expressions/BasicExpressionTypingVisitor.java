@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
@@ -914,8 +915,17 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     JetExpression stubExpression = ExpressionTypingUtils.createFakeExpressionOfType(baseExpression.getProject(), context.trace, "$e", type);
                     checkLValue(context.trace, context, baseExpression, stubExpression);
                 }
-                // TODO : Maybe returnType?
-                result = receiverType;
+                // x++ type is x type, but ++x type is x.inc() type
+                DataFlowValue receiverValue = DataFlowValueFactory.createDataFlowValue(call.getExplicitReceiver(), contextWithExpectedType);
+                if (expression instanceof JetPrefixExpression) {
+                    result = returnType;
+                }
+                else {
+                    result = receiverType;
+                    // Also record data flow information for x++ value (= x)
+                    DataFlowValue returnValue = DataFlowValueFactory.createDataFlowValue(expression, receiverType, contextWithExpectedType);
+                    typeInfo = typeInfo.replaceDataFlowInfo(typeInfo.getDataFlowInfo().assign(returnValue, receiverValue));
+                }
             }
         }
         else {
@@ -928,7 +938,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return createCompileTimeConstantTypeInfo(value, expression, contextWithExpectedType, components.builtIns);
         }
 
-        return DataFlowUtils.checkType(typeInfo.replaceType(result), expression, contextWithExpectedType);
+        return DataFlowUtils.checkType(typeInfo.replaceType(result),
+                                       expression,
+                                       contextWithExpectedType.replaceDataFlowInfo(typeInfo.getDataFlowInfo()));
     }
 
     private JetTypeInfo visitExclExclExpression(@NotNull JetUnaryExpression expression, @NotNull ExpressionTypingContext context) {

@@ -11763,6 +11763,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt7561.kt")
+            public void testKt7561() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/kt7561.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noErrorCheckForPackageLevelVal.kt")
             public void testNoErrorCheckForPackageLevelVal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/noErrorCheckForPackageLevelVal.kt");
@@ -12674,6 +12680,42 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("nestedWhile.kt")
                 public void testNestedWhile() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/nestedWhile.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("postfixNotnullClassIncrement.kt")
+                public void testPostfixNotnullClassIncrement() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/postfixNotnullClassIncrement.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("postfixNullableClassIncrement.kt")
+                public void testPostfixNullableClassIncrement() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/postfixNullableClassIncrement.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("postfixNullableIncrement.kt")
+                public void testPostfixNullableIncrement() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/postfixNullableIncrement.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("prefixNotnullClassIncrement.kt")
+                public void testPrefixNotnullClassIncrement() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/prefixNotnullClassIncrement.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("prefixNullableClassIncrement.kt")
+                public void testPrefixNullableClassIncrement() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/prefixNullableClassIncrement.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("prefixNullableIncrement.kt")
+                public void testPrefixNullableIncrement() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varnotnull/prefixNullableIncrement.kt");
                     doTest(fileName);
                 }
 

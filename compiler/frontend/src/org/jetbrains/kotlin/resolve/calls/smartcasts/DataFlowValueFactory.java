@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.resolve.calls.smartcasts;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
@@ -191,6 +193,14 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
+    private static IdentifierInfo createPostfixInfo(@NotNull JetPostfixExpression expression, @NotNull IdentifierInfo argumentInfo) {
+        if (argumentInfo == NO_IDENTIFIER_INFO) {
+            return NO_IDENTIFIER_INFO;
+        }
+        return createInfo(Pair.create(expression, argumentInfo.id), argumentInfo.isStable, argumentInfo.isLocal);
+    }
+
+    @NotNull
     private static IdentifierInfo getIdForStableIdentifier(
             @Nullable JetExpression expression,
             @NotNull BindingContext bindingContext,
@@ -219,6 +229,14 @@ public class DataFlowValueFactory {
             DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, thisExpression.getInstanceReference());
 
             return getIdForThisReceiver(declarationDescriptor);
+        }
+        else if (expression instanceof JetPostfixExpression) {
+            JetPostfixExpression postfixExpression = (JetPostfixExpression) expression;
+            IElementType operationType = postfixExpression.getOperationReference().getReferencedNameElementType();
+            if (operationType == JetTokens.PLUSPLUS || operationType == JetTokens.MINUSMINUS) {
+                return createPostfixInfo(postfixExpression,
+                        getIdForStableIdentifier(postfixExpression.getBaseExpression(), bindingContext, containingDeclarationOrModule));
+            }
         }
         else if (expression instanceof JetRootPackageExpression) {
             //todo return createPackageInfo());
