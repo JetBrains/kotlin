@@ -158,31 +158,31 @@ public class SmartCastUtils {
         return intersection;
     }
 
+    // Returns false when we need smart cast but cannot do it, otherwise true
     public static boolean recordSmartCastIfNecessary(
             @NotNull ReceiverValue receiver,
             @NotNull JetType receiverParameterType,
             @NotNull ResolutionContext context,
             boolean safeAccess
     ) {
-        if (!(receiver instanceof ExpressionReceiver)) return false;
+        if (!(receiver instanceof ExpressionReceiver)) return true;
 
         receiverParameterType = safeAccess ? TypeUtils.makeNullable(receiverParameterType) : receiverParameterType;
         if (ArgumentTypeResolver.isSubtypeOfForArgumentType(receiver.getType(), receiverParameterType)) {
-            return false;
+            return true;
         }
 
         Collection<JetType> smartCastTypesExcludingReceiver = getSmartCastVariantsExcludingReceiver(context, receiver);
         JetType smartCastSubType = getSmartCastSubType(receiverParameterType, smartCastTypesExcludingReceiver);
-        if (smartCastSubType == null) return false;
+        if (smartCastSubType == null) return true;
 
         JetExpression expression = ((ExpressionReceiver) receiver).getExpression();
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
 
-        recordCastOrError(expression, smartCastSubType, context.trace, dataFlowValue.isPredictable(), true);
-        return true;
+        return recordCastOrError(expression, smartCastSubType, context.trace, dataFlowValue.isPredictable(), true);
     }
 
-    public static void recordCastOrError(
+    public static boolean recordCastOrError(
             @NotNull JetExpression expression,
             @NotNull JetType type,
             @NotNull BindingTrace trace,
@@ -200,6 +200,7 @@ public class SmartCastUtils {
         else {
             trace.report(SMARTCAST_IMPOSSIBLE.on(expression, type, expression.getText()));
         }
+        return canBeCast;
     }
 
     public static boolean canBeSmartCast(

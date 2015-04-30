@@ -653,7 +653,9 @@ public class CandidateResolver {
             context.tracing.wrongReceiverType(trace, receiverParameter, receiverArgument);
             return OTHER_ERROR;
         }
-        SmartCastUtils.recordSmartCastIfNecessary(receiverArgument, receiverParameter.getType(), context, safeAccess);
+        if (!SmartCastUtils.recordSmartCastIfNecessary(receiverArgument, receiverParameter.getType(), context, safeAccess)) {
+            return OTHER_ERROR;
+        }
 
         JetType receiverArgumentType = receiverArgument.getType();
 
