@@ -26,6 +26,7 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEdito
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
@@ -76,6 +77,7 @@ public class ConfigLibraryUtil {
     public static void unConfigureKotlinJsRuntimeAndSdk(Module module, Sdk sdk) {
         configureSdk(module, sdk);
         removeLibrary(module, DEFAULT_KOTLIN_JS_STDLIB_NAME);
+        removeLibrary(module, KotlinJavaScriptLibraryManager.LIBRARY_NAME);
     }
 
     public static void configureSdk(@NotNull final Module module, @NotNull final Sdk sdk) {

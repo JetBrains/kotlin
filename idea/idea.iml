@@ -49,5 +49,6 @@
     <orderEntry type="module" module-name="idea-completion" scope="TEST" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="js.serializer" />
+    <orderEntry type="module" module-name="idea-js" scope="TEST" />
   </component>
 </module>
