@@ -24,7 +24,7 @@ fun main(args: Array<String>) {
         w.appendln(" */")
 
         w.appendln()
-        w.appendln("package org.w3c.dom3")
+        w.appendln("package org.w3c.dom")
         w.appendln()
 
         w.render(definitions)

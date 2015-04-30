@@ -3,6 +3,7 @@ package kotlin.js.dom.html5
 import kotlin.js.dom.html.HTMLElement
 import org.w3c.dom.Element
 
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLCanvasElement : HTMLElement {
     public var width: Double
     public var height: Double
@@ -12,6 +13,7 @@ public native trait HTMLCanvasElement : HTMLElement {
     public fun toDataURL(string: String): String
 }
 
+deprecated("USe org.w3c.dom instead. See CanvasRenderingContext2D")
 public native trait CanvasContext {
     public var canvas: HTMLCanvasElement
     public fun save(): Unit
@@ -76,10 +78,12 @@ public native trait CanvasContext {
     public fun putImageData(image_data: ImageData, dx: Number, dy: Number, dirtyX: Number, dirtyY: Number, dirtyWidth: Number): Unit
 }
 
+deprecated("Use org.w3c.dom instead")
 public native trait CanvasGradient {
     public fun addColorStop(offset: Number, color: String): Unit
 }
 
+deprecated("Use org.w3c.dom instead")
 public native trait ImageData {
     public var data: CanvasPixelArray
     public var width: Double
@@ -90,6 +94,7 @@ public native trait CanvasPixelArray {
     public var length: Double
 }
 
+deprecated("Use org.w3c.dom instead")
 public native trait TextMetrics {
     public var width: Double
 }

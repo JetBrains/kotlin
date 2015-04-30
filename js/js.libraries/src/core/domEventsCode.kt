@@ -10,7 +10,7 @@ import org.w3c.dom.views.*
   See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 */
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public trait EventListener {
     public fun handleEvent(arg1: Event): Unit
 }

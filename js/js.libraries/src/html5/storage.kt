@@ -17,12 +17,13 @@
 package kotlin.js.dom.html5
 
 native
-public val localStorage: Storage = noImpl
+public val localStorage: org.w3c.dom3.Storage = noImpl
 
 native
-public val sessionStorage: Storage = noImpl
+public val sessionStorage: org.w3c.dom3.Storage = noImpl
 
 native
+deprecated("Use org.w3c.dom")
 public trait Storage {
     public val length: Int
             get() = noImpl

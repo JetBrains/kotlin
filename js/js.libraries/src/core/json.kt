@@ -6,7 +6,7 @@ native public class Json() {
 }
 
 public fun json(vararg pairs: Pair<String, Any?>): Json {
-    var res: dynamic = js("({})")
+    val res: dynamic = js("({})")
     for((name, value) in pairs) {
         res[name] = value
     }

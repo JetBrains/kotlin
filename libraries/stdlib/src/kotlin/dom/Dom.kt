@@ -10,6 +10,7 @@ import java.lang.IndexOutOfBoundsException
 
 // Properties
 
+deprecated("use textContent directly instead")
 public var Node.text: String
     get() {
         return textContent
@@ -18,6 +19,7 @@ public var Node.text: String
         textContent = value
     }
 
+deprecated("You shouldn't use it as setter will drop all elements and get may return not exactly content user can expect")
 public var Element.childrenText: String
     get() {
         val buffer = StringBuilder()
@@ -368,6 +370,7 @@ public fun Element.createElement(name: String, doc: Document? = null, init: Elem
 }
 
 /** Returns the owner document of the element or uses the provided document */
+deprecated("")
 public fun Node.ownerDocument(doc: Document? = null): Document {
     val answer = if (this.nodeType == Node.DOCUMENT_NODE) this as Document
     else if (doc == null) this.ownerDocument

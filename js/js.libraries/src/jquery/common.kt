@@ -62,10 +62,12 @@ public fun jq(selector: String): JQuery = JQuery();
 native("$")
 public fun jq(selector: String, context: Element): JQuery = JQuery();
 native("$")
+native("$")
 public fun jq(callback: () -> Unit): JQuery = JQuery();
 native("$")
 public fun jq(obj: JQuery): JQuery = JQuery();
 native("$")
 public fun jq(el: Element): JQuery = JQuery();
+native("$")
 native("$")
 public fun jq(): JQuery = JQuery();

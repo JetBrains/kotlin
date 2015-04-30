@@ -3,22 +3,22 @@ package kotlin.js.dom.html
 import org.w3c.dom.*
 
 native
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public val window: Window = noImpl
 
 native
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public var document: HTMLDocument = noImpl
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Object {
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Image : HTMLImageElement {
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Navigator {
     public native var userAgent: String
     public native var product: String
@@ -44,7 +44,7 @@ public native trait Screen {
     public native var colorDepth: Double
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Option {
     public native var defaultSelected: Boolean
     public native var selected: Boolean
@@ -52,7 +52,7 @@ public native trait Option {
     public native var value: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Location {
     public native var href: String
     public native var hash: String
@@ -67,7 +67,7 @@ public native trait Location {
     public native fun replace(url: String): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Event {
     public native var data: Array<Any>
     public native var height: Double
@@ -88,20 +88,20 @@ public native trait Event {
     public native var button: Boolean
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Selection {
 
 }
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait CSSRule {
     public native var selectorText: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Stylesheet {
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait History {
     public native fun back(): Unit
     public native fun forward(): Unit
@@ -112,7 +112,7 @@ public native trait Console {
     public native fun log(message: Any): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait Window {
     public native val document: HTMLDocument
     public native val event: Event
@@ -172,21 +172,21 @@ public native trait Global {
     public native fun unescape(): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLCollection {
     public native val length: Double
     public native fun item(index: Number): Node?
     public native fun namedItem(name: String): Node?
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLOptionsCollection {
     public native val length: Double
     public native fun item(index: Number): Node?
     public native fun namedItem(name: String): Node?
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLDocument : Document {
     public native var title: String
     public native val referrer: String
@@ -209,7 +209,7 @@ public native trait HTMLDocument : Document {
     public native var onunload: () -> Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLElement : Element {
     public native var id: String
     public native var title: String
@@ -246,7 +246,7 @@ public native trait HTMLElement : Element {
     public native var onresize: () -> Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait CSSStyleDeclaration {
     public native var cssText: String
     public native var length: Double
@@ -258,17 +258,17 @@ public native trait CSSStyleDeclaration {
     public native fun setProperty(propertyName: String, value: String, priority: String): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLHtmlElement : HTMLElement {
     public native var version: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLHeadElement : HTMLElement {
     public native var profile: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLLinkElement : HTMLElement {
     public native var disabled: Boolean
     public native var charset: String
@@ -281,12 +281,12 @@ public native trait HTMLLinkElement : HTMLElement {
     public native var type: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLTitleElement : HTMLElement {
     public native var text: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLMetaElement : HTMLElement {
     public native var content: String
     public native var httpEquiv: String
@@ -294,26 +294,26 @@ public native trait HTMLMetaElement : HTMLElement {
     public native var scheme: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLBaseElement : HTMLElement {
     public native var href: String
     public native var target: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLIsIndexElement : HTMLElement {
     public native val form: HTMLFormElement
     public native var prompt: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLStyleElement : HTMLElement {
     public native var disabled: Boolean
     public native var media: String
     public native var type: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLBodyElement : HTMLElement {
     public native var aLink: String
     public native var background: String
@@ -325,7 +325,7 @@ public native trait HTMLBodyElement : HTMLElement {
     public native var onunload: () -> Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLFormElement {
     public native val elements: HTMLCollection
     public native val length: Double
@@ -339,7 +339,7 @@ public native trait HTMLFormElement {
     public native fun reset(): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLSelectElement : HTMLElement {
     public native val type: String
     public native var selectedIndex: Double
@@ -358,13 +358,13 @@ public native trait HTMLSelectElement : HTMLElement {
     public native fun focus(): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLOptGroupElement : HTMLElement {
     public native var disabled: Boolean
     public native var label: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLOptionElement : HTMLElement {
     public native val form: HTMLFormElement
     public native var defaultSelected: Boolean
@@ -376,7 +376,7 @@ public native trait HTMLOptionElement : HTMLElement {
     public native var value: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLInputElement : HTMLElement {
     public native var defaultValue: String
     public native var defaultChecked: Boolean
@@ -404,7 +404,7 @@ public native trait HTMLInputElement : HTMLElement {
     public native var selectionEnd: Double
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLTextAreaElement : HTMLElement {
     public native var defaultValue: String
     public native val form: HTMLFormElement
@@ -422,7 +422,7 @@ public native trait HTMLTextAreaElement : HTMLElement {
     public native fun select(): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLButtonElement : HTMLElement {
     public native val form: HTMLFormElement
     public native var accessKey: String
@@ -433,104 +433,104 @@ public native trait HTMLButtonElement : HTMLElement {
     public native var value: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLLabelElement : HTMLElement {
     public native val form: HTMLFormElement
     public native var accessKey: String
     public native var htmlFor: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLFieldSetElement : HTMLElement {
     public native val form: HTMLFormElement
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLLegendElement : HTMLElement {
     public native val form: HTMLFormElement
     public native var accessKey: String
     public native var align: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLUListElement : HTMLElement {
     public native var compact: Boolean
     public native var type: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLOListElement : HTMLElement {
     public native var compact: Boolean
     public native var start: Double
     public native var type: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLDListElement : HTMLElement {
     public native var compact: Boolean
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLDirectoryElement : HTMLElement {
     public native var compact: Boolean
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLMenuElement : HTMLElement {
     public native var compact: Boolean
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLLIElement : HTMLElement {
     public native var type: String
     public native var value: Double
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLDivElement : HTMLElement {
     public native var align: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLParagraphElement : HTMLElement {
     public native var align: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLHeadingElement : HTMLElement {
     public native var align: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLQuoteElement : HTMLElement {
     public native var cite: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLPreElement : HTMLElement {
     public native var width: Double
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLBRElement : HTMLElement {
     public native var clear: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLBaseFontElement : HTMLElement {
     public native var color: String
     public native var face: String
     public native var size: Double
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLFontElement : HTMLElement {
     public native var color: String
     public native var face: String
     public native var size: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLHRElement : HTMLElement {
     public native var align: String
     public native var noShade: Boolean
@@ -538,13 +538,13 @@ public native trait HTMLHRElement : HTMLElement {
     public native var width: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLModElement : HTMLElement {
     public native var cite: String
     public native var dateTime: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLAnchorElement : HTMLElement {
     public native var accessKey: String
     public native var charset: String
@@ -562,7 +562,7 @@ public native trait HTMLAnchorElement : HTMLElement {
     public native fun focus(): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLImageElement : HTMLElement {
     public native var name: String
     public native var align: String
@@ -580,7 +580,7 @@ public native trait HTMLImageElement : HTMLElement {
     public native var width: Double
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLObjectElement : HTMLElement {
     public native val form: HTMLFormElement
     public native var code: String
@@ -603,7 +603,7 @@ public native trait HTMLObjectElement : HTMLElement {
     public native val contentDocument: Document
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLParamElement : HTMLElement {
     public native var name: String
     public native var type: String
@@ -611,7 +611,7 @@ public native trait HTMLParamElement : HTMLElement {
     public native var valueType: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLAppletElement : HTMLElement {
     public native var align: String
     public native var alt: String
@@ -626,13 +626,13 @@ public native trait HTMLAppletElement : HTMLElement {
     public native var width: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLMapElement : HTMLElement {
     public native val areas: HTMLCollection
     public native var name: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLAreaElement : HTMLElement {
     public native var accessKey: String
     public native var alt: String
@@ -644,7 +644,7 @@ public native trait HTMLAreaElement : HTMLElement {
     public native var target: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLScriptElement : HTMLElement {
     public native var text: String
     public native var htmlFor: String
@@ -655,7 +655,7 @@ public native trait HTMLScriptElement : HTMLElement {
     public native var type: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLTableElement : HTMLElement {
     public native var caption: HTMLTableCaptionElement
     public native var tHead: HTMLTableSectionElement
@@ -681,12 +681,12 @@ public native trait HTMLTableElement : HTMLElement {
     public native fun deleteRow(index: Number): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLTableCaptionElement : HTMLElement {
     public native var align: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLTableColElement : HTMLElement {
     public native var align: String
     public native var ch: String
@@ -696,7 +696,7 @@ public native trait HTMLTableColElement : HTMLElement {
     public native var width: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLTableSectionElement : HTMLElement {
     public native var align: String
     public native var ch: String
@@ -707,7 +707,7 @@ public native trait HTMLTableSectionElement : HTMLElement {
     public native fun deleteRow(index: Number): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLTableRowElement : HTMLElement {
     public native val rowIndex: Double
     public native val sectionRowIndex: Double
@@ -721,7 +721,7 @@ public native trait HTMLTableRowElement : HTMLElement {
     public native fun deleteCell(index: Number): Unit
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLTableCellElement : HTMLElement {
     public native val cellIndex: Double
     public native var abbr: String
@@ -740,13 +740,13 @@ public native trait HTMLTableCellElement : HTMLElement {
     public native var width: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLFrameSetElement : HTMLElement {
     public native var cols: String
     public native var rows: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLFrameElement : HTMLElement {
     public native var frameBorder: String
     public native var longDesc: String
@@ -758,7 +758,7 @@ public native trait HTMLFrameElement : HTMLElement {
     public native var src: String
 }
 
-deprecated("Use org.w3c.dom3 instead")
+deprecated("Use org.w3c.dom instead")
 public native trait HTMLIFrameElement : HTMLElement {
     public native var align: String
     public native var frameBorder: String
