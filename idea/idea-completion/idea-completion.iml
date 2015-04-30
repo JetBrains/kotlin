@@ -21,5 +21,6 @@
     <orderEntry type="library" scope="RUNTIME" name="junit-plugin" level="project" />
     <orderEntry type="module" module-name="idea" scope="RUNTIME" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="idea-js" scope="TEST" />
   </component>
 </module>
