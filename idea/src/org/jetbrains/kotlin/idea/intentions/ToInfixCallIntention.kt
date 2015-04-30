@@ -36,6 +36,7 @@ public class ToInfixCallIntention : JetSelfTargetingIntention<JetCallExpression>
         if (argument.isNamed()) return false
         if (argument.getArgumentExpression() == null) return false
 
+        // check that receiver has type to filter out calls with package/java class qualifier
         val receiver = dotQualified.getReceiverExpression()
         if (element.analyze().getType(receiver) == null) return false
 

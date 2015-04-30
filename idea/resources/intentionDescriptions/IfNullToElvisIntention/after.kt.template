@@ -1,1 +1,1 @@
-val result = ... ?: return
+val result = ... <spot>?: return</spot>

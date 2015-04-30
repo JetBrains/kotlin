@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.refactoring.rename.RenameProcessor
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetReference
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -54,8 +54,6 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
     }
 
     private fun targetFunctionLiteral(element: PsiElement, caretOffset: Int): JetFunctionLiteral? {
-        val innermostFunctionLiteral = element.getParentOfType<JetFunctionLiteral>(true) ?: return null
-
         val expression = element.getParentOfType<JetSimpleNameExpression>(true)
         if (expression != null) {
             val reference = expression.getReference() as JetReference?
@@ -64,10 +62,10 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
             return DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor) as? JetFunctionLiteral
         }
 
-        val arrow = innermostFunctionLiteral.getArrowNode() ?: return null
+        val functionLiteral = element.getParentOfType<JetFunctionLiteral>(true) ?: return null
+        val arrow = functionLiteral.getArrowNode() ?: return null
         if (caretOffset > arrow.getTextRange().getEndOffset()) return null
-
-        return innermostFunctionLiteral
+        return functionLiteral
     }
 
     private class ParamRenamingProcessor(
@@ -89,10 +87,9 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
                 editor.getCaretModel().moveToOffset(functionLiteral.getBodyExpression()!!.getTextOffset())
             }
 
-            val range = functionLiteral.getTextRange()
-            CodeStyleManager.getInstance(functionLiteral.getProject()).reformatText(functionLiteral.getContainingFile(),
-                                                                                    range.getStartOffset(),
-                                                                                    range.getEndOffset())
+            val project = functionLiteral.getProject()
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+            CodeStyleManager.getInstance(project).adjustLineIndent(functionLiteral.getContainingFile(), functionLiteral.getTextRange())
 
         }
     }

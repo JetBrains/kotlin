@@ -43,7 +43,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTarge
 
     override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
         val reference = element.getReference() as JetReference
-        val target = reference.resolveToDescriptors(element.analyze()).first()
+        val target = reference.resolveToDescriptors(element.analyze()).single()
 
         val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as JetFunctionLiteral
 
