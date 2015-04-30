@@ -645,7 +645,7 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ fun toBack_NoClientCode(): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toFront(): kotlin.Unit
         invisible_fake final override /*1*/ /*fake_override*/ fun toFront_NoClientCode(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun transferFocus(): kotlin.Unit
         invisible_fake open override /*1*/ /*fake_override*/ fun transferFocus(/*0*/ p0: kotlin.Boolean): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun transferFocusBackward(): kotlin.Unit

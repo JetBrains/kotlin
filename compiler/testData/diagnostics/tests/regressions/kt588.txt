@@ -69,7 +69,7 @@ internal final class Test : java.lang.Thread {
     invisible_fake open override /*1*/ /*fake_override*/ fun stop0(/*0*/ p0: kotlin.Any!): kotlin.Unit
     kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public final override /*1*/ /*fake_override*/ fun suspend(): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun suspend0(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     internal companion object Companion {
         private constructor Companion()
