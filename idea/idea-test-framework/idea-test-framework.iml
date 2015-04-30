@@ -13,5 +13,6 @@
     <orderEntry type="module" module-name="idea-analysis" />
     <orderEntry type="module" module-name="idea-core" />
     <orderEntry type="module" module-name="util" />
+    <orderEntry type="module" module-name="idea-js" scope="TEST" />
   </component>
 </module>
