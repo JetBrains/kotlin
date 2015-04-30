@@ -1,0 +1,26 @@
+LineBreakpoint created at localFun.kt:9
+LineBreakpoint created at localFun.kt:15
+LineBreakpoint created at localFun.kt:21
+LineBreakpoint created at localFun.kt:34
+LineBreakpoint created at localFun.kt:43
+LineBreakpoint created at localFun.kt:54
+LineBreakpoint created at localFun.kt:61
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! localFun.LocalFunPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+localFun.kt:9
+Compile bytecode for myLocalFun1()
+localFun.kt:15
+Compile bytecode for myLocalFun2()
+localFun.kt:21
+Compile bytecode for myLocalFun1() + 1
+localFun.kt:34
+Compile bytecode for myLocalFun4()
+localFun.kt:43
+Compile bytecode for myLocalFun5(2)
+localFun.kt:54
+Compile bytecode for myLocalFun6()
+localFun.kt:61
+Compile bytecode for myLocalFun6() + 1
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

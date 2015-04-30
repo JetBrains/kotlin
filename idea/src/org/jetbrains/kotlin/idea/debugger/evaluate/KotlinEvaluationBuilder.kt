@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.org.objectweb.asm.*
@@ -167,9 +168,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             if (extractionResult == null) {
                 throw IllegalStateException("Code fragment cannot be extracted to function")
             }
+            val parametersDescriptor = extractionResult.getParametersForDebugger()
             val extractedFunction = extractionResult.declaration as JetNamedFunction
 
-            val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context)
+            val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
 
             val outputFiles = classFileFactory.asList()
                                     .filter { it.relativePath != "$packageInternalName.class" }
@@ -188,7 +190,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     additionalFiles,
                     sourcePosition,
                     funName,
-                    extractionResult.getParametersForDebugger())
+                    parametersDescriptor)
         }
 
         private fun getClassName(fileName: String): String {
@@ -286,11 +288,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 }
 
                 for (param in config.descriptor.parameters) {
-                    val paramName = if (param.argumentText.contains("@")) {
-                        param.argumentText.substringBefore("@")
-                    }
-                    else {
-                       param.argumentText
+                    val paramName = when {
+                        param.argumentText.contains("@") -> param.argumentText.substringBefore("@")
+                        param.argumentText.startsWith("::") -> param.argumentText.substring(2)
+                        else -> param.argumentText
                     }
                     parameters.add(paramName, param.getParameterType(true))
                 }
@@ -306,7 +307,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun createClassFileFactory(
                 codeFragment: JetCodeFragment,
                 extractedFunction: JetNamedFunction,
-                context: EvaluationContextImpl
+                context: EvaluationContextImpl,
+                parameters: ParametersDescriptor
         ): ClassFileFactory {
             return runReadAction {
                 val jetFile = createFileForDebugger(codeFragment, extractedFunction)
@@ -337,21 +339,28 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 val frameVisitor = FrameVisitor(context)
 
                 extractedFunction.getReceiverTypeReference()?.let {
-                    state.recordAnonymousType(it, THIS_NAME, frameVisitor)
+                    state.getBindingTrace().recordAnonymousType(it, THIS_NAME, frameVisitor)
                 }
 
-                for (param in extractedFunction.getValueParameters()) {
-                    val paramRef = param.getTypeReference()
-                    val paramName = param.getName()
-                    if (paramRef == null || paramName == null) {
-                        logger.error("Each parameter for extracted function should have a name and a type reference",
+                val valueParameters = extractedFunction.getValueParameters()
+                var paramIndex = 0
+                for (param in parameters) {
+                    val (callText, type) = param
+
+                    if (callText.contains(THIS_NAME)) continue
+
+                    val valueParameter = valueParameters[paramIndex++]
+
+                    val paramRef = valueParameter.getTypeReference()
+                    if (paramRef == null) {
+                        logger.error("Each parameter for extracted function should have a type reference",
                                      Attachment("codeFragment.txt", codeFragment.getText()),
                                      Attachment("extractedFunction.txt", extractedFunction.getText()))
 
                         exception("An exception occurs during Evaluate Expression Action")
                     }
 
-                    state.recordAnonymousType(paramRef, paramName, frameVisitor)
+                    state.getBindingTrace().recordAnonymousType(paramRef, callText, frameVisitor)
                 }
 
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)
@@ -360,7 +369,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             }
         }
 
-        private fun GenerationState.recordAnonymousType(typeReference: JetTypeReference, localVariableName: String, visitor: FrameVisitor) {
+        private fun BindingTrace.recordAnonymousType(typeReference: JetTypeReference, localVariableName: String, visitor: FrameVisitor) {
             val paramAnonymousType = typeReference.debugTypeInfo
             if (paramAnonymousType != null) {
                 val declarationDescriptor = paramAnonymousType.getConstructor().getDeclarationDescriptor()
@@ -369,7 +378,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                     if (localVariable == null) {
                         exception("Couldn't find local variable this in current frame to get classType for anonymous type ${paramAnonymousType}}")
                     }
-                    getBindingTrace().record(CodegenBinding.ASM_TYPE, declarationDescriptor, localVariable.asmType)
+                    record(CodegenBinding.ASM_TYPE, declarationDescriptor, localVariable.asmType)
                 }
             }
         }

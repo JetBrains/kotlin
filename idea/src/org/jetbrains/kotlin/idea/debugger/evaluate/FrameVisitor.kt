@@ -47,7 +47,11 @@ class FrameVisitor(context: EvaluationContextImpl) {
                     }
                 }
                 else -> {
-                    val localVariable = findLocalVariable(name, asmType, checkType)
+                    val localVariable = if (isFunctionType(asmType))
+                        findLocalVariableForLocalFun(name, asmType, checkType)
+                    else
+                        findLocalVariable(name, asmType, checkType)
+
                     if (localVariable != null) {
                         return localVariable
                     }
@@ -60,14 +64,15 @@ class FrameVisitor(context: EvaluationContextImpl) {
                 }
             }
 
-            return if (!failIfNotFound)
-                null
-            else
-                throw EvaluateExceptionUtil.createEvaluateException("Cannot find local variable: name = $name${if (checkType) ", type = " + asmType.toString() else ""}")
+            return fail("Cannot find local variable: name = $name${if (checkType) ", type = " + asmType.toString() else ""}", failIfNotFound)
         }
         catch(e: InvalidStackFrameException) {
             throw EvaluateExceptionUtil.createEvaluateException("Local variable $name is unavailable in current frame")
         }
+    }
+
+    private fun fail(message: String, shouldFail: Boolean): Value? {
+        return if (shouldFail) throw EvaluateExceptionUtil.createEvaluateException(message) else null
     }
 
     private fun findThis(asmType: Type?): Value? {
@@ -87,6 +92,15 @@ class FrameVisitor(context: EvaluationContextImpl) {
         if (`$this` != null) return `$this`
 
         return null
+    }
+
+    private fun findLocalVariableForLocalFun(name: String, asmType: Type?, checkType: Boolean): Value? {
+        return findLocalVariable(name + "$", asmType, checkType)
+    }
+
+    private fun isFunctionType(type: Type?): Boolean {
+        if (type == null || AsmUtil.isPrimitive(type)) return false
+        return type.getInternalName().startsWith("kotlin/Function") || type.getInternalName().startsWith("kotlin/ExtensionFunction")
     }
 
     private fun findLocalVariable(name: String, asmType: Type?, checkType: Boolean): Value? {

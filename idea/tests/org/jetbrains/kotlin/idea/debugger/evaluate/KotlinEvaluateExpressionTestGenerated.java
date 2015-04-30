@@ -607,6 +607,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doMultipleBreakpointsTest(fileName);
         }
 
+        @TestMetadata("localFun.kt")
+        public void testLocalFun() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/localFun.kt");
+            doMultipleBreakpointsTest(fileName);
+        }
+
         @TestMetadata("whenEntry.kt")
         public void testWhenEntry() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/whenEntry.kt");
@@ -642,6 +648,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("customLibClassName.kt")
             public void testCustomLibClassName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/customLibClassName.kt");
+                doMultipleBreakpointsTest(fileName);
+            }
+
+            @TestMetadata("localFunInLibrary.kt")
+            public void testLocalFunInLibrary() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/multipleBreakpoints/library/localFunInLibrary.kt");
                 doMultipleBreakpointsTest(fileName);
             }
         }
