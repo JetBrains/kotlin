@@ -18,11 +18,7 @@ package org.jetbrains.kotlin.idea.intentions;
 
 import com.google.common.collect.Lists;
 import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction;
-import com.intellij.codeInsight.template.Expression;
-import com.intellij.codeInsight.template.Template;
-import com.intellij.codeInsight.template.TemplateBuilderImpl;
-import com.intellij.codeInsight.template.TemplateEditingAdapter;
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl;
+import com.intellij.codeInsight.template.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
@@ -212,8 +208,8 @@ public class SpecifyTypeExplicitlyAction extends PsiElementBaseIntentionAction {
 
         editor.getCaretModel().moveToOffset(newTypeRef.getNode().getStartOffset());
 
-        TemplateManagerImpl manager = new TemplateManagerImpl(project);
-        manager.startTemplate(editor, builder.buildInlineTemplate(), createTypeReferencePostprocessor(declaration));
+        TemplateManager.getInstance(project)
+                .startTemplate(editor, builder.buildInlineTemplate(), createTypeReferencePostprocessor(declaration));
     }
 
     private static JetTypeReference anyTypeRef(@NotNull Project project) {
