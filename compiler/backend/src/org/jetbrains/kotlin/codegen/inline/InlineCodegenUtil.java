@@ -58,7 +58,6 @@ import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.ListIterator;
 
 import static kotlin.KotlinPackage.substringAfterLast;
@@ -70,14 +69,11 @@ public class InlineCodegenUtil {
     public static final int API = Opcodes.ASM5;
 
     public static final String CAPTURED_FIELD_PREFIX = "$";
-
     public static final String THIS$0 = "this$0";
-
     public static final String RECEIVER$0 = "receiver$0";
-
     public static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
-
     public static final String FIRST_FUN_LABEL = "$$$$$ROOT$$$$$";
+    public static final String NUMBERED_FUNCTION_PREFIX = "kotlin/jvm/functions/Function";
     public static final String INLINE_MARKER_CLASS_NAME = "kotlin/jvm/internal/InlineMarker";
     public static final String INLINE_MARKER_BEFORE_METHOD_NAME = "beforeInlineCall";
     public static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
@@ -251,20 +247,10 @@ public class InlineCodegenUtil {
         return getInlineName(codegenContext, currentDescriptor.getContainingDeclaration(), typeMapper) + "$" + suffix;
     }
 
-    public static boolean isInvokeOnLambda(String owner, String name) {
-        if (!OperatorConventions.INVOKE.asString().equals(name)) {
-            return false;
-        }
-
-        for (String prefix : Arrays.asList("kotlin/jvm/functions/Function", "kotlin/ExtensionFunction")) {
-            if (owner.startsWith(prefix)) {
-                String suffix = owner.substring(prefix.length());
-                if (isInteger(suffix)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    public static boolean isInvokeOnLambda(@NotNull String owner, @NotNull String name) {
+        return OperatorConventions.INVOKE.asString().equals(name) &&
+               owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
+               isInteger(owner.substring(NUMBERED_FUNCTION_PREFIX.length()));
     }
 
     public static boolean isAnonymousConstructorCall(@NotNull String internalName, @NotNull String methodName) {

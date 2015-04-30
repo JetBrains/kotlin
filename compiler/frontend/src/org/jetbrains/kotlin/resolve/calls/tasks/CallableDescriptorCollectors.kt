@@ -16,16 +16,20 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks.collectors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticNestedClass
 import org.jetbrains.kotlin.resolve.LibrarySourceHacks
+import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public trait CallableDescriptorCollector<D : CallableDescriptor> {
 
@@ -48,8 +52,8 @@ public class CallableDescriptorCollectors<D : CallableDescriptor>(val collectors
         Iterable<CallableDescriptorCollector<D>> {
     override fun iterator(): Iterator<CallableDescriptorCollector<D>> = collectors.iterator()
 
-    [suppress("UNCHECKED_CAST")] companion
-    object {
+    @suppress("UNCHECKED_CAST")
+    companion object {
         public val FUNCTIONS_AND_VARIABLES: CallableDescriptorCollectors<CallableDescriptor> =
                 CallableDescriptorCollectors(listOf(
                         FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>,
@@ -73,7 +77,20 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
     override fun getMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
         val receiverScope = receiver.getMemberScope()
-        return receiverScope.getFunctions(name) + getConstructors(receiverScope, name, { !isStaticNestedClass(it) })
+        val members = receiverScope.getFunctions(name)
+        val constructors = getConstructors(receiverScope, name, { !isStaticNestedClass(it) })
+
+        if (name == OperatorConventions.INVOKE && KotlinBuiltIns.isExtensionFunctionType(receiver)) {
+            // If we're looking for members of an extension function type, we ignore the non-extension "invoke"s
+            // that originate from the Function{n} class and only consider the synthesized "invoke" extensions.
+            // Otherwise confusing errors will be reported because the non-extension here beats the extension
+            // (because declarations beat synthesized members)
+            val (candidatesForReplacement, irrelevantInvokes) =
+                    members.partition { it is FunctionInvokeDescriptor && it.getValueParameters().isNotEmpty() }
+            return createSynthesizedInvokes(candidatesForReplacement) + irrelevantInvokes + constructors
+        }
+
+        return members + constructors
     }
 
     override fun getStaticMembersByName(receiver: JetType, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
@@ -81,7 +98,15 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
     }
 
     override fun getExtensionsByName(scope: JetScope, name: Name, bindingTrace: BindingTrace): Collection<FunctionDescriptor> {
-        return scope.getFunctions(name).filter { it.getExtensionReceiverParameter() != null }
+        val functions = scope.getFunctions(name)
+        val (extensions, nonExtensions) = functions.partition { it.getExtensionReceiverParameter() != null }
+
+        if (name == OperatorConventions.INVOKE) {
+            // Create synthesized "invoke" extensions for each non-extension "invoke" found in the scope
+            return extensions + createSynthesizedInvokes(nonExtensions)
+        }
+
+        return extensions
     }
 
     private fun getConstructors(

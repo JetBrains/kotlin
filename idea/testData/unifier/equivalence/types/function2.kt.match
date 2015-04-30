@@ -6,4 +6,8 @@ kotlin.Function2<kotlin.Any, kotlin.Int, kotlin.String>
 
 (a: Any, n: Int) -> kotlin.String
 
+Any.(Int) -> String
+
 (t: Any, u: Int) -> kotlin.String
+
+@extension Function2<Any, Int, String>

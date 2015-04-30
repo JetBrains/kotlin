@@ -5,10 +5,10 @@ fun <T, V> Function1<T, V>.minus() = this
 inline fun <T, V> Function1<T, V>.inc() = <!USAGE_IS_NOT_INLINABLE!>this<!>
 fun <T, V> Function1<T, V>.dec() = this
 
-inline fun <T, V> ExtensionFunction1<T, T, V>.plus(){}
-fun <T, V> ExtensionFunction1<T, T, V>.minus(){}
-inline fun <T, V> ExtensionFunction1<T, T, V>.inc() = <!USAGE_IS_NOT_INLINABLE!>this<!>
-fun <T, V> ExtensionFunction1<T, T, V>.dec() = this
+inline fun <T, V> @extension Function2<T, T, V>.plus(){}
+fun <T, V> @extension Function2<T, T, V>.minus(){}
+inline fun <T, V> @extension Function2<T, T, V>.inc() = <!USAGE_IS_NOT_INLINABLE!>this<!>
+fun <T, V> @extension Function2<T, T, V>.dec() = this
 
 inline fun <T, V> inlineFunWithInvoke(s: (p: T) -> V, ext: T.(p: T) -> V) {
     +s

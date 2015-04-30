@@ -3,20 +3,15 @@ inline fun <T, V> Function1<T, V>.not() : Boolean {
     return !this
 }
 
-inline fun <T, V> ExtensionFunction1<T, T, V>.not() : Boolean {
-    return !this
-}
-
-inline fun <T, V> inlineFunWithInvoke(s: (p: T) -> V, ext: T.(p: T) -> V) {
+inline fun <T, V> inlineFunWithInvoke(s: (p: T) -> V) {
     !s
-    !ext
 }
 
 fun <T, U, V> Function2<T, U, V>.not() : Boolean {
     return !this
 }
 
-fun <T, U, V, W> ExtensionFunction2<T, U, V, W>.not() : Boolean {
+fun <T, U, V, W> @extension Function3<T, U, V, W>.not() : Boolean {
     return !this
 }
 

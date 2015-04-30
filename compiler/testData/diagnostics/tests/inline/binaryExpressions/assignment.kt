@@ -12,14 +12,14 @@ inline fun <T, U> Function1<T, U>.plusAssign(p: Function1<T, U>) {
     <!USAGE_IS_NOT_INLINABLE!>p<!> -= <!USAGE_IS_NOT_INLINABLE!>this<!>
 }
 
-fun <T, U, V> ExtensionFunction1<T, U, V>.minusAssign(ext : ExtensionFunction1<T, U, V>) {}
+fun <T, U, V> @extension Function2<T, U, V>.minusAssign(ext : @extension Function2<T, U, V>) {}
 
-inline fun <T, U, V> ExtensionFunction1<T, U, V>.modAssign(ext : ExtensionFunction1<T, U, V>) = {
+inline fun <T, U, V> @extension Function2<T, U, V>.modAssign(ext : @extension Function2<T, U, V>) = {
     this += ext
     ext += this
 }
 
-inline fun <T, U, V> ExtensionFunction1<T, U, V>.plusAssign(ext : ExtensionFunction1<T, U, V>) {
+inline fun <T, U, V> @extension Function2<T, U, V>.plusAssign(ext : @extension Function2<T, U, V>) {
     <!USAGE_IS_NOT_INLINABLE!>this<!> -= <!USAGE_IS_NOT_INLINABLE!>ext<!>
     <!USAGE_IS_NOT_INLINABLE!>ext<!> -= <!USAGE_IS_NOT_INLINABLE!>this<!>
 }

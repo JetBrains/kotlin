@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.idea.decompiler.stubBuilder.FlagsToModifiers.VISIBIL
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetClassBody
+import org.jetbrains.kotlin.psi.JetDelegationSpecifierList
+import org.jetbrains.kotlin.psi.JetDelegatorToSuperClass
 import org.jetbrains.kotlin.psi.stubs.elements.JetClassElementType
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
@@ -103,11 +105,10 @@ private class ClassClsStubBuilder(
         val isCompanionObject = classKind == ProtoBuf.Class.Kind.CLASS_OBJECT
         val fqName = outerContext.containerFqName.child(classId.getShortClassName())
         val shortName = fqName.shortName().ref()
-        val superTypeRefs = supertypeIds.filter {
+        val superTypeRefs = supertypeIds.filterNot {
             //TODO: filtering function types should go away
-            !KotlinBuiltIns.isExactFunctionType(it.asSingleFqName().toUnsafe()) &&
-            !KotlinBuiltIns.isExactExtensionFunctionType(it.asSingleFqName().toUnsafe())
-        }.map { it.getShortClassName().ref() }.copyToArray()
+            KotlinBuiltIns.isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
+        }.map { it.getShortClassName().ref() }.toTypedArray()
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.CLASS_OBJECT -> {
                 KotlinObjectStubImpl(
@@ -184,7 +185,7 @@ private class ClassClsStubBuilder(
                     classBody,
                     qualifiedName = c.containerFqName.child(name).ref(),
                     name = name.ref(),
-                    superNames = array(),
+                    superNames = arrayOf(),
                     isTrait = false,
                     isEnumEntry = true,
                     isLocal = false,

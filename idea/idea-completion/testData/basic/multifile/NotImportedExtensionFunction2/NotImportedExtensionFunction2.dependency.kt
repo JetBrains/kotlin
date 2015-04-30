@@ -6,7 +6,7 @@ fun (() -> Unit)?.helloFun1() {
 fun Function0<Unit>.helloFun2() {
 }
 
-fun ExtensionFunction0<String, Unit>.helloFun3() {
+fun @extension Function1<String, Unit>.helloFun3() {
 }
 
 fun Function1<String, Unit>.helloFun4() {

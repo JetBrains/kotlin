@@ -3,7 +3,7 @@ fun <T, U> Function1<T, U>.minus(p: Function1<T, U>) {
 
 }
 
-fun <T, U, V> ExtensionFunction1<T, U, V>.minus(p: T.(p: U) -> V) {
+fun <T, U, V> @extension Function2<T, U, V>.minus(p: T.(p: U) -> V) {
 
 }
 
@@ -11,7 +11,7 @@ inline fun <T, U> Function1<T, U>.plus(p: Function1<T, U>) {
     <!USAGE_IS_NOT_INLINABLE!>this<!> - <!USAGE_IS_NOT_INLINABLE!>p<!>
 }
 
-inline fun <T, U, V> ExtensionFunction1<T, U, V>.plus(p: T.(p: U) -> V) {
+inline fun <T, U, V> @extension Function2<T, U, V>.plus(p: T.(p: U) -> V) {
     <!USAGE_IS_NOT_INLINABLE!>this<!> - <!USAGE_IS_NOT_INLINABLE!>p<!>
 }
 
@@ -29,6 +29,6 @@ inline fun <T, U> Function1<T, U>.submit() {
     this + this
 }
 
-inline fun <T, U, V> ExtensionFunction1<T, U, V>.submit() {
+inline fun <T, U, V> @extension Function2<T, U, V>.submit() {
     this + this
 }

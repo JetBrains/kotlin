@@ -131,6 +131,14 @@ public class JvmRuntimeTypes {
                 kFunctionClass.getMemberScope(typeArguments)
         );
 
-        return Arrays.asList(functionImplType, kFunctionType);
+        //noinspection ConstantConditions
+        JetType functionType = getBuiltIns(descriptor).getFunctionType(
+                Annotations.EMPTY,
+                receiverType,
+                ExpressionTypingUtils.getValueParametersTypes(descriptor.getValueParameters()),
+                descriptor.getReturnType()
+        );
+
+        return Arrays.asList(functionImplType, kFunctionType, functionType);
     }
 }

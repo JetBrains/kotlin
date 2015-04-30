@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
@@ -140,7 +142,15 @@ public class FunctionClassDescriptor(
 
                 val module = containingDeclaration.getContainingDeclaration()
                 val kotlinPackageFragment = module.getPackage(BUILT_INS_PACKAGE_FQ_NAME)!!.getFragments().single()
-                add(kotlinPackageFragment, Kind.Function.numberedClassName(functionArity), Annotations.EMPTY)
+
+                // If this is a KMemberFunction{n} or KExtensionFunction{n}, it extends Function{n} with the annotation kotlin.extension,
+                // so that the value of this type is callable as an extension function, with the receiver before the dot
+                val annotations =
+                        if (functionKind.hasDispatchReceiver || functionKind.hasExtensionReceiver)
+                            AnnotationsImpl(listOf(KotlinBuiltIns.getInstance().createExtensionAnnotation()))
+                        else Annotations.EMPTY
+
+                add(kotlinPackageFragment, Kind.Function.numberedClassName(functionArity), annotations)
             }
 
             result.toReadOnlyList()

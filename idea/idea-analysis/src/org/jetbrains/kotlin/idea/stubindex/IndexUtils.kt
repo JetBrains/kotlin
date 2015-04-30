@@ -62,8 +62,8 @@ private fun JetTypeElement.index<TDeclaration : JetCallableDeclaration>(declarat
         is JetNullableType -> getInnerType()?.index(declaration, sink)
 
         is JetFunctionType -> {
-            val typeName = (if (getReceiverTypeReference() != null) "ExtensionFunction" else "Function") + getParameters().size()
-            occurrence(typeName)
+            val arity = getParameters().size() + (if (getReceiverTypeReference() != null) 1 else 0)
+            occurrence("Function$arity")
         }
 
         is JetDynamicType -> occurrence("Any")

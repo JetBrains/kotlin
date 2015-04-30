@@ -26,6 +26,7 @@ import org.jetbrains.eval4j.jdi.asJdiValue
 import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.obj
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -99,8 +100,8 @@ class FrameVisitor(context: EvaluationContextImpl) {
     }
 
     private fun isFunctionType(type: Type?): Boolean {
-        if (type == null || AsmUtil.isPrimitive(type)) return false
-        return type.getInternalName().startsWith("kotlin/Function") || type.getInternalName().startsWith("kotlin/ExtensionFunction")
+        return type?.getSort() == Type.OBJECT &&
+               type!!.getInternalName().startsWith(InlineCodegenUtil.NUMBERED_FUNCTION_PREFIX)
     }
 
     private fun findLocalVariable(name: String, asmType: Type?, checkType: Boolean): Value? {

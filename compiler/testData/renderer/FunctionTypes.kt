@@ -5,18 +5,18 @@ var v4: Function1<Int, String>
 var v4: (() -> Int, (String) -> Unit) -> String
 var v5: Int.() -> Int
 var v6 : Int.(String, Int) -> Unit
-var v7 : ExtensionFunction1<Int, String, Boolean>
+var v7 : [extension] Function2<Int, String, Boolean>
 
 class F: Function0<Unit>
 var v8: F
 
-class EF: ExtensionFunction0<Unit>
+class EF: [extension] Function1<String, Unit>
 var v9: EF
 
 class GF<T>: Function0<T>
 var v10: GF<Any>
 
-class GEF<A, B>: ExtensionFunction0<A, B>
+class GEF<A, B>: [extension] Function1<A, B>
 var v11: GEF<Any, Any>
 
 //internal var v1: () -> kotlin.Unit defined in root package
@@ -30,7 +30,7 @@ var v11: GEF<Any, Any>
 //internal final class F : () -> kotlin.Unit defined in root package
 //public constructor F() defined in F
 //internal var v8: F defined in root package
-//internal final class EF defined in root package
+//internal final class EF : kotlin.String.() -> kotlin.Unit defined in root package
 //public constructor EF() defined in EF
 //internal var v9: EF defined in root package
 //internal final class GF<T> : () -> T defined in root package

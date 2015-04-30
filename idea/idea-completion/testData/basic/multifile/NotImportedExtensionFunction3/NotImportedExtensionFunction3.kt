@@ -8,6 +8,6 @@ fun firstFun(p: String.() -> Unit) {
 // ABSENT: helloFun2
 // EXIST: helloFun3
 // ABSENT: helloFun4
-// ABSENT: helloFun5
+// EXIST: helloFun5
 // EXIST: helloAny
 // NOTHING_ELSE: true

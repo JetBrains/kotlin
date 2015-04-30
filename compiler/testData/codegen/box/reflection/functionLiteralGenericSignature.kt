@@ -26,8 +26,8 @@ fun box(): String {
     assertGenericSuper("kotlin.jvm.functions.Function1<java.util.List<java.lang.Double>, java.util.List<java.lang.Integer>>", mutableListFun)
     assertGenericSuper("kotlin.jvm.functions.Function1<java.lang.Comparable<? super java.lang.String>, kotlin.Unit>", funWithIn)
 
-    assertGenericSuper("kotlin.ExtensionFunction0<java.lang.Object, kotlin.Unit>", extensionFun)
-    assertGenericSuper("kotlin.ExtensionFunction1<java.lang.Long, java.lang.Object, java.util.Date>", extensionWithArgFun)
+    assertGenericSuper("kotlin.jvm.functions.Function1<java.lang.Object, kotlin.Unit>", extensionFun)
+    assertGenericSuper("kotlin.jvm.functions.Function2<java.lang.Long, java.lang.Object, java.util.Date>", extensionWithArgFun)
 
     return "OK"
 }

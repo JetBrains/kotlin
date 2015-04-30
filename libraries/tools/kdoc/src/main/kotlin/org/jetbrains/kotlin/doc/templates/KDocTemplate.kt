@@ -134,7 +134,7 @@ abstract class KDocTemplate() : TextTemplate() {
         return if (c != null) {
             val prefix = if (c.isAnnotation()) "@" else ""
             val cname = c.name
-            if ((cname.startsWith("kotlin.Function") || cname.startsWith("kotlin.ExtensionFunction")) && arguments.isNotEmpty()) {
+            if (cname.startsWith("kotlin.Function") && arguments.isNotEmpty()) {
                 val rt = arguments.last()
                 // TODO use drop()
                 val rest = arguments.subList(0, arguments.size - 1).orEmpty()
