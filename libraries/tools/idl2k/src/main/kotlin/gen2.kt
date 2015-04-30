@@ -205,11 +205,14 @@ private fun <O : Appendable> O.renderFunction(allTypes: Set<String>, f: Generate
     appendln(") : ${f.returnType.mapUnknownType(allTypes)} = noImpl")
 }
 
-fun <O : Appendable> O.render(allTypes: Map<String, GenerateTraitOrClass>, classesToUnions : Map<String, List<UnionType>>, iface: GenerateTraitOrClass) {
+fun <O : Appendable> O.render(allTypes: Map<String, GenerateTraitOrClass>, classesToUnions : Map<String, List<UnionType>>, iface: GenerateTraitOrClass, markerAnnotation : Boolean = false) {
     val superTypes = iface.allSuperTypes(allTypes).filter { it.name != "" }
     val superTypesNames = superTypes.map { it.name }.toSet()
 
     append("native ")
+    if (markerAnnotation) {
+        append("marker ")
+    }
     when (iface.type) {
         GenerateDefinitionType.CLASS -> append("open class ")
         GenerateDefinitionType.TRAIT -> append("trait ")
@@ -267,6 +270,6 @@ fun <O : Appendable> O.render(ifaces: List<GenerateTraitOrClass>) {
     }
 
     unionTypeTraits.forEach {
-        render(all, emptyMap(), it)
+        render(all, emptyMap(), it, markerAnnotation = true)
     }
 }

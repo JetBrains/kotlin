@@ -5505,7 +5505,7 @@ native trait PseudoElement {
 }
 native trait CSS {
 }
-native trait UnionHTMLOptGroupElementOrHTMLOptionElement {
+native marker trait UnionHTMLOptGroupElementOrHTMLOptionElement {
 }
-native trait UnionElementOrMouseEvent {
+native marker trait UnionElementOrMouseEvent {
 }

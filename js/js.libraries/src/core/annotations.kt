@@ -29,3 +29,6 @@ native
 public annotation class library(public val name: String = "")
 native
 public annotation class enumerable()
+
+native
+public annotation class marker
