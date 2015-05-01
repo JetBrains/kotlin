@@ -1,5 +1,4 @@
 // "Create function 'foo'" "false"
-// ACTION: Replace with infix function call
 // ACTION: Split property declaration
 // ERROR: Unresolved reference: foo
 
