@@ -1172,6 +1172,9 @@ public class JetParsing extends AbstractJetParsing {
                     break;
                 }
                 PsiBuilder.Marker property = mark();
+
+                parseModifierListWithUnescapedAnnotations(TokenSet.create(COMMA, RPAR, COLON, IN_KEYWORD, EQ));
+
                 expect(IDENTIFIER, "Expecting a name", recoverySet);
 
                 if (at(COLON)) {
@@ -1916,8 +1919,12 @@ public class JetParsing extends AbstractJetParsing {
         return atGT;
     }
 
-    private void parseModifierListWithUnescapedAnnotations(TokenSet stopAt) {
-        int lastId = findLastBefore(IDENTIFIER, stopAt, false);
+    public void parseModifierListWithUnescapedAnnotations(TokenSet stopAt) {
+        parseModifierListWithUnescapedAnnotations(TokenSet.create(IDENTIFIER), stopAt);
+    }
+
+    public void parseModifierListWithUnescapedAnnotations(TokenSet lookFor, TokenSet stopAt) {
+        int lastId = findLastBefore(lookFor, stopAt, false);
         createTruncatedBuilder(lastId).parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
     }
 

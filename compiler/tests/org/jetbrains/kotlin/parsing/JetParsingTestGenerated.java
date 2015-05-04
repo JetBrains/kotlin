@@ -651,6 +651,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("forParameters.kt")
+            public void testForParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/forParameters.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("lambda.kt")
             public void testLambda() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/lambda.kt");
@@ -660,6 +666,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             @TestMetadata("lambdaRecovery.kt")
             public void testLambdaRecovery() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/lambdaRecovery.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("multiDeclaration.kt")
+            public void testMultiDeclaration() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/multiDeclaration.kt");
                 doParsingTest(fileName);
             }
 
@@ -704,12 +716,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 @TestMetadata("expressionJustAtTyped.kt")
                 public void testExpressionJustAtTyped() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/at/expressionJustAtTyped.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("invalidExpressions.kt")
-                public void testInvalidExpressions() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/at/invalidExpressions.kt");
                     doParsingTest(fileName);
                 }
 

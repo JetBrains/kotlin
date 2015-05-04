@@ -242,42 +242,33 @@ JetFile: declarationsJustAtTyped.kt
                     PsiElement(RBRACE)('}')
               PsiElement(RPAR)(')')
           PsiWhiteSpace('\n\n        ')
-          BINARY_EXPRESSION
-            FOR
-              PsiElement(for)('for')
-              PsiWhiteSpace(' ')
-              PsiElement(LPAR)('(')
-              VALUE_PARAMETER
-                PsiErrorElement:Expecting a variable name
+          FOR
+            PsiElement(for)('for')
+            PsiWhiteSpace(' ')
+            PsiElement(LPAR)('(')
+            VALUE_PARAMETER
+              MODIFIER_LIST
+                PsiErrorElement:Expected modifier or annotation after '@'
                   PsiElement(AT)('@')
               PsiWhiteSpace(' ')
-              PsiErrorElement:Expecting 'in'
-                PsiElement(IDENTIFIER)('x')
-              PsiErrorElement:Expecting ')'
-                <empty list>
-              PsiWhiteSpace(' ')
-              BODY
-                PsiErrorElement:Expecting an expression
-                  <empty list>
-            OPERATION_REFERENCE
-              PsiElement(in)('in')
+              PsiElement(IDENTIFIER)('x')
             PsiWhiteSpace(' ')
-            BINARY_EXPRESSION
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('1')
-              OPERATION_REFERENCE
-                PsiElement(RANGE)('..')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('100')
-          PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+            PsiElement(in)('in')
+            PsiWhiteSpace(' ')
+            LOOP_RANGE
+              BINARY_EXPRESSION
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('1')
+                OPERATION_REFERENCE
+                  PsiElement(RANGE)('..')
+                INTEGER_CONSTANT
+                  PsiElement(INTEGER_LITERAL)('100')
             PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          FUNCTION_LITERAL_EXPRESSION
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
+            PsiWhiteSpace(' ')
+            BODY
               BLOCK
-                <empty list>
-              PsiElement(RBRACE)('}')
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')

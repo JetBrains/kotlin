@@ -1465,7 +1465,15 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
             if (!at(RPAR)) {
                 PsiBuilder.Marker parameter = mark();
+
+                if (!at(IN_KEYWORD)) {
+                    myJetParsing.parseModifierListWithUnescapedAnnotations(
+                            TokenSet.create(IDENTIFIER, LPAR), TokenSet.create(IN_KEYWORD, RPAR, COLON)
+                    );
+                }
+
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
+
                 if (at(LPAR)) {
                     myJetParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
                     parameter.done(MULTI_VARIABLE_DECLARATION);
