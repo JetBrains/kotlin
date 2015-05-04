@@ -33,8 +33,8 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.JetNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
-import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.REGULAR_ANNOTATIONS_ALLOW_SHORTS;
-import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS;
+import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.ALLOW_UNESCAPED_REGULAR_ANNOTATIONS;
+import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.ONLY_ESCAPED_REGULAR_ANNOTATIONS;
 
 public class JetExpressionParsing extends AbstractJetParsing {
     private static final TokenSet WHEN_CONDITION_RECOVERY_SET = TokenSet.create(RBRACE, IN_KEYWORD, NOT_IN, IS_KEYWORD, NOT_IS, ELSE_KEYWORD);
@@ -345,7 +345,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
         if (at(LBRACKET)) {
             if (!parseLocalDeclaration()) {
                 PsiBuilder.Marker expression = mark();
-                myJetParsing.parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+                myJetParsing.parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
                 parsePrefixExpression();
                 expression.done(ANNOTATED_EXPRESSION);
             }
@@ -806,7 +806,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             int valPos = matchTokenStreamPredicate(new FirstBefore(new At(VAL_KEYWORD), new AtSet(RPAR, LBRACE, RBRACE, SEMICOLON, EQ)));
             if (valPos >= 0) {
                 PsiBuilder.Marker property = mark();
-                myJetParsing.parseModifierList(REGULAR_ANNOTATIONS_ALLOW_SHORTS);
+                myJetParsing.parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
                 myJetParsing.parseProperty(true);
                 property.done(PROPERTY);
             }
@@ -990,7 +990,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private boolean parseLocalDeclaration() {
         PsiBuilder.Marker decl = mark();
         JetParsing.ModifierDetector detector = new JetParsing.ModifierDetector();
-        myJetParsing.parseModifierList(detector, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        myJetParsing.parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         IElementType declType = parseLocalDeclarationRest(detector.isEnumDetected());
 
@@ -1241,7 +1241,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
                 PsiBuilder.Marker parameter = mark();
                 int parameterNamePos = matchTokenStreamPredicate(new LastBefore(new At(IDENTIFIER), new AtSet(COMMA, RPAR, COLON, ARROW, RBRACE, LBRACE)));
-                createTruncatedBuilder(parameterNamePos).parseModifierList(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+                createTruncatedBuilder(parameterNamePos).parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
                 expect(IDENTIFIER, "Expecting parameter declaration");
 

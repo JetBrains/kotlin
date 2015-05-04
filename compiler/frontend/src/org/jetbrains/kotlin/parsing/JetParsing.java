@@ -191,7 +191,7 @@ public class JetParsing extends AbstractJetParsing {
          *   ;
          */
         PsiBuilder.Marker packageDirective = mark();
-        parseModifierList(REGULAR_ANNOTATIONS_ALLOW_SHORTS);
+        parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
 
         if (at(PACKAGE_KEYWORD)) {
             advance(); // PACKAGE_KEYWORD
@@ -372,7 +372,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
 
         ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, REGULAR_ANNOTATIONS_ALLOW_SHORTS);
+        parseModifierList(detector, ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
 
         IElementType keywordToken = tt();
         IElementType declType = null;
@@ -625,7 +625,7 @@ public class JetParsing extends AbstractJetParsing {
         OptionalMarker constructorModifiersMarker = new OptionalMarker(object);
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
-        boolean hasConstructorModifiers = parseModifierList(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        boolean hasConstructorModifiers = parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON)) {
@@ -707,7 +707,7 @@ public class JetParsing extends AbstractJetParsing {
             TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
             int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
             ModifierDetector detector = new ModifierDetector();
-            createTruncatedBuilder(lastId).parseModifierList(detector, REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+            createTruncatedBuilder(lastId).parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
             IElementType type;
             if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
@@ -804,7 +804,7 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker decl = mark();
 
         ModifierDetector detector = new ModifierDetector();
-        parseModifierList(detector, REGULAR_ANNOTATIONS_ALLOW_SHORTS_AT_MEMBER_MODIFIER_LIST);
+        parseModifierList(detector, ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST);
 
         IElementType declType = parseMemberDeclarationRest(detector.isEnumDetected(), detector.isDefaultDetected());
 
@@ -948,7 +948,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseInitializer() {
         PsiBuilder.Marker initializer = mark();
-        parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         IElementType type;
         if (atSet(TYPE_REF_FIRST)) {
@@ -1152,7 +1152,7 @@ public class JetParsing extends AbstractJetParsing {
     private boolean parsePropertyGetterOrSetter() {
         PsiBuilder.Marker getterOrSetter = mark();
 
-        parseModifierList(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         if (!at(GET_KEYWORD) && !at(SET_KEYWORD)) {
             getterOrSetter.rollbackTo();
@@ -1282,7 +1282,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     private boolean parseReceiverType(String title, TokenSet nameFollow) {
         PsiBuilder.Marker annotations = mark();
-        boolean annotationsPresent = parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        boolean annotationsPresent = parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
         int lastDot = lastDotAfterReceiver();
         boolean receiverPresent = lastDot != -1;
         if (annotationsPresent) {
@@ -1435,7 +1435,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseDelegationSpecifier() {
         PsiBuilder.Marker delegator = mark();
-        parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         PsiBuilder.Marker reference = mark();
         parseTypeRef();
@@ -1534,7 +1534,7 @@ public class JetParsing extends AbstractJetParsing {
     private void parseTypeConstraint() {
         PsiBuilder.Marker constraint = mark();
 
-        parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         PsiBuilder.Marker reference = mark();
         if (expect(IDENTIFIER, "Expecting type parameter name", TokenSet.orSet(TokenSet.create(COLON, COMMA), TYPE_REF_FIRST))) {
@@ -1610,7 +1610,7 @@ public class JetParsing extends AbstractJetParsing {
         // we don't support this case now
 //        myBuilder.disableJoiningComplexTokens();
         PsiBuilder.Marker typeRefMarker = mark();
-        parseAnnotations(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+        parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
         IElementType lookahead = lookahead(1);
         IElementType lookahead2 = lookahead(2);
@@ -1842,7 +1842,7 @@ public class JetParsing extends AbstractJetParsing {
 //            TokenSet stopAt = TokenSet.create(COMMA, COLON, GT);
 //            parseModifierListWithShortAnnotations(MODIFIER_LIST, lookFor, stopAt);
             // Currently we do not allow annotations
-            parseModifierList(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS);
+            parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
             if (at(MUL)) {
                 advance(); // MUL
@@ -1868,7 +1868,7 @@ public class JetParsing extends AbstractJetParsing {
 
     private void parseModifierListWithShortAnnotations(IElementType modifierList, TokenSet lookFor, TokenSet stopAt) {
         int lastId = findLastBefore(lookFor, stopAt, false);
-        createTruncatedBuilder(lastId).parseModifierList(REGULAR_ANNOTATIONS_ALLOW_SHORTS);
+        createTruncatedBuilder(lastId).parseModifierList(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
     }
 
     /*
@@ -1970,7 +1970,7 @@ public class JetParsing extends AbstractJetParsing {
                 if (isFunctionTypeContents) {
                     if (!tryParseValueParameter(typeRequired)) {
                         PsiBuilder.Marker valueParameter = mark();
-                        parseModifierList(REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS); // lazy, out, ref
+                        parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS); // lazy, out, ref
                         parseTypeRef();
                         closeDeclarationWithCommentBinders(valueParameter, VALUE_PARAMETER, false);
                     }
@@ -2099,9 +2099,9 @@ public class JetParsing extends AbstractJetParsing {
     static enum AnnotationParsingMode {
         FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true),
         FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true),
-        REGULAR_ANNOTATIONS_ONLY_WITH_BRACKETS(false, false),
-        REGULAR_ANNOTATIONS_ALLOW_SHORTS(true, false),
-        REGULAR_ANNOTATIONS_ALLOW_SHORTS_AT_MEMBER_MODIFIER_LIST(true, false, true);
+        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true);
 
         boolean allowShortAnnotations;
         boolean isFileAnnotationParsingMode;
