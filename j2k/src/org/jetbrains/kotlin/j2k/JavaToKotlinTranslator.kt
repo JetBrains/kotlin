@@ -30,11 +30,9 @@ import com.intellij.codeInsight.NullableNotNullManager
 import com.intellij.psi.PsiModifierListOwner
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.core.CoreApplicationEnvironment
-import com.intellij.psi.impl.compiled.ClsStubBuilderFactory
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.codeInsight.ContainerProvider
-import com.intellij.openapi.fileTypes.ContentBasedFileSubstitutor
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.FileContextProvider
