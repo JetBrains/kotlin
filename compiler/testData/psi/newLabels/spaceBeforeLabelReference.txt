@@ -143,14 +143,17 @@ JetFile: spaceBeforeLabelReference.kt
         PsiElement(return)('return')
       PsiComment(EOL_COMMENT)('//')
       PsiWhiteSpace('\n')
-      LABELED_EXPRESSION
-        PsiErrorElement:Label must be named
+      ANNOTATED_EXPRESSION
+        ANNOTATION_ENTRY
           PsiElement(AT)('@')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('l7')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(INTEGER_LITERAL)('4')
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('l7')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('4')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         PsiElement(val)('val')

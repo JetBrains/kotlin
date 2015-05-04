@@ -1,0 +1,223 @@
+JetFile: expressionJustAtTyped.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiErrorElement:There should be no space or comments before '@' in label reference
+          <empty list>
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Label must be named
+          PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n    ')
+      RETURN
+        PsiElement(return)('return')
+        PsiWhiteSpace(' ')
+        PARENTHESIZED
+          PsiElement(LPAR)('(')
+          ANNOTATED_EXPRESSION
+            PsiErrorElement:Expected annotation identifier after '@'
+              PsiElement(AT)('@')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('2')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      ANNOTATED_EXPRESSION
+        PsiErrorElement:Expected annotation identifier after '@'
+          PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foo')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"')
+                PsiElement(CLOSING_QUOTE)('"')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      BINARY_EXPRESSION
+        BINARY_EXPRESSION
+          ANNOTATED_EXPRESSION
+            PsiErrorElement:Expected annotation identifier after '@'
+              PsiElement(AT)('@')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('3')
+          PsiWhiteSpace(' ')
+          OPERATION_REFERENCE
+            PsiElement(PLUS)('+')
+          PsiWhiteSpace(' ')
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
+                PsiElement(AT)('@')
+              PsiWhiteSpace('  ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('4')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(MUL)('*')
+            PsiWhiteSpace(' ')
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('5')
+        PsiWhiteSpace(' ')
+        OPERATION_REFERENCE
+          PsiElement(IDENTIFIER)('infix')
+        PsiWhiteSpace(' ')
+        ANNOTATED_EXPRESSION
+          PsiErrorElement:Expected annotation identifier after '@'
+            PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('6')
+      PsiWhiteSpace('\n\n    ')
+      DOT_QUALIFIED_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiElement(DOT)('.')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('bar')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              FUN
+                MODIFIER_LIST
+                  PsiErrorElement:Expected modifier or annotation after '@'
+                    PsiElement(AT)('@')
+                PsiWhiteSpace(' ')
+                PsiElement(fun)('fun')
+                VALUE_PARAMETER_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_PARAMETER
+                    PsiElement(IDENTIFIER)('x')
+                    PsiElement(COLON)(':')
+                    PsiWhiteSpace(' ')
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('Int')
+                  PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                BLOCK
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n\n    ')
+                  PsiElement(RBRACE)('}')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      IF
+        PsiElement(if)('if')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        CONDITION
+          BINARY_EXPRESSION
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(OROR)('||')
+            PsiWhiteSpace(' ')
+            BOOLEAN_CONSTANT
+              PsiElement(true)('true')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        THEN
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n\n    ')
+            PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n    ')
+        PsiElement(else)('else')
+        PsiWhiteSpace(' ')
+        ELSE
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      LABELED_EXPRESSION
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(IDENTIFIER)('label')
+            PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        ANNOTATED_EXPRESSION
+          PsiErrorElement:Expected annotation identifier after '@'
+            PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          WHILE
+            PsiElement(while)('while')
+            PsiWhiteSpace(' ')
+            PsiElement(LPAR)('(')
+            CONDITION
+              BOOLEAN_CONSTANT
+                PsiElement(true)('true')
+            PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            BODY
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace('\n        ')
+                ANNOTATED_EXPRESSION
+                  PsiErrorElement:Expected annotation identifier after '@'
+                    PsiElement(AT)('@')
+                  PsiWhiteSpace(' ')
+                  BREAK
+                    PsiElement(break)('break')
+                    LABEL_QUALIFIER
+                      LABEL
+                        PsiElement(AT)('@')
+                        PsiElement(IDENTIFIER)('label')
+                PsiWhiteSpace('\n    ')
+                PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      RETURN
+        PsiElement(return)('return')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('label')
+        PsiWhiteSpace(' ')
+        ANNOTATED_EXPRESSION
+          PsiErrorElement:Expected annotation identifier after '@'
+            PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n\n    ')
+      PsiComment(EOL_COMMENT)('// multiline')
+      PsiWhiteSpace('\n    ')
+      ANNOTATED_EXPRESSION
+        PsiErrorElement:Expected annotation identifier after '@'
+          PsiElement(AT)('@')
+        PsiWhiteSpace('\n    ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('ann')
+      PsiWhiteSpace('\n    ')
+      INTEGER_CONSTANT
+        PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

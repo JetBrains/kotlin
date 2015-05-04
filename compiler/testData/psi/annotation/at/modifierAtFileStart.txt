@@ -1,0 +1,10 @@
+JetFile: modifierAtFileStart.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    MODIFIER_LIST
+      PsiElement(public)('@public')
+    PsiWhiteSpace(' ')
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')

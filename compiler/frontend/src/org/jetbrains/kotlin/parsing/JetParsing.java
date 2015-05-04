@@ -430,9 +430,24 @@ public class JetParsing extends AbstractJetParsing {
             if (annotationParsingMode.atMemberStart && atSet(SOFT_KEYWORDS_AT_MEMBER_START)) {
                 break;
             }
-            if (atSet(MODIFIER_KEYWORDS)) {
-                if (tokenConsumer != null) tokenConsumer.consume(tt());
-                advance(); // MODIFIER
+
+            if (at(AT)) {
+                IElementType strictlyNextToken = myBuilder.rawLookup(1);
+                if (strictlyNextToken == IDENTIFIER || MODIFIER_KEYWORDS.contains(strictlyNextToken)) {
+                    if (!annotationParsingMode.allowAtAnnotations) {
+                        errorAndAdvance("Only annotations in '[]' can be declared here"); // AT
+                    }
+
+                    if (!tryParseModifier(tokenConsumer)) {
+                        parseAnnotationEntry();
+                    }
+                }
+                else {
+                    errorAndAdvance("Expected modifier or annotation after '@'"); // AT
+                }
+            }
+            else if (tryParseModifier(tokenConsumer)) {
+                // modifier advanced
             }
             else if (at(LBRACKET) || (annotationParsingMode.allowShortAnnotations && at(IDENTIFIER))) {
                 parseAnnotation(annotationParsingMode);
@@ -449,6 +464,27 @@ public class JetParsing extends AbstractJetParsing {
             list.done(MODIFIER_LIST);
         }
         return !empty;
+    }
+
+    private boolean tryParseModifier(@Nullable Consumer<IElementType> tokenConsumer) {
+        PsiBuilder.Marker marker = mark();
+
+        if (at(AT)) {
+            advance(); // AT
+        }
+
+        if (atSet(MODIFIER_KEYWORDS)) {
+            IElementType tt = tt();
+            if (tokenConsumer != null) {
+                tokenConsumer.consume(tt);
+            }
+            advance(); // MODIFIER
+            marker.collapse(tt);
+            return true;
+        }
+
+        marker.rollbackTo();
+        return false;
     }
 
     /*
@@ -490,6 +526,7 @@ public class JetParsing extends AbstractJetParsing {
      * annotation
      *   : "[" ("file" ":")? annotationEntry+ "]"
      *   : annotationEntry
+     *   : "@" annotationEntry
      *   ;
      */
     private boolean parseAnnotation(AnnotationParsingMode mode) {
@@ -541,6 +578,15 @@ public class JetParsing extends AbstractJetParsing {
             parseAnnotationEntry();
             return true;
         }
+        else if (mode.allowAtAnnotations && at(AT)) {
+            if (myBuilder.rawLookup(1) == IDENTIFIER) {
+                parseAnnotationEntry();
+            }
+            else {
+                errorAndAdvance("Expected annotation identifier after '@'", 1); // AT
+            }
+            return true;
+        }
 
         return false;
     }
@@ -551,9 +597,13 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseAnnotationEntry() {
-        assert _at(IDENTIFIER);
+        assert _at(IDENTIFIER) || (_at(AT) && myBuilder.rawLookup(1) == IDENTIFIER);
 
         PsiBuilder.Marker annotation = mark();
+
+        if (at(AT)) {
+            advance(); // AT
+        }
 
         PsiBuilder.Marker reference = mark();
         PsiBuilder.Marker typeReference = mark();
@@ -625,7 +675,7 @@ public class JetParsing extends AbstractJetParsing {
         OptionalMarker constructorModifiersMarker = new OptionalMarker(object);
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
-        boolean hasConstructorModifiers = parseModifierList(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+        boolean hasConstructorModifiers = parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON)) {
@@ -2096,25 +2146,29 @@ public class JetParsing extends AbstractJetParsing {
         }
     }
 
-    static enum AnnotationParsingMode {
-        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true),
-        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true),
-        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false),
-        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false),
-        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true);
+    enum AnnotationParsingMode {
+        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true, false, false),
+        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true, false, false),
+        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, false, true),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, false, true),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true, true),
+        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(false, false, false, false);
 
         boolean allowShortAnnotations;
         boolean isFileAnnotationParsingMode;
         boolean atMemberStart = false;
+        boolean allowAtAnnotations = true;
 
-        AnnotationParsingMode(boolean allowShortAnnotations, boolean onlyFileAnnotations) {
+        AnnotationParsingMode(
+                boolean allowShortAnnotations,
+                boolean isFileAnnotationParsingMode,
+                boolean atMemberStart,
+                boolean allowAtAnnotations
+        ) {
             this.allowShortAnnotations = allowShortAnnotations;
-            this.isFileAnnotationParsingMode = onlyFileAnnotations;
-        }
-
-        AnnotationParsingMode(boolean allowShortAnnotations, boolean onlyFileAnnotations, boolean atMemberStart) {
-            this(allowShortAnnotations, onlyFileAnnotations);
+            this.isFileAnnotationParsingMode = isFileAnnotationParsingMode;
             this.atMemberStart = atMemberStart;
+            this.allowAtAnnotations = allowAtAnnotations;
         }
     }
 }

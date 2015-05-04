@@ -1,0 +1,52 @@
+JetFile: invalidExpressions.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiErrorElement:Expecting a variable name
+            PsiElement(AT)('@')
+        PsiErrorElement:Expecting 'in'
+          PsiElement(IDENTIFIER)('volatile')
+        PsiErrorElement:Expecting ')'
+          <empty list>
+        PsiWhiteSpace(' ')
+        BODY
+          BINARY_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(in)('in')
+            PsiWhiteSpace(' ')
+            BINARY_EXPRESSION
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+              OPERATION_REFERENCE
+                PsiElement(RANGE)('..')
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('100')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      FUNCTION_LITERAL_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BLOCK
+            <empty list>
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

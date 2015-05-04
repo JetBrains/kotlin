@@ -1,0 +1,225 @@
+JetFile: primaryConstructor.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A1')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        PsiErrorElement:Only annotations in '[]' can be declared here
+          PsiElement(AT)('@')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Ann1')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"')
+                PsiElement(CLOSING_QUOTE)('"')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A2')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        PsiErrorElement:Only annotations in '[]' can be declared here
+          PsiElement(AT)('@')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Ann2')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"')
+                PsiElement(CLOSING_QUOTE)('"')
+            PsiElement(RPAR)(')')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('B')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A3')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann3')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expected modifier or annotation after '@'
+          PsiElement(AT)('@')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A4')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann4')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Only annotations in '[]' can be declared here
+          PsiElement(AT)('@')
+        PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expected modifier or annotation after '@'
+          PsiElement(AT)('@')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          PsiElement(IDENTIFIER)('x')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiElement(RPAR)(')')
+  PsiWhiteSpace('\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A5')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Only annotations in '[]' can be declared here
+          PsiElement(AT)('@')
+        ANNOTATION_ENTRY
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Ann4')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              BINARY_WITH_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('x')
+                OPERATION_REFERENCE
+                  PsiElement(COLON)(':')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Int')
+            PsiElement(RPAR)(')')
+    PsiErrorElement:Expecting primary constructor parameter list
+      <empty list>
+    PsiWhiteSpace(' ')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    DELEGATION_SPECIFIER_LIST
+      DELEGATOR_SUPER_CLASS
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('B')
+  PsiWhiteSpace('\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A6')
+    PsiWhiteSpace(' ')
+    PRIMARY_CONSTRUCTOR
+      MODIFIER_LIST
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann5')
+          PsiElement(RBRACKET)(']')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Only annotations in '[]' can be declared here
+          PsiElement(AT)('@')
+        PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expected modifier or annotation after '@'
+          PsiElement(AT)('@')
+        PsiWhiteSpace(' ')
+        ANNOTATION
+          PsiElement(LBRACKET)('[')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann6')
+          PsiElement(RBRACKET)(']')
+      VALUE_PARAMETER_LIST
+        PsiElement(LPAR)('(')
+        PsiElement(RPAR)(')')

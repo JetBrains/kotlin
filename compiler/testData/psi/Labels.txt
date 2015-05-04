@@ -56,8 +56,8 @@ JetFile: Labels.kt
         PsiWhiteSpace(' ')
         PARENTHESIZED
           PsiElement(LPAR)('(')
-          LABELED_EXPRESSION
-            PsiErrorElement:Label must be named
+          ANNOTATED_EXPRESSION
+            PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             INTEGER_CONSTANT
@@ -69,8 +69,8 @@ JetFile: Labels.kt
         PsiErrorElement:Label must be named
           PsiElement(AT)('@')
         PsiWhiteSpace(' ')
-        LABELED_EXPRESSION
-          PsiErrorElement:Label must be named
+        ANNOTATED_EXPRESSION
+          PsiErrorElement:Expected annotation identifier after '@'
             PsiElement(AT)('@')
           PsiWhiteSpace(' ')
           INTEGER_CONSTANT
@@ -132,16 +132,16 @@ JetFile: Labels.kt
         PsiElement(return)('return')
         PsiErrorElement:Label must be named
           PsiElement(AT)('@')
-        LABELED_EXPRESSION
-          PsiErrorElement:Label must be named
+        ANNOTATED_EXPRESSION
+          PsiErrorElement:Expected annotation identifier after '@'
             PsiElement(AT)('@')
           PsiWhiteSpace('\n  ')
           RETURN
             PsiElement(return)('return')
             PsiErrorElement:Label must be named
               PsiElement(AT)('@')
-            LABELED_EXPRESSION
-              PsiErrorElement:Label must be named
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
               PsiWhiteSpace(' ')
               INTEGER_CONSTANT
