@@ -1647,10 +1647,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * label?
+     * labelReference?
      */
     private void parseLabelReferenceWithNoWhitespace() {
-        if (at(AT) && !WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1))) {
+        if (at(AT) && !myBuilder.newlineBeforeCurrentToken()) {
+            if (WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(-1))) {
+                error("There should be no space or comments before '@' in label reference");
+            }
             parseLabelReference();
         }
     }

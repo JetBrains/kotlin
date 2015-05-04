@@ -108,13 +108,14 @@ JetFile: recovery.kt
             PsiWhiteSpace('\n        ')
             RETURN
               PsiElement(return)('return')
+              PsiErrorElement:There should be no space or comments before '@' in label reference
+                <empty list>
               PsiWhiteSpace(' ')
-              LABELED_EXPRESSION
-                PsiErrorElement:Label must be named
-                  PsiElement(AT)('@')
-                PsiWhiteSpace(' ')
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('loop2')
+              PsiErrorElement:Label must be named
+                PsiElement(AT)('@')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('loop2')
             PsiWhiteSpace(' ')
             PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
               PsiElement(INTEGER_LITERAL)('7')
@@ -257,12 +258,13 @@ JetFile: recovery.kt
         PsiWhiteSpace('\n\n    ')
         RETURN
           PsiElement(return)('return')
+          PsiErrorElement:There should be no space or comments before '@' in label reference
+            <empty list>
           PsiWhiteSpace(' ')
-          LABELED_EXPRESSION
-            PsiErrorElement:Label must be named
-              PsiElement(AT)('@')
-            PsiWhiteSpace(' ')
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
+          PsiErrorElement:Label must be named
+            PsiElement(AT)('@')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

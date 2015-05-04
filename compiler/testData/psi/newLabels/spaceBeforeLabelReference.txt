@@ -14,10 +14,13 @@ JetFile: spaceBeforeLabelReference.kt
       PsiWhiteSpace('\n    ')
       BREAK
         PsiElement(break)('break')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(AT)('@')
-        PsiElement(IDENTIFIER)('l1')
+        PsiErrorElement:There should be no space or comments before '@' in label reference
+          <empty list>
+        PsiWhiteSpace(' ')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('l1')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         PsiElement(val)('val')
@@ -31,15 +34,16 @@ JetFile: spaceBeforeLabelReference.kt
       PsiWhiteSpace('\n\n    ')
       RETURN
         PsiElement(return)('return')
+        PsiErrorElement:There should be no space or comments before '@' in label reference
+          <empty list>
         PsiWhiteSpace(' ')
-        LABELED_EXPRESSION
-          PsiErrorElement:Label must be named
+        LABEL_QUALIFIER
+          LABEL
             PsiElement(AT)('@')
-          REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('l2')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(INTEGER_LITERAL)('1')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         PsiElement(val)('val')
@@ -53,11 +57,12 @@ JetFile: spaceBeforeLabelReference.kt
       PsiWhiteSpace('\n\n    ')
       RETURN
         PsiElement(return)('return')
+        PsiErrorElement:There should be no space or comments before '@' in label reference
+          <empty list>
         PsiWhiteSpace(' ')
-        LABELED_EXPRESSION
-          PsiErrorElement:Label must be named
+        LABEL_QUALIFIER
+          LABEL
             PsiElement(AT)('@')
-          REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('l3')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
@@ -72,11 +77,15 @@ JetFile: spaceBeforeLabelReference.kt
       PsiWhiteSpace('\n\n    ')
       CONTINUE
         PsiElement(continue)('continue')
+        PsiErrorElement:There should be no space or comments before '@' in label reference
+          <empty list>
+        PsiWhiteSpace(' ')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('l4')
       PsiWhiteSpace(' ')
       PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(AT)('@')
-        PsiElement(IDENTIFIER)('l4')
-        PsiWhiteSpace(' ')
         PsiElement(INTEGER_LITERAL)('5')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
@@ -91,10 +100,13 @@ JetFile: spaceBeforeLabelReference.kt
       PsiWhiteSpace('\n\n    ')
       BREAK
         PsiElement(break)('break')
-      PsiComment(BLOCK_COMMENT)('/**/')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(AT)('@')
-        PsiElement(IDENTIFIER)('l5')
+        PsiErrorElement:There should be no space or comments before '@' in label reference
+          <empty list>
+        PsiComment(BLOCK_COMMENT)('/**/')
+        LABEL_QUALIFIER
+          LABEL
+            PsiElement(AT)('@')
+            PsiElement(IDENTIFIER)('l5')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         PsiElement(val)('val')
@@ -108,12 +120,13 @@ JetFile: spaceBeforeLabelReference.kt
       PsiWhiteSpace('\n\n    ')
       RETURN
         PsiElement(return)('return')
+        PsiErrorElement:There should be no space or comments before '@' in label reference
+          <empty list>
         PsiWhiteSpace(' ')
         PsiComment(BLOCK_COMMENT)('/**/')
-        LABELED_EXPRESSION
-          PsiErrorElement:Label must be named
+        LABEL_QUALIFIER
+          LABEL
             PsiElement(AT)('@')
-          REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('l6')
       PsiWhiteSpace('\n\n    ')
       PROPERTY
