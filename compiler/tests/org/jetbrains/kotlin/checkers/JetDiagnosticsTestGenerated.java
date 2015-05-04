@@ -639,6 +639,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("annotationsOnLambdaAsCallArgument.kt")
+            public void testAnnotationsOnLambdaAsCallArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/annotationsOnLambdaAsCallArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("atAnnotationResolve.kt")
             public void testAtAnnotationResolve() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/atAnnotationResolve.kt");

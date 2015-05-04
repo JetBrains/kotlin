@@ -225,9 +225,12 @@ postfixUnaryOperation
   ;
 
 callSuffix
-  : typeArguments? valueArguments (labelDefinition? functionLiteral)
-  : typeArguments (labelDefinition? functionLiteral)
+  : typeArguments? valueArguments annotatedLambda
+  : typeArguments annotatedLambda
   ;
+
+annotatedLambda
+  : ("@" annotationEntry)* labelDefinition? functionLiteral
 
 memberAccessOperation
   : "." : "?." : "?"

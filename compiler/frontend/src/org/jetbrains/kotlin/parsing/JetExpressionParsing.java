@@ -477,13 +477,13 @@ public class JetExpressionParsing extends AbstractJetParsing {
 
     /*
      * callSuffix
-     *   : typeArguments? valueArguments (getEntryPoint? functionLiteral*)
-     *   : typeArguments (getEntryPoint? functionLiteral*)
+     *   : typeArguments? valueArguments annotatedLambda
+     *   : typeArguments annotatedLambda
      *   ;
      */
     private boolean parseCallSuffix() {
         if (parseCallWithClosure()) {
-            parseCallWithClosure();
+            // do nothing
         }
         else if (at(LPAR)) {
             parseValueArgumentList();
@@ -529,24 +529,65 @@ public class JetExpressionParsing extends AbstractJetParsing {
     }
 
     /*
-     * element (getEntryPoint? functionLiteral)?
+     * annotatedLambda*
      */
     protected boolean parseCallWithClosure() {
         boolean success = false;
 
-        while (at(LBRACE) || isAtLabelDefinitionBeforeLBrace()) {
+        while (true) {
             PsiBuilder.Marker argument = mark();
-            if (!at(LBRACE)) {
-                parseLabeledExpression();
+
+            if (!parseAnnotatedLambda(/* preferBlock = */false)) {
+                argument.drop();
+                break;
             }
-            else {
-                parseFunctionLiteral();
-            }
+
             argument.done(FUNCTION_LITERAL_ARGUMENT);
             success = true;
         }
 
         return success;
+    }
+
+    /*
+     * annotatedLambda
+     *  : ("@" annotationEntry)* labelDefinition? functionLiteral
+     */
+    private boolean parseAnnotatedLambda(boolean preferBlock) {
+        PsiBuilder.Marker annotated = mark();
+
+        boolean wereAnnotations = myJetParsing.parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+        PsiBuilder.Marker labeled = mark();
+
+        boolean wasLabel = isAtLabelDefinitionOrMissingIdentifier();
+        if (wasLabel) {
+            parseLabelDefinition();
+        }
+
+        if (!at(LBRACE)) {
+            annotated.rollbackTo();
+            return false;
+        }
+
+        parseFunctionLiteral(preferBlock);
+
+        doneOrDrop(labeled, LABELED_EXPRESSION, wasLabel);
+        doneOrDrop(annotated, ANNOTATED_EXPRESSION, wereAnnotations);
+
+        return true;
+    }
+
+    private static void doneOrDrop(
+            @NotNull PsiBuilder.Marker marker,
+            @NotNull IElementType type,
+            boolean condition
+    ) {
+        if (condition) {
+            marker.done(type);
+        }
+        else {
+            marker.drop();
+        }
     }
 
     private boolean isAtLabelDefinitionBeforeLBrace() {
@@ -1014,7 +1055,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseFunctionLiteral() {
-        parseFunctionLiteral(false);
+        parseFunctionLiteral(/* preferBlock = */false);
     }
 
     private void parseFunctionLiteral(boolean preferBlock) {
@@ -1462,19 +1503,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
      * If it has no ->, it's a block, otherwise a function literal
      */
     private void parseExpressionPreferringBlocks() {
-        if (at(LBRACE)) {
-            parseFunctionLiteral(true);
-        }
-        else if (isAtLabelDefinitionBeforeLBrace()) {
-            PsiBuilder.Marker mark = mark();
-
-            parseLabelDefinition();
-
-            parseFunctionLiteral(true);
-
-            mark.done(LABELED_EXPRESSION);
-        }
-        else {
+        if (!parseAnnotatedLambda(/* preferBlock = */true)) {
             parseExpression();
         }
     }

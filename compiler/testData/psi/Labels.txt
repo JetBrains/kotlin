@@ -230,8 +230,8 @@ JetFile: Labels.kt
             PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
           FUNCTION_LITERAL_ARGUMENT
-            LABELED_EXPRESSION
-              PsiErrorElement:Label must be named
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
               FUNCTION_LITERAL_EXPRESSION
                 FUNCTION_LITERAL

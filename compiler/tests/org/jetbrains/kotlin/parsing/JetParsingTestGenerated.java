@@ -651,6 +651,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/lambda.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("lambdaRecovery.kt")
+            public void testLambdaRecovery() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/lambdaRecovery.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("ShortAnnotations.kt")
             public void testShortAnnotations() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/ShortAnnotations.kt");

@@ -51,8 +51,8 @@ JetFile: recovery.kt
             PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
           FUNCTION_LITERAL_ARGUMENT
-            LABELED_EXPRESSION
-              PsiErrorElement:Label must be named
+            ANNOTATED_EXPRESSION
+              PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
               PsiWhiteSpace(' ')
               FUNCTION_LITERAL_EXPRESSION

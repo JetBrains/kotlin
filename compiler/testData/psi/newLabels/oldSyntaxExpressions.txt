@@ -50,25 +50,32 @@ JetFile: oldSyntaxExpressions.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('x2')
         PsiElement(DOT)('.')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('filter')
-      PsiWhiteSpace(' ')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(AT)('@')
-        PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n        ')
-          BLOCK
-            RETURN
-              PsiElement(return)('return')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('filter')
+          PsiWhiteSpace(' ')
+          FUNCTION_LITERAL_ARGUMENT
+            ANNOTATED_EXPRESSION
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('f')
               PsiWhiteSpace(' ')
-              INTEGER_CONSTANT
-                PsiElement(INTEGER_LITERAL)('2')
-          PsiWhiteSpace('\n    ')
-          PsiElement(RBRACE)('}')
+              FUNCTION_LITERAL_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  PsiWhiteSpace('\n        ')
+                  BLOCK
+                    RETURN
+                      PsiElement(return)('return')
+                      PsiWhiteSpace(' ')
+                      INTEGER_CONSTANT
+                        PsiElement(INTEGER_LITERAL)('2')
+                  PsiWhiteSpace('\n    ')
+                  PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       RETURN
         PsiElement(return)('return')
