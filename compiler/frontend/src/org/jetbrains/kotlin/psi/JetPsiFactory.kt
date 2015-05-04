@@ -231,11 +231,6 @@ public class JetPsiFactory(private val project: Project) {
         return modifierList!!.getAnnotations().first()
     }
 
-    public fun createConstructorModifierList(modifier: JetKeywordToken): JetModifierList {
-        val aClass = createClass("class C ${modifier.getValue()} (){}")
-        return aClass.getPrimaryConstructorModifierList()!!
-    }
-
     public fun createEmptyBody(): JetBlockExpression {
         return createFunction("fun foo() {}").getBodyExpression() as JetBlockExpression
     }
