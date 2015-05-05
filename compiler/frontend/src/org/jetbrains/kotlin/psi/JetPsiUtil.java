@@ -142,6 +142,9 @@ public class JetPsiUtil {
             }
             return expression;
         }
+        else if (expression instanceof JetAnnotatedExpression) {
+            return ((JetAnnotatedExpression) expression).getBaseExpression();
+        }
         else if (expression instanceof JetLabeledExpression) {
             return ((JetLabeledExpression) expression).getBaseExpression();
         }
