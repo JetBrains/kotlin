@@ -39,16 +39,17 @@ import java.util.*
 
 public class RemoveExplicitTypeIntention : JetSelfTargetingIntention<JetCallableDeclaration>(javaClass(), "Remove explicit type specification") {
     override fun isApplicableTo(element: JetCallableDeclaration, caretOffset: Int): Boolean {
-        //TODO: check for public API
         if (element.getContainingFile() is JetCodeFragment) return false
         if (element.getTypeReference() == null) return false
 
         val initializer = (element as? JetWithExpressionInitializer)?.getInitializer()
         if (initializer != null && initializer.getTextRange().containsOffset(caretOffset)) return false
 
+        if (!element.canRemoveTypeSpecificationByVisibility()) return false
+
         return when (element) {
-            is JetProperty -> true
-            is JetNamedFunction -> !element.hasBlockBody() && element.getBodyExpression() != null
+            is JetProperty -> initializer != null
+            is JetNamedFunction -> !element.hasBlockBody() && initializer != null
             is JetParameter -> element.isLoopParameter()
             else -> false
         }

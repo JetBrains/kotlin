@@ -18,15 +18,20 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 fun JetCallableDeclaration.setType(type: JetType) {
     if (type.isError()) return
@@ -58,4 +63,11 @@ fun isAutoCreatedItUsage(expression: JetSimpleNameExpression): Boolean {
     val reference = expression.getReference() as JetReference?
     val target = reference?.resolveToDescriptors(context)?.singleOrNull() as? ValueParameterDescriptor? ?: return false
     return context[BindingContext.AUTO_CREATED_IT, target]
+}
+
+fun JetCallableDeclaration.canRemoveTypeSpecificationByVisibility(): Boolean {
+    val descriptor = resolveToDescriptor()
+    val isOverride = getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false
+    if (!isOverride && (descriptor as? DeclarationDescriptorWithVisibility)?.getVisibility()?.isPublicAPI() ?: false) return false
+    return true
 }

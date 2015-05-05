@@ -75,16 +75,13 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
                 editor.getCaretModel().moveToOffset(range.getEndOffset())
             }
             else {
-                (declaration : PsiElement).deleteChildRange(colon, typeRef)
+                (declaration as PsiElement).deleteChildRange(colon, typeRef)
             }
         }
     }
 
     private fun canOmitType(declaration: JetCallableDeclaration, expression: JetExpression): Boolean {
-        if (declaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false) return true
-
-        val descriptor = declaration.resolveToDescriptor()
-        if ((descriptor as? DeclarationDescriptorWithVisibility)?.getVisibility()?.isPublicAPI() ?: false) return false
+        if (!declaration.canRemoveTypeSpecificationByVisibility()) return false
 
         // Workaround for anonymous objects and similar expressions without resolution scope
         // TODO: This should probably be fixed in front-end so that resolution scope is recorded for anonymous objects as well
@@ -92,7 +89,7 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
                                  ?.getStatements()?.singleOrNull() as? JetExpression
                          ?: return false
 
-        val declaredType = (descriptor as? CallableDescriptor)?.getReturnType() ?: return false
+        val declaredType = (declaration.resolveToDescriptor() as? CallableDescriptor)?.getReturnType() ?: return false
         val scope = scopeExpression.analyze()[BindingContext.RESOLUTION_SCOPE, scopeExpression] ?: return false
         val expressionType = expression.analyzeInContext(scope).getType(expression) ?: return false
         return expressionType.isSubtypeOf(declaredType)

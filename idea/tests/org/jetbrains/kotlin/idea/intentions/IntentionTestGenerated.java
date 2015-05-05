@@ -5050,6 +5050,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitType"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("notOnPublic.kt")
+        public void testNotOnPublic() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnPublic.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onOverride.kt")
+        public void testOnOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/onOverride.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("onOverrideInTrait.kt")
+        public void testOnOverrideInTrait() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/onOverrideInTrait.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("onType.kt")
         public void testOnType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/onType.kt");
