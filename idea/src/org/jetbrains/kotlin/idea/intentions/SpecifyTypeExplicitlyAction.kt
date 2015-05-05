@@ -121,7 +121,10 @@ public class SpecifyTypeExplicitlyAction : PsiElementBaseIntentionAction() {
         public fun getTypeForDeclaration(declaration: JetCallableDeclaration): JetType {
             val bindingContext = declaration.getContainingJetFile().analyzeFully()
 
-            val type = if (bindingContext.get<PsiElement, DeclarationDescriptor>(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) != null) bindingContext.get<PsiElement, DeclarationDescriptor>(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration).getReturnType() else null
+            val type = if (bindingContext.get<PsiElement, DeclarationDescriptor>(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) != null)
+                bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration).getReturnType()
+            else
+                null
             return type ?: ErrorUtils.createErrorType("null type")
         }
 
