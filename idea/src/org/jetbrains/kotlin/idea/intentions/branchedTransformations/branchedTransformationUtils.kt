@@ -131,22 +131,32 @@ public fun JetWhenExpression.flatten(): JetWhenExpression {
 
     assert(elseBranch is JetWhenExpression, TRANSFORM_WITHOUT_CHECK)
 
-    val nestedWhenExpression = (elseBranch as JetWhenExpression)
+    val nestedWhenExpression = elseBranch as JetWhenExpression
 
     val outerEntries = getEntries()
     val innerEntries = nestedWhenExpression.getEntries()
-    val builder = JetPsiFactory(this).WhenBuilder(subjectExpression)
-    for (entry in outerEntries) {
-        if (entry.isElse())
-            continue
 
-        builder.entry(entry)
-    }
-    for (entry in innerEntries) {
-        builder.entry(entry)
-    }
+    val whenExpression = JetPsiFactory(this).buildExpression {
+        appendFixedText("when")
+        if (subjectExpression != null) {
+            appendFixedText("(").appendExpression(subjectExpression).appendFixedText(")")
+        }
+        appendFixedText("{\n")
 
-    return replaced(builder.toExpression())
+        for (entry in outerEntries) {
+            if (entry.isElse()) continue
+            appendNonFormattedText(entry.getText())
+            appendFixedText("\n")
+        }
+        for (entry in innerEntries) {
+            appendNonFormattedText(entry.getText())
+            appendFixedText("\n")
+        }
+
+        appendFixedText("}")
+    } as JetWhenExpression
+
+    return replaced(whenExpression)
 }
 
 public fun JetWhenExpression.introduceSubject(): JetWhenExpression {

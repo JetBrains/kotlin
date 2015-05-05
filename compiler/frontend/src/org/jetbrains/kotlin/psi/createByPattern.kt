@@ -199,8 +199,10 @@ public class ExpressionBuilder {
     }
 
     public fun appendExpression(expression: JetExpression?): ExpressionBuilder {
-        patternBuilder.append("$" + arguments.size())
-        arguments.add(expression)
+        if (expression != null) {
+            patternBuilder.append("$" + arguments.size())
+            arguments.add(expression)
+        }
         return this
     }
 
