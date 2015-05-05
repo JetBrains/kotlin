@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import java.util.ArrayList
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
-import java.util.Collections
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.parenthesizeIfNeeded
+import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.parenthesizeTextIfNeeded
+import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.toBinaryExpression
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
 
@@ -60,18 +60,6 @@ fun JetWhenCondition.toExpressionText(subject: JetExpression?): String {
             }
         }
     }
-}
-
-public fun JetWhenExpression.canFlatten(): Boolean {
-    val subject = getSubjectExpression()
-    if (subject != null && subject !is JetSimpleNameExpression) return false
-
-    if (!JetPsiUtil.checkWhenExpressionHasSingleElse(this)) return false
-
-    val elseBranch = getElseExpression()
-    if (elseBranch !is JetWhenExpression) return false
-
-    return JetPsiUtil.checkWhenExpressionHasSingleElse(elseBranch) && subject.matches(elseBranch.getSubjectExpression())
 }
 
 fun JetWhenExpression.getSubjectCandidate(): JetExpression?  {
@@ -123,40 +111,6 @@ fun JetWhenExpression.getSubjectCandidate(): JetExpression?  {
 
 public fun JetWhenExpression.canIntroduceSubject(): Boolean {
     return getSubjectCandidate() != null
-}
-
-public fun JetWhenExpression.flatten(): JetWhenExpression {
-    val subjectExpression = getSubjectExpression()
-    val elseBranch = getElseExpression()
-
-    assert(elseBranch is JetWhenExpression, TRANSFORM_WITHOUT_CHECK)
-
-    val nestedWhenExpression = elseBranch as JetWhenExpression
-
-    val outerEntries = getEntries()
-    val innerEntries = nestedWhenExpression.getEntries()
-
-    val whenExpression = JetPsiFactory(this).buildExpression {
-        appendFixedText("when")
-        if (subjectExpression != null) {
-            appendFixedText("(").appendExpression(subjectExpression).appendFixedText(")")
-        }
-        appendFixedText("{\n")
-
-        for (entry in outerEntries) {
-            if (entry.isElse()) continue
-            appendNonFormattedText(entry.getText())
-            appendFixedText("\n")
-        }
-        for (entry in innerEntries) {
-            appendNonFormattedText(entry.getText())
-            appendFixedText("\n")
-        }
-
-        appendFixedText("}")
-    } as JetWhenExpression
-
-    return replaced(whenExpression)
 }
 
 public fun JetWhenExpression.introduceSubject(): JetWhenExpression {

@@ -17,15 +17,59 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.canFlatten
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.flatten
-import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
+import org.jetbrains.kotlin.idea.quickfix.moveCaret
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 
-public class FlattenWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>("flatten.when", javaClass()) {
-    override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canFlatten()
+public class FlattenWhenIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Flatten 'when' expression") {
+    override fun isApplicableTo(element: JetWhenExpression, caretOffset: Int): Boolean {
+        val subject = element.getSubjectExpression()
+        if (subject != null && subject !is JetSimpleNameExpression) return false
+
+        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(element)) return false
+
+        val elseEntry = element.getEntries().singleOrNull { it.isElse() } ?: return false
+
+        val innerWhen = elseEntry.getExpression() as? JetWhenExpression ?: return false
+
+        if (!subject.matches(innerWhen.getSubjectExpression())) return false
+        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(innerWhen)) return false
+
+        return elseEntry.getTextRange().getStartOffset() <= caretOffset && caretOffset <= innerWhen.getWhenKeywordElement().getTextRange().getEndOffset()
+    }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
-        element.flatten()
+        val subjectExpression = element.getSubjectExpression()
+        val nestedWhen = element.getElseExpression() as JetWhenExpression
+
+        val outerEntries = element.getEntries()
+        val innerEntries = nestedWhen.getEntries()
+
+        val whenExpression = JetPsiFactory(element).buildExpression {
+            appendFixedText("when")
+            if (subjectExpression != null) {
+                appendFixedText("(").appendExpression(subjectExpression).appendFixedText(")")
+            }
+            appendFixedText("{\n")
+
+            for (entry in outerEntries) {
+                if (entry.isElse()) continue
+                appendNonFormattedText(entry.getText())
+                appendFixedText("\n")
+            }
+            for (entry in innerEntries) {
+                appendNonFormattedText(entry.getText())
+                appendFixedText("\n")
+            }
+
+            appendFixedText("}")
+        } as JetWhenExpression
+
+        val newWhen = element.replaced(whenExpression)
+
+        val firstNewEntry = newWhen.getEntries()[outerEntries.size() - 1]
+        editor.moveCaret(firstNewEntry.getTextOffset())
     }
 }
