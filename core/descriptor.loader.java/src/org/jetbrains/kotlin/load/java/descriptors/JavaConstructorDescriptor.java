@@ -21,6 +21,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
+import org.jetbrains.kotlin.types.JetType;
+
+import java.util.List;
 
 public class JavaConstructorDescriptor extends ConstructorDescriptorImpl implements JavaCallableMemberDescriptor {
     private Boolean hasStableParameterNames = null;
@@ -90,4 +93,26 @@ public class JavaConstructorDescriptor extends ConstructorDescriptorImpl impleme
         result.setHasSynthesizedParameterNames(hasSynthesizedParameterNames());
         return result;
     }
+
+    @Override
+    @NotNull
+    public JavaConstructorDescriptor enhance(
+            @Nullable JetType enhancedReceiverType,
+            @NotNull List<ValueParameterDescriptor> enhancedValueParameters,
+            @NotNull JetType enhancedReturnType
+    ) {
+        JavaConstructorDescriptor enhanced = createSubstitutedCopy(getContainingDeclaration(), getOriginal(), getKind());
+        enhanced.initialize(
+                enhancedReceiverType,
+                getDispatchReceiverParameter(),
+                getTypeParameters(),
+                enhancedValueParameters,
+                enhancedReturnType,
+                getModality(),
+                getVisibility()
+        );
+
+        return enhanced;
+    }
+
 }

@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.ifEmpty
-import org.jetbrains.kotlin.utils.singletonOrEmptyList
-import org.jetbrains.kotlin.utils.valuesToMap
+import org.jetbrains.kotlin.utils.*
 import java.util.ArrayList
 import java.util.Collections
 import java.util.LinkedHashSet
@@ -70,7 +67,9 @@ public class LazyJavaClassMemberScope(
             result.add(descriptor)
             result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
         }
-        result ifEmpty { createDefaultConstructors() }
+        c.externalSignatureResolver.enhanceSignatures(
+                result ifEmpty { createDefaultConstructors() }
+        ).toReadOnlyList()
     }
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {

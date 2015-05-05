@@ -237,7 +237,10 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredProperties(name, properties)
 
-        properties.toReadOnlyList()
+        if (DescriptorUtils.isAnnotationClass(containingDeclaration))
+            properties
+        else
+            c.externalSignatureResolver.enhanceSignatures(properties).toReadOnlyList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
