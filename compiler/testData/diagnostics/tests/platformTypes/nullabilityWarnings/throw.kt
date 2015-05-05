@@ -1,5 +1,4 @@
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -12,8 +11,6 @@ public class J {
 }
 
 // FILE: k.kt
-
-import p.*
 
 fun test() {
     throw J.staticNN

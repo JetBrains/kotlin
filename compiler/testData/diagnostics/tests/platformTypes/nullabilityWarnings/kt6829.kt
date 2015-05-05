@@ -2,8 +2,7 @@
 
 // KT-6829 False warning on map to @Nullable
 
-// FILE: p/J.java
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -14,8 +13,6 @@ public class J {
 }
 
 // FILE: k.kt
-
-import p.*
 
 fun foo(collection: Collection<J>) {
     val mapped = collection.map { it.method() }
