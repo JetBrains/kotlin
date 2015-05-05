@@ -12,5 +12,5 @@ annotation
   ;
 
 annotationEntry
-  : "@"? SimpleName{"."} typeArguments? valueArguments?
+  : "@"? ++ SimpleName{"."} typeArguments? valueArguments?
   ;

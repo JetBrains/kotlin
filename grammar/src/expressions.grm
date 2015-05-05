@@ -126,11 +126,11 @@ atomicExpression
   ;
 
 labelReference
-  : "@" LabelName
+  : "@" ++ LabelName
   ;
 
 labelDefinition
-  : LabelName "@"
+  : LabelName ++ "@"
   ;
 
 literalConstant
@@ -246,9 +246,9 @@ valueArguments
 
 jump
   : "throw" expression
-  : "return" labelReference? expression?
-  : "continue" labelReference?
-  : "break" labelReference?
+  : "return" ++ labelReference? expression?
+  : "continue" ++ labelReference?
+  : "break" ++ labelReference?
 // yield ?
   ;
 
