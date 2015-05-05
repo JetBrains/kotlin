@@ -31,35 +31,45 @@ public class IfToWhenIntention : JetSelfTargetingIntention<JetIfExpression>(java
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
-        val builder = JetPsiFactory(element).WhenBuilder()
+        var whenExpression = JetPsiFactory(element).buildExpression {
+            appendFixedText("when {\n")
 
-        var ifExpression = element
-        while (true) {
-            val condition = ifExpression.getCondition()
-            val orBranches = ArrayList<JetExpression>()
-            if (condition != null) {
-                orBranches.addOrBranches(condition)
-            }
-            if (orBranches.isNotEmpty()) {
-                orBranches.forEach { builder.condition(it) }
-            }
-            else {
-                builder.condition(null)
+            var ifExpression = element
+            while (true) {
+                val condition = ifExpression.getCondition()
+                val orBranches = ArrayList<JetExpression>()
+                if (condition != null) {
+                    orBranches.addOrBranches(condition)
+                }
+
+                for ((i, expr) in orBranches.withIndex()) {
+                    if (i > 0) appendFixedText(",")
+                    appendExpression(expr)
+                }
+                appendFixedText("->")
+
+                val thenBranch = ifExpression.getThen()
+                if (thenBranch != null) {
+                    appendExpression(thenBranch)
+                }
+                appendFixedText("\n")
+
+                val elseBranch = ifExpression.getElse() ?: break
+                if (elseBranch is JetIfExpression) {
+                    ifExpression = elseBranch
+                }
+                else {
+                    appendFixedText("else->")
+                    appendExpression(elseBranch)
+                    appendFixedText("\n")
+                    break
+                }
             }
 
-            builder.branchExpression(ifExpression.getThen())
+            appendFixedText("}")
+        } as JetWhenExpression
 
-            val elseBranch = ifExpression.getElse() ?: break
-            if (elseBranch is JetIfExpression) {
-                ifExpression = elseBranch
-            }
-            else {
-                builder.elseEntry(elseBranch)
-                break
-            }
-        }
 
-        var whenExpression = builder.toExpression()
         if (whenExpression.canIntroduceSubject()) {
             whenExpression = whenExpression.introduceSubject()
         }

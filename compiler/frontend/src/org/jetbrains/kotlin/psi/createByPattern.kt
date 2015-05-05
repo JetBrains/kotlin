@@ -48,13 +48,13 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
                 val elementRange = element.getTextRange().shiftRight(-start)
                 if (elementRange == range) {
                     val elementToUse = element.parents(withItself = false).firstIsInstanceOrNull<JetExpression>()
-                                       ?: error("Invalid pattern - no JetExpression found for $n")
+                                       ?: error("Invalid pattern '$pattern' - no JetExpression found for $n text = " + processedText)
                     val pointer = pointerManager.createSmartPsiElementPointer(elementToUse)
                     pointers.put(pointer, n)
                     break
                 }
                 else if (!range.contains(elementRange)) {
-                    throw IllegalArgumentException("Invalid pattern - no PsiElement found for $$n")
+                    throw IllegalArgumentException("Invalid pattern '$pattern' - no PsiElement found for $$n text = " + processedText)
                 }
             }
         }
@@ -106,7 +106,7 @@ private data class PatternData(val processedText: String, val placeholders: Map<
 private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
     val ranges = LinkedHashMap<Int, MutableList<Placeholder>>()
 
-    fun charOrNull(i: Int) = if (i < pattern.length()) pattern[i] else null
+    fun charOrNull(i: Int) = if (0 <= i && i < pattern.length()) pattern[i] else null
 
     fun check(condition: Boolean, message: String) {
         if (!condition) {
@@ -118,6 +118,7 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
         var i = 0
         while (i < pattern.length()) {
             var c = pattern[i]
+            var prevChar = charOrNull(i - 1)
 
             if (c == '$') {
                 val nextChar = charOrNull(++i)
@@ -134,7 +135,15 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
 
                     val arg: Any? = if (n < args.size()) args[n] else null /* report wrong number of arguments later */
                     val placeholderText = if (charOrNull(i) != '=') {
-                        arg as? String ?: "xyz"
+                        if (arg is String) {
+                            arg
+                        }
+                        else {
+                            if (prevChar?.isJavaIdentifierPart() ?: false) {
+                                append(" ")
+                            }
+                            "xyz"
+                        }
                     }
                     else {
                         check(arg !is String, "do not specify placeholder text for $$n - String argument passed")
@@ -172,4 +181,36 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
     }
 
     return PatternData(text, ranges)
+}
+
+public class ExpressionBuilder {
+    private val patternBuilder = StringBuilder()
+    private val arguments = ArrayList<Any>()
+
+    public fun appendFixedText(text: String): ExpressionBuilder {
+        patternBuilder.append(text)
+        return this
+    }
+
+    public fun appendNonFormattedText(text: String): ExpressionBuilder {
+        patternBuilder.append("$" + arguments.size())
+        arguments.add(text)
+        return this
+    }
+
+    public fun appendExpression(expression: JetExpression): ExpressionBuilder {
+        patternBuilder.append("$" + arguments.size())
+        arguments.add(expression)
+        return this
+    }
+
+    public fun createExpression(factory: JetPsiFactory): JetExpression {
+        return factory.createExpressionByPattern(patternBuilder.toString(), *arguments.toArray())
+    }
+}
+
+public fun JetPsiFactory.buildExpression(build: ExpressionBuilder.() -> Unit): JetExpression {
+    val builder = ExpressionBuilder()
+    builder.build()
+    return builder.createExpression(this)
 }
