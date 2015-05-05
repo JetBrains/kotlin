@@ -1,4 +1,3 @@
-// ERROR: The label '@OuterLoop1' does not denote a loop
 public object TestClass {
     public fun main(args: Array<String>) {
         var i = 1

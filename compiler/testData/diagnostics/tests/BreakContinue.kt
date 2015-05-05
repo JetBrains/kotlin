@@ -82,4 +82,15 @@ class C {
         }
         a<!UNSAFE_CALL!>.<!>compareTo("2")
     }
+
+    fun twoLabelsOnLoop() {
+        label1@ label2@ for (i in 1..100) {
+            if (i > 0) {
+                break@label1
+            }
+            else {
+                break@label2
+            }
+        }
+    }
 }

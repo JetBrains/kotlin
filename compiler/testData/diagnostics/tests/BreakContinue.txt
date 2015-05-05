@@ -12,5 +12,6 @@ internal final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal final fun notContainsBreak(/*0*/ a: kotlin.String?, /*1*/ b: kotlin.String?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    internal final fun twoLabelsOnLoop(): kotlin.Unit
     internal final fun unresolvedBreak(/*0*/ a: kotlin.String?, /*1*/ array: kotlin.Array<kotlin.Int>): kotlin.Unit
 }

@@ -90,7 +90,7 @@ public class JetPsiUtil {
             boolean deparenthesizeBinaryExpressionWithTypeRHS
     ) {
         return deparenthesizeWithResolutionStrategy(
-                expression, deparenthesizeBinaryExpressionWithTypeRHS, /* deparenthesizeRecursively = */ true, null);
+                expression, deparenthesizeBinaryExpressionWithTypeRHS, /* deparenthesizeRecursively = */  null);
     }
 
     @Nullable
@@ -98,50 +98,58 @@ public class JetPsiUtil {
             @Nullable JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS
     ) {
-        return deparenthesizeWithResolutionStrategy(
-                expression, deparenthesizeBinaryExpressionWithTypeRHS, /* deparenthesizeRecursively = */ false, null);
+        return deparenthesizeOnce(expression, deparenthesizeBinaryExpressionWithTypeRHS, null);
     }
 
     @Nullable
     public static JetExpression deparenthesizeWithResolutionStrategy(
             @Nullable JetExpression expression,
-            boolean deparenthesizeBinaryExpressionWithTypeRHS,
             @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
     ) {
-        return deparenthesizeWithResolutionStrategy(expression, true, true, typeResolutionStrategy);
+        return deparenthesizeWithResolutionStrategy(expression, true, typeResolutionStrategy);
     }
 
     @Nullable
     private static JetExpression deparenthesizeWithResolutionStrategy(
             @Nullable JetExpression expression,
             boolean deparenthesizeBinaryExpressionWithTypeRHS,
-            boolean deparenthesizeRecursively,
+            @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
+    ) {
+        while (true) {
+            JetExpression baseExpression =
+                    deparenthesizeOnce(expression, deparenthesizeBinaryExpressionWithTypeRHS, typeResolutionStrategy);
+
+            if (baseExpression == expression) return baseExpression;
+            expression = baseExpression;
+        }
+    }
+
+    @Nullable
+    private static JetExpression deparenthesizeOnce(
+            @Nullable JetExpression expression,
+            boolean deparenthesizeBinaryExpressionWithTypeRHS,
             @Nullable Function<JetTypeReference, Void> typeResolutionStrategy
     ) {
         if (deparenthesizeBinaryExpressionWithTypeRHS && expression instanceof JetBinaryExpressionWithTypeRHS) {
             JetBinaryExpressionWithTypeRHS binaryExpression = (JetBinaryExpressionWithTypeRHS) expression;
             JetSimpleNameExpression operationSign = binaryExpression.getOperationReference();
             if (JetTokens.COLON.equals(operationSign.getReferencedNameElementType())) {
-                expression = binaryExpression.getLeft();
                 JetTypeReference typeReference = binaryExpression.getRight();
                 if (typeResolutionStrategy != null && typeReference != null) {
                     typeResolutionStrategy.apply(typeReference);
                 }
+                return binaryExpression.getLeft();
             }
+            return expression;
         }
         else if (expression instanceof JetLabeledExpression) {
-            JetExpression baseExpression = ((JetLabeledExpression) expression).getBaseExpression();
-            if (baseExpression != null) {
-                expression = baseExpression;
-            }
+            return ((JetLabeledExpression) expression).getBaseExpression();
         }
         else if (expression instanceof JetExpressionWrapper) {
-            expression = ((JetExpressionWrapper) expression).getBaseExpression();
+            return ((JetExpressionWrapper) expression).getBaseExpression();
         }
-        if (expression instanceof JetParenthesizedExpression) {
-            JetExpression innerExpression = ((JetParenthesizedExpression) expression).getExpression();
-            return innerExpression != null && deparenthesizeRecursively ? deparenthesizeWithResolutionStrategy(
-                    innerExpression, deparenthesizeBinaryExpressionWithTypeRHS, true, typeResolutionStrategy) : innerExpression;
+        else if (expression instanceof JetParenthesizedExpression) {
+            return ((JetParenthesizedExpression) expression).getExpression();
         }
         return expression;
     }

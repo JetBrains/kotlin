@@ -101,7 +101,7 @@ public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueA
 // Get call / resolved call from binding context
 
 public fun JetElement?.getCalleeExpressionIfAny(): JetExpression? {
-    val element = if (this is JetExpression) JetPsiUtil.safeDeparenthesize(this, false) else this
+    val element = if (this is JetExpression) JetPsiUtil.deparenthesize(this, false) else this
     return when (element) {
         is JetSimpleNameExpression -> element
         is JetCallElement -> element.getCalleeExpression()

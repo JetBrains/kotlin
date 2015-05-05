@@ -337,7 +337,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         final ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(scope).replaceContextDependency(INDEPENDENT);
         JetExpression leftOperand = expression.getLeft();
-        JetExpression left = deparenthesizeWithResolutionStrategy(leftOperand, true, new Function<JetTypeReference, Void>() {
+        JetExpression left = deparenthesizeWithResolutionStrategy(leftOperand, new Function<JetTypeReference, Void>() {
             @Override
             public Void apply(JetTypeReference reference) {
                 components.typeResolver.resolveType(context.scope, reference, context.trace, true);
