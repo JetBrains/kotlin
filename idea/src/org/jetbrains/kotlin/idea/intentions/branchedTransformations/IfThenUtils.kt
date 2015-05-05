@@ -16,34 +16,37 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
-import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
-import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
-import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.search.LocalSearchScope
+import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
+import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
 val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
 val KOTLIN_NULL_PTR_EXCEPTION_FQ = "kotlin.KotlinNullPointerException"
 
-fun JetBinaryExpression.comparesNonNullToNull(): Boolean {
+fun JetBinaryExpression.expressionComparedToNull(): JetExpression? {
     val operationToken = this.getOperationToken()
-    val rhs = this.getRight()
-    val lhs = this.getLeft()
-    if (rhs == null || lhs == null) return false
+    if (operationToken != JetTokens.EQEQ && operationToken != JetTokens.EXCLEQ) return null
 
-    val rightIsNull = rhs.isNullExpression()
-    val leftIsNull = lhs.isNullExpression()
-    return leftIsNull != rightIsNull && (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ)
+    val right = this.getRight() ?: return null
+    val left = this.getLeft() ?: return null
+
+    val rightIsNull = right.isNullExpression()
+    val leftIsNull = left.isNullExpression()
+    if (leftIsNull == rightIsNull) return null
+    return if (leftIsNull) right else left
 }
 
 fun JetExpression.unwrapBlock(): JetExpression {
@@ -57,18 +60,9 @@ fun JetExpression.unwrapBlock(): JetExpression {
 
 fun JetExpression.isStatement(): Boolean = isUsedAsStatement(this.analyze())
 
-fun JetBinaryExpression.getNonNullExpression(): JetExpression? = when {
-    this.getLeft()?.isNullExpression() == false ->
-        this.getLeft()
-    this.getRight()?.isNullExpression() == false ->
-        this.getRight()
-    else ->
-        null
-}
+fun JetExpression?.isNullExpression(): Boolean = this?.unwrapBlock()?.getNode()?.getElementType() == JetNodeTypes.NULL
 
-fun JetExpression.isNullExpression(): Boolean = this.unwrapBlock().getText() == "null"
-
-fun JetExpression.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().isEmpty()
+fun JetExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().isEmpty()
 
 fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
     val thrownExpression = this.getThrownExpression()
@@ -76,8 +70,7 @@ fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
 
     val context = this.analyze()
     val descriptor = context.get(BindingContext.REFERENCE_TARGET, thrownExpression.getCalleeExpression() as JetSimpleNameExpression)
-    val declDescriptor = descriptor?.getContainingDeclaration()
-    if (declDescriptor == null) return false
+    val declDescriptor = descriptor?.getContainingDeclaration() ?: return false
 
     val exceptionName = DescriptorUtils.getFqName(declDescriptor).asString()
     return (exceptionName == NULL_PTR_EXCEPTION_FQ || exceptionName == KOTLIN_NULL_PTR_EXCEPTION_FQ) && thrownExpression.getValueArguments().isEmpty()

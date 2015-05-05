@@ -29,18 +29,13 @@ import org.jetbrains.kotlin.psi.JetThrowExpression
 public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("if.then.to.double.bang", javaClass()) {
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
-        val condition = element.getCondition()
+        val condition = element.getCondition() as? JetBinaryExpression ?: return false
         val thenClause = element.getThen()
         val elseClause = element.getElse()
 
-        if (condition !is JetBinaryExpression || !condition.comparesNonNullToNull()) return false
-
-        val expression = condition.getNonNullExpression()
-
-        if (expression == null) return false
+        val expression = condition.expressionComparedToNull() ?: return false
 
         val token = condition.getOperationToken()
-        if (token != JetTokens.EQEQ && token != JetTokens.EXCLEQ) return false
 
         val throwExpression =
                 when (token) {
@@ -80,7 +75,7 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentInte
     override fun applyTo(element: JetIfExpression, editor: Editor) {
         val condition = element.getCondition() as JetBinaryExpression
 
-        val expression = checkNotNull(condition.getNonNullExpression(), "condition must contain non null expression")
+        val expression = condition.expressionComparedToNull()!!
         val resultingExprString = expression.getText() + "!!"
         val result = element.replace(resultingExprString) as JetPostfixExpression
 

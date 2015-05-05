@@ -25,13 +25,12 @@ import org.jetbrains.kotlin.psi.*
 public class IfThenToSafeAccessIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("if.then.to.safe.access", javaClass()) {
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
-        val condition = element.getCondition()
+        val condition = element.getCondition() as? JetBinaryExpression ?: return false
         val thenClause = element.getThen()
         val elseClause = element.getElse()
-        if (condition !is JetBinaryExpression || !condition.comparesNonNullToNull()) return false
 
-        val receiverExpression = condition.getNonNullExpression()
-        if (receiverExpression == null || !receiverExpression.isStableVariable()) return false
+        val receiverExpression = condition.expressionComparedToNull() ?: return false
+        if (!receiverExpression.isStableVariable()) return false
 
         return when (condition.getOperationToken()) {
             JetTokens.EQEQ ->
@@ -54,7 +53,7 @@ public class IfThenToSafeAccessIntention : JetSelfTargetingOffsetIndependentInte
 
     public fun applyTo(element: JetIfExpression): JetSafeQualifiedExpression {
         val condition = element.getCondition() as JetBinaryExpression
-        val receiverExpression = checkNotNull(condition.getNonNullExpression(), "The receiver expression cannot be null")
+        val receiverExpression = condition.expressionComparedToNull()!!
 
         val selectorExpression =
                 when(condition.getOperationToken()) {

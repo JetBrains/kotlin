@@ -22,6 +22,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.util.isNothing
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -84,14 +86,13 @@ public class IfNullToElvisIntention : JetSelfTargetingOffsetIndependentIntention
 
         val binaryExpression = ifExpression.getCondition() as? JetBinaryExpression ?: return null
         if (binaryExpression.getOperationToken() != JetTokens.EQEQ) return null
-        if (binaryExpression.getRight()?.getNode()?.getElementType() != JetNodeTypes.NULL) return null
-        val left = binaryExpression.getLeft() as? JetSimpleNameExpression ?: return null
+        val value = binaryExpression.expressionComparedToNull() as? JetSimpleNameExpression ?: return null
 
         if (ifExpression.getParent() !is JetBlockExpression) return null
         val prevStatement = ifExpression.siblings(forward = false, withItself = false)
                                     .firstIsInstanceOrNull<JetExpression>() ?: return null
         if (prevStatement !is JetVariableDeclaration) return null
-        if (prevStatement.getNameAsName() != left.getReferencedNameAsName()) return null
+        if (prevStatement.getNameAsName() != value.getReferencedNameAsName()) return null
         val initializer = prevStatement.getInitializer() ?: return null
         val then = ifExpression.getThen() ?: return null
 
