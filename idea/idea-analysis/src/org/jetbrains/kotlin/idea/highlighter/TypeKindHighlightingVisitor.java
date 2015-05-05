@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.highlighter;
 
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
 class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
@@ -41,12 +43,23 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             }
 
             if (referenceTarget instanceof ClassDescriptor) {
-                highlightName(expression, textAttributesKeyForClass((ClassDescriptor) referenceTarget));
+                TextAttributesKey textAttributesKey = textAttributesKeyForClass((ClassDescriptor) referenceTarget);
+                if (textAttributesKey == JetHighlightingColors.ANNOTATION) {
+                    highlightAnnotation(expression);
+                }
+                else {
+                    highlightName(expression, textAttributesKey);
+                }
             }
             else if (referenceTarget instanceof TypeParameterDescriptor) {
                 highlightName(expression, JetHighlightingColors.TYPE_PARAMETER);
             }
         }
+    }
+
+    private void highlightAnnotation(@NotNull JetSimpleNameExpression expression) {
+        TextRange toHighlight = PsiUtilPackage.getCalleeHighlightingRange(expression);
+        JetPsiChecker.highlightName(holder, toHighlight, JetHighlightingColors.ANNOTATION);
     }
 
     @Override

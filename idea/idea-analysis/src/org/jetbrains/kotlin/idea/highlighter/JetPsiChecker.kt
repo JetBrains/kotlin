@@ -26,6 +26,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.MultiRangeReference
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -233,6 +234,12 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         platformStatic fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
             if (namesHighlightingEnabled) {
                 holder.createInfoAnnotation(psiElement, null).setTextAttributes(attributesKey)
+            }
+        }
+
+        platformStatic fun highlightName(holder: AnnotationHolder, textRange: TextRange, attributesKey: TextAttributesKey) {
+            if (namesHighlightingEnabled) {
+                holder.createInfoAnnotation(textRange, null).setTextAttributes(attributesKey)
             }
         }
 

@@ -35,6 +35,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/highlighter"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("Annotations.kt")
+    public void testAnnotations() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Annotations.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Dynamic.kt")
     public void testDynamic() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Dynamic.kt");
@@ -62,6 +68,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     @TestMetadata("KDoc.kt")
     public void testKDoc() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/KDoc.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Labels.kt")
+    public void testLabels() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/highlighter/Labels.kt");
         doTest(fileName);
     }
 

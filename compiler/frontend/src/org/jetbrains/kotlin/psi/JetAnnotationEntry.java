@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -101,4 +103,8 @@ public class JetAnnotationEntry extends JetElementImplStub<KotlinAnnotationEntry
         return null;
     }
 
+    @Nullable
+    public PsiElement getAtSymbol() {
+        return findChildByType(JetTokens.AT);
+    }
 }

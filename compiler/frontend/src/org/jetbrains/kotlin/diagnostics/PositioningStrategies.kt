@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getCalleeHighlightingRange
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.utils.sure
 import kotlin.platform.platformStatic
@@ -226,7 +227,7 @@ public object PositioningStrategies {
                     return ranges
                 }
             }
-            return listOf(element.getTextRange())
+            return listOf(element.getCalleeHighlightingRange())
         }
     }
 

@@ -570,3 +570,15 @@ private fun JetAnnotationsContainer.collectAnnotationEntriesFromPsi() =
             else -> emptyList<JetAnnotationEntry>()
         }
     }
+
+public fun JetElement.getCalleeHighlightingRange(): TextRange {
+    val annotationEntry: JetAnnotationEntry =
+            PsiTreeUtil.getParentOfType<JetAnnotationEntry>(
+                    this, javaClass<JetAnnotationEntry>(), /* strict = */false, javaClass<JetValueArgumentList>()
+            ) ?: return getTextRange()
+
+    val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
+                      ?: annotationEntry.getCalleeExpression().getTextRange().getStartOffset()
+
+    return TextRange(startOffset, annotationEntry.getCalleeExpression().getTextRange().getEndOffset())
+}

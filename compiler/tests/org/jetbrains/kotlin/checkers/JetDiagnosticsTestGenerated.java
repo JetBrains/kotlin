@@ -801,6 +801,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unresolvedReferenceRange.kt")
+            public void testUnresolvedReferenceRange() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/unresolvedReferenceRange.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("WrongAnnotationArgsOnObject.kt")
             public void testWrongAnnotationArgsOnObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/WrongAnnotationArgsOnObject.kt");
