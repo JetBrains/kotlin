@@ -125,10 +125,6 @@ public fun JetWhenExpression.canIntroduceSubject(): Boolean {
     return getSubjectCandidate() != null
 }
 
-public fun JetWhenExpression.canEliminateSubject(): Boolean {
-    return getSubjectExpression() is JetSimpleNameExpression
-}
-
 public fun JetWhenExpression.flatten(): JetWhenExpression {
     val subjectExpression = getSubjectExpression()
     val elseBranch = getElseExpression()
@@ -187,27 +183,6 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
             }
 
         }
-        builder.branchExpression(branchExpression)
-    }
-
-    return replaced(builder.toExpression())
-}
-
-public fun JetWhenExpression.eliminateSubject(): JetWhenExpression {
-    val subject = getSubjectExpression()!!
-
-    val builder = JetPsiFactory(this).WhenBuilder()
-    for (entry in getEntries()) {
-        val branchExpression = entry.getExpression()
-
-        if (entry.isElse()) {
-            builder.elseEntry(branchExpression)
-            continue
-        }
-        for (condition in entry.getConditions()) {
-            builder.condition(condition.toExpressionText(subject))
-        }
-
         builder.branchExpression(branchExpression)
     }
 

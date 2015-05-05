@@ -17,15 +17,37 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.canEliminateSubject
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.eliminateSubject
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpressionText
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetWhenExpression
 
-public class EliminateWhenSubjectIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>("eliminate.when.subject", javaClass()) {
-    override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canEliminateSubject()
+public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Eliminate argument of 'when'") {
+    override fun isApplicableTo(element: JetWhenExpression, caretOffset: Int): Boolean {
+        if (element.getSubjectExpression() !is JetSimpleNameExpression) return false
+        val lBrace = element.getOpenBrace() ?: return false
+        return caretOffset <= lBrace.getTextRange().getStartOffset()
+    }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
-        element.eliminateSubject()
+        val subject = element.getSubjectExpression()!!
+
+        val builder = JetPsiFactory(element).WhenBuilder()
+        for (entry in element.getEntries()) {
+            val branchExpression = entry.getExpression()
+
+            if (entry.isElse()) {
+                builder.elseEntry(branchExpression)
+                continue
+            }
+            for (condition in entry.getConditions()) {
+                builder.condition(condition.toExpressionText(subject))
+            }
+
+            builder.branchExpression(branchExpression)
+        }
+
+        element.replace(builder.toExpression())
     }
 }
