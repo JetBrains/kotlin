@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.build;
 
+import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightVirtualFile;
@@ -33,6 +34,7 @@ import org.jetbrains.jps.util.JpsPathUtil;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -258,7 +260,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class");
         assertFilesNotExistInOutput(module, EXCLUDE_FILES);
 
-        checkWhen(touch("src/foo.kt"), null, new String[] { klass("kotlinProject", "Foo")} );
+        checkWhen(touch("src/foo.kt"), null, new String[] {klass("kotlinProject", "Foo")});
         checkWhen(touch("src/Excluded.kt"), null, NOTHING );
         checkWhen(touch("src/dir/YetAnotherExcluded.kt"), null, NOTHING);
     }
@@ -270,7 +272,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class");
         assertFilesNotExistInOutput(module, EXCLUDE_FILES);
 
-        checkWhen(touch("src/foo.kt"), null, new String[] { klass("kotlinProject", "Foo")} );
+        checkWhen(touch("src/foo.kt"), null, new String[] {klass("kotlinProject", "Foo")});
         checkWhen(touch("src/dir/subdir/bar.kt"), null, new String[] { klass("kotlinProject", "Bar")} );
 
         checkWhen(touch("src/dir/Excluded.kt"), null, NOTHING );
@@ -284,7 +286,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         assertFilesExistInOutput(module, "Foo.class", "Bar.class");
         assertFilesNotExistInOutput(module, EXCLUDE_FILES);
 
-        checkWhen(touch("src/foo.kt"), null, new String[] { klass("kotlinProject", "Foo")} );
+        checkWhen(touch("src/foo.kt"), null, new String[] {klass("kotlinProject", "Foo")});
 
         checkWhen(touch("src/exclude/Excluded.kt"), null, NOTHING);
         checkWhen(touch("src/exclude/YetAnotherExcluded.kt"), null, NOTHING);
@@ -414,6 +416,19 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         checkWhen(touch("module1/src/a.kt"), null, packageClasses("module1", "module1/src/a.kt", "test.TestPackage"));
         checkWhen(touch("module2/src/b.kt"), null, packageClasses("module2", "module2/src/b.kt", "test.TestPackage"));
+    }
+
+    public void testCircularDependencyWithReferenceToOldVersionLib() throws IOException {
+        initProject();
+
+        File libraryJar = MockLibraryUtil.compileLibraryToJar(
+                workDir.getAbsolutePath() + File.separator + "oldModuleLib/src", "module-lib", false);
+
+        addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module1"), findModule("module2")), false,
+                      "module-lib", libraryJar);
+
+        BuildResult result = makeAll();
+        result.assertSuccessful();
     }
 
     private void createKotlinJavaScriptLibraryArchive() {
