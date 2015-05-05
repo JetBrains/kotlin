@@ -1621,7 +1621,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         if (statement instanceof JetNamedFunction) {
             DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, statement);
-            myFrameMap.enter(descriptor, OBJECT_TYPE);
+            assert descriptor instanceof FunctionDescriptor : "Couldn't find function declaration in binding context " + statement.getText();
+            Type type = asmTypeForAnonymousClass(bindingContext, (FunctionDescriptor) descriptor);
+            myFrameMap.enter(descriptor, type);
         }
     }
 
@@ -1657,14 +1659,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (statement instanceof JetNamedFunction) {
-            final DeclarationDescriptor descriptor = bindingContext.get(DECLARATION_TO_DESCRIPTOR, statement);
-            leaveTasks.add(new Function<StackValue, Void>() {
-                @Override
-                public Void fun(StackValue value) {
-                    myFrameMap.leave(descriptor);
-                    return null;
-                }
-            });
+            removeNamedFunctionFromFrameMap((JetNamedFunction) statement, blockEnd, leaveTasks);
         }
     }
 
@@ -1691,6 +1686,31 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                     v.store(index, OBJECT_TYPE);
                 }
                 v.visitLocalVariable(variableDescriptor.getName().asString(), type.getDescriptor(), null, scopeStart, blockEnd, index);
+                return null;
+            }
+        });
+    }
+
+    private void removeNamedFunctionFromFrameMap(
+            final @NotNull JetNamedFunction statement,
+            final Label blockEnd,
+            @NotNull List<Function<StackValue, Void>> leaveTasks
+    ) {
+        final FunctionDescriptor functionDescriptor = (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, statement);
+        assert functionDescriptor != null;
+
+        final Type type = asmTypeForAnonymousClass(bindingContext, functionDescriptor);
+
+        final Label scopeStart = new Label();
+        v.mark(scopeStart);
+
+        leaveTasks.add(new Function<StackValue, Void>() {
+            @Override
+            public Void fun(StackValue answer) {
+                int index = myFrameMap.leave(functionDescriptor);
+
+                assert !functionDescriptor.getName().isSpecial() : "Local variable should be generated only for function with name: " + statement.getText();
+                v.visitLocalVariable(functionDescriptor.getName().asString() + "$", type.getDescriptor(), null, scopeStart, blockEnd, index);
                 return null;
             }
         });
