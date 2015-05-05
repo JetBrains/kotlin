@@ -42,7 +42,6 @@ private class HTMLCollectionListView(val collection: HTMLCollection) : AbstractL
 }
 
 public fun HTMLCollection.asList(): List<HTMLElement> = HTMLCollectionListView(this)
-
 public fun HTMLCollection?.toElementList(): List<Element> = this?.asList() ?: emptyList()
 
 private class DOMTokenListView(val delegate: DOMTokenList) : AbstractList<String>() {

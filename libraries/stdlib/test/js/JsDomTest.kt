@@ -1,6 +1,7 @@
 package test.js
 
 import kotlin.*
+import kotlin.browser.*
 import kotlin.dom.*
 import kotlin.test.*
 import org.w3c.dom.*

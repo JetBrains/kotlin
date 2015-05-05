@@ -3,11 +3,11 @@ package kotlin.js.dom.html
 import org.w3c.dom.*
 
 native
-deprecated("Use org.w3c.dom instead")
+deprecated("Use kotlin.browser instead")
 public val window: Window = noImpl
 
 native
-deprecated("Use org.w3c.dom instead")
+deprecated("Use kotlin.browser instead")
 public var document: HTMLDocument = noImpl
 
 deprecated("Use org.w3c.dom instead")

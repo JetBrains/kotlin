@@ -1,10 +1,16 @@
 package kotlin.browser
 
-import org.w3c.dom.Document
+import org.w3c.dom.*
 
-/**
- * Provides access to the current active browsers DOM for the currently visible page.
- */
-deprecated("use org.w3c.dom instead")
-native public var document: Document = noImpl
+native
+public val window: Window = noImpl
+
+native
+public val document: Document = noImpl
+
+native
+public val localStorage: Storage = noImpl
+
+native
+public val sessionStorage: Storage = noImpl
 
