@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentInt
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 
-public class IfThenToSafeAccessIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("if.then.to.safe.access", javaClass()) {
+public class IfThenToSafeAccessIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with safe access expression") {
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         val condition = element.getCondition() as? JetBinaryExpression ?: return false
@@ -57,33 +58,25 @@ public class IfThenToSafeAccessIntention : JetSelfTargetingOffsetIndependentInte
 
         val selectorExpression =
                 when(condition.getOperationToken()) {
+                    JetTokens.EQEQ -> findSelectorExpressionInClause(element.getElse()!!, receiverExpression)!!
 
-                    JetTokens.EQEQ -> {
-                        val elseClause = checkNotNull(element.getElse(), "The else clause cannot be null")
-                        findSelectorExpressionInClause(elseClause, receiverExpression)
-                    }
+                    JetTokens.EXCLEQ -> findSelectorExpressionInClause(element.getThen()!!, receiverExpression)!!
 
-                    JetTokens.EXCLEQ -> {
-                        val thenClause = checkNotNull(element.getThen(), "The then clause cannot be null")
-                        findSelectorExpressionInClause(thenClause, receiverExpression)
-                    }
-
-                    else ->
-                        throw IllegalStateException("Operation token must be either null or not null")
+                    else -> throw IllegalArgumentException()
                 }
 
-        val resultingExprString = "${receiverExpression.getText()}?.${selectorExpression?.getText()}"
-        return element.replace(resultingExprString) as JetSafeQualifiedExpression
+        val newExpr = JetPsiFactory(element).createExpressionByPattern("$0?.$1", receiverExpression, selectorExpression) as JetSafeQualifiedExpression
+        return element.replaced(newExpr)
     }
 
-    fun clauseContainsAppropriateDotQualifiedExpression(clause: JetExpression, receiverExpression: JetExpression): Boolean =
-            findSelectorExpressionInClause(clause, receiverExpression) != null
+    private fun clauseContainsAppropriateDotQualifiedExpression(clause: JetExpression, receiverExpression: JetExpression)
+            = findSelectorExpressionInClause(clause, receiverExpression) != null
 
-    fun findSelectorExpressionInClause(clause: JetExpression, receiverExpression: JetExpression): JetExpression? {
-        val expression = clause.unwrapBlock() as? JetDotQualifiedExpression
+    private fun findSelectorExpressionInClause(clause: JetExpression, receiverExpression: JetExpression): JetExpression? {
+        val expression = clause.unwrapBlock() as? JetDotQualifiedExpression ?: return null
 
-        if (expression?.getReceiverExpression()?.getText() != receiverExpression.getText()) return null
+        if (expression.getReceiverExpression().getText() != receiverExpression.getText()) return null
 
-        return expression?.getSelectorExpression()
+        return expression.getSelectorExpression()
     }
 }
