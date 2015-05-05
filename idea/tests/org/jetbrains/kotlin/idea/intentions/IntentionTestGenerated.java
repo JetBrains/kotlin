@@ -2744,89 +2744,89 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/convertIfToAssert")
+    @TestMetadata("idea/testData/intentions/convertIfWithThrowToAssert")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConvertIfToAssert extends AbstractIntentionTest {
-        public void testAllFilesPresentInConvertIfToAssert() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertIfToAssert"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class ConvertIfWithThrowToAssert extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertIfWithThrowToAssert() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertIfWithThrowToAssert"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("assertOverloaded.kt")
         public void testAssertOverloaded() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/assertOverloaded.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/assertOverloaded.kt");
             doTest(fileName);
         }
 
         @TestMetadata("assertOverloaded2.kt")
         public void testAssertOverloaded2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/assertOverloaded2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/assertOverloaded2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("booleanCondition.kt")
         public void testBooleanCondition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/booleanCondition.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/booleanCondition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("dotQualifiedThrow.kt")
         public void testDotQualifiedThrow() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/dotQualifiedThrow.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/dotQualifiedThrow.kt");
             doTest(fileName);
         }
 
         @TestMetadata("inapplicableAssertionErrorOverloaded.kt")
         public void testInapplicableAssertionErrorOverloaded() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/inapplicableAssertionErrorOverloaded.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/inapplicableAssertionErrorOverloaded.kt");
             doTest(fileName);
         }
 
         @TestMetadata("inapplicableCauseSent.kt")
         public void testInapplicableCauseSent() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/inapplicableCauseSent.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/inapplicableCauseSent.kt");
             doTest(fileName);
         }
 
         @TestMetadata("inapplicableHasElse.kt")
         public void testInapplicableHasElse() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/inapplicableHasElse.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/inapplicableHasElse.kt");
             doTest(fileName);
         }
 
         @TestMetadata("inapplicableMoreThanSingleExpression.kt")
         public void testInapplicableMoreThanSingleExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/inapplicableMoreThanSingleExpression.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/inapplicableMoreThanSingleExpression.kt");
             doTest(fileName);
         }
 
         @TestMetadata("inapplicableMoreThanSingleExpression2.kt")
         public void testInapplicableMoreThanSingleExpression2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/inapplicableMoreThanSingleExpression2.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/inapplicableMoreThanSingleExpression2.kt");
             doTest(fileName);
         }
 
         @TestMetadata("noMessageSent.kt")
         public void testNoMessageSent() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/noMessageSent.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/noMessageSent.kt");
             doTest(fileName);
         }
 
         @TestMetadata("nullSent.kt")
         public void testNullSent() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/nullSent.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/nullSent.kt");
             doTest(fileName);
         }
 
         @TestMetadata("simpleConvert.kt")
         public void testSimpleConvert() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/simpleConvert.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/simpleConvert.kt");
             doTest(fileName);
         }
 
         @TestMetadata("simplifiedCondition.kt")
         public void testSimplifiedCondition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfToAssert/simplifiedCondition.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertIfWithThrowToAssert/simplifiedCondition.kt");
             doTest(fileName);
         }
     }
@@ -5788,71 +5788,71 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
-    @TestMetadata("idea/testData/intentions/specifyType")
+    @TestMetadata("idea/testData/intentions/specifyTypeExplicitly")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SpecifyType extends AbstractIntentionTest {
-        public void testAllFilesPresentInSpecifyType() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/specifyType"), Pattern.compile("^(.+)\\.kt$"), true);
+    public static class SpecifyTypeExplicitly extends AbstractIntentionTest {
+        public void testAllFilesPresentInSpecifyTypeExplicitly() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/specifyTypeExplicitly"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
         @TestMetadata("badCaretPosition.kt")
         public void testBadCaretPosition() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/badCaretPosition.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/badCaretPosition.kt");
             doTest(fileName);
         }
 
         @TestMetadata("classNameClashing.kt")
         public void testClassNameClashing() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/classNameClashing.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/classNameClashing.kt");
             doTest(fileName);
         }
 
         @TestMetadata("enumType.kt")
         public void testEnumType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/enumType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/enumType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("functionType.kt")
         public void testFunctionType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/functionType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/functionType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("loopParameter.kt")
         public void testLoopParameter() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/loopParameter.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/loopParameter.kt");
             doTest(fileName);
         }
 
         @TestMetadata("publicMember.kt")
         public void testPublicMember() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/publicMember.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/publicMember.kt");
             doTest(fileName);
         }
 
         @TestMetadata("stringRedefined.kt")
         public void testStringRedefined() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/stringRedefined.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/stringRedefined.kt");
             doTest(fileName);
         }
 
         @TestMetadata("typeAlreadyProvided.kt")
         public void testTypeAlreadyProvided() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/typeAlreadyProvided.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/typeAlreadyProvided.kt");
             doTest(fileName);
         }
 
         @TestMetadata("unitType.kt")
         public void testUnitType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/unitType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/unitType.kt");
             doTest(fileName);
         }
 
         @TestMetadata("unknownType.kt")
         public void testUnknownType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/unknownType.kt");
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/unknownType.kt");
             doTest(fileName);
         }
     }
