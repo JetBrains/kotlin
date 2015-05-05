@@ -62,8 +62,8 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingOffsetIndependentInte
                 object: JetTypeLookupExpression<String>(listOf(nullPtrExceptionText, kotlinNullPtrExceptionText),
                                                         nullPtrExceptionText, JetBundle.message("double.bang.to.if.then.choose.exception")) {
 
-                    override fun getLookupString(element: String?) = element
-                    override fun getResult(element: String?) = element
+                    override fun getLookupString(element: String) = element
+                    override fun getResult(element: String) = element
                 }
 
         val project = element.getProject()
