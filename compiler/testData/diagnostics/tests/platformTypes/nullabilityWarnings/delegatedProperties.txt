@@ -3,3 +3,23 @@ package
 internal var A: kotlin.String!
 internal var B: kotlin.String!
 internal var C: kotlin.String!
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public trait DP {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public abstract fun get(/*0*/ a: kotlin.Any!, /*1*/ b: kotlin.Any!): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun set(/*0*/ a: kotlin.Any!, /*1*/ b: kotlin.Any!, /*2*/ c: kotlin.Any!): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    // Static members
+    public final var staticJ: J.DP!
+    org.jetbrains.annotations.Nullable() public final var staticN: J.DP!
+    org.jetbrains.annotations.NotNull() public final var staticNN: J.DP!
+}

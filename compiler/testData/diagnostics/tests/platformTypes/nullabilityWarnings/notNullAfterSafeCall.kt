@@ -1,6 +1,4 @@
-// FILE: p/J.java
-
-package p;
+// FILE: J.java
 
 import org.jetbrains.annotations.*;
 
@@ -9,8 +7,6 @@ public class J {
 }
 
 // FILE: k.kt
-
-import p.J
 
 fun test(j: J?) {
     val s = j?.nn()
