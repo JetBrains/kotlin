@@ -1,7 +1,7 @@
 enum class E {
-    abstract class Nested
-
     ENTRY
+
+    abstract class Nested
 }
 
 fun box(): String {

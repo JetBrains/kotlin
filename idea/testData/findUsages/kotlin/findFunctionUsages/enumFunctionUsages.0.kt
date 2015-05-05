@@ -1,12 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.JetNamedFunction
 // OPTIONS: usages
 enum class E {
-    init {
-        foo(1)
-    }
-
-    open fun <caret>foo(n: Int): Int = n
-
     O
     A {
         init {
@@ -22,4 +16,10 @@ enum class E {
 
         override fun foo(n: Int): Int = n + 2
     }
+
+    init {
+        foo(1)
+    }
+
+    open fun <caret>foo(n: Int): Int = n
 }

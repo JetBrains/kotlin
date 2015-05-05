@@ -24,8 +24,8 @@ interface T1
 // -----
 
 enum class E1 {
-    object O7
     ENTRY
+    object O7
 }
 
 // -----
@@ -56,8 +56,8 @@ interface T2
 // -----
 
 enum class E2 {
-    object O14 {}
     ENTRY
+    object O14 {}
 }
 
 // -----
@@ -93,7 +93,7 @@ interface T3
 // -----
 
 enum class E3 {
+    ENTRY
     object O21 {
     }
-    ENTRY
 }

@@ -19,13 +19,13 @@ enum class A1(val prop1: String) {
 }
 
 enum class A2 {
-    val prop1: String
     X: A2("asd")
     Y: A2() {
         override fun f() = super.f() + "#Y"
     }
     Z: A2(5)
 
+    val prop1: String
     val prop2: String = "const2"
     var prop3: String = ""
 

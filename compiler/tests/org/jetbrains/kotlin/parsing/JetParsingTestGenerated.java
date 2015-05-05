@@ -205,6 +205,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("EnumNoAnnotations.kt")
+        public void testEnumNoAnnotations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumNoAnnotations.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("Enums.kt")
         public void testEnums() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/Enums.kt");

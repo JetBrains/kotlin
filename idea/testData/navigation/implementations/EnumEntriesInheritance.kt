@@ -1,6 +1,4 @@
 enum class <caret>E {
-    open fun foo(n: Int): Int = n
-
     O
     A {
         override fun foo(n: Int): Int = n + 1
@@ -10,6 +8,8 @@ enum class <caret>E {
         override fun foo(n: Int): Int = n + 2
 
     }
+
+    open fun foo(n: Int): Int = n
 }
 
 // REF: (E).A

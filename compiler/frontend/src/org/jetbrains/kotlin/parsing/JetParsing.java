@@ -740,45 +740,48 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * enumClassBody
-     *   : "{" (enumEntry | memberDeclaration)* "}"
+     *   : "{" enumEntries members "}"
      *   ;
      */
     private void parseEnumClassBody() {
         if (!at(LBRACE)) return;
 
-        PsiBuilder.Marker classBody = mark();
-
+        PsiBuilder.Marker body = mark();
         myBuilder.enableNewlines();
+
         advance(); // LBRACE
 
+        parseEnumEntries();
+        parseMembers();
+
+        expect(RBRACE, "Expecting '}' to close enum class body");
+        myBuilder.restoreNewlinesState();
+        body.done(CLASS_BODY);
+    }
+
+    /**
+     * enumEntries
+     *   : enumEntry*
+     *   ;
+     */
+    private void parseEnumEntries() {
         while (!eof() && !at(RBRACE)) {
-            PsiBuilder.Marker entryOrMember = mark();
+            PsiBuilder.Marker entry = mark();
 
             ModifierDetector detector = new ModifierDetector();
             parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
-            IElementType type;
+            // ?: how can we find ourselves at SOFT_KEYWORDS_AT_MEMBER_START if we are at identifier?
+            // Or, is it just for performance?
             if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
                 parseEnumEntry();
-                type = ENUM_ENTRY;
+                closeDeclarationWithCommentBinders(entry, ENUM_ENTRY, true);
             }
             else {
-                type = parseMemberDeclarationRest(detector.isEnumDetected(), detector.isDefaultDetected());
-            }
-
-            if (type == null) {
-                errorAndAdvance("Expecting an enum entry or member declaration");
-                entryOrMember.drop();
-            }
-            else {
-                closeDeclarationWithCommentBinders(entryOrMember, type, true);
+                entry.rollbackTo();
+                break;
             }
         }
-
-        expect(RBRACE, "Expecting '}' to close enum class body");
-        myBuilder.restoreNewlinesState();
-
-        classBody.done(CLASS_BODY);
     }
 
     /*
@@ -808,7 +811,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * classBody
-     *   : ("{" memberDeclaration* "}")?
+     *   : ("{" members "}")?
      *   ;
      */
     private void parseClassBody() {
@@ -817,18 +820,27 @@ public class JetParsing extends AbstractJetParsing {
         myBuilder.enableNewlines();
 
         if (expect(LBRACE, "Expecting a class body")) {
-            while (!eof()) {
-                if (at(RBRACE)) {
-                    break;
-                }
-                parseMemberDeclaration();
-            }
+            parseMembers();
             expect(RBRACE, "Missing '}");
         }
 
         myBuilder.restoreNewlinesState();
 
         body.done(CLASS_BODY);
+    }
+
+    /**
+     * members
+     *   : memberDeclaration*
+     *   ;
+     */
+    private void parseMembers() {
+        while (!eof()) {
+            if (at(RBRACE)) {
+                break;
+            }
+            parseMemberDeclaration();
+        }
     }
 
     /*

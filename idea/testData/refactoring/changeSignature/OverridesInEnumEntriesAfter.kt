@@ -1,6 +1,4 @@
 enum class E {
-    open fun foo(n: Int, s: String): Int = n
-
     O
     A {
         override fun foo(n: Int, s: String): Int = n + 1
@@ -10,4 +8,6 @@ enum class E {
         override fun foo(n: Int, s: String): Int = n + 2
 
     }
+
+    open fun foo(n: Int, s: String): Int = n
 }

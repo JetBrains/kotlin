@@ -1,8 +1,6 @@
 package foo
 
 enum class B(open val bar: Int) {
-    val x = 1
-    var y = 12;
     a : B(0) {
         override val bar = 3
         init {
@@ -12,6 +10,8 @@ enum class B(open val bar: Int) {
     b : B(4) {
     }
     c : B(5)
+    val x = 1
+    var y = 12;
 }
 
 trait X {

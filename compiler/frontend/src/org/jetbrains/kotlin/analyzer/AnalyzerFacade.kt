@@ -97,10 +97,6 @@ public trait ModuleInfo {
 
     public enum class DependenciesOnBuiltins : DependencyOnBuiltins {
 
-        override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
-            //TODO: KT-5457
-        }
-
         NONE {
             override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
                 //do nothing
@@ -111,6 +107,11 @@ public trait ModuleInfo {
                 dependencies.add(builtinsModule)
             }
         }
+
+        override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
+            //TODO: KT-5457
+        }
+
     }
 }
 

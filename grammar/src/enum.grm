@@ -5,7 +5,11 @@ See [Enum classes](enum-classes.html)
 */
 
 enumClassBody
-  : "{" (enumEntry | memberDeclaration)* "}"
+  : "{" enumEntries members "}"
+  ;
+
+enumEntries
+  : enumEntry*
   ;
 
 enumEntry

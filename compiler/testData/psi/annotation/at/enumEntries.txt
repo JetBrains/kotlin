@@ -133,17 +133,20 @@ JetFile: enumEntries.kt
       ENUM_ENTRY
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('Ann')
-      PsiErrorElement:Expecting an enum entry or member declaration
+      PsiErrorElement:Expecting member declaration
         PsiElement(LPAR)('(')
-      PsiErrorElement:Expecting an enum entry or member declaration
+      PsiErrorElement:Expecting member declaration
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      ENUM_ENTRY
-        OBJECT_DECLARATION_NAME
-          PsiElement(IDENTIFIER)('W')
-      PsiWhiteSpace('\n\n    ')
       FUN
         MODIFIER_LIST
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('W')
+          PsiWhiteSpace('\n\n    ')
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
             CONSTRUCTOR_CALLEE

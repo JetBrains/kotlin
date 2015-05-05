@@ -25,7 +25,11 @@ class
 
 
 classBody
-  : ("{" memberDeclaration* "}")?
+  : ("{" members "}")?
+  ;
+
+members
+  : memberDeclaration*
   ;
 
 delegationSpecifier
