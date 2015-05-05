@@ -31,15 +31,28 @@ public val localStorage: Storage = noImpl
 native
 public val sessionStorage: Storage = noImpl
 
-
 private class HTMLCollectionListView(val collection: HTMLCollection) : AbstractList<HTMLElement>() {
-    override fun size(): Int = collection.length.toInt()
+    override fun size(): Int = collection.length
 
     override fun get(index: Int): HTMLElement =
-            if (index in 0..size() - 1) collection.item(index) as HTMLElement
-            else throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size() - 1})")
+            when {
+                index in 0..size() - 1 -> collection.item(index) as HTMLElement
+                else -> throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size() - 1})")
+            }
 }
 
 public fun HTMLCollection.asList(): List<HTMLElement> = HTMLCollectionListView(this)
 
-public fun HTMLCollection?.toElementList() : List<Element> = this?.asList() ?: emptyList()
+public fun HTMLCollection?.toElementList(): List<Element> = this?.asList() ?: emptyList()
+
+private class DOMTokenListView(val delegate: DOMTokenList) : AbstractList<String>() {
+    override fun size(): Int = delegate.length
+
+    override fun get(index: Int) =
+            when {
+                index in 0..size() - 1 -> delegate.item(index)!!
+                else -> throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size() - 1})")
+            }
+}
+
+public fun DOMTokenList.asList(): List<String> = DOMTokenListView(this)

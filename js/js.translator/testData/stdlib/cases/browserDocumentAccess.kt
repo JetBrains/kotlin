@@ -9,5 +9,5 @@ fun box(): String {
     element.appendChild(textNode)
     if (textNode.nodeType != Node.TEXT_NODE) return "The type of the node is ${textNode.nodeType}, ${Node.TEXT_NODE} was expected"
     if (element.nodeType != Node.ELEMENT_NODE) return "The type of the node is ${element.nodeType}, ${Node.ELEMENT_NODE} was expected"
-    return element.textContent
+    return element.textContent!!
 }

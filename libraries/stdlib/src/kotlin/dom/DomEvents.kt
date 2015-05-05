@@ -1,7 +1,7 @@
 package kotlin.dom
 
 import java.io.Closeable
-import org.w3c.dom.Node
+import org.w3c.dom.*
 import org.w3c.dom.events.*
 
 /**
