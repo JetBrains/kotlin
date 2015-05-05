@@ -36,7 +36,10 @@ class AndroidXmlVisitor(val elementCallback: (String, String, XmlAttribute) -> U
 
     override fun visitXmlTag(tag: XmlTag?) {
         val localName = tag?.getLocalName() ?: ""
-        if (isWidgetTypeIgnored(localName)) return
+        if (isWidgetTypeIgnored(localName)) {
+            tag?.acceptChildren(this)
+            return
+        }
 
         val idAttribute = tag?.getAttribute(AndroidConst.ID_ATTRIBUTE)
         if (idAttribute != null) {
