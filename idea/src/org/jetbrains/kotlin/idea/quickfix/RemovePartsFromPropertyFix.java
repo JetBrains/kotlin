@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction;
+import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -116,7 +116,7 @@ public class RemovePartsFromPropertyFix extends JetIntentionAction<JetProperty> 
         }
         element = (JetProperty) element.replace(newElement);
         if (typeToAdd != null) {
-            SpecifyTypeExplicitlyAction.Companion.addTypeAnnotation(project, editor, element, typeToAdd);
+            SpecifyTypeExplicitlyIntention.Companion.addTypeAnnotation(editor, element, typeToAdd);
         }
     }
 

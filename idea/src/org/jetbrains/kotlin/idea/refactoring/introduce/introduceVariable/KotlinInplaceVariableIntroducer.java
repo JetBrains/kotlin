@@ -40,7 +40,7 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction;
+import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -356,7 +356,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
         if (typeReference != null) {
             builder.replaceElement(typeReference,
                                    TYPE_REFERENCE_VARIABLE_NAME,
-                                   SpecifyTypeExplicitlyAction.Companion.createTypeExpressionForTemplate(myExprType),
+                                   SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType),
                                    false);
         }
     }
@@ -381,7 +381,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
         TemplateState templateState =
                 TemplateManagerImpl.getTemplateState(InjectedLanguageUtil.getTopLevelEditor(myEditor));
         if (templateState != null && myDeclaration.getTypeReference() != null) {
-            templateState.addTemplateStateListener(SpecifyTypeExplicitlyAction.Companion.createTypeReferencePostprocessor(myDeclaration));
+            templateState.addTemplateStateListener(SpecifyTypeExplicitlyIntention.Companion.createTypeReferencePostprocessor(myDeclaration));
         }
 
         return result;

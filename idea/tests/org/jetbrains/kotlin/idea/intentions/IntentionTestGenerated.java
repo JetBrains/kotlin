@@ -5042,6 +5042,27 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/removeExplicitType")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveExplicitType extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveExplicitType() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitType"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("onType.kt")
+        public void testOnType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/onType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeUnresolvedType.kt")
+        public void testRemoveUnresolvedType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/removeUnresolvedType.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/removeExplicitTypeArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -5787,21 +5808,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("onType.kt")
-        public void testOnType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/onType.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("publicMember.kt")
         public void testPublicMember() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/publicMember.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("removeUnresolvedType.kt")
-        public void testRemoveUnresolvedType() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyType/removeUnresolvedType.kt");
             doTest(fileName);
         }
 
