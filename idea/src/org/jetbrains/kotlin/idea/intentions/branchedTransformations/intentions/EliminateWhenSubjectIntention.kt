@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.buildExpression
 
 public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Eliminate argument of 'when'") {
     override fun isApplicableTo(element: JetWhenExpression, caretOffset: Int): Boolean {
@@ -33,21 +34,32 @@ public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<JetWhenEx
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
         val subject = element.getSubjectExpression()!!
 
-        val builder = JetPsiFactory(element).WhenBuilder()
-        for (entry in element.getEntries()) {
-            val branchExpression = entry.getExpression()
+        val whenExpression = JetPsiFactory(element).buildExpression {
+            appendFixedText("when {\n")
 
-            if (entry.isElse()) {
-                builder.elseEntry(branchExpression)
-                continue
-            }
-            for (condition in entry.getConditions()) {
-                builder.condition(condition.toExpressionText(subject))
+            for (entry in element.getEntries()) {
+                val branchExpression = entry.getExpression()
+
+                if (entry.isElse()) {
+                    appendFixedText("else")
+                }
+                else {
+                    for ((i, condition) in entry.getConditions().withIndex()) {
+                        if (i > 0) appendFixedText(",")
+                        appendNonFormattedText(condition.toExpressionText(subject))
+                    }
+                }
+                appendFixedText("->")
+
+                if (branchExpression != null) {
+                    appendExpression(branchExpression)
+                }
+                appendFixedText("\n")
             }
 
-            builder.branchExpression(branchExpression)
+            appendFixedText("}")
         }
 
-        element.replace(builder.toExpression())
+        element.replace(whenExpression)
     }
 }
