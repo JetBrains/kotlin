@@ -17,10 +17,10 @@
 package kotlin.js.dom.html5
 
 native
-public val localStorage: org.w3c.dom3.Storage = noImpl
+public val localStorage: org.w3c.dom.Storage = noImpl
 
 native
-public val sessionStorage: org.w3c.dom3.Storage = noImpl
+public val sessionStorage: org.w3c.dom.Storage = noImpl
 
 native
 deprecated("Use org.w3c.dom")

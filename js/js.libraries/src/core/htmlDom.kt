@@ -188,40 +188,22 @@ public native trait HTMLOptionsCollection {
 
 deprecated("Use org.w3c.dom instead")
 public native trait HTMLDocument : Document {
-    public native var title: String
-    public native val referrer: String
-    public native val domain: String
-    public native val URL: String
-    public native var body: HTMLElement
-    public native val images: HTMLCollection
-    public native val applets: HTMLCollection
-    public native val links: HTMLCollection
-    public native val forms: HTMLCollection
-    public native val anchors: HTMLCollection
-    public native var cookie: HTMLCollection
     public native fun open(): Unit
-    public native fun close(): Unit
     public native fun write(text: String): Unit
     public native fun writeln(text: String): Unit
-    public native fun getElementsByName(elementName: String): NodeList
-    public native var compatMode: String
-    public native var onload: () -> Unit
     public native var onunload: () -> Unit
 }
 
 deprecated("Use org.w3c.dom instead")
 public native trait HTMLElement : Element {
-    public native var id: String
     public native var title: String
     public native var lang: String
     public native var dir: String
-    public native var className: String
     public native var style: CSSStyleDeclaration
     public native var clientWidth: Double
     public native var clientHeight: Double
     public native var clientTop: Double
     public native var clientLeft: Double
-    public native var innerHTML: String
     public native var offsetWidth: Double
     public native var offsetHeight: Double
     public native var offsetTop: Double

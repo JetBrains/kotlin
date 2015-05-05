@@ -12,9 +12,7 @@ import java.lang.IndexOutOfBoundsException
 
 deprecated("use textContent directly instead")
 public var Node.text: String
-    get() {
-        return textContent
-    }
+    get() = textContent ?: ""
     set(value) {
         textContent = value
     }
@@ -52,7 +50,6 @@ public var Element.id: String
     get() = this.getAttribute("id") ?: ""
     set(value) {
         this.setAttribute("id", value)
-        this.setIdAttribute("id", true)
     }
 
 public var Element.style: String
@@ -68,10 +65,7 @@ public var Element.classes: String
     }
 
 /** Returns true if the element has the given CSS class style in its 'class' attribute */
-public fun Element.hasClass(cssClass: String): Boolean {
-    val c = this.classes
-    return c.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
-}
+public fun Element.hasClass(cssClass: String): Boolean = classes.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
 
 
 /** Returns the children of the element as a list */
@@ -118,15 +112,9 @@ public fun Document?.elements(namespaceUri: String, localName: String): List<Ele
     return this?.getElementsByTagNameNS(namespaceUri, localName).toElementList()
 }
 
-public fun NodeList?.toList(): List<Node> {
-    return if (this == null) {
-        // TODO the following is easier to convert to JS
-        emptyList()
-    }
-    else {
-        NodeListAsList(this)
-    }
-}
+public fun NodeList?.asList() : List<Node> = if (this == null) emptyList() else NodeListAsList(this)
+deprecated("use asList instead")
+public fun NodeList?.toList(): List<Node> = asList()
 
 public fun NodeList?.toElementList(): List<Element> {
     return if (this == null) {
@@ -184,48 +172,95 @@ public fun Element.get(selector: String): List<Element> {
 
 // Helper methods
 
-/** TODO this approach generates compiler errors...
 
-fun Element.addClass(varargs cssClasses: Array<String>): Boolean {
-    val set = this.classSet
-    var answer = false
-    for (cs in cssClasses) {
-        if (set.add(cs)) {
-            answer = true
-        }
+/**
+ * Adds CSS class to element. Has no effect if all specified classes are already in class attribute of the element
+ */
+public fun Element.addClass(vararg cssClasses: String): Boolean {
+    val missingClasses = cssClasses.filterNot { hasClass(it) }
+    if (missingClasses.isNotEmpty()) {
+        classes = StringBuilder {
+            append(classes)
+            missingClasses.joinTo(this, " ", " ")
+        }.toString()
+        return true
     }
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
+
+    return false
 }
 
-fun Element.removeClass(varargs cssClasses: Array<String>): Boolean {
-    val set = this.classSet
-    var answer = false
-    for (cs in cssClasses) {
-        if (set.remove(cs)) {
-            answer = true
-        }
+/**
+ * Removes all [cssClasses] from element. Has no effect if all specified classes are missing in class attribute of the element
+ */
+public fun Element.removeClass(vararg cssClasses: String): Boolean {
+    if (cssClasses.any { hasClass(it) }) {
+        val toBeRemoved = cssClasses.toSet()
+        classes = classes.split("\\s+").filter { it !in toBeRemoved }.joinToString(" ")
+        return true
     }
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
+
+    return false
 }
-*/
 
-private class NodeListAsList(private val nodeList: NodeList) : AbstractList<Node>() {
-    override fun get(index: Int): Node {
-        val node = nodeList.item(index)
-        if (node == null) {
-            throw IndexOutOfBoundsException("NodeList does not contain a node at index: " + index)
-        } else {
-            return node
-        }
+/**
+ * Adds [cssClasses] to element if []condition] is true or removes it otherwise.
+ * Has no effect if class attribute already has corresponding content
+ */
+public fun Element.addOrRemoveClassWhen(condition : Boolean, vararg cssClasses : String) {
+    if (condition) {
+        addClass(*cssClasses)
+    } else {
+        removeClass(*cssClasses)
     }
+}
 
-    override fun size(): Int = nodeList.length
+/**
+ * Adds [trueClassName] class to element if [condition] is true and removes [falseClassName].
+ * If [condition] is false then [trueClassName] will be removed and [falseClassName] will be added.
+ * Has no effect if class attribute already has corresponding content
+ */
+public fun Element.swapClassWhen(condition: Boolean, trueClassName: String, falseClassName: String) {
+    if (condition) {
+        addClass(trueClassName)
+        removeClass(falseClassName)
+    } else {
+        removeClass(trueClassName)
+        addClass(falseClassName)
+    }
+}
+
+/**
+ * If [condition] is true then [attributeName] with value [attributeValue] will be added to the element, otherwise attribute with
+ * name [attributeName] will be removed
+ */
+public fun Element.addOrRemoveAttributeWhen(condition : Boolean, attributeName : String, attributeValue : String = attributeName) {
+    if (condition) {
+        setAttribute(attributeName, attributeValue)
+    } else {
+        removeAttribute(attributeName)
+    }
+}
+
+/** Removes all the children from this node */
+public fun Node.clear() {
+    while (hasChildNodes()) {
+        removeChild(firstChild!!)
+    }
+}
+
+/**
+ * Removes this node from parent node. Does nothing if no parent node
+ */
+public fun Node.removeFromParent() {
+    parentNode?.removeChild(this)
+}
+
+private class NodeListAsList(val delegate: NodeList) : AbstractList<Node>() {
+    override fun size(): Int = delegate.length
+
+    override fun get(index: Int): Node =
+            if (index in 0..size() - 1) delegate.item(index)!!
+            else throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size() - 1})")
 }
 
 private class ElementListAsList(private val nodeList: NodeList) : AbstractList<Element>() {
@@ -242,18 +277,6 @@ private class ElementListAsList(private val nodeList: NodeList) : AbstractList<E
 
     override fun size(): Int = nodeList.length
 
-}
-
-/** Removes all the children from this node */
-public fun Node.clear(): Unit {
-    while (true) {
-        val child = firstChild
-        if (child == null) {
-            return
-        } else {
-            removeChild(child)
-        }
-    }
 }
 
 /** Returns an [[Iterator]] over the next siblings of this node */
@@ -291,10 +314,15 @@ private class PreviousSiblings(private var node: Node) : Iterable<Node> {
 }
 
 /** Returns true if this node is a Text node or a CDATA node */
-public fun Node.isText(): Boolean {
-    val nt = nodeType
-    return nt == Node.TEXT_NODE || nt == Node.CDATA_SECTION_NODE
-}
+deprecated("use property isText instead")
+public fun Node.isText() : Boolean = nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
+
+/**
+ * it is *true* when [Node.nodeType] is TEXT_NODE or CDATA_SECTION_NODE
+ */
+public val Node.isText : Boolean
+    get() = nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
+
 
 /** Returns the attribute value or empty string if its not present */
 public fun Element.attribute(name: String): String {
@@ -410,4 +438,18 @@ public fun Element.addText(text: String?, doc: Document? = null): Element {
         this.appendChild(child)
     }
     return this
+}
+
+/**
+ * Creates text node and append it to the element
+ */
+public fun Element.appendText(text : String, doc : Document = this.ownerDocument!!) {
+    appendChild(doc.createTextNode(text))
+}
+
+/**
+ * Appends the node to the specified parent element
+ */
+public fun Node.appendTo(parent : Element) {
+    parent.appendChild(this)
 }
