@@ -356,7 +356,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
         if (typeReference != null) {
             builder.replaceElement(typeReference,
                                    TYPE_REFERENCE_VARIABLE_NAME,
-                                   SpecifyTypeExplicitlyAction.createTypeExpressionForTemplate(myExprType),
+                                   SpecifyTypeExplicitlyAction.Companion.createTypeExpressionForTemplate(myExprType),
                                    false);
         }
     }
@@ -381,7 +381,7 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
         TemplateState templateState =
                 TemplateManagerImpl.getTemplateState(InjectedLanguageUtil.getTopLevelEditor(myEditor));
         if (templateState != null && myDeclaration.getTypeReference() != null) {
-            templateState.addTemplateStateListener(SpecifyTypeExplicitlyAction.createTypeReferencePostprocessor(myDeclaration));
+            templateState.addTemplateStateListener(SpecifyTypeExplicitlyAction.Companion.createTypeReferencePostprocessor(myDeclaration));
         }
 
         return result;

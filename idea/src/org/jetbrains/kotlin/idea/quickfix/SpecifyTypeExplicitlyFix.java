@@ -23,13 +23,11 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.JetBundle;
+import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction;
 import org.jetbrains.kotlin.psi.JetCallableDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
 import org.jetbrains.kotlin.psi.JetProperty;
 import org.jetbrains.kotlin.types.JetType;
-
-import static org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction.addTypeAnnotation;
-import static org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyAction.getTypeForDeclaration;
 
 @SuppressWarnings("IntentionDescriptionNotFoundInspection")
 public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
@@ -43,8 +41,8 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
     public void invoke(@NotNull Project project, @NotNull Editor editor, @NotNull PsiElement element) {
         //noinspection unchecked
         JetCallableDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetProperty.class, JetNamedFunction.class);
-        JetType type = getTypeForDeclaration(declaration);
-        addTypeAnnotation(project, editor, declaration, type);
+        JetType type = SpecifyTypeExplicitlyAction.Companion.getTypeForDeclaration(declaration);
+        SpecifyTypeExplicitlyAction.Companion.addTypeAnnotation(project, editor, declaration, type);
     }
 
     @Override
@@ -61,6 +59,6 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
             return false;
         }
 
-        return !getTypeForDeclaration(declaration).isError();
+        return !SpecifyTypeExplicitlyAction.Companion.getTypeForDeclaration(declaration).isError();
     }
 }
