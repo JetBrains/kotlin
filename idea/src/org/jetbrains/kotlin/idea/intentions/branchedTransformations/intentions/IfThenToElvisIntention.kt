@@ -47,6 +47,11 @@ public class IfThenToElvisIntention : JetSelfTargetingOffsetIndependentIntention
         }
     }
 
+    private fun JetExpression.isNotNullExpression(): Boolean {
+        val innerExpression = this.unwrapBlock()
+        return innerExpression !is JetBlockExpression && innerExpression.getText() != "null"
+    }
+
     override fun applyTo(element: JetIfExpression, editor: Editor) {
         val elvis = applyTo(element)
         elvis.inlineLeftSideIfApplicableWithPrompt(editor)
@@ -57,8 +62,8 @@ public class IfThenToElvisIntention : JetSelfTargetingOffsetIndependentIntention
 
         val thenClause = checkNotNull(element.getThen(), "The then clause cannot be null")
         val elseClause = checkNotNull(element.getElse(), "The else clause cannot be null")
-        val thenExpression = checkNotNull(thenClause.extractExpressionIfSingle(), "Then clause must contain expression")
-        val elseExpression = checkNotNull(elseClause.extractExpressionIfSingle(), "Else clause must contain expression")
+        val thenExpression = thenClause.unwrapBlock()
+        val elseExpression = elseClause.unwrapBlock()
 
         val (left, right) =
                 when(condition.getOperationToken()) {

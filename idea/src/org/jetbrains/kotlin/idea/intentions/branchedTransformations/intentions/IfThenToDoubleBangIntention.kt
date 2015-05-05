@@ -44,12 +44,10 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentInte
 
         val throwExpression =
                 when (token) {
-                    JetTokens.EQEQ -> thenClause?.extractExpressionIfSingle()
-                    JetTokens.EXCLEQ -> elseClause?.extractExpressionIfSingle()
+                    JetTokens.EQEQ -> thenClause?.unwrapBlock()
+                    JetTokens.EXCLEQ -> elseClause?.unwrapBlock()
                     else -> throw IllegalStateException("Token must be either '!=' or '==' ")
-                } as? JetThrowExpression
-
-        if (throwExpression == null) return false
+                } as? JetThrowExpression ?: return false
 
         val matchingClause =
                 when (token) {

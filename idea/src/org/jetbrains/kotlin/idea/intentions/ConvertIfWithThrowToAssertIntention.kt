@@ -17,75 +17,54 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetCallExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetPrefixExpression
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.extractExpressionIfSingle
-import org.jetbrains.kotlin.psi.JetThrowExpression
-import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlock
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.copied
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 
-public class ConvertIfWithThrowToAssertIntention :
-        JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("convert.if.with.throw.to.assert", javaClass()) {
+public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' with 'assert' statement") {
 
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         if (element.getElse() != null) return false
 
-        val thenExpr = element.getThen()?.extractExpressionIfSingle()
-        if (thenExpr !is JetThrowExpression) return false
-
-        val thrownExpr = getSelector(thenExpr.getThrownExpression())
+        val throwExpr = element.getThen()?.unwrapBlock() as? JetThrowExpression
+        val thrownExpr = getSelector(throwExpr?.getThrownExpression())
         if (thrownExpr !is JetCallExpression) return false
 
-        if (thrownExpr.getCalleeExpression()?.getText() != "AssertionError") return false
+        if (thrownExpr.getValueArguments().size() > 1) return false
 
-        val paramAmount = thrownExpr.getValueArguments().size
-        if (paramAmount > 1) return false
-
-        val context = thenExpr.analyze()
-        val resolvedCall = thrownExpr.getResolvedCall(context)
-        if (resolvedCall == null) return false
-
+        val resolvedCall = thrownExpr.getResolvedCall(thrownExpr.analyze()) ?: return false
         return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() == "java.lang.AssertionError.<init>"
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
-        val condition = element.getCondition()
-        if (condition == null) return
+        val condition = element.getCondition() ?: return
 
-        val thenExpr = element.getThen()?.extractExpressionIfSingle() as JetThrowExpression
+        val thenExpr = element.getThen()?.unwrapBlock() as JetThrowExpression
         val thrownExpr = getSelector(thenExpr.getThrownExpression()) as JetCallExpression
 
-        val args = thrownExpr.getValueArguments()
-        val paramText =
-            if (args.isNotEmpty()) {
-                val param = args.first!!.getArgumentExpression()!!
-                if (param.isNullExpression()) "" else ", ${param.getText()}"
-            } else {
-                ""
-            }
-
         val psiFactory = JetPsiFactory(element)
-        val negatedCondition = psiFactory.createExpression("!true") as JetPrefixExpression
-        negatedCondition.getBaseExpression()!!.replace(condition)
-        condition.replace(negatedCondition)
+        condition.replace(psiFactory.createExpressionByPattern("!$0", condition))
 
-        val newCondition = element.getCondition() as JetPrefixExpression
+        var newCondition = element.getCondition()!!
         val simplifier = SimplifyNegatedBinaryExpressionIntention()
-        if (simplifier.isApplicableTo(newCondition)) {
+        if (simplifier.isApplicableTo(newCondition as JetPrefixExpression)) {
             simplifier.applyTo(newCondition, editor)
+            newCondition = element.getCondition()!!
         }
 
-        val assertText = "kotlin.assert(${element.getCondition()?.getText()} $paramText)"
-        val assertExpr = psiFactory.createExpression(assertText)
+        val arg = thrownExpr.getValueArguments().singleOrNull()?.getArgumentExpression()
+        val assertExpr = if (arg != null && !arg.isNullExpression())
+            psiFactory.createExpressionByPattern("kotlin.assert($0, $1)", newCondition, arg)
+        else
+            psiFactory.createExpressionByPattern("kotlin.assert($0)", newCondition)
 
-        val newExpr = element.replace(assertExpr) as JetExpression
+        val newExpr = element.replaced(assertExpr)
         ShortenReferences.DEFAULT.process(newExpr)
     }
 

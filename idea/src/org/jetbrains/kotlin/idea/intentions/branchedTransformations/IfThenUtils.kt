@@ -48,15 +48,12 @@ fun JetBinaryExpression.comparesNonNullToNull(): Boolean {
     return leftIsNull != rightIsNull && (operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ)
 }
 
-fun JetExpression.extractExpressionIfSingle(): JetExpression? {
-    val innerExpression = JetPsiUtil.deparenthesize(this)
+fun JetExpression.unwrapBlock(): JetExpression {
+    val innerExpression = JetPsiUtil.safeDeparenthesize(this)
     if (innerExpression is JetBlockExpression) {
-        return if (innerExpression.getStatements().size() == 1)
-            JetPsiUtil.deparenthesize(innerExpression.getStatements().firstOrNull() as? JetExpression)
-        else
-            null
+        val statement = innerExpression.getStatements().singleOrNull() as? JetExpression ?: return this
+        return JetPsiUtil.safeDeparenthesize(statement)
     }
-
     return innerExpression
 }
 
@@ -71,11 +68,9 @@ fun JetBinaryExpression.getNonNullExpression(): JetExpression? = when {
         null
 }
 
-fun JetExpression.isNullExpression(): Boolean = this.extractExpressionIfSingle()?.getText() == "null"
+fun JetExpression.isNullExpression(): Boolean = this.unwrapBlock().getText() == "null"
 
 fun JetExpression.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().isEmpty()
-
-fun JetExpression.isThrowExpression(): Boolean = this.extractExpressionIfSingle() is JetThrowExpression
 
 fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
     val thrownExpression = this.getThrownExpression()
@@ -90,13 +85,8 @@ fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
     return (exceptionName == NULL_PTR_EXCEPTION_FQ || exceptionName == KOTLIN_NULL_PTR_EXCEPTION_FQ) && thrownExpression.getValueArguments().isEmpty()
 }
 
-fun JetExpression.isNotNullExpression(): Boolean {
-    val innerExpression = this.extractExpressionIfSingle()
-    return innerExpression != null && innerExpression.getText() != "null"
-}
-
 fun JetExpression.evaluatesTo(other: JetExpression): Boolean {
-    return this.extractExpressionIfSingle()?.getText() == other.getText()
+    return this.unwrapBlock().getText() == other.getText()
 }
 
 fun JetExpression.convertToIfNotNullExpression(conditionLhs: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {

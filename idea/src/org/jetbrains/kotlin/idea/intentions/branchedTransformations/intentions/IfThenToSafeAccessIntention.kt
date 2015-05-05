@@ -81,7 +81,7 @@ public class IfThenToSafeAccessIntention : JetSelfTargetingOffsetIndependentInte
             findSelectorExpressionInClause(clause, receiverExpression) != null
 
     fun findSelectorExpressionInClause(clause: JetExpression, receiverExpression: JetExpression): JetExpression? {
-        val expression = clause.extractExpressionIfSingle() as? JetDotQualifiedExpression
+        val expression = clause.unwrapBlock() as? JetDotQualifiedExpression
 
         if (expression?.getReceiverExpression()?.getText() != receiverExpression.getText()) return null
 
