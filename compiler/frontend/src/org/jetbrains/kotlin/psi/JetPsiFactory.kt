@@ -502,10 +502,6 @@ public class JetPsiFactory(private val project: Project) {
         }
     }
 
-    public fun WhenBuilder(): WhenBuilder {
-        return WhenBuilder(null: String?)
-    }
-
     public fun WhenBuilder(subject: JetExpression?): WhenBuilder {
         return WhenBuilder(subject?.getText())
     }

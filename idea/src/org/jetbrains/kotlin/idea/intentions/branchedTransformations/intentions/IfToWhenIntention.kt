@@ -49,9 +49,7 @@ public class IfToWhenIntention : JetSelfTargetingIntention<JetIfExpression>(java
                 appendFixedText("->")
 
                 val thenBranch = ifExpression.getThen()
-                if (thenBranch != null) {
-                    appendExpression(thenBranch)
-                }
+                appendExpression(thenBranch)
                 appendFixedText("\n")
 
                 val elseBranch = ifExpression.getElse() ?: break

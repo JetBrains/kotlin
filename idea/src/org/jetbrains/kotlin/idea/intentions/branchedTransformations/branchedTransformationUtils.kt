@@ -102,7 +102,7 @@ fun JetWhenExpression.getSubjectCandidate(): JetExpression?  {
     var lastCandidate: JetExpression? = null
     for (entry in getEntries()) {
         val conditions = entry.getConditions()
-        if (!entry.isElse() && conditions.size == 0) return null
+        if (!entry.isElse() && conditions.isEmpty()) return null
 
         for (condition in conditions) {
             if (condition !is JetWhenConditionWithExpression) return null
@@ -152,54 +152,69 @@ public fun JetWhenExpression.flatten(): JetWhenExpression {
 public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
     val subject = getSubjectCandidate()!!
 
-    val builder = JetPsiFactory(this).WhenBuilder(subject)
-    for (entry in getEntries()) {
-        val branchExpression = entry.getExpression()
-        if (entry.isElse()) {
-            builder.elseEntry(branchExpression)
-            continue
-        }
+    val whenExpression = JetPsiFactory(this).buildExpression {
+        appendFixedText("when(").appendExpression(subject).appendFixedText("){\n")
 
-        for (condition in entry.getConditions()) {
-            assert(condition is JetWhenConditionWithExpression, TRANSFORM_WITHOUT_CHECK)
+        for (entry in getEntries()) {
+            val branchExpression = entry.getExpression()
 
-            val conditionExpression = ((condition as JetWhenConditionWithExpression)).getExpression()
-            when (conditionExpression)  {
-                is JetIsExpression -> {
-                    builder.pattern(conditionExpression.getTypeReference(), conditionExpression.isNegated())
-                }
-                is JetBinaryExpression -> {
-                    val lhs = conditionExpression.getLeft()
-                    val rhs = conditionExpression.getRight()
-                    val op = conditionExpression.getOperationToken()
-                    when (op) {
-                        JetTokens.IN_KEYWORD -> builder.range(rhs, false)
-                        JetTokens.NOT_IN -> builder.range(rhs, true)
-                        JetTokens.EQEQ -> builder.condition(if (subject.matches(lhs)) rhs else lhs)
-                        else -> assert(false, TRANSFORM_WITHOUT_CHECK)
+            if (entry.isElse()) {
+                appendFixedText("else")
+            }
+            else {
+                for ((i, condition) in entry.getConditions().withIndex()) {
+                    if (i > 0) appendFixedText(",")
+                    assert(condition is JetWhenConditionWithExpression, TRANSFORM_WITHOUT_CHECK)
+
+                    val conditionExpression = (condition as JetWhenConditionWithExpression).getExpression()
+                    when (conditionExpression)  {
+                        is JetIsExpression -> {
+                            if (conditionExpression.isNegated()) {
+                                appendFixedText("!")
+                            }
+                            appendFixedText("is ")
+                            appendNonFormattedText(conditionExpression.getTypeReference()?.getText() ?: "")
+                        }
+
+                        is JetBinaryExpression -> {
+                            val lhs = conditionExpression.getLeft()
+                            val rhs = conditionExpression.getRight()
+                            val op = conditionExpression.getOperationToken()
+                            when (op) {
+                                JetTokens.IN_KEYWORD -> appendFixedText("in ").appendExpression(rhs)
+                                JetTokens.NOT_IN -> appendFixedText("!in ").appendExpression(rhs)
+                                JetTokens.EQEQ -> appendExpression(if (subject.matches(lhs)) rhs else lhs)
+                                else -> error(TRANSFORM_WITHOUT_CHECK)
+                            }
+                        }
+
+                        else -> error(TRANSFORM_WITHOUT_CHECK)
                     }
                 }
-                else -> assert(false, TRANSFORM_WITHOUT_CHECK)
             }
+            appendFixedText("->")
 
+            appendExpression(branchExpression)
+            appendFixedText("\n")
         }
-        builder.branchExpression(branchExpression)
-    }
 
-    return replaced(builder.toExpression())
+        appendFixedText("}")
+    } as JetWhenExpression
+
+    return replaced(whenExpression)
 }
 
 public fun JetWhenExpression.canTransformToIf(): Boolean = !getEntries().isEmpty()
 
 public fun JetWhenExpression.transformToIf() {
     fun combineWhenConditions(conditions: Array<JetWhenCondition>, subject: JetExpression?): String {
-        return when (conditions.size) {
+        return when (conditions.size()) {
             0 -> ""
             1 -> conditions[0].toExpressionText(subject)
             else -> {
                 conditions
                         .map { condition -> parenthesizeTextIfNeeded(condition.toExpressionText(subject)) }
-                        .makeString(separator = " || ")
+                        .joinToString(separator = " || ")
             }
         }
     }
@@ -227,8 +242,8 @@ public fun JetWhenExpression.canMergeWithNext(): Boolean {
     fun JetWhenEntry.declarationNames(): Set<String> =
             getExpression()?.blockExpressionsOrSingle()
                     ?.filter { it is JetNamedDeclaration }
-                    ?.map { decl -> decl.getName() }
-                    ?.filterNotNull()?.toSet() ?: Collections.emptySet<String>()
+                    ?.map { it.getName() }
+                    ?.filterNotNull()?.toSet() ?: emptySet()
 
     fun checkBodies(e1: JetWhenEntry, e2: JetWhenEntry): Boolean {
         if (ContainerUtil.intersects(e1.declarationNames(), e2.declarationNames())) return false
@@ -246,7 +261,7 @@ public fun JetWhenExpression.canMergeWithNext(): Boolean {
 
     val entries1 = getEntries()
     val entries2 = sibling.getEntries()
-    return entries1.size == entries2.size && (entries1 zip entries2).all { pair ->
+    return entries1.size() == entries2.size() && (entries1 zip entries2).all { pair ->
         checkConditions(pair.first, pair.second) && checkBodies(pair.first, pair.second)
     }
 }

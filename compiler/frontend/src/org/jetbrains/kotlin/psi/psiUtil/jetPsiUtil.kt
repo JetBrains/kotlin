@@ -126,8 +126,8 @@ public fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newEl
 [suppress("UNCHECKED_CAST")]
 public fun <T: PsiElement> T.copied(): T = copy() as T
 
-public fun JetElement.blockExpressionsOrSingle(): Stream<JetElement> =
-        if (this is JetBlockExpression) getStatements().stream() else listOf(this).stream()
+public fun JetElement.blockExpressionsOrSingle(): Sequence<JetElement> =
+        if (this is JetBlockExpression) getStatements().asSequence() else sequenceOf(this)
 
 public fun JetElement.outermostLastBlockElement(predicate: (JetElement) -> Boolean = { true }): JetElement? {
     return JetPsiUtil.getOutermostLastBlockElement(this) { e -> e != null && predicate(e) }

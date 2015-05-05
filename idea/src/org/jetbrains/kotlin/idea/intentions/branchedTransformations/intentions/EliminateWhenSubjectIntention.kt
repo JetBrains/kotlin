@@ -51,9 +51,7 @@ public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<JetWhenEx
                 }
                 appendFixedText("->")
 
-                if (branchExpression != null) {
-                    appendExpression(branchExpression)
-                }
+                appendExpression(branchExpression)
                 appendFixedText("\n")
             }
 
