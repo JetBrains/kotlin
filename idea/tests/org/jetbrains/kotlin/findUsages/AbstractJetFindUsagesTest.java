@@ -21,6 +21,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.find.FindManager;
 import com.intellij.find.findUsages.*;
@@ -48,16 +49,15 @@ import kotlin.Function1;
 import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.findUsages.KotlinClassFindUsagesOptions;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions;
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
+import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import static com.intellij.codeInsight.TargetElementUtil.*;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -70,7 +70,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
 
     public static final UsageViewPresentation USAGE_VIEW_PRESENTATION = new UsageViewPresentation();
 
-    protected static enum OptionsParser {
+    protected enum OptionsParser {
         CLASS {
             @NotNull
             @Override
@@ -327,7 +327,8 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
 
         PsiElement originalElement =
                 InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
-                ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(), REFERENCED_ELEMENT_ACCEPTED | NEW_AS_CONSTRUCTOR)
+                ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(),
+                                                          TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtil.NEW_AS_CONSTRUCTOR)
                 : myFixture.getElementAtCaret();
         if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_MIRROR_ELEMENT")) {
             assert originalElement instanceof PsiCompiledElement : "PsiCompiledElement is expected: " + originalElement;
