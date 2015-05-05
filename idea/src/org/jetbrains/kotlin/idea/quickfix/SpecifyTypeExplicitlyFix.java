@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention;
 import org.jetbrains.kotlin.psi.JetCallableDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedFunction;
@@ -34,7 +33,7 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
     @NotNull
     @Override
     public String getFamilyName() {
-        return JetBundle.message("specify.type.explicitly.action.family.name");
+        return "Specify type explicitly";
     }
 
     @Override
@@ -50,10 +49,10 @@ public class SpecifyTypeExplicitlyFix extends PsiElementBaseIntentionAction {
         //noinspection unchecked
         JetCallableDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetProperty.class, JetNamedFunction.class);
         if (declaration instanceof JetProperty) {
-            setText(JetBundle.message("specify.type.explicitly.add.action.name"));
+            setText("Specify type explicitly");
         }
         else if (declaration instanceof JetNamedFunction) {
-            setText(JetBundle.message("specify.type.explicitly.add.return.type.action.name"));
+            setText("Specify return type explicitly");
         }
         else {
             return false;
