@@ -121,10 +121,6 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     @NotNull
     private List<JsParameter> translateParameters() {
-        if (extensionFunctionReceiverName == null && descriptor.getValueParameters().isEmpty()) {
-            return Collections.emptyList();
-        }
-
         List<JsParameter> jsParameters = new SmartList<JsParameter>();
 
         for (TypeParameterDescriptor type : descriptor.getTypeParameters()) {
@@ -133,6 +129,10 @@ public final class FunctionTranslator extends AbstractTranslator {
                 JsName paramName = functionObject.getScope().declareName("is" + typeName.getIdent());
                 jsParameters.add(new JsParameter(paramName));
             }
+        }
+
+        if (extensionFunctionReceiverName == null && descriptor.getValueParameters().isEmpty()) {
+            return jsParameters;
         }
 
         mayBeAddThisParameterForExtensionFunction(jsParameters);
