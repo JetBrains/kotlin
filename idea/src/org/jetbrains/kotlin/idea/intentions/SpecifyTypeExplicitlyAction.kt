@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
@@ -105,24 +106,16 @@ public class SpecifyTypeExplicitlyAction : PsiElementBaseIntentionAction() {
     }
 
     companion object {
-
-
         private fun hasPublicMemberDiagnostic(declaration: JetNamedDeclaration): Boolean {
-            val bindingContext = declaration.getContainingJetFile().analyzeFully()
-            for (diagnostic in bindingContext.getDiagnostics()) {
-                //noinspection ConstantConditions
-                if (Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == diagnostic.getFactory() && declaration == diagnostic.getPsiElement()) {
-                    return true
-                }
-            }
-            return false
+            return declaration.getContainingJetFile().analyzeFully().getDiagnostics()
+                    .any { Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == it.getFactory() && declaration == it.getPsiElement() }
         }
 
         public fun getTypeForDeclaration(declaration: JetCallableDeclaration): JetType {
             val bindingContext = declaration.getContainingJetFile().analyzeFully()
 
             val type = if (bindingContext.get<PsiElement, DeclarationDescriptor>(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) != null)
-                bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration).getReturnType()
+                (bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration) as CallableDescriptor).getReturnType()
             else
                 null
             return type ?: ErrorUtils.createErrorType("null type")
@@ -177,12 +170,11 @@ public class SpecifyTypeExplicitlyAction : PsiElementBaseIntentionAction() {
             PsiDocumentManager.getInstance(project).commitAllDocuments()
             PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
 
-            val newTypeRef = declaration.getTypeReference()
-            assert(newTypeRef != null)
+            val newTypeRef = declaration.getTypeReference()!!
             val builder = TemplateBuilderImpl(newTypeRef)
             builder.replaceElement(newTypeRef, expression)
 
-            editor.getCaretModel().moveToOffset(newTypeRef!!.getNode().getStartOffset())
+            editor.getCaretModel().moveToOffset(newTypeRef.getNode().getStartOffset())
 
             TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), createTypeReferencePostprocessor(declaration))
         }
