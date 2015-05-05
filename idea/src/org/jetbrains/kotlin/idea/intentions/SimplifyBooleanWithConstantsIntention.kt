@@ -27,20 +27,18 @@ import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 
-public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(
-        "simplify.boolean.with.constants", javaClass()) {
-
-    private var topParent : JetBinaryExpression? = null
+public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Simplify boolean expression") {
 
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        topParent = PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetBinaryExpression>()) ?: element
-        return areThereExpressionsToBeSimplified(topParent)
+        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetBinaryExpression>()) ?: element
+        return areThereExpressionsToBeSimplified(topBinary)
     }
 
     private fun areThereExpressionsToBeSimplified(element: JetExpression?) : Boolean {
         if (element == null) return false
         when (element) {
             is JetParenthesizedExpression -> return areThereExpressionsToBeSimplified(element.getExpression())
+
             is JetBinaryExpression -> {
                 val op = element.getOperationToken()
                 if ((op == JetTokens.ANDAND || op == JetTokens.OROR) &&
@@ -52,76 +50,75 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        // we know from isApplicableTo that topParent is not null
-        val simplified = toSimplifiedExpression(topParent!!)
-        if (simplified is JetParenthesizedExpression) {
-            val expr = simplified.getExpression()
-            if (expr != null) {
-                // this extra check is for the case where there are empty parentheses ()
-                topParent!!.replace(expr)
-                return
-            }
-        }
-        topParent!!.replace(simplified)
+        val topBinary = PsiTreeUtil.getTopmostParentOfType(element, javaClass<JetBinaryExpression>()) ?: element
+        val simplified = toSimplifiedExpression(topBinary)
+        topBinary.replace(JetPsiUtil.safeDeparenthesize(simplified))
     }
 
-    private fun toSimplifiedExpression(element: JetExpression): JetExpression {
-        val psiFactory = JetPsiFactory(element)
-        if (element.canBeReducedToTrue())
-            return psiFactory.createExpression("true")
-        if (element.canBeReducedToFalse())
-            return psiFactory.createExpression("false")
-        when (element) {
-            is JetParenthesizedExpression -> {
-                val expr = element.getExpression()
-                if (expr == null) return element
-                val innerSimplified = toSimplifiedExpression(expr)
-                if (innerSimplified is JetBinaryExpression) {
-                    val simpText = innerSimplified.getText() ?: return element.copied()
-                    // wrap in new parentheses to keep the user's original format
-                    return psiFactory.createExpression("($simpText)")
+    private fun toSimplifiedExpression(expression: JetExpression): JetExpression {
+        val psiFactory = JetPsiFactory(expression)
+
+        when  {
+            expression.canBeReducedToTrue() -> {
+                return psiFactory.createExpression("true")
+            }
+
+            expression.canBeReducedToFalse() -> {
+                return psiFactory.createExpression("false")
+            }
+
+            expression is JetParenthesizedExpression -> {
+                val expr = expression.getExpression()
+                if (expr != null) {
+                    val simplified = toSimplifiedExpression(expr)
+                    return if (simplified is JetBinaryExpression) {
+                        // wrap in new parentheses to keep the user's original format
+                        psiFactory.createExpressionByPattern("($0)", simplified)
+                    }
+                    else {
+                        // if we now have a simpleName, constant, or parenthesized we don't need parentheses
+                        simplified
+                    }
                 }
-                // if we now have a simpleName, constant, or parenthesized we don't need parentheses
-                return innerSimplified
             }
-            is JetBinaryExpression -> {
-                val left = element.getLeft()
-                val right = element.getRight()
-                val op = element.getOperationToken()
-                if (left == null || right == null || op == null || (op != JetTokens.ANDAND && op != JetTokens.OROR))
-                    return element.copied()
 
-                val simpleLeft = simplifyExpression(left)
-                val simpleRight = simplifyExpression(right)
-                if (simpleLeft.canBeReducedToTrue() || simpleLeft.canBeReducedToFalse())
-                    return toSimplifiedBooleanBinaryExpressionWithConstantOperand(simpleLeft, simpleRight, op)
-                if (simpleRight.canBeReducedToTrue() || simpleRight.canBeReducedToFalse())
-                    return toSimplifiedBooleanBinaryExpressionWithConstantOperand(simpleRight, simpleLeft, op)
+            expression is JetBinaryExpression -> {
+                val left = expression.getLeft()
+                val right = expression.getRight()
+                val op = expression.getOperationToken()
+                if (left != null && right != null && (op == JetTokens.ANDAND || op == JetTokens.OROR)) {
+                    val simpleLeft = simplifyExpression(left)
+                    val simpleRight = simplifyExpression(right)
+                    when {
+                        simpleLeft.canBeReducedToTrue() -> return toSimplifiedBooleanBinaryExpressionWithConstantOperand(true, simpleRight, op)
 
-                val opText = element.getOperationReference().getText() ?: return element.copied()
-                return psiFactory.createExpressionByPattern("$0 $opText $1", simpleLeft, simpleRight)
+                        simpleLeft.canBeReducedToFalse() -> return toSimplifiedBooleanBinaryExpressionWithConstantOperand(false, simpleRight, op)
+
+                        simpleRight.canBeReducedToTrue() -> return toSimplifiedBooleanBinaryExpressionWithConstantOperand(true, simpleLeft, op)
+
+                        simpleRight.canBeReducedToFalse() -> return toSimplifiedBooleanBinaryExpressionWithConstantOperand(false, simpleLeft, op)
+
+                        else -> {
+                            val opText = expression.getOperationReference().getText()
+                            return psiFactory.createExpressionByPattern("$0 $opText $1", simpleLeft, simpleRight)
+                        }
+                    }
+                }
             }
-            else -> return element.copied()
+        }
+
+        return expression.copied()
+    }
+
+    private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(constantOperand: Boolean, otherOperand: JetExpression, operation: IElementType): JetExpression {
+        return when {
+            constantOperand && operation == JetTokens.OROR -> JetPsiFactory(otherOperand).createExpression("true")
+            !constantOperand && operation == JetTokens.ANDAND -> JetPsiFactory(otherOperand).createExpression("false")
+            else -> toSimplifiedExpression(otherOperand)
         }
     }
 
-    private fun toSimplifiedBooleanBinaryExpressionWithConstantOperand(
-            booleanConstantOperand: JetExpression,
-            otherOperand: JetExpression,
-            operation: IElementType
-    ): JetExpression {
-        assert(booleanConstantOperand.canBeReducedToBooleanConstant(null), "should only be called when we know it can be reduced")
-        val psiFactory = JetPsiFactory(otherOperand)
-        if (booleanConstantOperand.canBeReducedToTrue() && operation == JetTokens.OROR)
-            return psiFactory.createExpression("true")
-        if (booleanConstantOperand.canBeReducedToFalse() && operation == JetTokens.ANDAND)
-            return psiFactory.createExpression("false")
-        return toSimplifiedExpression(otherOperand)
-    }
-
-    private fun simplifyExpression(element: JetExpression): JetExpression {
-        return element.replaced(toSimplifiedExpression(element))
-    }
+    private fun simplifyExpression(element: JetExpression) = element.replaced(toSimplifiedExpression(element))
 
     private fun JetExpression.canBeReducedToBooleanConstant(constant: Boolean?): Boolean {
         val bindingContext = this.analyze()
@@ -129,11 +126,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
         return CompileTimeConstantUtils.canBeReducedToBooleanConstant(this, trace, constant)
     }
 
-    private fun JetExpression.canBeReducedToTrue(): Boolean {
-        return this.canBeReducedToBooleanConstant(true)
-    }
+    private fun JetExpression.canBeReducedToTrue() = canBeReducedToBooleanConstant(true)
 
-    private fun JetExpression.canBeReducedToFalse(): Boolean {
-        return this.canBeReducedToBooleanConstant(false)
-    }
+    private fun JetExpression.canBeReducedToFalse() = canBeReducedToBooleanConstant(false)
 }

@@ -67,6 +67,7 @@ public class JetBinaryExpression extends JetExpressionImpl implements JetOperati
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }
 
+    @NotNull
     public IElementType getOperationToken() {
         return getOperationReference().getReferencedNameElementType();
     }
