@@ -91,6 +91,9 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         return result;
     }
 
+
+
+    @Override
     @NotNull
     public JavaMethodDescriptor enhance(
             @Nullable JetType enhancedReceiverType,

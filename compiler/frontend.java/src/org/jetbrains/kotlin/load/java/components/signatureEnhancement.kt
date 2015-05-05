@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 
 fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
@@ -46,7 +48,7 @@ fun <D : CallableMemberDescriptor> D.enhance(): D {
 
     val enhancedReturnType = parts { it.getReturnType()!!.toReturnTypePart() }.enhance()
 
-    if (this is JavaMethodDescriptor) {
+    if (this is JavaCallableMemberDescriptor) {
         @suppress("UNCHECKED_CAST")
         return this.enhance(enhancedReceiverType, enhancedValueParameters, enhancedReturnType) as D
     }

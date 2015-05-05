@@ -17,13 +17,14 @@
 package org.jetbrains.kotlin.load.java.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.Modality;
-import org.jetbrains.kotlin.descriptors.SourceElement;
-import org.jetbrains.kotlin.descriptors.Visibility;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.JetType;
+
+import java.util.List;
 
 public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements JavaCallableMemberDescriptor {
     public JavaPropertyDescriptor(
@@ -40,5 +41,36 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     @Override
     public boolean hasSynthesizedParameterNames() {
         return false;
+    }
+
+    @NotNull
+    @Override
+    public JavaCallableMemberDescriptor enhance(
+            @Nullable JetType enhancedReceiverType,
+            @NotNull List<ValueParameterDescriptor> enhancedValueParameters,
+            @NotNull JetType enhancedReturnType
+    ) {
+        JavaPropertyDescriptor enhanced = new JavaPropertyDescriptor(
+                getContainingDeclaration(),
+                getAnnotations(),
+                getVisibility(),
+                isVar(),
+                getName(),
+                getSource()
+        );
+        assert getGetter() == null : "Field must not have a getter: " + this;
+        assert getSetter() == null : "Field must not have a setter: " + this;
+        enhanced.initialize(null, null);
+        enhanced.setSetterProjectedOut(isSetterProjectedOut());
+        if (compileTimeInitializer != null) {
+            enhanced.setCompileTimeInitializer(compileTimeInitializer);
+        }
+        enhanced.setType(
+                enhancedReturnType,
+                getTypeParameters(), // TODO
+                getDispatchReceiverParameter(),
+                enhancedReceiverType
+        );
+        return enhanced;
     }
 }

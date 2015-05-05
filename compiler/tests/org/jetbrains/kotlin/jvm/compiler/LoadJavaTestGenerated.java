@@ -1568,6 +1568,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledJava(fileName);
                 }
 
+                @TestMetadata("ConstructorWithAnnotations.java")
+                public void testConstructorWithAnnotations() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/ConstructorWithAnnotations.java");
+                    doTestCompiledJava(fileName);
+                }
+
                 @TestMetadata("DeepSamLoop.java")
                 public void testDeepSamLoop() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/adapters/DeepSamLoop.java");
