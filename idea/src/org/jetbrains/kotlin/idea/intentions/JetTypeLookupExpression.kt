@@ -33,7 +33,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 public abstract class JetTypeLookupExpression<T : Any>(
         lookupItems: List<T>,
         protected val defaultItem: T,
-        private val advertisementText: String?
+        private val advertisementText: String? = null
 ) : Expression() {
 
     protected abstract fun getLookupString(element: T): String

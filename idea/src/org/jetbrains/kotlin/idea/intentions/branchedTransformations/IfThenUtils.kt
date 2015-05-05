@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
 
-val NULL_PTR_EXCEPTION = "NullPointerException"
 val NULL_PTR_EXCEPTION_FQ = "java.lang.NullPointerException"
-val KOTLIN_NULL_PTR_EXCEPTION = "KotlinNullPointerException"
 val KOTLIN_NULL_PTR_EXCEPTION_FQ = "kotlin.KotlinNullPointerException"
 
 fun JetBinaryExpression.comparesNonNullToNull(): Boolean {

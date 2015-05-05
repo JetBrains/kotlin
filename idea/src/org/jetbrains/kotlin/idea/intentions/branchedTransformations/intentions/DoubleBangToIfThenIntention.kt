@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.template.Template
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.TemplateEditingAdapter
-import com.intellij.codeInsight.template.impl.TemplateManagerImpl
+import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
-import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
 import org.jetbrains.kotlin.idea.intentions.JetTypeLookupExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -33,16 +32,16 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetThrowExpression
 
-public class DoubleBangToIfThenIntention : JetSelfTargetingOffsetIndependentIntention<JetPostfixExpression>("double.bang.to.if.then", javaClass()) {
-
-    override fun isApplicableTo(element: JetPostfixExpression): Boolean =
-            element.getOperationToken() == JetTokens.EXCLEXCL
+public class DoubleBangToIfThenIntention : JetSelfTargetingIntention<JetPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression") {
+    override fun isApplicableTo(element: JetPostfixExpression, caretOffset: Int): Boolean {
+        return element.getOperationToken() == JetTokens.EXCLEXCL && element.getOperationReference().getTextRange().containsOffset(caretOffset)
+    }
 
     override fun applyTo(element: JetPostfixExpression, editor: Editor) {
-        val base = checkNotNull(JetPsiUtil.deparenthesize(element.getBaseExpression()), "Base expression cannot be null")
+        val base = JetPsiUtil.safeDeparenthesize(element.getBaseExpression())
         val expressionText = formatForUseInExceptionArgument(base.getText()!!)
 
-        val defaultException = JetPsiFactory(element).createExpression("throw $NULL_PTR_EXCEPTION()")
+        val defaultException = JetPsiFactory(element).createExpression("throw NullPointerException()")
 
         val isStatement = element.isStatement()
         val isStable = base.isStableVariable()
@@ -55,19 +54,18 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingOffsetIndependentInte
         val thrownExpression =
                 ((if (isStatement) ifStatement.getThen() else ifStatement.getElse()) as JetThrowExpression).getThrownExpression()!!
 
-        val nullPtrExceptionText = "$NULL_PTR_EXCEPTION(\"%s\")".format(escapeJava(JetBundle.message("double.bang.to.if.then.exception.text", expressionText)))
-        val kotlinNullPtrExceptionText = "$KOTLIN_NULL_PTR_EXCEPTION()"
+        val message = escapeJava("Expression '$expressionText' must not be null")
+        val nullPtrExceptionText = "NullPointerException(\"$message\")"
+        val kotlinNullPtrExceptionText = "KotlinNullPointerException()"
 
         val exceptionLookupExpression =
                 object: JetTypeLookupExpression<String>(listOf(nullPtrExceptionText, kotlinNullPtrExceptionText),
-                                                        nullPtrExceptionText, JetBundle.message("double.bang.to.if.then.choose.exception")) {
-
+                                                        nullPtrExceptionText) {
                     override fun getLookupString(element: String) = element
                     override fun getResult(element: String) = element
                 }
 
         val project = element.getProject()
-        val manager = TemplateManagerImpl(project)
         val builder = TemplateBuilderImpl(thrownExpression)
         builder.replaceElement(thrownExpression, exceptionLookupExpression);
 
@@ -75,7 +73,7 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingOffsetIndependentInte
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument());
         editor.getCaretModel().moveToOffset(thrownExpression.getNode()!!.getStartOffset());
 
-        manager.startTemplate(editor, builder.buildInlineTemplate()!!, object: TemplateEditingAdapter() {
+        TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), object: TemplateEditingAdapter() {
             override fun templateFinished(template: Template?, brokenOff: Boolean) {
                 if (!isStable && !isStatement) {
                     ifStatement.introduceValueForCondition(ifStatement.getThen()!!, editor)
@@ -84,10 +82,9 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingOffsetIndependentInte
         })
     }
 
-    fun formatForUseInExceptionArgument(expressionText: String): String {
+    private fun formatForUseInExceptionArgument(expressionText: String): String {
         val lines = expressionText.split('\n')
-
-        return if (lines.size > 1)
+        return if (lines.size() > 1)
             lines.first().trim() + " ..."
         else
             expressionText.trim()
