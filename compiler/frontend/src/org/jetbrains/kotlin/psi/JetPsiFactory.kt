@@ -349,8 +349,11 @@ public class JetPsiFactory(private val project: Project) {
         return createReturn(JetPsiUtil.getText(expression))
     }
 
-    public fun createIf(condition: JetExpression?, thenExpr: JetExpression?, elseExpr: JetExpression?): JetIfExpression {
-        return createExpression(JetPsiUnparsingUtils.toIf(condition, thenExpr, elseExpr)) as JetIfExpression
+    public fun createIf(condition: JetExpression, thenExpr: JetExpression, elseExpr: JetExpression?): JetIfExpression {
+        return (if (elseExpr != null)
+            createExpressionByPattern("if ($0) $1 else $2", condition, thenExpr, elseExpr) as JetIfExpression
+        else
+            createExpressionByPattern("if ($0) $1", condition, thenExpr)) as JetIfExpression
     }
 
     public fun createArgumentWithName(name: String?, argumentExpression: JetExpression): JetValueArgument {

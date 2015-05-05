@@ -24,20 +24,6 @@ public class JetPsiUnparsingUtils {
     }
 
     @NotNull
-    public static String toIf(@Nullable JetExpression condition, @Nullable JetExpression thenExpression, @Nullable JetExpression elseExpression) {
-        return toIf(
-                JetPsiUtil.getText(condition),
-                JetPsiUtil.getText(thenExpression),
-                elseExpression != null ? elseExpression.getText() : null
-        );
-    }
-
-    @NotNull
-    public static String toIf(@NotNull String condition, @NotNull String thenExpression, @Nullable String elseExpression) {
-        return "if " + parenthesizeTextIfNeeded(condition) + " " + thenExpression + (elseExpression != null ? " else " + elseExpression : "");
-    }
-
-    @NotNull
     public static String toBinaryExpression(@Nullable JetExpression left, @NotNull String op, @Nullable JetElement right) {
         return toBinaryExpression(JetPsiUtil.getText(left), op, JetPsiUtil.getText(right));
     }

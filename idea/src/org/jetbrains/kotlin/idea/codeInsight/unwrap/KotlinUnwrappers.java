@@ -68,7 +68,10 @@ public class KotlinUnwrappers {
 
         @Override
         public boolean isApplicableTo(PsiElement e) {
-            return e instanceof JetIfExpression && ((JetIfExpression) e).getElse() != null;
+            return e instanceof JetIfExpression
+                   && ((JetIfExpression) e).getCondition() != null
+                   && ((JetIfExpression) e).getThen() != null
+                   && ((JetIfExpression) e).getElse() != null;
         }
 
         @Override

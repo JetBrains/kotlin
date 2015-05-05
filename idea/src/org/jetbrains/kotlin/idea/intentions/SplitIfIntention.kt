@@ -16,98 +16,74 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetIfExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.*
 
-public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>("split.if", javaClass()) {
+public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Split if into 2 if's") {
     override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
-        if (element !is JetSimpleNameExpression && element !is JetIfExpression) return false
-
-        if (element is JetSimpleNameExpression) {
-            return isOperatorValid(element)
+        return when (element) {
+            is JetSimpleNameExpression -> isOperatorValid(element)
+            is JetIfExpression -> getFirstValidOperator(element) != null && element.getIfKeyword().getTextRange().containsOffset(caretOffset)
+            else -> false
         }
-
-        if (element is JetIfExpression) {
-            if (!isCursorOnIfKeyword(element, caretOffset)) return false
-            if (getFirstValidOperator(element) == null) return false
-        }
-        return true
     }
 
     override fun applyTo(element: JetExpression, editor: Editor) {
-        val currentElement = when (element) {
-            is JetIfExpression -> getFirstValidOperator(element)
+        val operator = when (element) {
+            is JetIfExpression -> getFirstValidOperator(element)!!
             else -> element as JetSimpleNameExpression
         }
 
-        val ifExpression = currentElement!!.getNonStrictParentOfType<JetIfExpression>()
-        val expression = currentElement.getParent() as JetBinaryExpression
-        val rightExpression = getRight(expression, ifExpression!!.getCondition())
-        val leftExpression = expression.getLeft()
+        val ifExpression = operator.getNonStrictParentOfType<JetIfExpression>()
+        val expression = operator.getParent() as JetBinaryExpression
+        val rightExpression = JetPsiUtil.safeDeparenthesize(getRight(expression, ifExpression!!.getCondition()!!))
+        val leftExpression = JetPsiUtil.safeDeparenthesize(expression.getLeft()!!)
+        val thenExpression = ifExpression.getThen()!!
         val elseExpression = ifExpression.getElse()
-        val thenExpression = ifExpression.getThen()
 
         val psiFactory = JetPsiFactory(element)
-        if (currentElement.getReferencedNameElementType() == JetTokens.ANDAND) {
-            ifExpression.replace(
-                    psiFactory.createIf(leftExpression, psiFactory.wrapInABlock(
-                            psiFactory.createIf(rightExpression, thenExpression, elseExpression)
-                    ),
-                elseExpression)
-            )
+        val innerIf = psiFactory.createIf(rightExpression, thenExpression, elseExpression)
+        val newIf = when (operator.getReferencedNameElementType()) {
+            JetTokens.ANDAND -> psiFactory.createIf(leftExpression, psiFactory.wrapInABlock(innerIf), elseExpression)
+
+            JetTokens.OROR -> psiFactory.createIf(leftExpression, thenExpression, innerIf)
+
+            else -> throw IllegalArgumentException()
         }
-        else {
-            ifExpression.replace(psiFactory.createIf(leftExpression, thenExpression,
-                psiFactory.createIf(rightExpression, thenExpression, elseExpression))
-            )
-        }
+        ifExpression.replace(newIf)
     }
 
     private fun getRight(element: JetBinaryExpression, condition: JetExpression): JetExpression {
         //gets the textOffset of the right side of the JetBinaryExpression in context to condition
         val startOffset = element.getRight()!!.getTextOffset() - condition.getTextOffset()
-        val rightString = condition.getText()!![startOffset, condition.getTextLength()].toString()
+        val rightString = condition.getText()!!.substring(startOffset, condition.getTextLength())
 
         return JetPsiFactory(element).createExpression(rightString)
     }
 
-    private fun isCursorOnIfKeyword(element: JetIfExpression, offset: Int): Boolean {
-        val ifKeyword = JetPsiUtil.findChildByType(element, JetTokens.IF_KEYWORD) ?: return false
-        return (offset >= ifKeyword.getTextOffset() && offset <= ifKeyword.getTextOffset() + ifKeyword.getTextLength())
-    }
-
     private fun getFirstValidOperator(element: JetIfExpression): JetSimpleNameExpression? {
-        if (element.getCondition() == null) return null
-        val condition = element.getCondition()
-        val childElements = PsiTreeUtil.findChildrenOfType(condition, javaClass<JetSimpleNameExpression>())
-        return childElements.firstOrNull { isOperatorValid(it) }
+        val condition = element.getCondition() ?: return null
+        return PsiTreeUtil.findChildrenOfType(condition, javaClass<JetSimpleNameExpression>())
+                .firstOrNull { isOperatorValid(it) }
     }
 
     private fun isOperatorValid(element: JetSimpleNameExpression): Boolean {
         val operator = element.getReferencedNameElementType()
         if (operator != JetTokens.ANDAND && operator != JetTokens.OROR) return false
 
-        if (element.getParent() !is JetBinaryExpression) return false
-        var expression = element.getParent() as JetBinaryExpression
+        var expression = element.getParent() as? JetBinaryExpression ?: return false
 
         if (expression.getRight() == null || expression.getLeft() == null) return false
 
-        while (expression.getParent() is JetBinaryExpression) {
-            expression = expression.getParent() as JetBinaryExpression
-            if (operator == JetTokens.ANDAND && expression.getOperationToken() != JetTokens.ANDAND) return false
-            if (operator == JetTokens.OROR && expression.getOperationToken() != JetTokens.OROR) return false
+        while (true) {
+            expression = expression.getParent() as? JetBinaryExpression ?: break
+            if (expression.getOperationToken() != operator) return false
         }
 
-        if (expression.getParent()?.getParent() !is JetIfExpression) return false
-        val ifExpression = expression.getParent()?.getParent() as JetIfExpression
+        val ifExpression = expression.getParent()?.getParent() as? JetIfExpression ?: return false
 
         if (ifExpression.getCondition() == null) return false
         if (!PsiTreeUtil.isAncestor(ifExpression.getCondition(), element, false)) return false

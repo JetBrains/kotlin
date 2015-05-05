@@ -80,9 +80,6 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
             bound = range.getStartOffset() + start
         }
         expression = codeStyleManager.reformatRange(expression, start, bound + 1, true) as JetExpression
-
-        // we need to adjust indent of all lines within expression
-        codeStyleManager.adjustLineIndent(expression.getContainingFile(), expression.getTextRange())
     }
 
     // do not reformat the whole expression in PostprocessReformattingAspect
@@ -96,6 +93,8 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
         }
         element.replace(arg)
     }
+
+    codeStyleManager.adjustLineIndent(expression.getContainingFile(), expression.getTextRange())
 
     return expression
 }

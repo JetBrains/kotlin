@@ -46,8 +46,7 @@ import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.name.FqName
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
-    val calleeExpression = getCalleeExpression()
-    if (calleeExpression == null) return null
+    val calleeExpression = getCalleeExpression() ?: return null
 
     return when (calleeExpression) {
         is JetSimpleNameExpression -> calleeExpression
