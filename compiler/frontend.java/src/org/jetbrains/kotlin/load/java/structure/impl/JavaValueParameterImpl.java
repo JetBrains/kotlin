@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
+import com.intellij.psi.PsiAnnotationOwner;
 import com.intellij.psi.PsiParameter;
 import com.intellij.psi.impl.compiled.ClsParameterImpl;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +32,12 @@ import java.util.Collection;
 public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter> implements JavaValueParameter, JavaAnnotationOwnerImpl {
     public JavaValueParameterImpl(@NotNull PsiParameter psiParameter) {
         super(psiParameter);
+    }
+
+    @Nullable
+    @Override
+    public PsiAnnotationOwner getAnnotationOwnerPsi() {
+        return getPsi().getModifierList();
     }
 
     @NotNull

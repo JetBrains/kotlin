@@ -20,6 +20,7 @@ import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.*;
+import org.jetbrains.kotlin.name.FqName;
 
 import java.util.*;
 

@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
-import com.intellij.psi.PsiAnnotation;
-import com.intellij.psi.PsiModifier;
-import com.intellij.psi.PsiModifierList;
-import com.intellij.psi.PsiModifierListOwner;
+import com.intellij.psi.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.Visibilities;
@@ -66,18 +63,18 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
 
     @NotNull
     public static Collection<JavaAnnotation> getAnnotations(@NotNull JavaAnnotationOwnerImpl owner) {
-        PsiModifierList modifierList = owner.getPsi().getModifierList();
-        if (modifierList != null) {
-            return annotations(modifierList.getAnnotations());
+        PsiAnnotationOwner annotationOwnerPsi = owner.getAnnotationOwnerPsi();
+        if (annotationOwnerPsi != null) {
+            return annotations(annotationOwnerPsi.getAnnotations());
         }
         return Collections.emptyList();
     }
 
     @Nullable
     public static JavaAnnotation findAnnotation(@NotNull JavaAnnotationOwnerImpl owner, @NotNull FqName fqName) {
-        PsiModifierList modifierList = owner.getPsi().getModifierList();
-        if (modifierList != null) {
-            PsiAnnotation psiAnnotation = modifierList.findAnnotation(fqName.asString());
+        PsiAnnotationOwner annotationOwnerPsi = owner.getAnnotationOwnerPsi();
+        if (annotationOwnerPsi != null) {
+            PsiAnnotation psiAnnotation = annotationOwnerPsi.findAnnotation(fqName.asString());
             return psiAnnotation == null ? null : new JavaAnnotationImpl(psiAnnotation);
         }
         return null;

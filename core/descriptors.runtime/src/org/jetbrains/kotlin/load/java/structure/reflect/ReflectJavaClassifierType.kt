@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.load.java.structure.reflect
 
-import org.jetbrains.kotlin.load.java.structure.JavaClassifier
-import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
-import org.jetbrains.kotlin.load.java.structure.JavaType
-import org.jetbrains.kotlin.load.java.structure.JavaTypeSubstitutor
+import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.FqName
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
@@ -47,5 +45,13 @@ public class ReflectJavaClassifierType(public override val type: Type) : Reflect
 
     override fun getTypeArguments(): List<JavaType> {
         return (type as? ParameterizedType)?.getActualTypeArguments()?.map { ReflectJavaType.create(it) } ?: listOf()
+    }
+
+    override fun getAnnotations(): Collection<JavaAnnotation> {
+        return emptyList() // TODO
+    }
+
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? {
+        return null // TODO
     }
 }

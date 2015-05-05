@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
-import com.intellij.psi.PsiModifierListOwner;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.PsiAnnotationOwner;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationOwner;
 
 public interface JavaAnnotationOwnerImpl extends JavaAnnotationOwner {
-    @NotNull
-    PsiModifierListOwner getPsi();
+    @Nullable
+    PsiAnnotationOwner getAnnotationOwnerPsi();
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.structure.impl;
 
+import com.intellij.psi.PsiAnnotationOwner;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMember;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +34,12 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
         implements JavaMember, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
     protected JavaMemberImpl(@NotNull Psi psiMember) {
         super(psiMember);
+    }
+
+    @Nullable
+    @Override
+    public PsiAnnotationOwner getAnnotationOwnerPsi() {
+        return getPsi().getModifierList();
     }
 
     @NotNull
