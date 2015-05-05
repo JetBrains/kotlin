@@ -93,6 +93,8 @@ public interface JetStubElementTypes {
 
     JetNameReferenceExpressionElementType REFERENCE_EXPRESSION = new JetNameReferenceExpressionElementType("REFERENCE_EXPRESSION");
     JetDotQualifiedExpressionElementType DOT_QUALIFIED_EXPRESSION = new JetDotQualifiedExpressionElementType("DOT_QUALIFIED_EXPRESSION");
+    JetEnumEntrySuperClassReferenceExpressionElementType
+            ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = new JetEnumEntrySuperClassReferenceExpressionElementType("ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION");
     JetPlaceHolderStubElementType<JetTypeArgumentList> TYPE_ARGUMENT_LIST =
             new JetPlaceHolderStubElementType<JetTypeArgumentList>("TYPE_ARGUMENT_LIST", JetTypeArgumentList.class);
 

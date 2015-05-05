@@ -138,9 +138,7 @@ JetFile: EnumEntryInitList.kt
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(COMMA)(',')
-          PsiErrorElement:Expecting constructor call (<class-name>(...))
-            <empty list>
+      PsiElement(COMMA)(',')
       PsiWhiteSpace('\n\n    ')
       CLASS
         PsiElement(class)('class')
@@ -175,10 +173,8 @@ JetFile: EnumEntryInitList.kt
             VALUE_ARGUMENT_LIST
               PsiElement(LPAR)('(')
               PsiElement(RPAR)(')')
-          PsiElement(COMMA)(',')
-          PsiErrorElement:Expecting constructor call (<class-name>(...))
-            <empty list>
-        PsiElement(SEMICOLON)(';')
+      PsiElement(COMMA)(',')
+      PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       CLASS
         PsiElement(class)('class')

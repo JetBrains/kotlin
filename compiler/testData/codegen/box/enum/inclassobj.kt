@@ -5,8 +5,8 @@ public class Context
         companion object
         {
                 public enum class OsType {
-                        LINUX;
-                        OTHER
+                        LINUX,
+                        OTHER;
                 }
 
                 public val operatingSystemType: OsType

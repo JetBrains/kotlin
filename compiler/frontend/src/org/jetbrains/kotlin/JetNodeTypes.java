@@ -120,6 +120,7 @@ public interface JetNodeTypes {
     JetNodeType ANNOTATED_EXPRESSION      = new JetNodeType("ANNOTATED_EXPRESSION", JetAnnotatedExpression.class);
 
     IElementType REFERENCE_EXPRESSION     = JetStubElementTypes.REFERENCE_EXPRESSION;
+    IElementType ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION = JetStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION;
     JetNodeType OPERATION_REFERENCE       = new JetNodeType("OPERATION_REFERENCE", JetOperationReferenceExpression.class);
     JetNodeType LABEL                     = new JetNodeType("LABEL", JetLabelReferenceExpression.class);
 

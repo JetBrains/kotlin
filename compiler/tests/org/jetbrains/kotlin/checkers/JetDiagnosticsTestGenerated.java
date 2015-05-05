@@ -4206,6 +4206,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumMissingName.kt")
+            public void testEnumMissingName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMissingName.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumModifier.kt")
             public void testEnumModifier() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumModifier.kt");

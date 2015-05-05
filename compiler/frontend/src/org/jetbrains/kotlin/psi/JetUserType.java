@@ -72,8 +72,9 @@ public class JetUserType extends JetElementImplStub<KotlinUserTypeStub> implemen
     }
 
     @Nullable @IfNotParsed
-    public JetNameReferenceExpression getReferenceExpression() {
-        return getStubOrPsiChild(JetStubElementTypes.REFERENCE_EXPRESSION);
+    public JetSimpleNameExpression getReferenceExpression() {
+        JetNameReferenceExpression nameRefExpr = getStubOrPsiChild(JetStubElementTypes.REFERENCE_EXPRESSION);
+        return nameRefExpr != null ? nameRefExpr : getStubOrPsiChild(JetStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
     }
 
     @Nullable
@@ -92,7 +93,7 @@ public class JetUserType extends JetElementImplStub<KotlinUserTypeStub> implemen
 
     @Nullable
     public String getReferencedName() {
-        JetNameReferenceExpression referenceExpression = getReferenceExpression();
+        JetSimpleNameExpression referenceExpression = getReferenceExpression();
         return referenceExpression == null ? null : referenceExpression.getReferencedName();
     }
 }

@@ -12,6 +12,11 @@ enumEntries
   : enumEntry*
   ;
 
+enumEntries
+  : (enumEntry ","? )?
+  ;
+
+
 enumEntry
-  : modifiers SimpleName (":" initializer{","})? classBody?
+  : modifiers SimpleName ((":" initializer) | ("(" arguments ")"))? classBody?
   ;

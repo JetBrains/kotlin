@@ -112,7 +112,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testEnumClass() throws Exception {
-        loadText("enum class Direction { NORTH; SOUTH; EAST; WEST }");
+        loadText("enum class Direction { NORTH, SOUTH, EAST, WEST; }");
         Class<?> direction = generateClass("Direction");
         Field north = direction.getField("NORTH");
         assertEquals(direction, north.getType());
@@ -120,7 +120,7 @@ public class ClassGenTest extends CodegenTestCase {
     }
 
     public void testEnumConstantConstructors() throws Exception {
-        loadText("enum class Color(val rgb: Int) { RED: Color(0xFF0000); GREEN: Color(0x00FF00); }");
+        loadText("enum class Color(val rgb: Int) { RED: Color(0xFF0000), GREEN: Color(0x00FF00); }");
         Class<?> colorClass = generateClass("Color");
         Field redField = colorClass.getField("RED");
         Object redValue = redField.get(null);

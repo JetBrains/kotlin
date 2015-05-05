@@ -740,7 +740,7 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * enumClassBody
-     *   : "{" enumEntries members "}"
+     *   : "{" enumEntries ";"? members "}"
      *   ;
      */
     private void parseEnumClassBody() {
@@ -752,6 +752,8 @@ public class JetParsing extends AbstractJetParsing {
         advance(); // LBRACE
 
         parseEnumEntries();
+        // TODO: syntax without SEMICOLON is deprecated, KT-7605
+        consumeIf(SEMICOLON);
         parseMembers();
 
         expect(RBRACE, "Expecting '}' to close enum class body");
@@ -761,52 +763,73 @@ public class JetParsing extends AbstractJetParsing {
 
     /**
      * enumEntries
-     *   : enumEntry*
+     *   : (enumEntry ","? )?
      *   ;
      */
     private void parseEnumEntries() {
         while (!eof() && !at(RBRACE)) {
-            PsiBuilder.Marker entry = mark();
-
-            ModifierDetector detector = new ModifierDetector();
-            parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
-
-            // ?: how can we find ourselves at SOFT_KEYWORDS_AT_MEMBER_START if we are at identifier?
-            // Or, is it just for performance?
-            if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
-                parseEnumEntry();
-                closeDeclarationWithCommentBinders(entry, ENUM_ENTRY, true);
-            }
-            else {
-                entry.rollbackTo();
+            if (!parseEnumEntry()) {
                 break;
             }
+            // TODO: syntax without COMMA is deprecated (only last entry is an exception), KT-7605
+            consumeIf(COMMA);
         }
     }
 
     /*
      * enumEntry
-     *   : modifiers SimpleName (":" initializer{","})? classBody?
+     *   : modifiers SimpleName ((":" initializer) | ("(" arguments ")"))? classBody?
      *   ;
      */
-    private void parseEnumEntry() {
-        assert _at(IDENTIFIER);
+    private boolean parseEnumEntry() {
+        PsiBuilder.Marker entry = mark();
 
-        PsiBuilder.Marker nameAsDeclaration = mark();
-        advance(); // IDENTIFIER
-        nameAsDeclaration.done(OBJECT_DECLARATION_NAME);
+        ModifierDetector detector = new ModifierDetector();
+        parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
-        if (at(COLON)) {
-            advance(); // COLON
+        if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
+            PsiBuilder.Marker nameAsDeclaration = mark();
+            advance(); // IDENTIFIER
+            nameAsDeclaration.done(OBJECT_DECLARATION_NAME);
 
-            parseInitializerList();
+            if (at(LPAR)) {
+                // Arguments should be parsed here
+                // Also, "fake" constructor call tree is created,
+                // with empty type name inside
+                PsiBuilder.Marker initializerList = mark();
+                PsiBuilder.Marker delegatorSuperCall = mark();
+
+                PsiBuilder.Marker callee = mark();
+                PsiBuilder.Marker typeReference = mark();
+                PsiBuilder.Marker type = mark();
+                PsiBuilder.Marker referenceExpr = mark();
+                referenceExpr.done(ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION);
+                type.done(USER_TYPE);
+                typeReference.done(TYPE_REFERENCE);
+                callee.done(CONSTRUCTOR_CALLEE);
+
+                myExpressionParsing.parseValueArgumentList();
+                delegatorSuperCall.done(DELEGATOR_SUPER_CALL);
+                initializerList.done(INITIALIZER_LIST);
+            }
+            // TODO: syntax with COLON is deprecated, should be changed to syntax with LPAR above, KT-7605
+            else if (at(COLON)) {
+                advance(); // COLON
+
+                parseInitializerList();
+            }
+            if (at(LBRACE)) {
+                parseClassBody();
+            }
+
+            // Probably some helper function
+            closeDeclarationWithCommentBinders(entry, ENUM_ENTRY, true);
+            return true;
         }
-
-        if (at(LBRACE)) {
-            parseClassBody();
+        else {
+            entry.rollbackTo();
+            return false;
         }
-
-        consumeIf(SEMICOLON);
     }
 
     /*
@@ -988,16 +1011,15 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * initializer{","}
+     * initializerList
+     *      : initializer
+     *
      */
     private void parseInitializerList() {
+        // In practice, only one initializer is always in use
         PsiBuilder.Marker list = mark();
-        while (true) {
-            if (at(COMMA)) errorAndAdvance("Expecting a this or super constructor call");
-            parseInitializer();
-            if (!at(COMMA)) break;
-            advance(); // COMMA
-        }
+        if (at(COMMA)) errorAndAdvance("Expecting a this or super constructor call");
+        parseInitializer();
         list.done(INITIALIZER_LIST);
     }
 
