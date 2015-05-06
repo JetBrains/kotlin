@@ -399,6 +399,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             if (multiParameter != null && loopRange != null) {
                 JetType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
                 TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
+                components.annotationResolver.resolveAnnotationsWithArguments(loopScope, multiParameter.getModifierList(), context.trace);
                 components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(
                         loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context
                 );
