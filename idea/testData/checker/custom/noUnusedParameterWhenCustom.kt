@@ -4,7 +4,7 @@ fun unused(<warning descr="[UNUSED_PARAMETER] Parameter 'p' is never used">p</wa
 
 }
 
-[MyTestAnnotation]
+@MyTestAnnotation
 fun unusedButAnnotated(p: Int) {
 
 }

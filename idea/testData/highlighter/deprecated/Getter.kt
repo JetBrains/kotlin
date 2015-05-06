@@ -9,13 +9,13 @@ fun test() {
 
 class MyClass() {
     public val test1: String = ""
-      [deprecated("Use A instead")] get
+      @deprecated("Use A instead") get
 
     public var test2: String = ""
-      [deprecated("Use A instead")] get
+      @deprecated("Use A instead") get
 
     deprecated("Use A instead") public val test3: String = ""
-      [deprecated("Use A instead")] get
+      @deprecated("Use A instead") get
 }
 
 // NO_CHECK_INFOS

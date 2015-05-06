@@ -11,7 +11,7 @@ fun foo() {
     val a4 = 1
     val a5 = 1.0
 
-    [Ann(
+    @Ann(
             <!ANNOTATION_PARAMETER_MUST_BE_CONST!>a1<!>,
             <!ANNOTATION_PARAMETER_MUST_BE_CONST!>a2<!>,
             <!ANNOTATION_PARAMETER_MUST_BE_CONST!>a3<!>,
@@ -24,5 +24,5 @@ fun foo() {
             <!ANNOTATION_PARAMETER_MUST_BE_CONST!>"a" + a2<!>,
             "a" + topLevel,
             <!ANNOTATION_PARAMETER_MUST_BE_CONST!>"a" + a4<!>
-    )] val b = 1
+    ) val b = 1
 }

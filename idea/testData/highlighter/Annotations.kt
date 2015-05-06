@@ -7,7 +7,7 @@ fun <info descr="null">bar</info>(<info descr="null">block</info>: () -> <info d
 
 <info descr="null" textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">@private</info>
 fun <info descr="null">foo</info>() {
-    1 + [<info descr="null" textAttributesKey="KOTLIN_ANNOTATION">Ann</info>] 2
+    1 + <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> 2
 
     <info descr="null" textAttributesKey="KOTLIN_ANNOTATION">@Ann</info> 3 + 4
 

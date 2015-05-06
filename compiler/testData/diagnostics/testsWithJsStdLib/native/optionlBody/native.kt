@@ -59,7 +59,7 @@ object O {
 }
 
 fun test() {
-    [native]
+    @native
     class Local {
         val baz: Int
         val boo: Int = noImpl

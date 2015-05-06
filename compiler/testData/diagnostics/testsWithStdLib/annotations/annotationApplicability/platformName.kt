@@ -2,66 +2,66 @@
 
 import kotlin.platform.*
 
-[platformName("a")]
+@platformName("a")
 fun foo() {}
 
-[platformName("b")]
+@platformName("b")
 fun Any.foo() {}
 
-[<!INAPPLICABLE_ANNOTATION!>platformName("c")<!>]
+<!INAPPLICABLE_ANNOTATION!>@platformName("c")<!>
 val px = 1
 
-[<!INAPPLICABLE_ANNOTATION!>platformName("d")<!>]
+<!INAPPLICABLE_ANNOTATION!>@platformName("d")<!>
 val Any.px : Int
     get() = 1
 
 val valx: Int
-    [platformName("e")]
+    @platformName("e")
     get() = 1
 
 var varx: Int
-    [platformName("f")]
+    @platformName("f")
     get() = 1
-    [platformName("g")]
+    @platformName("g")
     set(v) {}
 
 var vardef: Int = 1
-    [platformName("h")]
+    @platformName("h")
     get
-    [platformName("i")]
+    @platformName("i")
     set
 
-[<!INAPPLICABLE_ANNOTATION!>platformName("C")<!>]
+<!INAPPLICABLE_ANNOTATION!>@platformName("C")<!>
 class C [<!INAPPLICABLE_ANNOTATION!>platformName("primary")<!>]() {
     <!INAPPLICABLE_ANNOTATION!>platformName("ctr")<!> constructor(x: Int): this() {}
-    [<!INAPPLICABLE_ANNOTATION!>platformName("a")<!>]
+    <!INAPPLICABLE_ANNOTATION!>@platformName("a")<!>
     fun foo() {}
 
-    [<!INAPPLICABLE_ANNOTATION!>platformName("b")<!>]
+    <!INAPPLICABLE_ANNOTATION!>@platformName("b")<!>
     fun Any.foo() {}
 
-    [<!INAPPLICABLE_ANNOTATION!>platformName("c")<!>]
+    <!INAPPLICABLE_ANNOTATION!>@platformName("c")<!>
     val px = 1
 
-    [<!INAPPLICABLE_ANNOTATION!>platformName("d")<!>]
+    <!INAPPLICABLE_ANNOTATION!>@platformName("d")<!>
     val Any.px : Int
         get() = 1
 
     val valx: Int
-        [<!INAPPLICABLE_ANNOTATION!>platformName("e")<!>]
+        <!INAPPLICABLE_ANNOTATION!>@platformName("e")<!>
         get() = 1
 
     var varx: Int
-        [<!INAPPLICABLE_ANNOTATION!>platformName("f")<!>]
+        <!INAPPLICABLE_ANNOTATION!>@platformName("f")<!>
         get() = 1
-        [<!INAPPLICABLE_ANNOTATION!>platformName("g")<!>]
+        <!INAPPLICABLE_ANNOTATION!>@platformName("g")<!>
         set(v) {}
 }
 
 fun foo1() {
-    [<!INAPPLICABLE_ANNOTATION!>platformName("a")<!>]
+    <!INAPPLICABLE_ANNOTATION!>@platformName("a")<!>
     fun foo() {}
 
-    [<!INAPPLICABLE_ANNOTATION!>platformName("a")<!>]
+    <!INAPPLICABLE_ANNOTATION!>@platformName("a")<!>
     val x = 1
 }

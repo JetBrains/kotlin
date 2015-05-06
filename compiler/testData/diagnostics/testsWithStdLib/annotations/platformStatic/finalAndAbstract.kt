@@ -12,24 +12,24 @@ abstract class A {
 
 object B: A() {
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] override fun a()<!> {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@platformStatic override fun a()<!> {}
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] override fun b()<!> {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@platformStatic override fun b()<!> {}
 
-    <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] final override fun c()<!> {}
+    <!OVERRIDE_CANNOT_BE_STATIC!>@platformStatic final override fun c()<!> {}
 
-    [platformStatic] open fun d() {}
+    @platformStatic open fun d() {}
 }
 
 class C {
 
     companion object: A() {
-        [platformStatic] override fun a() {}
+        @platformStatic override fun a() {}
 
-        [platformStatic] override fun b() {}
+        @platformStatic override fun b() {}
 
-        [platformStatic] final override fun c() {}
+        @platformStatic final override fun c() {}
 
-        [platformStatic] open fun d() {}
+        @platformStatic open fun d() {}
     }
 }

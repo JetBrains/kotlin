@@ -1,3 +1,3 @@
-fun foo() = [ann] 1
+fun foo() = @ann 1
 
 annotation class ann

@@ -1,11 +1,11 @@
 fun test() {
-    [ann]
+    @ann
     while (2 < 1) {}
 
-    [ann]
+    @ann
     do {} while (2 < 1)
 
-    [ann]
+    @ann
     for (i in 1..2) {}
 }
 

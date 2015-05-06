@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo() {
-    [native]
+    @native
     class A {
         nativeInvoke
         fun foo() {}

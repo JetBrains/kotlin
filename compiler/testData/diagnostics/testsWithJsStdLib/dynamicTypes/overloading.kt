@@ -19,5 +19,5 @@ fun test(d: dynamic) {
     // Checking specificity of `dynamic` vs `Nothing`
     nothing(d).checkType { _<String>() }
     nothing("").checkType { _<Int>() }
-    [suppress("UNREACHABLE_CODE")] nothing(null!!).checkType { _<String>() }
+    @suppress("UNREACHABLE_CODE") nothing(null!!).checkType { _<String>() }
 }

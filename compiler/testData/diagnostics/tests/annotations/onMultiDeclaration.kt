@@ -1,5 +1,5 @@
 fun test(): Any? {
-    [ann] val (a, b) = P(1, 1)
+    @ann val (a, b) = P(1, 1)
     return a + b
 }
 

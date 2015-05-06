@@ -19,11 +19,11 @@ fun test() {
 
 class MyClass() {
     public var test1: Int = 0
-      [deprecated("Use A instead")] set
+      @deprecated("Use A instead") set
 }
 
 public var test2: Int = 0
-      [deprecated("Use A instead")] set
+      @deprecated("Use A instead") set
 
 // NO_CHECK_INFOS
 // NO_CHECK_WEAK_WARNINGS

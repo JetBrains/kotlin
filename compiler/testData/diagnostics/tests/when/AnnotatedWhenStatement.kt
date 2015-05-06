@@ -1,5 +1,5 @@
 fun foo(a: Int) {
-    [ann]
+    @ann
     when (a) {
         1 -> {}
     }

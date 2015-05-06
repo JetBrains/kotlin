@@ -1,4 +1,4 @@
 fun foo() {
-    [suppress("warnings")]
+    @suppress("warnings")
     ("": String??)
 }

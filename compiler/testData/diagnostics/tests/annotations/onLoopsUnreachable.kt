@@ -1,11 +1,11 @@
 fun test() {
-    [ann]
+    @ann
     while (2 > 1) {}
 
-    [ann]
+    @ann
     <!UNREACHABLE_CODE!>do {} while (2 > 1)<!>
 
-    [ann]
+    @ann
     <!UNREACHABLE_CODE!>for (i in 1..2) {}<!>
 }
 

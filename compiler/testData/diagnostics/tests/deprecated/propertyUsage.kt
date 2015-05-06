@@ -19,19 +19,19 @@ class PropertyHolder {
     var varDelegate <!DEPRECATED_SYMBOL_WITH_MESSAGE, DEPRECATED_SYMBOL_WITH_MESSAGE!>by<!> Delegate()
 
     public val test1: String = ""
-        [deprecated("val-getter")] get
+        @deprecated("val-getter") get
 
     public var test2: String = ""
-        [deprecated("var-getter")] get
-        [deprecated("var-setter")] set
+        @deprecated("var-getter") get
+        @deprecated("var-setter") set
 
     public var test3: String = ""
-        [deprecated("var-getter")] get
+        @deprecated("var-getter") get
         set
 
     public var test4: String = ""
         get
-        [deprecated("var-setter")] set
+        @deprecated("var-setter") set
 }
 
 fun PropertyHolder.extFunction() {

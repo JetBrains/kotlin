@@ -1,9 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo() {
-    [nativeInvoke]
+    @nativeInvoke
     fun Int.ext() = 1
 
-    [nativeInvoke]
+    @nativeInvoke
     fun Int.invoke(a: String, b: Int) = "OK"
 }

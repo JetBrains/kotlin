@@ -9,38 +9,38 @@ open class B {
 class A {
     companion object : B() {
         var p1:Int = 1
-            [platformStatic] set(p: Int) {
+            @platformStatic set(p: Int) {
                 p1 = 1
             }
 
-        [platformStatic] val z = 1;
+        @platformStatic val z = 1;
 
-        [platformStatic] override val base1: Int = 0
+        @platformStatic override val base1: Int = 0
 
         override val base2: Int = 0
-            [platformStatic] get
+            @platformStatic get
     }
 
     object A : B() {
         var p:Int = 1
-            [platformStatic] set(p1: Int) {
+            @platformStatic set(p1: Int) {
                 p = 1
             }
 
-        [platformStatic] val z = 1;
+        @platformStatic val z = 1;
 
-        <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] override val base1: Int<!> = 0
+        <!OVERRIDE_CANNOT_BE_STATIC!>@platformStatic override val base1: Int<!> = 0
 
         platformStatic open fun f() {}
 
         override val base2: Int = 0
-            <!OVERRIDE_CANNOT_BE_STATIC!>[platformStatic] get<!>
+            <!OVERRIDE_CANNOT_BE_STATIC!>@platformStatic get<!>
     }
 
     var p:Int = 1
-        <!PLATFORM_STATIC_NOT_IN_OBJECT!>[platformStatic] set(p1: Int)<!> {
+        <!PLATFORM_STATIC_NOT_IN_OBJECT!>@platformStatic set(p1: Int)<!> {
             p = 1
         }
 
-    <!PLATFORM_STATIC_NOT_IN_OBJECT!>[platformStatic] val z2<!> = 1;
+    <!PLATFORM_STATIC_NOT_IN_OBJECT!>@platformStatic val z2<!> = 1;
 }

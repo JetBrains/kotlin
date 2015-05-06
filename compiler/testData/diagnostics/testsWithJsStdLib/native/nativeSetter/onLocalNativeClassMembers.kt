@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo() {
-    [native]
+    @native
     class A {
         nativeSetter
         fun set(a: String, v: Any?): Any? = null
@@ -19,13 +19,13 @@ fun foo() {
         fun set5(a: Double, v: String): CharSequence = "OK"
     }
 
-    [native]
+    @native
     class B {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
         val foo<!> = 0
     }
 
-    [native]
+    @native
     class C {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeSetter
         fun Int.set(a: String, v: Int)<!> {}
@@ -51,10 +51,10 @@ fun foo() {
         nativeSetter
         fun set(<!NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER!>a: A<!>, v: Any?) {}
 
-        [nativeSetter]
+        @nativeSetter
         fun foo(<!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>a: Number = 0.0<!>, v: String) = "OK"
 
-        [nativeSetter]
+        @nativeSetter
         fun boo(a: Number, <!NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS!>v: String = "str"<!>) = "OK"
     }
 }

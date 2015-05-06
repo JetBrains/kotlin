@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// !DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATED_ANNOTATION_SYNTAX
 annotation class Ann
 
 fun <T> bar(block: (T) -> Int) {}

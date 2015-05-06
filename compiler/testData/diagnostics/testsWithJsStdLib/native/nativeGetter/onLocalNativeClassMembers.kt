@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo() {
-    [native]
+    @native
     class A {
         nativeGetter
         fun get(a: String): Any? = null
@@ -13,13 +13,13 @@ fun foo() {
         fun foo(a: Double): String? = null
     }
 
-    [native]
+    @native
     class B {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
         val foo<!> = 0
     }
 
-    [native]
+    @native
     class C {
         <!NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN!>nativeGetter
         fun Int.get(a: String): Int?<!> = 1

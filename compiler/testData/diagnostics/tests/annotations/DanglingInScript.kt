@@ -2,4 +2,4 @@
 
 annotation class Ann
 
-[Ann]<!SYNTAX!><!>
+@Ann<!SYNTAX!><!>

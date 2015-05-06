@@ -11,7 +11,7 @@ val extensionWithName = fun A.name() {}
 val withoutName = fun () {}
 val extensionWithoutName = fun A.() {}
 
-fun withAnnotation() = [ann(ok)] fun () {}
+fun withAnnotation() = @ann(ok) fun () {}
 val withReturn = fun (): Int { return 5}
 val withExpression = fun() = 5
 val funfun = fun() = fun() = 5
