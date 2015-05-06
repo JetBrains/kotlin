@@ -41,6 +41,8 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.name.FqName
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
@@ -542,3 +544,29 @@ public fun PsiFile.getFqNameByDirectory(): FqName {
 }
 
 public fun JetFile.packageMatchesDirectory(): Boolean = getPackageFqName() == getFqNameByDirectory()
+
+public fun JetAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<JetAnnotationEntry> =
+    when (this) {
+        is StubBasedPsiElementBase<*> -> getStub()?.collectAnnotationEntriesFromStubElement() ?: collectAnnotationEntriesFromPsi()
+        else -> collectAnnotationEntriesFromPsi()
+    }
+
+private fun StubElement<*>.collectAnnotationEntriesFromStubElement() =
+    getChildrenStubs().flatMap {
+        child ->
+        when (child.getStubType()) {
+            JetNodeTypes.ANNOTATION_ENTRY -> listOf(child.getPsi() as JetAnnotationEntry)
+            JetNodeTypes.ANNOTATION -> (child.getPsi() as JetAnnotation).getEntries()
+            else -> emptyList<JetAnnotationEntry>()
+        }
+    }
+
+private fun JetAnnotationsContainer.collectAnnotationEntriesFromPsi() =
+    getChildren().flatMap {
+        child ->
+        when (child) {
+            is JetAnnotationEntry -> listOf(child)
+            is JetAnnotation -> child.getEntries()
+            else -> emptyList<JetAnnotationEntry>()
+        }
+    }

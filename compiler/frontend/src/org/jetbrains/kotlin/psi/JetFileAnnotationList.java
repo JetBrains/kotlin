@@ -17,15 +17,14 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import kotlin.Function1;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
 import java.util.List;
 
-public class JetFileAnnotationList extends JetElementImplStub<KotlinPlaceHolderStub<JetFileAnnotationList>> {
+public class JetFileAnnotationList extends JetElementImplStub<KotlinPlaceHolderStub<JetFileAnnotationList>> implements JetAnnotationsContainer {
 
     public JetFileAnnotationList(@NotNull ASTNode node) {
         super(node);
@@ -47,11 +46,6 @@ public class JetFileAnnotationList extends JetElementImplStub<KotlinPlaceHolderS
 
     @NotNull
     public List<JetAnnotationEntry> getAnnotationEntries() {
-        return KotlinPackage.flatMap(getAnnotations(), new Function1<JetAnnotation, List<JetAnnotationEntry>>() {
-            @Override
-            public List<JetAnnotationEntry> invoke(JetAnnotation annotation) {
-                return annotation.getEntries();
-            }
-        });
+        return PsiUtilPackage.collectAnnotationEntriesFromStubOrPsi(this);
     }
 }

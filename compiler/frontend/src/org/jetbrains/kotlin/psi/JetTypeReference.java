@@ -20,6 +20,7 @@ import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -33,7 +34,7 @@ import static org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes.ANNOTA
  * Type reference element.
  * Underlying token is {@link org.jetbrains.kotlin.JetNodeTypes#TYPE_REFERENCE}
  */
-public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<JetTypeReference>> {
+public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<JetTypeReference>> implements JetAnnotationsContainer {
 
     public JetTypeReference(@NotNull ASTNode node) {
         super(node);
@@ -48,23 +49,13 @@ public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<J
         return visitor.visitTypeReference(this, data);
     }
 
-    @NotNull
-    public List<JetAnnotation> getAttributeAnnotations() {
-        return getStubOrPsiChildrenAsList(ANNOTATION);
-    }
-
     @Nullable
     public JetTypeElement getTypeElement() {
         return JetStubbedPsiUtil.getStubOrPsiChild(this, JetStubElementTypes.TYPE_ELEMENT_TYPES, JetTypeElement.ARRAY_FACTORY);
     }
 
     public List<JetAnnotationEntry> getAnnotations() {
-        List<JetAnnotationEntry> answer = null;
-        for (JetAnnotation annotation : getAttributeAnnotations()) {
-            if (answer == null) answer = new ArrayList<JetAnnotationEntry>();
-            answer.addAll(annotation.getEntries());
-        }
-        return answer != null ? answer : Collections.<JetAnnotationEntry>emptyList();
+        return PsiUtilPackage.collectAnnotationEntriesFromStubOrPsi(this);
     }
 
     public boolean hasParentheses() {

@@ -1,0 +1,19 @@
+package
+
+Ann(x = IntegerValueType(1): IntegerValueType(1)) Ann(x = IntegerValueType(2): IntegerValueType(2)) Ann(x = IntegerValueType(3): IntegerValueType(3)) private final class A {
+    Ann() public constructor A()
+    Ann() internal final val x: kotlin.Int = 1
+    internal final fun bar(/*0*/ x: [Ann(x = IntegerValueType(1): IntegerValueType(1)) Ann(x = IntegerValueType(2): IntegerValueType(2)) Ann(x = IntegerValueType(3): IntegerValueType(3))] kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    Ann(x = IntegerValueType(5): IntegerValueType(5)) internal final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ x: kotlin.Int = ...)
+    internal final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
