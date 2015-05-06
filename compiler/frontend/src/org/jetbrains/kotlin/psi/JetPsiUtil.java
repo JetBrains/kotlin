@@ -814,8 +814,6 @@ public class JetPsiUtil {
             declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
         }
         else if (declaration instanceof JetParameter) {
-            if (((JetParameter) declaration).getValOrVarNode() != null) return null;
-
             PsiElement parent = declaration.getParent();
             if (skipParameters && parent != null && parent.getParent() instanceof JetNamedFunction) {
                 declaration = (JetNamedFunction) parent.getParent();
