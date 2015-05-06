@@ -111,16 +111,18 @@ public class ReferenceVariantsHelper(
             return descriptors
         }
         else {
+            val dataFlowInfo = context.getDataFlowInfo(expression)
+
             val descriptorsSet = HashSet<DeclarationDescriptor>()
 
             // process instance members that can be called via implicit receiver's instances
             val receivers = resolutionScope.getImplicitReceiversWithInstance()
-            for (receiver in receivers) {
-                descriptorsSet.addMembersFromReceiver(receiver.getType(), CallType.NORMAL, kindFilter, nameFilter)
-            }
-
-            val dataFlowInfo = context.getDataFlowInfo(expression)
             val receiverValues = receivers.map { it.getValue() }
+            for (receiverValue in receiverValues) {
+                for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)) {
+                    descriptorsSet.addMembersFromReceiver(variant, CallType.NORMAL, kindFilter, nameFilter)
+                }
+            }
 
             // process extensions and non-instance members
             for (descriptor in resolutionScope.getDescriptorsFiltered(kindFilter, nameFilter)) {

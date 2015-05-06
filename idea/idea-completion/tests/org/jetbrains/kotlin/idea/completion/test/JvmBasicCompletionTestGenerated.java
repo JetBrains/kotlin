@@ -931,6 +931,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("SmartCastThis.kt")
+        public void testSmartCastThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/SmartCastThis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("StandardJetArrayFirst.kt")
         public void testStandardJetArrayFirst() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/StandardJetArrayFirst.kt");
