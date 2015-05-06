@@ -41,6 +41,12 @@ public class ReifiedTestGenerated extends AbstractReifiedTest {
         doTest(fileName);
     }
 
+    @TestMetadata("extensionFun.kt")
+    public void testExtensionFun() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/extensionFun.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("extensionLambda.kt")
     public void testExtensionLambda() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/extensionLambda.kt");

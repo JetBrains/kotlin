@@ -45,10 +45,14 @@ public class CallArgumentTranslator private (
 ) : AbstractTranslator(context) {
 
     public data class ArgumentsInfo(
-            public val translateArguments: List<JsExpression>,
+            public val valueArguments: List<JsExpression>,
             public val hasSpreadOperator: Boolean,
-            public val cachedReceiver: TemporaryConstVariable?
-    )
+            public val cachedReceiver: TemporaryConstVariable?,
+            public val reifiedArguments: List<JsExpression> = listOf()
+    ) {
+        public val translateArguments: List<JsExpression>
+            get() = reifiedArguments + valueArguments
+    }
 
     private enum class ArgumentsKind {
         HAS_EMPTY_EXPRESSION_ARGUMENT
@@ -349,5 +353,5 @@ private fun Map<TypeParameterDescriptor, JetType>.addReifiedTypeArgsTo(
         reifiedTypeArguments.add(isCheckCallable)
     }
 
-    return info.copy(translateArguments = reifiedTypeArguments + info.translateArguments)
+    return info.copy(reifiedArguments = reifiedTypeArguments)
 }
