@@ -374,44 +374,6 @@ public class JetPsiFactory(private val project: Project) {
         return createClass("class A { constructor()$colonOrEmpty$text {}").getSecondaryConstructors().first().getDelegationCall()
     }
 
-    public inner class IfChainBuilder() {
-        private val sb = StringBuilder()
-        private var first = true
-        private var frozen = false
-
-        public fun ifBranch(conditionText: String, expressionText: String): IfChainBuilder {
-            if (first) {
-                first = false
-            }
-            else {
-                sb.append("else ")
-            }
-
-            sb.append("if (").append(conditionText).append(") ").append(expressionText).append("\n")
-            return this
-        }
-
-        public fun ifBranch(condition: JetExpression, expression: JetExpression): IfChainBuilder {
-            return ifBranch(condition.getText()!!, expression.getText()!!)
-        }
-
-        public fun elseBranch(expressionText: String): IfChainBuilder {
-            sb.append("else ").append(expressionText)
-            return this
-        }
-
-        public fun elseBranch(expression: JetExpression?): IfChainBuilder {
-            return elseBranch(JetPsiUtil.getText(expression))
-        }
-
-        public fun toExpression(): JetIfExpression {
-            if (!frozen) {
-                frozen = true
-            }
-            return createExpression(sb.toString()) as JetIfExpression
-        }
-    }
-
     public class CallableBuilder(private val target: Target) {
         public enum class Target {
             FUNCTION
