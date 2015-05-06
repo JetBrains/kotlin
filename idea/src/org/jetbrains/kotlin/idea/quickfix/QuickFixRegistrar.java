@@ -321,5 +321,8 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION, ReplaceJavaClassAsAnnotationParameterFix.Companion);
         QuickFixes.factories.put(JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION, ReplaceJavaClassAsAnnotationParameterFix.Companion.createWholeProjectFixFactory());
+
+        QuickFixes.factories.put(DEPRECATED_ANNOTATION_SYNTAX, DeprecatedAnnotationSyntaxFix.Companion);
+        QuickFixes.factories.put(DEPRECATED_ANNOTATION_SYNTAX, DeprecatedAnnotationSyntaxFix.Companion.createWholeProjectFixFactory());
     }
 }
