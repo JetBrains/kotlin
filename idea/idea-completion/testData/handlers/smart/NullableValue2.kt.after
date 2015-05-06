@@ -7,4 +7,4 @@ fun bar() {
 }
 
 // ELEMENT_TEXT: "?: getString"
-// TAIL_TEXT: "(i: Int)"
+// TAIL_TEXT: "(i: Int) (<root>)"

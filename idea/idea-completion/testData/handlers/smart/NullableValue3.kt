@@ -9,4 +9,4 @@ fun foo(){
 }
 
 // ELEMENT_TEXT: "!! K.bar"
-// TAIL_TEXT: "()"
+// TAIL_TEXT: "() (<root>)"

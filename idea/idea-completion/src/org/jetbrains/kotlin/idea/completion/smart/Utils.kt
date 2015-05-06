@@ -17,34 +17,28 @@
 package org.jetbrains.kotlin.idea.completion.smart
 
 import com.intellij.codeInsight.completion.InsertHandler
-import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import java.util.HashSet
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.kotlin.idea.completion.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
+import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
 import java.util.HashMap
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.makeNotNullable
-import org.jetbrains.kotlin.idea.util.nullability
-import org.jetbrains.kotlin.idea.util.TypeNullability
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import java.util.HashSet
 
 class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
@@ -95,6 +89,32 @@ fun LookupElement.addTail(tail: Tail?): LookupElement {
     }
 }
 
+fun LookupElement.withOptions(options: ItemOptions): LookupElement {
+    var lookupElement = this
+    if (options.starPrefix) {
+        lookupElement = object : LookupElementDecorator<LookupElement>(this) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+                presentation.setItemText("*" + presentation.getItemText())
+            }
+
+            override fun handleInsert(context: InsertionContext) {
+                getDelegate().handleInsert(context)
+
+                PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
+
+                val offset = context.getStartOffset()
+                val token = context.getFile().findElementAt(offset)!!
+                val argument = token.getStrictParentOfType<JetValueArgument>()
+                if (argument != null) {
+                    context.getDocument().insertString(argument.getTextRange().getStartOffset(), "*")
+                }
+            }
+        }
+    }
+    return lookupElement
+}
+
 fun LookupElement.addTailAndNameSimilarity(matchedExpectedInfos: Collection<ExpectedInfo>): LookupElement {
     val lookupElement = addTail(mergeTails(matchedExpectedInfos.map { it.tail }))
     val similarity = calcNameSimilarity(lookupElement.getLookupString(), matchedExpectedInfos)
@@ -113,14 +133,14 @@ class ExpectedInfoClassification private(val substitutor: TypeSubstitutor?, val 
 }
 
 fun Collection<FuzzyType>.classifyExpectedInfo(expectedInfo: ExpectedInfo): ExpectedInfoClassification {
-    val stream = stream()
-    val substitutor = stream.map { it.checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
+    val sequence = asSequence()
+    val substitutor = sequence.map { it.checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
     if (substitutor != null) {
         return ExpectedInfoClassification.matches(substitutor)
     }
 
-    if (stream.any { it.nullability() == TypeNullability.NULLABLE }) {
-        val substitutor2 = stream.map { it.makeNotNullable().checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
+    if (sequence.any { it.nullability() == TypeNullability.NULLABLE }) {
+        val substitutor2 = sequence.map { it.makeNotNullable().checkIsSubtypeOf(expectedInfo.type) }.firstOrNull()
         if (substitutor2 != null) {
             return ExpectedInfoClassification.matchesIfNotNullable(substitutor2)
         }
@@ -137,36 +157,37 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         infoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
         lookupElementFactory: (TDescriptor) -> LookupElement?
 ) {
-    class DescriptorWrapper(val descriptor: TDescriptor) {
-        override fun equals(other: Any?) = other is DescriptorWrapper && descriptorsEqualWithSubstitution(this.descriptor, other.descriptor)
+    class ItemData(val descriptor: TDescriptor, val itemOptions: ItemOptions) {
+        override fun equals(other: Any?)
+                = other is ItemData && descriptorsEqualWithSubstitution(this.descriptor, other.descriptor) && itemOptions == other.itemOptions
         override fun hashCode() = if (this.descriptor != null) this.descriptor.getOriginal().hashCode() else 0
     }
-    fun TDescriptor.wrap() = DescriptorWrapper(this)
-    fun DescriptorWrapper.unwrap() = this.descriptor
 
-    val matchedInfos = HashMap<DescriptorWrapper, MutableList<ExpectedInfo>>()
-    val makeNullableInfos = HashMap<DescriptorWrapper, MutableList<ExpectedInfo>>()
+    fun ItemData.createLookupElement() = lookupElementFactory(this.descriptor)?.withOptions(this.itemOptions)
+
+    val matchedInfos = HashMap<ItemData, MutableList<ExpectedInfo>>()
+    val makeNullableInfos = HashMap<ItemData, MutableList<ExpectedInfo>>()
     for (info in expectedInfos) {
         val classification = infoClassifier(info)
         if (classification.substitutor != null) {
             [suppress("UNCHECKED_CAST")]
             val substitutedDescriptor = descriptor?.substitute(classification.substitutor) as TDescriptor
             val map = if (classification.makeNotNullable) makeNullableInfos else matchedInfos
-            map.getOrPut(substitutedDescriptor.wrap()) { ArrayList() }.add(info)
+            map.getOrPut(ItemData(substitutedDescriptor, info.itemOptions)) { ArrayList() }.add(info)
         }
     }
 
     if (!matchedInfos.isEmpty()) {
-        for ((substitutedDescriptor, infos) in matchedInfos) {
-            val lookupElement = lookupElementFactory(substitutedDescriptor.unwrap())
+        for ((itemData, infos) in matchedInfos) {
+            val lookupElement = itemData.createLookupElement()
             if (lookupElement != null) {
                 add(lookupElement.addTailAndNameSimilarity(infos))
             }
         }
     }
     else {
-        for ((substitutedDescriptor, infos) in makeNullableInfos) {
-            addLookupElementsForNullable({ lookupElementFactory(substitutedDescriptor.unwrap()) }, infos)
+        for ((itemData, infos) in makeNullableInfos) {
+            addLookupElementsForNullable({ itemData.createLookupElement() }, infos)
         }
     }
 }
@@ -182,7 +203,7 @@ private fun lookupElementsForNullable(factory: () -> LookupElement?): Collection
 
     var lookupElement = factory()
     if (lookupElement != null) {
-        lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement!!) {
+        lookupElement = object: LookupElementDecorator<LookupElement>(lookupElement) {
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
                 presentation.setItemText("!! " + presentation.getItemText())

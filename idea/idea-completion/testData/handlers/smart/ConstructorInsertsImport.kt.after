@@ -8,3 +8,5 @@ class X<T> {
         foo(HashMap<File, T>(<caret>))
     }
 }
+
+// ELEMENT: HashMap

@@ -25,9 +25,10 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
+import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.JetTestUtils
-import org.junit.Assert
+import kotlin.test.fail
 
 public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTestCase() {
     protected val fixture: JavaCodeInsightTestFixture
@@ -55,8 +56,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
     }
 
     private fun getExistentLookupElement(lookupString: String?, itemText: String?, tailText: String?): LookupElement? {
-        val lookup = LookupManager.getInstance(getProject())?.getActiveLookup() as LookupImpl?
-        if (lookup == null) return null
+        val lookup = LookupManager.getInstance(getProject())?.getActiveLookup() as LookupImpl? ?: return null
         val items = lookup.getItems()
 
         if (lookupString == "*") {
@@ -68,14 +68,14 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
         var foundElement : LookupElement? = null
         val presentation = LookupElementPresentation()
         for (lookupElement in items) {
-            val lookupOk = if (lookupString != null) lookupElement.getLookupString().contains(lookupString) else true
+            val lookupOk = if (lookupString != null) lookupElement.getLookupString() == lookupString else true
 
             if (lookupOk) {
                 lookupElement.renderElement(presentation)
 
                 val textOk = if (itemText != null) {
                     val itemItemText = presentation.getItemText()
-                    itemItemText != null && itemItemText.contains(itemText)
+                    itemItemText != null && itemItemText == itemText
                 }
                 else {
                     true
@@ -84,7 +84,7 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
                 if (textOk) {
                     val tailOk = if (tailText != null) {
                         val itemTailText = presentation.getTailText()
-                        itemTailText != null && itemTailText.contains(tailText)
+                        itemTailText != null && itemTailText == tailText
                     }
                     else {
                         true
@@ -92,7 +92,8 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
 
                     if (tailOk) {
                         if (foundElement != null) {
-                            Assert.fail("Several elements satisfy to completion restrictions: \n    $foundElement\n    $lookupElement")
+                            val dump = ExpectedCompletionUtils.listToString(ExpectedCompletionUtils.getItemsInformation(arrayOf(foundElement, lookupElement)))
+                            fail("Several elements satisfy to completion restrictions:\n$dump")
                         }
 
                         foundElement = lookupElement
@@ -101,7 +102,10 @@ public abstract class CompletionHandlerTestBase() : JetLightCodeInsightFixtureTe
             }
         }
 
-        if (foundElement == null) error("No element satisfy completion restrictions")
+        if (foundElement == null) {
+            val dump = ExpectedCompletionUtils.listToString(ExpectedCompletionUtils.getItemsInformation(items.toTypedArray()))
+            error("No element satisfy completion restrictions in:\n$dump")
+        }
         return foundElement
     }
 

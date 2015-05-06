@@ -6,3 +6,5 @@ fun foo(p: HashMap<String, List<Int>>){}
 fun f(){
     foo(<caret>)
 }
+
+// ELEMENT: HashMap

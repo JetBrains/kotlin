@@ -293,6 +293,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("DefaultParams.kt")
+    public void testDefaultParams() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/DefaultParams.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("DoNotEraseBraceOnTab.kt")
     public void testDoNotEraseBraceOnTab() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/DoNotEraseBraceOnTab.kt");
@@ -644,6 +650,42 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("True2.kt")
     public void testTrue2() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/True2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg1.kt")
+    public void testVararg1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Vararg1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg2.kt")
+    public void testVararg2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Vararg2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg3.kt")
+    public void testVararg3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Vararg3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg4.kt")
+    public void testVararg4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Vararg4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg5.kt")
+    public void testVararg5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Vararg5.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg6.kt")
+    public void testVararg6() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Vararg6.kt");
         doTest(fileName);
     }
 

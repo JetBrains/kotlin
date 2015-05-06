@@ -5,3 +5,5 @@ class X<T> {
         foo(<caret>)
     }
 }
+
+// ELEMENT: HashMap

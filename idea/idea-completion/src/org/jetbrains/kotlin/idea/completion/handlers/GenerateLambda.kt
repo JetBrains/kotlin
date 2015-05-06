@@ -76,7 +76,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
     val file = context.getFile() as JetFile
     val expression = PsiTreeUtil.findElementOfClassAtRange(file, placeholderRange.getStartOffset(), placeholderRange.getEndOffset(), javaClass<JetExpression>())
-    if (expression == null) return false
+                     ?: return false
 
     val resolutionFacade = file.getResolutionFacade()
     val bindingContext = resolutionFacade.analyze(expression, BodyResolveMode.PARTIAL)

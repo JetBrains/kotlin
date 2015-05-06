@@ -61,7 +61,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testDoNotInsertImportIfResolvedIntoJavaConstructor() = doTest()
 
-    fun testNonStandardArray() = doTest(2, "Array", "java.lang.reflect", '\n')
+    fun testNonStandardArray() = doTest(2, "Array", " (java.lang.reflect)", '\n')
 
     fun testNoParamsFunction() = doTest()
 
@@ -89,15 +89,15 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testHigherOrderFunction() = doTest()
 
-    fun testInsertFqnForJavaClass() = doTest(2, "SortedSet", "java.util", '\n')
+    fun testInsertFqnForJavaClass() = doTest(2, "SortedSet", "<E> (java.util)", '\n')
 
     fun testHigherOrderFunctionWithArg() = doTest(2, "filterNot", null, '\n')
 
-    fun testHigherOrderFunctionWithArgs1() = doTest(1, "foo", "foo", " { String, Char -> ... }", '\n')
+    fun testHigherOrderFunctionWithArgs1() = doTest(1, "foo", "foo", " { String, Char -> ... } (<root>)", '\n')
 
-    fun testHigherOrderFunctionWithArgs2() = doTest(1, "foo", "foo", "(p: (String, Char) -> Boolean)", '\n')
+    fun testHigherOrderFunctionWithArgs2() = doTest(1, "foo", "foo", "(p: (String, Char) -> Boolean) (<root>)", '\n')
 
-    fun testHigherOrderFunctionWithArgs3() = doTest(1, "foo", "foo", " { String, Char -> ... }", '\n')
+    fun testHigherOrderFunctionWithArgs3() = doTest(1, "foo", "foo", " { String, Char -> ... } (<root>)", '\n')
 
     fun testForceParenthesisForTabChar() = doTest(0, "some", null, '\t')
 
@@ -170,7 +170,7 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     fun testTypeArgOfSuper() = doTest(1, "X", null, '\n')
 
     fun testKeywordClassName() = doTest(1, "class", null, '\n')
-    fun testKeywordFunctionName() = doTest(1, "fun", "fun", "()", '\n')
+    fun testKeywordFunctionName() = doTest(1, "fun", "fun", "() (test)", '\n')
 
     fun testInfixCall() = doTest(1, "to", null, null, '\n')
     fun testInfixCallOnSpace() = doTest(1, "to", null, null, ' ')

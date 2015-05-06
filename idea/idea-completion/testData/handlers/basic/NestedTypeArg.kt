@@ -5,4 +5,4 @@ class Pair<T1, T2>
 private val v = ArrayList<Pair<Str<caret>>>
 
 // ELEMENT: String
-// TAIL_TEXT: "(kotlin)"
+// TAIL_TEXT: " (kotlin)"

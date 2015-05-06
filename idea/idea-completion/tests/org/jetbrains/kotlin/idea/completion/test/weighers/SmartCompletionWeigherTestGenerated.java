@@ -167,6 +167,12 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("NameSimilarityForVararg.kt")
+    public void testNameSimilarityForVararg() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/NameSimilarityForVararg.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NameSimilarityInImplicitlyTypedVarInitializer.kt")
     public void testNameSimilarityInImplicitlyTypedVarInitializer() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/NameSimilarityInImplicitlyTypedVarInitializer.kt");

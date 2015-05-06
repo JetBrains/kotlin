@@ -55,13 +55,20 @@ enum class Tail {
     ELSE
 }
 
-open data class ExpectedInfo(val type: JetType, val name: String?, val tail: Tail?)
+data class ItemOptions(val starPrefix: Boolean) {
+    companion object {
+        val DEFAULT = ItemOptions(false)
+        val STAR_PREFIX = ItemOptions(true)
+    }
+}
 
-class PositionalArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val argumentIndex: Int)
-  : ExpectedInfo(type, name, tail) {
+open data class ExpectedInfo(val type: JetType, val name: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT)
+
+class PositionalArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val parameterIndex: Int, itemOptions: ItemOptions = ItemOptions.DEFAULT)
+  : ExpectedInfo(type, name, tail, itemOptions) {
 
     override fun equals(other: Any?)
-            = other is PositionalArgumentExpectedInfo && super.equals(other) && function == other.function && argumentIndex == other.argumentIndex
+            = other is PositionalArgumentExpectedInfo && super.equals(other) && function == other.function && parameterIndex == other.parameterIndex
 
     override fun hashCode()
             = function.hashCode()
@@ -149,8 +156,8 @@ class ExpectedInfos(
         val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
         val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, call, expectedType, dataFlowInfo,
-                                                                           ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
-                                                                           CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
+                                                        ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
+                                                        CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
         val callResolver = InjectorForMacros(
                 callElement.getProject(),
@@ -163,32 +170,58 @@ class ExpectedInfos(
             val status = candidate.getStatus()
             if (status == ResolutionStatus.RECEIVER_TYPE_ERROR || status == ResolutionStatus.RECEIVER_PRESENCE_ERROR) continue
 
-            // consider only candidates with more arguments than in the truncated call and with all arguments before the current one matched
-            if (candidate.noErrorsInValueArguments() && (candidate.getCandidateDescriptor().getValueParameters().size() > argumentIndex || isFunctionLiteralArgument)) {
-                val descriptor = candidate.getResultingDescriptor()
+            // check that all arguments before the current one matched
+            if (!candidate.noErrorsInValueArguments()) continue
 
-                val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
-                if (!Visibilities.isVisible(thisReceiver, descriptor, resolutionScope.getContainingDeclaration())) continue
+            val descriptor = candidate.getResultingDescriptor()
+            val parameters = descriptor.getValueParameters()
 
-                val parameters = descriptor.getValueParameters()
-                if (isFunctionLiteralArgument && argumentIndex != parameters.lastIndex) continue
+            val parameterIndex = if (isFunctionLiteralArgument) {
+                if (argumentIndex != parameters.lastIndex) continue //TODO: varargs and optional parameters
+                argumentIndex
+            }
+            else {
+                val varArgIndex = parameters.indexOfFirst { it.getVarargElementType() != null }
+                if (varArgIndex < 0) {
+                    if (parameters.size() <= argumentIndex) continue
+                    argumentIndex
+                }
+                else {
+                    if (argumentIndex < varArgIndex) argumentIndex else varArgIndex
+                }
+            }
 
+            val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
+            if (!Visibilities.isVisible(thisReceiver, descriptor, resolutionScope.getContainingDeclaration())) continue
+
+            val parameter = parameters[parameterIndex]
+            val varargElementType = parameter.getVarargElementType()
+
+            val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
+
+            if (varargElementType != null) {
+                expectedInfos.add(PositionalArgumentExpectedInfo(varargElementType, expectedName?.fromPlural(), null, descriptor, parameterIndex))
+
+                if (argumentIndex == parameterIndex) {
+                    val tail = if (parameterIndex == parameters.lastIndex) Tail.RPARENTH else null
+                    expectedInfos.add(PositionalArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, parameterIndex, ItemOptions.STAR_PREFIX))
+                }
+            }
+            else {
                 val tail = if (isFunctionLiteralArgument)
                     null
-                else if (argumentIndex == parameters.lastIndex)
+                else if (parameterIndex == parameters.lastIndex)
                     Tail.RPARENTH //TODO: support square brackets
-                else if (parameters.drop(argumentIndex + 1).all { it.hasDefaultValue() || it.getVarargElementType() != null })
+                else if (parameters.drop(parameterIndex + 1).all { it.hasDefaultValue() || it.getVarargElementType() != null })
                     null
                 else
                     Tail.COMMA
 
-                val parameter = parameters[argumentIndex]
-                val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
                 val parameterType = if (useHeuristicSignatures)
                     HeuristicSignatures.correctedParameterType(descriptor, argumentIndex, moduleDescriptor, callElement.getProject()) ?: parameter.getType()
                 else
                     parameter.getType()
-                expectedInfos.add(PositionalArgumentExpectedInfo(parameterType, expectedName, tail, descriptor, argumentIndex))
+                expectedInfos.add(PositionalArgumentExpectedInfo(parameterType, expectedName, tail, descriptor, parameterIndex))
             }
         }
         return expectedInfos

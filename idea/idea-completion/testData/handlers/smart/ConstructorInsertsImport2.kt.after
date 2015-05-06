@@ -9,3 +9,5 @@ class X<T> {
         foo(HashMap<T, AbstractMap<T, File>>(<caret>))
     }
 }
+
+// ELEMENT: HashMap

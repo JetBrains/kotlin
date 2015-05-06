@@ -371,6 +371,30 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("Vararg1.kt")
+    public void testVararg1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Vararg1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg2.kt")
+    public void testVararg2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Vararg2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg3.kt")
+    public void testVararg3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Vararg3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Vararg4.kt")
+    public void testVararg4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Vararg4.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("VariableAsFunction1.kt")
     public void testVariableAsFunction1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/VariableAsFunction1.kt");

@@ -47,15 +47,15 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
 
         val added = HashSet<String>()
         for (expectedInfo in expectedInfos) {
-            if (expectedInfo is PositionalArgumentExpectedInfo && expectedInfo.argumentIndex == 0) {
+            if (expectedInfo is PositionalArgumentExpectedInfo && expectedInfo.parameterIndex == 0) {
                 val parameters = expectedInfo.function.getValueParameters()
-                if (parameters.size > 1) {
+                if (parameters.size() > 1) {
                     val variables = ArrayList<VariableDescriptor>()
-                    for ((i, parameter) in parameters.withIndices()) {
+                    for ((i, parameter) in parameters.withIndex()) {
                         val variable = variableInScope(parameter, resolutionScope) ?: break
                         variables.add(variable) // TODO: cannot inline variable because of KT-5890
 
-                        if (i > 0 && parameters.stream().drop(i + 1).all { it.hasDefaultValue() }) { // this is the last parameter or all others have default values
+                        if (i > 0 && parameters.asSequence().drop(i + 1).all { it.hasDefaultValue() }) { // this is the last parameter or all others have default values
                             val lookupElement = createParametersLookupElement(variables)
                             if (added.add(lookupElement.getLookupString())) { // check that we don't already have item with the same text
                                 collection.add(lookupElement)
