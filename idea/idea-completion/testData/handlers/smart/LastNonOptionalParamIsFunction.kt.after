@@ -1,0 +1,7 @@
+fun foo(p: Int, handler: () -> Unit, optional: String = ""){}
+
+fun bar(p: Int) {
+    foo(p<caret>)
+}
+
+// ELEMENT: p

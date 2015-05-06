@@ -208,11 +208,21 @@ class ExpectedInfos(
                 }
             }
             else {
+                val lastNonOptionalParam = parameters.lastOrNull { !it.hasDefaultValue() }
+
+                fun needCommaForParameter(parameter: ValueParameterDescriptor): Boolean {
+                    if (parameter.hasDefaultValue()) return false // parameter is optional
+                    if (parameter.getVarargElementType() != null) return false // vararg arguments list can be empty
+                    // last non-optional parameter of functional type can be placed outside parenthesis:
+                    if (parameter == lastNonOptionalParam && KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameter.getType())) return false
+                    return true
+                }
+
                 val tail = if (isFunctionLiteralArgument)
                     null
                 else if (parameterIndex == parameters.lastIndex)
                     Tail.RPARENTH //TODO: support square brackets
-                else if (parameters.drop(parameterIndex + 1).all { it.hasDefaultValue() || it.getVarargElementType() != null })
+                else if (parameters.drop(parameterIndex + 1).none(::needCommaForParameter))
                     null
                 else
                     Tail.COMMA

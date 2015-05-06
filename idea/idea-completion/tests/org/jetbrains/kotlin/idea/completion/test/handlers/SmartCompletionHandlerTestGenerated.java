@@ -329,6 +329,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("FunctionLiteralParamAlreadyExist.kt")
+    public void testFunctionLiteralParamAlreadyExist() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/FunctionLiteralParamAlreadyExist.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunctionReference1.kt")
     public void testFunctionReference1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/FunctionReference1.kt");
@@ -458,6 +464,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
     @TestMetadata("LambdaInsertImport.kt")
     public void testLambdaInsertImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/LambdaInsertImport.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("LastNonOptionalParamIsFunction.kt")
+    public void testLastNonOptionalParamIsFunction() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/LastNonOptionalParamIsFunction.kt");
         doTest(fileName);
     }
 
