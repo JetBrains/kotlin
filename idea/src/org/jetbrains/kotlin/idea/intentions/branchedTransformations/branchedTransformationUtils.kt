@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.getTypeReference
 
-public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
-
 fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
     val factory = JetPsiFactory(this)
     when (this) {
@@ -54,29 +52,7 @@ fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
     }
 }
 
-fun JetWhenExpression.getSubjectCandidate(): JetExpression?  {
-    fun JetExpression?.getWhenConditionSubjectCandidate(): JetExpression? {
-        return when(this) {
-            is JetIsExpression -> getLeftHandSide()
-            is JetBinaryExpression -> {
-                val lhs = getLeft()
-                val op = getOperationToken()
-                when (op) {
-                    JetTokens.IN_KEYWORD, JetTokens.NOT_IN -> lhs
-                    JetTokens.EQEQ -> {
-                        if (lhs is JetSimpleNameExpression)
-                            lhs
-                        else
-                            getRight()
-                    }
-                    else -> null
-                }
-
-            }
-            else -> null
-        }
-    }
-
+public fun JetWhenExpression.getSubjectToIntroduce(): JetExpression?  {
     if (getSubjectExpression() != null) return null
 
     var lastCandidate: JetExpression? = null
@@ -87,13 +63,14 @@ fun JetWhenExpression.getSubjectCandidate(): JetExpression?  {
         for (condition in conditions) {
             if (condition !is JetWhenConditionWithExpression) return null
 
-            val currCandidate = condition.getExpression().getWhenConditionSubjectCandidate()
-            if (currCandidate !is JetSimpleNameExpression) return null
+            val candidate = condition.getExpression()?.getWhenConditionSubjectCandidate() as? JetSimpleNameExpression ?: return null
 
             if (lastCandidate == null) {
-                lastCandidate = currCandidate
+                lastCandidate = candidate
             }
-            else if (!lastCandidate.matches(currCandidate)) return null
+            else if (!lastCandidate.matches(candidate)) {
+                return null
+            }
 
         }
     }
@@ -101,12 +78,27 @@ fun JetWhenExpression.getSubjectCandidate(): JetExpression?  {
     return lastCandidate
 }
 
-public fun JetWhenExpression.canIntroduceSubject(): Boolean {
-    return getSubjectCandidate() != null
+private fun JetExpression?.getWhenConditionSubjectCandidate(): JetExpression? {
+    return when(this) {
+        is JetIsExpression -> getLeftHandSide()
+
+        is JetBinaryExpression -> {
+            val lhs = getLeft()
+            val op = getOperationToken()
+            when (op) {
+                JetTokens.IN_KEYWORD, JetTokens.NOT_IN -> lhs
+                JetTokens.EQEQ -> lhs as? JetSimpleNameExpression ?: getRight()
+                else -> null
+            }
+
+        }
+
+        else -> null
+    }
 }
 
 public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
-    val subject = getSubjectCandidate()!!
+    val subject = getSubjectToIntroduce()!!
 
     val whenExpression = JetPsiFactory(this).buildExpression {
         appendFixedText("when(").appendExpression(subject).appendFixedText("){\n")
@@ -120,7 +112,6 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
             else {
                 for ((i, condition) in entry.getConditions().withIndex()) {
                     if (i > 0) appendFixedText(",")
-                    assert(condition is JetWhenConditionWithExpression, TRANSFORM_WITHOUT_CHECK)
 
                     val conditionExpression = (condition as JetWhenConditionWithExpression).getExpression()
                     when (conditionExpression)  {
@@ -140,11 +131,11 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
                                 JetTokens.IN_KEYWORD -> appendFixedText("in ").appendExpression(rhs)
                                 JetTokens.NOT_IN -> appendFixedText("!in ").appendExpression(rhs)
                                 JetTokens.EQEQ -> appendExpression(if (subject.matches(lhs)) rhs else lhs)
-                                else -> error(TRANSFORM_WITHOUT_CHECK)
+                                else -> throw IllegalStateException()
                             }
                         }
 
-                        else -> error(TRANSFORM_WITHOUT_CHECK)
+                        else -> throw IllegalStateException()
                     }
                 }
             }

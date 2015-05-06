@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.canIntroduceSubject
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -68,7 +68,7 @@ public class IfToWhenIntention : JetSelfTargetingIntention<JetIfExpression>(java
         } as JetWhenExpression
 
 
-        if (whenExpression.canIntroduceSubject()) {
+        if (whenExpression.getSubjectToIntroduce() != null) {
             whenExpression = whenExpression.introduceSubject()
         }
 
