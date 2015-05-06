@@ -27,6 +27,7 @@ import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.idea.JetPluginUtil
 import org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex
+import org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
@@ -62,6 +63,7 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             val fileBasedIndex = FileBasedIndex.getInstance()
             fileBasedIndex.requestRebuild(KotlinAbiVersionIndex.INSTANCE.getName())
             fileBasedIndex.requestRebuild(KotlinClassFileIndex.KEY)
+            fileBasedIndex.requestRebuild(KotlinJavaScriptMetaFileIndex.KEY)
 
             PropertiesComponent.getInstance()?.setValue(INSTALLED_KOTLIN_VERSION, JetPluginUtil.getPluginVersion())
         }
