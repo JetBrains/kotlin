@@ -3,10 +3,10 @@ package kotlin.dom
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 
-deprecated("use org.w3c.dom instead: create document directly via constructor Document() or use document.implementation.createDocument")
+deprecated("use declarations from org.w3c.dom instead: create document directly via constructor Document() or use document.implementation.createDocument")
 public fun createDocument(): Document = Document()
 
-deprecated("use org.w3c.dom instead")
+deprecated("use member property outerHTML of Element class instead")
 native public val Node.outerHTML: String get() = noImpl
 
 /** Converts the node to an XML String */

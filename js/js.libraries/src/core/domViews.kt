@@ -1,6 +1,6 @@
 package org.w3c.dom.views
 
-deprecated("Use org.w3c.dom instead")
+deprecated("Use declarations from org.w3c.dom instead")
 native public trait AbstractView {
 }
 

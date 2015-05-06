@@ -1,84 +1,124 @@
-/*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.jetbrains.idl2k
 
-import java.util.*
+import java.util.HashSet
 
-private val typeMapper = mapOf(
-        "unsignedlong" to "Int",
-        "unsignedlonglong" to "Long",
-        "longlong" to "Long",
-        "unsignedshort" to "Short",
-        "void" to "Unit",
-        "DOMString" to "String",
-        "boolean" to "Boolean",
-        "short" to "Short",
-        "long" to "Int",
-        "double" to "Double",
-        "any" to "Any",
-        "" to "dynamic",
-        "DOMTimeStamp" to "Number",
-        "EventHandler" to "() -> Unit",
-        "object" to "dynamic",
-        "WindowProxy" to "Window",
-        "Uint8ClampedArray" to "dynamic", // TODO think of native arrays,
-        "Function" to "() -> dynamic",
-        "USVString" to "String",
-        "ByteString" to "String",
-        "DOMError" to "dynamic",
-        "SVGMatrix" to "dynamic",
-        "ArrayBuffer" to "dynamic",
-        "Elements" to "dynamic"
-)
-
-private fun fixDynamic(type : String) = if (type == "dynamic?") "dynamic" else type
-
-private fun mapType(repository: Repository, type: String) = fixDynamic(handleSpecialTypes(repository, typeMapper[type] ?: type))
-
-private fun handleSpecialTypes(repository: Repository, type: String): String {
-    if (type.endsWith("?")) {
-        return mapType(repository, type.substring(0, type.length() - 1)) + "?"
-    } else if (type.endsWith("...")) {
-        return mapType(repository, type.substring(0, type.length() - 3))
-    } else if (type.endsWith("[]")) {
-        return "Array<${mapType(repository, type.substring(0, type.length() - 2))}>"
-    } else if (type.startsWith("unrestricted")) {
-        return mapType(repository, type.substring(12))
-    } else if (type.startsWith("sequence")) {
-        return "Any" // TODO how do we handle sequences?
-    } else if (type in repository.typeDefs) {
-        val typedef = repository.typeDefs[type]!!
-
-        return if (!typedef.types.startsWith("Union<")) mapType(repository, typedef.types)
-            else if (splitUnionType(typedef.types).size() == 1) mapType(repository, splitUnionType(typedef.types).first())
-            else typedef.name
-    } else if (type in repository.enums) {
-        return "String"
-    } else if (type.endsWith("Callback")) {
-        return "() -> Unit"
-//    } else if (type.startsWith("Union<")) {
-//        return "dynamic"
-    } else if (type.startsWith("Promise<")) {
-        return "dynamic"
-    } else if ("NoInterfaceObject" in repository.interfaces[type]?.extendedAttributes?.map {it.call} ?: emptyList()) {
-        return "dynamic"
+private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet().let { attributes ->
+    when {
+        "getter" in attributes -> NativeGetterOrSetter.GETTER
+        "setter" in attributes -> NativeGetterOrSetter.SETTER
+        else -> NativeGetterOrSetter.NONE
     }
-
-    return type
 }
 
-private fun findConstructorAttribute(iface: InterfaceDefinition) = iface.extendedAttributes.firstOrNull { it.call == "Constructor" }
+fun String.ensureNullable() = when {
+    endsWith("?") -> this
+    this == "dynamic" -> this
+    contains("->") -> "($this)?"
+    else -> "$this?"
+}
+
+fun generateFunction(repository: Repository, function: Operation, functionName: String, nativeGetterOrSetter: NativeGetterOrSetter = function.getterOrSetter()): GenerateFunction =
+        function.attributes.map { it.call }.toSet().let { attributes ->
+            GenerateFunction(
+                    name = functionName,
+                    returnType = mapType(repository, function.returnType).let { mapped -> if (nativeGetterOrSetter != NativeGetterOrSetter.NONE) mapped.ensureNullable() else mapped },
+                    arguments = function.parameters.map {
+                        GenerateAttribute(
+                                name = it.name,
+                                type = mapType(repository, it.type),
+                                initializer = it.defaultValue,
+                                getterSetterNoImpl = false,
+                                override = false,
+                                readOnly = true,
+                                vararg = it.vararg
+                        )
+                    },
+                    nativeGetterOrSetter = nativeGetterOrSetter
+            )
+        }
+
+fun generateFunctions(repository: Repository, function: Operation): List<GenerateFunction> {
+    val realFunction = if (function.name == "") null else generateFunction(repository, function, function.name, NativeGetterOrSetter.NONE)
+    val getterOrSetterFunction = when (function.getterOrSetter()) {
+        NativeGetterOrSetter.NONE -> null
+        NativeGetterOrSetter.GETTER -> generateFunction(repository, function, "get")
+        NativeGetterOrSetter.SETTER -> generateFunction(repository, function, "set")
+    }
+
+    return listOf(realFunction, getterOrSetterFunction).filterNotNull()
+}
+
+fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute): GenerateAttribute =
+        GenerateAttribute(attribute.name,
+                type = mapType(repository, attribute.type),
+                initializer = attribute.defaultValue,
+                getterSetterNoImpl = putNoImpl,
+                readOnly = attribute.readOnly,
+                override = false,
+                vararg = attribute.vararg
+        )
+
+private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
+private fun resolveDefinitionType(repository: Repository, iface: InterfaceDefinition, constructor: ExtendedAttribute? = iface.findConstructor()): GenerateDefinitionKind =
+        if (iface.dictionary || constructor != null || iface.superTypes(repository).any { resolveDefinitionType(repository, it) == GenerateDefinitionKind.CLASS }) {
+            GenerateDefinitionKind.CLASS
+        }
+        else {
+            GenerateDefinitionKind.TRAIT
+        }
+
+private fun InterfaceDefinition.mapAttributes(repository: Repository) = attributes.map { generateAttribute(!dictionary, repository, it) }
+private fun InterfaceDefinition.mapOperations(repository: Repository) = operations.flatMap { generateFunctions(repository, it) }
+private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), value, false, true, false, false)
+
+fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {
+    val constructor = iface.findConstructor()
+    val constructorFunction = generateFunction(repository, Operation("", "Unit", constructor?.arguments ?: emptyList(), emptyList()), functionName = "", nativeGetterOrSetter = NativeGetterOrSetter.NONE)
+    val constructorArgumentNames = constructorFunction.arguments.map { it.name }.toSet()
+
+    val constructorSuperCalls = iface.superTypes
+            .map { repository.interfaces[it] }
+            .filterNotNull()
+            .filter { resolveDefinitionType(repository, it) == GenerateDefinitionKind.CLASS }
+            .map {
+                val superConstructor = it.findConstructor()
+                GenerateFunctionCall(
+                        name = it.name,
+                        arguments = if (superConstructor == null) {
+                            emptyList()
+                        } else {
+                            superConstructor.arguments.map { arg ->
+                                if (arg.name in constructorArgumentNames) arg.name else "noImpl"
+                            }
+                        }
+                )
+            }
+
+    val entityType = resolveDefinitionType(repository, iface, constructor)
+    val extensions = repository.externals[iface.name]?.map { repository.interfaces[it] }?.filterNotNull() ?: emptyList()
+
+    return GenerateTraitOrClass(iface.name, iface.namespace, entityType, iface.superTypes,
+            memberAttributes = (iface.mapAttributes(repository) + extensions.flatMap { it.mapAttributes(repository) }).distinct().toList(),
+            memberFunctions = (iface.mapOperations(repository) + extensions.flatMap { it.mapOperations(repository) }).distinct().toList(),
+            constants = (iface.constants.map {it.mapConstant(repository)} + extensions.flatMap { it.constants.map {it.mapConstant(repository)} }.distinct().toList()),
+            constructor = constructorFunction,
+            superConstructorCalls = constructorSuperCalls
+    )
+}
+
+fun mapUnionType(it : UnionType) = GenerateTraitOrClass(
+        name = it.name,
+        namespace = it.namespace,
+        kind = GenerateDefinitionKind.TRAIT,
+        superTypes = emptyList(),
+        memberAttributes = emptyList(),
+        memberFunctions = emptyList(),
+        constants = emptyList(),
+        constructor = null,
+        superConstructorCalls = emptyList()
+)
+
+fun generateUnionTypeTraits(allUnionTypes : Iterable<UnionType>): List<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)
+
+fun mapDefinitions(repository: Repository, definitions: Iterable<InterfaceDefinition>) =
+        definitions.filter { "NoInterfaceObject" !in it.extendedAttributes.map { it.call } }.map { generateTrait(repository, it) }

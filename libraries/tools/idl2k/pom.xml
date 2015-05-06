@@ -82,15 +82,27 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>download-idl</id>
                         <goals>
                             <goal>java</goal>
                         </goals>
+                        <configuration>
+                            <mainClass>org.jetbrains.idl2k.dl.DlPackage</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>idl2k</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>org.jetbrains.idl2k.Idl2kPackage</mainClass>
+                        </configuration>
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.jetbrains.idl2k.Idl2kPackage</mainClass>
-                    <classpathScope>compile</classpathScope>
                     <workingDirectory>${project.basedir}</workingDirectory>
+                    <classpathScope>compile</classpathScope>
                 </configuration>
             </plugin>
 

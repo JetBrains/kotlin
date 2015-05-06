@@ -16,14 +16,11 @@
 
 package org.jetbrains.idl2k
 
+import org.antlr.v4.runtime.*
 import org.antlr.webidl.WebIDLBaseListener
 import org.antlr.webidl.WebIDLLexer
 import org.antlr.webidl.WebIDLParser
 import org.antlr.webidl.WebIDLParser.*
-import org.antlr.v4.runtime.ANTLRInputStream
-import org.antlr.v4.runtime.BufferedTokenStream
-import org.antlr.v4.runtime.CommonTokenStream
-import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.webidl.WebIDLBaseVisitor
 import org.jsoup.Jsoup
@@ -46,10 +43,10 @@ enum class DefinitionType {
     DICTIONARY
 }
 trait Definition
-data class TypedefDefinition(val types: String, val name: String) : Definition
-data class InterfaceDefinition(val name : String, val extendedAttributes: List<ExtendedAttribute>, val operations : List<Operation>, val attributes : List<Attribute>, val superTypes : List<String>, val constants : List<Constant>, val dictionary : Boolean = false) : Definition
-data class ExtensionInterfaceDefinition(val name : String, val implements : String) : Definition
-data class EnumDefinition(val name : String) : Definition
+data class TypedefDefinition(val types: String, val namespace : String, val name: String) : Definition
+data class InterfaceDefinition(val name : String, val namespace : String, val extendedAttributes: List<ExtendedAttribute>, val operations : List<Operation>, val attributes : List<Attribute>, val superTypes : List<String>, val constants : List<Constant>, val dictionary : Boolean = false) : Definition
+data class ExtensionInterfaceDefinition(val namespace : String, val name : String, val implements : String) : Definition
+data class EnumDefinition(val namespace : String, val name : String) : Definition
 
 class ExtendedAttributeArgumentsParser : WebIDLBaseVisitor<List<Attribute>>() {
     private val arguments = ArrayList<Attribute>()
@@ -129,6 +126,11 @@ class TypeVisitor : WebIDLBaseVisitor<String>() {
 
     override fun visitUnionType(ctx: WebIDLParser.UnionTypeContext): String {
         type = "Union<" + UnionTypeVisitor().visitChildren(ctx).joinToString(",") + ">"
+        return type
+    }
+
+    override fun visitTypeSuffix(ctx: TypeSuffixContext): String {
+        type += ctx.getText()
         return type
     }
 
@@ -248,7 +250,7 @@ class ConstantVisitor(val attributes : List<ExtendedAttribute>) : WebIDLBaseVisi
     }
 }
 
-class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>) : WebIDLBaseVisitor<Definition>() {
+class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val namespace : String) : WebIDLBaseVisitor<Definition>() {
     private var type : DefinitionType = DefinitionType.INTERFACE
     private var name = ""
     private val memberAttributes = ArrayList<ExtendedAttribute>()
@@ -261,11 +263,11 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>) : WebID
     private val constants = ArrayList<Constant>()
 
     override fun defaultResult(): Definition = when(type) {
-        DefinitionType.INTERFACE -> InterfaceDefinition(name, extendedAttributes, operations, attributes, inherited, constants)
-        DefinitionType.DICTIONARY -> InterfaceDefinition(name, extendedAttributes, operations, attributes, inherited, constants, true)
-        DefinitionType.EXTENSION_INTERFACE -> ExtensionInterfaceDefinition(name, implements ?: "")
-        DefinitionType.TYPEDEF -> TypedefDefinition(typedefType ?: "", name)
-        DefinitionType.ENUM -> EnumDefinition(name)
+        DefinitionType.INTERFACE -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants)
+        DefinitionType.DICTIONARY -> InterfaceDefinition(name, namespace, extendedAttributes, operations, attributes, inherited, constants, true)
+        DefinitionType.EXTENSION_INTERFACE -> ExtensionInterfaceDefinition(namespace, name, implements ?: "")
+        DefinitionType.TYPEDEF -> TypedefDefinition(typedefType ?: "", namespace, name)
+        DefinitionType.ENUM -> EnumDefinition(namespace, name)
     }
 
     override fun visitInterface_(ctx: Interface_Context) : Definition {
@@ -322,7 +324,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>) : WebID
                 ?.first { it.getText() != "" }
                 ?.getText()
 
-        val type = TypeVisitor().visit(ctx)
+        val type = TypeVisitor().visit(ctx.children.first {it is TypeContext})
         val defaultValue = object : WebIDLBaseVisitor<String?>() {
             private var value : String? = null
 
@@ -404,8 +406,8 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>) : WebID
 
 private fun getName(ctx: ParserRuleContext) = ctx.children.first {it is TerminalNode && it.getSymbol().getType() == WebIDLLexer.IDENTIFIER_WEBIDL}.getText()
 
-fun parseIDL(reader : Reader) : Repository {
-    val ll = WebIDLLexer(ANTLRInputStream(reader))
+fun parseIDL(reader : CharStream) : Repository {
+    val ll = WebIDLLexer(reader)
     val pp = WebIDLParser(CommonTokenStream(ll))
 
     val idl = pp.webIDL()
@@ -414,9 +416,10 @@ fun parseIDL(reader : Reader) : Repository {
 
     idl.accept(object : WebIDLBaseVisitor<Unit>() {
         val extendedAttributes = ArrayList<ExtendedAttribute>()
+        var namespace = ""
 
         override fun visitDefinition(ctx: WebIDLParser.DefinitionContext) {
-            val declaration = DefinitionVisitor(extendedAttributes.toList()).visitChildren(ctx)
+            val declaration = DefinitionVisitor(extendedAttributes.toList(), namespace).visitChildren(ctx)
             extendedAttributes.clear()
             declarations.add(declaration)
         }
@@ -427,6 +430,10 @@ fun parseIDL(reader : Reader) : Repository {
             }
 
             extendedAttributes.add(att)
+        }
+
+        override fun visitNamespaceRest(ctx: NamespaceRestContext) {
+            this.namespace = ctx.getText()
         }
     })
 
@@ -441,7 +448,7 @@ fun parseIDL(reader : Reader) : Repository {
 fun merge(i1 : InterfaceDefinition, i2 : InterfaceDefinition) : InterfaceDefinition {
     require(i1.name == i2.name)
 
-    return InterfaceDefinition(i1.name,
+    return InterfaceDefinition(i1.name, i1.namespace,
             extendedAttributes = i1.extendedAttributes merge i2.extendedAttributes,
             operations = i1.operations merge i2.operations,
             attributes = i1.attributes merge i2.attributes,

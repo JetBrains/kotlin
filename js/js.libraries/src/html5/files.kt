@@ -1,7 +1,6 @@
 package html5.files
 
 native
-native
 deprecated("Use org.w3c.dom")
 public class FileReader() {
     public var onloadend : ((FileReaderEvent)->Unit)? = noImpl //
@@ -10,13 +9,11 @@ public class FileReader() {
 }
 
 native
-native
 deprecated("Use org.w3c.dom")
 public class FileReaderEvent() {
     public val target : FileReader = noImpl
 }
 
-native
 native
 deprecated("Use org.w3c.dom")
 public class FileList() {
@@ -25,14 +22,12 @@ public class FileList() {
 }
 
 native
-native
 deprecated("Use org.w3c.dom")
 public class File() : Blob() {
     public val name : String = noImpl
    // readonly attribute Date lastModifiedDate;
 }
 
-native
 native
 deprecated("Use org.w3c.dom")
 public open class Blob(blobParts: Array<Any>? = undefined, options: BlobPropertyBag? = undefined) {
@@ -44,7 +39,6 @@ public open class Blob(blobParts: Array<Any>? = undefined, options: BlobProperty
     //
 }
 
-native
 native
 deprecated("Use org.w3c.dom")
 public trait BlobPropertyBag {

@@ -16,6 +16,10 @@
 
 package org.jetbrains.idl2k
 
+import java.util.HashSet
+
+data class NamedValue<V>(val name: String, val value: V)
+
 data class Repository(
         val interfaces: Map<String, InterfaceDefinition>,
         val typeDefs: Map<String, TypedefDefinition>,
@@ -23,14 +27,14 @@ data class Repository(
         val enums: Map<String, EnumDefinition>
 )
 
-data class GenerateAttribute(val name: String, val type: String, val initializer: String?, val getterSetterNoImpl: Boolean, val readOnly: Boolean, val override: Boolean, var vararg : Boolean) {
-    val getterNoImpl: Boolean
-        get() = getterSetterNoImpl
-    val setterNoImpl: Boolean
-        get() = getterSetterNoImpl && !readOnly
-}
+data class GenerateAttribute(val name: String, val type: String, val initializer: String?, val getterSetterNoImpl: Boolean, val readOnly: Boolean, val override: Boolean, var vararg: Boolean)
 
-val GenerateAttribute.proto : String
+val GenerateAttribute.getterNoImpl: Boolean
+    get() = getterSetterNoImpl
+val GenerateAttribute.setterNoImpl: Boolean
+    get() = getterSetterNoImpl && !readOnly
+
+val GenerateAttribute.signature: String
     get() = "$name:$type"
 
 enum class NativeGetterOrSetter {
@@ -39,20 +43,53 @@ enum class NativeGetterOrSetter {
     SETTER
 }
 
-enum class GenerateDefinitionType {
+enum class GenerateDefinitionKind {
     TRAIT
     CLASS
 }
 
-data class GenerateFunction(val name: String, val returnType: String, val arguments: List<GenerateAttribute>, val native : NativeGetterOrSetter)
+
+class UnionType(val namespace: String, types: Collection<String>) {
+    val memberTypes = HashSet(types)
+    val name = "Union${this.memberTypes.sort().joinToString("Or")}"
+
+    fun contains(type: String) = type in memberTypes
+
+    override fun equals(other: Any?): Boolean = other is UnionType && name == other.name
+    override fun hashCode(): Int = name.hashCode()
+    override fun toString(): String = name
+}
+
 data class GenerateFunctionCall(val name: String, val arguments: List<String>)
-data class GenerateTraitOrClass(val name: String,
-                           val type : GenerateDefinitionType,
-                           val superTypes: List<String>,
-                           val memberAttributes: List<GenerateAttribute>,
-                           val memberFunctions: List<GenerateFunction>,
-                           val constnats : List<GenerateAttribute>,
-                           val constructor: GenerateFunction?,
-                           val superConstructorCalls: List<GenerateFunctionCall>)
-val GenerateFunction.proto : String
-    get() = arguments.map {it.type}.joinToString(", ", "$name(", ")")
+data class GenerateFunction(
+        val name: String,
+        val returnType: String,
+        val arguments: List<GenerateAttribute>,
+        val nativeGetterOrSetter: NativeGetterOrSetter
+)
+
+data class GenerateTraitOrClass(
+        val name: String,
+        val namespace: String,
+        val kind: GenerateDefinitionKind,
+        val superTypes: List<String>,
+        val memberAttributes: List<GenerateAttribute>,
+        val memberFunctions: List<GenerateFunction>,
+        val constants: List<GenerateAttribute>,
+        val constructor: GenerateFunction?,
+        val superConstructorCalls: List<GenerateFunctionCall>
+) {
+    init {
+        assert(superConstructorCalls.size() <= 1, "It shoould be zero or one super constructors")
+    }
+}
+
+
+val GenerateFunction.signature: String
+    get() = arguments.map { it.type }.joinToString(", ", "$name(", ")")
+
+
+fun InterfaceDefinition.findExtendedAttribute(name: String) = extendedAttributes.firstOrNull { it.call == name }
+fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttribute(name) ?: null != null
+fun InterfaceDefinition.findConstructor() = findExtendedAttribute("Constructor")
+

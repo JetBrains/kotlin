@@ -42,9 +42,19 @@ grammar WebIDL;
 // Note: Added "wrapper" rule webIDL with EOF token.
 
 webIDL
-	: definitions EOF
+	: namespace? definitions EOF
 ;
 
+namespaceScope
+  	: '*' | 'cpp' | 'java' | 'py' | 'perl' | 'rb' | 'cocoa' | 'csharp'
+;
+
+namespaceRest
+    : IDENTIFIER_WEBIDL ( '.' IDENTIFIER_WEBIDL )*
+    ;
+
+namespace
+	: 'namespace' namespaceScope? namespaceRest ';';
 
 definitions
 	: extendedAttributeList definition definitions
@@ -414,6 +424,7 @@ argumentNameKeyword
 	| 'stringifier'
 	| 'typedef'
 	| 'unrestricted'
+	| 'namespace'
 ;
 
 type
@@ -427,7 +438,7 @@ singleType
 ;
 
 unionType
-	: '(' unionMemberType 'or' unionMemberType unionMemberTypes ')'
+	: '(' unionMemberType ( 'or' unionMemberType )* ')'
 ;
 
 unionMemberType
@@ -500,12 +511,7 @@ unsignedIntegerType
 
 integerType
 	: 'short'
-	| 'long' optionalLong
-;
-
-optionalLong
-	: 'long'
-	| /* empty */
+	| 'long'+
 ;
 
 promiseType

@@ -202,45 +202,6 @@ public fun Element.removeClass(vararg cssClasses: String): Boolean {
     return false
 }
 
-/**
- * Adds [cssClasses] to element if []condition] is true or removes it otherwise.
- * Has no effect if class attribute already has corresponding content
- */
-public fun Element.addOrRemoveClassWhen(condition : Boolean, vararg cssClasses : String) {
-    if (condition) {
-        addClass(*cssClasses)
-    } else {
-        removeClass(*cssClasses)
-    }
-}
-
-/**
- * Adds [trueClassName] class to element if [condition] is true and removes [falseClassName].
- * If [condition] is false then [trueClassName] will be removed and [falseClassName] will be added.
- * Has no effect if class attribute already has corresponding content
- */
-public fun Element.swapClassWhen(condition: Boolean, trueClassName: String, falseClassName: String) {
-    if (condition) {
-        addClass(trueClassName)
-        removeClass(falseClassName)
-    } else {
-        removeClass(trueClassName)
-        addClass(falseClassName)
-    }
-}
-
-/**
- * If [condition] is true then [attributeName] with value [attributeValue] will be added to the element, otherwise attribute with
- * name [attributeName] will be removed
- */
-public fun Element.addOrRemoveAttributeWhen(condition : Boolean, attributeName : String, attributeValue : String = attributeName) {
-    if (condition) {
-        setAttribute(attributeName, attributeValue)
-    } else {
-        removeAttribute(attributeName)
-    }
-}
-
 /** Removes all the children from this node */
 public fun Node.clear() {
     while (hasChildNodes()) {
@@ -258,9 +219,10 @@ public fun Node.removeFromParent() {
 private class NodeListAsList(val delegate: NodeList) : AbstractList<Node>() {
     override fun size(): Int = delegate.length
 
-    override fun get(index: Int): Node =
-            if (index in 0..size() - 1) delegate.item(index)!!
-            else throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size() - 1})")
+    override fun get(index: Int): Node = when {
+        index in 0..size() - 1 -> delegate.item(index)!!
+        else -> throw IndexOutOfBoundsException("index $index is not in range [0 .. ${size() - 1})")
+    }
 }
 
 private class ElementListAsList(private val nodeList: NodeList) : AbstractList<Element>() {
@@ -398,7 +360,6 @@ public fun Element.createElement(name: String, doc: Document? = null, init: Elem
 }
 
 /** Returns the owner document of the element or uses the provided document */
-deprecated("")
 public fun Node.ownerDocument(doc: Document? = null): Document {
     val answer = if (this.nodeType == Node.DOCUMENT_NODE) this as Document
     else if (doc == null) this.ownerDocument
@@ -443,13 +404,13 @@ public fun Element.addText(text: String?, doc: Document? = null): Element {
 /**
  * Creates text node and append it to the element
  */
-public fun Element.appendText(text : String, doc : Document = this.ownerDocument!!) {
+public fun Element.appendText(text: String, doc : Document = this.ownerDocument!!) {
     appendChild(doc.createTextNode(text))
 }
 
 /**
  * Appends the node to the specified parent element
  */
-public fun Node.appendTo(parent : Element) {
+public fun Node.appendTo(parent: Element) {
     parent.appendChild(this)
 }

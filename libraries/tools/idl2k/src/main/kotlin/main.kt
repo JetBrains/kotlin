@@ -1,36 +1,71 @@
 package org.jetbrains.idl2k
 
+import org.antlr.v4.runtime.ANTLRFileStream
 import java.io.File
 import java.io.StringReader
+import java.util.*
 
 fun main(args: Array<String>) {
-    val idl = getAllIDLs()
-    val defs = parseIDL(StringReader(idl))
+    val outDir = File("../../../js/js.libraries/src/generated")
+    val srcDir = File("../../idl")
+    if (!srcDir.exists()) {
+        System.err?.println("Directory ${srcDir.getAbsolutePath()} doesn't exist")
+        System.exit(1)
+        return
+    }
+    outDir.deleteRecursively()
+    outDir.mkdirs()
 
-    println("IDL dump:")
-    idl.lineSequence().forEachIndexed { i, line ->
-        println("${i.toString().padStart(4, ' ')}: ${line}")
+    val repository = srcDir.walkTopDown().filter { it.isDirectory() || it.extension == "idl" }.asSequence().filter {it.isFile()}.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
+        val fileRepository = parseIDL(ANTLRFileStream(e.getAbsolutePath(), "UTF-8"))
+
+        Repository(
+                interfaces = acc.interfaces + fileRepository.interfaces,
+                typeDefs = acc.typeDefs + fileRepository.typeDefs,
+                externals = acc.externals merge fileRepository.externals,
+                enums = acc.enums + fileRepository.enums
+        )
     }
 
-    println()
-    defs.typeDefs.values().forEach { typedef ->
-        println(typedef)
+    val definitions = mapDefinitions(repository, repository.interfaces.values())
+    val allPackages = definitions.map { it.namespace }.distinct().sort()
+
+    allPackages.forEach { pkg ->
+        File(outDir, pkg + ".kt").bufferedWriter().use { w ->
+            w.appendln("/*")
+            w.appendln(" * Generated file")
+            w.appendln(" * DO NOT EDIT")
+            w.appendln(" * ")
+            w.appendln(" * See libraries/tools/idl2k for details")
+            w.appendln(" */")
+
+            w.appendln()
+            w.appendln("package ${pkg}")
+            w.appendln()
+
+            allPackages.filter {it != pkg}.forEach { import ->
+                w.appendln("import ${import}.*")
+            }
+            w.appendln()
+
+            w.render(pkg, definitions, repository.typeDefs.values())
+        }
+    }
+}
+
+private fun <K, V> Map<K, List<V>>.merge(other : Map<K, List<V>>) : Map<K, List<V>> {
+    val result = LinkedHashMap<K, MutableList<V>>(size() + other.size())
+    this.forEach {
+        result[it.key] = ArrayList(it.value)
+    }
+    other.forEach {
+        val list = result[it.key]
+        if (list == null) {
+            result[it.key] = ArrayList(it.value)
+        } else {
+            list.addAll(it.value)
+        }
     }
 
-    val definitions = mapDefinitions(defs, defs.interfaces.values())
-
-    File("../../../js/js.libraries/src/core/dom.kt").writer().use { w ->
-        w.appendln("/*")
-        w.appendln(" * Generated file")
-        w.appendln(" * DO NOT EDIT")
-        w.appendln(" * ")
-        w.appendln(" * See libraries/tools/idl2k for details")
-        w.appendln(" */")
-
-        w.appendln()
-        w.appendln("package org.w3c.dom")
-        w.appendln()
-
-        w.render(definitions, defs.typeDefs.values())
-    }
+    return result
 }
