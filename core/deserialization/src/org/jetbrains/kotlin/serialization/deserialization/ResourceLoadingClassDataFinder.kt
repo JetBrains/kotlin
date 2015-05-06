@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.builtins
+package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import java.io.InputStream
 
-public class BuiltInsClassDataFinder(
+public open class ResourceLoadingClassDataFinder(
         private val packageFragmentProvider: PackageFragmentProvider,
+        private val serializedResourcePaths: SerializedResourcePaths,
         private val loadResource: (path: String) -> InputStream?
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
         val packageFragment = packageFragmentProvider.getPackageFragments(classId.getPackageFqName()).singleOrNull() ?: return null
 
-        val stream = loadResource(BuiltInsSerializationUtil.getClassMetadataPath(classId)) ?: return null
+        val stream = loadResource(serializedResourcePaths.getClassMetadataPath(classId)) ?: return null
 
-        val classProto = ProtoBuf.Class.parseFrom(stream, BuiltInsSerializationUtil.EXTENSION_REGISTRY)
+        val classProto = ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.EXTENSION_REGISTRY)
         val nameResolver =
-                (packageFragment as? BuiltinsPackageFragment ?: error("Not a built-in package fragment: $packageFragment")).nameResolver
+                (packageFragment as? DeserializedPackageFragment ?: error("Not a deserialized package fragment: $packageFragment")).nameResolver
 
         val expectedShortName = classId.getShortClassName()
         val actualShortName = nameResolver.getClassId(classProto.getFqName()).getShortClassName()

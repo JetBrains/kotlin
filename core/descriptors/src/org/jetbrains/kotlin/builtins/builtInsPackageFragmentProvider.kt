@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.serialization.deserialization.ResourceLoadingClassDataFinder
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
@@ -43,7 +44,7 @@ public fun createBuiltInPackageFragmentProvider(
     val components = DeserializationComponents(
             storageManager,
             module,
-            BuiltInsClassDataFinder(provider, loadResource),
+            ResourceLoadingClassDataFinder(provider, BuiltInsSerializedResourcePaths, loadResource),
             BuiltInsAnnotationAndConstantLoader(module),
             provider,
             localClassResolver,

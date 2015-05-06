@@ -19,10 +19,11 @@ package org.jetbrains.kotlin.builtins
 import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
-public object BuiltInsSerializationUtil {
-    public val EXTENSION_REGISTRY: ExtensionRegistryLite
+public object BuiltInsSerializedResourcePaths : SerializedResourcePaths() {
+    public override val EXTENSION_REGISTRY: ExtensionRegistryLite
 
     init {
         EXTENSION_REGISTRY = ExtensionRegistryLite.newInstance()
@@ -33,24 +34,15 @@ public object BuiltInsSerializationUtil {
     private val PACKAGE_FILE_EXTENSION = "kotlin_package"
     private val STRING_TABLE_FILE_EXTENSION = "kotlin_string_table"
 
-    // TODO: remove this after M12
-    public object FallbackPaths {
-        public fun getPackageFilePath(fqName: FqName): String =
-                packageFqNameToPath(fqName) + "/.kotlin_package"
-
-        public fun getStringTableFilePath(fqName: FqName): String =
-                packageFqNameToPath(fqName) + "/.kotlin_string_table"
-    }
-
-    public fun getClassMetadataPath(classId: ClassId): String {
+    public override fun getClassMetadataPath(classId: ClassId): String {
         return packageFqNameToPath(classId.getPackageFqName()) + "/" + classId.getRelativeClassName().asString() +
                "." + CLASS_METADATA_FILE_EXTENSION
     }
 
-    public fun getPackageFilePath(fqName: FqName): String =
+    public override fun getPackageFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + PACKAGE_FILE_EXTENSION
 
-    public fun getStringTableFilePath(fqName: FqName): String =
+    public override fun getStringTableFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + STRING_TABLE_FILE_EXTENSION
 
 

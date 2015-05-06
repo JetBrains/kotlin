@@ -21,7 +21,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.builtins.BuiltInsSerializationUtil
+import org.jetbrains.kotlin.builtins.BuiltInsSerializedResourcePaths
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -128,14 +128,14 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
         val packageProto = serializer.packageProto(fragments).build() ?: error("Package fragments not serialized: $fragments")
         packageProto.writeTo(packageStream)
-        write(destDir, BuiltInsSerializationUtil.getPackageFilePath(fqName), packageStream,
-              BuiltInsSerializationUtil.FallbackPaths.getPackageFilePath(fqName))
+        write(destDir, BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), packageStream,
+              BuiltInsSerializedResourcePaths.fallbackPaths.getPackageFilePath(fqName))
 
         val nameStream = ByteArrayOutputStream()
         val strings = serializer.getStringTable()
         SerializationUtil.serializeStringTable(nameStream, strings.serializeSimpleNames(), strings.serializeQualifiedNames())
-        write(destDir, BuiltInsSerializationUtil.getStringTableFilePath(fqName), nameStream,
-              BuiltInsSerializationUtil.FallbackPaths.getStringTableFilePath(fqName))
+        write(destDir, BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), nameStream,
+              BuiltInsSerializedResourcePaths.fallbackPaths.getStringTableFilePath(fqName))
     }
 
     private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream, legacyFileName: String? = null) {
@@ -173,6 +173,6 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     }
 
     private fun getFileName(classDescriptor: ClassDescriptor): String {
-        return BuiltInsSerializationUtil.getClassMetadataPath(classDescriptor.classId)
+        return BuiltInsSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId)
     }
 }

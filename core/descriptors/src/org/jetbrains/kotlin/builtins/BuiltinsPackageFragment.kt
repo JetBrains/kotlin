@@ -16,49 +16,23 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
-import javax.inject.Inject
-import kotlin.properties.Delegates
 
 public class BuiltinsPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
-        private val loadResource: (path: String) -> InputStream?
-) : PackageFragmentDescriptorImpl(module, fqName) {
+        loadResource: (path: String) -> InputStream?
+) : DeserializedPackageFragment(fqName, storageManager, module, BuiltInsSerializedResourcePaths, loadResource) {
 
-    val nameResolver = NameResolver.read(
-            loadResource(BuiltInsSerializationUtil.getStringTableFilePath(fqName))
-            ?: loadResourceSure(BuiltInsSerializationUtil.FallbackPaths.getStringTableFilePath(fqName))
-    )
-
-    private var components: DeserializationComponents by Delegates.notNull()
-
-    Inject
-    public fun setDeserializationComponents(components: DeserializationComponents) {
-        this.components = components
+    protected override fun loadClassNames(fqName: FqName, packageProto: ProtoBuf.Package): Collection<Name> {
+        return packageProto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
     }
-
-    private val memberScope = storageManager.createLazyValue {
-        val stream = loadResource(BuiltInsSerializationUtil.getPackageFilePath(fqName))
-                     ?: loadResourceSure(BuiltInsSerializationUtil.FallbackPaths.getPackageFilePath(fqName))
-        val proto = ProtoBuf.Package.parseFrom(stream, BuiltInsSerializationUtil.EXTENSION_REGISTRY)
-        DeserializedPackageMemberScope(this, proto, nameResolver, components, classNames = {
-            proto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
-        })
-    }
-
-    override fun getMemberScope() = memberScope()
-
-    private fun loadResourceSure(path: String): InputStream =
-            loadResource(path) ?: throw IllegalStateException("Resource not found in classpath: $path")
 }
