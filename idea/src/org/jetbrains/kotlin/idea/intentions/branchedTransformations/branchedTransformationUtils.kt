@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.parenthesizeIfNeeded
-import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.parenthesizeTextIfNeeded
 import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.toBinaryExpression
 import org.jetbrains.kotlin.psi.psiUtil.*
 
@@ -166,37 +165,6 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
     } as JetWhenExpression
 
     return replaced(whenExpression)
-}
-
-public fun JetWhenExpression.canTransformToIf(): Boolean = !getEntries().isEmpty()
-
-public fun JetWhenExpression.transformToIf() {
-    fun combineWhenConditions(conditions: Array<JetWhenCondition>, subject: JetExpression?): String {
-        return when (conditions.size()) {
-            0 -> ""
-            1 -> conditions[0].toExpressionText(subject)
-            else -> {
-                conditions
-                        .map { condition -> parenthesizeTextIfNeeded(condition.toExpressionText(subject)) }
-                        .joinToString(separator = " || ")
-            }
-        }
-    }
-
-    val builder = JetPsiFactory(this).IfChainBuilder()
-
-    for (entry in getEntries()) {
-        val branch = entry.getExpression()
-        if (entry.isElse()) {
-            builder.elseBranch(branch)
-        }
-        else {
-            val branchConditionText = combineWhenConditions(entry.getConditions(), getSubjectExpression())
-            builder.ifBranch(branchConditionText, JetPsiUtil.getText(branch))
-        }
-    }
-
-    replace(builder.toExpression())
 }
 
 public fun JetWhenExpression.canMergeWithNext(): Boolean {

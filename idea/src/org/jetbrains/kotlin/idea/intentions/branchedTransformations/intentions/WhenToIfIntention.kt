@@ -17,15 +17,42 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.canTransformToIf
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.transformToIf
-import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpressionText
+import org.jetbrains.kotlin.psi.*
 
-public class WhenToIfIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>("when.to.if", javaClass()) {
-    override fun isApplicableTo(element: JetWhenExpression): Boolean = element.canTransformToIf()
+public class WhenToIfIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Replace 'when' with 'if'") {
+    override fun isApplicableTo(element: JetWhenExpression, caretOffset: Int): Boolean {
+        if (element.getEntries().isEmpty()) return false
+        return element.getWhenKeywordElement().getTextRange().containsOffset(caretOffset)
+    }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
-        element.transformToIf()
+        val builder = JetPsiFactory(element).IfChainBuilder()
+
+        for (entry in element.getEntries()) {
+            val branch = entry.getExpression()
+            if (entry.isElse()) {
+                builder.elseBranch(branch)
+            }
+            else {
+                val branchConditionText = combineWhenConditions(entry.getConditions(), element.getSubjectExpression())
+                builder.ifBranch(branchConditionText, JetPsiUtil.getText(branch))
+            }
+        }
+
+        element.replace(builder.toExpression())
+    }
+
+    private fun combineWhenConditions(conditions: Array<JetWhenCondition>, subject: JetExpression?): String {
+        return when (conditions.size()) {
+            0 -> ""
+            1 -> conditions[0].toExpressionText(subject)
+            else -> {
+                conditions
+                        .map { condition -> JetPsiUnparsingUtils.parenthesizeTextIfNeeded(condition.toExpressionText(subject)) }
+                        .joinToString(separator = " || ")
+            }
+        }
     }
 }
