@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
 public abstract class JetSelfTargetingIntention<TElement : JetElement>(
@@ -88,7 +88,7 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
     override fun toString(): String = getText()
 }
 
-public abstract class JetSelfTargetingOffsetIndependentIntention<TElement : JetElement>(
+public abstract class JetSelfTargetingRangeIntention<TElement : JetElement>(
         elementType: Class<TElement>,
         text: String,
         familyName: String = text,
@@ -99,7 +99,28 @@ public abstract class JetSelfTargetingOffsetIndependentIntention<TElement : JetE
     public constructor(key: String, elementType: Class<TElement>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
     }
 
+    public abstract fun applicabilityRange(element: TElement): TextRange?
+
+    override final fun isApplicableTo(element: TElement, caretOffset: Int): Boolean {
+        val range = applicabilityRange(element) ?: return false
+        return range.containsOffset(caretOffset)
+    }
+}
+
+public abstract class JetSelfTargetingOffsetIndependentIntention<TElement : JetElement>(
+        elementType: Class<TElement>,
+        text: String,
+        familyName: String = text,
+        firstElementOfTypeOnly: Boolean = false
+) : JetSelfTargetingRangeIntention<TElement>(elementType, text, familyName, firstElementOfTypeOnly) {
+
+    deprecated("Use primary constructor, no need to use i18n")
+    public constructor(key: String, elementType: Class<TElement>) : this(elementType, JetBundle.message(key), JetBundle.message(key + ".family")) {
+    }
+
     public abstract fun isApplicableTo(element: TElement): Boolean
 
-    override final fun isApplicableTo(element: TElement, caretOffset: Int): Boolean = isApplicableTo(element)
+    override final fun applicabilityRange(element: TElement): TextRange? {
+        return if (isApplicableTo(element)) element.getTextRange() else null
+    }
 }

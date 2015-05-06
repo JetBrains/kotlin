@@ -23,15 +23,14 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.JetElement
-import java.util.*
 
 public abstract class IntentionBasedInspection<T: JetElement>(
-        protected val intentions: List<JetSelfTargetingOffsetIndependentIntention<T>>,
+        protected val intentions: List<JetSelfTargetingRangeIntention<T>>,
         protected val elementType: Class<T>
 ) : AbstractKotlinInspection() {
-    constructor(intention: JetSelfTargetingOffsetIndependentIntention<T>): this(listOf(intention), intention.elementType)
+    constructor(intention: JetSelfTargetingRangeIntention<T>): this(listOf(intention), intention.elementType)
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object: PsiElementVisitor() {
@@ -42,7 +41,10 @@ public abstract class IntentionBasedInspection<T: JetElement>(
                 val targetElement = element as T
 
                 for (intention in intentions) {
-                    if (!intention.isApplicableTo(targetElement)) continue
+                    val range = intention.applicabilityRange(targetElement) ?: continue
+                    val elementRange = targetElement.getTextRange()
+                    assert(range in elementRange, "Wrong applicabilityRange() result for $intention - should be within element's range")
+                    val rangeInElement = range.shiftRight(-elementRange.getStartOffset())
 
                     val fix = object: LocalQuickFix {
                         private val text = intention.getText()
@@ -59,7 +61,7 @@ public abstract class IntentionBasedInspection<T: JetElement>(
                         }
                     }
 
-                    holder.registerProblem(targetElement, intention.getText(), problemHighlightType, fix)
+                    holder.registerProblem(targetElement, intention.getText(), problemHighlightType, rangeInElement, fix)
                 }
             }
         }
@@ -67,14 +69,14 @@ public abstract class IntentionBasedInspection<T: JetElement>(
 
     protected open val problemHighlightType: ProblemHighlightType
         get() = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-}
 
-private fun PsiElement.getOrCreateEditor(): Editor? {
-    val file = getContainingFile()?.getVirtualFile() ?: return null
-    val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
+    private fun PsiElement.getOrCreateEditor(): Editor? {
+        val file = getContainingFile()?.getVirtualFile() ?: return null
+        val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
 
-    val editorFactory = EditorFactory.getInstance()!!
+        val editorFactory = EditorFactory.getInstance()
 
-    val editors = editorFactory.getEditors(document)
-    return if (editors.isEmpty()) editorFactory.createEditor(document) else editors[0]
+        val editors = editorFactory.getEditors(document)
+        return if (editors.isEmpty()) editorFactory.createEditor(document) else editors[0]
+    }
 }

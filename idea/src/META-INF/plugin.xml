@@ -924,6 +924,13 @@
         level="WEAK WARNING"
         />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IntroduceWhenSubjectInspection"
+        displayName="Introduce argument to 'when'"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        level="WEAK WARNING"
+        />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
         displayName="Unused Symbol"
         groupName="Kotlin"

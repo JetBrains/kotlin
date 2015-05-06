@@ -17,16 +17,17 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
 import org.jetbrains.kotlin.psi.JetWhenExpression
 
-public class IntroduceWhenSubjectIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>(javaClass(), "Introduce argument to 'when'") {
-    override fun isApplicableTo(element: JetWhenExpression): Boolean {
-        val subject = element.getSubjectToIntroduce() ?: return false
-        setText("Introduce '$subject' as argument to 'when'")
-        return true
+public class IntroduceWhenSubjectIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Introduce argument to 'when'") {
+    override fun applicabilityRange(element: JetWhenExpression): TextRange? {
+        val subject = element.getSubjectToIntroduce() ?: return null
+        setText("Introduce '${subject.getText()}' as argument to 'when'")
+        return element.getWhenKeywordElement().getTextRange()
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
