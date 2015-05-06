@@ -1732,6 +1732,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/whenWithoutSubject.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("wrongIsAndInNoEnd.kt")
+                public void testWrongIsAndInNoEnd() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/wrongIsAndInNoEnd.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("wrongIsAndInNoSubject.kt")
+                public void testWrongIsAndInNoSubject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifWhen/whenToIf/wrongIsAndInNoSubject.kt");
+                    doTest(fileName);
+                }
             }
         }
 

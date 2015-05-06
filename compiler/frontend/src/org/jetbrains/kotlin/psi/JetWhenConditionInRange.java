@@ -52,6 +52,7 @@ public class JetWhenConditionInRange extends JetWhenCondition {
         return visitor.visitWhenConditionInRange(this, data);
     }
 
+    @NotNull
     public JetSimpleNameExpression getOperationReference() {
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.OPERATION_REFERENCE);
     }

@@ -23,41 +23,34 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.parenthesizeIfNeeded
-import org.jetbrains.kotlin.psi.JetPsiUnparsingUtils.toBinaryExpression
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.typeRefHelpers.getTypeReference
 
 public val TRANSFORM_WITHOUT_CHECK: String = "Expression must be checked before applying transformation"
 
-fun JetWhenCondition.toExpressionText(subject: JetExpression?): String {
-    return when (this) {
+fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
+    val factory = JetPsiFactory(this)
+    when (this) {
         is JetWhenConditionIsPattern -> {
             val op = if (isNegated()) "!is" else "is"
-            toBinaryExpression(subject, op, getTypeReference())
+            return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", getTypeReference() ?: "")
         }
-        is JetWhenConditionInRange -> {
-            toBinaryExpression(subject, getOperationReference()!!.getText()!!, getRangeExpression())
-        }
-        is JetWhenConditionWithExpression -> {
-            val conditionExpression = getExpression()
-            if (subject != null) {
-                toBinaryExpression(parenthesizeIfNeeded(subject), "==", parenthesizeIfNeeded(conditionExpression))
-            }
-            else {
-                JetPsiUtil.getText(this)
-            }
-        }
-        else -> {
-            assert(this is JetWhenConditionWithExpression, TRANSFORM_WITHOUT_CHECK)
 
-            val conditionExpression = (this as JetWhenConditionWithExpression).getExpression()
-            if (subject != null) {
-                toBinaryExpression(parenthesizeIfNeeded(subject), "==", parenthesizeIfNeeded(conditionExpression))
+        is JetWhenConditionInRange -> {
+            val op = getOperationReference().getText()
+            return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", getRangeExpression() ?: "")
+        }
+
+        is JetWhenConditionWithExpression -> {
+            return if (subject != null) {
+                factory.createExpressionByPattern("$0 == $1", subject, getExpression() ?: "")
             }
             else {
-                JetPsiUtil.getText(this)
+                getExpression()
             }
         }
+
+        else -> throw IllegalArgumentException("Unknown JetWhenCondition type: $this")
     }
 }
 

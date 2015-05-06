@@ -72,6 +72,7 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
             .filter { args[it.getKey()] is String }
             .flatMap { it.getValue() }
             .map { it.range }
+            .filterNot { it.isEmpty() }
             .sortBy { -it.getStartOffset() }
 
     // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)

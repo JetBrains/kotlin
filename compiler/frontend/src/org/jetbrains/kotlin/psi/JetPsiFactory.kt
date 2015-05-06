@@ -63,7 +63,7 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createExpression(text: String): JetExpression {
-        return createProperty("val x = $text").getInitializer()!!
+        return createProperty("val x = $text").getInitializer() ?: error("Failed to create expression from text: '$text'")
     }
 
     public fun createClassLiteral(className: String): JetClassLiteralExpression =

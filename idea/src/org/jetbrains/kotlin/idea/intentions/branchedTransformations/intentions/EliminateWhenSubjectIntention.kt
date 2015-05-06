@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpressionText
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetWhenExpression
@@ -46,7 +46,7 @@ public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<JetWhenEx
                 else {
                     for ((i, condition) in entry.getConditions().withIndex()) {
                         if (i > 0) appendFixedText(",")
-                        appendNonFormattedText(condition.toExpressionText(subject))
+                        appendExpression(condition.toExpression(subject))
                     }
                 }
                 appendFixedText("->")
