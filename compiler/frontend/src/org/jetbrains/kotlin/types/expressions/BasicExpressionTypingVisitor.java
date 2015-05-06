@@ -1497,6 +1497,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public JetTypeInfo visitAnnotatedExpression(JetAnnotatedExpression expression, ExpressionTypingContext context, boolean isStatement) {
+        AnnotationResolver.reportDeprecatedAnnotationSyntax(expression.getAnnotations(), context.trace);
         components.annotationResolver.resolveAnnotationsWithArguments(
                 context.scope, expression.getAnnotationEntries(), context.trace);
 

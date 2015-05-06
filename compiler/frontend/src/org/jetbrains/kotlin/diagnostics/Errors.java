@@ -130,6 +130,7 @@ public interface Errors {
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetAnnotation> DEPRECATED_ANNOTATION_SYNTAX = DiagnosticFactory0.create(WARNING);
 
     // Classes and traits
 

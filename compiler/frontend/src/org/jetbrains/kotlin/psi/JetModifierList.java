@@ -76,4 +76,8 @@ public abstract class JetModifierList extends JetElementImplStub<KotlinModifierL
         }
         return null;
     }
+
+    public PsiElement getOwner() {
+        return getParentByStub();
+    }
 }

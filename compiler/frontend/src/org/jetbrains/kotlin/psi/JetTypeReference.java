@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
@@ -34,7 +35,7 @@ import static org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes.ANNOTA
  * Type reference element.
  * Underlying token is {@link org.jetbrains.kotlin.JetNodeTypes#TYPE_REFERENCE}
  */
-public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<JetTypeReference>> implements JetAnnotationsContainer {
+public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<JetTypeReference>> implements JetAnnotated, JetAnnotationsContainer {
 
     public JetTypeReference(@NotNull ASTNode node) {
         super(node);
@@ -54,7 +55,15 @@ public class JetTypeReference extends JetElementImplStub<KotlinPlaceHolderStub<J
         return JetStubbedPsiUtil.getStubOrPsiChild(this, JetStubElementTypes.TYPE_ELEMENT_TYPES, JetTypeElement.ARRAY_FACTORY);
     }
 
-    public List<JetAnnotationEntry> getAnnotations() {
+    @NotNull
+    @Override
+    public List<JetAnnotation> getAnnotations() {
+        return getStubOrPsiChildrenAsList(JetStubElementTypes.ANNOTATION);
+    }
+
+    @NotNull
+    @Override
+    public List<JetAnnotationEntry> getAnnotationEntries() {
         return PsiUtilPackage.collectAnnotationEntriesFromStubOrPsi(this);
     }
 

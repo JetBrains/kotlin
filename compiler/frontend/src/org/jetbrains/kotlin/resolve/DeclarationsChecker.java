@@ -237,6 +237,7 @@ public class DeclarationsChecker {
     }
 
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
+        AnnotationResolver.reportDeprecatedAnnotationSyntax(aClass.getAnnotations(), trace);
         checkOpenMembers(classDescriptor);
         checkPrimaryConstructor(aClass, classDescriptor);
         checkTypeParameters(aClass);
