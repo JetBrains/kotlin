@@ -33,7 +33,9 @@ import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator.shouldBeInlined;
 import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getFunctionDescriptor;
@@ -50,7 +52,7 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     @NotNull
-    private final TranslationContext functionBodyContext;
+    private TranslationContext functionBodyContext;
     @NotNull
     private final JetDeclarationWithBody functionDeclaration;
     @Nullable
@@ -122,14 +124,18 @@ public final class FunctionTranslator extends AbstractTranslator {
     @NotNull
     private List<JsParameter> translateParameters() {
         List<JsParameter> jsParameters = new SmartList<JsParameter>();
+        Map<DeclarationDescriptor, JsExpression> aliases = new HashMap<DeclarationDescriptor, JsExpression>();
 
         for (TypeParameterDescriptor type : descriptor.getTypeParameters()) {
             if (type.isReified()) {
-                JsName typeName = context().getNameForDescriptor(type);
-                JsName paramName = functionObject.getScope().declareName("is" + typeName.getIdent());
+                String suggestedName = Namer.isInstanceSuggestedName(type);
+                JsName paramName = functionObject.getScope().declareName(suggestedName);
                 jsParameters.add(new JsParameter(paramName));
+                aliases.put(type, paramName.makeRef());
             }
         }
+
+        functionBodyContext = functionBodyContext.innerContextWithDescriptorsAliased(aliases);
 
         if (extensionFunctionReceiverName == null && descriptor.getValueParameters().isEmpty()) {
             return jsParameters;

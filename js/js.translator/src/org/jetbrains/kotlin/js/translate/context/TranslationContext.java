@@ -339,12 +339,10 @@ public class TranslationContext {
 
     @Nullable
     private JsNameRef captureIfNeedAndGetCapturedName(DeclarationDescriptor descriptor) {
-        if (usageTracker != null && descriptor instanceof CallableDescriptor) {
-            CallableDescriptor callableDescriptor = (CallableDescriptor) descriptor;
+        if (usageTracker != null) {
+            usageTracker.used(descriptor);
 
-            usageTracker.used(callableDescriptor);
-
-            JsName name = getNameForCapturedDescriptor(usageTracker, callableDescriptor);
+            JsName name = getNameForCapturedDescriptor(usageTracker, descriptor);
             if (name != null) return name.makeRef();
         }
 

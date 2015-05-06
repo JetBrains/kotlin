@@ -31,13 +31,13 @@ class UsageTracker(
         private val scope: JsFunctionScope
 ) {
 
-    private val captured = linkedMapOf<CallableDescriptor, JsName>()
+    private val captured = linkedMapOf<DeclarationDescriptor, JsName>()
 
     // For readonly access from external places.
-    val capturedDescriptorToJsName: Map<CallableDescriptor, JsName>
+    val capturedDescriptorToJsName: Map<DeclarationDescriptor, JsName>
         get() = captured
 
-    public fun used(descriptor: CallableDescriptor) {
+    public fun used(descriptor: DeclarationDescriptor) {
         if (isCaptured(descriptor)) return
 
         // local named function
@@ -53,9 +53,12 @@ class UsageTracker(
         else if (descriptor is ReceiverParameterDescriptor) {
             captureIfNeed(descriptor)
         }
+        else if (descriptor is TypeParameterDescriptor && descriptor.isReified()) {
+            captureIfNeed(descriptor)
+        }
     }
 
-    private fun captureIfNeed(descriptor: CallableDescriptor?) {
+    private fun captureIfNeed(descriptor: DeclarationDescriptor?) {
         if (descriptor == null || isCaptured(descriptor) || isAncestor(containingDescriptor, descriptor, /* strict = */ true)) return
 
         parent?.captureIfNeed(descriptor)
@@ -63,13 +66,18 @@ class UsageTracker(
         captured[descriptor] = descriptor.getJsNameForCapturedDescriptor()
     }
 
-    private fun CallableDescriptor.getJsNameForCapturedDescriptor(): JsName {
-        val suggestedName = if (this is ReceiverParameterDescriptor) this.getNameForCapturedReceiver() else getSuggestedName(this)
+    private fun DeclarationDescriptor.getJsNameForCapturedDescriptor(): JsName {
+        val suggestedName = when (this) {
+            is ReceiverParameterDescriptor -> this.getNameForCapturedReceiver()
+            is TypeParameterDescriptor -> Namer.isInstanceSuggestedName(this)
+            else -> getSuggestedName(this)
+        }
+
         return scope.declareFreshName(suggestedName)
     }
 }
 
-public fun UsageTracker.getNameForCapturedDescriptor(descriptor: CallableDescriptor): JsName? = capturedDescriptorToJsName.get(descriptor)
+public fun UsageTracker.getNameForCapturedDescriptor(descriptor: DeclarationDescriptor): JsName? = capturedDescriptorToJsName.get(descriptor)
 
 public fun UsageTracker.hasCapturedExceptContaining(): Boolean {
     val hasNotCaptured =
@@ -79,7 +87,7 @@ public fun UsageTracker.hasCapturedExceptContaining(): Boolean {
     return !hasNotCaptured
 }
 
-public fun UsageTracker.isCaptured(descriptor: CallableDescriptor): Boolean = capturedDescriptorToJsName.containsKey(descriptor)
+public fun UsageTracker.isCaptured(descriptor: DeclarationDescriptor): Boolean = capturedDescriptorToJsName.containsKey(descriptor)
 
 // NOTE: don't use from other places to avoid name clashes! So, it is not in Namer.
 private fun ReceiverParameterDescriptor.getNameForCapturedReceiver(): String {

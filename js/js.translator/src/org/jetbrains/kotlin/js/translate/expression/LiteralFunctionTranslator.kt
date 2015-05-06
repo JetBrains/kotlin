@@ -66,13 +66,13 @@ class LiteralFunctionTranslator(context: TranslationContext) : AbstractTranslato
 
 fun JsFunction.withCapturedParameters(context: TranslationContext, invokingContext: TranslationContext, descriptor: MemberDescriptor): JsExpression {
 
-    fun getParameterNameRefForInvocation(callableDescriptor: CallableDescriptor): JsExpression {
-        val alias = invokingContext.getAliasForDescriptor(callableDescriptor)
+    fun getParameterNameRefForInvocation(descriptor: DeclarationDescriptor): JsExpression {
+        val alias = invokingContext.getAliasForDescriptor(descriptor)
         if (alias != null) return alias
 
-        if (callableDescriptor is ReceiverParameterDescriptor) return JsLiteral.THIS
+        if (descriptor is ReceiverParameterDescriptor) return JsLiteral.THIS
 
-        return invokingContext.getNameForDescriptor(callableDescriptor).makeRef()
+        return invokingContext.getNameForDescriptor(descriptor).makeRef()
     }
 
     val ref = invokingContext.define(descriptor, this)
@@ -90,7 +90,7 @@ fun JsFunction.withCapturedParameters(context: TranslationContext, invokingConte
         var additionalArgs = listOf(capturedRef)
         var additionalParams = listOf(JsParameter(name))
 
-        if (isLocalInlineDeclaration(capturedDescriptor)) {
+        if (capturedDescriptor is CallableDescriptor && isLocalInlineDeclaration(capturedDescriptor)) {
             val aliasRef = capturedRef as? JsNameRef
             val localFunAlias = aliasRef?.getStaticRef() as? JsExpression
 
