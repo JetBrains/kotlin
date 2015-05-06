@@ -66,7 +66,7 @@ public abstract class ElementResolver protected(
 
         if (elementOfAdditionalResolve != null) {
             if (elementOfAdditionalResolve !is JetParameter) {
-                if (bodyResolveMode != BodyResolveMode.FULL && !hasElementAdditionalResolveCached(jetElement)) {
+                if (bodyResolveMode != BodyResolveMode.FULL && !hasElementAdditionalResolveCached(elementOfAdditionalResolve)) {
                     return performElementAdditionalResolve(elementOfAdditionalResolve, jetElement, bodyResolveMode)
                 }
 
