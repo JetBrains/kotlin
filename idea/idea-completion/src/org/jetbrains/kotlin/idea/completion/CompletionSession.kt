@@ -127,27 +127,35 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext) { isVisibleDescriptor(it) }
 
+    protected val receiversData: ReferenceVariantsHelper.ReceiversData? = reference?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it.expression) }
+
     protected val lookupElementFactory: LookupElementFactory = run {
-        val receiverTypes = if (reference != null) {
-            val expression = reference.expression
-            val (receivers, callType) = referenceVariantsHelper.getReferenceVariantsReceivers(expression)
+        if (receiversData != null) {
             val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
-            var receiverTypes = receivers.flatMap {
+
+            var receiverTypes = receiversData.receivers.flatMap {
                 SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(it, bindingContext, moduleDescriptor, dataFlowInfo)
             }
-            if (callType == CallType.SAFE) {
+
+            if (receiversData.callType == CallType.SAFE) {
                 receiverTypes = receiverTypes.map { it.makeNotNullable() }
             }
-            receiverTypes
+
+            LookupElementFactory(receiverTypes)
         }
         else {
-            listOf()
+            LookupElementFactory(emptyList())
         }
-        LookupElementFactory(receiverTypes)
     }
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(
-            prefixMatcher, parameters, resolutionFacade, lookupElementFactory, inDescriptor, expression?.getParent() is JetSimpleNameStringTemplateEntry)
+    private val collectorContext = if (expression?.getParent() is JetSimpleNameStringTemplateEntry)
+        LookupElementsCollector.Context.STRING_TEMPLATE_AFTER_DOLLAR
+    else if (receiversData?.callType == CallType.INFIX)
+        LookupElementsCollector.Context.INFIX_CALL
+    else
+        LookupElementsCollector.Context.NORMAL
+
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, lookupElementFactory, inDescriptor, collectorContext)
 
     protected val project: Project = position.getProject()
 

@@ -631,6 +631,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("InfixCallNoSpecialLambdaArgumentItem.kt")
+        public void testInfixCallNoSpecialLambdaArgumentItem() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InfixCallNoSpecialLambdaArgumentItem.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InsideAnonymousClass.kt")
         public void testInsideAnonymousClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InsideAnonymousClass.kt");
