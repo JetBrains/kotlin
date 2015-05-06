@@ -69,8 +69,8 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
     val codeStyleManager = CodeStyleManager.getInstance(project)
 
     val stringPlaceholderRanges = allPlaceholders
-            .filter { args[it.getKey()] is String }
-            .flatMap { it.getValue() }
+            .filter { args[it.key] is String }
+            .flatMap { it.value }
             .map { it.range }
             .filterNot { it.isEmpty() }
             .sortBy { -it.getStartOffset() }
@@ -121,7 +121,6 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
         var i = 0
         while (i < pattern.length()) {
             var c = pattern[i]
-            var prevChar = charOrNull(i - 1)
 
             if (c == '$') {
                 val nextChar = charOrNull(++i)
@@ -138,15 +137,7 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
 
                     val arg: Any? = if (n < args.size()) args[n] else null /* report wrong number of arguments later */
                     val placeholderText = if (charOrNull(i) != '=') {
-                        if (arg is String) {
-                            arg
-                        }
-                        else {
-                            if (prevChar?.isJavaIdentifierPart() ?: false) {
-                                append(" ")
-                            }
-                            "xyz"
-                        }
+                        if (arg is String) arg else "xyz"
                     }
                     else {
                         check(arg !is String, "do not specify placeholder text for $$n - String argument passed")
@@ -171,8 +162,6 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
             i++
         }
     }.toString()
-
-    check(!ranges.isEmpty(), "no placeholders found")
 
     val max = ranges.keySet().max()!!
     for (i in 0..max) {
@@ -205,6 +194,14 @@ public class ExpressionBuilder {
         if (expression != null) {
             patternBuilder.append("$" + arguments.size())
             arguments.add(expression)
+        }
+        return this
+    }
+
+    public fun appendTypeReference(typeRef: JetTypeReference?): ExpressionBuilder {
+        if (typeRef != null) {
+            patternBuilder.append("$" + arguments.size())
+            arguments.add(typeRef)
         }
         return this
     }
