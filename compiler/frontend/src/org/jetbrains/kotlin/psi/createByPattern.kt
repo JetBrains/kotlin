@@ -38,23 +38,29 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
 
     val pointerManager = SmartPointerManager.getInstance(project)
 
-    val pointers = HashMap<SmartPsiElementPointer<JetExpression>, Int>()
+    val pointers = HashMap<SmartPsiElementPointer<PsiElement>, Int>()
+
+    PlaceholdersLoop@
     for ((n, placeholders) in allPlaceholders) {
-        if (args[n] is String) continue // already in the text
+        val expectedElementType = when (args[n]) {
+            is String -> continue@PlaceholdersLoop // already in the text
+            is JetExpression -> javaClass<JetExpression>()
+            is JetTypeReference -> javaClass<JetTypeReference>()
+            else -> throw IllegalArgumentException("Unknown argument ${args[n]} - should be JetExpression, JetTypeReference or String")
+        }
 
         for ((range, text) in placeholders) {
             val token = expression.findElementAt(range.getStartOffset())!!
             for (element in token.parents()) {
                 val elementRange = element.getTextRange().shiftRight(-start)
-                if (elementRange == range) {
-                    val elementToUse = element.parents(withItself = false).firstIsInstanceOrNull<JetExpression>()
-                                       ?: error("Invalid pattern '$pattern' - no JetExpression found for $n text = " + processedText)
-                    val pointer = pointerManager.createSmartPsiElementPointer(elementToUse)
+                if (elementRange == range && expectedElementType.isInstance(element)) {
+                    val pointer = pointerManager.createSmartPsiElementPointer(element)
                     pointers.put(pointer, n)
                     break
                 }
-                else if (!range.contains(elementRange)) {
-                    throw IllegalArgumentException("Invalid pattern '$pattern' - no PsiElement found for $$n text = " + processedText)
+
+                if (!range.contains(elementRange)) {
+                    throw IllegalArgumentException("Invalid pattern '$pattern' - no ${expectedElementType.getSimpleName()} found for $$n, text = '$processedText'")
                 }
             }
         }
@@ -87,11 +93,7 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
 
     for ((pointer, n) in pointers) {
         val element = pointer.getElement()!!
-        val arg = args[n]
-        if (arg !is JetExpression) {
-            throw IllegalArgumentException("Unknown argument $arg - should be JetExpression or String")
-        }
-        element.replace(arg)
+        element.replace(args[n] as PsiElement)
     }
 
     codeStyleManager.adjustLineIndent(expression.getContainingFile(), expression.getTextRange())
