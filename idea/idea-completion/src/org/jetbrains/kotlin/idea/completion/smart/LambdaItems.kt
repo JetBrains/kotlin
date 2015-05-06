@@ -18,14 +18,21 @@ package org.jetbrains.kotlin.idea.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.completion.handlers.insertLambdaTemplate
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.handlers.buildLambdaPresentation
+import org.jetbrains.kotlin.idea.completion.handlers.insertLambdaTemplate
 import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
+import java.util.*
 
 object LambdaItems {
+    public fun collect(functionExpectedInfos: Collection<ExpectedInfo>): Collection<LookupElement> {
+        val list = ArrayList<LookupElement>()
+        addToCollection(list, functionExpectedInfos)
+        return list
+    }
+
     public fun addToCollection(collection: MutableCollection<LookupElement>, functionExpectedInfos: Collection<ExpectedInfo>) {
         val distinctTypes = functionExpectedInfos.map { it.type }.toSet()
 

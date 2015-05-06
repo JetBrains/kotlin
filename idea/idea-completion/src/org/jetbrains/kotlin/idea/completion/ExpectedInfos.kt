@@ -116,8 +116,6 @@ class ExpectedInfos(
     }
 
     private fun calculateForArgument(callElement: JetCallElement, argumentIndex: Int, isFunctionLiteralArgument: Boolean): Collection<ExpectedInfo>? {
-        val calleeExpression = callElement.getCalleeExpression()
-
         val parent = callElement.getParent()
         val receiver: ReceiverValue
         val callOperationNode: ASTNode?
@@ -141,13 +139,23 @@ class ExpectedInfos(
             receiver = ReceiverValue.NO_RECEIVER
             callOperationNode = null
         }
-        var call = CallMaker.makeCall(receiver, callOperationNode, callElement)
 
-        if (!isFunctionLiteralArgument) { // leave only arguments before the current one
-            call = object : DelegatingCall(call) {
+        val call = CallMaker.makeCall(receiver, callOperationNode, callElement)
+        return calculateForArgument(call, argumentIndex, isFunctionLiteralArgument)
+    }
+
+    public fun calculateForArgument(call: Call, argumentIndex: Int, isFunctionLiteralArgument: Boolean): Collection<ExpectedInfo>? {
+        val callElement = call.getCallElement()
+        val calleeExpression = call.getCalleeExpression()
+
+        val truncatedCall = if (!isFunctionLiteralArgument) { // leave only arguments before the current one
+            object : DelegatingCall(call) {
                 override fun getValueArguments() = super.getValueArguments().subList(0, argumentIndex)
                 override fun getValueArgumentList() = null
             }
+        }
+        else {
+            call
         }
 
         val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
@@ -155,7 +163,7 @@ class ExpectedInfos(
         val expectedType = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it] } ?: TypeUtils.NO_EXPECTED_TYPE
         val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for completion")
-        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, call, expectedType, dataFlowInfo,
+        val context = BasicCallResolutionContext.create(bindingTrace, resolutionScope, truncatedCall, expectedType, dataFlowInfo,
                                                         ContextDependency.INDEPENDENT, CheckValueArgumentsMode.ENABLED,
                                                         CompositeChecker(listOf()), SymbolUsageValidator.Empty, AdditionalTypeChecker.Composite(listOf()), false)
         val callResolutionContext = context.replaceCollectAllCandidates(true)
@@ -175,10 +183,10 @@ class ExpectedInfos(
 
             val descriptor = candidate.getResultingDescriptor()
             val parameters = descriptor.getValueParameters()
+            if (parameters.isEmpty()) continue
 
             val parameterIndex = if (isFunctionLiteralArgument) {
-                if (argumentIndex != parameters.lastIndex) continue //TODO: varargs and optional parameters
-                argumentIndex
+                parameters.lastIndex
             }
             else {
                 val varArgIndex = parameters.indexOfFirst { it.getVarargElementType() != null }
@@ -200,6 +208,8 @@ class ExpectedInfos(
             val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
 
             if (varargElementType != null) {
+                if (isFunctionLiteralArgument) continue
+
                 expectedInfos.add(PositionalArgumentExpectedInfo(varargElementType, expectedName?.fromPlural(), null, descriptor, parameterIndex))
 
                 if (argumentIndex == parameterIndex) {
@@ -231,6 +241,9 @@ class ExpectedInfos(
                     HeuristicSignatures.correctedParameterType(descriptor, argumentIndex, moduleDescriptor, callElement.getProject()) ?: parameter.getType()
                 else
                     parameter.getType()
+
+                if (isFunctionLiteralArgument && !KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) continue
+
                 expectedInfos.add(PositionalArgumentExpectedInfo(parameterType, expectedName, tail, descriptor, parameterIndex))
             }
         }

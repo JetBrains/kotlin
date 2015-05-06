@@ -19,21 +19,19 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.patterns.CharPattern
 import com.intellij.patterns.ElementPattern
-import com.intellij.patterns.PatternCondition
 import com.intellij.patterns.StandardPatterns
 import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
@@ -50,6 +48,7 @@ import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
@@ -400,6 +399,23 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     override fun doComplete() {
         if (expression != null) {
             val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
+
+            // special completion for outside parenthesis lambda argument
+            if (reference != null) {
+                val receiverData = ReferenceVariantsHelper.getExplicitReceiverData(reference.expression)
+                if (receiverData != null && receiverData.second == CallType.INFIX) {
+                    val call = receiverData.first.getCall(bindingContext)
+                    if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
+                        val argumentIndex = call.getValueArguments().size()
+                        val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, moduleDescriptor, true)
+                                .calculateForArgument(call, argumentIndex, true)
+                        if (expectedInfos != null) {
+                            collector.addElements(LambdaItems.collect(expectedInfos))
+                        }
+                    }
+                }
+            }
+
             val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
                                              bindingContext, { isVisibleDescriptor(it) }, inDescriptor, prefixMatcher, originalSearchScope,
                                              mapper, lookupElementFactory)
