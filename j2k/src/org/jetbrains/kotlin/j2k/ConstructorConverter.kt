@@ -265,7 +265,7 @@ class ConstructorConverter(
                     if (target is PsiParameter) {
                         val scope = target.getDeclarationScope()
                         // we do not check for exactly this constructor because default values reference parameters in other constructors
-                        if (scope.isConstructor() && scope.getParent() == psiClass) {
+                        if (scope is PsiMember && scope.isConstructor() && scope.getParent() == psiClass) {
                             return Identifier(replacement, codeConverter.typeConverter.variableNullability(target).isNullable(codeConverter.settings))
                         }
                     }

@@ -92,8 +92,8 @@ fun PsiElement.isInSingleLine(): Boolean {
 
     var child = getFirstChild()
     while (child != null) {
-        if (!child!!.isInSingleLine()) return false
-        child = child!!.getNextSibling()
+        if (!child.isInSingleLine()) return false
+        child = child.getNextSibling()
     }
     return true
 }
@@ -102,7 +102,7 @@ fun PsiElement.isInSingleLine(): Boolean {
 fun PsiElement.getContainingMethod(): PsiMethod? {
     var context = getContext()
     while (context != null) {
-        val _context = context!!
+        val _context = context
         if (_context is PsiMethod) return _context
         context = _context.getContext()
     }
@@ -114,7 +114,7 @@ fun PsiElement.getContainingConstructor(): PsiMethod? {
     return if (method?.isConstructor() == true) method else null
 }
 
-fun PsiElement.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()
+fun PsiMember.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()
 
 fun PsiModifierListOwner.accessModifier(): String = when {
     hasModifierProperty(PsiModifier.PUBLIC) -> PsiModifier.PUBLIC
