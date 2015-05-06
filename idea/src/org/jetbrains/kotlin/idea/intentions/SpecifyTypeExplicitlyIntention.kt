@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.j2k.isConstructor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -45,6 +46,8 @@ import java.util.ArrayList
 public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCallableDeclaration>(javaClass(), "Specify type explicitly") {
     override fun isApplicableTo(element: JetCallableDeclaration, caretOffset: Int): Boolean {
         if (element.getContainingFile() is JetCodeFragment) return false
+        if (element is JetFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?
+        if (element is JetPrimaryConstructor || element is JetSecondaryConstructor) return false // TODO: base class?
         if (element.getTypeReference() != null) return false
 
         if (getTypeForDeclaration(element).isError() || hasPublicMemberDiagnostic(element)) return false

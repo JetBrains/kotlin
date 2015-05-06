@@ -5820,6 +5820,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/constructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("enumType.kt")
         public void testEnumType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/enumType.kt");
@@ -5829,6 +5835,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("functionType.kt")
         public void testFunctionType() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/functionType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lambdaParam.kt")
+        public void testLambdaParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/specifyTypeExplicitly/lambdaParam.kt");
             doTest(fileName);
         }
 
