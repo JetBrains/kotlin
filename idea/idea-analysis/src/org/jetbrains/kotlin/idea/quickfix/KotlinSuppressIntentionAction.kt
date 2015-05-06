@@ -66,7 +66,7 @@ public class KotlinSuppressIntentionAction(
             val entry = findSuppressAnnotation(suppressAt)
             if (entry == null) {
                 // no [suppress] annotation
-                val newAnnotation = psiFactory.createAnnotation(suppressAnnotationText(id))
+                val newAnnotation = psiFactory.createAnnotationEntry(suppressAnnotationText(id))
                 val addedAnnotation = modifierList.addBefore(newAnnotation, modifierList.getFirstChild())
                 val whiteSpace = psiFactory.createWhiteSpace(kind)
                 modifierList.addAfter(whiteSpace, addedAnnotation)
@@ -81,7 +81,7 @@ public class KotlinSuppressIntentionAction(
     private fun suppressAtAnnotatedExpression(suppressAt: CaretBox<JetAnnotatedExpression>, id: String) {
         val entry = findSuppressAnnotation(suppressAt.expression)
         if (entry != null) {
-            // already annotated with [suppress]
+            // already annotated with @suppress
             addArgumentToSuppressAnnotation(entry, id)
         }
         else {
@@ -129,7 +129,7 @@ public class KotlinSuppressIntentionAction(
         }
     }
 
-    private fun suppressAnnotationText(id: String) = "[suppress($id)]"
+    private fun suppressAnnotationText(id: String) = "@suppress($id)"
 
     private fun findSuppressAnnotation(annotated: JetAnnotated): JetAnnotationEntry? {
         val context = annotated.analyze()

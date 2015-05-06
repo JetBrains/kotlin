@@ -1,5 +1,5 @@
 // "Suppress 'REDUNDANT_NULLABLE' for fun foo" "true"
 // ERROR: Unresolved reference: ann
 
-[suppress("REDUNDANT_NULLABLE")]
+@suppress("REDUNDANT_NULLABLE")
 [ann] fun foo(): String?<caret>? = null

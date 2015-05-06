@@ -1,7 +1,7 @@
 // "Suppress 'UNNECESSARY_NOT_NULL_ASSERTION' for statement " "true"
 
 fun foo() {
-    [suppress("Foo", "UNNECESSARY_NOT_NULL_ASSERTION")] ""<caret>!!
+    @suppress("Foo", "UNNECESSARY_NOT_NULL_ASSERTION") ""<caret>!!
 }
 
 annotation class ann

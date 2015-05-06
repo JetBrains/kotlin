@@ -2,7 +2,7 @@
 
 fun foo() {
     try {
-        [suppress("UNNECESSARY_NOT_NULL_ASSERTION")]
+        @suppress("UNNECESSARY_NOT_NULL_ASSERTION")
         ""<caret>!!
     }
     finally {

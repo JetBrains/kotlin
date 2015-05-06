@@ -2,7 +2,7 @@
 
 fun foo() {
     var v = Box<String?>()
-    [suppress("REDUNDANT_NULLABLE")]
+    @suppress("REDUNDANT_NULLABLE")
     (v: Box<String?<caret>?>)++
 }
 

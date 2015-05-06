@@ -1,6 +1,6 @@
 // "Suppress 'UNNECESSARY_NOT_NULL_ASSERTION' for statement " "true"
 
 fun foo(): Any {
-    [suppress("UNNECESSARY_NOT_NULL_ASSERTION")]
+    @suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     return ""<caret>!!
 }

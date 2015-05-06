@@ -3,6 +3,6 @@
 
 fun foo() {
     var x = 0
-    [suppress("UNNECESSARY_NOT_NULL_ASSERTION")]
+    @suppress("UNNECESSARY_NOT_NULL_ASSERTION")
     (x = 1<caret>!!)
 }

@@ -2,6 +2,6 @@
 
 fun foo() {
     val a = 1
-    [suppress("UNUSED_EXPRESSION")]
+    @suppress("UNUSED_EXPRESSION")
     a
 }

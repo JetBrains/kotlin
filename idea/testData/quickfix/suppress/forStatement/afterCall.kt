@@ -1,7 +1,7 @@
 // "Suppress 'REDUNDANT_NULLABLE' for statement " "true"
 
 fun foo() {
-    [suppress("REDUNDANT_NULLABLE")]
+    @suppress("REDUNDANT_NULLABLE")
     call("": String?<caret>?)
 }
 
