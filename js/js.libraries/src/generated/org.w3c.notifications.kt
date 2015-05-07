@@ -98,27 +98,3 @@ native public open class NotificationEventInit : ExtendableEventInit() {
     var notification: Notification
 }
 
-native public marker trait UnionElementOrHTMLCollection {
-}
-
-native public marker trait UnionElementOrRadioNodeList {
-}
-
-native public marker trait UnionHTMLOptGroupElementOrHTMLOptionElement {
-}
-
-native public marker trait UnionAudioTrackOrTextTrackOrVideoTrack {
-}
-
-native public marker trait UnionElementOrMouseEvent {
-}
-
-native public marker trait UnionElementOrProcessingInstruction {
-}
-
-native public marker trait UnionMessagePortOrServiceWorker {
-}
-
-native public marker trait UnionClientOrMessagePortOrServiceWorker {
-}
-

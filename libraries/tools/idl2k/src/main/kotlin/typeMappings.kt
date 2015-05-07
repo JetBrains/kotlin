@@ -112,5 +112,12 @@ private fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
                 .map { splitUnionType(it) }
                 .filter { it.all { unionMember -> unionMember in allTypes } }
                 .toSet()
-                .map { UnionType("", it) }
+                .map { UnionType(guessPackage(it, allTypes), it) }
 
+private fun guessPackage(types : List<String>, allTypes: Map<String, GenerateTraitOrClass>) =
+        types.map { allTypes[it] }
+        .map { it?.namespace }
+        .filterNotNull()
+        .filter { it != "" }
+        .distinct()
+        .minBy { it.split('.').size() } ?: ""

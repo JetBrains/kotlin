@@ -8,7 +8,7 @@ private fun <O : Appendable> O.indent(level: Int) {
     }
 }
 
-private fun Appendable.renderAttributeDeclaration(allTypes: Set<String>, arg: GenerateAttribute, override: Boolean, level: Int = 1) {
+private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, override: Boolean, level: Int = 1) {
     indent(level)
 
     if (override) {
@@ -117,7 +117,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     val superSignatures = superAttributes.map { it.signature } merge superFunctions.map { it.signature }
 
     iface.memberAttributes.filter { it !in superAttributes }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues().values().forEach { arg ->
-        renderAttributeDeclaration(allTypes.keySet(), arg, arg.signature in superSignatures)
+        renderAttributeDeclaration(arg, arg.signature in superSignatures)
     }
     iface.memberFunctions.filter { it !in superFunctions }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
         renderFunctionDeclaration(allTypes.keySet(), it, it.signature in superSignatures)
@@ -127,7 +127,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         indent(1)
         appendln("companion object {")
         iface.constants.forEach {
-            renderAttributeDeclaration(allTypes.keySet(), it, override = false, level = 2)
+            renderAttributeDeclaration(it, override = false, level = 2)
         }
         indent(1)
         appendln("}")
@@ -172,11 +172,11 @@ fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, typ
         render(allTypes, typeNamesToUnions, it)
     }
 
-    anonymousUnionTypeTraits.forEach {
+    anonymousUnionTypeTraits.filter { it.namespace == "" || it.namespace == namespace }.forEach {
         render(allTypes, emptyMap(), it, markerAnnotation = true)
     }
 
-    typedefsMarkerTraits.values().forEach {
+    typedefsMarkerTraits.values().filter { it.namespace == "" || it.namespace == namespace }.forEach {
         render(allTypes, emptyMap(), it, markerAnnotation = true)
     }
 }

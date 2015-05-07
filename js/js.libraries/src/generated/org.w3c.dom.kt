@@ -4854,12 +4854,6 @@ native public marker trait UnionElementOrMouseEvent {
 native public marker trait UnionElementOrProcessingInstruction {
 }
 
-native public marker trait UnionMessagePortOrServiceWorker {
-}
-
-native public marker trait UnionClientOrMessagePortOrServiceWorker {
-}
-
 native public marker trait RenderingContext {
 }
 
