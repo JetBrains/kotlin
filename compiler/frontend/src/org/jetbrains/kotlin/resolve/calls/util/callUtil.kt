@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.sure
 // resolved call
 
 public fun <D : CallableDescriptor> ResolvedCall<D>.noErrorsInValueArguments(): Boolean {
-    return getCall().getValueArguments().all { argument -> !getArgumentMapping(argument!!).isError() }
+    return getCall().getValueArguments().all { argument -> argument.getArgumentExpression() != null/* isError() crashes otherwise!*/ && !getArgumentMapping(argument!!).isError() }
 }
 
 public fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedArguments(): Boolean {

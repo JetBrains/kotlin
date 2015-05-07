@@ -399,6 +399,11 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     private val DESCRIPTOR_KIND_MASK = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
     override fun doComplete() {
+        if (NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
+            NamedParametersCompletion.complete(position, collector, bindingContext)
+            return
+        }
+
         if (expression != null) {
             val mapper = ToFromOriginalFileMapper(parameters.getOriginalFile() as JetFile, position.getContainingFile() as JetFile, parameters.getOffset())
 

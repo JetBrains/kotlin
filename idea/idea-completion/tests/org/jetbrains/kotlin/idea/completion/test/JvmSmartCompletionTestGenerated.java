@@ -31,9 +31,21 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionTest {
+    @TestMetadata("AfterEmptyArgument.kt")
+    public void testAfterEmptyArgument() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/AfterEmptyArgument.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("AfterExclSign.kt")
     public void testAfterExclSign() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/AfterExclSign.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("AfterNamedArgument.kt")
+    public void testAfterNamedArgument() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/AfterNamedArgument.kt");
         doTest(fileName);
     }
 
