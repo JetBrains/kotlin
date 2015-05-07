@@ -2907,7 +2907,7 @@ native public open class ImageData(sw: Int, sh: Int) {
     var height: Int
         get() = noImpl
         set(value) = noImpl
-    var data: dynamic
+    var data: Uint8ClampedArray
         get() = noImpl
         set(value) = noImpl
 }
@@ -3731,7 +3731,8 @@ native public open class WebSocket(url: String, protocols: dynamic = noImpl) : E
     fun close(code: Short = noImpl, reason: String = noImpl): Unit = noImpl
     fun send(data: String): Unit = noImpl
     fun send(data: Blob): Unit = noImpl
-    fun send(data: dynamic): Unit = noImpl
+    fun send(data: ArrayBuffer): Unit = noImpl
+    fun send(data: ArrayBufferView): Unit = noImpl
 
     companion object {
         val CONNECTING: Short = 0
@@ -4852,6 +4853,12 @@ native public marker trait UnionElementOrMouseEvent {
 }
 
 native public marker trait UnionElementOrProcessingInstruction {
+}
+
+native public marker trait ArrayBufferView {
+}
+
+native public marker trait Transferable {
 }
 
 native public marker trait RenderingContext {

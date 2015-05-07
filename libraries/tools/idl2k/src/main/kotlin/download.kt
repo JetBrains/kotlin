@@ -37,7 +37,8 @@ val urls = listOf(
         "https://raw.githubusercontent.com/whatwg/fetch/master/Overview.src.html" to "org.w3c.fetch",
         "http://www.w3.org/TR/vibration/" to "org.w3c.vibration",
         "http://dev.w3.org/csswg/cssom/" to "org.w3c.dom.css",
-        "https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl" to "org.khronos.webgl"
+        "https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl" to "org.khronos.webgl",
+        "https://www.khronos.org/registry/typedarray/specs/latest/typedarray.idl" to "org.khronos.webgl"
 )
 
 fun main(args: Array<String>) {

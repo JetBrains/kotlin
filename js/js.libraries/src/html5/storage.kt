@@ -17,13 +17,15 @@
 package kotlin.js.dom.html5
 
 native
+deprecated("Use declaration from kotlin.browser")
 public val localStorage: org.w3c.dom.Storage = noImpl
 
 native
+deprecated("Use declaration from kotlin.browser")
 public val sessionStorage: org.w3c.dom.Storage = noImpl
 
 native
-deprecated("Use org.w3c.dom")
+deprecated("Use declarations from org.w3c.dom")
 public trait Storage {
     public val length: Int
             get() = noImpl

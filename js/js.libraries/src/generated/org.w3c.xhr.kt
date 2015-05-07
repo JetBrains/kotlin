@@ -100,14 +100,12 @@ native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
 }
 
 native public open class FormData(form: HTMLFormElement = noImpl) {
-    fun append(name: String, value: Blob, filename: String = noImpl): Unit = noImpl
-    fun append(name: String, value: String): Unit = noImpl
+    fun append(name: String, value: dynamic): Unit = noImpl
     fun delete(name: String): Unit = noImpl
     fun get(name: String): dynamic = noImpl
     fun getAll(name: String): Any = noImpl
     fun has(name: String): Boolean = noImpl
-    fun set(name: String, value: Blob, filename: String = noImpl): Unit = noImpl
-    fun set(name: String, value: String): Unit = noImpl
+    fun set(name: String, value: dynamic): Unit = noImpl
 }
 
 native public open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {

@@ -98,7 +98,7 @@ native public open class FileReader : EventTarget {
 }
 
 native public open class FileReaderSync {
-    fun readAsArrayBuffer(blob: Blob): dynamic = noImpl
+    fun readAsArrayBuffer(blob: Blob): ArrayBuffer = noImpl
     fun readAsText(blob: Blob, label: String = noImpl): String = noImpl
     fun readAsDataURL(blob: Blob): String = noImpl
 }

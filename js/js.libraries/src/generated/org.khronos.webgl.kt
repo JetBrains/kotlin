@@ -97,7 +97,7 @@ native public trait WebGLRenderingContext {
     fun bindFramebuffer(target: Int, framebuffer: WebGLFramebuffer?): Unit = noImpl
     fun bindRenderbuffer(target: Int, renderbuffer: WebGLRenderbuffer?): Unit = noImpl
     fun bindTexture(target: Int, texture: WebGLTexture?): Unit = noImpl
-    fun blendColor(red: dynamic, green: dynamic, blue: dynamic, alpha: dynamic): Unit = noImpl
+    fun blendColor(red: Float, green: Float, blue: Float, alpha: Float): Unit = noImpl
     fun blendEquation(mode: Int): Unit = noImpl
     fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int): Unit = noImpl
     fun blendFunc(sfactor: Int, dfactor: Int): Unit = noImpl
@@ -107,8 +107,8 @@ native public trait WebGLRenderingContext {
     fun bufferSubData(target: Int, offset: Long, data: dynamic): Unit = noImpl
     fun checkFramebufferStatus(target: Int): Int = noImpl
     fun clear(mask: Int): Unit = noImpl
-    fun clearColor(red: dynamic, green: dynamic, blue: dynamic, alpha: dynamic): Unit = noImpl
-    fun clearDepth(depth: dynamic): Unit = noImpl
+    fun clearColor(red: Float, green: Float, blue: Float, alpha: Float): Unit = noImpl
+    fun clearDepth(depth: Float): Unit = noImpl
     fun clearStencil(s: Int): Unit = noImpl
     fun colorMask(red: Boolean, green: Boolean, blue: Boolean, alpha: Boolean): Unit = noImpl
     fun compileShader(shader: WebGLShader?): Unit = noImpl
@@ -131,7 +131,7 @@ native public trait WebGLRenderingContext {
     fun deleteTexture(texture: WebGLTexture?): Unit = noImpl
     fun depthFunc(func: Int): Unit = noImpl
     fun depthMask(flag: Boolean): Unit = noImpl
-    fun depthRange(zNear: dynamic, zFar: dynamic): Unit = noImpl
+    fun depthRange(zNear: Float, zFar: Float): Unit = noImpl
     fun detachShader(program: WebGLProgram?, shader: WebGLShader?): Unit = noImpl
     fun disable(cap: Int): Unit = noImpl
     fun disableVertexAttribArray(index: Int): Unit = noImpl
@@ -173,13 +173,13 @@ native public trait WebGLRenderingContext {
     fun isRenderbuffer(renderbuffer: WebGLRenderbuffer?): Boolean = noImpl
     fun isShader(shader: WebGLShader?): Boolean = noImpl
     fun isTexture(texture: WebGLTexture?): Boolean = noImpl
-    fun lineWidth(width: dynamic): Unit = noImpl
+    fun lineWidth(width: Float): Unit = noImpl
     fun linkProgram(program: WebGLProgram?): Unit = noImpl
     fun pixelStorei(pname: Int, param: Int): Unit = noImpl
-    fun polygonOffset(factor: dynamic, units: dynamic): Unit = noImpl
+    fun polygonOffset(factor: Float, units: Float): Unit = noImpl
     fun readPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: dynamic): Unit = noImpl
     fun renderbufferStorage(target: Int, internalformat: Int, width: Int, height: Int): Unit = noImpl
-    fun sampleCoverage(value: dynamic, invert: Boolean): Unit = noImpl
+    fun sampleCoverage(value: Float, invert: Boolean): Unit = noImpl
     fun scissor(x: Int, y: Int, width: Int, height: Int): Unit = noImpl
     fun shaderSource(shader: WebGLShader?, source: String): Unit = noImpl
     fun stencilFunc(func: Int, ref: Int, mask: Int): Unit = noImpl
@@ -190,53 +190,53 @@ native public trait WebGLRenderingContext {
     fun stencilOpSeparate(face: Int, fail: Int, zfail: Int, zpass: Int): Unit = noImpl
     fun texImage2D(target: Int, level: Int, internalformat: Int, width: Int, height: Int, border: Int, format: Int, type: Int, pixels: dynamic): Unit = noImpl
     fun texImage2D(target: Int, level: Int, internalformat: Int, format: Int, type: Int, source: dynamic): Unit = noImpl
-    fun texParameterf(target: Int, pname: Int, param: dynamic): Unit = noImpl
+    fun texParameterf(target: Int, pname: Int, param: Float): Unit = noImpl
     fun texParameteri(target: Int, pname: Int, param: Int): Unit = noImpl
     fun texSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int, format: Int, type: Int, pixels: dynamic): Unit = noImpl
     fun texSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, format: Int, type: Int, source: dynamic): Unit = noImpl
-    fun uniform1f(location: WebGLUniformLocation?, x: dynamic): Unit = noImpl
-    fun uniform1fv(location: WebGLUniformLocation?, v: dynamic): Unit = noImpl
+    fun uniform1f(location: WebGLUniformLocation?, x: Float): Unit = noImpl
+    fun uniform1fv(location: WebGLUniformLocation?, v: Float32Array): Unit = noImpl
     fun uniform1fv(location: WebGLUniformLocation?, v: Any): Unit = noImpl
     fun uniform1i(location: WebGLUniformLocation?, x: Int): Unit = noImpl
-    fun uniform1iv(location: WebGLUniformLocation?, v: dynamic): Unit = noImpl
+    fun uniform1iv(location: WebGLUniformLocation?, v: Int32Array): Unit = noImpl
     fun uniform1iv(location: WebGLUniformLocation?, v: Any): Unit = noImpl
-    fun uniform2f(location: WebGLUniformLocation?, x: dynamic, y: dynamic): Unit = noImpl
-    fun uniform2fv(location: WebGLUniformLocation?, v: dynamic): Unit = noImpl
+    fun uniform2f(location: WebGLUniformLocation?, x: Float, y: Float): Unit = noImpl
+    fun uniform2fv(location: WebGLUniformLocation?, v: Float32Array): Unit = noImpl
     fun uniform2fv(location: WebGLUniformLocation?, v: Any): Unit = noImpl
     fun uniform2i(location: WebGLUniformLocation?, x: Int, y: Int): Unit = noImpl
-    fun uniform2iv(location: WebGLUniformLocation?, v: dynamic): Unit = noImpl
+    fun uniform2iv(location: WebGLUniformLocation?, v: Int32Array): Unit = noImpl
     fun uniform2iv(location: WebGLUniformLocation?, v: Any): Unit = noImpl
-    fun uniform3f(location: WebGLUniformLocation?, x: dynamic, y: dynamic, z: dynamic): Unit = noImpl
-    fun uniform3fv(location: WebGLUniformLocation?, v: dynamic): Unit = noImpl
+    fun uniform3f(location: WebGLUniformLocation?, x: Float, y: Float, z: Float): Unit = noImpl
+    fun uniform3fv(location: WebGLUniformLocation?, v: Float32Array): Unit = noImpl
     fun uniform3fv(location: WebGLUniformLocation?, v: Any): Unit = noImpl
     fun uniform3i(location: WebGLUniformLocation?, x: Int, y: Int, z: Int): Unit = noImpl
-    fun uniform3iv(location: WebGLUniformLocation?, v: dynamic): Unit = noImpl
+    fun uniform3iv(location: WebGLUniformLocation?, v: Int32Array): Unit = noImpl
     fun uniform3iv(location: WebGLUniformLocation?, v: Any): Unit = noImpl
-    fun uniform4f(location: WebGLUniformLocation?, x: dynamic, y: dynamic, z: dynamic, w: dynamic): Unit = noImpl
-    fun uniform4fv(location: WebGLUniformLocation?, v: dynamic): Unit = noImpl
+    fun uniform4f(location: WebGLUniformLocation?, x: Float, y: Float, z: Float, w: Float): Unit = noImpl
+    fun uniform4fv(location: WebGLUniformLocation?, v: Float32Array): Unit = noImpl
     fun uniform4fv(location: WebGLUniformLocation?, v: Any): Unit = noImpl
     fun uniform4i(location: WebGLUniformLocation?, x: Int, y: Int, z: Int, w: Int): Unit = noImpl
-    fun uniform4iv(location: WebGLUniformLocation?, v: dynamic): Unit = noImpl
+    fun uniform4iv(location: WebGLUniformLocation?, v: Int32Array): Unit = noImpl
     fun uniform4iv(location: WebGLUniformLocation?, v: Any): Unit = noImpl
-    fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: dynamic): Unit = noImpl
+    fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array): Unit = noImpl
     fun uniformMatrix2fv(location: WebGLUniformLocation?, transpose: Boolean, value: Any): Unit = noImpl
-    fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: dynamic): Unit = noImpl
+    fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array): Unit = noImpl
     fun uniformMatrix3fv(location: WebGLUniformLocation?, transpose: Boolean, value: Any): Unit = noImpl
-    fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: dynamic): Unit = noImpl
+    fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: Float32Array): Unit = noImpl
     fun uniformMatrix4fv(location: WebGLUniformLocation?, transpose: Boolean, value: Any): Unit = noImpl
     fun useProgram(program: WebGLProgram?): Unit = noImpl
     fun validateProgram(program: WebGLProgram?): Unit = noImpl
-    fun vertexAttrib1f(indx: Int, x: dynamic): Unit = noImpl
-    fun vertexAttrib1fv(indx: Int, values: dynamic): Unit = noImpl
+    fun vertexAttrib1f(indx: Int, x: Float): Unit = noImpl
+    fun vertexAttrib1fv(indx: Int, values: Float32Array): Unit = noImpl
     fun vertexAttrib1fv(indx: Int, values: Any): Unit = noImpl
-    fun vertexAttrib2f(indx: Int, x: dynamic, y: dynamic): Unit = noImpl
-    fun vertexAttrib2fv(indx: Int, values: dynamic): Unit = noImpl
+    fun vertexAttrib2f(indx: Int, x: Float, y: Float): Unit = noImpl
+    fun vertexAttrib2fv(indx: Int, values: Float32Array): Unit = noImpl
     fun vertexAttrib2fv(indx: Int, values: Any): Unit = noImpl
-    fun vertexAttrib3f(indx: Int, x: dynamic, y: dynamic, z: dynamic): Unit = noImpl
-    fun vertexAttrib3fv(indx: Int, values: dynamic): Unit = noImpl
+    fun vertexAttrib3f(indx: Int, x: Float, y: Float, z: Float): Unit = noImpl
+    fun vertexAttrib3fv(indx: Int, values: Float32Array): Unit = noImpl
     fun vertexAttrib3fv(indx: Int, values: Any): Unit = noImpl
-    fun vertexAttrib4f(indx: Int, x: dynamic, y: dynamic, z: dynamic, w: dynamic): Unit = noImpl
-    fun vertexAttrib4fv(indx: Int, values: dynamic): Unit = noImpl
+    fun vertexAttrib4f(indx: Int, x: Float, y: Float, z: Float, w: Float): Unit = noImpl
+    fun vertexAttrib4fv(indx: Int, values: Float32Array): Unit = noImpl
     fun vertexAttrib4fv(indx: Int, values: Any): Unit = noImpl
     fun vertexAttribPointer(indx: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Long): Unit = noImpl
     fun viewport(x: Int, y: Int, width: Int, height: Int): Unit = noImpl
@@ -550,5 +550,256 @@ native public open class WebGLContextEvent(type: String, eventInit: WebGLContext
 
 native public open class WebGLContextEventInit : EventInit() {
     var statusMessage: String
+}
+
+native public open class ArrayBuffer(length: Int) {
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun slice(begin: Int, end: Int = noImpl): ArrayBuffer = noImpl
+}
+
+native public open class Int8Array(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Byte = noImpl
+    fun set(index: Int, value: Byte): Unit = noImpl
+    fun set(array: Int8Array, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Int8Array = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 1
+    }
+}
+
+native public open class Uint8Array(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Byte = noImpl
+    fun set(index: Int, value: Byte): Unit = noImpl
+    fun set(array: Uint8Array, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Uint8Array = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 1
+    }
+}
+
+native public open class Uint8ClampedArray(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Byte = noImpl
+    fun set(index: Int, value: Byte): Unit = noImpl
+    fun set(array: Uint8ClampedArray, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Uint8ClampedArray = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 1
+    }
+}
+
+native public open class Int16Array(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Short = noImpl
+    fun set(index: Int, value: Short): Unit = noImpl
+    fun set(array: Int16Array, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Int16Array = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 2
+    }
+}
+
+native public open class Uint16Array(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Short = noImpl
+    fun set(index: Int, value: Short): Unit = noImpl
+    fun set(array: Uint16Array, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Uint16Array = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 2
+    }
+}
+
+native public open class Int32Array(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Int = noImpl
+    fun set(index: Int, value: Int): Unit = noImpl
+    fun set(array: Int32Array, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Int32Array = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 4
+    }
+}
+
+native public open class Uint32Array(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Int = noImpl
+    fun set(index: Int, value: Int): Unit = noImpl
+    fun set(array: Uint32Array, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Uint32Array = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 4
+    }
+}
+
+native public open class Float32Array(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Float = noImpl
+    fun set(index: Int, value: Float): Unit = noImpl
+    fun set(array: Float32Array, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Float32Array = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 4
+    }
+}
+
+native public open class Float64Array(length: Int) {
+    var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun get(index: Int): Double = noImpl
+    fun set(index: Int, value: Double): Unit = noImpl
+    fun set(array: Float64Array, offset: Int = noImpl): Unit = noImpl
+    fun set(array: dynamic, offset: Int = noImpl): Unit = noImpl
+    fun subarray(start: Int, end: Int): Float64Array = noImpl
+
+    companion object {
+        val BYTES_PER_ELEMENT: Int = 8
+    }
+}
+
+native public open class DataView(buffer: ArrayBuffer, byteOffset: Int = noImpl, byteLength: Int = noImpl) {
+    var buffer: ArrayBuffer
+        get() = noImpl
+        set(value) = noImpl
+    var byteOffset: Int
+        get() = noImpl
+        set(value) = noImpl
+    var byteLength: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun getInt8(byteOffset: Int): Byte = noImpl
+    fun getUint8(byteOffset: Int): Byte = noImpl
+    fun getInt16(byteOffset: Int, littleEndian: Boolean = noImpl): Short = noImpl
+    fun getUint16(byteOffset: Int, littleEndian: Boolean = noImpl): Short = noImpl
+    fun getInt32(byteOffset: Int, littleEndian: Boolean = noImpl): Int = noImpl
+    fun getUint32(byteOffset: Int, littleEndian: Boolean = noImpl): Int = noImpl
+    fun getFloat32(byteOffset: Int, littleEndian: Boolean = noImpl): Float = noImpl
+    fun getFloat64(byteOffset: Int, littleEndian: Boolean = noImpl): Double = noImpl
+    fun setInt8(byteOffset: Int, value: Byte): Unit = noImpl
+    fun setUint8(byteOffset: Int, value: Byte): Unit = noImpl
+    fun setInt16(byteOffset: Int, value: Short, littleEndian: Boolean = noImpl): Unit = noImpl
+    fun setUint16(byteOffset: Int, value: Short, littleEndian: Boolean = noImpl): Unit = noImpl
+    fun setInt32(byteOffset: Int, value: Int, littleEndian: Boolean = noImpl): Unit = noImpl
+    fun setUint32(byteOffset: Int, value: Int, littleEndian: Boolean = noImpl): Unit = noImpl
+    fun setFloat32(byteOffset: Int, value: Float, littleEndian: Boolean = noImpl): Unit = noImpl
+    fun setFloat64(byteOffset: Int, value: Double, littleEndian: Boolean = noImpl): Unit = noImpl
 }
 
