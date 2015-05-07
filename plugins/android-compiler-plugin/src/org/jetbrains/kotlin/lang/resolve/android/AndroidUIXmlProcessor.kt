@@ -124,7 +124,11 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     private fun renderMainLayoutFile(layoutName: String, resources: List<AndroidResource>): AndroidSyntheticFile {
         return renderLayoutFile(layoutName + AndroidConst.LAYOUT_POSTFIX,
-                                escapeAndroidIdentifier(layoutName), resources) { it.mainProperties }
+                                escapeAndroidIdentifier(layoutName), resources) {
+            val properties = it.mainProperties.toArrayList()
+            if (supportV4) properties.addAll(it.mainPropertiesForSupportV4)
+            properties
+        }
     }
 
     private fun renderViewLayoutFile(layoutName: String, resources: List<AndroidResource>): AndroidSyntheticFile {
@@ -143,10 +147,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
             for (res in resources) {
                 properties(res).forEach { property ->
-                    // Comment
-                    if (supportV4 || !isFromSupportV4Package(property.first)) {
-                        writeSyntheticProperty(property.first, res, property.second)
-                    }
+                    writeSyntheticProperty(property.first, res, property.second)
                 }
             }
         }
@@ -165,7 +166,7 @@ public abstract class AndroidUIXmlProcessor(protected val project: Project) {
 
     private fun KotlinStringWriter.writeSyntheticProperty(receiver: String, widget: AndroidResource, stubCall: String) {
         // extract startsWith() to fun
-        val className = if (isFromSupportV4Package(receiver)) widget.supportClassName() else widget.className
+        val className = if (isFromSupportV4Package(receiver)) widget.supportClassName else widget.className
         val cast = if (widget.className != "View") " as? $className" else ""
         val body = arrayListOf("return $stubCall$cast")
         writeImmutableExtensionProperty(receiver,
