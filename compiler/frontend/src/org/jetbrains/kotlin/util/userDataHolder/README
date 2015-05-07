@@ -1,0 +1,2 @@
+TODO: remove all files from this package when these changes will be available in Android Studio EAP, i.e. `apiVersion` should be 141.1009.5 or higher
+TODO: Don't forget to update min idea-version in plugin.xml
