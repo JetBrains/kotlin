@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.components.TypeUsage.*
+import org.jetbrains.kotlin.load.java.lazy.LazyJavaAnnotations
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.TypeParameterResolver
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND
@@ -110,6 +112,7 @@ class LazyJavaTypeResolver(
             private val javaType: JavaClassifierType,
             private val attr: JavaTypeAttributes
     ) : AbstractLazyType(c.storageManager) {
+        private val annotations = CompositeAnnotations(listOf(LazyJavaAnnotations(c, javaType), attr.typeAnnotations))
 
         private val classifier = c.storageManager.createNullableLazyValue { javaType.getClassifier() }
 
@@ -291,7 +294,7 @@ class LazyJavaTypeResolver(
 
         override fun isMarkedNullable(): Boolean = nullable()
 
-        override fun getAnnotations() = attr.typeAnnotations
+        override fun getAnnotations() = annotations
     }
 
     public object FlexibleJavaClassifierTypeCapabilities : FlexibleTypeCapabilities {

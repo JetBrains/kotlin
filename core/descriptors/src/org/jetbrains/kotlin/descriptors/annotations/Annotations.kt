@@ -65,3 +65,15 @@ class FilteredAnnotations(
 
     override fun isEmpty() = !iterator().hasNext()
 }
+
+class CompositeAnnotations(
+        private val delegates: List<Annotations>
+) : Annotations {
+    override fun isEmpty() = delegates.all { it.isEmpty() }
+
+    override fun findAnnotation(fqName: FqName) = delegates.sequence().map { it.findAnnotation(fqName) }.firstOrNull()
+
+    override fun findExternalAnnotation(fqName: FqName) = delegates.sequence().map { it.findExternalAnnotation(fqName) }.firstOrNull()
+
+    override fun iterator() = delegates.sequence().flatMap { it.sequence() }.iterator()
+}
