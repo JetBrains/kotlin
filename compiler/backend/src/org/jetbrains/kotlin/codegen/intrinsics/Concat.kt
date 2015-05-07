@@ -69,7 +69,7 @@ public class Concat : IntrinsicMethod() {
                         codegen: ExpressionCodegen
                 ): StackValue {
                     return StackValue.operation(returnType) {
-                        val arguments = resolvedCall.getCall().getValueArguments().map { it.getArgumentExpression() }
+                        val arguments = resolvedCall.getCall().getValueArguments().map { it.getArgumentExpression()!! }
                         val actualType = generateImpl(
                                 codegen, it, returnType,
                                 resolvedCall.getCall().getCallElement(),

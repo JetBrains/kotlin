@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiWhiteSpace
 
-public class JetFunctionLiteralArgument(node: ASTNode) : JetValueArgument(node) {
+public class JetFunctionLiteralArgument(node: ASTNode) : JetValueArgument(node), FunctionLiteralArgument {
 
     private fun assertFL() = throw AssertionError("Function literal argument doesn't contain function literal expression: " +
-                                                          "${super.getArgumentExpression()?.getText()} (it should be guaranteed by parser)")
+                                                          "${super<JetValueArgument>.getArgumentExpression()?.getText()} (it should be guaranteed by parser)")
 
-    override fun getArgumentExpression() = super.getArgumentExpression() ?: assertFL()
+    override fun getArgumentExpression() = super<JetValueArgument>.getArgumentExpression() ?: assertFL()
 
-    public fun getFunctionLiteral(): JetFunctionLiteralExpression = unpackFunctionLiteral(getArgumentExpression())
+    override fun getFunctionLiteral(): JetFunctionLiteralExpression = unpackFunctionLiteral(getArgumentExpression())
 
     private fun unpackFunctionLiteral(expression: JetExpression?): JetFunctionLiteralExpression =
             when (expression) {

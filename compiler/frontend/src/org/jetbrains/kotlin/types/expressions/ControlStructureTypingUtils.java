@@ -214,7 +214,7 @@ public class ControlStructureTypingUtils {
 
             @NotNull
             @Override
-            public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+            public List<FunctionLiteralArgument> getFunctionLiteralArguments() {
                 return Collections.emptyList();
             }
 

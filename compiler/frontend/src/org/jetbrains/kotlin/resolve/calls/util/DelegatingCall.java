@@ -72,7 +72,7 @@ public class DelegatingCall implements Call {
 
     @Override
     @NotNull
-    public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+    public List<? extends FunctionLiteralArgument> getFunctionLiteralArguments() {
         return delegate.getFunctionLiteralArguments();
     }
 

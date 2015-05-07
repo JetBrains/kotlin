@@ -130,7 +130,7 @@ class SmartCompletion(
 
         // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
         val expectedInfos = if ((expressionWithType.getParent() as? JetBinaryExpression)?.getOperationToken() in COMPARISON_TOKENS)
-            filteredExpectedInfos.map { ExpectedInfo(it.type.makeNullable(), it.name, it.tail) }
+            filteredExpectedInfos.map { ExpectedInfo(it.type.makeNullable(), it.expectedName, it.tail) }
         else
             filteredExpectedInfos
 

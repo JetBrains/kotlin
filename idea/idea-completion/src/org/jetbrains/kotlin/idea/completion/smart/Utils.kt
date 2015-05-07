@@ -107,7 +107,7 @@ fun LookupElement.withOptions(options: ItemOptions): LookupElement {
                 val token = context.getFile().findElementAt(offset)!!
                 val argument = token.getStrictParentOfType<JetValueArgument>()
                 if (argument != null) {
-                    context.getDocument().insertString(argument.getTextRange().getStartOffset(), "*")
+                    context.getDocument().insertString(argument.getArgumentExpression()!!.getTextRange().getStartOffset(), "*")
                 }
             }
         }

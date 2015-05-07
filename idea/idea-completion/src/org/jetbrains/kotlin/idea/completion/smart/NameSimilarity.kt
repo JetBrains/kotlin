@@ -32,7 +32,7 @@ object NameSimilarityWeigher : LookupElementWeigher("kotlin.nameSimilarity") {
 
 fun calcNameSimilarity(name: String, expectedInfos: Collection<ExpectedInfo>): Int {
     return expectedInfos
-            .map { it.name }
+            .map { it.expectedName }
             .filterNotNull()
             .map { calcNameSimilarity(name, it) }
             .max() ?: 0

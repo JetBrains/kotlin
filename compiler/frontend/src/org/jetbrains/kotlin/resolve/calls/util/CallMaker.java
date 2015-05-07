@@ -162,7 +162,7 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+        public List<FunctionLiteralArgument> getFunctionLiteralArguments() {
             return Collections.emptyList();
         }
         @NotNull
@@ -301,7 +301,7 @@ public class CallMaker {
 
             @Override
             @NotNull
-            public List<JetFunctionLiteralArgument> getFunctionLiteralArguments() {
+            public List<? extends FunctionLiteralArgument> getFunctionLiteralArguments() {
                 return callElement.getFunctionLiteralArguments();
             }
 

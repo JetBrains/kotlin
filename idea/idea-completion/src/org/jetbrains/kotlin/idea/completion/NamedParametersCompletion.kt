@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.core.FirstChildInParentFilter
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -41,6 +41,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import java.util.*
 
 object NamedParametersCompletion {
     private val positionFilter = AndFilter(
@@ -83,18 +85,20 @@ object NamedParametersCompletion {
 
         for (funDescriptor in functionDescriptors) {
             if (!funDescriptor.hasStableParameterNames()) continue
+            val call = callElement.getCall(bindingContext) ?: continue
 
-            val usedArguments = QuickFixUtil.getUsedParameters(callElement, valueArgument, funDescriptor)
+            var argumentToParameter = HashMap(call.mapArgumentsToParameters(funDescriptor))
+            argumentToParameter.remove(valueArgument)
+            val usedParameters = argumentToParameter.values().toSet()
 
             for (parameter in funDescriptor.getValueParameters()) {
-                val name = parameter.getName()
-                val nameString = name.asString()
-                if (nameString !in usedArguments) {
-                    val lookupElement = LookupElementBuilder.create(nameString)
-                            .withPresentableText("$nameString =")
+                if (parameter !in usedParameters) {
+                    val name = parameter.getName().asString()
+                    val lookupElement = LookupElementBuilder.create(name)
+                            .withPresentableText("$name =")
                             .withTailText(" ${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
                             .withIcon(JetIcons.PARAMETER)
-                            .withInsertHandler(NamedParameterInsertHandler(name))
+                            .withInsertHandler(NamedParameterInsertHandler(parameter.getName()))
                             .assignPriority(ItemPriority.NAMED_PARAMETER)
                     collector.addElement(lookupElement)
                 }

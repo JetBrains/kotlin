@@ -16,24 +16,25 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import java.util.HashMap
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.SubstitutionUtils
-import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.di.InjectorForMacros
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.JetModuleUtil
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
+import java.util.HashMap
 
 public object HeuristicSignatures {
     private val signatures = HashMap<Pair<FqName, Name>, List<String>>()
@@ -59,7 +60,13 @@ public object HeuristicSignatures {
         signatures[FqName(classFqName) to Name.identifier(name)] = parameterTypes.toList()
     }
 
-    public fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int, moduleDescriptor: ModuleDescriptor, project: Project): JetType? {
+    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor, moduleDescriptor: ModuleDescriptor, project: Project): JetType? {
+        val parameterIndex = function.getValueParameters().indexOf(parameter)
+        assert(parameterIndex >= 0)
+        return correctedParameterType(function, parameterIndex, moduleDescriptor, project)
+    }
+
+    private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int, moduleDescriptor: ModuleDescriptor, project: Project): JetType? {
         val ownerType = function.getDispatchReceiverParameter()?.getType() ?: return null
 
         val superFunctions = function.getOverriddenDescriptors()

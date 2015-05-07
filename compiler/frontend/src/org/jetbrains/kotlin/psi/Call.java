@@ -48,7 +48,7 @@ public interface Call {
 
     @ReadOnly
     @NotNull
-    List<JetFunctionLiteralArgument> getFunctionLiteralArguments();
+    List<? extends FunctionLiteralArgument> getFunctionLiteralArguments();
 
     @ReadOnly
     @NotNull

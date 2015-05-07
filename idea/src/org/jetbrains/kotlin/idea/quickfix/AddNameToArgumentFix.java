@@ -28,6 +28,7 @@ import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.JetIcons;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.JetCallElement;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -76,13 +78,11 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
         CallableDescriptor callableDescriptor = resolvedCall.getResultingDescriptor();
         JetExpression argExpression = argument.getArgumentExpression();
         JetType type = argExpression != null ? context.getType(argExpression) : null;
-        Set<String> usedParameters = QuickFixUtil.getUsedParameters(callElement, null, callableDescriptor);
+        Set<ValueParameterDescriptor> usedParameters = KotlinPackage.toSet( CorePackage.mapArgumentsToParameters(resolvedCall.getCall(), callableDescriptor).values());
         List<String> names = Lists.newArrayList();
         for (ValueParameterDescriptor parameter: callableDescriptor.getValueParameters()) {
-            String name = parameter.getName().asString();
-            if (usedParameters.contains(name)) continue;
-            if (type == null || JetTypeChecker.DEFAULT.isSubtypeOf(type, parameter.getType())) {
-                names.add(name);
+            if (!usedParameters.contains(parameter) && (type == null || JetTypeChecker.DEFAULT.isSubtypeOf(type, parameter.getType()))) {
+                names.add(parameter.getName().asString());
             }
         }
         return names;

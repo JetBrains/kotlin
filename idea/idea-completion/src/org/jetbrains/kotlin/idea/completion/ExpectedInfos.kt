@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.toList
+import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.noErrorsInValueArguments
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CompositeChecker
@@ -62,17 +64,23 @@ data class ItemOptions(val starPrefix: Boolean) {
     }
 }
 
-open data class ExpectedInfo(val type: JetType, val name: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT)
+open data class ExpectedInfo(val type: JetType, val expectedName: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT)
 
-class PositionalArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val parameterIndex: Int, itemOptions: ItemOptions = ItemOptions.DEFAULT)
+data class ArgumentPosition(val argumentIndex: Int, val argumentName: String?, val isFunctionLiteralArgument: Boolean) {
+    constructor(argumentIndex: Int, isFunctionLiteralArgument: Boolean = false) : this(argumentIndex, null, isFunctionLiteralArgument)
+    constructor(argumentIndex: Int, argumentName: String?) : this(argumentIndex, argumentName, false)
+}
+
+class ArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val position: ArgumentPosition, itemOptions: ItemOptions = ItemOptions.DEFAULT)
   : ExpectedInfo(type, name, tail, itemOptions) {
 
     override fun equals(other: Any?)
-            = other is PositionalArgumentExpectedInfo && super.equals(other) && function == other.function && parameterIndex == other.parameterIndex
+            = other is ArgumentExpectedInfo && super.equals(other) && function == other.function && position == other.position
 
     override fun hashCode()
             = function.hashCode()
 }
+
 
 class ExpectedInfos(
         val bindingContext: BindingContext,
@@ -97,67 +105,42 @@ class ExpectedInfos(
 
     private fun calculateForArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val argument = expressionWithType.getParent() as? JetValueArgument ?: return null
-        if (argument.isNamed()) return null //TODO - support named arguments (also do not forget to check for presence of named arguments before)
         val argumentList = argument.getParent() as? JetValueArgumentList ?: return null
-        val argumentIndex = argumentList.getArguments().indexOf(argument)
         val callElement = argumentList.getParent() as? JetCallElement ?: return null
-        return calculateForArgument(callElement, argumentIndex, false)
+        return calculateForArgument(callElement, argument)
     }
 
     private fun calculateForFunctionLiteralArgument(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val functionLiteralArgument = expressionWithType.getParent() as? JetFunctionLiteralArgument
-        val callExpression = functionLiteralArgument?.getParent() as? JetCallExpression
-        if (callExpression != null) {
-            if (callExpression.getFunctionLiteralArguments().firstOrNull()?.getArgumentExpression() == expressionWithType) {
-                return calculateForArgument(callExpression, callExpression.getValueArguments().size() - 1, true)
-            }
-        }
-        return null
+        val callExpression = functionLiteralArgument?.getParent() as? JetCallExpression ?: return null
+        val literalArgument = callExpression.getFunctionLiteralArguments().firstOrNull() ?: return null
+        if (literalArgument.getArgumentExpression() != expressionWithType) return null
+        return calculateForArgument(callExpression, literalArgument)
     }
 
-    private fun calculateForArgument(callElement: JetCallElement, argumentIndex: Int, isFunctionLiteralArgument: Boolean): Collection<ExpectedInfo>? {
-        val parent = callElement.getParent()
-        val receiver: ReceiverValue
-        val callOperationNode: ASTNode?
-        if (parent is JetQualifiedExpression && callElement == parent.getSelectorExpression()) {
-            val receiverExpression = parent.getReceiverExpression()
-            val expressionType = bindingContext.getType(receiverExpression)
-            val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression]
-            if (expressionType != null) {
-                receiver = ExpressionReceiver(receiverExpression, expressionType)
-                callOperationNode = parent.getOperationTokenNode()
-            }
-            else if (qualifier != null) {
-                receiver = qualifier
-                callOperationNode = null
-            }
-            else {
-                return null
-            }
-        }
-        else {
-            receiver = ReceiverValue.NO_RECEIVER
-            callOperationNode = null
-        }
-
-        val call = CallMaker.makeCall(receiver, callOperationNode, callElement)
-        return calculateForArgument(call, argumentIndex, isFunctionLiteralArgument)
+    private fun calculateForArgument(callElement: JetCallElement, argument: ValueArgument): Collection<ExpectedInfo>? {
+        val call = callElement.getCall(bindingContext) ?: return null
+        return calculateForArgument(call, argument)
     }
 
-    public fun calculateForArgument(call: Call, argumentIndex: Int, isFunctionLiteralArgument: Boolean): Collection<ExpectedInfo>? {
+    public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo>? {
+        val argumentIndex = call.getValueArguments().indexOf(argument)
+        assert(argumentIndex >= 0)
+        val argumentName = argument.getArgumentName()?.getReferenceExpression()?.getReferencedName()
+        val isFunctionLiteralArgument = argument is FunctionLiteralArgument
+        val argumentPosition = ArgumentPosition(argumentIndex, argumentName, isFunctionLiteralArgument)
+
         val callElement = call.getCallElement()
         val calleeExpression = call.getCalleeExpression()
 
-        val truncatedCall = if (!isFunctionLiteralArgument) { // leave only arguments before the current one
-            object : DelegatingCall(call) {
-                override fun getValueArguments() = super.getValueArguments().subList(0, argumentIndex)
-                override fun getValueArgumentList() = null
-            }
-        }
-        else {
-            call
-        }
+        // leave only arguments before the current one
+        val truncatedCall = object : DelegatingCall(call) {
+            val arguments = call.getValueArguments().subList(0, argumentIndex)
 
+            override fun getValueArguments() = arguments
+            override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
+            override fun getValueArgumentList() = null
+        }
         val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return null //TODO: discuss it
 
         val expectedType = (callElement as? JetExpression)?.let { bindingContext[BindingContext.EXPECTED_EXPRESSION_TYPE, it] } ?: TypeUtils.NO_EXPECTED_TYPE
@@ -185,36 +168,30 @@ class ExpectedInfos(
             val parameters = descriptor.getValueParameters()
             if (parameters.isEmpty()) continue
 
-            val parameterIndex = if (isFunctionLiteralArgument) {
-                parameters.lastIndex
-            }
-            else {
-                val varArgIndex = parameters.indexOfFirst { it.getVarargElementType() != null }
-                if (varArgIndex < 0) {
-                    if (parameters.size() <= argumentIndex) continue
-                    argumentIndex
-                }
-                else {
-                    if (argumentIndex < varArgIndex) argumentIndex else varArgIndex
-                }
-            }
+            val argumentToParameter = call.mapArgumentsToParameters(descriptor)
+            val parameter = argumentToParameter[argument] ?: continue
 
             val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), bindingContext)
             if (!Visibilities.isVisible(thisReceiver, descriptor, resolutionScope.getContainingDeclaration())) continue
 
-            val parameter = parameters[parameterIndex]
-            val varargElementType = parameter.getVarargElementType()
-
             val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
 
+            val varargElementType = parameter.getVarargElementType()
             if (varargElementType != null) {
                 if (isFunctionLiteralArgument) continue
 
-                expectedInfos.add(PositionalArgumentExpectedInfo(varargElementType, expectedName?.fromPlural(), null, descriptor, parameterIndex))
+                if (argumentName == null) {
+                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.fromPlural(), null, descriptor, argumentPosition))
 
-                if (argumentIndex == parameterIndex) {
-                    val tail = if (parameterIndex == parameters.lastIndex) Tail.RPARENTH else null
-                    expectedInfos.add(PositionalArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, parameterIndex, ItemOptions.STAR_PREFIX))
+                    if (argumentIndex == parameters.indexOf(parameter)) {
+                        val tail = if (parameter == parameters.last()) Tail.RPARENTH else null
+                        expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentPosition, ItemOptions.STAR_PREFIX))
+                    }
+                }
+                else {
+                    val tail = namedArgumentTail(argumentToParameter, argumentName, descriptor)
+                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.fromPlural(), tail, descriptor, argumentPosition))
+                    expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentPosition, ItemOptions.STAR_PREFIX))
                 }
             }
             else {
@@ -228,26 +205,45 @@ class ExpectedInfos(
                     return true
                 }
 
-                val tail = if (isFunctionLiteralArgument)
-                    null
-                else if (parameterIndex == parameters.lastIndex)
-                    Tail.RPARENTH //TODO: support square brackets
-                else if (parameters.drop(parameterIndex + 1).none(::needCommaForParameter))
-                    null
-                else
-                    Tail.COMMA
-
                 val parameterType = if (useHeuristicSignatures)
-                    HeuristicSignatures.correctedParameterType(descriptor, argumentIndex, moduleDescriptor, callElement.getProject()) ?: parameter.getType()
+                    HeuristicSignatures.correctedParameterType(descriptor, parameter, moduleDescriptor, callElement.getProject()) ?: parameter.getType()
                 else
                     parameter.getType()
 
-                if (isFunctionLiteralArgument && !KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) continue
+                if (isFunctionLiteralArgument) {
+                    if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
+                        expectedInfos.add(ArgumentExpectedInfo(parameterType, expectedName, null, descriptor, argumentPosition))
+                    }
+                }
+                else {
+                    val tail = if (argumentName == null) {
+                        if (parameter == parameters.last())
+                            Tail.RPARENTH //TODO: support square brackets
+                        else if (parameters.dropWhile { it != parameter }.drop(1).none(::needCommaForParameter))
+                            null
+                        else
+                            Tail.COMMA
+                    }
+                    else {
+                        namedArgumentTail(argumentToParameter, argumentName, descriptor)
+                    }
 
-                expectedInfos.add(PositionalArgumentExpectedInfo(parameterType, expectedName, tail, descriptor, parameterIndex))
+                    expectedInfos.add(ArgumentExpectedInfo(parameterType, expectedName, tail, descriptor, argumentPosition))
+                }
             }
         }
         return expectedInfos
+    }
+
+    private fun namedArgumentTail(argumentToParameter: Map<ValueArgument, ValueParameterDescriptor>, argumentName: String, descriptor: FunctionDescriptor): Tail? {
+        val usedParameterNames = (argumentToParameter.values().map { it.getName().asString() } + listOf(argumentName)).toSet()
+        val notUsedParameters = descriptor.getValueParameters().filter { it.getName().asString() !in usedParameterNames }
+        return if (notUsedParameters.isEmpty())
+            Tail.RPARENTH
+        else if (notUsedParameters.all { it.hasDefaultValue() })
+            null
+        else
+            Tail.COMMA
     }
 
     private fun calculateForEqAndAssignment(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
@@ -271,7 +267,7 @@ class ExpectedInfos(
         return when (expressionWithType) {
             ifExpression.getCondition() -> listOf(ExpectedInfo(KotlinBuiltIns.getInstance().getBooleanType(), null, Tail.RPARENTH))
 
-            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.type, it.name, Tail.ELSE) }
+            ifExpression.getThen() -> calculate(ifExpression)?.map { ExpectedInfo(it.type, it.expectedName, Tail.ELSE) }
 
             ifExpression.getElse() -> {
                 val ifExpectedInfo = calculate(ifExpression)
@@ -312,7 +308,7 @@ class ExpectedInfos(
     private fun calculateForBlockExpression(expressionWithType: JetExpression): Collection<ExpectedInfo>? {
         val block = expressionWithType.getParent() as? JetBlockExpression ?: return null
         if (expressionWithType != block.getStatements().last()) return null
-        return calculate(block)?.map { ExpectedInfo(it.type, it.name, null) }
+        return calculate(block)?.map { ExpectedInfo(it.type, it.expectedName, null) }
     }
 
     private fun calculateForWhenEntryValue(expressionWithType: JetExpression): Collection<ExpectedInfo>? {

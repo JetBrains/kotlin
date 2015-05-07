@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 
-public interface ValueArgument {
-    @Nullable
-    @IfNotParsed
-    JetExpression getArgumentExpression();
+public trait ValueArgument {
+    IfNotParsed
+    public fun getArgumentExpression(): JetExpression?
 
-    @Nullable
-    JetValueArgumentName getArgumentName();
+    public fun getArgumentName(): JetValueArgumentName?
 
-    boolean isNamed();
+    public fun isNamed(): Boolean
 
-    @NotNull
-    JetElement asElement();
+    public fun asElement(): JetElement
 
     /* The '*' in something like foo(*arr) i.e. pass an array as a number of vararg arguments */
-    @Nullable
-    LeafPsiElement getSpreadElement();
+    public fun getSpreadElement(): LeafPsiElement?
 
     /* The argument is placed externally to call element, e.g. in 'when' condition with subject: 'when (a) { in c -> }' */
-    boolean isExternal();
+    public fun isExternal(): Boolean
+}
+
+public trait FunctionLiteralArgument : ValueArgument {
+    public fun getFunctionLiteral(): JetFunctionLiteralExpression
+
+    override fun getArgumentExpression(): JetExpression
 }

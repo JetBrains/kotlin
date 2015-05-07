@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.core.quickfix;
 
-import com.google.common.collect.Sets;
 import com.intellij.extapi.psi.ASTDelegatePsiElement;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -24,10 +23,8 @@ import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
@@ -43,8 +40,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.types.DeferredType;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
-
-import java.util.Set;
 
 public class QuickFixUtil {
     private QuickFixUtil() {
@@ -165,39 +160,6 @@ public class QuickFixUtil {
             JetReturnExpression returnExpression = PsiTreeUtil.getParentOfType(expression, JetReturnExpression.class);
             return returnExpression != null && canEvaluateTo(returnExpression.getReturnedExpression(), expression);
         }
-    }
-
-    @ReadOnly
-    @NotNull
-    public static Set<String> getUsedParameters(
-            @NotNull JetCallElement callElement,
-            @Nullable JetValueArgument ignoreArgument,
-            @NotNull CallableDescriptor callableDescriptor
-    ) {
-        Set<String> usedParameters = Sets.newHashSet();
-        boolean isPositionalArgument = true;
-        int idx = 0;
-        for (ValueArgument argument : callElement.getValueArguments()) {
-            if (argument.isNamed()) {
-                JetValueArgumentName name = argument.getArgumentName();
-                assert name != null : "Named argument's name cannot be null";
-                if (argument != ignoreArgument) {
-                    usedParameters.add(name.getText());
-                }
-                isPositionalArgument = false;
-            }
-            else if (isPositionalArgument) {
-                if (callableDescriptor.getValueParameters().size() > idx) {
-                    ValueParameterDescriptor parameter = callableDescriptor.getValueParameters().get(idx);
-                    if (argument != ignoreArgument) {
-                        usedParameters.add(parameter.getName().asString());
-                    }
-                    idx++;
-                }
-            }
-        }
-
-        return usedParameters;
     }
 
     public static String renderTypeWithFqNameOnClash(JetType type, String nameToCheckAgainst) {

@@ -1301,6 +1301,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("AfterVararg.kt")
+            public void testAfterVararg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/AfterVararg.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInNamedParameters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/namedParameters"), Pattern.compile("^(.+)\\.kt$"), true);
             }
