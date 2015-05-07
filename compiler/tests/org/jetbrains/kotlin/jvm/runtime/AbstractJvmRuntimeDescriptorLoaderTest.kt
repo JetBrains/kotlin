@@ -199,5 +199,6 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
         override fun getAnnotations() = throw UnsupportedOperationException()
         override fun getName() = throw UnsupportedOperationException()
+        override fun getFragments() = throw UnsupportedOperationException()
     }
 }

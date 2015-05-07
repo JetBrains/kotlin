@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.name.Name
 public trait PackageFragmentProvider {
     public fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor>
 
-    /**
-     * @return declared subpackages of a package with the FQ name given by [fqName]
-     */
     public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
 

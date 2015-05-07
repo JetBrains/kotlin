@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 public class PackageViewDescriptorImpl(
         private val module: ModuleDescriptor,
         private val fqName: FqName,
-        fragments: List<PackageFragmentDescriptor>
+        private val fragments: List<PackageFragmentDescriptor>
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, fqName.shortNameOrSpecial()), PackageViewDescriptor {
     private val memberScope: JetScope = run {
         assert(fragments.isNotEmpty()) { "$fqName in module" }
@@ -46,6 +46,8 @@ public class PackageViewDescriptorImpl(
     override fun getMemberScope(): JetScope = memberScope
 
     override fun getModule(): ModuleDescriptor = module
+
+    override fun getFragments() = fragments
 
     override fun equals(other: Any?): Boolean {
         if (javaClass != other?.javaClass) return false

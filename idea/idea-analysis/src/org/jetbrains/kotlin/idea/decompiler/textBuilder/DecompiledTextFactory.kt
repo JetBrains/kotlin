@@ -18,26 +18,23 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileVirtualFileHolder
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
-import java.util.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
-import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
-import org.jetbrains.kotlin.types.isFlexible
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import org.jetbrains.kotlin.types.flexibility
+import org.jetbrains.kotlin.types.isFlexible
+import java.util.ArrayList
+import java.util.HashMap
 
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
 private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
@@ -85,9 +82,7 @@ public fun buildDecompiledTextFromJsMetadata(
     val packageFqName = classFile.getUserData(JsMetaFileVirtualFileHolder.PACKAGE_FQNAME_KEY)
     assert (packageFqName != null)
 
-    val fragments = module.getPackageFragmentProvider().getPackageFragments(packageFqName)
-    val descriptors = fragments.flatMap { it.getMemberScope().getAllDescriptors() }
-
+    val descriptors = module.getPackage(packageFqName)?.getMemberScope()?.getAllDescriptors()?.toList().orEmpty()
     return buildDecompiledText(packageFqName, descriptors)
 }
 

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
@@ -71,9 +70,8 @@ class AllClassesCompletion(val parameters: CompletionParameters,
     }
 
     private val allClassDescriptors = CachedValuesManager.getManager(scope.getProject()).createCachedValue( {
-        val provider = (moduleDescriptor as ModuleDescriptorImpl).getPackageFragmentProvider()
-        val fragments = DescriptorUtils.getPackagesFqNames(moduleDescriptor).flatMap { provider.getPackageFragments(it) }
-        val classDescriptors = fragments.flatMap { it.getMemberScope().getAllDescriptors().filter { it is ClassDescriptor} }.map { it as ClassDescriptor }
+        val packages = DescriptorUtils.getPackagesFqNames(moduleDescriptor).map { moduleDescriptor.getPackage(it) }.filterNotNull()
+        val classDescriptors = packages.flatMap { it.getMemberScope().getAllDescriptors().filterIsInstance<ClassDescriptor>() }
         CachedValueProvider.Result(classDescriptors, ProjectRootModificationTracker.getInstance(scope.getProject()))
     }, false)
 

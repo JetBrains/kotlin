@@ -63,8 +63,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         PackageFragmentDescriptor deserialized = KotlinBuiltIns.getInstance().getBuiltInsPackageFragment();
 
         ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, getEnvironment(), false);
-        List<PackageFragmentDescriptor> fragments =
-                module.getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+        List<PackageFragmentDescriptor> fragments = module.getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME).getFragments();
         for (PackageFragmentDescriptor fromLazyResolve : fragments) {
             if (fromLazyResolve instanceof LazyPackageDescriptor) {
                 RecursiveDescriptorComparator.validateAndCompareDescriptors(

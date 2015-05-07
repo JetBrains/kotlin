@@ -120,7 +120,7 @@ public object KotlinJavascriptSerializationUtil {
         }, skip)
 
         val packageStream = ByteArrayOutputStream()
-        val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
+        val fragments = packageView.getFragments()
         val packageProto = serializer.packageProto(fragments, skip).build() ?: error("Package fragments not serialized: $fragments")
         if (packageProto.getMemberCount() > 0) {
             packageProto.writeTo(packageStream)

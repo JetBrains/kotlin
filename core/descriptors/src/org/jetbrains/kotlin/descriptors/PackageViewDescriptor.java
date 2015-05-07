@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
+import java.util.List;
+
 public interface PackageViewDescriptor extends DeclarationDescriptor {
     @Override
     @Nullable
@@ -34,4 +36,7 @@ public interface PackageViewDescriptor extends DeclarationDescriptor {
 
     @NotNull
     ModuleDescriptor getModule();
+
+    @NotNull
+    List<PackageFragmentDescriptor> getFragments();
 }

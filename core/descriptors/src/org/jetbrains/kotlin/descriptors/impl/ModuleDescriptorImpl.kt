@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.ArrayList
@@ -89,7 +91,14 @@ public class ModuleDescriptorImpl(
         packageFragmentProviderForModuleContent = providerForModuleContent
     }
 
-    override fun getPackageFragmentProvider() = packageFragmentProviderForWholeModuleWithDependencies
+    override fun getPackage(fqName: FqName): PackageViewDescriptor? {
+        val fragments = packageFragmentProviderForWholeModuleWithDependencies.getPackageFragments(fqName)
+        return if (!fragments.isEmpty()) PackageViewDescriptorImpl(this, fqName, fragments) else null
+    }
+
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        return packageFragmentProviderForWholeModuleWithDependencies.getSubPackagesOf(fqName, nameFilter)
+    }
 
     private val friendModules = LinkedHashSet<ModuleDescriptor>()
 

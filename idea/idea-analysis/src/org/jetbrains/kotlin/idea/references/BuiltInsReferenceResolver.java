@@ -39,9 +39,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.MutableModuleContext;
-import org.jetbrains.kotlin.context.ProjectContext;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForLazyResolve;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -123,8 +121,9 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                     injectorForLazyResolve.getResolveSession().forceResolveAll();
                 }
 
-                List<PackageFragmentDescriptor> fragments =
-                        newModuleContext.getModule().getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+                PackageViewDescriptor packageView = newModuleContext.getModule().getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+                assert packageView != null : "Should contain " + KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME  + " package";
+                List<PackageFragmentDescriptor> fragments = packageView.getFragments();
 
                 BuiltInsReferenceResolver.this.moduleDescriptor = newModuleContext.getModule();
                 builtinsPackageFragment = KotlinPackage.single(fragments);

@@ -17,21 +17,17 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.impl.PackageViewDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 public trait ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
+    public fun getPackage(fqName: FqName): PackageViewDescriptor?
+    public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
+
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
-
-    public fun getPackageFragmentProvider(): PackageFragmentProvider
-
-    public fun getPackage(fqName: FqName): PackageViewDescriptor? {
-        val fragments = getPackageFragmentProvider().getPackageFragments(fqName)
-        return if (!fragments.isEmpty()) PackageViewDescriptorImpl(this, fqName, fragments) else null
-    }
 
     public val builtIns: KotlinBuiltIns
 

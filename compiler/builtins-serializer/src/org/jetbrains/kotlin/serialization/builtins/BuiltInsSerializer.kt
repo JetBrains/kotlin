@@ -125,7 +125,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
 
         val packageStream = ByteArrayOutputStream()
-        val fragments = module.getPackageFragmentProvider().getPackageFragments(fqName)
+        val fragments = packageView.getFragments()
         val packageProto = serializer.packageProto(fragments).build() ?: error("Package fragments not serialized: $fragments")
         packageProto.writeTo(packageStream)
         write(destDir, BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), packageStream,
