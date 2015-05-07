@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -65,6 +66,7 @@ public class ValueParameterResolver(
         expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.getType()))
         if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {
             ConstantExpressionEvaluator.evaluate(defaultValue, context.trace, valueParameterDescriptor.getType())
+            ?: context.trace.report(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT.on(defaultValue))
         }
     }
 }
