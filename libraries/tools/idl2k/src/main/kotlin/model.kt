@@ -34,8 +34,12 @@ val GenerateAttribute.getterNoImpl: Boolean
 val GenerateAttribute.setterNoImpl: Boolean
     get() = getterSetterNoImpl && !readOnly
 
+val String.typeSignature: String
+    get() = if (contains("->")) "()" else this
+
 val GenerateAttribute.signature: String
-    get() = "$name:$type"
+    get() = "$name:${type.typeSignature}"
+fun GenerateAttribute.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<String> = standardTypes()) = this.copy(type = type.dynamicIfUnknownType(allTypes, standardTypes))
 
 enum class NativeGetterOrSetter {
     NONE
@@ -86,8 +90,11 @@ data class GenerateTraitOrClass(
 
 
 val GenerateFunction.signature: String
-    get() = arguments.map { it.type }.joinToString(", ", "$name(", ")")
+    get() = arguments.map { it.type.typeSignature }.joinToString(", ", "$name(", ")")
 
+fun GenerateFunction.dynamicIfUnknownType(allTypes : Set<String>) = standardTypes().let { standardTypes ->
+    this.copy(returnType = returnType.dynamicIfUnknownType(allTypes, standardTypes), arguments = arguments.map { it.dynamicIfUnknownType(allTypes, standardTypes) })
+}
 
 fun InterfaceDefinition.findExtendedAttribute(name: String) = extendedAttributes.firstOrNull { it.call == name }
 fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttribute(name) ?: null != null

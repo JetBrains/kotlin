@@ -28,7 +28,7 @@ private val typeMapper = mapOf(
         "short" to "Short",
         "long" to "Int",
         "double" to "Double",
-        "any" to "Any",
+        "any" to "Any?",
         "DOMTimeStamp" to "Number",
         "object" to "dynamic", // TODO map to Any?
         "EventHandler" to "(Event) -> Unit",
@@ -55,15 +55,24 @@ fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String, Genera
     }
 }
 
-fun String.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<String> = typeMapper.values().toSet()): String =
-        if (this.endsWith("?")) this.substring(0, length() - 1).dynamicIfUnknownType(allTypes, standardTypes).ensureNullable()
-        else if (this.startsWith("Union<")) UnionType("", splitUnionType(this)).name.dynamicIfUnknownType(allTypes, standardTypes) // TODO check it is required here
-        else if (this in allTypes || this in standardTypes) this else "dynamic"
+fun standardTypes() = typeMapper.values().map {it.dropNullable()}.toSet()
+fun String.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<String> = standardTypes()): String = when {
+    startsWith("Union<") -> UnionType("", splitUnionType(this)).name.dynamicIfUnknownType(allTypes, standardTypes).copyNullabilityFrom(this)
+    endsWith("?") -> this.dropNullable().dynamicIfUnknownType(allTypes, standardTypes).ensureNullable()
+    contains("->") -> {
+        val (parameters, returnType) = this.split("->".toRegex()).map {it.trim()}.filter { it != "" }
+
+        "(${parameters.removeSurrounding("(", ")").split(',').map {it.dynamicIfUnknownType(allTypes, standardTypes)}.join(",")}) -> ${returnType.dynamicIfUnknownType(allTypes, standardTypes)}"
+    }
+    this in allTypes -> this
+    this in standardTypes -> this
+    else -> "dynamic"
+}
 
 private fun mapType(repository: Repository, type: String): String =
     when {
         type in typeMapper -> typeMapper[type]!!
-        type.endsWith("?") -> mapType(repository, type.substring(0, type.length() - 1)).ensureNullable()
+        type.endsWith("?") -> mapType(repository, type.dropNullable()).ensureNullable()
         type.endsWith("...") -> mapType(repository, type.substring(0, type.length() - 3))
         type.endsWith("[]") -> "Array<${mapType(repository, type.substring(0, type.length() - 2))}>"
         type.startsWith("unrestricted") -> mapType(repository, type.substring(12))

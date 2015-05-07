@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
         val fileRepository = parseIDL(ANTLRFileStream(e.getAbsolutePath(), "UTF-8"))
 
         Repository(
-                interfaces = acc.interfaces + fileRepository.interfaces,
+                interfaces = acc.interfaces.mergeReduce(fileRepository.interfaces, ::merge),
                 typeDefs = acc.typeDefs + fileRepository.typeDefs,
                 externals = acc.externals merge fileRepository.externals,
                 enums = acc.enums + fileRepository.enums
@@ -51,6 +51,24 @@ fun main(args: Array<String>) {
             w.render(pkg, definitions, repository.typeDefs.values())
         }
     }
+}
+
+private fun <K, V> Map<K, List<V>>.reduceValues(reduce : (V, V) -> V = {a, b -> b}) : Map<K, V> = mapValues { it.value.reduce(reduce) }
+
+private fun <K, V> Map<K, V>.mergeReduce(other : Map<K, V>, reduce : (V, V) -> V = {a, b -> b}) : Map<K, V> {
+    val result = LinkedHashMap<K, V>(this.size() + other.size())
+    result.putAll(this)
+    other.forEach { e ->
+        val existing = result[e.key]
+
+        if (existing == null) {
+            result[e.key] = e.value
+        } else {
+            result[e.key] = reduce(e.value, existing)
+        }
+    }
+
+    return result
 }
 
 private fun <K, V> Map<K, List<V>>.merge(other : Map<K, List<V>>) : Map<K, List<V>> {

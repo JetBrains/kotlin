@@ -2,13 +2,13 @@ package org.jetbrains.idl2k
 
 import java.math.BigInteger
 
-private fun <O: Appendable> O.indent(level : Int) {
+private fun <O : Appendable> O.indent(level: Int) {
     for (i in 1..level) {
         append("    ")
     }
 }
 
-private fun Appendable.renderAttributeDeclaration(allTypes: Set<String>, arg: GenerateAttribute, override: Boolean, level : Int = 1) {
+private fun Appendable.renderAttributeDeclaration(allTypes: Set<String>, arg: GenerateAttribute, override: Boolean, level: Int = 1) {
     indent(level)
 
     if (override) {
@@ -19,7 +19,7 @@ private fun Appendable.renderAttributeDeclaration(allTypes: Set<String>, arg: Ge
     append(" ")
     append(arg.name)
     append(": ")
-    append(arg.type.dynamicIfUnknownType(allTypes))
+    append(arg.type)
     if (arg.initializer != null) {
         append(" = ")
         append(arg.initializer.replaceWrongConstants(arg.type))
@@ -50,7 +50,7 @@ private fun Appendable.renderArgumentsDeclaration(allTypes: Set<String>, args: L
                 }
                 append(it.name.replaceKeywords())
                 append(": ")
-                append(it.type.dynamicIfUnknownType(allTypes))
+                append(it.type)
                 if (!omitDefaults && it.initializer != null && it.initializer != "") {
                     append(" = ")
                     append(it.initializer.replaceWrongConstants(it.type))
@@ -58,7 +58,7 @@ private fun Appendable.renderArgumentsDeclaration(allTypes: Set<String>, args: L
             }
         }.joinTo(this, ", ")
 
-private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.map {it.replaceKeywords()}.join(", ")})"
+private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.map { it.replaceKeywords() }.join(", ")})"
 
 private fun Appendable.renderFunctionDeclaration(allTypes: Set<String>, f: GenerateFunction, override: Boolean) {
     indent(1)
@@ -77,11 +77,11 @@ private fun Appendable.renderFunctionDeclaration(allTypes: Set<String>, f: Gener
     }
     append("fun ${f.name.replaceKeywords()}(")
     renderArgumentsDeclaration(allTypes, f.arguments, override)
-    appendln("): ${f.returnType.dynamicIfUnknownType(allTypes)} = noImpl")
+    appendln("): ${f.returnType} = noImpl")
 }
 
-fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation : Boolean = false) {
-    append("native ")
+fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
+    append("native public ")
     if (markerAnnotation) {
         append("marker ")
     }
@@ -93,7 +93,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     append(iface.name)
     if (iface.constructor != null && iface.constructor.arguments.isNotEmpty()) {
         append("(")
-        renderArgumentsDeclaration(allTypes.keySet(), iface.constructor.arguments, false)
+        renderArgumentsDeclaration(allTypes.keySet(), iface.constructor.arguments.map { it.dynamicIfUnknownType(allTypes.keySet()) }, false)
         append(")")
     }
 
@@ -116,10 +116,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     val superFunctions = allSuperTypes.flatMap { it.memberFunctions }.distinct()
     val superSignatures = superAttributes.map { it.signature } merge superFunctions.map { it.signature }
 
-    iface.memberAttributes.filter { it !in superAttributes }.forEach { arg ->
+    iface.memberAttributes.filter { it !in superAttributes }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues().values().forEach { arg ->
         renderAttributeDeclaration(allTypes.keySet(), arg, arg.signature in superSignatures)
     }
-    iface.memberFunctions.filter { it !in superFunctions }.forEach {
+    iface.memberFunctions.filter { it !in superFunctions }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
         renderFunctionDeclaration(allTypes.keySet(), it, it.signature in superSignatures)
     }
     if (iface.constants.isNotEmpty()) {
@@ -137,27 +137,38 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     appendln()
 }
 
-fun <K, V> List<Pair<K, V>>.toMultiMap() : Map<K, List<V>> = groupBy { it.first }.mapValues { it.value.map { it.second } }
+fun betterFunction(f1: GenerateFunction, f2: GenerateFunction): GenerateFunction =
+        f1.copy(
+                arguments = f1.arguments
+                        .zip(f2.arguments)
+                        .map { it.first.copy(type = it.map { it.type }.betterType(), name = it.map { it.name }.betterName()) }
+        )
 
-fun Appendable.render(namespace : String, ifaces: List<GenerateTraitOrClass>, typedefs : Iterable<TypedefDefinition>) {
+private fun <F, T> Pair<F, F>.map(block: (F) -> T) = block(first) to block(second)
+private fun Pair<String, String>.betterType() = if (listOf("dynamic", "Any", "Any").any { first.contains(it) }) first else second
+private fun Pair<String, String>.betterName() = if (((0..9).map { it.toString() } + listOf("arg")).none { first.toLowerCase().contains(it) }) first else second
+
+fun <K, V> List<Pair<K, V>>.toMultiMap(): Map<K, List<V>> = groupBy { it.first }.mapValues { it.value.map { it.second } }
+
+fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<TypedefDefinition>) {
     val declaredTypes = ifaces.toMap { it.name }
 
     val anonymousUnionTypes = collectUnionTypes(declaredTypes)
     val anonymousUnionTypeTraits = generateUnionTypeTraits(anonymousUnionTypes)
     val anonymousUnionsMap = anonymousUnionTypeTraits.toMap { it.name }
 
-    val typedefsToBeGenerated = typedefs.filter {it.types.startsWith("Union<")}
-            .filter {it.namespace == namespace}
+    val typedefsToBeGenerated = typedefs.filter { it.types.startsWith("Union<") }
+            .filter { it.namespace == namespace }
             .map { NamedValue(it.name, UnionType(namespace, splitUnionType(it.types))) }
-            .filter { it.value.memberTypes.all { type -> type in declaredTypes} }
+            .filter { it.value.memberTypes.all { type -> type in declaredTypes } }
     val typedefsMarkerTraits = typedefsToBeGenerated.groupBy { it.name }.mapValues { mapUnionType(it.value.first().value).copy(name = it.key) }
 
     // TODO better name, extract duplication
     val typeNamesToUnions = anonymousUnionTypes.flatMap { unionType -> unionType.memberTypes.map { unionMember -> unionMember to unionType.name } }.toMultiMap()
-            typedefsToBeGenerated.flatMap { typedef -> typedef.value.memberTypes.map { unionMember -> unionMember to typedef.name } }.toMultiMap()
+    typedefsToBeGenerated.flatMap { typedef -> typedef.value.memberTypes.map { unionMember -> unionMember to typedef.name } }.toMultiMap()
 
     val allTypes = declaredTypes + anonymousUnionsMap + typedefsMarkerTraits
-    declaredTypes.values().filter {it.namespace == namespace}.forEach {
+    declaredTypes.values().filter { it.namespace == namespace }.forEach {
         render(allTypes, typeNamesToUnions, it)
     }
 

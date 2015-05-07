@@ -1,6 +1,6 @@
 package org.jetbrains.idl2k
 
-import java.util.HashSet
+import java.util.*
 
 private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet().let { attributes ->
     when {
@@ -15,6 +15,17 @@ fun String.ensureNullable() = when {
     this == "dynamic" -> this
     contains("->") -> "($this)?"
     else -> "$this?"
+}
+
+fun String.dropNullable() = when {
+    endsWith(")?") -> this.removeSuffix("?").removeSurrounding("(", ")")
+    endsWith("?") -> this.removeSuffix("?")
+    else -> this
+}
+
+fun String.copyNullabilityFrom(type : String) = when {
+    type.endsWith("?") -> ensureNullable()
+    else -> this
 }
 
 fun generateFunction(repository: Repository, function: Operation, functionName: String, nativeGetterOrSetter: NativeGetterOrSetter = function.getterOrSetter()): GenerateFunction =
@@ -44,8 +55,26 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
         NativeGetterOrSetter.GETTER -> generateFunction(repository, function, "get")
         NativeGetterOrSetter.SETTER -> generateFunction(repository, function, "set")
     }
+    val callbackArgumentsAsLambdas = function.parameters.map {
+        val interfaceType = repository.interfaces[it.type.dropNullable()]
+        when {
+            interfaceType == null -> it
+            interfaceType.callback -> interfaceType.operations.single().let { callbackFunction ->
+                it.copy(type = callbackFunction.parameters
+                        .map { mapType(repository, it.type) }
+                        .join(",", "(", ") -> ${mapType(repository, callbackFunction.returnType)}")
+                        .copyNullabilityFrom(it.type))
+            }
+            else -> it
+        }
+    }
 
-    return listOf(realFunction, getterOrSetterFunction).filterNotNull()
+    val functionWithCallbackOrNull = when {
+        callbackArgumentsAsLambdas == function.parameters -> null
+        else -> generateFunction(repository, function.copy(parameters = callbackArgumentsAsLambdas), function.name, NativeGetterOrSetter.NONE)
+    }
+
+    return listOf(realFunction, getterOrSetterFunction, functionWithCallbackOrNull).filterNotNull()
 }
 
 fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute): GenerateAttribute =
