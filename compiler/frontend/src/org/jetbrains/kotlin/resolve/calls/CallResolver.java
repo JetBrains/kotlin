@@ -352,6 +352,7 @@ public class CallResolver {
             context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(
                     (JetConstructorDelegationCall) calleeExpression.getParent()
             ));
+            if (call.isImplicit()) return OverloadResolutionResultsImpl.nameNotFound();
         }
 
         if (constructors.isEmpty()) {

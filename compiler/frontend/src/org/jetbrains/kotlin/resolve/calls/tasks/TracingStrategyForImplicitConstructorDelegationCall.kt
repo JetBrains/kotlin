@@ -82,7 +82,11 @@ public class TracingStrategyForImplicitConstructorDelegationCall(
     }
 
     private fun reportError(trace: BindingTrace) {
-        trace.report(Errors.EXPLICIT_DELEGATION_CALL_REQUIRED.on(delegationCall))
+        if (!trace.getBindingContext().getDiagnostics().forElement(delegationCall).
+            any { it.getFactory() == Errors.EXPLICIT_DELEGATION_CALL_REQUIRED }
+        ) {
+            trace.report(Errors.EXPLICIT_DELEGATION_CALL_REQUIRED.on(delegationCall))
+        }
     }
 
     // Underlying methods should not be called because such errors are impossible
