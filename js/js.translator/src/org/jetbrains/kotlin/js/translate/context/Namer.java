@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.js.translate.context;
 
 import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -375,12 +377,21 @@ public final class Namer {
 
     @NotNull
     public JsExpression isTypeOf(@NotNull JsExpression type) {
-        return new JsInvocation(kotlin("isTypeOf"), type);
+        JsInvocation invocation = new JsInvocation(kotlin("isTypeOf"), type);
+        MetadataPackage.setTypeCheck(invocation, TypeCheck.TYPEOF);
+        return invocation;
     }
 
     @NotNull
     public JsExpression isInstanceOf(@NotNull JsExpression type) {
-        return new JsInvocation(kotlin("isInstanceOf"), type);
+        JsInvocation invocation = new JsInvocation(kotlin("isInstanceOf"), type);
+        MetadataPackage.setTypeCheck(invocation, TypeCheck.INSTANCEOF);
+        return invocation;
+    }
+
+    @NotNull
+    public JsExpression isInstanceOf(@NotNull JsExpression instance, @NotNull JsExpression type) {
+        return new JsInvocation(kotlin(isTypeName), instance, type);
     }
 
     @NotNull

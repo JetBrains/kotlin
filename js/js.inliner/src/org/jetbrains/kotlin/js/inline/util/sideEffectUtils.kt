@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.JsLiteral.*
 import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
 import org.jetbrains.kotlin.js.translate.utils.ast.any
 
 public fun JsExpression.canHaveSideEffect(): Boolean =
@@ -44,5 +45,6 @@ public fun JsExpression.shouldHaveOwnAlias(): Boolean =
             is JsConditional,
             is JsBinaryOperation,
             is JsArrayLiteral -> true
+            is JsInvocation -> if (typeCheck == null) canHaveSideEffect() else false
             else -> canHaveOwnSideEffect()
         }

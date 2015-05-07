@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 import java.util.List;
 
 import static org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError;
+import static org.jetbrains.kotlin.js.translate.utils.UtilsPackage.expandIsCalls;
 
 /**
  * An entry point of translator.
@@ -79,6 +80,7 @@ public final class K2JSTranslator {
         JsProgram program = JsInliner.process(context);
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
+        expandIsCalls(program, context);
         return new TranslationResult.Success(config, files, program, diagnostics, moduleDescriptor);
     }
 }
