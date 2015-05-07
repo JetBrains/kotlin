@@ -1,0 +1,20 @@
+namespace org.w3c.dom.parsing;
+
+
+[Constructor]
+interface DOMParser {
+ [NewObject] Document parseFromString (DOMString str, SupportedType type);
+};
+[Constructor]
+interface XMLSerializer {
+ DOMString serializeToString (Node root);
+};
+partial interface Element {
+ [TreatNullAs=EmptyString] attribute DOMString innerHTML;
+ [TreatNullAs=EmptyString] attribute DOMString outerHTML;
+ void insertAdjacentHTML (DOMString position, DOMString text);
+};
+partial interface Range {
+ [NewObject] DocumentFragment createContextualFragment (DOMString fragment);
+};
+

@@ -1,0 +1,232 @@
+namespace org.w3c.workers;
+
+
+[Exposed=(Window,Worker)]
+interface ServiceWorker : EventTarget {
+  readonly attribute USVString scriptURL;
+  readonly attribute ServiceWorkerState state;
+  readonly attribute DOMString id;
+  void postMessage(any message, optional sequence<Transferable> transfer);
+
+  // event
+  attribute EventHandler onstatechange;
+};
+ServiceWorker implements AbstractWorker;
+
+enum ServiceWorkerState {
+  "installing",
+  "installed",
+  "activating",
+  "activated",
+  "redundant"
+};
+[Exposed=(Window,Worker)]
+interface ServiceWorkerRegistration : EventTarget {
+  [Unforgeable] readonly attribute ServiceWorker? installing;
+  [Unforgeable] readonly attribute ServiceWorker? waiting;
+  [Unforgeable] readonly attribute ServiceWorker? active;
+
+  readonly attribute USVString scope;
+
+  void update();
+  Promise<boolean> unregister();
+
+  // event
+  attribute EventHandler onupdatefound;
+};
+partial interface Navigator {
+  readonly attribute ServiceWorkerContainer serviceWorker;
+};
+
+partial interface WorkerNavigator {
+  readonly attribute ServiceWorkerContainer serviceWorker;
+};
+[Exposed=(Window,Worker)]
+interface ServiceWorkerContainer : EventTarget {
+  [Unforgeable] readonly attribute ServiceWorker? controller;
+  readonly attribute Promise<ServiceWorkerRegistration> ready;
+
+  Promise<ServiceWorkerRegistration> register(USVString scriptURL, optional RegistrationOptions options);
+
+  Promise<ServiceWorkerRegistration> getRegistration(optional USVString clientURL = "");
+  Promise<sequence<ServiceWorkerRegistration>?> getRegistrations();
+
+
+  // events
+  attribute EventHandler oncontrollerchange;
+  attribute EventHandler onerror;
+  attribute EventHandler onmessage; // event.source of message events is ServiceWorker object
+};
+
+dictionary RegistrationOptions {
+  USVString scope;
+};
+[Constructor(DOMString type, optional ServiceWorkerMessageEventInit eventInitDict), Exposed=(Window,Worker)]
+interface ServiceWorkerMessageEvent : Event {
+  readonly attribute any data;
+  readonly attribute DOMString origin;
+  readonly attribute DOMString lastEventId;
+  readonly attribute (ServiceWorker or MessagePort)? source;
+  readonly attribute MessagePort[]? ports;
+
+  void initServiceWorkerMessageEvent(DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, any dataArg, DOMString originArg, DOMString lastEventIdArg, (ServiceWorker or MessagePort) sourceArg, sequence<MessagePort>? portsArg);
+};
+
+dictionary ServiceWorkerMessageEventInit : EventInit {
+  any data;
+  DOMString origin;
+  DOMString lastEventId;
+  (ServiceWorker or MessagePort)? source;
+  sequence<MessagePort> ports;
+};
+[Global=(Worker,ServiceWorker), Exposed=ServiceWorker]
+interface ServiceWorkerGlobalScope : WorkerGlobalScope {
+  // A container for a list of Client objects that correspond to
+  // browsing contexts (or shared workers) that are on the origin of this SW
+  readonly attribute Clients clients;
+  readonly attribute ServiceWorkerRegistration registration;
+
+  Promise<void> skipWaiting();
+
+  attribute EventHandler oninstall;
+  attribute EventHandler onactivate;
+  attribute EventHandler onfetch;
+
+  // event
+  attribute EventHandler onmessage; // event.source of the message events is Client object
+
+  // close() method inherited from WorkerGlobalScope should not be accessible.
+};
+[Exposed=ServiceWorker]
+interface Client {
+  readonly attribute USVString url;
+  readonly attribute FrameType frameType;
+  readonly attribute DOMString id;
+  void postMessage(any message, optional sequence<Transferable> transfer);
+};
+
+[Exposed=ServiceWorker]
+interface WindowClient : Client {
+  readonly attribute VisibilityState visibilityState;
+  readonly attribute boolean focused;
+  Promise<WindowClient> focus();
+};
+
+enum FrameType {
+  "auxiliary",
+  "top-level",
+  "nested",
+  "none"
+};
+[Exposed=ServiceWorker]
+interface Clients {
+  // The objects returned will be new instances every time
+  Promise<sequence<Client>?> matchAll(optional ClientQueryOptions options);
+  Promise<WindowClient> openWindow(USVString url);
+  Promise<void> claim();
+};
+
+dictionary ClientQueryOptions {
+  boolean includeUncontrolled = false;
+  ClientType type = "window";
+};
+
+enum ClientType {
+  "window",
+  "worker",
+  "sharedworker",
+  "all"
+};
+[Constructor(DOMString type, optional ExtendableEventInit eventInitDict), Exposed=ServiceWorker]
+interface ExtendableEvent : Event {
+  void waitUntil(Promise<any> f);
+};
+
+dictionary ExtendableEventInit : EventInit {
+  // Defined for the forward compatibility across the derived events
+};
+[Constructor(DOMString type, optional FetchEventInit eventInitDict), Exposed=ServiceWorker]
+interface FetchEvent : ExtendableEvent {
+  readonly attribute Request request;
+  readonly attribute Client client;
+  readonly attribute boolean isReload;
+
+  void respondWith((Response or Promise<Response>) r);
+};
+
+dictionary FetchEventInit : ExtendableEventInit {
+  Request request;
+  Client client;
+  boolean isReload = false;
+};
+[Constructor(DOMString type, optional ExtendableMessageEventInit eventInitDict), Exposed=ServiceWorker]
+interface ExtendableMessageEvent : ExtendableEvent {
+  readonly attribute any data;
+  readonly attribute DOMString origin;
+  readonly attribute DOMString lastEventId;
+  readonly attribute (Client or ServiceWorker or MessagePort)? source;
+  readonly attribute MessagePort[]? ports;
+
+  void initExtendableMessageEvent(DOMString typeArg, boolean canBubbleArg, boolean cancelableArg, any dataArg, DOMString originArg, DOMString lastEventIdArg, (Client or ServiceWorker or MessagePort) sourceArg, sequence<MessagePort>? portsArg);
+};
+
+dictionary ExtendableMessageEventInit : ExtendableEventInit {
+  any data;
+  DOMString origin;
+  DOMString lastEventId;
+  (Client or ServiceWorker or MessagePort)? source;
+  sequence<MessagePort> ports;
+};
+partial interface Window {
+  readonly attribute CacheStorage caches;
+};
+
+partial interface WorkerGlobalScope {
+  readonly attribute CacheStorage caches;
+};
+[Exposed=(Window,Worker)]
+interface Cache {
+  Promise<Response> match(RequestInfo request, optional CacheQueryOptions options);
+  Promise<sequence<Response>> matchAll(optional RequestInfo request, optional CacheQueryOptions options);
+  Promise<void> add(RequestInfo request);
+  Promise<void> addAll(sequence<RequestInfo> requests);
+  Promise<void> put(RequestInfo request, Response response);
+  Promise<boolean> delete(RequestInfo request, optional CacheQueryOptions options);
+  Promise<sequence<Request>> keys(optional RequestInfo request, optional CacheQueryOptions options);
+};
+
+dictionary CacheQueryOptions {
+  boolean ignoreSearch = false;
+  boolean ignoreMethod = false;
+  boolean ignoreVary = false;
+  DOMString cacheName;
+};
+
+dictionary CacheBatchOperation {
+  DOMString type;
+  Request request;
+  Response response;
+  CacheQueryOptions options;
+};
+[Exposed=(Window,Worker)]
+interface CacheStorage {
+  Promise<Response> match(RequestInfo request, optional CacheQueryOptions options);
+  Promise<boolean> has(DOMString cacheName);
+  Promise<Cache> open(DOMString cacheName);
+  Promise<boolean> delete(DOMString cacheName);
+  Promise<sequence<DOMString>> keys();
+};
+partial interface ServiceWorkerRegistration {
+  // e.g. define an API namespace
+  readonly attribute APISpaceType APISpace;
+  // e.g. define a method
+  Promise<T> methodName(list of arguments);
+};
+// e.g. define FunctionalEvent interface
+interface FunctionalEvent : ExtendableEvent {
+  // add a functional event's own attributes and methods
+};
+partial interface ServiceWorkerGlobalScope {
+  attribute EventHandler onfunctionalevent;
+};
+
