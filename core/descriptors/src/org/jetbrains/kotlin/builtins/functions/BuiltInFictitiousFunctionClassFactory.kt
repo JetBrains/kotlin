@@ -73,7 +73,7 @@ public class BuiltInFictitiousFunctionClassFactory(
         val kindWithArity = parseClassName(className, packageFqName) ?: return null
         val (kind, arity) = kindWithArity // KT-5100
 
-        val containingPackageFragment = module.getPackage(packageFqName)!!.fragments.single()
+        val containingPackageFragment = module.getPackage(packageFqName).fragments.single()
 
         return FunctionClassDescriptor(storageManager, containingPackageFragment, kind, arity)
     }

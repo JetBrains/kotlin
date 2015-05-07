@@ -24,9 +24,6 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 public trait ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
-    public fun getPackage(fqName: FqName): PackageViewDescriptor?
-    public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
-
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
 
     public val builtIns: KotlinBuiltIns
@@ -40,6 +37,10 @@ public trait ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
         return visitor.visitModuleDeclaration(this, data)
     }
+
+    public fun getPackage(fqName: FqName): PackageViewDescriptor
+
+    public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 }
 
 trait ModuleParameters {

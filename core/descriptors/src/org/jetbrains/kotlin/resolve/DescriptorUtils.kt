@@ -44,8 +44,7 @@ public val DeclarationDescriptor.module: ModuleDescriptor
 
 public fun ModuleDescriptor.resolveTopLevelClass(topLevelClassFqName: FqName): ClassDescriptor? {
     assert(!topLevelClassFqName.isRoot())
-    return getPackage(topLevelClassFqName.parent())?.memberScope
-            ?.getClassifier(topLevelClassFqName.shortName()) as? ClassDescriptor
+    return getPackage(topLevelClassFqName.parent()).memberScope.getClassifier(topLevelClassFqName.shortName()) as? ClassDescriptor
 }
 
 public val ClassDescriptor.classId: ClassId

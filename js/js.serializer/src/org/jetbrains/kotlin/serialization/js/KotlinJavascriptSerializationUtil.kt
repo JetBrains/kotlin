@@ -101,7 +101,7 @@ public object KotlinJavascriptSerializationUtil {
         KotlinJavascriptMetadataUtils.formatMetadataAsString(moduleName, moduleDescriptor.toBinaryMetadata())
 
     fun serializePackage(module: ModuleDescriptor, fqName: FqName, writeFun: (String, ByteArrayOutputStream) -> Unit) {
-        val packageView = module.getPackage(fqName) ?: error("No package resolved in $module")
+        val packageView = module.getPackage(fqName)
 
         val skip: (DeclarationDescriptor) -> Boolean = { DescriptorUtils.getContainingModule(it) != module }
 

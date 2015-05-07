@@ -105,8 +105,6 @@ public final class LoadDescriptorUtil {
         ModuleDescriptor module = LazyResolveTestUtil.resolve(environment.getProject(), trace, Collections.<JetFile>emptyList());
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
-        assert packageView != null;
-
         return Pair.create(packageView, trace.getBindingContext());
     }
 

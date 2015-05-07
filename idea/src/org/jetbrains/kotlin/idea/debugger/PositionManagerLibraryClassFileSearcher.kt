@@ -61,11 +61,6 @@ fun findPackagePartInternalNameForLibraryFile(topLevelDeclaration: JetDeclaratio
 
     val packageFqName = topLevelDeclaration.getContainingJetFile().getPackageFqName()
     val packageDescriptor = descriptor.module.getPackage(packageFqName)
-    if (packageDescriptor == null) {
-        reportError(topLevelDeclaration, descriptor)
-        return null
-    }
-
     val descFromSourceText = render(descriptor)
 
     val descriptors: Collection<CallableDescriptor> = when (descriptor) {

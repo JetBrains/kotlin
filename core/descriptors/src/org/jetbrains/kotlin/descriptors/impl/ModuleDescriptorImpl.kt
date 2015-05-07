@@ -43,6 +43,12 @@ public class ModuleDescriptorImpl(
     private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
 
+    override fun getPackage(fqName: FqName): PackageViewDescriptor = LazyPackageViewDescriptorImpl(this, fqName, storageManager)
+
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        return packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
+    }
+
     private val packageFragmentProviderForWholeModuleWithDependencies by Delegates.lazy {
         val moduleDependencies = dependencies.sure { "Dependencies of module $id were not set before querying module content" }
         val dependenciesDescriptors = moduleDependencies.descriptors
@@ -82,17 +88,11 @@ public class ModuleDescriptorImpl(
      */
     public fun initialize(providerForModuleContent: PackageFragmentProvider) {
         assert(!isInitialized) { "Attempt to initialize module $id twice" }
-        packageFragmentProviderForModuleContent = providerForModuleContent
+        this.packageFragmentProviderForModuleContent = providerForModuleContent
     }
 
-    override fun getPackage(fqName: FqName): PackageViewDescriptor? {
-        val fragments = packageFragmentProviderForWholeModuleWithDependencies.getPackageFragments(fqName)
-        return if (!fragments.isEmpty()) PackageViewDescriptorImpl(this, fqName, fragments) else null
-    }
-
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
-        return packageFragmentProviderForWholeModuleWithDependencies.getSubPackagesOf(fqName, nameFilter)
-    }
+    val packageFragmentProvider: PackageFragmentProvider
+        get() = packageFragmentProviderForWholeModuleWithDependencies
 
     private val friendModules = LinkedHashSet<ModuleDescriptor>()
 

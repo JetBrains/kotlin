@@ -122,7 +122,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 }
 
                 PackageViewDescriptor packageView = newModuleContext.getModule().getPackage(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
-                assert packageView != null : "Should contain " + KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME  + " package";
                 List<PackageFragmentDescriptor> fragments = packageView.getFragments();
 
                 BuiltInsReferenceResolver.this.moduleDescriptor = newModuleContext.getModule();

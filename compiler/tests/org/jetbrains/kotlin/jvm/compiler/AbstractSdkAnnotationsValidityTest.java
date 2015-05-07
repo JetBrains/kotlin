@@ -93,7 +93,7 @@ public abstract class AbstractSdkAnnotationsValidityTest extends UsefulTestCase 
 
                     topLevelClass.acceptVoid(visitor);
 
-                    if (topLevelPackage != null) {
+                    if (!topLevelPackage.isEmpty()) {
                         topLevelPackage.acceptVoid(visitor);
                     }
                 }

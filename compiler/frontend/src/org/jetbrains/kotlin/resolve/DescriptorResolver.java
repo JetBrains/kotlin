@@ -1227,11 +1227,10 @@ public class DescriptorResolver {
             FqName fqName = packageDirective.getFqName(nameExpression);
 
             PackageViewDescriptor packageView = module.getPackage(fqName);
-            assert packageView != null : "package not found: " + fqName;
             trace.record(REFERENCE_TARGET, nameExpression, packageView);
 
             PackageViewDescriptor parentPackageView = packageView.getContainingDeclaration();
-            assert parentPackageView != null : "package has no parent: " + packageView;
+            assert parentPackageView != null : "Should not be null since " + fqName + " should not be root";
             trace.record(RESOLUTION_SCOPE, nameExpression, parentPackageView.getMemberScope());
         }
     }

@@ -90,7 +90,7 @@ public class CompileKotlinAgainstCustomBinariesTest extends TestCaseWithTmpdir {
         );
 
         PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
-        assertNotNull("Failed to find package: " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView);
+        assertFalse("Failed to find package: " + LoadDescriptorUtil.TEST_PACKAGE_FQNAME, packageView.isEmpty());
         return packageView;
     }
 

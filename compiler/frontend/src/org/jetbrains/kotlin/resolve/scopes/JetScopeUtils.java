@@ -168,7 +168,7 @@ public final class JetScopeUtils {
             if (packageFragment == null) return null;
 
             PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(((JetFile) parent).getPackageFqName());
-            return packageView != null ? packageView.getMemberScope() : null;
+            return packageView.getMemberScope();
         }
 
         JetExpression expression = PsiTreeUtil.getParentOfType(element, JetExpression.class, false);

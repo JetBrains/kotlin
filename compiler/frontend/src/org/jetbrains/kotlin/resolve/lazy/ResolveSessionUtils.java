@@ -59,7 +59,7 @@ public class ResolveSessionUtils {
         FqName packageFqName = fqName.parent();
         while (true) {
             PackageViewDescriptor packageDescriptor = module.getPackage(packageFqName);
-            if (packageDescriptor != null) {
+            if (!packageDescriptor.isEmpty()) {
                 FqName relativeClassFqName = NamePackage.tail(fqName, packageFqName);
                 ClassDescriptor classDescriptor = findByQualifiedName(packageDescriptor.getMemberScope(), relativeClassFqName);
                 if (classDescriptor != null && filter.apply(classDescriptor)) {

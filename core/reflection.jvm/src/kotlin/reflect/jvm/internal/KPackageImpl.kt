@@ -26,7 +26,7 @@ class KPackageImpl(override val jClass: Class<*>) : KCallableContainerImpl(), KP
         val moduleData = jClass.getOrCreateModule()
         val fqName = jClass.classId.getPackageFqName()
 
-        moduleData.module.getPackage(fqName) ?: throw KotlinReflectionInternalError("Package not resolved: $fqName")
+        moduleData.module.getPackage(fqName)
     }
 
     override val scope: JetScope get() = descriptor.memberScope

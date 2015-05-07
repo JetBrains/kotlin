@@ -51,7 +51,7 @@ public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
 
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                module.getPackage(TEST_PACKAGE_FQNAME)!!,
+                module.getPackage(TEST_PACKAGE_FQNAME),
                 RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
                 File(source.replace(".kt", ".txt"))
         )

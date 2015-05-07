@@ -181,7 +181,6 @@ public abstract class ElementResolver protected constructor(
                 if (trace.getBindingContext()[BindingContext.REFERENCE_TARGET, jetElement] == null) {
                     val fqName = header.getFqName(jetElement)
                     val packageDescriptor = resolveSession.getModuleDescriptor().getPackage(fqName)
-                                            ?: error("Package descriptor should be present in session for $fqName")
                     trace.record(BindingContext.REFERENCE_TARGET, jetElement, packageDescriptor)
                 }
             }
@@ -410,14 +409,13 @@ public abstract class ElementResolver protected constructor(
 
             // Inside import
             if (expression.getParentOfType<JetImportDirective>(false) != null) {
-                val rootPackage = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT)!!
+                val rootPackage = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT)
 
                 if (parent is JetDotQualifiedExpression) {
                     val element = parent.getReceiverExpression()
                     val fqName = expression.getContainingJetFile().getPackageFqName()
 
                     val filePackage = resolveSession.getModuleDescriptor().getPackage(fqName)
-                                      ?: error("File package should be already resolved and be found")
 
                     val descriptors = if (element is JetDotQualifiedExpression) {
                         qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
@@ -439,7 +437,7 @@ public abstract class ElementResolver protected constructor(
             val packageDirective = expression.getParentOfType<JetPackageDirective>(false)
             if (packageDirective != null) {
                 val packageDescriptor = resolveSession.getModuleDescriptor().getPackage(packageDirective.getFqName(expression as JetSimpleNameExpression).parent())
-                return packageDescriptor?.memberScope
+                return packageDescriptor.memberScope
             }
         }
 

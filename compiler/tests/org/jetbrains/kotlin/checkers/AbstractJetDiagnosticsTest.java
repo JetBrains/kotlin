@@ -262,8 +262,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         for (TestModule module : KotlinPackage.sort(modules.keySet())) {
             ModuleDescriptorImpl moduleDescriptor = modules.get(module);
-            DeclarationDescriptor aPackage = moduleDescriptor.getPackage(FqName.ROOT);
-            assertNotNull(aPackage);
+            PackageViewDescriptor aPackage = moduleDescriptor.getPackage(FqName.ROOT);
+            assertFalse(aPackage.isEmpty());
 
             if (isMultiModuleTest) {
                 rootPackageText.append(String.format("// -- Module: %s --\n", moduleDescriptor.getName()));

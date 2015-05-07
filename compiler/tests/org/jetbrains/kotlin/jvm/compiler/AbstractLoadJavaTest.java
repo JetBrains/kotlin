@@ -105,7 +105,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                                                                         configurationKind);
 
         PackageViewDescriptor packageFromSource = result.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
-        assert packageFromSource != null : "Package " + TEST_PACKAGE_FQNAME + " not found";
         Assert.assertEquals("test", packageFromSource.getName().asString());
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
@@ -157,8 +156,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         );
 
         PackageViewDescriptor packageView = moduleContext.getModule().getPackage(TEST_PACKAGE_FQNAME);
-        assert packageView != null : "Test package not found";
-
         checkJavaPackage(expectedFile, packageView, trace.getBindingContext(), DONT_INCLUDE_METHODS_OF_OBJECT);
     }
 
@@ -187,7 +184,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 environment.getProject(), Collections.singleton(jetFile)
         );
         PackageViewDescriptor packageView = result.getModuleDescriptor().getPackage(TEST_PACKAGE_FQNAME);
-        assertNotNull(packageView);
+        assertFalse(packageView.isEmpty());
 
         validateAndCompareDescriptorWithFile(packageView, DONT_INCLUDE_METHODS_OF_OBJECT.withValidationStrategy(
                 new DeserializedScopeValidationVisitor()

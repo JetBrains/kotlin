@@ -67,8 +67,7 @@ private class ResolverForDecompilerImpl(val module: ModuleDescriptor) : Resolver
     }
 
     override fun resolveDeclarationsInPackage(packageFqName: FqName): Collection<DeclarationDescriptor> {
-        val packageView = module.getPackage(packageFqName) ?: return listOf()
-        return packageView.memberScope.getAllDescriptors() filter {
+        return module.getPackage(packageFqName).memberScope.getAllDescriptors() filter {
             it is CallableMemberDescriptor && it.module != KotlinBuiltIns.getInstance().getBuiltInsModule()
         } sortBy MemberComparator.INSTANCE
     }

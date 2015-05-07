@@ -46,7 +46,6 @@ public class RecursiveDescriptorProcessorTest extends KotlinTestWithEnvironment 
         JetFile jetFile = JetTestUtils.createFile("declarations.kt", text, getEnvironment().getProject());
         AnalysisResult result = JetTestUtils.analyzeFile(jetFile);
         PackageViewDescriptor testPackage = result.getModuleDescriptor().getPackage(FqName.topLevel(Name.identifier("test")));
-        assert testPackage != null;
 
         List<String> descriptors = recursivelyCollectDescriptors(testPackage);
 

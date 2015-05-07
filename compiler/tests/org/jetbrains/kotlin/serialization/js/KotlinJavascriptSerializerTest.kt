@@ -57,7 +57,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         val module = deserialize(metaFile)
 
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                module.getPackage(TEST_PACKAGE_FQNAME)!!,
+                module.getPackage(TEST_PACKAGE_FQNAME),
                 RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
                 File(source.replace(".kt", ".txt"))
         )

@@ -128,7 +128,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
             // make sure we create a package descriptor
             PackageViewDescriptor packageDescriptor = session.getModuleDescriptor().getPackage(packageFqName);
-            if (packageDescriptor == null) {
+            if (packageDescriptor.isEmpty()) {
                 LOG.warn("No descriptor found for package " + packageFqName + " in file " + file.getName() + "\n" + file.getText());
                 session.forceResolveAll();
                 continue;

@@ -62,7 +62,7 @@ public abstract class AbstractResolveByStubTest extends KotlinCodeInsightTestCas
         JetFile file = (JetFile) getFile();
         ModuleDescriptor module = ResolvePackage.findModuleDescriptor(file);
         PackageViewDescriptor packageViewDescriptor = module.getPackage(new FqName("test"));
-        Assert.assertNotNull(packageViewDescriptor);
+        Assert.assertFalse(packageViewDescriptor.isEmpty());
 
         File fileToCompareTo = new File(FileUtil.getNameWithoutExtension(path) + ".txt");
 

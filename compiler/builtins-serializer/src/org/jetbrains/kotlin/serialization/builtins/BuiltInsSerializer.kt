@@ -108,7 +108,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     }
 
     private fun serializePackage(module: ModuleDescriptor, fqName: FqName, destDir: File) {
-        val packageView = module.getPackage(fqName) ?: error("No package resolved in $module")
+        val packageView = module.getPackage(fqName)
 
         // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
         // DescriptorValidator.validate(packageView)

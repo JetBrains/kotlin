@@ -29,4 +29,6 @@ public interface PackageViewDescriptor : DeclarationDescriptor {
     public val module: ModuleDescriptor
 
     public val fragments: List<PackageFragmentDescriptor>
+
+    public fun isEmpty(): Boolean = fragments.isEmpty()
 }

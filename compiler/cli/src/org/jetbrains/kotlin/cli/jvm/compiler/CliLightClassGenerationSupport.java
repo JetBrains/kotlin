@@ -167,15 +167,13 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
 
     @Override
     public boolean packageExists(@NotNull FqName fqName, @NotNull GlobalSearchScope scope) {
-        return getModule().getPackage(fqName) != null;
+        return !getModule().getPackage(fqName).isEmpty();
     }
 
     @NotNull
     @Override
     public Collection<FqName> getSubPackages(@NotNull FqName fqn, @NotNull GlobalSearchScope scope) {
         PackageViewDescriptor packageView = getModule().getPackage(fqn);
-        if (packageView == null) return Collections.emptyList();
-
         Collection<DeclarationDescriptor> members = packageView.getMemberScope().getDescriptors(DescriptorKindFilter.PACKAGES, JetScope.ALL_NAME_FILTER);
         return ContainerUtil.mapNotNull(members, new Function<DeclarationDescriptor, FqName>() {
             @Override

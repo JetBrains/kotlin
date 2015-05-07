@@ -163,7 +163,7 @@ object ReplaceWithAnnotationAnalyzer {
         return when (descriptor) {
             is PackageFragmentDescriptor -> {
                 val moduleDescriptor = descriptor.getContainingDeclaration()
-                getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName)!!)
+                getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName))
             }
 
             is PackageViewDescriptor ->

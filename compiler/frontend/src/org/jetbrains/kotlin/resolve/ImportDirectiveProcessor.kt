@@ -86,10 +86,10 @@ public class ImportDirectiveProcessor(
             val packageView = moduleDescriptor.getPackage(fqName)
             if (jetExpression == null) {
                 assert(fqName.isRoot())
-                return packageView.sure { "Root package does not exist in module $moduleDescriptor" }
+                return packageView
             }
             return when {
-                packageView != null -> {
+                !packageView.isEmpty() -> {
                     recordPackageViews(jetExpression, packageView, trace)
                     packageView
                 }

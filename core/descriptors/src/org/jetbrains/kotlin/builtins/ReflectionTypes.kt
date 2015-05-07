@@ -31,13 +31,13 @@ import kotlin.properties.Delegates
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
 public class ReflectionTypes(private val module: ModuleDescriptor) {
-    private val kotlinReflectScope: JetScope? by Delegates.lazy {
-        module.getPackage(KOTLIN_REFLECT_FQ_NAME)?.memberScope
+    private val kotlinReflectScope: JetScope by Delegates.lazy {
+        module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
     }
 
     fun find(className: String): ClassDescriptor {
         val name = Name.identifier(className)
-        return kotlinReflectScope?.getClassifier(name) as? ClassDescriptor
+        return kotlinReflectScope.getClassifier(name) as? ClassDescriptor
                 ?: ErrorUtils.createErrorClass(KOTLIN_REFLECT_FQ_NAME.child(name).asString())
     }
 

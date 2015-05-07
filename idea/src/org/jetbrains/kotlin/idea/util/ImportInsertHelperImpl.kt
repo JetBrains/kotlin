@@ -216,7 +216,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                     }
                     .filterNotNull()
 
-            val filePackage = moduleDescriptor.getPackage(file.getPackageFqName())!!
+            val filePackage = moduleDescriptor.getPackage(file.getPackageFqName())
 
             fun isVisible(descriptor: DeclarationDescriptor): Boolean {
                 if (descriptor !is DeclarationDescriptorWithVisibility) return true
@@ -263,7 +263,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
 
         private fun getMemberScope(fqName: FqName, moduleDescriptor: ModuleDescriptor): JetScope? {
             val packageView = moduleDescriptor.getPackage(fqName)
-            if (packageView != null) {
+            if (!packageView.isEmpty()) {
                 return packageView.memberScope
             }
 
