@@ -142,7 +142,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
 
                     run {
                         val intention = IfNullToElvisIntention()
-                        if (intention.isApplicableTo(expression)) {
+                        if (intention.applicabilityRange(expression) != null) {
                             intention.applyTo(expression)
                             return
                         }

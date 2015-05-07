@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
-import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.idea.util.isNothing
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -32,14 +31,15 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 
-public class IfNullToElvisIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
-    override fun isApplicableTo(element: JetIfExpression): Boolean {
-        val data = calcData(element) ?: return false
+public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
+    override fun applicabilityRange(element: JetIfExpression): TextRange? {
+        val data = calcData(element) ?: return null
 
-        val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return false
-        if (!type.isNothing()) return false
+        val type = data.ifNullExpression.analyze().getType(data.ifNullExpression) ?: return null
+        if (!type.isNothing()) return null
 
-        return true
+        val rParen = element.getRightParenthesis() ?: return null
+        return TextRange(element.getTextRange().getStartOffset(), rParen.getTextRange().getEndOffset())
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
