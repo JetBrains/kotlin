@@ -713,6 +713,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                     doParsingTest(fileName);
                 }
 
+                @TestMetadata("enumEntries.kt")
+                public void testEnumEntries() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/at/enumEntries.kt");
+                    doParsingTest(fileName);
+                }
+
                 @TestMetadata("expressionJustAtTyped.kt")
                 public void testExpressionJustAtTyped() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/at/expressionJustAtTyped.kt");

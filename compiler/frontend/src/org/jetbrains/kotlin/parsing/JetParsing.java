@@ -754,10 +754,8 @@ public class JetParsing extends AbstractJetParsing {
         while (!eof() && !at(RBRACE)) {
             PsiBuilder.Marker entryOrMember = mark();
 
-            TokenSet constructorNameFollow = TokenSet.create(SEMICOLON, COLON, LPAR, LT, LBRACE);
-            int lastId = findLastBefore(ENUM_MEMBER_FIRST, constructorNameFollow, false);
             ModifierDetector detector = new ModifierDetector();
-            createTruncatedBuilder(lastId).parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+            parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
             IElementType type;
             if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
