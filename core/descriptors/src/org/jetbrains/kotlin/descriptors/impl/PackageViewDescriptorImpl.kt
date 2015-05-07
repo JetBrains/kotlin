@@ -14,97 +14,72 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.descriptors.impl;
+package org.jetbrains.kotlin.descriptors.impl
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayList
 
-public class PackageViewDescriptorImpl extends DeclarationDescriptorImpl implements PackageViewDescriptor {
-    private final ModuleDescriptor module;
-    private final FqName fqName;
-    private final JetScope memberScope;
+public class PackageViewDescriptorImpl(private val module: ModuleDescriptor, private val fqName: FqName, fragments: List<PackageFragmentDescriptor>) : DeclarationDescriptorImpl(Annotations.EMPTY, fqName.shortNameOrSpecial()), PackageViewDescriptor {
+    private val memberScope: JetScope
 
-    public PackageViewDescriptorImpl(
-            @NotNull ModuleDescriptor module,
-            @NotNull FqName fqName,
-            @NotNull List<PackageFragmentDescriptor> fragments
-    ) {
-        super(Annotations.EMPTY, fqName.shortNameOrSpecial());
-        this.module = module;
-        this.fqName = fqName;
+    init {
 
-        List<JetScope> scopes = new ArrayList<JetScope>(fragments.size() + 1);
-        assert !fragments.isEmpty() : fqName + " in " + module;
-        for (PackageFragmentDescriptor fragment : fragments) {
-            scopes.add(fragment.getMemberScope());
+        val scopes = ArrayList<JetScope>(fragments.size() + 1)
+        assert(!fragments.isEmpty()) { fqName + " in " + module }
+        for (fragment in fragments) {
+            scopes.add(fragment.getMemberScope())
         }
-        scopes.add(new SubpackagesScope(this));
+        scopes.add(SubpackagesScope(this))
 
-        memberScope = new ChainedScope(this, "package view scope for " + fqName + " in " + module.getName(),
-                                       scopes.toArray(new JetScope[scopes.size()]));
+        memberScope = ChainedScope(this, "package view scope for " + fqName + " in " + module.getName(), *scopes.toArray<JetScope>(arrayOfNulls<JetScope>(scopes.size())))
     }
 
-    @Nullable
-    @Override
-    public PackageViewDescriptor getContainingDeclaration() {
-        return fqName.isRoot() ? null : module.getPackage(fqName.parent());
+    override fun getContainingDeclaration(): PackageViewDescriptor? {
+        return if (fqName.isRoot()) null else module.getPackage(fqName.parent())
     }
 
-    @Nullable
-    @Override
-    public DeclarationDescriptor substitute(@NotNull TypeSubstitutor substitutor) {
-        return this;
+    override fun substitute(substitutor: TypeSubstitutor): DeclarationDescriptor? {
+        return this
     }
 
-    @Override
-    public <R, D> R accept(DeclarationDescriptorVisitor<R, D> visitor, D data) {
-        return visitor.visitPackageViewDescriptor(this, data);
+    override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R {
+        return visitor.visitPackageViewDescriptor(this, data)
     }
 
-    @NotNull
-    @Override
-    public FqName getFqName() {
-        return fqName;
+    override fun getFqName(): FqName {
+        return fqName
     }
 
-    @NotNull
-    @Override
-    public JetScope getMemberScope() {
-        return memberScope;
+    override fun getMemberScope(): JetScope {
+        return memberScope
     }
 
-    @Override
-    @NotNull
-    public ModuleDescriptor getModule() {
-        return module;
+    override fun getModule(): ModuleDescriptor {
+        return module
     }
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    override fun equals(o: Any?): Boolean {
+        if (this == o) return true
+        if (o == null || javaClass != o.javaClass) return false
 
-        PackageViewDescriptorImpl that = (PackageViewDescriptorImpl) o;
+        val that = o as PackageViewDescriptorImpl
 
-        if (!fqName.equals(that.fqName)) return false;
-        if (!module.equals(that.module)) return false;
+        if (fqName != that.fqName) return false
+        if (module != that.module) return false
 
-        return true;
+        return true
     }
 
 
-    @Override
-    public int hashCode() {
-        int result = module.hashCode();
-        result = 31 * result + fqName.hashCode();
-        return result;
+    override fun hashCode(): Int {
+        var result = module.hashCode()
+        result = 31 * result + fqName.hashCode()
+        return result
     }
 }
