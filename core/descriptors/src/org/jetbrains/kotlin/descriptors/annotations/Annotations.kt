@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public trait Annotations : Iterable<AnnotationDescriptor> {
 
@@ -39,4 +40,28 @@ public trait Annotations : Iterable<AnnotationDescriptor> {
             override fun toString() = "EMPTY"
         }
     }
+}
+
+class FilteredAnnotations(
+        private val delegate: Annotations,
+        private val fqNameFilter: (FqName) -> Boolean
+) : Annotations {
+    override fun findAnnotation(fqName: FqName) =
+            if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
+            else null
+
+    override fun findExternalAnnotation(fqName: FqName) =
+            if (fqNameFilter(fqName)) delegate.findExternalAnnotation(fqName)
+            else null
+
+    override fun iterator() = delegate.sequence()
+            .filter { annotation ->
+                val descriptor = annotation.getType().getConstructor().getDeclarationDescriptor()
+                descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->
+                    fqName.isSafe() && fqNameFilter(fqName.toSafe())
+                }
+            }
+            .iterator()
+
+    override fun isEmpty() = !iterator().hasNext()
 }

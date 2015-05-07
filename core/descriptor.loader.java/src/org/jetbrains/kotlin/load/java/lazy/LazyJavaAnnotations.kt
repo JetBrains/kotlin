@@ -44,29 +44,5 @@ class LazyJavaAnnotations(
     override fun isEmpty() = !iterator().hasNext()
 }
 
-class FilteredAnnotations(
-        private val delegate: Annotations,
-        private val fqNameFilter: (FqName) -> Boolean
-) : Annotations {
-    override fun findAnnotation(fqName: FqName) =
-            if (fqNameFilter(fqName)) delegate.findAnnotation(fqName)
-            else null
-
-    override fun findExternalAnnotation(fqName: FqName) =
-            if (fqNameFilter(fqName)) delegate.findExternalAnnotation(fqName)
-            else null
-
-    override fun iterator() = delegate.sequence()
-            .filter { annotation ->
-                val descriptor = annotation.getType().getConstructor().getDeclarationDescriptor()
-                descriptor != null && DescriptorUtils.getFqName(descriptor).let { fqName ->
-                    fqName.isSafe() && fqNameFilter(fqName.toSafe())
-                }
-            }
-            .iterator()
-
-    override fun isEmpty() = !iterator().hasNext()
-}
-
 fun LazyJavaResolverContext.resolveAnnotations(annotationsOwner: JavaAnnotationOwner): Annotations
         = LazyJavaAnnotations(this, annotationsOwner)
