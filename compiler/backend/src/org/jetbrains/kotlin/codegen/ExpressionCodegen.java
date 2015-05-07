@@ -1579,7 +1579,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 result.put(Type.VOID_TYPE, v);
             }
 
-            removeDescriptorFromFrameMap(statement, blockEnd, leaveTasks);
+            addLeaveTaskToRemoveDescriptorFromFrameMap(statement, blockEnd, leaveTasks);
         }
 
         return new StackValueWithLeaveTask(answer, new ExtensionFunction0<StackValueWithLeaveTask, Unit>() {
@@ -1642,7 +1642,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private void removeDescriptorFromFrameMap(
+    private void addLeaveTaskToRemoveDescriptorFromFrameMap(
             @NotNull JetElement statement,
             @NotNull Label blockEnd,
             @NotNull List<Function<StackValue, Void>> leaveTasks
@@ -1650,20 +1650,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (statement instanceof JetMultiDeclaration) {
             JetMultiDeclaration multiDeclaration = (JetMultiDeclaration) statement;
             for (JetMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
-                removeLocalVariableFromFrameMap(entry, blockEnd, leaveTasks);
+                addLeaveTaskToRemoveLocalVariableFromFrameMap(entry, blockEnd, leaveTasks);
             }
         }
 
         if (statement instanceof JetVariableDeclaration) {
-            removeLocalVariableFromFrameMap((JetVariableDeclaration) statement, blockEnd, leaveTasks);
+            addLeaveTaskToRemoveLocalVariableFromFrameMap((JetVariableDeclaration) statement, blockEnd, leaveTasks);
         }
 
         if (statement instanceof JetNamedFunction) {
-            removeNamedFunctionFromFrameMap((JetNamedFunction) statement, blockEnd, leaveTasks);
+            addLeaveTaskToRemoveNamedFunctionFromFrameMap((JetNamedFunction) statement, blockEnd, leaveTasks);
         }
     }
 
-    private void removeLocalVariableFromFrameMap(
+    private void addLeaveTaskToRemoveLocalVariableFromFrameMap(
             @NotNull JetVariableDeclaration statement,
             final Label blockEnd,
             @NotNull List<Function<StackValue, Void>> leaveTasks
@@ -1691,8 +1691,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         });
     }
 
-    private void removeNamedFunctionFromFrameMap(
-            final @NotNull JetNamedFunction statement,
+    private void addLeaveTaskToRemoveNamedFunctionFromFrameMap(
+            @NotNull final JetNamedFunction statement,
             final Label blockEnd,
             @NotNull List<Function<StackValue, Void>> leaveTasks
     ) {
