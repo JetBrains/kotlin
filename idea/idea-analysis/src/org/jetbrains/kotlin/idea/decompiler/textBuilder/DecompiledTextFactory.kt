@@ -169,13 +169,17 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                 builder.append(" {\n")
                 var firstPassed = false
                 val subindent = indent + "    "
-                val companionObject = descriptor.getCompanionObjectDescriptor()
-                if (companionObject != null) {
-                    firstPassed = true
-                    builder.append(subindent)
-                    appendDescriptor(companionObject, subindent)
-                }
                 val allDescriptors = descriptor.secondaryConstructors + descriptor.getDefaultType().getMemberScope().getDescriptors()
+                val companionObject = descriptor.getCompanionObjectDescriptor()
+                var companionNeeded = (companionObject != null)
+                fun newlineExceptFirst() {
+                    if (firstPassed) {
+                        builder.append("\n")
+                    }
+                    else {
+                        firstPassed = true
+                    }
+                }
                 for (member in allDescriptors) {
                     if (member.getContainingDeclaration() != descriptor) {
                         continue
@@ -183,19 +187,19 @@ private fun buildDecompiledText(packageFqName: FqName, descriptors: List<Declara
                     if (member == companionObject) {
                         continue
                     }
+                    if (companionNeeded && !isEnumEntry(member)) {
+                        companionNeeded = false
+                        newlineExceptFirst()
+                        builder.append(subindent)
+                        appendDescriptor(companionObject, subindent)
+                    }
                     if (member is CallableMemberDescriptor
                         && member.getKind() != CallableMemberDescriptor.Kind.DECLARATION
                         //TODO: not synthesized and component like
                         && !isComponentLike(member.getName())) {
                         continue
                     }
-
-                    if (firstPassed) {
-                        builder.append("\n")
-                    }
-                    else {
-                        firstPassed = true
-                    }
+                    newlineExceptFirst()
                     builder.append(subindent)
                     appendDescriptor(member, subindent)
                 }
