@@ -3031,6 +3031,57 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/enumConstructor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnumConstructor extends AbstractQuickFixTest {
+            public void testAllFilesPresentInEnumConstructor() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/enumConstructor"), Pattern.compile("^(\\w+)\\.kt$"), true);
+            }
+
+            @TestMetadata("noDelimiterWithInitializerFirst.kt")
+            public void testNoDelimiterWithInitializerFirst() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/noDelimiterWithInitializerFirst.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDelimiterWithInitializerLast.kt")
+            public void testNoDelimiterWithInitializerLast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/noDelimiterWithInitializerLast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("singleEntry.kt")
+            public void testSingleEntry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/singleEntry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wholeProject.kt")
+            public void testWholeProject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/wholeProject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withCommas.kt")
+            public void testWithCommas() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/withCommas.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withNamedArgument.kt")
+            public void testWithNamedArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/withNamedArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withOverloads.kt")
+            public void testWithOverloads() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/withOverloads.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/lambdaSyntax")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
