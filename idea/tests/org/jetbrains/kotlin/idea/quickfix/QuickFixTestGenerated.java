@@ -4023,6 +4023,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("multipleConstructors.kt")
+        public void testMultipleConstructors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/multipleConstructors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noAccessibleConstructors.kt")
         public void testNoAccessibleConstructors() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/noAccessibleConstructors.kt");

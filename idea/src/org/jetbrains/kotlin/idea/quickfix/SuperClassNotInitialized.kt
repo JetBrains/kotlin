@@ -19,12 +19,9 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiFile
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.isVisible
@@ -32,6 +29,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.ArrayList
@@ -55,15 +53,15 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
         fixes.add(AddParenthesisFix(delegator, putCaretIntoParenthesis = constructors.singleOrNull()?.getValueParameters()?.isNotEmpty() ?: true))
 
         if (classOrObjectDeclaration is JetClass) {
-            val constructorToUse = constructors.singleOrNull()
-                                   ?: constructors.singleOrNull { it.isPrimary() } //TODO: should we select it automatically in this case?
-            //TODO: multiple
-            if (constructorToUse != null && constructorToUse.getValueParameters().isNotEmpty() && constructorToUse.getValueParameters().none { it.getType().isError() }) {
-                val superType = classDescriptor.getTypeConstructor().getSupertypes().first { it.getConstructor().getDeclarationDescriptor() == superClass }
-                val typeArgsMap = superClass.getTypeConstructor().getParameters().zip(superType.getArguments()).toMap()
-                val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
-                val substitutedConstructor = constructorToUse.substitute(substitutor) as ConstructorDescriptor
-                fixes.add(AddParametersFix(delegator, classOrObjectDeclaration, substitutedConstructor))
+            val superType = classDescriptor.getTypeConstructor().getSupertypes().first { it.getConstructor().getDeclarationDescriptor() == superClass }
+            val typeArgsMap = superClass.getTypeConstructor().getParameters().zip(superType.getArguments()).toMap()
+            val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
+
+            for (constructor in constructors) {
+                if (constructor.getValueParameters().isNotEmpty() && constructor.getValueParameters().none { it.getType().isError() }) {
+                    val substitutedConstructor = constructor.substitute(substitutor) as ConstructorDescriptor
+                    fixes.add(AddParametersFix(delegator, classOrObjectDeclaration, substitutedConstructor))
+                }
             }
         }
 
@@ -96,7 +94,11 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
 
         override fun getFamilyName() = "Add constructor parameters from superclass"
 
-        override fun getText() = "Add constructor parameters and use them"
+        override fun getText(): String {
+            return "Add constructor parameters from " +
+                   superConstructor.getContainingDeclaration().getName().asString() +
+                   DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(superConstructor)
+        }
 
         override fun invoke(project: Project, editor: Editor?, file: JetFile) {
             val factory = JetPsiFactory(project)
