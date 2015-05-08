@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
@@ -74,7 +75,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     private class AddParenthesisFix(
             element: JetDelegatorToSuperClass,
             val putCaretIntoParenthesis: Boolean
-    ) : JetIntentionAction<JetDelegatorToSuperClass>(element) {
+    ) : JetIntentionAction<JetDelegatorToSuperClass>(element), HighPriorityAction {
 
         override fun getFamilyName() = "Change to constructor invocation" //TODO?
 
