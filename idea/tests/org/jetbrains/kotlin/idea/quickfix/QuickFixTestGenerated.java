@@ -3959,6 +3959,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("addParenthesis.kt")
+        public void testAddParenthesis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addParenthesisDefaultParameters.kt")
+        public void testAddParenthesisDefaultParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisDefaultParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addParenthesisEmptyConstructor.kt")
+        public void testAddParenthesisEmptyConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisEmptyConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addParenthesisForLocalClass.kt")
+        public void testAddParenthesisForLocalClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisForLocalClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addParenthesisForObjectExpression.kt")
+        public void testAddParenthesisForObjectExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/addParenthesisForObjectExpression.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInSupertypeInitialization() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/supertypeInitialization"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
@@ -4002,36 +4032,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("primaryConstructorInaccessible.kt")
         public void testPrimaryConstructorInaccessible() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/primaryConstructorInaccessible.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("supertypeNotInitialized.kt")
-        public void testSupertypeNotInitialized() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/supertypeNotInitialized.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("supertypeNotInitializedDefaultParameters.kt")
-        public void testSupertypeNotInitializedDefaultParameters() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/supertypeNotInitializedDefaultParameters.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("supertypeNotInitializedEmptyConstructor.kt")
-        public void testSupertypeNotInitializedEmptyConstructor() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/supertypeNotInitializedEmptyConstructor.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("supertypeNotInitializedForLocalClass.kt")
-        public void testSupertypeNotInitializedForLocalClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/supertypeNotInitializedForLocalClass.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("supertypeNotInitializedForObjectExpression.kt")
-        public void testSupertypeNotInitializedForObjectExpression() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/supertypeNotInitializedForObjectExpression.kt");
             doTest(fileName);
         }
     }
