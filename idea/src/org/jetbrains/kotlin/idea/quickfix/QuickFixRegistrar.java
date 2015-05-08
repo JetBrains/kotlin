@@ -325,5 +325,7 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(DEPRECATED_ANNOTATION_SYNTAX, DeprecatedAnnotationSyntaxFix.Companion);
         QuickFixes.factories.put(DEPRECATED_ANNOTATION_SYNTAX, DeprecatedAnnotationSyntaxFix.Companion.createWholeProjectFixFactory());
+
+        QuickFixes.factories.put(SUPERTYPE_NOT_INITIALIZED, AddConstructorParametersFromSuperFix.Companion);
     }
 }

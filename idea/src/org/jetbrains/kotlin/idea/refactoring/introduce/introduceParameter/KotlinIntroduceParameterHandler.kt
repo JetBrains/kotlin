@@ -192,8 +192,6 @@ public open class KotlinIntroduceParameterHandler(
             return
         }
 
-        val parameterList = targetParent.getValueParameterList()
-
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, targetParent]
         val functionDescriptor: FunctionDescriptor =
                 when (descriptor) {
@@ -250,26 +248,9 @@ public open class KotlinIntroduceParameterHandler(
 
                     val addedParameter = if (inplaceIsAvailable) {
                         runWriteAction {
-                            val newParameterList =
-                                    if (parameterList == null) {
-                                        val klass = targetParent as? JetClass
-                                        val anchor = klass?.getTypeParameterList() ?: klass?.getNameIdentifier()
-                                        assert(anchor != null) { "Invalid declaration: ${targetParent.getElementTextWithContext()}" }
-
-                                        val constructor = targetParent.addAfter(psiFactory.createPrimaryConstructor(), anchor) as JetPrimaryConstructor
-                                        constructor.getValueParameterList()!!
-                                    }
-                                    else parameterList
-
-                            val lastParameter = newParameterList.getChildren().lastOrNull { it is JetParameter } as? JetParameter
-                            if (lastParameter != null) {
-                                val comma = newParameterList.addAfter(psiFactory.createComma(), lastParameter)
-                                newParameterList.addAfter(newParameter, comma) as JetParameter
-                            }
-                            else {
-                                val singleParameterList = psiFactory.createParameterList("(${newParameter.getText()})")
-                                (newParameterList.replace(singleParameterList) as JetParameterList).getParameters().first()
-                            }
+                            val parameterList = targetParent.getValueParameterList()
+                                                ?: (targetParent as JetClass).getOrCreatePrimaryConstructorParameterList()
+                            parameterList.addParameter(newParameter)
                         }
                     }
                     else newParameter

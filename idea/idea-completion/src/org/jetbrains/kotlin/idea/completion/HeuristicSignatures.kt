@@ -82,8 +82,7 @@ public object HeuristicSignatures {
             val type = typeFromText(typeStr, typeParameters, moduleDescriptor, project)
 
             // now substitute type parameters with actual arguments
-            val typeArgs = ownerType.getArguments()
-            val typeArgsMap = typeParameters.indices.map { typeParameters[it] to typeArgs[it] }.toMap()
+            val typeArgsMap = typeParameters.zip(ownerType.getArguments()).toMap()
             val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
             return substitutor.substitute(type, Variance.INVARIANT)
         }

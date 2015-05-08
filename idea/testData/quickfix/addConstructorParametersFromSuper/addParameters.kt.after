@@ -1,0 +1,4 @@
+// "Add constructor parameters and use them" "true"
+open class Base(p1: Int, val p2: Int)
+
+class C(p: Int, p1: Int, p2: Int) : Base<caret>(p1, p2)

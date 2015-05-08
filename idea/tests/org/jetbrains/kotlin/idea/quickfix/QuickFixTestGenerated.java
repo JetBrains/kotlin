@@ -176,6 +176,63 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/addConstructorParametersFromSuper")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddConstructorParametersFromSuper extends AbstractQuickFixTest {
+        @TestMetadata("addImport.kt")
+        public void testAddImport() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addConstructorParametersFromSuper/addImport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addParameters.kt")
+        public void testAddParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addConstructorParametersFromSuper/addParameters.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInAddConstructorParametersFromSuper() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/addConstructorParametersFromSuper"), Pattern.compile("^(\\w+)\\.kt$"), true);
+        }
+
+        @TestMetadata("createConstructor.kt")
+        public void testCreateConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addConstructorParametersFromSuper/createConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("genericClass.kt")
+        public void testGenericClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addConstructorParametersFromSuper/genericClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incompleteConstructor.kt")
+        public void testIncompleteConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addConstructorParametersFromSuper/incompleteConstructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("keywordName.kt")
+        public void testKeywordName() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addConstructorParametersFromSuper/keywordName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noParameters.kt")
+        public void testNoParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addConstructorParametersFromSuper/noParameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("primaryConstructorInaccessible.kt")
+        public void testPrimaryConstructorInaccessible() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/addConstructorParametersFromSuper/primaryConstructorInaccessible.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/addStarProjections")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

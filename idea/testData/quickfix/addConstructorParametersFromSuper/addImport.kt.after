@@ -1,0 +1,5 @@
+// "Add constructor parameters and use them" "true"
+import java.io.DataInputStream
+import java.io.InputStream
+
+class C(p0: InputStream) : DataInputStream<caret>(p0)

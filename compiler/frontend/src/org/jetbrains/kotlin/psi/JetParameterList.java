@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
@@ -42,6 +43,57 @@ public class JetParameterList extends JetElementImplStub<KotlinPlaceHolderStub<J
     @NotNull
     public List<JetParameter> getParameters() {
         return getStubOrPsiChildrenAsList(JetStubElementTypes.VALUE_PARAMETER);
+    }
+
+    @NotNull
+    public JetParameter addParameter(@NotNull JetParameter parameter) {
+        return addParameterBefore(parameter, null);
+    }
+
+    @NotNull
+    public JetParameter addParameterAfter(@NotNull JetParameter parameter, @Nullable JetParameter anchor) {
+        assert anchor == null || anchor.getParent() == this;
+        List<JetParameter> parameters = getParameters();
+        if (parameters.isEmpty()) {
+            if (getFirstChild().getNode().getElementType() == JetTokens.LPAR) {
+                return (JetParameter) addAfter(parameter, getFirstChild());
+            }
+            else {
+                return (JetParameter) add(parameter);
+            }
+        }
+        else {
+            PsiElement comma = new JetPsiFactory(getProject()).createComma();
+            if (anchor != null) {
+                comma = addAfter(comma, anchor);
+                return (JetParameter) addAfter(parameter, comma);
+            }
+            else {
+                comma = addBefore(comma, parameters.get(0));
+                return (JetParameter) addBefore(parameter, comma);
+            }
+        }
+    }
+
+    @NotNull
+    public JetParameter addParameterBefore(@NotNull JetParameter parameter, @Nullable JetParameter anchor) {
+        List<JetParameter> parameters = getParameters();
+        JetParameter anchorAfter;
+        if (parameters.isEmpty()) {
+            assert anchor == null;
+            anchorAfter = null;
+        }
+        else {
+            if (anchor != null) {
+                int index = parameters.indexOf(anchor);
+                assert index >= 0;
+                anchorAfter = index > 0 ? parameters.get(index - 1) : null;
+            }
+            else {
+                anchorAfter = parameters.get(parameters.size() - 1);
+            }
+        }
+        return addParameterAfter(parameter, anchorAfter);
     }
 
     // this method needed only for migrate lambda syntax

@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.JetCodeFragment;
 import org.jetbrains.kotlin.psi.JetFile;
 
@@ -42,7 +43,7 @@ public abstract class JetIntentionAction<T extends PsiElement> implements Intent
     //Don't override this method. Use the method with JetFile instead.
     @Deprecated
     @Override
-    public void invoke(@NotNull Project project, Editor editor, PsiFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, @Nullable Editor editor, @NotNull PsiFile file) throws IncorrectOperationException {
         if (file instanceof JetFile) {
             if (FileModificationService.getInstance().prepareFileForWrite(element.getContainingFile())) {
                 invoke(project, editor, (JetFile) file);
@@ -50,8 +51,7 @@ public abstract class JetIntentionAction<T extends PsiElement> implements Intent
         }
     }
 
-    protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-    }
+    protected abstract void invoke(@NotNull Project project, @Nullable Editor editor, @NotNull JetFile file) throws IncorrectOperationException;
 
     @Override
     public boolean startInWriteAction() {
