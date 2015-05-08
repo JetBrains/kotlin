@@ -47,13 +47,21 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
         // Foo! -> Foo?
         // Foo<Bar!>! -> Foo<Bar>?
-        val approximation =
+        var approximation =
                 if (isCollection)
                     TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) flexible.upperBound else flexible.lowerBound, outermost)
                 else
                     if (outermost) flexible.upperBound else flexible.lowerBound
-        val approximated = approximateFlexibleTypes(approximation)
-        return if (jetType.isMarkedNotNull()) approximated.makeNotNullable() else approximated
+
+        approximation = approximateFlexibleTypes(approximation)
+
+        approximation = if (jetType.isMarkedNotNull()) approximation.makeNotNullable() else approximation
+
+        if (approximation.isMarkedNullable() && !flexible.lowerBound.isMarkedNullable() && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
+            approximation = approximation.makeNotNullable()
+        }
+
+        return approximation
     }
     return JetTypeImpl(
             jetType.getAnnotations(),

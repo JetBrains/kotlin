@@ -485,7 +485,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 if (typeProjection.getProjectionKind() != Variance.INVARIANT) {
                     builder.append(typeProjection.getProjectionKind()).append(" ");
                 }
-                builder.append(renderNormalizedType(typeProjection.getType()));
+                builder.append(renderType(typeProjection.getType()));
             }
             if (iterator.hasNext()) {
                 builder.append(", ");

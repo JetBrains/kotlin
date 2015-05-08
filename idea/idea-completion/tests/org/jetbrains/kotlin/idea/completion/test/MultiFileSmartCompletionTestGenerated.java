@@ -35,6 +35,12 @@ public class MultiFileSmartCompletionTestGenerated extends AbstractMultiFileSmar
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/smartMultiFile"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("AnonymousObjectGenericJava")
+    public void testAnonymousObjectGenericJava() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/AnonymousObjectGenericJava/");
+        doTest(fileName);
+    }
+
     @TestMetadata("FunctionFromAnotherPackage")
     public void testFunctionFromAnotherPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smartMultiFile/FunctionFromAnotherPackage/");

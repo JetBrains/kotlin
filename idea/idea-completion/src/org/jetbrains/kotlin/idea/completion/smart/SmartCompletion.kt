@@ -455,7 +455,7 @@ class SmartCompletion(
         val lookupString = lookupElement.getLookupString()
 
         val typeArgs = jetType.getArguments()
-        var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
+        var itemText = lookupString + IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
         val typeText = DescriptorUtils.getFqName(classifier).toString() + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgs)
 
         val insertHandler: InsertHandler<LookupElement> = object : InsertHandler<LookupElement> {

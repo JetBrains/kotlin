@@ -147,7 +147,7 @@ class TypeInstantiationItems(
         // drop "in" and "out" from type arguments - they cannot be used in constructor call
         val typeArgsToUse = typeArgs.map { TypeProjectionImpl(Variance.INVARIANT, it.getType()) }
 
-        var itemText = lookupString + DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
+        var itemText = lookupString + IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgsToUse)
         var signatureText: String? = null
 
         val insertHandler: InsertHandler<LookupElement>
