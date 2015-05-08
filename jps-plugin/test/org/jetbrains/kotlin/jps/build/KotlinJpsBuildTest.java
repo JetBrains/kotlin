@@ -431,6 +431,20 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         result.assertSuccessful();
     }
 
+    public void testDependencyToOldKotlinLib() throws IOException {
+        initProject();
+
+        File libraryJar = MockLibraryUtil.compileLibraryToJar(
+                workDir.getAbsolutePath() + File.separator + "oldModuleLib/src", "module-lib", false);
+
+        addDependency(JpsJavaDependencyScope.COMPILE, Lists.newArrayList(findModule("module")), false, "module-lib", libraryJar);
+
+        addKotlinRuntimeDependency();
+
+        BuildResult result = makeAll();
+        result.assertSuccessful();
+    }
+
     private void createKotlinJavaScriptLibraryArchive() {
         File jarFile = new File(workDir, KOTLIN_JS_LIBRARY_JAR);
         try {

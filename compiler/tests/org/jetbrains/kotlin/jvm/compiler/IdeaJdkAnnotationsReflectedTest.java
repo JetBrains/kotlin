@@ -25,11 +25,13 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiFormatUtil;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.asJava.KotlinLightClass;
 import org.jetbrains.kotlin.cli.jvm.compiler.CoreExternalAnnotationsManager;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
+import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -42,8 +44,13 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
 
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
-        return JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
+        KotlinCoreEnvironment environment = JetTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                 myTestRootDisposable, ConfigurationKind.JDK_AND_ANNOTATIONS, TestJdkKind.FULL_JDK);
+
+        // Activate Kotlin light class finder
+        LazyResolveTestUtil.resolveProject(environment.getProject());
+
+        return environment;
     }
 
     @Override
@@ -90,9 +97,11 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
             PsiClass psiClass = javaPsiFacade.findClass(classFqName.asString(), allScope);
             assertNotNull("Class has annotation, but it is not found: " + classFqName, psiClass);
 
+            assertFalse("Kotlin light classes are not not expected", psiClass instanceof KotlinLightClass);
+
             psiClass.accept(new JavaRecursiveElementVisitor() {
                 @Override
-                public void visitMethod(PsiMethod method) {
+                public void visitMethod(@NotNull PsiMethod method) {
                     super.visitMethod(method);
                     if (method.getReturnType() != null) { // disabled for constructors
                         checkAndReport(method);
@@ -100,19 +109,19 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
                 }
 
                 @Override
-                public void visitField(PsiField field) {
+                public void visitField(@NotNull PsiField field) {
                     super.visitField(field);
                     checkAndReport(field);
                 }
 
                 @Override
-                public void visitParameter(PsiParameter parameter) {
+                public void visitParameter(@NotNull PsiParameter parameter) {
                     super.visitParameter(parameter);
                     PsiMethod method = PsiTreeUtil.getParentOfType(parameter, PsiMethod.class);
                     assert method != null;
                     if (method.getReturnType() != null) { // disabled for constructors
                         if (!check(parameter, method, AnnotationsKind.KOTLIN_SIGNATURE) &&
-                                !check(parameter, parameter, AnnotationsKind.NOT_NULL)) {
+                            !check(parameter, parameter, AnnotationsKind.NOT_NULL)) {
                             declarationsWithMissingAnnotations.add(parameter);
                         }
                     }
@@ -128,8 +137,7 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
                         @NotNull PsiModifierListOwner ideaOwner,
                         @NotNull PsiModifierListOwner kotlinOwner,
                         @NotNull AnnotationsKind annotationsKind
-                )
-                {
+                ) {
                     return !hasAnnotationInIdea(ideaOwner) || hasAnnotationInKotlin(kotlinOwner, annotationsKind);
                 }
 
@@ -172,7 +180,7 @@ public class IdeaJdkAnnotationsReflectedTest extends KotlinTestWithEnvironment {
 
         public final String[] annotationNames;
 
-        private AnnotationsKind(@NotNull String... annotationNames) {
+        AnnotationsKind(@NotNull String... annotationNames) {
             this.annotationNames = annotationNames;
         }
     }

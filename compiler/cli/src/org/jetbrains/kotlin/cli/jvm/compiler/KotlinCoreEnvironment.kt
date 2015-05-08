@@ -378,8 +378,10 @@ public class KotlinCoreEnvironment private(
                 registerService(javaClass<CodeAnalyzerInitializer>(), cliLightClassGenerationSupport)
 
                 val area = Extensions.getArea(this)
-                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(PsiElementFinderImpl(this, ServiceManager.getService(this, javaClass<JavaFileManager>())))
+
                 area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
+                area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
+                        PsiElementFinderImpl(this, ServiceManager.getService(this, javaClass<JavaFileManager>())))
             }
         }
     }
