@@ -100,7 +100,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
         override fun getText(): String {
             return "Add constructor parameters from " +
                    superConstructor.getContainingDeclaration().getName().asString() +
-                   DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(superConstructor)
+                   superConstructor.getValueParameters().map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.getType()) }.joinToString(", ", "(", ")")
         }
 
         override fun invoke(project: Project, editor: Editor?, file: JetFile) {

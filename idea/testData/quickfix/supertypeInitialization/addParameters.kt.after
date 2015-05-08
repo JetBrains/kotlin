@@ -1,4 +1,4 @@
-// "Add constructor parameters from Base(p1: Int, p2: Int)" "true"
-open class Base(p1: Int, private val p2: Int)
+// "Add constructor parameters from Base(Int, Int)" "true"
+open class Base(p1: Int, private val p2: Int = 0)
 
 class C(p: Int, p1: Int, p2: Int) : Base<caret>(p1, p2)

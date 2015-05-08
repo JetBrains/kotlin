@@ -1,4 +1,4 @@
-// "Add constructor parameters from Base(p1: Int, p2: Int, p3: Any, p4: String, p5: String)" "true"
+// "Add constructor parameters from Base(Int, Int, Any, String, String)" "true"
 // ERROR: Redeclaration: p4
 // ERROR: Redeclaration: p4
 // ERROR: Redeclaration: p4
