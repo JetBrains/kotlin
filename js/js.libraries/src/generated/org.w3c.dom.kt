@@ -11,6 +11,7 @@ import org.khronos.webgl.*
 import org.w3c.dom.css.*
 import org.w3c.dom.events.*
 import org.w3c.dom.parsing.*
+import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.files.*
 import org.w3c.notifications.*
@@ -2726,7 +2727,7 @@ native public open class CanvasRenderingContext2D {
     var height: Int
         get() = noImpl
         set(value) = noImpl
-    var currentTransform: dynamic
+    var currentTransform: SVGMatrix
         get() = noImpl
         set(value) = noImpl
     var globalAlpha: Double
@@ -2847,7 +2848,7 @@ native public trait CanvasGradient {
 }
 
 native public trait CanvasPattern {
-    fun setTransform(transform: dynamic): Unit = noImpl
+    fun setTransform(transform: SVGMatrix): Unit = noImpl
 }
 
 native public trait TextMetrics {
@@ -2945,12 +2946,12 @@ native public open class DrawingStyle(scope: Element = noImpl) {
 }
 
 native public open class Path2D {
-    fun addPath(path: Path2D, transformation: dynamic = null): Unit = noImpl
-    fun addPathByStrokingPath(path: Path2D, styles: dynamic, transformation: dynamic = null): Unit = noImpl
-    fun addText(text: String, styles: dynamic, transformation: dynamic, x: Double, y: Double, maxWidth: Double = noImpl): Unit = noImpl
-    fun addPathByStrokingText(text: String, styles: dynamic, transformation: dynamic, x: Double, y: Double, maxWidth: Double = noImpl): Unit = noImpl
-    fun addText(text: String, styles: dynamic, transformation: dynamic, path: Path2D, maxWidth: Double = noImpl): Unit = noImpl
-    fun addPathByStrokingText(text: String, styles: dynamic, transformation: dynamic, path: Path2D, maxWidth: Double = noImpl): Unit = noImpl
+    fun addPath(path: Path2D, transformation: SVGMatrix? = null): Unit = noImpl
+    fun addPathByStrokingPath(path: Path2D, styles: dynamic, transformation: SVGMatrix? = null): Unit = noImpl
+    fun addText(text: String, styles: dynamic, transformation: SVGMatrix?, x: Double, y: Double, maxWidth: Double = noImpl): Unit = noImpl
+    fun addPathByStrokingText(text: String, styles: dynamic, transformation: SVGMatrix?, x: Double, y: Double, maxWidth: Double = noImpl): Unit = noImpl
+    fun addText(text: String, styles: dynamic, transformation: SVGMatrix?, path: Path2D, maxWidth: Double = noImpl): Unit = noImpl
+    fun addPathByStrokingText(text: String, styles: dynamic, transformation: SVGMatrix?, path: Path2D, maxWidth: Double = noImpl): Unit = noImpl
     fun closePath(): Unit = noImpl
     fun moveTo(x: Double, y: Double): Unit = noImpl
     fun lineTo(x: Double, y: Double): Unit = noImpl

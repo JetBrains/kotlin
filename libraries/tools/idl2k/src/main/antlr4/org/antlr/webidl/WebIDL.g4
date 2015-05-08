@@ -67,13 +67,24 @@ definition
 	| dictionary
 	| enum_
 	| typedef
+	| exception_
+	| const_
+	| module
 	| implementsStatement
 ;
+
+module
+	: 'module' IDENTIFIER_WEBIDL '{' definitions '}' ';'?
+	;
 
 callbackOrInterface
 	: 'callback' callbackRestOrInterface
 	| interface_
 ;
+
+exception_
+	: 'exception' IDENTIFIER_WEBIDL inheritance '{' dictionaryMembers '}' ';'
+	;
 
 callbackRestOrInterface
 	: callbackRest
@@ -150,7 +161,7 @@ defaultValue
 ;
 
 inheritance
-	: ':' IDENTIFIER_WEBIDL
+	: ':' IDENTIFIER_WEBIDL ( ',' IDENTIFIER_WEBIDL )*
 	| /* empty */
 ;
 
@@ -271,16 +282,11 @@ readWriteAttribute
 ;
 
 attributeRest
-	: 'attribute' type (IDENTIFIER_WEBIDL | 'required') ';'
+	: 'attribute' type (IDENTIFIER_WEBIDL | 'required') attributeAnnotations* ';'
 ;
 
-attributeName
-	: attributeNameKeyword
-	| IDENTIFIER_WEBIDL
-;
-
-attributeNameKeyword
-	: 'required'
+attributeAnnotations
+	: IDENTIFIER_WEBIDL ( '(' type (',' type)* ')' )?
 ;
 
 inherit
@@ -316,7 +322,7 @@ special
 ;
 
 operationRest
-	: optionalIdentifier '(' argumentList ')' ';'
+	: optionalIdentifier '(' argumentList ')' attributeAnnotations* ';'
 ;
 
 optionalIdentifier
@@ -339,7 +345,7 @@ argument
 ;
 
 optionalOrRequiredArgument
-	: 'optional'? type ellipsis argumentName default_
+	: 'optional'? ('in'|'out')? type ellipsis argumentName default_
 ;
 
 argumentName

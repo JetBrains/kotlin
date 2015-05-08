@@ -19,6 +19,7 @@ package org.jetbrains.idl2k
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.ParserRuleContext
+import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.webidl.WebIDLBaseVisitor
 import org.antlr.webidl.WebIDLLexer
@@ -82,7 +83,7 @@ class ExtendedAttributeParser : WebIDLBaseVisitor<ExtendedAttribute>() {
     override fun defaultResult(): ExtendedAttribute = ExtendedAttribute(name, call, arguments)
 
     override fun visitExtendedAttribute(ctx: WebIDLParser.ExtendedAttributeContext): ExtendedAttribute {
-        call = ctx.children?.filter { it is TerminalNode && it.getSymbol().getType() == WebIDLLexer.IDENTIFIER_WEBIDL }?.firstOrNull()?.getText() ?: ""
+        call = ctx.children.filterIdentifiers().firstOrNull()?.getText() ?: ""
 
         visitChildren(ctx)
         return defaultResult()
@@ -259,7 +260,7 @@ class ConstantVisitor(val attributes: List<ExtendedAttribute>) : WebIDLBaseVisit
     }
 }
 
-class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val namespace: String) : WebIDLBaseVisitor<Definition>() {
+class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val namespace: String, val declarations : MutableList<Definition>) : WebIDLBaseVisitor<Definition>() {
     private var type: DefinitionType = DefinitionType.INTERFACE
     private var name = ""
     private val memberAttributes = ArrayList<ExtendedAttribute>()
@@ -292,6 +293,15 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
             operations.add(visit(ctx))
         }
         memberAttributes.clear()
+        return defaultResult()
+    }
+
+    override fun visitModule(ctx: ModuleContext): Definition {
+        val moduleName = getName(ctx)
+        val namespace = if (this.namespace.endsWith(moduleName)) this.namespace else this.namespace + "." + moduleName
+
+        ModuleVisitor(declarations, namespace).visitChildren(ctx)
+
         return defaultResult()
     }
 
@@ -347,8 +357,8 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
 
     override fun visitDictionaryMember(ctx: DictionaryMemberContext): Definition {
         val name = ctx.children
-                ?.filter { it is TerminalNode && it.getSymbol().getType() == WebIDLLexer.IDENTIFIER_WEBIDL }
-                ?.first { it.getText() != "" }
+                .filterIdentifiers()
+                .firstOrNull { it.getText() != "" }
                 ?.getText()
 
         val type = TypeVisitor().visit(ctx.children.first { it is TypeContext })
@@ -369,7 +379,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     }
 
     override fun visitImplementsStatement(ctx: ImplementsStatementContext): Definition {
-        val identifiers = ctx.children.filter { it is TerminalNode && it.getSymbol().getType() == WebIDLLexer.IDENTIFIER_WEBIDL }.map { it.getText() }
+        val identifiers = ctx.children.filterIdentifiers().map { it.getText() }
 
         if (identifiers.size() >= 2) {
             type = DefinitionType.EXTENSION_INTERFACE
@@ -390,8 +400,8 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     }
 
     override fun visitInheritance(ctx: WebIDLParser.InheritanceContext): Definition {
-        if (ctx.children != null && ctx.isEmpty().not()) {
-            inherited.add(getName(ctx))
+        if (ctx.children != null) {
+            inherited.addAll(ctx.children.filterIdentifiers().map {it.getText().trim()}.filter {it != ""})
         }
         return defaultResult()
     }
@@ -431,38 +441,38 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
 
 }
 
-private fun getName(ctx: ParserRuleContext) = ctx.children.first { it is TerminalNode && it.getSymbol().getType() == WebIDLLexer.IDENTIFIER_WEBIDL }.getText()
+class ModuleVisitor(val declarations : MutableList<Definition>, var namespace : String = "") : WebIDLBaseVisitor<Unit>() {
+    val extendedAttributes = ArrayList<ExtendedAttribute>()
+
+    override fun visitDefinition(ctx: WebIDLParser.DefinitionContext) {
+        val declaration = DefinitionVisitor(extendedAttributes.toList(), namespace, declarations).visitChildren(ctx)
+        extendedAttributes.clear()
+        declarations.add(declaration)
+    }
+
+    override fun visitExtendedAttribute(ctx: ExtendedAttributeContext?) {
+        val att = with(ExtendedAttributeParser()) {
+            visit(ctx)
+        }
+
+        extendedAttributes.add(att)
+    }
+
+    override fun visitNamespaceRest(ctx: NamespaceRestContext) {
+        this.namespace = ctx.getText()
+    }
+}
+
+private fun List<ParseTree>?.filterIdentifiers(): List<ParseTree> = this?.filter { it is TerminalNode && it.getSymbol().getType() == WebIDLLexer.IDENTIFIER_WEBIDL } ?: emptyList()
+private fun getName(ctx: ParserRuleContext) = ctx.children.filterIdentifiers().first().getText()
 
 fun parseIDL(reader: CharStream): Repository {
     val ll = WebIDLLexer(reader)
     val pp = WebIDLParser(CommonTokenStream(ll))
 
     val idl = pp.webIDL()
-
     val declarations = ArrayList<Definition>()
-
-    idl.accept(object : WebIDLBaseVisitor<Unit>() {
-        val extendedAttributes = ArrayList<ExtendedAttribute>()
-        var namespace = ""
-
-        override fun visitDefinition(ctx: WebIDLParser.DefinitionContext) {
-            val declaration = DefinitionVisitor(extendedAttributes.toList(), namespace).visitChildren(ctx)
-            extendedAttributes.clear()
-            declarations.add(declaration)
-        }
-
-        override fun visitExtendedAttribute(ctx: ExtendedAttributeContext?) {
-            val att = with(ExtendedAttributeParser()) {
-                visit(ctx)
-            }
-
-            extendedAttributes.add(att)
-        }
-
-        override fun visitNamespaceRest(ctx: NamespaceRestContext) {
-            this.namespace = ctx.getText()
-        }
-    })
+    ModuleVisitor(declarations).visit(idl)
 
     return Repository(
             declarations.filterIsInstance<InterfaceDefinition>().filter { it.name.isEmpty().not() }.groupBy { it.name }.mapValues { it.getValue().reduce(::merge) },
