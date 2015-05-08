@@ -28,8 +28,8 @@ public abstract class JetIntentionActionsFactory {
 
     public fun createActions(diagnostic: Diagnostic): List<IntentionAction> {
         if (diagnostic.getPsiElement().getContainingFile() is JetCodeFragment && !isApplicableForCodeFragment()) {
-            return Collections.emptyList()
+            return emptyList()
         }
-        return doCreateActions(diagnostic) ?: Collections.emptyList()
+        return doCreateActions(diagnostic) ?: emptyList()
     }
 }

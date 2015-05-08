@@ -140,7 +140,7 @@ public class QuickFixRegistrar {
         JetSingleIntentionActionFactory removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory();
         QuickFixes.factories.put(CONFLICTING_IMPORT, removeImportFixFactory);
 
-        QuickFixes.factories.put(SUPERTYPE_NOT_INITIALIZED, ChangeToConstructorInvocationFix.createFactory());
+        QuickFixes.factories.put(SUPERTYPE_NOT_INITIALIZED, SuperClassNotInitialized.INSTANCE$);
         QuickFixes.factories.put(FUNCTION_CALL_EXPECTED, ChangeToFunctionInvocationFix.createFactory());
 
         QuickFixes.factories.put(CANNOT_CHANGE_ACCESS_PRIVILEGE, ChangeVisibilityModifierFix.createFactory());
@@ -325,7 +325,5 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(DEPRECATED_ANNOTATION_SYNTAX, DeprecatedAnnotationSyntaxFix.Companion);
         QuickFixes.factories.put(DEPRECATED_ANNOTATION_SYNTAX, DeprecatedAnnotationSyntaxFix.Companion.createWholeProjectFixFactory());
-
-        QuickFixes.factories.put(SUPERTYPE_NOT_INITIALIZED, AddConstructorParametersFromSuperFix.Companion);
     }
 }
