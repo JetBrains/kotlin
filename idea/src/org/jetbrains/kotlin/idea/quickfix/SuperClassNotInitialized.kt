@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInsight.hint.ShowParameterInfoHandler
 import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -62,7 +65,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
             val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
 
             for (constructor in constructors) {
-                if (constructor.getValueParameters().isNotEmpty() && constructor.getValueParameters().none { it.getType().isError() }) {
+                if (constructor.getValueParameters().isNotEmpty()) {
                     val substitutedConstructor = constructor.substitute(substitutor) as ConstructorDescriptor
                     fixes.add(AddParametersFix(delegator, classOrObjectDeclaration, substitutedConstructor))
                 }
@@ -85,7 +88,13 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
             val newSpecifier = element.replaced(JetPsiFactory(project).createDelegatorToSuperCall(element.getText() + "()"))
 
             if (putCaretIntoParenthesis) {
-                editor?.moveCaret(newSpecifier.getValueArgumentList()!!.getLeftParenthesis()!!.getTextRange().getEndOffset())
+                if (editor != null) {
+                    val offset = newSpecifier.getValueArgumentList()!!.getLeftParenthesis()!!.getTextRange().getEndOffset()
+                    editor.moveCaret(offset)
+                    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                        ShowParameterInfoHandler.invoke(project, editor, file, offset - 1, null)
+                    }
+                }
             }
         }
     }
@@ -97,6 +106,11 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     ) : JetIntentionAction<JetDelegatorToSuperClass>(element) {
 
         override fun getFamilyName() = "Add constructor parameters from superclass"
+
+        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+            //TODO: can ConstructorDescriptor become invalid?
+            return super.isAvailable(project, editor, file) && superConstructor.getValueParameters().none { it.getType().isError() }
+        }
 
         override fun getText(): String {
             return "Add constructor parameters from " +
