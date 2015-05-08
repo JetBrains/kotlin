@@ -48,6 +48,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
         val superClass = (type.getConstructor().getDeclarationDescriptor() as? ClassDescriptor) ?: return null
         val classDescriptor = delegator.getResolutionFacade().resolveToDescriptor(classOrObjectDeclaration) as ClassDescriptor
         val constructors = superClass.getConstructors().filter { it.isVisible(classDescriptor) }
+        if (constructors.isEmpty()) return null // no accessible constructor
 
         val fixes = ArrayList<IntentionAction>()
 

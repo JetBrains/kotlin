@@ -3987,6 +3987,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noAccessibleConstructors.kt")
+        public void testNoAccessibleConstructors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/noAccessibleConstructors.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("noParameters.kt")
         public void testNoParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/noParameters.kt");
