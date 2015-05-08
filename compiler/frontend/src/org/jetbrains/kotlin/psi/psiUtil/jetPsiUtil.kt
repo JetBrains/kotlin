@@ -61,7 +61,7 @@ public fun PsiElement.getParentOfTypesAndPredicate<T: PsiElement>(
 ) : T? {
     var element = if (strict) getParent() else this
     while (element != null) {
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         when {
             (parentClasses.isEmpty() || parentClasses.any {parentClass -> parentClass.isInstance(element)}) && predicate(element!! as T) ->
                 return element as T
@@ -96,15 +96,16 @@ inline public fun PsiElement.getChildOfType<reified T: PsiElement>(): T? {
 }
 
 inline public fun PsiElement.getChildrenOfType<reified T: PsiElement>(): Array<T> {
-    return PsiTreeUtil.getChildrenOfType(this, javaClass<T>()) ?: array()
+    return PsiTreeUtil.getChildrenOfType(this, javaClass<T>()) ?: arrayOf()
 }
 
-public fun PsiElement.getNextSiblingIgnoringWhitespace(): PsiElement {
+public fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(): PsiElement? {
     var current = this
     do {
         current = current.getNextSibling()
+        if (current == null) return null
     }
-    while (current.getNode().getElementType() == JetTokens.WHITE_SPACE)
+    while (current is PsiComment || current is PsiWhiteSpace)
     return current
 }
 
@@ -130,7 +131,7 @@ public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
 
 public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 
-[suppress("UNCHECKED_CAST")]
+@suppress("UNCHECKED_CAST")
 public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
     val result = replace(newElement)
     return if (result is T)
@@ -139,7 +140,7 @@ public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T 
         (result as JetParenthesizedExpression).getExpression() as T
 }
 
-[suppress("UNCHECKED_CAST")]
+@suppress("UNCHECKED_CAST")
 public fun <T: PsiElement> T.copied(): T = copy() as T
 
 public fun JetElement.blockExpressionsOrSingle(): Sequence<JetElement> =
@@ -182,10 +183,10 @@ public fun <T: JetClassOrObject> StubBasedPsiElementBase<out KotlinClassOrObject
             if (directive != null) {
                 var reference = directive.getImportedReference()
                 while (reference is JetDotQualifiedExpression) {
-                    reference = (reference as JetDotQualifiedExpression).getSelectorExpression()
+                    reference = reference.getSelectorExpression()
                 }
                 if (reference is JetSimpleNameExpression) {
-                    result.add((reference as JetSimpleNameExpression).getReferencedName())
+                    result.add(reference.getReferencedName())
                 }
             }
         }
@@ -250,7 +251,7 @@ public fun PsiElement.deleteElementAndCleanParent() {
     val parent = getParent()
 
     JetPsiUtil.deleteElementWithDelimiters(this)
-    [suppress("UNCHECKED_CAST")]
+    @suppress("UNCHECKED_CAST")
     JetPsiUtil.deleteChildlessElement(parent, this.javaClass)
 }
 
@@ -278,7 +279,7 @@ public fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
 }
 
 public fun JetSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): JetQualifiedExpression? {
-    return stream<JetExpression>(this) {
+    return sequence<JetExpression>(this) {
         val parentQualified = it.getParent() as? JetQualifiedExpression
         if (parentQualified?.getSelectorExpression() == it) parentQualified else null
     }.last() as? JetQualifiedExpression
@@ -339,7 +340,7 @@ public fun JetSimpleNameExpression.getReceiverExpression(): JetExpression? {
         }
         parent is JetCallExpression -> {
             //This is in case `a().b()`
-            val callExpression = (parent as JetCallExpression)
+            val callExpression = parent
             val grandParent = callExpression.getParent()
             if (grandParent is JetQualifiedExpression) {
                 val parentsReceiver = grandParent.getReceiverExpression()
@@ -421,7 +422,7 @@ public fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement?
 public fun PsiElement.prevLeafSkipWhitespacesAndComments(): PsiElement? {
     var leaf = prevLeaf()
     while (leaf is PsiWhiteSpace || leaf is PsiComment) {
-        leaf = leaf!!.prevLeaf()
+        leaf = leaf.prevLeaf()
     }
     return leaf
 }
@@ -429,7 +430,7 @@ public fun PsiElement.prevLeafSkipWhitespacesAndComments(): PsiElement? {
 public fun PsiElement.prevLeafSkipWhitespaces(): PsiElement? {
     var leaf = prevLeaf()
     while (leaf is PsiWhiteSpace) {
-        leaf = leaf!!.prevLeaf()
+        leaf = leaf.prevLeaf()
     }
     return leaf
 }
@@ -437,7 +438,7 @@ public fun PsiElement.prevLeafSkipWhitespaces(): PsiElement? {
 public fun PsiElement.nextLeafSkipWhitespacesAndComments(): PsiElement? {
     var leaf = nextLeaf()
     while (leaf is PsiWhiteSpace || leaf is PsiComment) {
-        leaf = leaf!!.nextLeaf()
+        leaf = leaf.nextLeaf()
     }
     return leaf
 }

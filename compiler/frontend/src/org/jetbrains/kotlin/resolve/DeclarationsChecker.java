@@ -565,8 +565,8 @@ public class DeclarationsChecker {
             next = next.getNextSibling();
         }
         JetDeclaration nextDeclaration = (JetDeclaration) next;
-        next = PsiUtilPackage.getNextSiblingIgnoringWhitespace(enumEntry);
-        IElementType nextType = next.getNode().getElementType();
+        next = PsiUtilPackage.getNextSiblingIgnoringWhitespaceAndComments(enumEntry);
+        IElementType nextType = next != null ? next.getNode().getElementType() : null;
         if (nextDeclaration instanceof JetEnumEntry) {
             // Not last
             return nextType != JetTokens.COMMA ? "," : "";
@@ -574,8 +574,8 @@ public class DeclarationsChecker {
         else {
             // Last: after it we can have semicolon, just closing brace, or comma followed by semicolon / closing brace
             if (nextType == JetTokens.COMMA) {
-                next = PsiUtilPackage.getNextSiblingIgnoringWhitespace(next);
-                nextType = next.getNode().getElementType();
+                next = PsiUtilPackage.getNextSiblingIgnoringWhitespaceAndComments(next);
+                nextType = next != null ? next.getNode().getElementType() : null;
             }
             return nextType != JetTokens.SEMICOLON && nextType != JetTokens.RBRACE ? ";" : "";
         }

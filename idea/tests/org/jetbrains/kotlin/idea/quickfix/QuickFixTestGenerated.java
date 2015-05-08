@@ -3082,6 +3082,81 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/enumDelimiter")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EnumDelimiter extends AbstractQuickFixTest {
+            public void testAllFilesPresentInEnumDelimiter() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/enumDelimiter"), Pattern.compile("^(\\w+)\\.kt$"), true);
+            }
+
+            @TestMetadata("commaNoSemicolon.kt")
+            public void testCommaNoSemicolon() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/commaNoSemicolon.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("missedCommas.kt")
+            public void testMissedCommas() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/missedCommas.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noComma.kt")
+            public void testNoComma() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noComma.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noCommaComment.kt")
+            public void testNoCommaComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noCommaComment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDelimiter.kt")
+            public void testNoDelimiter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noDelimiter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDelimiterWithInitializer.kt")
+            public void testNoDelimiterWithInitializer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noDelimiterWithInitializer.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDelimiterWithOverload.kt")
+            public void testNoDelimiterWithOverload() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noDelimiterWithOverload.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDelimiterWithShortConstructor.kt")
+            public void testNoDelimiterWithShortConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noDelimiterWithShortConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noSemicolon.kt")
+            public void testNoSemicolon() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noSemicolon.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noSemicolonComment.kt")
+            public void testNoSemicolonComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noSemicolonComment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("wholeProject.kt")
+            public void testWholeProject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/wholeProject.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/lambdaSyntax")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
