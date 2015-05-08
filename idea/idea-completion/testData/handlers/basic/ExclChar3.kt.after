@@ -1,0 +1,8 @@
+class C(val flag: Boolean)
+
+fun foo(c: C) {
+    if (!c.flag<caret>)
+}
+
+// ELEMENT: flag
+// CHAR: '!'

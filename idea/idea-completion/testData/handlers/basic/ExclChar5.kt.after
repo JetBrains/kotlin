@@ -1,0 +1,6 @@
+fun foo() {
+    if (!true<caret>)
+}
+
+// ELEMENT: true
+// CHAR: '!'

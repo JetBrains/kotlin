@@ -142,13 +142,18 @@ class LookupElementsCollector(
                     getDelegate().handleInsert(context)
 
                     if (context.shouldAddCompletionChar() && !isJustTyping(context, this)) {
-                        val handler = when (context.getCompletionChar()) {
-                            ',' -> WithTailInsertHandler.commaTail()
-                            '=' -> WithTailInsertHandler.eqTail()
-                            else -> null
+                        when (context.getCompletionChar()) {
+                            ',' -> WithTailInsertHandler.commaTail().postHandleInsert(context, getDelegate())
+
+                            '=' -> WithTailInsertHandler.eqTail().postHandleInsert(context, getDelegate())
+
+                            '!' -> {
+                                WithExpressionPrefixInsertHandler("!").postHandleInsert(context)
+                                context.setAddCompletionChar(false)
+                            }
                         }
-                        handler?.postHandleInsert(context, getDelegate())
                     }
+
                 }
             })
         }

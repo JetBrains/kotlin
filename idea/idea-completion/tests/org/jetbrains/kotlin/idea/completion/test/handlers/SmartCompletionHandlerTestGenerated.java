@@ -323,6 +323,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ExclChar.kt")
+    public void testExclChar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ExclChar.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ForLoopRange.kt")
     public void testForLoopRange() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/ForLoopRange.kt");

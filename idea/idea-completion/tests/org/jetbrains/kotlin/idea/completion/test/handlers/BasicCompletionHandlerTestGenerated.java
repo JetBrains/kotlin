@@ -47,6 +47,36 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ExclChar1.kt")
+    public void testExclChar1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExclChar1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExclChar2.kt")
+    public void testExclChar2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExclChar2.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExclChar3.kt")
+    public void testExclChar3() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExclChar3.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExclChar4.kt")
+    public void testExclChar4() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExclChar4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ExclChar5.kt")
+    public void testExclChar5() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExclChar5.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExtensionReceiverTypeArg.kt")
     public void testExtensionReceiverTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ExtensionReceiverTypeArg.kt");

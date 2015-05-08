@@ -26,8 +26,8 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetValueArgument
@@ -99,16 +99,7 @@ fun LookupElement.withOptions(options: ItemOptions): LookupElement {
             }
 
             override fun handleInsert(context: InsertionContext) {
-                getDelegate().handleInsert(context)
-
-                PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
-
-                val offset = context.getStartOffset()
-                val token = context.getFile().findElementAt(offset)!!
-                val argument = token.getStrictParentOfType<JetValueArgument>()
-                if (argument != null) {
-                    context.getDocument().insertString(argument.getArgumentExpression()!!.getTextRange().getStartOffset(), "*")
-                }
+                WithExpressionPrefixInsertHandler("*").handleInsert(context, getDelegate())
             }
         }
     }
