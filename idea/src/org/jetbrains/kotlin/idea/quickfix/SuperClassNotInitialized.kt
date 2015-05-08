@@ -58,7 +58,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
             val constructorToUse = constructors.singleOrNull()
                                    ?: constructors.singleOrNull { it.isPrimary() } //TODO: should we select it automatically in this case?
             //TODO: multiple
-            if (constructorToUse != null && constructorToUse.getValueParameters().isNotEmpty()) {
+            if (constructorToUse != null && constructorToUse.getValueParameters().isNotEmpty() && constructorToUse.getValueParameters().none { it.getType().isError() }) {
                 val superType = classDescriptor.getTypeConstructor().getSupertypes().first { it.getConstructor().getDeclarationDescriptor() == superClass }
                 val typeArgsMap = superClass.getTypeConstructor().getParameters().zip(superType.getArguments()).toMap()
                 val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
@@ -108,7 +108,6 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
             if (!superParameters.isEmpty()) {
                 val parameterList = classDeclaration.getOrCreatePrimaryConstructorParameterList()
                 for (parameter in superParameters) {
-                    //TODO: what if type is error?
                     val name = renderer.renderName(parameter.getName())
                     val parameterText = name + ":" + renderer.renderType(parameter.getType())
                     val newParameter = parameterList.addParameter(factory.createParameter(parameterText))

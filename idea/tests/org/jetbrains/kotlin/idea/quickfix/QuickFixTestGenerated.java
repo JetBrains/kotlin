@@ -3993,6 +3993,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/supertypeInitialization"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
 
+        @TestMetadata("baseConstructorError.kt")
+        public void testBaseConstructorError() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/baseConstructorError.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("createConstructor.kt")
         public void testCreateConstructor() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/createConstructor.kt");
