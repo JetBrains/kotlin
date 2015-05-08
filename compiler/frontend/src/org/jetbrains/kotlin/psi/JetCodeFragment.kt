@@ -97,7 +97,7 @@ public abstract class JetCodeFragment(
     }
 
     override fun importsToString(): String {
-        return myImports.join(IMPORT_SEPARATOR.pattern())
+        return myImports.join(IMPORT_SEPARATOR)
     }
 
     override fun addImportsFromString(imports: String?) {
@@ -149,7 +149,7 @@ public abstract class JetCodeFragment(
     }
 
     companion object {
-        public val IMPORT_SEPARATOR: Pattern = ",".toRegex()
+        public val IMPORT_SEPARATOR: String = ","
         public val RUNTIME_TYPE_EVALUATOR: Key<Function1<JetExpression, JetType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
     }
 }
