@@ -1,5 +1,5 @@
 private enum class MethodKind {
-    INSTANCE
+    INSTANCE,
     STATIC
 }
 

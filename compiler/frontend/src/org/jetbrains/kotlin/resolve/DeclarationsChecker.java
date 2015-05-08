@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.SubstitutionUtils;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -206,6 +209,7 @@ public class DeclarationsChecker {
                     DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
                     assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
                     JetClassOrObject psiElement = (JetClassOrObject) DescriptorToSourceUtils.getSourceFromDescriptor(classDescriptor);
+                    assert psiElement != null;
                     JetDelegationSpecifierList delegationSpecifierList = psiElement.getDelegationSpecifierList();
                     assert delegationSpecifierList != null;
                     //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
@@ -535,10 +539,64 @@ public class DeclarationsChecker {
         }
     }
 
+    // Temporary
+    // Returns true if deprecated constructor is in use, like
+    // ENTRY: Enum(arguments) instead of
+    // ENTRY(arguments)
+    public static boolean enumEntryUsesDeprecatedSuperConstructor(@NotNull JetEnumEntry enumEntry) {
+        JetInitializerList initializerList = enumEntry.getInitializerList();
+        if (initializerList == null) return false;
+        JetTypeReference typeReference = initializerList.getInitializers().get(0).getTypeReference();
+        if (typeReference == null) return false;
+        JetUserType userType = (JetUserType) typeReference.getTypeElement();
+        if (userType == null || userType.getReferenceExpression() instanceof JetEnumEntrySuperclassReferenceExpression) return false;
+        return true;
+    }
+
+    // Temporary
+    // Returns comma if it's an enum entry without following comma (entry is not last in enum),
+    // or semicolon if it's an enum entry without following semicolon, may be after comma (entry is last in enum),
+    // or empty string if an enum entry has the necessary following delimiter
+    @NotNull
+    private static String enumEntryExpectedDelimiter(@NotNull JetEnumEntry enumEntry) {
+        PsiElement next = enumEntry.getNextSibling();
+        while (next != null) {
+            if (next instanceof JetDeclaration) break;
+            next = next.getNextSibling();
+        }
+        JetDeclaration nextDeclaration = (JetDeclaration) next;
+        next = PsiUtilPackage.getNextSiblingIgnoringWhitespace(enumEntry);
+        IElementType nextType = next.getNode().getElementType();
+        if (nextDeclaration instanceof JetEnumEntry) {
+            // Not last
+            return nextType != JetTokens.COMMA ? "," : "";
+        }
+        else {
+            // Last: after it we can have semicolon, just closing brace, or comma followed by semicolon / closing brace
+            if (nextType == JetTokens.COMMA) {
+                next = PsiUtilPackage.getNextSiblingIgnoringWhitespace(next);
+                nextType = next.getNode().getElementType();
+            }
+            return nextType != JetTokens.SEMICOLON && nextType != JetTokens.RBRACE ? ";" : "";
+        }
+    }
+
+    public static boolean enumEntryUsesDeprecatedOrNoDelimiter(@NotNull JetEnumEntry enumEntry) {
+        return !enumEntryExpectedDelimiter(enumEntry).isEmpty();
+    }
+
     private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(declaration) : "Enum entry should be declared in enum class: " + classDescriptor;
         ClassDescriptor enumClass = (ClassDescriptor) declaration;
+
+        if (enumEntryUsesDeprecatedSuperConstructor(enumEntry)) {
+            trace.report(Errors.ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR.on(enumEntry, classDescriptor));
+        }
+        String neededDelimiter = enumEntryExpectedDelimiter(enumEntry);
+        if (!neededDelimiter.isEmpty()) {
+            trace.report(Errors.ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER.on(enumEntry, classDescriptor, neededDelimiter));
+        }
 
         List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
         ConstructorDescriptor constructor = enumClass.getUnsubstitutedPrimaryConstructor();

@@ -99,6 +99,15 @@ inline public fun PsiElement.getChildrenOfType<reified T: PsiElement>(): Array<T
     return PsiTreeUtil.getChildrenOfType(this, javaClass<T>()) ?: array()
 }
 
+public fun PsiElement.getNextSiblingIgnoringWhitespace(): PsiElement {
+    var current = this
+    do {
+        current = current.getNextSibling()
+    }
+    while (current.getNode().getElementType() == JetTokens.WHITE_SPACE)
+    return current
+}
+
 public fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false): Boolean {
     return PsiTreeUtil.isAncestor(this, element, strict)
 }

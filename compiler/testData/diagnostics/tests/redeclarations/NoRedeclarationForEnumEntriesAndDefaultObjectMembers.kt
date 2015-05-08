@@ -1,7 +1,7 @@
 enum class E {
-    FIRST
+    FIRST,
 
-    SECOND
+    SECOND;
 
     companion object {
         class FIRST

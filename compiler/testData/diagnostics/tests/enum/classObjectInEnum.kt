@@ -1,5 +1,5 @@
 enum class E {
-    ENTRY
+    ENTRY;
 
     companion object {
         fun entry() = ENTRY

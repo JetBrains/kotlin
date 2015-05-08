@@ -1,8 +1,8 @@
 enum class E {
-    FIRST
+    FIRST,
     SECOND {
         class A
-    }
+    };
 }
 
 val foo: Any.() -> Unit = {}

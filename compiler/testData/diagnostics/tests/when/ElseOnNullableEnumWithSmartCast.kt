@@ -1,4 +1,4 @@
-enum class E { A B }
+enum class E { A, B }
 
 fun foo(e: E, something: Any?): Int {
     if (something != null) return 0

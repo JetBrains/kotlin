@@ -3,24 +3,24 @@
 package kt2418
 
 enum class A {
-    <!REDECLARATION!>FOO<!>
+    <!REDECLARATION!>FOO<!>,
     <!REDECLARATION!>FOO<!>
 }
 
 enum class B {
-    FOO
+    FOO;
     
     fun FOO() {}
 }
 
 enum class C {
-    <!REDECLARATION!>FOO<!>
+    <!REDECLARATION!>FOO<!>;
     
     val <!REDECLARATION!>FOO<!> = 1
 }
 
 enum class D {
-    <!REDECLARATION!>FOO<!>
+    <!REDECLARATION!>FOO<!>;
     
     class <!REDECLARATION!>FOO<!> {}
 }

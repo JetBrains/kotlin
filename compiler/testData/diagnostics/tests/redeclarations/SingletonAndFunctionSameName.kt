@@ -11,9 +11,9 @@ object Foo {
 <!CONFLICTING_OVERLOADS!>fun En()<!> = 239
 
 enum class <!CONFLICTING_OVERLOADS!>En<!> {
-    ENTRY
+    ENTRY,
 
-    SUBCLASS { }
+    SUBCLASS { };
 
     fun ENTRY() = 42
 

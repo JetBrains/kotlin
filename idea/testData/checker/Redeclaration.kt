@@ -5,7 +5,7 @@ val <error>a</error> : Int = 1
 <error>fun foo()</error> {}
 
 enum class EnumClass {
-    <error>FOO</error>
+    <error>FOO</error>,
     <error>FOO</error>
 }
 

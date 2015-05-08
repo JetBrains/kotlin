@@ -1,7 +1,7 @@
 import A.ONE
 
 enum class A {
-    ONE
+    ONE,
     TWO
 }
 

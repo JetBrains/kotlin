@@ -2,7 +2,7 @@ package a
 
 
 enum class C {
-    E1 E2 E3 {
+    E1, E2, E3 {
         object O_O
 
         fun b() {
@@ -10,7 +10,7 @@ enum class C {
         }
 
         class G
-    }
+    },
 
     E4 {
         fun c() {
@@ -22,7 +22,7 @@ enum class C {
             //TODO: this is a bug
             this.<!UNRESOLVED_REFERENCE!>A<!>()
         }
-    }
+    };
 
     class A
     inner class B

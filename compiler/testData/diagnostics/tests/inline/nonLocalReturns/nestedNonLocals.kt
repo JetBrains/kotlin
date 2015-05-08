@@ -2,8 +2,8 @@ import Kind.EXT_RETURN
 import Kind.GLOBAL_RETURN
 
 enum class Kind {
-    LOCAL
-    EXT_RETURN
+    LOCAL,
+    EXT_RETURN,
     GLOBAL_RETURN
 }
 

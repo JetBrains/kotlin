@@ -2,8 +2,8 @@
 package foo
 
 enum class E {
-    ENTRY
-    ANOTHER
+    ENTRY,
+    ANOTHER;
 
     class Nested {
         companion object {

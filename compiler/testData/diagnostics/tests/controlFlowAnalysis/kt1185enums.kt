@@ -3,9 +3,9 @@
 package kt1185
 
 enum class Direction {
-    NORTH
-    SOUTH
-    WEST
+    NORTH,
+    SOUTH,
+    WEST,
     EAST
 }
 
@@ -16,9 +16,9 @@ class A {
 }
 
 enum class Color(val rgb : Int) {
-    RED : Color(0xFF0000)
-    GREEN : Color(0x00FF00)
-    BLUE : Color(0x0000FF)
+    RED(0xFF0000),
+    GREEN(0x00FF00),
+    BLUE(0x0000FF)
 }
 
 fun foo(d: Direction) = when(d) { //no 'else' should be requested

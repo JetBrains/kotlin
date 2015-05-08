@@ -4,7 +4,7 @@ object A {
 }
 
 enum class B {
-    X : B() {
+    X() {
         <!SECONDARY_CONSTRUCTOR_IN_OBJECT!>constructor()
  <!>}
 }

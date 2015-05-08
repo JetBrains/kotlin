@@ -22,7 +22,7 @@ class A {
     }
 
     <!NON_TOPLEVEL_CLASS_DECLARATION!>enum class E<!> {
-        X Y
+        X, Y;
 
         companion object {}
     }
@@ -52,7 +52,7 @@ interface T {
     }
 
     <!NON_TOPLEVEL_CLASS_DECLARATION!>enum class E<!> {
-        X Y
+        X, Y;
 
         companion object {}
     }
@@ -61,7 +61,7 @@ interface T {
 }
 
 enum class E {
-    X Y
+    X, Y;
 
     <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!> {
         <!NON_TOPLEVEL_CLASS_DECLARATION!>class C<!>
@@ -86,7 +86,7 @@ enum class E {
     }
 
     <!NON_TOPLEVEL_CLASS_DECLARATION!>enum class E<!> {
-        X Y
+        X, Y;
 
         companion object {}
     }

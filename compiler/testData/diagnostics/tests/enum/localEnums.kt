@@ -2,7 +2,7 @@
 
 fun foo() {
     <!LOCAL_ENUM_NOT_ALLOWED!>enum class A<!> {
-        FOO
+        FOO,
         BAR
     }
     val foo = A.FOO

@@ -2,7 +2,7 @@
 
 // FILE: 1.kt
 
-enum class E { A B }
+enum class E { A, B }
 
 fun test(e: E?) = <!NO_ELSE_IN_WHEN!>when<!> (e) {
     E.A -> 1

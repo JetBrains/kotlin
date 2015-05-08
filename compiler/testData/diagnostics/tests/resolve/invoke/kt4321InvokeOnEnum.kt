@@ -4,7 +4,7 @@ import DOMElementTestClasses.cls2
 
 // use case 1
 enum class DOMElementTestClasses {
-    cls1 cls2
+    cls1, cls2;
 
     fun invoke() {}
 }

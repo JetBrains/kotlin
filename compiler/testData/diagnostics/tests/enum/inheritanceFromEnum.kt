@@ -3,7 +3,7 @@ public enum MyJavaEnum {}
 
 // FILE: test.kt
 <!OPEN_MODIFIER_IN_ENUM!>open<!> enum class MyEnum() {
-    A: MyEnum()
+    A()
 }
 
 enum class MyEnum2() {}

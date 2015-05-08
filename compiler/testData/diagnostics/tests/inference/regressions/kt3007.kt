@@ -2,7 +2,7 @@
 package a
 
 enum class SomeEnum {
-    FIRST
+    FIRST,
     SECOND
 }
 

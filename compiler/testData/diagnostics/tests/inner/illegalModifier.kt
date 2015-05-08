@@ -17,7 +17,7 @@ class D {
 enum class H {
     <!ILLEGAL_MODIFIER!>inner<!> I {
         inner class II
-    }
+    };
     
     inner class J
 }

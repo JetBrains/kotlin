@@ -36,7 +36,7 @@ class A {
 }
 
 enum class E {
-    E1 E2
+    E1, E2
 }
 
 object B {

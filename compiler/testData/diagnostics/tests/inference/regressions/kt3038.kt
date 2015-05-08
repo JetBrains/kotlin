@@ -2,7 +2,7 @@
 package a
 
 enum class TestEnum {
-    FIRST
+    FIRST,
     SECOND
 }
 

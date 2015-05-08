@@ -1,5 +1,5 @@
 enum class A {
-    ONE
+    ONE,
     TWO
 }
 

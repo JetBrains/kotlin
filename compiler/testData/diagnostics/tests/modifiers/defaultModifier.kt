@@ -38,8 +38,8 @@ class J {
 }
 
 <!ILLEGAL_MODIFIER!>companion<!> enum class Enum {
-    E1
-    E2
+    E1,
+    E2;
 
     companion object
 }

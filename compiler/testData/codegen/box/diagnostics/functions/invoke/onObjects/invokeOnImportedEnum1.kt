@@ -1,8 +1,8 @@
 import A.ONE
 
 enum class A {
-    ONE
-    TWO
+    ONE,
+    TWO;
 
     fun invoke(i: Int) = i
 }

@@ -1,7 +1,7 @@
 // KT-3750 When without else
 
 enum class A {
-    e1
+    e1,
     e2
 }
 class B(val a: A)

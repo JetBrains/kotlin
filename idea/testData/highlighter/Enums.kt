@@ -1,7 +1,7 @@
 package testing
 
 <info textAttributesKey="KOTLIN_BUILTIN_ANNOTATION">enum</info> class <info textAttributesKey="KOTLIN_CLASS">Test</info> {
-    <info textAttributesKey="KOTLIN_CLASS">FIRST</info>
+    <info textAttributesKey="KOTLIN_CLASS">FIRST</info>,
     <info textAttributesKey="KOTLIN_CLASS">SECOND</info>
 }
 

@@ -1,5 +1,5 @@
 enum class E {
-    ABC
+    ABC;
     
     enum class F {
         DEF
