@@ -349,7 +349,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractQuickFixTest>()) {
-            model("quickfix", pattern = "^before(\\w+)\\.kt$")
+            model("quickfix", pattern = "^(\\w+)\\.kt$")
         }
 
         testClass(javaClass<AbstractGotoSuperTest>()) {

@@ -17,25 +17,31 @@
 package org.jetbrains.kotlin.idea.quickfix;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
+import com.intellij.codeInsight.daemon.quickFix.QuickFixTestCase;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInspection.SuppressIntentionAction;
 import com.intellij.codeInspection.SuppressableProblemGroup;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
 import com.intellij.lang.annotation.ProblemGroup;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
+import com.intellij.rt.execution.junit.FileComparisonFailure;
+import kotlin.KotlinPackage;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.Assert;
@@ -45,6 +51,8 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static com.intellij.util.ObjectUtils.notNull;
 
 public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     @Override
@@ -80,6 +88,69 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             unConfigureRuntimeIfNeeded(beforeFileName);
         }
     }
+
+    //region Severe hack - lot of code copied from LightQuickFixTestCase to workaround stupid format of test data with before/after prefixes
+    @Override
+    protected void doSingleTest(String fileSuffix) {
+        doTestFor(fileSuffix, createWrapper());
+    }
+
+    private static QuickFixTestCase myWrapper;
+
+    private static void doTestFor(final String testName, final QuickFixTestCase quickFixTestCase) {
+        final String relativePath = notNull(quickFixTestCase.getBasePath(), "") + "/" + KotlinPackage.decapitalize(testName);
+        final String testFullPath = quickFixTestCase.getTestDataPath().replace(File.separatorChar, '/') + relativePath;
+        final File testFile = new File(testFullPath);
+        CommandProcessor.getInstance().executeCommand(quickFixTestCase.getProject(), new Runnable() {
+            @SuppressWarnings({"AssignmentToStaticFieldFromInstanceMethod", "CallToPrintStackTrace"})
+            @Override
+            public void run() {
+                try {
+                    String contents = StringUtil.convertLineSeparators(FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET));
+                    quickFixTestCase.configureFromFileText(testFile.getName(), contents);
+                    quickFixTestCase.bringRealEditorBack();
+                    final Pair<String, Boolean> pair = quickFixTestCase.parseActionHintImpl(quickFixTestCase.getFile(), contents);
+                    final String text = pair.getFirst();
+                    final boolean actionShouldBeAvailable = pair.getSecond().booleanValue();
+
+                    quickFixTestCase.beforeActionStarted(testName, contents);
+
+                    try {
+                        myWrapper = quickFixTestCase;
+                        quickFixTestCase.doAction(text, actionShouldBeAvailable, testFullPath, testName);
+                    }
+                    finally {
+                        myWrapper = null;
+                        quickFixTestCase.afterActionCompleted(testName, contents);
+                    }
+                }
+                catch (FileComparisonFailure e) {
+                    throw e;
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
+                    fail(testName);
+                }
+            }
+        }, "", "");
+    }
+
+    @Override
+    protected void doAction(final String text, final boolean actionShouldBeAvailable, final String testFullPath, final String testName)
+            throws Exception {
+        doAction(text, actionShouldBeAvailable, testFullPath, testName, myWrapper);
+    }
+
+    @Override
+    protected void checkResultByFile(@Nullable String message, @NotNull String filePath, boolean ignoreTrailingSpaces) {
+        File file = new File(filePath);
+        String afterFileName = file.getName();
+        assert afterFileName.startsWith(AFTER_PREFIX);
+        String newAfterFileName = KotlinPackage.decapitalize(afterFileName.substring(AFTER_PREFIX.length())) + ".after";
+
+        super.checkResultByFile(message, new File(file.getParent(), newAfterFileName).getPath(), ignoreTrailingSpaces);
+    }
+    //endregion
 
     private static void configureRuntimeIfNeeded(@NotNull String beforeFileName) {
         if (beforeFileName.endsWith("JsRuntime.kt")) {
