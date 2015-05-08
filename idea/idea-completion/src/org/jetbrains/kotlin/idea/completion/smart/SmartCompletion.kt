@@ -62,6 +62,7 @@ class SmartCompletion(
         val lookupElementFactory: LookupElementFactory
 ) {
     private val project = expression.getProject()
+    private val receiver = if (expression is JetSimpleNameExpression) expression.getReceiverExpression() else null
 
     public class Result(
             val declarationFilter: ((DeclarationDescriptor) -> Collection<LookupElement>)?,
@@ -110,7 +111,6 @@ class SmartCompletion(
         val asTypePositionResult = buildForAsTypePosition()
         if (asTypePositionResult != null) return asTypePositionResult
 
-        val receiver = if (expression is JetSimpleNameExpression) expression.getReceiverExpression() else null
         val expressionWithType = if (receiver != null) {
             expression.getParent() as? JetExpression ?: return null
         }
@@ -148,7 +148,7 @@ class SmartCompletion(
             val types = descriptor.fuzzyTypes(smartCastTypes)
             val infoClassifier = { expectedInfo: ExpectedInfo -> types.classifyExpectedInfo(expectedInfo) }
 
-            result.addLookupElements(descriptor, expectedInfos, infoClassifier) { descriptor ->
+            result.addLookupElements(descriptor, expectedInfos, infoClassifier, noNameSimilarityForReturnItself = receiver == null) { descriptor ->
                 lookupElementFactory.createLookupElement(descriptor, resolutionFacade, bindingContext, true)
             }
 

@@ -124,8 +124,8 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
     private val importCache = ImportCache()
 
     private enum class Weight {
-        kotlinDefaultImport
         thisFile
+        kotlinDefaultImport
         preciseImport
         allUnderImport
         `default`

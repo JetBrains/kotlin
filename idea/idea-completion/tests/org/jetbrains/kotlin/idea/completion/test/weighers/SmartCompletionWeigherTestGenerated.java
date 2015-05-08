@@ -197,6 +197,18 @@ public class SmartCompletionWeigherTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ReturnValue1.kt")
+    public void testReturnValue1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/ReturnValue1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReturnValue2.kt")
+    public void testReturnValue2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/ReturnValue2.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SmartPriority.kt")
     public void testSmartPriority() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/smart/SmartPriority.kt");

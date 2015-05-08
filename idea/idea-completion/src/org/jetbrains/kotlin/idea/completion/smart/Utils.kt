@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetValueArgument
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.HashSet
@@ -115,9 +115,12 @@ fun LookupElement.withOptions(options: ItemOptions): LookupElement {
     return lookupElement
 }
 
-fun LookupElement.addTailAndNameSimilarity(matchedExpectedInfos: Collection<ExpectedInfo>): LookupElement {
+fun LookupElement.addTailAndNameSimilarity(
+        matchedExpectedInfos: Collection<ExpectedInfo>,
+        nameSimilarityExpectedInfos: Collection<ExpectedInfo> = matchedExpectedInfos
+): LookupElement {
     val lookupElement = addTail(mergeTails(matchedExpectedInfos.map { it.tail }))
-    val similarity = calcNameSimilarity(lookupElement.getLookupString(), matchedExpectedInfos)
+    val similarity = calcNameSimilarity(lookupElement.getLookupString(), nameSimilarityExpectedInfos)
     if (similarity != 0) {
         lookupElement.putUserData(NAME_SIMILARITY_KEY, similarity)
     }
@@ -155,6 +158,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         descriptor: TDescriptor,
         expectedInfos: Collection<ExpectedInfo>,
         infoClassifier: (ExpectedInfo) -> ExpectedInfoClassification,
+        noNameSimilarityForReturnItself: Boolean = false,
         lookupElementFactory: (TDescriptor) -> LookupElement?
 ) {
     class ItemData(val descriptor: TDescriptor, val itemOptions: ItemOptions) {
@@ -181,7 +185,12 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         for ((itemData, infos) in matchedInfos) {
             val lookupElement = itemData.createLookupElement()
             if (lookupElement != null) {
-                add(lookupElement.addTailAndNameSimilarity(infos))
+                val nameSimilarityInfos = if (noNameSimilarityForReturnItself && descriptor is CallableDescriptor) {
+                    infos.filter { (it as? ReturnValueExpectedInfo)?.callable != descriptor } // do not calculate name similarity with function itself in its return
+                }
+                else
+                    infos
+                add(lookupElement.addTailAndNameSimilarity(infos, nameSimilarityInfos))
             }
         }
     }

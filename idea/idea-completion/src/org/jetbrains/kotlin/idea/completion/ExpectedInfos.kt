@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.di.InjectorForMacros
@@ -40,10 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
-import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -79,6 +75,14 @@ class ArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val functi
 
     override fun hashCode()
             = function.hashCode()
+}
+
+class ReturnValueExpectedInfo(type: JetType, val callable: CallableDescriptor) : ExpectedInfo(type, callable.getName().asString(), null) {
+    override fun equals(other: Any?)
+            = other is ReturnValueExpectedInfo && super.equals(other) && callable == other.callable
+
+    override fun hashCode()
+            = callable.hashCode()
 }
 
 
@@ -351,14 +355,14 @@ class ExpectedInfos(
         return functionReturnValueExpectedInfo(descriptor).toList()
     }
 
-    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor): ExpectedInfo? {
+    private fun functionReturnValueExpectedInfo(descriptor: FunctionDescriptor): ReturnValueExpectedInfo? {
         return when (descriptor) {
-            is SimpleFunctionDescriptor -> ExpectedInfo(descriptor.getReturnType() ?: return null, descriptor.getName().asString(), null)
+            is SimpleFunctionDescriptor -> ReturnValueExpectedInfo(descriptor.getReturnType() ?: return null, descriptor)
 
             is PropertyGetterDescriptor -> {
                 if (descriptor !is PropertyGetterDescriptor) return null
                 val property = descriptor.getCorrespondingProperty()
-                ExpectedInfo(property.getType(),  property.getName().asString(), null)
+                ReturnValueExpectedInfo(property.getType(), property)
             }
 
             else -> null

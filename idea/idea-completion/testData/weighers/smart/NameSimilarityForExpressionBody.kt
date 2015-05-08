@@ -1,5 +1,5 @@
-val fooBar = ""
+val vFooBar = ""
 
 fun foo(s: String): String = <caret>
 
-// ORDER: foo, fooBar, s
+// ORDER: vFooBar, s, foo
