@@ -21,9 +21,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.ArrayList
 
 public object SuperClassNotInitialized : JetIntentionActionsFactory() {
@@ -109,12 +112,26 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
             val typeRefsToShorten = ArrayList<JetTypeReference>()
             if (!superParameters.isEmpty()) {
                 val parameterList = classDeclaration.getOrCreatePrimaryConstructorParameterList()
+                val oldParameters = parameterList.getParameters()
+                val parametersToAdd = ArrayList<JetParameter>()
                 for (parameter in superParameters) {
                     val name = renderer.renderName(parameter.getName())
-                    val parameterText = name + ":" + renderer.renderType(parameter.getType())
-                    val newParameter = parameterList.addParameter(factory.createParameter(parameterText))
-                    typeRefsToShorten.add(newParameter.getTypeReference())
                     parameterNames.add(name)
+
+                    val nameString = parameter.getName().asString()
+                    val existingParameter = oldParameters.firstOrNull { it.getName() == nameString }
+                    if (existingParameter != null) {
+                        val type = (existingParameter.resolveToDescriptor() as ValueParameterDescriptor).getType()
+                        if (type.isSubtypeOf(parameter.getType())) continue // use existing parameter
+                    }
+
+                    val parameterText = name + ":" + renderer.renderType(parameter.getType())
+                    parametersToAdd.add(factory.createParameter(parameterText))
+                }
+
+                for (parameter in parametersToAdd) {
+                    val newParameter = parameterList.addParameter(parameter)
+                    typeRefsToShorten.add(newParameter.getTypeReference())
                 }
             }
 

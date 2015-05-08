@@ -4046,6 +4046,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/primaryConstructorInaccessible.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("someParametersAlreadyExist.kt")
+        public void testSomeParametersAlreadyExist() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/someParametersAlreadyExist.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/suppress")
