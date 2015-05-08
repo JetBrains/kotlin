@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
@@ -156,8 +157,11 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             context: ExpressionTypingContext
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.getFunctionLiteral()
-        val functionDescriptor = AnonymousFunctionDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY,
-                                                             CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement())
+        val functionDescriptor = AnonymousFunctionDescriptor(
+            context.scope.getContainingDeclaration(),
+            components.annotationResolver.resolveAnnotationsWithArguments(context.scope, expression.getAnnotationEntries(), context.trace),
+            CallableMemberDescriptor.Kind.DECLARATION, functionLiteral.toSourceElement()
+        )
         components.functionDescriptorResolver.
                 initializeFunctionDescriptorAndExplicitReturnType(context.scope.getContainingDeclaration(), context.scope, functionLiteral,
                                                                   functionDescriptor, context.trace, context.expectedType)

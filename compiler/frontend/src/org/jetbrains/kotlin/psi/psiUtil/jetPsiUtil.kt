@@ -586,3 +586,13 @@ public val PsiElement.startOffset: Int
 
 public val PsiElement.endOffset: Int
     get() = getTextRange().getEndOffset()
+
+// Annotations on labeled expression lies on it's base expression
+public fun JetExpression.getAnnotationEntries(): List<JetAnnotationEntry> {
+    val parent = getParent()
+    return when (parent) {
+        is JetAnnotatedExpression -> parent.getAnnotationEntries()
+        is JetLabeledExpression -> parent.getAnnotationEntries()
+        else -> emptyList<JetAnnotationEntry>()
+    }
+}

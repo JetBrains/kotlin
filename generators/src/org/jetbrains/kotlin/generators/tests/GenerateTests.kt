@@ -105,6 +105,7 @@ import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.parsing.AbstractJetParsingTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractJetPsiUnifierTest
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
+import org.jetbrains.kotlin.renderer.AbstractFunctionDescriptorInExpressionRendererTest
 import org.jetbrains.kotlin.repl.AbstractReplInterpreterTest
 import org.jetbrains.kotlin.resolve.AbstractResolveTest
 import org.jetbrains.kotlin.resolve.annotation.AbstractAnnotationParameterTest
@@ -245,6 +246,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDescriptorRendererTest>()) {
             model("renderer")
+        }
+
+        testClass(javaClass<AbstractFunctionDescriptorInExpressionRendererTest>()) {
+            model("renderFunctionDescriptorInExpression")
         }
 
         testClass(javaClass<AbstractModuleXmlParserTest>()) {
