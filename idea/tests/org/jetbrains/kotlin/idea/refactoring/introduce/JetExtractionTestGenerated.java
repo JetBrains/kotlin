@@ -366,6 +366,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("identityEquals.kt")
+            public void testIdentityEquals() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/identityEquals.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("invisibleType.kt")
             public void testInvisibleType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/invisibleType.kt");
