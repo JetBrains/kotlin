@@ -358,7 +358,7 @@ public object Renderers {
             typeBounds.add(constraintSystem.getTypeBounds(variable))
         }
         return "type parameter bounds:\n" +
-               StringUtil.join(typeBounds, { renderTypeBounds.render(it) }, "\n") + "\n" + "status:\n" +
+               StringUtil.join(typeBounds, { renderTypeBounds.render(it) }, "\n") + "\n\n" + "status:\n" +
                ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus())
     }
 

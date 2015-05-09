@@ -5,6 +5,7 @@ SUBTYPE T Any
 
 type parameter bounds:
 T >: IntegerValueType(1), <: kotlin.Any
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false

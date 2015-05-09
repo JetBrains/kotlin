@@ -6,6 +6,7 @@ SUPERTYPE T C
 
 type parameter bounds:
 T <: A, >: B, >: C
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false

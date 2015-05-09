@@ -5,6 +5,7 @@ SUBTYPE T B
 
 type parameter bounds:
 T <: A, <: B
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false

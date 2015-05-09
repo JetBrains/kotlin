@@ -5,6 +5,7 @@ SUBTYPE T Short
 
 type parameter bounds:
 T >: IntegerValueType(1), <: kotlin.Short
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false

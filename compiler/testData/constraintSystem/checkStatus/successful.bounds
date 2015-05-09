@@ -5,6 +5,7 @@ SUPERTYPE T Int
 
 type parameter bounds:
 T <: kotlin.Int, >: kotlin.Int
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false

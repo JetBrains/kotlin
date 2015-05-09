@@ -5,6 +5,7 @@ SUBTYPE T Int
 type parameter bounds:
 T <: kotlin.Int
 P <: kotlin.Int
+
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
