@@ -6,5 +6,5 @@ fun bar() {
 }
 
 fun main(args: Array<String>) {
-    (foo()) ?: <caret>bar()
+    (foo()) ?:<caret> bar()
 }

@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
@@ -25,13 +26,17 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 
-public class ElvisToIfThenIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>("elvis.to.if.then", javaClass()) {
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean =
-            element.getOperationToken() == JetTokens.ELVIS
+public class ElvisToIfThenIntention : JetSelfTargetingRangeIntention<JetBinaryExpression>(javaClass(), "Replace elvis expression with 'if' expression") {
+    override fun applicabilityRange(element: JetBinaryExpression): TextRange? {
+        return if (element.getOperationToken() == JetTokens.ELVIS && element.getLeft() != null && element.getRight() != null)
+            element.getOperationReference().getTextRange()
+        else
+            null
+    }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        val left = checkNotNull(JetPsiUtil.deparenthesize(element.getLeft()), "Left hand side of elvis expression cannot be null")
-        val right = checkNotNull(JetPsiUtil.deparenthesize(element.getRight()), "Right hand side of elvis expression cannot be null")
+        val left = JetPsiUtil.safeDeparenthesize(element.getLeft()!!)
+        val right = JetPsiUtil.safeDeparenthesize(element.getRight()!!)
 
         val leftIsStable = left.isStableVariable()
 
