@@ -90,6 +90,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/capturedLambdaInInlineObject.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
+
+        @TestMetadata("changingReturnType.1.kt")
+        public void testChangingReturnType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/changingReturnType.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/builders")

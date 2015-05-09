@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
+import kotlin.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
@@ -62,6 +63,8 @@ public class AnonymousObjectTransformer {
 
     private final Map<String, List<String>> fieldNames = new HashMap<String, List<String>>();
 
+    private final TypeRemapper typeRemapper;
+
     public AnonymousObjectTransformer(
             @NotNull String objectInternalName,
             @NotNull InliningContext inliningContext,
@@ -76,6 +79,7 @@ public class AnonymousObjectTransformer {
         this.newLambdaType = newLambdaType;
 
         reader = InlineCodegenUtil.buildClassReaderByInternalName(state, objectInternalName);
+        typeRemapper = new TypeRemapper(inliningContext.typeMapping);
     }
 
     private void buildInvokeParamsFor(@NotNull ParametersBuilder builder, @NotNull MethodNode node) {
@@ -181,13 +185,29 @@ public class AnonymousObjectTransformer {
         ParametersBuilder allCapturedParamBuilder = ParametersBuilder.newBuilder();
         ParametersBuilder constructorParamBuilder = ParametersBuilder.newBuilder();
         List<CapturedParamInfo> additionalFakeParams =
-                extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder, anonymousObjectGen);
+                extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder,
+                                                            anonymousObjectGen);
+        List<MethodVisitor> deferringMethods = new ArrayList();
 
         for (MethodNode next : methodsToTransform) {
-            MethodVisitor visitor = newMethod(classBuilder, next);
-            InlineResult funResult = inlineMethod(anonymousObjectGen, parentRemapper, visitor, next, allCapturedParamBuilder);
+            MethodVisitor deferringVisitor = newMethod(classBuilder, next);
+            InlineResult funResult = inlineMethod(anonymousObjectGen, parentRemapper, deferringVisitor, next, allCapturedParamBuilder);
             result.addAllClassesToRemove(funResult);
             result.getReifiedTypeParametersUsages().mergeAll(funResult.getReifiedTypeParametersUsages());
+
+            Type returnType = Type.getReturnType(next.desc);
+            if (!AsmUtil.isPrimitive(returnType)) {
+                String oldFunReturnType = returnType.getInternalName();
+                String newFunReturnType = funResult.getChangedTypes().get(oldFunReturnType);
+                if (newFunReturnType != null) {
+                    typeRemapper.addAdditionalMappings(oldFunReturnType, newFunReturnType);
+                }
+            }
+            deferringMethods.add(deferringVisitor);
+        }
+
+        for (MethodVisitor method : deferringMethods) {
+            method.visitEnd();
         }
 
         InlineResult constructorResult =
@@ -207,7 +227,7 @@ public class AnonymousObjectTransformer {
     private InlineResult inlineMethod(
             @NotNull AnonymousObjectGeneration anonymousObjectGen,
             @NotNull FieldRemapper parentRemapper,
-            @NotNull MethodVisitor resultVisitor,
+            @NotNull MethodVisitor deferringVisitor,
             @NotNull MethodNode sourceNode,
             @NotNull ParametersBuilder capturedBuilder
     ) {
@@ -223,10 +243,9 @@ public class AnonymousObjectTransformer {
                                                   remapper, isSameModule, "Transformer for " + anonymousObjectGen.getOwnerInternalName(),
                                                   sourceMapper);
 
-        InlineResult result = inliner.doInline(resultVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);
+        InlineResult result = inliner.doInline(deferringVisitor, new LocalVarRemapper(parameters, 0), false, LabelOwner.NOT_APPLICABLE);
         result.getReifiedTypeParametersUsages().mergeAll(typeParametersToReify);
-        resultVisitor.visitMaxs(-1, -1);
-        resultVisitor.visitEnd();
+        deferringVisitor.visitMaxs(-1, -1);
         return result;
     }
 
@@ -338,19 +357,30 @@ public class AnonymousObjectTransformer {
     @NotNull
     private ClassBuilder createClassBuilder() {
         ClassBuilder classBuilder = state.getFactory().newVisitor(NO_ORIGIN, newLambdaType, inliningContext.getRoot().callElement.getContainingFile());
-        return new RemappingClassBuilder(classBuilder, new TypeRemapper(inliningContext.typeMapping));
+        return new RemappingClassBuilder(classBuilder, typeRemapper);
     }
 
     @NotNull
-    private static MethodVisitor newMethod(@NotNull ClassBuilder builder, @NotNull MethodNode original) {
-        return builder.newMethod(
-                NO_ORIGIN,
-                original.access,
-                original.name,
-                original.desc,
-                original.signature,
-                ArrayUtil.toStringArray(original.exceptions)
-        );
+    private static DeferredMethodVisitor newMethod(@NotNull final ClassBuilder builder, @NotNull final MethodNode original) {
+        return new DeferredMethodVisitor(
+                new MethodNode(original.access,
+                               original.name,
+                               original.desc,
+                               original.signature,
+                               ArrayUtil.toStringArray(original.exceptions)),
+
+                new Function0<MethodVisitor>() {
+                    @Override
+                    public MethodVisitor invoke() {
+                        return builder.newMethod(
+                                NO_ORIGIN,
+                                original.access,
+                                original.name,
+                                original.desc,
+                                original.signature,
+                                ArrayUtil.toStringArray(original.exceptions));
+                    }
+                });
     }
 
     private List<CapturedParamInfo> extractParametersMappingAndPatchConstructor(

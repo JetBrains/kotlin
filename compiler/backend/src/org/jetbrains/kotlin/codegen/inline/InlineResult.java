@@ -18,12 +18,15 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class InlineResult {
 
     private final Set<String> classesToRemove = new HashSet<String>();
+    private final Map<String, String> changedTypes = new HashMap<String, String>();
     private final ReifiedTypeParametersUsages reifiedTypeParametersUsages = new ReifiedTypeParametersUsages();
 
     private InlineResult() {
@@ -44,9 +47,17 @@ public class InlineResult {
         classesToRemove.add(classInternalName);
     }
 
+    public void addChangedType(@NotNull String oldClassInternalName, @NotNull String newClassInternalName) {
+        changedTypes.put(oldClassInternalName, newClassInternalName);
+    }
+
     @NotNull
     public Set<String> getClassesToRemove() {
         return classesToRemove;
+    }
+
+    public Map<String, String> getChangedTypes() {
+        return changedTypes;
     }
 
     @NotNull

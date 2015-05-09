@@ -158,26 +158,28 @@ public class MethodInliner {
 
                 if (anonymousObjectGen.shouldRegenerate()) {
                     //TODO: need poping of type but what to do with local funs???
-                    Type newLambdaType = Type.getObjectType(inliningContext.nameGenerator.genLambdaClassName());
-                    currentTypeMapping.put(anonymousObjectGen.getOwnerInternalName(), newLambdaType.getInternalName());
+                    String oldClassName = anonymousObjectGen.getOwnerInternalName();
+                    String newClassName = inliningContext.nameGenerator.genLambdaClassName();
+                    currentTypeMapping.put(oldClassName, newClassName);
                     AnonymousObjectTransformer transformer =
-                            new AnonymousObjectTransformer(anonymousObjectGen.getOwnerInternalName(),
+                            new AnonymousObjectTransformer(oldClassName,
                                                            inliningContext
                                                                    .subInlineWithClassRegeneration(
                                                                            inliningContext.nameGenerator,
                                                                            currentTypeMapping,
                                                                            anonymousObjectGen),
-                                                           isSameModule, newLambdaType
+                                                           isSameModule, Type.getObjectType(newClassName)
                             );
 
                     InlineResult transformResult = transformer.doTransform(anonymousObjectGen, nodeRemapper);
                     result.addAllClassesToRemove(transformResult);
+                    result.addChangedType(oldClassName, newClassName);
 
                     if (inliningContext.isInliningLambda && !anonymousObjectGen.isStaticOrigin()) {
                         // this class is transformed and original not used so we should remove original one after inlining
                         // Note: It is unsafe to remove anonymous class that is referenced by GETSTATIC within lambda
                         // because it can be local function from outer scope
-                        result.addClassToRemove(anonymousObjectGen.getOwnerInternalName());
+                        result.addClassToRemove(oldClassName);
                     }
 
                     if (transformResult.getReifiedTypeParametersUsages().wereUsedReifiedParameters()) {

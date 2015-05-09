@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.codegen.inline;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.org.objectweb.asm.commons.Remapper;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class TypeRemapper extends Remapper {
     private final Map<String, String> typeMapping;
+    private Map<String, String> additionalMappings;
 
     //typeMapping could be changed outside through method processing
     public TypeRemapper(@NotNull Map<String, String> typeMapping) {
@@ -36,6 +38,18 @@ public class TypeRemapper extends Remapper {
             return newType;
         }
 
+        if (additionalMappings != null) {
+            newType = additionalMappings.get(type);
+            if (newType != null) {
+                return newType;
+            }
+        }
+
         return type;
+    }
+
+    public void addAdditionalMappings(String oldName, String newName) {
+        if (additionalMappings == null) additionalMappings = new HashMap<String, String>();
+        additionalMappings.put(oldName, newName);
     }
 }
