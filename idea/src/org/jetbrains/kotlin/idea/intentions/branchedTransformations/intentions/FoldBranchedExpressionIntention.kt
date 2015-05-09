@@ -19,35 +19,57 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.FoldableKind
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetWhenExpression
 
-public open class FoldBranchedExpressionIntention<T: JetExpression>(
-        val kind: FoldableKind, elementType: Class<T>
-) : JetSelfTargetingOffsetIndependentIntention<T>(kind.getKey(), elementType) {
-    override fun isApplicableTo(element: T): Boolean = BranchedFoldingUtils.getFoldableExpressionKind(element) == kind
+public class FoldIfToAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with assignment") {
+    override fun isApplicableTo(element: JetIfExpression): Boolean {
+        return BranchedFoldingUtils.checkFoldableIfExpressionWithAssignments(element)
+    }
 
-    override fun applyTo(element: T, editor: Editor) {
-        val file = element.getContainingFile()
-        if (file is JetFile) {
-            kind.transform(element, editor, file)
-        }
+    override fun applyTo(element: JetIfExpression, editor: Editor) {
+        BranchedFoldingUtils.foldIfExpressionWithAssignments(element)
     }
 }
+        
+public class FoldIfToReturnAsymmetricallyIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
+    override fun isApplicableTo(element: JetIfExpression): Boolean {
+        return BranchedFoldingUtils.checkFoldableIfExpressionWithAsymmetricReturns(element)
+    }
 
-public class FoldIfToAssignmentIntention : FoldBranchedExpressionIntention<JetIfExpression>(FoldableKind.IF_TO_ASSIGNMENT, javaClass())
+    override fun applyTo(element: JetIfExpression, editor: Editor) {
+        BranchedFoldingUtils.foldIfExpressionWithAsymmetricReturns(element)
+    }
+}
         
-public class FoldIfToReturnAsymmetricallyIntention : FoldBranchedExpressionIntention<JetIfExpression>(
-        FoldableKind.IF_TO_RETURN_ASYMMETRICALLY, javaClass()
-)
+public class FoldIfToReturnIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
+    override fun isApplicableTo(element: JetIfExpression): Boolean {
+        return BranchedFoldingUtils.checkFoldableIfExpressionWithReturns(element)
+    }
+
+    override fun applyTo(element: JetIfExpression, editor: Editor) {
+        BranchedFoldingUtils.foldIfExpressionWithReturns(element)
+    }
+}
         
-public class FoldIfToReturnIntention : FoldBranchedExpressionIntention<JetIfExpression>(FoldableKind.IF_TO_RETURN, javaClass())
+public class FoldWhenToAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>(javaClass(), "Replace 'when' expression with assignment") {
+    override fun isApplicableTo(element: JetWhenExpression): Boolean {
+        return BranchedFoldingUtils.checkFoldableWhenExpressionWithAssignments(element)
+    }
+
+    override fun applyTo(element: JetWhenExpression, editor: Editor) {
+        BranchedFoldingUtils.foldWhenExpressionWithAssignments(element)
+    }
+}
         
-public class FoldWhenToAssignmentIntention : FoldBranchedExpressionIntention<JetWhenExpression>(
-        FoldableKind.WHEN_TO_ASSIGNMENT, javaClass()
-)
-        
-public class FoldWhenToReturnIntention : FoldBranchedExpressionIntention<JetWhenExpression>(FoldableKind.WHEN_TO_RETURN, javaClass())
+public class FoldWhenToReturnIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>(javaClass(), "Replace 'when' expression with return") {
+    override fun isApplicableTo(element: JetWhenExpression): Boolean {
+        return BranchedFoldingUtils.checkFoldableWhenExpressionWithReturns(element)
+    }
+
+    override fun applyTo(element: JetWhenExpression, editor: Editor) {
+        BranchedFoldingUtils.foldWhenExpressionWithReturns(element)
+    }
+}

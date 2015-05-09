@@ -55,7 +55,7 @@ public object BranchedFoldingUtils {
         return a1.getLeft()?.getText() == a2.getLeft()?.getText() && a1.getOperationToken() == a2.getOperationToken()
     }
 
-    private fun checkFoldableIfExpressionWithAssignments(ifExpression: JetIfExpression): Boolean {
+    public fun checkFoldableIfExpressionWithAssignments(ifExpression: JetIfExpression): Boolean {
         val thenBranch = ifExpression.getThen()
         val elseBranch = ifExpression.getElse()
 
@@ -67,7 +67,7 @@ public object BranchedFoldingUtils {
         return checkAssignmentsMatch(thenAssignment, elseAssignment)
     }
 
-    private fun checkFoldableWhenExpressionWithAssignments(whenExpression: JetWhenExpression): Boolean {
+    public fun checkFoldableWhenExpressionWithAssignments(whenExpression: JetWhenExpression): Boolean {
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpression)) return false
 
         val entries = whenExpression.getEntries()
@@ -90,11 +90,11 @@ public object BranchedFoldingUtils {
         return true
     }
 
-    private fun checkFoldableIfExpressionWithReturns(ifExpression: JetIfExpression): Boolean {
+    public fun checkFoldableIfExpressionWithReturns(ifExpression: JetIfExpression): Boolean {
         return getFoldableBranchedReturn(ifExpression.getThen()) != null && getFoldableBranchedReturn(ifExpression.getElse()) != null
     }
 
-    private fun checkFoldableWhenExpressionWithReturns(whenExpression: JetWhenExpression): Boolean {
+    public fun checkFoldableWhenExpressionWithReturns(whenExpression: JetWhenExpression): Boolean {
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpression)) return false
 
         val entries = whenExpression.getEntries()
@@ -108,29 +108,13 @@ public object BranchedFoldingUtils {
         return true
     }
 
-    private fun checkFoldableIfExpressionWithAsymmetricReturns(ifExpression: JetIfExpression): Boolean {
+    public fun checkFoldableIfExpressionWithAsymmetricReturns(ifExpression: JetIfExpression): Boolean {
         if (getFoldableBranchedReturn(ifExpression.getThen()) == null || ifExpression.getElse() != null) {
             return false
         }
 
         val nextElement = JetPsiUtil.skipTrailingWhitespacesAndComments(ifExpression)
         return (nextElement is JetExpression) && getFoldableBranchedReturn(nextElement) != null
-    }
-
-    public fun getFoldableExpressionKind(root: JetExpression?): FoldableKind? {
-        if (root is JetIfExpression) {
-
-            if (checkFoldableIfExpressionWithAssignments(root)) return FoldableKind.IF_TO_ASSIGNMENT
-            if (checkFoldableIfExpressionWithReturns(root)) return FoldableKind.IF_TO_RETURN
-            if (checkFoldableIfExpressionWithAsymmetricReturns(root)) return FoldableKind.IF_TO_RETURN_ASYMMETRICALLY
-        }
-        else if (root is JetWhenExpression) {
-
-            if (checkFoldableWhenExpressionWithAssignments(root)) return FoldableKind.WHEN_TO_ASSIGNMENT
-            if (checkFoldableWhenExpressionWithReturns(root)) return FoldableKind.WHEN_TO_RETURN
-        }
-
-        return null
     }
 
     public fun foldIfExpressionWithAssignments(ifExpression: JetIfExpression) {
