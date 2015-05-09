@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.intentions;
+package org.jetbrains.kotlin.idea.intentions.branchedTransformations;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;

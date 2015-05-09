@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.intentions.Transformer;
 import org.jetbrains.kotlin.psi.JetBinaryExpression;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetProperty;
