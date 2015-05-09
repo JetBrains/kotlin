@@ -23,48 +23,36 @@ import org.jetbrains.kotlin.psi.*
 import java.util.ArrayList
 
 public object BranchedFoldingUtils {
-
-    private fun checkEquivalence(e1: JetExpression, e2: JetExpression): Boolean {
-        return e1.getText() == e2.getText()
-    }
-
     private val CHECK_ASSIGNMENT = object : Predicate<JetElement> {
-        override fun apply(input: JetElement?): Boolean {
-            if (input == null || !JetPsiUtil.isAssignment(input)) {
-                return false
-            }
+        override fun apply(input: JetElement): Boolean {
+            if (!JetPsiUtil.isAssignment(input)) return false
 
             val assignment = input as JetBinaryExpression
 
-            if (assignment.getRight() == null || assignment.getLeft() !is JetSimpleNameExpression) {
-                return false
-            }
+            val left = assignment.getLeft() as? JetSimpleNameExpression ?: return false
+            if (assignment.getRight() == null) return false
 
-            if (assignment.getParent() is JetBlockExpression) {
-                //noinspection ConstantConditions
-                return !JetPsiUtil.checkVariableDeclarationInBlock(assignment.getParent() as JetBlockExpression, assignment.getLeft()!!.getText())
+            val parent = assignment.getParent()
+            if (parent is JetBlockExpression) {
+                return !JetPsiUtil.checkVariableDeclarationInBlock(parent, left.getText())
             }
 
             return true
         }
     }
 
-    private val CHECK_RETURN = object : Predicate<JetElement> {
-        override fun apply(input: JetElement?): Boolean {
-            return (input is JetReturnExpression) && input.getReturnedExpression() != null
-        }
-    }
-
-    private fun getFoldableBranchedAssignment(branch: JetExpression): JetBinaryExpression? {
+    private fun getFoldableBranchedAssignment(branch: JetExpression?): JetBinaryExpression? {
         return JetPsiUtil.getOutermostLastBlockElement(branch, CHECK_ASSIGNMENT) as JetBinaryExpression?
     }
 
-    private fun getFoldableBranchedReturn(branch: JetExpression): JetReturnExpression? {
-        return JetPsiUtil.getOutermostLastBlockElement(branch, CHECK_RETURN) as JetReturnExpression?
+    private fun getFoldableBranchedReturn(branch: JetExpression?): JetReturnExpression? {
+        return JetPsiUtil.getOutermostLastBlockElement(branch) {
+            (it as? JetReturnExpression)?.getReturnedExpression() != null
+        } as JetReturnExpression?
     }
 
     private fun checkAssignmentsMatch(a1: JetBinaryExpression, a2: JetBinaryExpression): Boolean {
-        return checkEquivalence(a1.getLeft(), a2.getLeft()) && a1.getOperationToken() == a2.getOperationToken()
+        return a1.getLeft()?.getText() == a2.getLeft()?.getText() && a1.getOperationToken() == a2.getOperationToken()
     }
 
     private fun checkFoldableIfExpressionWithAssignments(ifExpression: JetIfExpression): Boolean {
@@ -145,16 +133,8 @@ public object BranchedFoldingUtils {
         return null
     }
 
-    public val FOLD_WITHOUT_CHECK: String = "Expression must be checked before folding"
-
-    private fun assertNotNull(expression: JetExpression?) {
-        assert(expression != null) { FOLD_WITHOUT_CHECK }
-    }
-
     public fun foldIfExpressionWithAssignments(ifExpression: JetIfExpression) {
-        var thenAssignment: JetBinaryExpression = getFoldableBranchedAssignment(ifExpression.getThen())
-
-        assertNotNull(thenAssignment)
+        var thenAssignment = getFoldableBranchedAssignment(ifExpression.getThen()!!)!!
 
         val op = thenAssignment.getOperationReference().getText()
         val lhs = thenAssignment.getLeft() as JetSimpleNameExpression
@@ -162,24 +142,13 @@ public object BranchedFoldingUtils {
         val assignment = JetPsiFactory(ifExpression).createExpressionByPattern("$0 $1 $2", lhs, op, ifExpression)
         val newIfExpression = (assignment as JetBinaryExpression).getRight() as JetIfExpression
 
-        assertNotNull(newIfExpression)
+        thenAssignment = getFoldableBranchedAssignment(newIfExpression.getThen()!!)!!
+        val elseAssignment = getFoldableBranchedAssignment(newIfExpression.getElse()!!)!!
 
-        //noinspection ConstantConditions
-        thenAssignment = getFoldableBranchedAssignment(newIfExpression.getThen())
-        val elseAssignment = getFoldableBranchedAssignment(newIfExpression.getElse())
+        val thenRhs = thenAssignment.getRight()!!
+        val elseRhs = elseAssignment.getRight()!!
 
-        assertNotNull(thenAssignment)
-        assertNotNull(elseAssignment)
-
-        val thenRhs = thenAssignment.getRight()
-        val elseRhs = elseAssignment.getRight()
-
-        assertNotNull(thenRhs)
-        assertNotNull(elseRhs)
-
-        //noinspection ConstantConditions
         thenAssignment.replace(thenRhs)
-        //noinspection ConstantConditions
         elseAssignment.replace(elseRhs)
 
         ifExpression.replace(assignment)
@@ -189,76 +158,46 @@ public object BranchedFoldingUtils {
         val newReturnExpression = JetPsiFactory(ifExpression).createReturn(ifExpression)
         val newIfExpression = newReturnExpression.getReturnedExpression() as JetIfExpression
 
-        assertNotNull(newIfExpression)
+        val thenReturn = getFoldableBranchedReturn(newIfExpression.getThen()!!)!!
+        val elseReturn = getFoldableBranchedReturn(newIfExpression.getElse()!!)!!
 
-        //noinspection ConstantConditions
-        val thenReturn = getFoldableBranchedReturn(newIfExpression.getThen())
-        val elseReturn = getFoldableBranchedReturn(newIfExpression.getElse())
+        val thenExpr = thenReturn.getReturnedExpression()!!
+        val elseExpr = elseReturn.getReturnedExpression()!!
 
-        assertNotNull(thenReturn)
-        assertNotNull(elseReturn)
-
-        val thenExpr = thenReturn.getReturnedExpression()
-        val elseExpr = elseReturn.getReturnedExpression()
-
-        assertNotNull(thenExpr)
-        assertNotNull(elseExpr)
-
-        //noinspection ConstantConditions
         thenReturn.replace(thenExpr)
-        //noinspection ConstantConditions
         elseReturn.replace(elseExpr)
 
         ifExpression.replace(newReturnExpression)
     }
 
     public fun foldIfExpressionWithAsymmetricReturns(ifExpression: JetIfExpression) {
-        val condition = ifExpression.getCondition()
-        val thenRoot = ifExpression.getThen()
+        val condition = ifExpression.getCondition()!!
+        val thenRoot = ifExpression.getThen()!!
         val elseRoot = JetPsiUtil.skipTrailingWhitespacesAndComments(ifExpression) as JetExpression
 
-        assertNotNull(condition)
-        assertNotNull(thenRoot)
-        assertNotNull(elseRoot)
-
-        //noinspection ConstantConditions
         val psiFactory = JetPsiFactory(ifExpression)
         var newIfExpression = psiFactory.createIf(condition, thenRoot, elseRoot)
         val newReturnExpression = psiFactory.createReturn(newIfExpression)
 
         newIfExpression = newReturnExpression.getReturnedExpression() as JetIfExpression
 
-        assertNotNull(newIfExpression)
+        val thenReturn = getFoldableBranchedReturn(newIfExpression.getThen()!!)!!
+        val elseReturn = getFoldableBranchedReturn(newIfExpression.getElse()!!)!!
 
-        //noinspection ConstantConditions
-        val thenReturn = getFoldableBranchedReturn(newIfExpression.getThen())
-        val elseReturn = getFoldableBranchedReturn(newIfExpression.getElse())
+        val thenExpr = thenReturn.getReturnedExpression()!!
+        val elseExpr = elseReturn.getReturnedExpression()!!
 
-        assertNotNull(thenReturn)
-        assertNotNull(elseReturn)
-
-        val thenExpr = thenReturn.getReturnedExpression()
-        val elseExpr = elseReturn.getReturnedExpression()
-
-        assertNotNull(thenExpr)
-        assertNotNull(elseExpr)
-
-        //noinspection ConstantConditions
         thenReturn.replace(thenExpr)
-        //noinspection ConstantConditions
         elseReturn.replace(elseExpr)
 
         elseRoot.delete()
         ifExpression.replace(newReturnExpression)
     }
 
-    SuppressWarnings("ConstantConditions")
     public fun foldWhenExpressionWithAssignments(whenExpression: JetWhenExpression) {
-        assert(!whenExpression.getEntries().isEmpty()) { FOLD_WITHOUT_CHECK }
+        assert(!whenExpression.getEntries().isEmpty())
 
-        val firstAssignment = getFoldableBranchedAssignment(whenExpression.getEntries().get(0).getExpression())
-
-        assertNotNull(firstAssignment)
+        val firstAssignment = getFoldableBranchedAssignment(whenExpression.getEntries().get(0).getExpression()!!)!!
 
         val op = firstAssignment.getOperationReference().getText()
         val lhs = firstAssignment.getLeft() as JetSimpleNameExpression
@@ -266,17 +205,9 @@ public object BranchedFoldingUtils {
         val assignment = JetPsiFactory(whenExpression).createExpressionByPattern("$0 $1 $2", lhs, op, whenExpression)
         val newWhenExpression = (assignment as JetBinaryExpression).getRight() as JetWhenExpression
 
-        assertNotNull(newWhenExpression)
-
         for (entry in newWhenExpression.getEntries()) {
-            val currAssignment = getFoldableBranchedAssignment(entry.getExpression())
-
-            assertNotNull(currAssignment)
-
-            val currRhs = currAssignment.getRight()
-
-            assertNotNull(currRhs)
-
+            val currAssignment = getFoldableBranchedAssignment(entry.getExpression()!!)!!
+            val currRhs = currAssignment.getRight()!!
             currAssignment.replace(currRhs)
         }
 
@@ -284,24 +215,14 @@ public object BranchedFoldingUtils {
     }
 
     public fun foldWhenExpressionWithReturns(whenExpression: JetWhenExpression) {
-        assert(!whenExpression.getEntries().isEmpty()) { FOLD_WITHOUT_CHECK }
+        assert(!whenExpression.getEntries().isEmpty())
 
         val newReturnExpression = JetPsiFactory(whenExpression).createReturn(whenExpression)
         val newWhenExpression = newReturnExpression.getReturnedExpression() as JetWhenExpression
 
-        assertNotNull(newWhenExpression)
-
-        //noinspection ConstantConditions
         for (entry in newWhenExpression.getEntries()) {
-            val currReturn = getFoldableBranchedReturn(entry.getExpression())
-
-            assertNotNull(currReturn)
-
-            val currExpr = currReturn.getReturnedExpression()
-
-            assertNotNull(currExpr)
-
-            //noinspection ConstantConditions
+            val currReturn = getFoldableBranchedReturn(entry.getExpression()!!)!!
+            val currExpr = currReturn.getReturnedExpression()!!
             currReturn.replace(currExpr)
         }
 
