@@ -4,7 +4,7 @@ SUBTYPE T B
 SUPERTYPE T A
 
 type parameter bounds:
-T <: B(SPECIAL), >: A(SPECIAL)
+T <: B, >: A
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: true

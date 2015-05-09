@@ -351,23 +351,25 @@ public object Renderers {
 
     public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<JetType>> = Renderer { renderTypes(it) }
 
-    private fun renderConstraintSystem(constraintSystem: ConstraintSystem): String {
+    private fun renderConstraintSystem(constraintSystem: ConstraintSystem, renderTypeBounds: Renderer<TypeBounds>): String {
         val typeVariables = constraintSystem.getTypeVariables()
         val typeBounds = Sets.newLinkedHashSet<TypeBounds>()
         for (variable in typeVariables) {
             typeBounds.add(constraintSystem.getTypeBounds(variable))
         }
         return "type parameter bounds:\n" +
-               StringUtil.join(typeBounds, { RENDER_TYPE_BOUNDS.render(it) }, "\n") + "\n" + "status:\n" +
+               StringUtil.join(typeBounds, { renderTypeBounds.render(it) }, "\n") + "\n" + "status:\n" +
                ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus())
     }
 
-    public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it) }
+    public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it, RENDER_TYPE_BOUNDS) }
+    public val RENDER_CONSTRAINT_SYSTEM_SHORT: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it, RENDER_TYPE_BOUNDS_SHORT) }
 
-    private fun renderTypeBounds(typeBounds: TypeBounds): String {
+    private fun renderTypeBounds(typeBounds: TypeBounds, renderPosition: Boolean): String {
         val renderBound = { bound: Bound ->
             val arrow = if (bound.kind == LOWER_BOUND) ">: " else if (bound.kind == UPPER_BOUND) "<: " else ":= "
-            arrow + RENDER_TYPE.render(bound.constrainingType) + '(' + bound.position + ')'
+            val type = arrow + RENDER_TYPE.render(bound.constrainingType)
+            if (renderPosition) type + '(' + bound.position + ')' else type
         }
         val typeVariableName = typeBounds.typeVariable.getName()
         return if (typeBounds.isEmpty()) {
@@ -377,7 +379,8 @@ public object Renderers {
             "$typeVariableName ${StringUtil.join(typeBounds.bounds, renderBound, ", ")}"
     }
 
-    public val RENDER_TYPE_BOUNDS: Renderer<TypeBounds> = Renderer { renderTypeBounds(it) }
+    public val RENDER_TYPE_BOUNDS: Renderer<TypeBounds> = Renderer { renderTypeBounds(it, renderPosition = true) }
+    public val RENDER_TYPE_BOUNDS_SHORT: Renderer<TypeBounds> = Renderer { renderTypeBounds(it, renderPosition = false) }
 
     private fun renderDebugMessage(message: String, inferenceErrorData: InferenceErrorData) = StringBuilder {
         append(message)

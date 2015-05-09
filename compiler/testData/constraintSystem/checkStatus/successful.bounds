@@ -4,7 +4,7 @@ SUBTYPE T Int
 SUPERTYPE T Int
 
 type parameter bounds:
-T <: kotlin.Int(SPECIAL), >: kotlin.Int(SPECIAL)
+T <: kotlin.Int, >: kotlin.Int
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false

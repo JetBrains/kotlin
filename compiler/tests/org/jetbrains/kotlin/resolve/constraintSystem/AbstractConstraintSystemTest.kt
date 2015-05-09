@@ -101,7 +101,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         }
         constraintSystem.processDeclaredBoundConstraints()
 
-        val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM.render(constraintSystem)
+        val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM_SHORT.render(constraintSystem)
 
         val resultingSubstitutor = constraintSystem.getResultingSubstitutor()
         val result = StringBuilder() append "result:\n"
