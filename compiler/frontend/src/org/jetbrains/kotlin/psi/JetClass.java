@@ -79,7 +79,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     }
 
     @NotNull
-    public JetPrimaryConstructor getOrCreatePrimaryConstructor() {
+    public JetPrimaryConstructor createPrimaryConstructorIfAbsent() {
         JetPrimaryConstructor constructor = getPrimaryConstructor();
         if (constructor != null) return constructor;
         PsiElement anchor = getTypeParameterList();
@@ -89,8 +89,8 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     }
 
     @NotNull
-    public JetParameterList getOrCreatePrimaryConstructorParameterList() {
-        JetPrimaryConstructor constructor = getOrCreatePrimaryConstructor();
+    public JetParameterList createPrimaryConstructorParameterListIfAbsent() {
+        JetPrimaryConstructor constructor = createPrimaryConstructorIfAbsent();
         JetParameterList parameterList = constructor.getValueParameterList();
         if (parameterList != null) return parameterList;
         return (JetParameterList) constructor.add(new JetPsiFactory(getProject()).createParameterList("()"));

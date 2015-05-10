@@ -249,7 +249,7 @@ public open class KotlinIntroduceParameterHandler(
                     val addedParameter = if (inplaceIsAvailable) {
                         runWriteAction {
                             val parameterList = targetParent.getValueParameterList()
-                                                ?: (targetParent as JetClass).getOrCreatePrimaryConstructorParameterList()
+                                                ?: (targetParent as JetClass).createPrimaryConstructorParameterListIfAbsent()
                             parameterList.addParameter(newParameter)
                         }
                     }

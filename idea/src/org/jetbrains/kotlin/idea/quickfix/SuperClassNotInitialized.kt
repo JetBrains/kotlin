@@ -126,7 +126,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
             val parameterNames = ArrayList<String>()
             val typeRefsToShorten = ArrayList<JetTypeReference>()
             if (!superParameters.isEmpty()) {
-                val parameterList = classDeclaration.getOrCreatePrimaryConstructorParameterList()
+                val parameterList = classDeclaration.createPrimaryConstructorParameterListIfAbsent()
                 val oldParameters = parameterList.getParameters()
                 val parametersToAdd = ArrayList<JetParameter>()
                 for (parameter in superParameters) {
