@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.*
 
 public class FoldIfToReturnAsymmetricallyIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
     override fun isApplicableTo(element: JetIfExpression): Boolean {
@@ -31,30 +28,24 @@ public class FoldIfToReturnAsymmetricallyIntention : JetSelfTargetingOffsetIndep
         }
 
         val nextElement = JetPsiUtil.skipTrailingWhitespacesAndComments(element)
-        return nextElement is JetExpression && BranchedFoldingUtils.getFoldableBranchedReturn(nextElement) != null
+        return nextElement is JetReturnExpression && nextElement.getReturnedExpression() != null
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
         val condition = element.getCondition()!!
-        val thenRoot = element.getThen()!!
-        val elseRoot = JetPsiUtil.skipTrailingWhitespacesAndComments(element) as JetExpression
+        val thenBranch = element.getThen()!!
+        val elseBranch = JetPsiUtil.skipTrailingWhitespacesAndComments(element) as JetReturnExpression
 
-        val psiFactory = psi.JetPsiFactory(element)
-        var newIfExpression = psiFactory.createIf(condition, thenRoot, elseRoot)
-        val newReturnExpression = psiFactory.createReturn(newIfExpression)
-
-        newIfExpression = newReturnExpression.getReturnedExpression() as JetIfExpression
+        val psiFactory = JetPsiFactory(element)
+        var newIfExpression = psiFactory.createIf(condition, thenBranch, elseBranch)
 
         val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.getThen()!!)!!
         val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.getElse()!!)!!
 
-        val thenExpr = thenReturn.getReturnedExpression()!!
-        val elseExpr = elseReturn.getReturnedExpression()!!
+        thenReturn.replace(thenReturn.getReturnedExpression()!!)
+        elseReturn.replace(elseReturn.getReturnedExpression()!!)
 
-        thenReturn.replace(thenExpr)
-        elseReturn.replace(elseExpr)
-
-        elseRoot.delete()
-        element.replace(newReturnExpression)
+        element.replace(psiFactory.createReturn(newIfExpression))
+        elseBranch.delete()
     }
 }

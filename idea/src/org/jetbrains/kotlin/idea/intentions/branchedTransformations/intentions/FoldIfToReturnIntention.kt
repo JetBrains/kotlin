@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentInt
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 
 public class FoldIfToReturnIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
     override fun isApplicableTo(element: JetIfExpression): Boolean {
@@ -29,18 +30,12 @@ public class FoldIfToReturnIntention : JetSelfTargetingOffsetIndependentIntentio
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
-        val newReturnExpression = JetPsiFactory(element).createReturn(element)
-        val newIfExpression = newReturnExpression.getReturnedExpression() as JetIfExpression
+        val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(element.getThen()!!)!!
+        val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(element.getElse()!!)!!
 
-        val thenReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.getThen()!!)!!
-        val elseReturn = BranchedFoldingUtils.getFoldableBranchedReturn(newIfExpression.getElse()!!)!!
+        thenReturn.replace(thenReturn.getReturnedExpression()!!)
+        elseReturn.replace(elseReturn.getReturnedExpression()!!)
 
-        val thenExpr = thenReturn.getReturnedExpression()!!
-        val elseExpr = elseReturn.getReturnedExpression()!!
-
-        thenReturn.replace(thenExpr)
-        elseReturn.replace(elseExpr)
-
-        element.replace(newReturnExpression)
+        element.replace(JetPsiFactory(element).createReturn(element))
     }
 }
