@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.CodeStyleManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
@@ -74,7 +73,6 @@ public class DeclarationUtils {
         Project project = newInitializer.getProject();
         PsiFile file = parent.getContainingFile();
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(PsiDocumentManager.getInstance(project).getDocument(file));
-        CodeStyleManager.getInstance(project).adjustLineIndent(file, newInitializer.getTextRange());
 
         //noinspection ConstantConditions
         JetType inferredType = getPropertyTypeIfNeeded(property);

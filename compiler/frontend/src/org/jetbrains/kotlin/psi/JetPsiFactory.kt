@@ -63,7 +63,8 @@ public class JetPsiFactory(private val project: Project) {
     }
 
     public fun createExpression(text: String): JetExpression {
-        return createProperty("val x = $text").getInitializer() ?: error("Failed to create expression from text: '$text'")
+        //TODO: '\n' below if important - some strange code indenting problems appear without it
+        return createProperty("val x =\n$text").getInitializer() ?: error("Failed to create expression from text: '$text'")
     }
 
     public fun createClassLiteral(className: String): JetClassLiteralExpression =
@@ -345,8 +346,8 @@ public class JetPsiFactory(private val project: Project) {
         return createExpression("return $text") as JetReturnExpression
     }
 
-    public fun createReturn(expression: JetExpression?): JetReturnExpression {
-        return createReturn(JetPsiUtil.getText(expression))
+    public fun createReturn(expression: JetExpression): JetReturnExpression {
+        return createExpressionByPattern("return $0", expression) as JetReturnExpression
     }
 
     public fun createIf(condition: JetExpression, thenExpr: JetExpression, elseExpr: JetExpression?): JetIfExpression {
