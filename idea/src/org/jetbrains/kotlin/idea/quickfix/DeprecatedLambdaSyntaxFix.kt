@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.util.psiModificationUtil.getFunctionLiteralArgu
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.sure
 import java.util.ArrayList
@@ -152,12 +153,12 @@ private class LambdaToFunctionExpression(
         return null
     }
 
-    private fun JetElement.replaceWithReturn(psiFactory: JetPsiFactory) {
+    private fun JetExpression.replaceWithReturn(psiFactory: JetPsiFactory) {
         if (this is JetReturnExpression) {
             return
         }
         else {
-            replace(psiFactory.createReturn(getText()))
+            replace(psiFactory.createReturn(this))
         }
     }
 
@@ -183,8 +184,7 @@ private class LambdaToFunctionExpression(
 
         val functionWithEmptyBody = psiFactory.createFunction(functionDeclaration + " {}")
 
-        val blockExpression = functionLiteral.getBodyExpression()
-        if (blockExpression == null) return functionWithEmptyBody
+        val blockExpression = functionLiteral.getBodyExpression() ?: return functionWithEmptyBody
 
         val statements = blockExpression.getStatements()
         if (statements.isEmpty()) return functionWithEmptyBody
@@ -194,9 +194,16 @@ private class LambdaToFunctionExpression(
         }
 
         // many statements
-        if (returnType != null) statements.last().replaceWithReturn(psiFactory)
+        if (returnType != null) statements.filterIsInstance<JetExpression>().lastOrNull()?.replaceWithReturn(psiFactory)
 
-        return psiFactory.createFunction(functionDeclaration + "{ " + blockExpression.getText() + "}")
+        val fromElement = functionLiteral.getArrowNode()?.getPsi() ?: functionLiteral.getLBrace()
+        val toElement = functionLiteral.getRBrace()
+        // to include comments in the start/end of the body
+        val bodyText = fromElement.siblings(withItself = false)
+                .takeWhile { it != toElement }
+                .map { it.getText() }
+                .joinToString("")
+        return psiFactory.createFunction(functionDeclaration + "{ " + bodyText + "}")
     }
 
 }

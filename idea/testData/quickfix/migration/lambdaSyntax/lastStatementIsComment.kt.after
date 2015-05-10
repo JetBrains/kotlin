@@ -1,0 +1,8 @@
+// "Migrate lambda syntax" "true"
+
+
+val a = fun (p: Int): String {
+    val v = p + 1
+    return v.toString()
+    // returns v.toString()
+}

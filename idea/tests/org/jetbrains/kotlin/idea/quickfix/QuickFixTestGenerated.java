@@ -3075,6 +3075,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("lastStatementIsComment.kt")
+            public void testLastStatementIsComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/lastStatementIsComment.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("paranthesizedParameters.kt")
             public void testParanthesizedParameters() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/lambdaSyntax/paranthesizedParameters.kt");
