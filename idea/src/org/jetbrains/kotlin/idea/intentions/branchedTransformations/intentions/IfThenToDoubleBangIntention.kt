@@ -17,19 +17,19 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
-public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
-    override fun isApplicableTo(element: JetIfExpression): Boolean {
-        val condition = element.getCondition() as? JetBinaryExpression ?: return false
-        val thenClause = element.getThen() ?: return false
+public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
+    override fun applicabilityRange(element: JetIfExpression): TextRange? {
+        val condition = element.getCondition() as? JetBinaryExpression ?: return null
+        val thenClause = element.getThen() ?: return null
         val elseClause = element.getElse()
 
-        val expression = condition.expressionComparedToNull() ?: return false
+        val expression = condition.expressionComparedToNull() ?: return null
 
         val token = condition.getOperationToken()
 
@@ -37,20 +37,20 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentInte
         val matchingClause: JetExpression?
         when (token) {
             JetTokens.EQEQ -> {
-                throwExpression = thenClause.unwrapBlock() as? JetThrowExpression ?: return false
+                throwExpression = thenClause.unwrapBlock() as? JetThrowExpression ?: return null
                 matchingClause = elseClause
             }
 
             JetTokens.EXCLEQ -> {
                 matchingClause = thenClause
-                throwExpression = elseClause?.unwrapBlock() as? JetThrowExpression ?: return false
+                throwExpression = elseClause?.unwrapBlock() as? JetThrowExpression ?: return null
             }
 
             else -> throw IllegalStateException()
         }
 
         val matchesAsStatement = element.isStatement() && (matchingClause?.isNullExpressionOrEmptyBlock() ?: true)
-        if (!matchesAsStatement && !(matchingClause?.evaluatesTo(expression) ?: false && expression.isStableVariable())) return false
+        if (!matchesAsStatement && !(matchingClause?.evaluatesTo(expression) ?: false && expression.isStableVariable())) return null
 
         var text = "Replace 'if' expression with '!!' expression"
         if (!throwExpression.throwsNullPointerExceptionWithNoArguments()) {
@@ -58,7 +58,8 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentInte
         }
 
         setText(text)
-        return true
+        val rParen = element.getRightParenthesis() ?: return null
+        return TextRange(element.getTextRange().getStartOffset(), rParen.getTextRange().getEndOffset())
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
