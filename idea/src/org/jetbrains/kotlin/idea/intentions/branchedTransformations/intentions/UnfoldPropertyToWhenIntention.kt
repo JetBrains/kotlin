@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
+import org.jetbrains.kotlin.idea.intentions.declarations.DeclarationUtils
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetWhenExpression
@@ -31,6 +32,7 @@ public class UnfoldPropertyToWhenIntention : JetSelfTargetingOffsetIndependentIn
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {
-        BranchedUnfoldingUtils.unfoldPropertyToWhen(element, editor)
+        val assignment = DeclarationUtils.splitPropertyDeclaration(element)
+        BranchedUnfoldingUtils.unfoldAssignmentToWhen(assignment, editor)
     }
 }

@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.copied
 
 public class UnfoldReturnToWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression") {
     override fun isApplicableTo(element: JetReturnExpression): Boolean {
@@ -30,6 +29,14 @@ public class UnfoldReturnToWhenIntention : JetSelfTargetingOffsetIndependentInte
     }
 
     override fun applyTo(element: JetReturnExpression, editor: Editor) {
-        BranchedUnfoldingUtils.unfoldReturnToWhen(element)
+        val whenExpression = element.getReturnedExpression() as JetWhenExpression
+        val newWhenExpression = whenExpression.copied()
+
+        for (entry in newWhenExpression.getEntries()) {
+            val currExpr = BranchedUnfoldingUtils.getOutermostLastBlockElement(entry.getExpression())
+            currExpr.replace(JetPsiFactory(element).createExpressionByPattern("return $0", currExpr))
+        }
+
+        element.replace(newWhenExpression)
     }
 }

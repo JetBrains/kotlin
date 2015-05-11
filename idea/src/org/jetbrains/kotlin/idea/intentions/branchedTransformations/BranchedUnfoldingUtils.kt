@@ -17,118 +17,47 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.declarations.DeclarationUtils
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.copied
 
 public object BranchedUnfoldingUtils {
-
-    private fun getOutermostLastBlockElement(expression: JetExpression?): JetExpression {
+    public fun getOutermostLastBlockElement(expression: JetExpression?): JetExpression {
         return JetPsiUtil.getOutermostLastBlockElement(expression, JetPsiUtil.ANY_JET_ELEMENT) as JetExpression
-    }
-
-    public val UNFOLD_WITHOUT_CHECK: String = "Expression must be checked before unfolding"
-
-    private fun assertNotNull(value: Any?) {
-        assert(value != null) { UNFOLD_WITHOUT_CHECK }
     }
 
     public fun unfoldAssignmentToIf(assignment: JetBinaryExpression, editor: Editor) {
         val op = assignment.getOperationReference().getText()
-        val lhs = assignment.getLeft()
+        val left = assignment.getLeft()!!
         val ifExpression = assignment.getRight() as JetIfExpression
 
-        assertNotNull(ifExpression)
-
-        //noinspection ConstantConditions
-        val newIfExpression = ifExpression.copy() as JetIfExpression
+        val newIfExpression = ifExpression.copied()
 
         val thenExpr = getOutermostLastBlockElement(newIfExpression.getThen())
         val elseExpr = getOutermostLastBlockElement(newIfExpression.getElse())
 
-        assertNotNull(thenExpr)
-        assertNotNull(elseExpr)
-
-        //noinspection ConstantConditions
         val psiFactory = JetPsiFactory(assignment)
-        thenExpr.replace(psiFactory.createExpressionByPattern("$0 $1 $2", lhs, op, thenExpr))
-        elseExpr.replace(psiFactory.createExpressionByPattern("$0 $1 $2", lhs, op, elseExpr))
+        thenExpr.replace(psiFactory.createExpressionByPattern("$0 $1 $2", left, op, thenExpr))
+        elseExpr.replace(psiFactory.createExpressionByPattern("$0 $1 $2", left, op, elseExpr))
 
-        val resultElement = assignment.replace(newIfExpression)
+        val resultIf = assignment.replace(newIfExpression)
 
-        editor.getCaretModel().moveToOffset(resultElement.getTextOffset())
+        editor.getCaretModel().moveToOffset(resultIf.getTextOffset())
     }
 
     public fun unfoldAssignmentToWhen(assignment: JetBinaryExpression, editor: Editor) {
         val op = assignment.getOperationReference().getText()
-        val lhs = assignment.getLeft()
+        val left = assignment.getLeft()!!
         val whenExpression = assignment.getRight() as JetWhenExpression
 
-        assertNotNull(whenExpression)
-
-        //noinspection ConstantConditions
-        val newWhenExpression = whenExpression.copy() as JetWhenExpression
+        val newWhenExpression = whenExpression.copied()
 
         for (entry in newWhenExpression.getEntries()) {
-            val currExpr = getOutermostLastBlockElement(entry.getExpression())
-
-            assertNotNull(currExpr)
-
-            //noinspection ConstantConditions
-            currExpr.replace(JetPsiFactory(assignment).createExpressionByPattern("$0 $1 $2", lhs, op, currExpr))
+            val expr = getOutermostLastBlockElement(entry.getExpression())
+            expr.replace(JetPsiFactory(assignment).createExpressionByPattern("$0 $1 $2", left, op, expr))
         }
 
-        val resultElement = assignment.replace(newWhenExpression)
+        val resultWhen = assignment.replace(newWhenExpression)
 
-        editor.getCaretModel().moveToOffset(resultElement.getTextOffset())
-    }
-
-    public fun unfoldPropertyToIf(property: JetProperty, editor: Editor) {
-        val assignment = DeclarationUtils.splitPropertyDeclaration(property)
-        unfoldAssignmentToIf(assignment, editor)
-    }
-
-    public fun unfoldPropertyToWhen(property: JetProperty, editor: Editor) {
-        val assignment = DeclarationUtils.splitPropertyDeclaration(property)
-        unfoldAssignmentToWhen(assignment, editor)
-    }
-
-    public fun unfoldReturnToIf(returnExpression: JetReturnExpression) {
-        val ifExpression = returnExpression.getReturnedExpression() as JetIfExpression
-
-        assertNotNull(ifExpression)
-
-        //noinspection ConstantConditions
-        val newIfExpression = ifExpression.copy() as JetIfExpression
-
-        val thenExpr = getOutermostLastBlockElement(newIfExpression.getThen())
-        val elseExpr = getOutermostLastBlockElement(newIfExpression.getElse())
-
-        assertNotNull(thenExpr)
-        assertNotNull(elseExpr)
-
-        val psiFactory = JetPsiFactory(returnExpression)
-        thenExpr.replace(psiFactory.createExpressionByPattern("return $0", thenExpr))
-        elseExpr.replace(psiFactory.createExpressionByPattern("return $0", elseExpr))
-
-        returnExpression.replace(newIfExpression)
-    }
-
-    public fun unfoldReturnToWhen(returnExpression: JetReturnExpression) {
-        val whenExpression = returnExpression.getReturnedExpression() as JetWhenExpression
-
-        assertNotNull(whenExpression)
-
-        //noinspection ConstantConditions
-        val newWhenExpression = whenExpression.copy() as JetWhenExpression
-
-        for (entry in newWhenExpression.getEntries()) {
-            val currExpr = getOutermostLastBlockElement(entry.getExpression())
-
-            assertNotNull(currExpr)
-
-            currExpr.replace(JetPsiFactory(returnExpression).createExpressionByPattern("return $0", currExpr))
-        }
-
-        returnExpression.replace(newWhenExpression)
+        editor.getCaretModel().moveToOffset(resultWhen.getTextOffset())
     }
 }
