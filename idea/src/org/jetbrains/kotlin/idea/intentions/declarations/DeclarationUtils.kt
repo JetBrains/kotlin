@@ -16,71 +16,33 @@
 
 package org.jetbrains.kotlin.idea.intentions.declarations
 
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.setType
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public object DeclarationUtils {
+// returns assignment which replaces initializer
+public fun splitPropertyDeclaration(property: JetProperty): JetBinaryExpression {
+    val parent = property.getParent()!!
 
-    private fun assertNotNull(value: Any?) {
-        assert(value != null, "Expression must be checked before applying transformation")
+    val initializer = property.getInitializer()!!
+
+    val explicitTypeToSet = if (property.getTypeReference() != null) null else initializer.analyze().getType(initializer)
+
+    val psiFactory = JetPsiFactory(property)
+    var assignment = psiFactory.createExpressionByPattern("$0 = $1", property.getName()!!, initializer)
+
+    assignment = parent.addAfter(assignment, property) as JetBinaryExpression
+    parent.addAfter(psiFactory.createNewLine(), property)
+
+    property.setInitializer(null)
+
+    if (explicitTypeToSet != null) {
+        property.setType(explicitTypeToSet)
     }
 
-    public fun checkSplitProperty(property: JetProperty): Boolean {
-        return property.hasInitializer() && property.isLocal()
-    }
-
-    private fun getPropertyTypeIfNeeded(property: JetProperty): JetType? {
-        if (property.getTypeReference() != null) return null
-
-        val initializer = property.getInitializer()
-        val type = if (initializer != null) property.analyze(BodyResolveMode.FULL).getType(initializer) else null
-        return if (type == null || type.isError()) null else type
-    }
-
-    // returns assignment which replaces initializer
-    public fun splitPropertyDeclaration(property: JetProperty): JetBinaryExpression {
-        var property = property
-        val parent = property.getParent()
-        assertNotNull(parent)
-
-        //noinspection unchecked
-        val initializer = property.getInitializer()
-        assertNotNull(initializer)
-
-        val psiFactory = JetPsiFactory(property)
-        //noinspection ConstantConditions, unchecked
-        var newInitializer = psiFactory.createExpressionByPattern("$0 = $1", property.getName(), initializer)
-
-        newInitializer = parent.addAfter(newInitializer, property) as JetBinaryExpression
-        parent.addAfter(psiFactory.createNewLine(), property)
-
-        val project = newInitializer.getProject()
-        val file = parent.getContainingFile()
-        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(PsiDocumentManager.getInstance(project).getDocument(file))
-
-        //noinspection ConstantConditions
-        val inferredType = getPropertyTypeIfNeeded(property)
-
-        val typeStr = if (inferredType != null)
-            IdeDescriptorRenderers.SOURCE_CODE.renderType(inferredType)
-        else
-            JetPsiUtil.getNullableText(property.getTypeReference())
-
-        //noinspection ConstantConditions
-        property = property.replace(psiFactory.createProperty(property.getNameIdentifier()!!.getText(), typeStr, property.isVar())) as JetProperty
-
-        if (inferredType != null) {
-            ShortenReferences.DEFAULT.process(property.getTypeReference())
-        }
-
-        return newInitializer
-    }
+    return assignment
 }

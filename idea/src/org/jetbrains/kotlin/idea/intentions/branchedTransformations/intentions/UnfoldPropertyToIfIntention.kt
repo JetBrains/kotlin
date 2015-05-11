@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
-import org.jetbrains.kotlin.idea.intentions.declarations.DeclarationUtils
+import org.jetbrains.kotlin.idea.intentions.declarations.splitPropertyDeclaration
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetProperty
 
@@ -32,7 +32,7 @@ public class UnfoldPropertyToIfIntention : JetSelfTargetingRangeIntention<JetPro
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {
-        val assignment = DeclarationUtils.splitPropertyDeclaration(element)
+        val assignment = splitPropertyDeclaration(element)
         BranchedUnfoldingUtils.unfoldAssignmentToIf(assignment, editor)
     }
 }

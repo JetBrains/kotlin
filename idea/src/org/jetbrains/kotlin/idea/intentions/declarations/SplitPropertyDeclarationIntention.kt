@@ -20,10 +20,10 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.psi.JetProperty
 
-public class SplitPropertyDeclarationIntention : JetSelfTargetingOffsetIndependentIntention<JetProperty>("split.property.declaration", javaClass()) {
-    override fun isApplicableTo(element: JetProperty): Boolean = DeclarationUtils.checkSplitProperty(element)
+public class SplitPropertyDeclarationIntention : JetSelfTargetingOffsetIndependentIntention<JetProperty>(javaClass(), "Split property declaration") {
+    override fun isApplicableTo(element: JetProperty): Boolean = element.hasInitializer() && element.isLocal()
 
     override fun applyTo(element: JetProperty, editor: Editor) {
-        DeclarationUtils.splitPropertyDeclaration(element)
+        splitPropertyDeclaration(element)
     }
 }
