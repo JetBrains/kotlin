@@ -17,15 +17,17 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.copied
 
-public class UnfoldReturnToWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression") {
-    override fun isApplicableTo(element: JetReturnExpression): Boolean {
-        val expr = element.getReturnedExpression()
-        return expr is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(expr)
+public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression") {
+    override fun applicabilityRange(element: JetReturnExpression): TextRange? {
+        val whenExpr = element.getReturnedExpression() as? JetWhenExpression ?: return null
+        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null
+        return TextRange(element.getTextRange().getStartOffset(), whenExpr.getWhenKeywordElement().getTextRange().getEndOffset())
     }
 
     override fun applyTo(element: JetReturnExpression, editor: Editor) {

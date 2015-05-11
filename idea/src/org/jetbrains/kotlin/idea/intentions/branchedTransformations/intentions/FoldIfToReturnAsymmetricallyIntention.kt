@@ -17,18 +17,20 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
-public class FoldIfToReturnAsymmetricallyIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
-    override fun isApplicableTo(element: JetIfExpression): Boolean {
+public class FoldIfToReturnAsymmetricallyIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
+    override fun applicabilityRange(element: JetIfExpression): TextRange? {
         if (BranchedFoldingUtils.getFoldableBranchedReturn(element.getThen()) == null || element.getElse() != null) {
-            return false
+            return null
         }
 
-        val nextElement = JetPsiUtil.skipTrailingWhitespacesAndComments(element)
-        return nextElement is JetReturnExpression && nextElement.getReturnedExpression() != null
+        val nextElement = JetPsiUtil.skipTrailingWhitespacesAndComments(element) as? JetReturnExpression
+        if (nextElement?.getReturnedExpression() == null) return null
+        return element.getIfKeyword().getTextRange()
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {

@@ -17,18 +17,20 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.idea.intentions.declarations.DeclarationUtils
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetWhenExpression
 
-public class UnfoldPropertyToWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetProperty>(javaClass(), "Replace property initializer with 'when' expression") {
-    override fun isApplicableTo(element: JetProperty): Boolean {
-        if (!element.isLocal()) return false
-        val initializer = element.getInitializer()
-        return initializer is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(initializer)
+public class UnfoldPropertyToWhenIntention : JetSelfTargetingRangeIntention<JetProperty>(javaClass(), "Replace property initializer with 'when' expression") {
+    override fun applicabilityRange(element: JetProperty): TextRange? {
+        if (!element.isLocal()) return null
+        val initializer = element.getInitializer() as? JetWhenExpression ?: return null
+        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(initializer)) return null
+        return TextRange(element.getTextRange().getStartOffset(), initializer.getWhenKeywordElement().getTextRange().getEndOffset())
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {

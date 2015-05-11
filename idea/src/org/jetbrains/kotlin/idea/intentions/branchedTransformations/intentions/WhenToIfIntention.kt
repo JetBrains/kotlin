@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
 import org.jetbrains.kotlin.psi.*
 
-public class WhenToIfIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Replace 'when' with 'if'") {
-    override fun isApplicableTo(element: JetWhenExpression, caretOffset: Int): Boolean {
+public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Replace 'when' with 'if'") {
+    override fun applicabilityRange(element: JetWhenExpression): TextRange? {
         val entries = element.getEntries()
-        if (entries.isEmpty()) return false
+        if (entries.isEmpty()) return null
         val lastEntry = entries.last()
-        if (entries.any { it != lastEntry && it.isElse() }) return false
-
-        return element.getWhenKeywordElement().getTextRange().containsOffset(caretOffset)
+        if (entries.any { it != lastEntry && it.isElse() }) return null
+        return element.getWhenKeywordElement().getTextRange()
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

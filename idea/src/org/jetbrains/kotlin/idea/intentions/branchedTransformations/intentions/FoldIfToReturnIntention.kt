@@ -17,16 +17,18 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class FoldIfToReturnIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
-    override fun isApplicableTo(element: JetIfExpression): Boolean {
-        return BranchedFoldingUtils.getFoldableBranchedReturn(element.getThen()) != null
-               && BranchedFoldingUtils.getFoldableBranchedReturn(element.getElse()) != null
+public class FoldIfToReturnIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with return") {
+    override fun applicabilityRange(element: JetIfExpression): TextRange? {
+        if (BranchedFoldingUtils.getFoldableBranchedReturn(element.getThen()) == null) return null
+        if (BranchedFoldingUtils.getFoldableBranchedReturn(element.getElse()) == null) return null
+        return element.getIfKeyword().getTextRange()
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {

@@ -17,23 +17,24 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.psi.*
 
-public class FoldWhenToReturnIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>(javaClass(), "Replace 'when' expression with return") {
-    override fun isApplicableTo(element: JetWhenExpression): Boolean {
-        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(element)) return false
+public class FoldWhenToReturnIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Replace 'when' expression with return") {
+    override fun applicabilityRange(element: JetWhenExpression): TextRange? {
+        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(element)) return null
 
         val entries = element.getEntries()
 
-        if (entries.isEmpty()) return false
+        if (entries.isEmpty()) return null
 
         for (entry in entries) {
-            if (BranchedFoldingUtils.getFoldableBranchedReturn(entry.getExpression()) == null) return false
+            if (BranchedFoldingUtils.getFoldableBranchedReturn(entry.getExpression()) == null) return null
         }
 
-        return true
+        return element.getWhenKeywordElement().getTextRange()
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

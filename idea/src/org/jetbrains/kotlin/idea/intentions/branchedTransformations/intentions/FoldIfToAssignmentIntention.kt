@@ -17,15 +17,19 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class FoldIfToAssignmentIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with assignment") {
-    override fun isApplicableTo(element: JetIfExpression): Boolean {
-        val thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getThen()) ?: return false
-        val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getElse()) ?: return false
-        return BranchedFoldingUtils.checkAssignmentsMatch(thenAssignment, elseAssignment)
+public class FoldIfToAssignmentIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with assignment") {
+    override fun applicabilityRange(element: JetIfExpression): TextRange? {
+        val thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getThen()) ?: return null
+        val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.getElse()) ?: return null
+        if (!BranchedFoldingUtils.checkAssignmentsMatch(thenAssignment, elseAssignment)) return null
+        return element.getIfKeyword().getTextRange()
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {

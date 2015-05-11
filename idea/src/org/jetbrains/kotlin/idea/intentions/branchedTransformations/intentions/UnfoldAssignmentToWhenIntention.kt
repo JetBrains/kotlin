@@ -17,19 +17,21 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetWhenExpression
 
-public class UnfoldAssignmentToWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'when' expression" ) {
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        if (element.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return false
-        if (element.getLeft() == null) return false
-        val right = element.getRight()
-        return right is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(right)
+public class UnfoldAssignmentToWhenIntention : JetSelfTargetingRangeIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'when' expression" ) {
+    override fun applicabilityRange(element: JetBinaryExpression): TextRange? {
+        if (element.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return null
+        if (element.getLeft() == null) return null
+        val right = element.getRight() as? JetWhenExpression ?: return null
+        if (!JetPsiUtil.checkWhenExpressionHasSingleElse(right)) return null
+        return TextRange(element.getTextRange().getStartOffset(), right.getWhenKeywordElement().getTextRange().getEndOffset())
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {

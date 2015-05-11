@@ -17,16 +17,18 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.idea.intentions.declarations.DeclarationUtils
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetProperty
 
-public class UnfoldPropertyToIfIntention : JetSelfTargetingOffsetIndependentIntention<JetProperty>(javaClass(), "Replace property initializer with 'if' expression") {
-    override fun isApplicableTo(element: JetProperty): Boolean {
-        if (!element.isLocal()) return false
-        return element.getInitializer() is JetIfExpression
+public class UnfoldPropertyToIfIntention : JetSelfTargetingRangeIntention<JetProperty>(javaClass(), "Replace property initializer with 'if' expression") {
+    override fun applicabilityRange(element: JetProperty): TextRange? {
+        if (!element.isLocal()) return null
+        val initializer = element.getInitializer() as? JetIfExpression ?: return null
+        return TextRange(element.getTextRange().getStartOffset(), initializer.getIfKeyword().getTextRange().getEndOffset())
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {

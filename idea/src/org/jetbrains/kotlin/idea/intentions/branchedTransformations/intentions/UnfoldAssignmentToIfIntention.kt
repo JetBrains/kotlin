@@ -17,17 +17,19 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetIfExpression
 
-public class UnfoldAssignmentToIfIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'if' expression") {
-    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        if (element.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return false
-        if (element.getLeft() == null) return false
-        return element.getRight() is JetIfExpression
+public class UnfoldAssignmentToIfIntention : JetSelfTargetingRangeIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'if' expression") {
+    override fun applicabilityRange(element: JetBinaryExpression): TextRange? {
+        if (element.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return null
+        if (element.getLeft() == null) return null
+        val right = element.getRight() as? JetIfExpression ?: return null
+        return TextRange(element.getTextRange().getStartOffset(), right.getIfKeyword().getTextRange().getEndOffset())
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {

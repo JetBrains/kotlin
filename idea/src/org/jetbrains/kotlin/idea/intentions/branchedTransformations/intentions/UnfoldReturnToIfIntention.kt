@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -25,9 +26,10 @@ import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.copied
 
-public class UnfoldReturnToIfIntention : JetSelfTargetingOffsetIndependentIntention<JetReturnExpression>(javaClass(), "Replace return with 'if' expression") {
-    override fun isApplicableTo(element: JetReturnExpression): Boolean {
-        return element.getReturnedExpression() is JetIfExpression
+public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'if' expression") {
+    override fun applicabilityRange(element: JetReturnExpression): TextRange? {
+        val ifExpression = element.getReturnedExpression() as? JetIfExpression ?: return null
+        return TextRange(element.getTextRange().getStartOffset(), ifExpression.getIfKeyword().getTextRange().getEndOffset())
     }
 
     override fun applyTo(element: JetReturnExpression, editor: Editor) {
