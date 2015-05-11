@@ -157,7 +157,8 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
     abstract val boxingRequired: Boolean
 
     fun getReturnExpression(arguments: List<String>, psiFactory: JetPsiFactory): JetReturnExpression? {
-        return getBoxingExpressionText(arguments)?.let { psiFactory.createReturn(it) }
+        val expressionText = getBoxingExpressionText(arguments) ?: return null
+        return psiFactory.createExpression("return $expressionText") as JetReturnExpression
     }
 
     protected abstract fun extractExpressionByIndex(boxedExpression: JetExpression, index: Int): JetExpression?

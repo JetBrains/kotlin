@@ -515,8 +515,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
                     lastExpression to null
                 }
 
-        val returnExpression = descriptor.controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(defaultExpression), psiFactory)
-        if (returnExpression == null) return
+        val returnExpression = descriptor.controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(defaultExpression), psiFactory) ?: return
 
         when(generatorOptions.target) {
             ExtractionTarget.LAZY_PROPERTY, ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION -> {

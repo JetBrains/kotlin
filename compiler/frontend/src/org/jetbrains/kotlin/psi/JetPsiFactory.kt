@@ -342,10 +342,6 @@ public class JetPsiFactory(private val project: Project) {
         return JetBlockCodeFragment(project, "fragment.kt", text, null, context)
     }
 
-    public fun createReturn(text: String): JetReturnExpression {
-        return createExpression("return $text") as JetReturnExpression
-    }
-
     public fun createReturn(expression: JetExpression): JetReturnExpression {
         return createExpressionByPattern("return $0", expression) as JetReturnExpression
     }
