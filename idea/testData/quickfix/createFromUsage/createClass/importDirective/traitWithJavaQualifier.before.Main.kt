@@ -1,4 +1,4 @@
-// "Create trait 'A'" "true"
+// "Create interface 'A'" "true"
 // ERROR: Unresolved reference: A
 import J.<caret>A
 

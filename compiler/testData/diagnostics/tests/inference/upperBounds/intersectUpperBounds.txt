@@ -7,25 +7,25 @@ package s {
     internal fun test(/*0*/ inA: s.In<s.A>, /*1*/ inB: s.In<s.B>, /*2*/ inC: s.In<s.C>): kotlin.Unit
     internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 
-    internal trait A {
+    internal interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait B {
+    internal interface B {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait C : s.A, s.B {
+    internal interface C : s.A, s.B {
         public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait In</*0*/ in T> {
+    internal interface In</*0*/ in T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

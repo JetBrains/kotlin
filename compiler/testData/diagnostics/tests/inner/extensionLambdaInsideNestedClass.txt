@@ -17,7 +17,7 @@ package f {
         }
     }
 
-    internal trait ActionContext {
+    internal interface ActionContext {
         internal abstract val session: kotlin.Map<kotlin.String, kotlin.String>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -2,8 +2,8 @@ package test
 
 internal fun </*0*/ T : test.Foo> foo(): kotlin.Unit where T : test.Bar
 
-internal trait Bar {
+internal interface Bar {
 }
 
-internal trait Foo {
+internal interface Foo {
 }

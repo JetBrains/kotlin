@@ -10,7 +10,7 @@ public open class RawSuperTypeWithRecursiveBound {
         public open override /*1*/ fun foo(/*0*/ p0: test.RawSuperTypeWithRecursiveBound.Super<*>!): kotlin.Unit
     }
 
-    public trait Super</*0*/ T : test.RawSuperTypeWithRecursiveBound.Super<T!>!> {
+    public interface Super</*0*/ T : test.RawSuperTypeWithRecursiveBound.Super<T!>!> {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ p0: T!): kotlin.Unit
     }

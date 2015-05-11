@@ -3,7 +3,7 @@ package
 
 package p {
 
-    public trait A</*0*/ T> {
+    public interface A</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -16,13 +16,13 @@ package p {
         public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public trait C {
+    public interface C {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public trait D</*0*/ T> {
+    public interface D</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -46,19 +46,19 @@ package p {
     public fun c(/*0*/ c: p.C<kotlin.Int>): kotlin.Unit
     public fun d(/*0*/ d: p.D<kotlin.Int>): kotlin.Unit
 
-    public trait A {
+    public interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public trait C</*0*/ T> {
+    public interface C</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public trait D</*0*/ T> {
+    public interface D</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -76,11 +76,11 @@ package p {
     public fun c(/*0*/ c: p.C<kotlin.Int>): kotlin.Unit
     public fun d(/*0*/ d: p.D<kotlin.Int>): kotlin.Unit
 
-    public trait A {
+    public interface A {
         // -- Module: <m2> --
     }
 
-    public trait A</*0*/ T> {
+    public interface A</*0*/ T> {
         // -- Module: <m1> --
     }
 
@@ -88,19 +88,19 @@ package p {
         // -- Module: <m1> --
     }
 
-    public trait C {
+    public interface C {
         // -- Module: <m1> --
     }
 
-    public trait C</*0*/ T> {
+    public interface C</*0*/ T> {
         // -- Module: <m2> --
     }
 
-    public trait D</*0*/ T> {
+    public interface D</*0*/ T> {
         // -- Module: <m1> --
     }
 
-    public trait D</*0*/ T> {
+    public interface D</*0*/ T> {
         // -- Module: <m2> --
     }
 

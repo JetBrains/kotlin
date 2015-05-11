@@ -5,7 +5,7 @@ package kt1875 {
     internal fun test(/*0*/ t: kt1875.T): kotlin.Unit
     internal fun test1(/*0*/ t: kt1875.T?): kotlin.Unit
 
-    internal trait T {
+    internal interface T {
         internal abstract val f: ((kotlin.Int) -> kotlin.Unit)?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

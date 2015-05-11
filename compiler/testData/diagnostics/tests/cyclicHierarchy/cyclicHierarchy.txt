@@ -10,34 +10,34 @@ internal val g: G? = null
 internal val h: H? = null
 internal fun test(): kotlin.Unit
 
-internal trait A {
+internal interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait B : A {
+internal interface B : A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait C {
+internal interface C {
 }
 
-internal trait D {
+internal interface D {
 }
 
-internal trait E {
+internal interface E {
 }
 
-internal trait F {
+internal interface F {
 }
 
-internal trait G : F {
+internal interface G : F {
 }
 
-internal trait H : F {
+internal interface H : F {
 }

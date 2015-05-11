@@ -1,8 +1,8 @@
 package test
 
-public trait LoadIterableWithPropagation {
+public interface LoadIterableWithPropagation {
 
-    public trait LoadIterable</*0*/ T> {
+    public interface LoadIterable</*0*/ T> {
         org.jetbrains.annotations.Mutable() public abstract fun getIterable(): kotlin.(Mutable)Iterable<T!>!
         org.jetbrains.annotations.ReadOnly() public abstract fun getReadOnlyIterable(): kotlin.(Mutable)Iterable<T!>!
         public abstract fun setIterable(/*0*/ org.jetbrains.annotations.Mutable() p0: kotlin.(Mutable)Iterable<T!>!): kotlin.Unit

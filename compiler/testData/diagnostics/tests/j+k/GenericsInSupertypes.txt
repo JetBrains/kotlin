@@ -57,7 +57,7 @@ internal abstract class K : p.C<p.P> {
 
 package p {
 
-    public trait A</*0*/ TA> {
+    public interface A</*0*/ TA> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal abstract fun foo(/*0*/ p: p.A<TA>): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -80,7 +80,7 @@ package p {
         public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public trait G</*0*/ TG> {
+    public interface G</*0*/ TG> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

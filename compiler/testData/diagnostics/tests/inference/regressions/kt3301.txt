@@ -5,13 +5,13 @@ package arrays {
     internal fun m(/*0*/ args: kotlin.Array<arrays.A>): kotlin.Unit
     internal fun test122(): kotlin.Unit
 
-    internal trait A {
+    internal interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait B {
+    internal interface B {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

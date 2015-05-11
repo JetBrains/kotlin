@@ -11,19 +11,19 @@ package a {
     internal fun </*0*/ T> two(/*0*/ u: T, /*1*/ v: T): T
     internal fun use(/*0*/ vararg a: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Array<out kotlin.Any>
 
-    internal trait A {
+    internal interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait B : a.A {
+    internal interface B : a.A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait C : a.A {
+    internal interface C : a.A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

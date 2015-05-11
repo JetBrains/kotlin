@@ -1,6 +1,6 @@
 package test
 
-public trait EmptyArrayInParam {
+public interface EmptyArrayInParam {
 
     test.EmptyArrayInParam.MyAnnotation(value = {}: kotlin.Array<out kotlin.String>) public open class A {
         public constructor A()

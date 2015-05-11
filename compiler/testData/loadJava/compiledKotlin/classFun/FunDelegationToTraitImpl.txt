@@ -1,6 +1,6 @@
 package test
 
-internal trait A {
+internal interface A {
     internal open fun f(): kotlin.String
 }
 

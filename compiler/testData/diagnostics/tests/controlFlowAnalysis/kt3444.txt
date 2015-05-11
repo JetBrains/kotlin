@@ -3,7 +3,7 @@ package
 internal val m: X
 internal fun box(): kotlin.Unit
 
-internal trait X {
+internal interface X {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal abstract fun f(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -19,7 +19,7 @@ package a {
     internal fun test7(/*0*/ list: kotlin.MutableList<kotlin.Int>): kotlin.Unit
     internal fun test8(): kotlin.Int
 
-    internal trait A {
+    internal interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -53,8 +53,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.OVERLOADS_PRIVATE, "''overloads'' annotation has no effect on private and local declarations");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_ABSTRACT, "Native declaration can not be abstract");
         MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_HAVE_BODY, "Native declaration can not have a body");
-        MAP.put(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT, "Members of traits can not be native");
-        MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED, "Members of traits can not be inlined");
+        MAP.put(ErrorsJvm.NATIVE_DECLARATION_IN_TRAIT, "Members of interfaces can not be native");
+        MAP.put(ErrorsJvm.NATIVE_DECLARATION_CANNOT_BE_INLINED, "Members of interfaces can not be inlined");
 
         MAP.put(ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
         MAP.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, "Usage of `javaClass<T>()` in annotations is deprecated. Use T::class instead");
@@ -65,7 +65,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Expected type does not accept nulls in {0}, but the value may be null in {1}", Renderers.TO_STRING, Renderers.TO_STRING);
 
-        MAP.put(ErrorsJvm.TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Traits can't call Java default methods via super");
+        MAP.put(ErrorsJvm.TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
     }
 
 

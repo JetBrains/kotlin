@@ -1,6 +1,6 @@
 package
 
-internal trait One {
+internal interface One {
     private final fun boo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Int
@@ -8,7 +8,7 @@ internal trait One {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait OneImpl : One {
+internal interface OneImpl : One {
     invisible_fake final override /*1*/ /*fake_override*/ fun boo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(): kotlin.Int
@@ -43,14 +43,14 @@ internal final class Test3 : Two, One {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Two {
+internal interface Two {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait TwoImpl : Two {
+internal interface TwoImpl : Two {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

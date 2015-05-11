@@ -24,7 +24,7 @@ internal final class D : test.B, test.X {
     internal open override /*2*/ /*fake_override*/ fun foo(): kotlin.Unit
 }
 
-internal trait X : test.A {
+internal interface X : test.A {
     internal open fun bar(): kotlin.Unit
     internal abstract override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
 }

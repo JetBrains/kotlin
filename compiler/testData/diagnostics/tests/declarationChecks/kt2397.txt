@@ -10,7 +10,7 @@ package a {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait T {
+    internal interface T {
         internal final val b: kotlin.Int
         internal final val c: kotlin.Int
         internal final val d: kotlin.Int = 1

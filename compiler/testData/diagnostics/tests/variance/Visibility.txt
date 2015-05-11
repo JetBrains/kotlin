@@ -1,6 +1,6 @@
 package
 
-internal trait Test</*0*/ in I, /*1*/ out O> {
+internal interface Test</*0*/ in I, /*1*/ out O> {
     internal abstract var interlan_private_set: O
     internal abstract val internal_val: I
     private/*private to this*/ abstract var private_private_set: O

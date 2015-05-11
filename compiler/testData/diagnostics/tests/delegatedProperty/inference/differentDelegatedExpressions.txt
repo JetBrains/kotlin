@@ -32,7 +32,7 @@ package baz {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait MyPropertyContainer {
+    internal interface MyPropertyContainer {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal abstract fun </*0*/ R, /*1*/ T> getMyProperty(): baz.MyProperty<R, T>
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -47,7 +47,7 @@ package baz {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait Outer {
+    internal interface Outer {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal abstract fun getContainer(): baz.MyPropertyContainer
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

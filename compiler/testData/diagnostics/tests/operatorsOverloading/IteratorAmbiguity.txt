@@ -4,7 +4,7 @@ internal fun test1(/*0*/ collection: MyCollection): kotlin.Unit
 internal fun MyAnotherCollectionInterface.iterator(): MyIterator
 internal fun MyCollectionInterface.iterator(): MyIterator
 
-internal trait MyAnotherCollectionInterface {
+internal interface MyAnotherCollectionInterface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -17,7 +17,7 @@ internal final class MyCollection : MyCollectionInterface, MyAnotherCollectionIn
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait MyCollectionInterface {
+internal interface MyCollectionInterface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

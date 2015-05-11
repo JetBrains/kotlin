@@ -5,6 +5,6 @@ internal open class Class : test.Trait {
     internal open override /*1*/ /*fake_override*/ fun f(/*0*/ a: kotlin.String): kotlin.Unit
 }
 
-internal trait Trait {
+internal interface Trait {
     internal open fun f(/*0*/ a: kotlin.String): kotlin.Unit
 }

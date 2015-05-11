@@ -1,4 +1,4 @@
-package 
+package
 
 internal final class C {
     kotlin.jvm.overloads() public constructor C()

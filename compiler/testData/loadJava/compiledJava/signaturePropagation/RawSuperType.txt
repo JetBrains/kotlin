@@ -9,7 +9,7 @@ public open class RawSuperType {
         public open override /*1*/ fun foo(/*0*/ p0: kotlin.Any!): kotlin.Unit
     }
 
-    public trait Super</*0*/ T> {
+    public interface Super</*0*/ T> {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ p0: T!): kotlin.Unit
     }

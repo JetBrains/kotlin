@@ -1,6 +1,6 @@
 package test
 
-internal trait TheTrait {
+internal interface TheTrait {
 
     internal companion object Companion {
         /*primary*/ private constructor Companion()

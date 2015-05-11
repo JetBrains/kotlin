@@ -1,6 +1,6 @@
 // "Create enum constant 'A'" "false"
 // ACTION: Create class 'A'
-// ACTION: Create trait 'A'
+// ACTION: Create interface 'A'
 // ACTION: Create object 'A'
 // ACTION: Create enum 'A'
 // ACTION: Create annotation 'A'

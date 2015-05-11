@@ -5,6 +5,6 @@ public final class UnboundWildcard {
     public final fun collection(): kotlin.(Mutable)Collection<*>!
     public final fun foo(): test.UnboundWildcard.MyClass<*>!
 
-    public trait MyClass</*0*/ T : kotlin.CharSequence!> {
+    public interface MyClass</*0*/ T : kotlin.CharSequence!> {
     }
 }

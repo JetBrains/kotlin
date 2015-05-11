@@ -2,7 +2,7 @@ package
 
 internal fun zz(/*0*/ b: Baz): kotlin.Int
 
-internal trait Bar</*0*/ Q> : Foo<Q> {
+internal interface Bar</*0*/ Q> : Foo<Q> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal open override /*1*/ /*fake_override*/ fun quux(/*0*/ p: Q, /*1*/ q: kotlin.Int = ...): kotlin.Int
@@ -17,7 +17,7 @@ internal abstract class Baz : Bar<kotlin.String> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Foo</*0*/ P> {
+internal interface Foo</*0*/ P> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal open fun quux(/*0*/ p: P, /*1*/ q: kotlin.Int = ...): kotlin.Int

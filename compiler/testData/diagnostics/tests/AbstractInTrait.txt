@@ -2,7 +2,7 @@ package
 
 package abstract {
 
-    internal trait MyTrait {
+    internal interface MyTrait {
         internal abstract val a: kotlin.Int
         internal open val a1: kotlin.Int = 1
         internal abstract val a2: kotlin.Int

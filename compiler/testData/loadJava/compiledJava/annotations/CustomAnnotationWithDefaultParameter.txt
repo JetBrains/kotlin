@@ -1,6 +1,6 @@
 package test
 
-public trait CustomAnnotationWithDefaultParameter {
+public interface CustomAnnotationWithDefaultParameter {
 
     public final annotation class MyAnnotation : kotlin.Annotation {
         public constructor MyAnnotation(/*0*/ first: kotlin.String, /*1*/ second: kotlin.String = ...)

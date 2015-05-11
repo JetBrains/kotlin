@@ -26,7 +26,7 @@ internal final enum class E : kotlin.Enum<E>, T {
     public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
 
-internal trait T {
+internal interface T {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal abstract fun f(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

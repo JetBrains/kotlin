@@ -84,7 +84,7 @@ package html {
         internal final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
     }
 
-    internal trait Element {
+    internal interface Element {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         internal abstract fun render(/*0*/ builder: java.lang.StringBuilder, /*1*/ indent: kotlin.String): kotlin.Unit

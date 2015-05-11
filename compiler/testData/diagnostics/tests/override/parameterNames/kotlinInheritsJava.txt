@@ -2,7 +2,7 @@ package
 
 public/*package*/ /*synthesized*/ fun JavaInterface(/*0*/ function: (kotlin.Int) -> kotlin.Unit): JavaInterface
 
-public/*package*/ trait JavaInterface {
+public/*package*/ interface JavaInterface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -25,7 +25,7 @@ internal final class Subclass : SubtraitWithFakeOverride {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait SubtraitWithFakeOverride : JavaInterface {
+internal interface SubtraitWithFakeOverride : JavaInterface {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ javaName: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

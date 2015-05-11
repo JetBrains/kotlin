@@ -1,18 +1,18 @@
 package test
 
-public trait Nested {
+public interface Nested {
 
-    public trait Deeper1 {
+    public interface Deeper1 {
 
-        public trait Runnable {
+        public interface Runnable {
             public abstract fun run(): kotlin.Unit
             public abstract fun run2(): kotlin.Unit
         }
     }
 
-    public trait Deeper2 {
+    public interface Deeper2 {
 
-        public trait Runnable {
+        public interface Runnable {
             public abstract fun run(): kotlin.Unit
         }
 
@@ -20,7 +20,7 @@ public trait Nested {
         public final /*synthesized*/ fun Runnable(/*0*/ function: () -> kotlin.Unit): test.Nested.Deeper2.Runnable
     }
 
-    public trait Runnable {
+    public interface Runnable {
         public abstract fun run(): kotlin.Unit
     }
 

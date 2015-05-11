@@ -1,13 +1,13 @@
 package
 
-internal trait Y {
+internal interface Y {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal abstract fun foo(/*0*/ a: kotlin.Int = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait YSub : Y {
+internal interface YSub : Y {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ a: kotlin.Int = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

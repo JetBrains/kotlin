@@ -12,7 +12,7 @@ public open class Subclass : test.Impl {
     internal open override /*1*/ /*fake_override*/ fun foo(): kotlin.String
 }
 
-internal trait Trait {
+internal interface Trait {
     internal open fun bar(): kotlin.String
     internal open fun foo(): kotlin.String
 }

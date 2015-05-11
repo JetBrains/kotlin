@@ -10,7 +10,7 @@ public open class RawSuperTypeWithRecursiveBoundMultipleParameters {
         public open override /*1*/ fun foo(/*0*/ p0: kotlin.Any!, /*1*/ p1: test.RawSuperTypeWithRecursiveBoundMultipleParameters.Super<*, *>!): kotlin.Unit
     }
 
-    public trait Super</*0*/ R, /*1*/ T : test.RawSuperTypeWithRecursiveBoundMultipleParameters.Super<R!, T!>!> {
+    public interface Super</*0*/ R, /*1*/ T : test.RawSuperTypeWithRecursiveBoundMultipleParameters.Super<R!, T!>!> {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ p0: R!, /*1*/ p1: T!): kotlin.Unit
     }

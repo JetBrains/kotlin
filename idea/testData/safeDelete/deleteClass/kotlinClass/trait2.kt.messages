@@ -1,1 +1,1 @@
-trait test.A has 1 usage that is not safe to delete.
+interface test.A has 1 usage that is not safe to delete.

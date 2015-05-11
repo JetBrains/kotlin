@@ -1,3 +1,3 @@
-// "Create trait 'A'" "true"
+// "Create interface 'A'" "true"
 // ERROR: Unresolved reference: A
 fun foo(): J.A = throw Throwable("")

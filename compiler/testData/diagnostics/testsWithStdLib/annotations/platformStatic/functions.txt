@@ -25,7 +25,7 @@ internal final class A {
     }
 }
 
-internal trait B {
+internal interface B {
     kotlin.platform.platformStatic() internal open fun a4(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

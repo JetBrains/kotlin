@@ -1,4 +1,4 @@
-// "Create trait 'A'" "false"
+// "Create interface 'A'" "false"
 // ACTION: Create object 'A'
 // ACTION: Create local variable 'A'
 // ACTION: Create parameter 'A'

@@ -19,20 +19,20 @@ internal final class C2 {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Either</*0*/ out A, /*1*/ out B> {
+internal interface Either</*0*/ out A, /*1*/ out B> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Left</*0*/ out A> : Either<A, kotlin.Nothing> {
+internal interface Left</*0*/ out A> : Either<A, kotlin.Nothing> {
     internal abstract val value: A
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Right</*0*/ out B> : Either<kotlin.Nothing, B> {
+internal interface Right</*0*/ out B> : Either<kotlin.Nothing, B> {
     internal abstract val value: B
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

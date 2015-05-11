@@ -1,6 +1,6 @@
 package
 
-internal trait Base {
+internal interface Base {
     internal open var v: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -23,7 +23,7 @@ internal open class Left : Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Right : Base {
+internal interface Right : Base {
     internal open override /*1*/ /*fake_override*/ var v: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

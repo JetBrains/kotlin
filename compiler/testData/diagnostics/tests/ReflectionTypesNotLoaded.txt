@@ -1,4 +1,4 @@
-package 
+package
 
 internal val classLiteral: [ERROR : Unresolved class]
 internal val memberFun: [ERROR : Type for A::baz]

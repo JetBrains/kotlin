@@ -1,6 +1,6 @@
 package test
 
-public trait SubclassOfCollection</*0*/ E> : kotlin.MutableCollection<E> {
+public interface SubclassOfCollection</*0*/ E> : kotlin.MutableCollection<E> {
     public abstract override /*1*/ /*fake_override*/ fun add(/*0*/ e: E): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit

@@ -1,6 +1,6 @@
 package
 
-internal trait A {
+internal interface A {
     internal abstract val a: kotlin.Int
     internal abstract val a1: kotlin.Int
     internal abstract val </*0*/ T> g: kotlin.Iterator<T>

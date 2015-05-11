@@ -1,6 +1,6 @@
 package test
 
-public trait Sub : test.Super1, test.Super2 {
+public interface Sub : test.Super1, test.Super2 {
     internal abstract override /*2*/ /*fake_override*/ var x: kotlin.String
         internal abstract override /*2*/ /*fake_override*/ fun <get-x>(): kotlin.String
         internal abstract override /*1*/ /*fake_override*/ fun <set-x>(/*0*/ <set-?>: kotlin.String): kotlin.Unit
@@ -9,7 +9,7 @@ public trait Sub : test.Super1, test.Super2 {
         internal abstract override /*1*/ /*fake_override*/ fun <set-y>(/*0*/ <set-?>: kotlin.String): kotlin.Unit
 }
 
-public trait Super1 {
+public interface Super1 {
     internal abstract val x: kotlin.String
         internal abstract fun <get-x>(): kotlin.String
     internal abstract var y: kotlin.String
@@ -17,7 +17,7 @@ public trait Super1 {
         internal abstract fun <set-y>(/*0*/ <set-?>: kotlin.String): kotlin.Unit
 }
 
-public trait Super2 {
+public interface Super2 {
     internal abstract var x: kotlin.String
         internal abstract fun <get-x>(): kotlin.String
         internal abstract fun <set-x>(/*0*/ <set-?>: kotlin.String): kotlin.Unit

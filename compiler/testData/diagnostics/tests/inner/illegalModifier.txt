@@ -11,7 +11,7 @@ internal final class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait B {
+internal interface B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -44,7 +44,7 @@ internal final class D {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait F {
+    internal interface F {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -117,7 +117,7 @@ internal final enum class H : kotlin.Enum<H> {
     public final /*synthesized*/ fun values(): kotlin.Array<H>
 }
 
-internal trait K {
+internal interface K {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

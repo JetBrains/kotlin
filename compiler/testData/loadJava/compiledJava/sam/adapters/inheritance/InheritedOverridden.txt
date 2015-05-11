@@ -1,6 +1,6 @@
 package test
 
-public trait InheritedOverridden {
+public interface InheritedOverridden {
 
     public open class Sub : test.InheritedOverridden.Super {
         public constructor Sub()

@@ -1,6 +1,6 @@
 package test
 
-internal trait Bbb</*0*/ P> {
+internal interface Bbb</*0*/ P> {
 }
 
 internal final class ClassObjectExtendsTraitWithTP {

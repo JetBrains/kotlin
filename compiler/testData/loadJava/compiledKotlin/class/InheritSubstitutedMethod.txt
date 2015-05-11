@@ -1,6 +1,6 @@
 package test
 
-public trait A</*0*/ T> {
+public interface A</*0*/ T> {
     internal abstract fun bar(): T
     internal open fun foo(): T
 }

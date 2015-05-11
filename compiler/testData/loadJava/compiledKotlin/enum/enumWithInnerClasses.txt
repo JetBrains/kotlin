@@ -37,7 +37,7 @@ internal final enum class Enum : kotlin.Enum<test.Enum> {
         /*primary*/ public constructor Nested()
     }
 
-    internal trait Trait {
+    internal interface Trait {
     }
 
     // Static members
