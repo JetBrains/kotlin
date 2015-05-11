@@ -33,9 +33,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
     companion object {
@@ -110,8 +108,8 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
                 val doc = editor.getDocument()
                 var caretAdvance = 1
                 if (stringTemplate.getParent() is JetDotQualifiedExpression) {
-                    doc.insertString(stringTemplate.getTextRange().getEndOffset(), ")")
-                    doc.insertString(stringTemplate.getTextRange().getStartOffset(), "(")
+                    doc.insertString(stringTemplate.endOffset, ")")
+                    doc.insertString(stringTemplate.startOffset, "(")
                     caretOffset++
                     caretAdvance++
                 }

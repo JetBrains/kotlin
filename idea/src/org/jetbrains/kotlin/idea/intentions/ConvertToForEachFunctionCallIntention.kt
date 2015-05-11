@@ -21,11 +21,12 @@ import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>(javaClass(), "Replace with a forEach function call") {
     override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
         val rParen = element.getRightParenthesis() ?: return false
-        if (caretOffset > rParen.getTextRange().getEndOffset()) return false // available only on the loop header, not in the body
+        if (caretOffset > rParen.endOffset) return false // available only on the loop header, not in the body
         return element.getLoopRange() != null && element.getLoopParameter() != null && element.getBody() != null
     }
 

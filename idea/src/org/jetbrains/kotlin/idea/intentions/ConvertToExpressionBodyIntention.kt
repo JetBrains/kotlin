@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -70,7 +72,7 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
             val typeRef = declaration.getTypeReference()!!
             val colon = declaration.getColon()!!
             if (editor != null) {
-                val range = TextRange(colon.getTextRange().getStartOffset(), typeRef.getTextRange().getEndOffset())
+                val range = TextRange(colon.startOffset, typeRef.endOffset)
                 editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
                 editor.getCaretModel().moveToOffset(range.getEndOffset())
             }

@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class UnfoldAssignmentToWhenIntention : JetSelfTargetingRangeIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'when' expression" ) {
     override fun applicabilityRange(element: JetBinaryExpression): TextRange? {
@@ -31,7 +33,7 @@ public class UnfoldAssignmentToWhenIntention : JetSelfTargetingRangeIntention<Je
         if (element.getLeft() == null) return null
         val right = element.getRight() as? JetWhenExpression ?: return null
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(right)) return null
-        return TextRange(element.getTextRange().getStartOffset(), right.getWhenKeywordElement().getTextRange().getEndOffset())
+        return TextRange(element.startOffset, right.getWhenKeywordElement().endOffset)
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {

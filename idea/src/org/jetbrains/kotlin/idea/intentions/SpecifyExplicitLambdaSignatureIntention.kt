@@ -25,13 +25,14 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 public class SpecifyExplicitLambdaSignatureIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Specify explicit lambda signature") {
 
     override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
-        val arrow = element.getFunctionLiteral().getArrowNode()
+        val arrow = element.getFunctionLiteral().getArrow()
         if (arrow != null) {
-            if (caretOffset > arrow.getTextRange().getEndOffset()) return false
+            if (caretOffset > arrow.endOffset) return false
             if (element.getValueParameters().all { it.getTypeReference() != null }) return false
         }
         else {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.completion
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ToFromOriginalFileMapper(
         val originalFile: JetFile,
@@ -64,13 +65,13 @@ class ToFromOriginalFileMapper(
 
     public fun toOriginalFile(declaration: JetDeclaration): JetDeclaration? {
         if (declaration.getContainingFile() != syntheticFile) return declaration
-        val offset = toOriginalFile(declaration.getTextRange().getStartOffset()) ?: return null
+        val offset = toOriginalFile(declaration.startOffset) ?: return null
         return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, javaClass<JetDeclaration>(), true)
     }
 
     public fun toSyntheticFile(declaration: JetDeclaration): JetDeclaration? {
         if (declaration.getContainingFile() != originalFile) return declaration
-        val offset = toSyntheticFile(declaration.getTextRange().getStartOffset()) ?: return null
+        val offset = toSyntheticFile(declaration.startOffset) ?: return null
         return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, javaClass<JetDeclaration>(), true)
     }
 }

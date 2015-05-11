@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
 public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
@@ -61,7 +63,7 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfE
 
         setText(text)
         val rParen = element.getRightParenthesis() ?: return null
-        return TextRange(element.getTextRange().getStartOffset(), rParen.getTextRange().getEndOffset())
+        return TextRange(element.startOffset, rParen.endOffset)
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {

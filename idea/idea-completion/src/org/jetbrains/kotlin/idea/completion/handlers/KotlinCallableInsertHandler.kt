@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
@@ -150,7 +151,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
                     if (token.getNode().getElementType() == JetTokens.LT) {
                         val parent = token.getParent()
                         if (parent is JetTypeArgumentList && parent.getText().indexOf('\n') < 0/* if type argument list is on multiple lines this is more likely wrong parsing*/) {
-                            offset = parent.getTextRange().getEndOffset()
+                            offset = parent.endOffset
                         }
                     }
                 }

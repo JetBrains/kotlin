@@ -21,6 +21,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.JetStringTemplateExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class KotlinStringLiteralSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement) = e is JetStringTemplateExpression
@@ -28,8 +30,8 @@ public class KotlinStringLiteralSelectioner : ExtendWordSelectionHandlerBase() {
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val entries = (e as JetStringTemplateExpression).getEntries()
         if (entries.isEmpty()) return null
-        val start = entries.first().getTextRange().getStartOffset()
-        val end = entries.last().getTextRange().getEndOffset()
+        val start = entries.first().startOffset
+        val end = entries.last().endOffset
         return listOf(TextRange(start, end))
     }
 }

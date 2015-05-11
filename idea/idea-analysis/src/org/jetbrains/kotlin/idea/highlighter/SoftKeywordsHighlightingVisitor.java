@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.highlighter;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.lang.annotation.AnnotationHolder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -59,9 +58,9 @@ class SoftKeywordsHighlightingVisitor extends HighlightingVisitor {
         if (closingBrace != null) {
             holder.createInfoAnnotation(closingBrace, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
         }
-        ASTNode arrowNode = functionLiteral.getArrowNode();
-        if (arrowNode != null) {
-            holder.createInfoAnnotation(arrowNode, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
+        PsiElement arrow = functionLiteral.getArrow();
+        if (arrow != null) {
+            holder.createInfoAnnotation(arrow, null).setTextAttributes(JetHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
         }
     }
 }

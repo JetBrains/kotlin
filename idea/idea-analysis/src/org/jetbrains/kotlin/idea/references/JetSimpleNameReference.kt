@@ -63,7 +63,7 @@ public class JetSimpleNameReference(
 
     override fun getRangeInElement(): TextRange {
         val element = getElement().getReferencedNameElement()
-        val startOffset = getElement().getTextRange().getStartOffset()
+        val startOffset = getElement().startOffset
         return element.getTextRange().shiftRight(-startOffset)
     }
 

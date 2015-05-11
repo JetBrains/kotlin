@@ -23,12 +23,13 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetWhenExpression
 import org.jetbrains.kotlin.psi.buildExpression
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class EliminateWhenSubjectIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Eliminate argument of 'when'") {
     override fun isApplicableTo(element: JetWhenExpression, caretOffset: Int): Boolean {
         if (element.getSubjectExpression() !is JetSimpleNameExpression) return false
         val lBrace = element.getOpenBrace() ?: return false
-        return caretOffset <= lBrace.getTextRange().getStartOffset()
+        return caretOffset <= lBrace.startOffset
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

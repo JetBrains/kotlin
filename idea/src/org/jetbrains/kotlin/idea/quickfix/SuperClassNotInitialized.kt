@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -89,7 +90,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
 
             if (putCaretIntoParenthesis) {
                 if (editor != null) {
-                    val offset = newSpecifier.getValueArgumentList()!!.getLeftParenthesis()!!.getTextRange().getEndOffset()
+                    val offset = newSpecifier.getValueArgumentList()!!.getLeftParenthesis()!!.endOffset
                     editor.moveCaret(offset)
                     if (!ApplicationManager.getApplication().isUnitTestMode()) {
                         ShowParameterInfoHandler.invoke(project, editor, file, offset - 1, null)

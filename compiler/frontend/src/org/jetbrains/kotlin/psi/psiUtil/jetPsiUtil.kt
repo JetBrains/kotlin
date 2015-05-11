@@ -473,7 +473,7 @@ public fun PsiFile.elementsInRange(range: TextRange): List<PsiElement> {
                 }
         result.add(element)
 
-        offset = element.getTextRange().getEndOffset()
+        offset = element.endOffset
     }
     return result
 }
@@ -510,7 +510,7 @@ public fun PsiElement.getElementTextWithContext(): String {
     val topLevelElement = PsiTreeUtil.findFirstParent(this, { it.getParent() is PsiFile }) ?:
         throw AssertionError("For non-file element we should always be able to find parent in file children")
 
-    val startContextOffset = topLevelElement.getTextRange().getStartOffset()
+    val startContextOffset = topLevelElement.startOffset
     val elementContextOffset = getTextRange().getStartOffset()
 
     val inFileParentOffset = elementContextOffset - startContextOffset
@@ -583,7 +583,13 @@ public fun JetElement.getCalleeHighlightingRange(): TextRange {
             ) ?: return getTextRange()
 
     val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
-                      ?: annotationEntry.getCalleeExpression().getTextRange().getStartOffset()
+                      ?: annotationEntry.getCalleeExpression().startOffset
 
-    return TextRange(startOffset, annotationEntry.getCalleeExpression().getTextRange().getEndOffset())
+    return TextRange(startOffset, annotationEntry.getCalleeExpression().endOffset)
 }
+
+public val PsiElement.startOffset: Int
+    get() = getTextRange().getStartOffset()
+
+public val PsiElement.endOffset: Int
+    get() = getTextRange().getEndOffset()

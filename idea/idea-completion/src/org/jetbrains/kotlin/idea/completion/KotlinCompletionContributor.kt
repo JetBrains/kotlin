@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -108,12 +105,12 @@ public class KotlinCompletionContributor : CompletionContributor() {
                         context.setReplacementOffset(suggestedReplacementOffset)
                     }
 
-                    context.getOffsetMap().addOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET, expression.getTextRange().getEndOffset())
+                    context.getOffsetMap().addOffset(SmartCompletion.OLD_ARGUMENTS_REPLACEMENT_OFFSET, expression.endOffset)
 
                     val argumentList = (expression.getParent() as? JetValueArgument)?.getParent() as? JetValueArgumentList
                     if (argumentList != null) {
                         context.getOffsetMap().addOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET,
-                                                         argumentList.getRightParenthesis()?.getTextRange()?.getStartOffset() ?: argumentList.getTextRange().getEndOffset())
+                                                         argumentList.getRightParenthesis()?.getTextRange()?.getStartOffset() ?: argumentList.endOffset)
                     }
                 }
             }
@@ -149,8 +146,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
         val classOrObject = tokenBefore?.parents(false)?.firstIsInstanceOrNull<JetClassOrObject>() ?: return false
         val name = classOrObject.getNameIdentifier() ?: return false
         val body = classOrObject.getBody() ?: return false
-        val offset = tokenBefore!!.getTextRange().getStartOffset()
-        return name.getTextRange().getEndOffset() <= offset && offset <= body.getTextRange().getStartOffset()
+        val offset = tokenBefore!!.startOffset
+        return name.endOffset <= offset && offset <= body.startOffset
     }
 
     private val declarationKeywords = TokenSet.create(JetTokens.FUN_KEYWORD, JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD)

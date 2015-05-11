@@ -70,8 +70,8 @@ public class JetFunctionLiteral extends JetFunctionNotStubbed {
     }
 
     @Nullable
-    public ASTNode getArrowNode() {
-        return getNode().findChildByType(JetTokens.ARROW);
+    public PsiElement getArrow() {
+        return findChildByType(JetTokens.ARROW);
     }
 
     @Nullable

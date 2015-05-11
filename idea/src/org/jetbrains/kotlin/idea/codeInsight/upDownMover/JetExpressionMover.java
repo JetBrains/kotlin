@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.codeInsight.upDownMover;
 
 import com.google.common.base.Predicate;
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
@@ -259,9 +258,9 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 newBlock = findClosestBlock(((JetFunctionLiteral) parent).getBodyExpression(), down, false);
 
                 if (!down) {
-                    ASTNode arrow = ((JetFunctionLiteral) parent).getArrowNode();
+                    PsiElement arrow = ((JetFunctionLiteral) parent).getArrow();
                     if (arrow != null) {
-                        end = arrow.getPsi();
+                        end = arrow;
                     }
                 }
             } else {
@@ -306,9 +305,9 @@ public class JetExpressionMover extends AbstractJetUpDownMover {
                 if (down) {
                     end = JetPsiUtil.findChildByType(blockLikeElement, JetTokens.LBRACE);
                     if (blockLikeElement instanceof JetFunctionLiteral) {
-                        ASTNode arrow = ((JetFunctionLiteral) blockLikeElement).getArrowNode();
+                        PsiElement arrow = ((JetFunctionLiteral) blockLikeElement).getArrow();
                         if (arrow != null) {
-                            end = arrow.getPsi();
+                            end = arrow;
                         }
                     }
                 }

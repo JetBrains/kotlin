@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionCo
 import org.jetbrains.kotlin.idea.util.isNothing
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 
@@ -39,7 +41,7 @@ public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpres
         if (!type.isNothing()) return null
 
         val rParen = element.getRightParenthesis() ?: return null
-        return TextRange(element.getTextRange().getStartOffset(), rParen.getTextRange().getEndOffset())
+        return TextRange(element.startOffset, rParen.endOffset)
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {

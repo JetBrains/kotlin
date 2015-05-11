@@ -50,7 +50,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTarge
         val newExpr = JetPsiFactory(element).createExpression("{ it -> }") as JetFunctionLiteralExpression
         functionLiteral.addRangeAfter(
                 newExpr.getFunctionLiteral().getValueParameterList(),
-                newExpr.getFunctionLiteral().getArrowNode()!!.getPsi(),
+                newExpr.getFunctionLiteral().getArrow()!!,
                 functionLiteral.getLBrace())
         PsiDocumentManager.getInstance(element.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
 

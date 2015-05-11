@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
@@ -63,8 +64,8 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
         }
 
         val functionLiteral = element.getParentOfType<JetFunctionLiteral>(true) ?: return null
-        val arrow = functionLiteral.getArrowNode() ?: return null
-        if (caretOffset > arrow.getTextRange().getEndOffset()) return null
+        val arrow = functionLiteral.getArrow() ?: return null
+        if (caretOffset > arrow.endOffset) return null
         return functionLiteral
     }
 
@@ -81,7 +82,7 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
         public override fun performRefactoring(usages: Array<out UsageInfo>) {
             super.performRefactoring(usages)
 
-            functionLiteral.deleteChildRange(functionLiteral.getValueParameterList(), functionLiteral.getArrowNode()!!.getPsi())
+            functionLiteral.deleteChildRange(functionLiteral.getValueParameterList(), functionLiteral.getArrow()!!)
 
             if (cursorWasInParameterList) {
                 editor.getCaretModel().moveToOffset(functionLiteral.getBodyExpression()!!.getTextOffset())

@@ -892,17 +892,17 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             when (newJavaMember) {
                 is PsiMethod -> CreateFromUsageUtils.setupEditor(newJavaMember, targetEditor)
-                is PsiField -> targetEditor.getCaretModel().moveToOffset(newJavaMember.getTextRange().getEndOffset() - 1)
+                is PsiField -> targetEditor.getCaretModel().moveToOffset(newJavaMember.endOffset - 1)
                 is PsiClass -> {
                     val constructor = newJavaMember.getConstructors().firstOrNull()
                     val superStatement = constructor?.getBody()?.getStatements()?.firstOrNull() as? PsiExpressionStatement
                     val superCall = superStatement?.getExpression() as? PsiMethodCallExpression
                     if (superCall != null) {
                         val lParen = superCall.getArgumentList().getFirstChild()
-                        targetEditor.getCaretModel().moveToOffset(lParen.getTextRange().getEndOffset())
+                        targetEditor.getCaretModel().moveToOffset(lParen.endOffset)
                     }
                     else {
-                        targetEditor.getCaretModel().moveToOffset(newJavaMember.getTextRange().getStartOffset())
+                        targetEditor.getCaretModel().moveToOffset(newJavaMember.startOffset)
                     }
                 }
             }
@@ -916,17 +916,17 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val selectionModel = containingFileEditor.getSelectionModel()
 
             if (declaration is JetSecondaryConstructor) {
-                caretModel.moveToOffset(declaration.getConstructorKeyword().getTextRange().getEndOffset())
+                caretModel.moveToOffset(declaration.getConstructorKeyword().endOffset)
             }
             else {
-                caretModel.moveToOffset(declaration.getNameIdentifier()!!.getTextRange().getEndOffset())
+                caretModel.moveToOffset(declaration.getNameIdentifier()!!.endOffset)
             }
 
             fun positionBetween(left: PsiElement, right: PsiElement) {
                 val from = left.siblings(withItself = false, forward = true).firstOrNull { it !is PsiWhiteSpace } ?: return
                 val to = right.siblings(withItself = false, forward = false).firstOrNull { it !is PsiWhiteSpace } ?: return
-                val startOffset = from.getTextRange().getStartOffset()
-                val endOffset = to.getTextRange().getEndOffset()
+                val startOffset = from.startOffset
+                val endOffset = to.endOffset
                 caretModel.moveToOffset(endOffset)
                 selectionModel.setSelection(startOffset, endOffset)
             }
@@ -938,7 +938,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     }
                 }
                 is JetClassOrObject -> {
-                    caretModel.moveToOffset(declaration.getTextRange().getStartOffset())
+                    caretModel.moveToOffset(declaration.startOffset)
                 }
                 is JetProperty -> {
                     if (!declaration.hasInitializer() && containingElement is JetBlockExpression) {
@@ -949,7 +949,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         val range = initializer.getTextRange()
                         selectionModel.setSelection(range.getStartOffset(), range.getEndOffset())
                     }
-                    caretModel.moveToOffset(declaration.getTextRange().getEndOffset())
+                    caretModel.moveToOffset(declaration.endOffset)
                 }
             }
             containingFileEditor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE)

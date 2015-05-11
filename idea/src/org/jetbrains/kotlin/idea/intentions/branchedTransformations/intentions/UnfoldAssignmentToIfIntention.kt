@@ -23,13 +23,15 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfo
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
 import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class UnfoldAssignmentToIfIntention : JetSelfTargetingRangeIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'if' expression") {
     override fun applicabilityRange(element: JetBinaryExpression): TextRange? {
         if (element.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return null
         if (element.getLeft() == null) return null
         val right = element.getRight() as? JetIfExpression ?: return null
-        return TextRange(element.getTextRange().getStartOffset(), right.getIfKeyword().getTextRange().getEndOffset())
+        return TextRange(element.startOffset, right.getIfKeyword().endOffset)
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {

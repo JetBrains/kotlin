@@ -248,9 +248,9 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
             if (parametersCount == 0 && ((JetFunctionLiteral) element).getTypeReference() == null) {
                 if (parameterList != null) {
                     parameterList.delete();
-                    ASTNode arrowNode = ((JetFunctionLiteral)element).getArrowNode();
-                    if (arrowNode != null) {
-                        arrowNode.getPsi().delete();
+                    PsiElement arrow = ((JetFunctionLiteral)element).getArrow();
+                    if (arrow != null) {
+                        arrow.delete();
                     }
                     parameterList = null;
                 }
@@ -298,7 +298,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
                 JetFunctionLiteral functionLiteral = (JetFunctionLiteral) element;
                 PsiElement anchor = functionLiteral.getLBrace();
                 newParameterList = (JetParameterList) element.addAfter(newParameterList, anchor);
-                if (functionLiteral.getArrowNode() == null) {
+                if (functionLiteral.getArrow() == null) {
                     Pair<PsiElement, PsiElement> whitespaceAndArrow = psiFactory.createWhitespaceAndArrow();
                     element.addRangeAfter(whitespaceAndArrow.getFirst(), whitespaceAndArrow.getSecond(), newParameterList);
                 }

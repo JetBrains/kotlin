@@ -22,6 +22,8 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public open class PositioningStrategy<E : PsiElement> {
     public open fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out E>): List<TextRange> {
@@ -57,26 +59,26 @@ private fun getStartOffset(element: PsiElement): Int {
     var child = element.getFirstChild()
     if (child != null) {
         while (child is PsiComment || child is PsiWhiteSpace) {
-            child = child!!.getNextSibling()
+            child = child.getNextSibling()
         }
         if (child != null) {
-            return getStartOffset(child!!)
+            return getStartOffset(child)
         }
     }
-    return element.getTextRange().getStartOffset()
+    return element.startOffset
 }
 
 private fun getEndOffset(element: PsiElement): Int {
     var child = element.getLastChild()
     if (child != null) {
         while (child is PsiComment || child is PsiWhiteSpace) {
-            child = child!!.getPrevSibling()
+            child = child.getPrevSibling()
         }
         if (child != null) {
-            return getEndOffset(child!!)
+            return getEndOffset(child)
         }
     }
-    return element.getTextRange().getEndOffset()
+    return element.endOffset
 }
 
 fun hasSyntaxErrors(psiElement: PsiElement): Boolean {

@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfo
 import org.jetbrains.kotlin.idea.intentions.splitPropertyDeclaration
 import org.jetbrains.kotlin.psi.JetIfExpression
 import org.jetbrains.kotlin.psi.JetProperty
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class UnfoldPropertyToIfIntention : JetSelfTargetingRangeIntention<JetProperty>(javaClass(), "Replace property initializer with 'if' expression") {
     override fun applicabilityRange(element: JetProperty): TextRange? {
         if (!element.isLocal()) return null
         val initializer = element.getInitializer() as? JetIfExpression ?: return null
-        return TextRange(element.getTextRange().getStartOffset(), initializer.getIfKeyword().getTextRange().getEndOffset())
+        return TextRange(element.startOffset, initializer.getIfKeyword().endOffset)
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {

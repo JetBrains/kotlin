@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class AddBracesIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Add braces") {
     override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
@@ -50,7 +51,7 @@ public class AddBracesIntention : JetSelfTargetingIntention<JetExpression>(javaC
             is JetIfExpression -> {
                 val thenExpr = getThen() ?: return null
                 val elseExpr = getElse()
-                if (elseExpr != null && caretLocation >= getElseKeyword()!!.getTextRange().getStartOffset()) {
+                if (elseExpr != null && caretLocation >= getElseKeyword()!!.startOffset) {
                     return elseExpr
                 }
                 return thenExpr

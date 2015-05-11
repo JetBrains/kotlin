@@ -22,12 +22,14 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.copied
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression") {
     override fun applicabilityRange(element: JetReturnExpression): TextRange? {
         val whenExpr = element.getReturnedExpression() as? JetWhenExpression ?: return null
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null
-        return TextRange(element.getTextRange().getStartOffset(), whenExpr.getWhenKeywordElement().getTextRange().getEndOffset())
+        return TextRange(element.startOffset, whenExpr.getWhenKeywordElement().endOffset)
     }
 
     override fun applyTo(element: JetReturnExpression, editor: Editor) {

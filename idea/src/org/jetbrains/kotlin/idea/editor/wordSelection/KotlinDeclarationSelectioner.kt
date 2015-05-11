@@ -25,6 +25,8 @@ import java.util.ArrayList
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
@@ -44,8 +46,8 @@ public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
                 .first { it !is PsiComment && it !is PsiWhiteSpace }
 
         if (firstNonComment != firstChild || lastNonComment != lastChild) {
-            val start = firstNonComment.getTextRange().getStartOffset()
-            val end = lastNonComment.getTextRange().getEndOffset()
+            val start = firstNonComment.startOffset
+            val end = lastNonComment.endOffset
             result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
         }
 

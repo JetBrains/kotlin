@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetImportList
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     override fun buildLanguageFoldRegions(descriptors: MutableList<FoldingDescriptor>,
@@ -42,11 +44,11 @@ public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         val imports = root.getImportDirectives()
         if (imports.size() > 1) {
             val importKeyword = imports.get(0).getFirstChild()
-            val startOffset = importKeyword.getTextRange().getEndOffset() + 1
+            val startOffset = importKeyword.endOffset + 1
 
             val importList = root.getImportList()
             if (importList != null) {
-                val endOffset = importList.getTextRange().getEndOffset()
+                val endOffset = importList.endOffset
 
                 val range = TextRange(startOffset, endOffset)
                 descriptors.add(FoldingDescriptor(importList, range))
@@ -85,7 +87,7 @@ public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
             val lbrace = psi?.getLBrace()
             val rbrace = psi?.getRBrace()
             if (lbrace != null && rbrace != null) {
-                return TextRange(lbrace.getTextRange().getStartOffset(), rbrace.getTextRange().getEndOffset())
+                return TextRange(lbrace.startOffset, rbrace.endOffset)
             }
         }
         return node.getTextRange()

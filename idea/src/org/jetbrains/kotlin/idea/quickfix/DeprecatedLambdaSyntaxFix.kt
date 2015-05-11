@@ -196,7 +196,7 @@ private class LambdaToFunctionExpression(
         // many statements
         if (returnType != null) statements.filterIsInstance<JetExpression>().lastOrNull()?.replaceWithReturn(psiFactory)
 
-        val fromElement = functionLiteral.getArrowNode()?.getPsi() ?: functionLiteral.getLBrace()
+        val fromElement = functionLiteral.getArrow() ?: functionLiteral.getLBrace()
         val toElement = functionLiteral.getRBrace()
         // to include comments in the start/end of the body
         val bodyText = fromElement.siblings(withItself = false)

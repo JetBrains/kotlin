@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveLambdaOutsideParentheses
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 
 public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Move lambda argument out of parentheses") {
@@ -26,7 +27,7 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
         val argument = element.getValueArgumentsInParentheses().lastOrNull() ?: return false
         val expression = argument.getArgumentExpression() ?: return false
         val functionLiteral = getFunctionLiteral(expression) ?: return false
-        if (caretOffset < argument.asElement().getTextRange().getStartOffset()) return false
+        if (caretOffset < argument.asElement().startOffset) return false
         val bodyRange = functionLiteral.getBodyExpression()?.getTextRange() ?: return true
         return !bodyRange.containsInside(caretOffset)
     }

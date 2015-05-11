@@ -22,7 +22,9 @@ import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 import java.util.HashMap
@@ -34,7 +36,7 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
     var expression = createExpression(processedText)
     val project = expression.getProject()
 
-    val start = expression.getTextRange().getStartOffset()
+    val start = expression.startOffset
 
     val pointerManager = SmartPointerManager.getInstance(project)
 
@@ -80,7 +82,7 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
         expression = codeStyleManager.reformat(expression, true) as JetExpression
     }
     else {
-        var bound = expression.getTextRange().getEndOffset() - 1
+        var bound = expression.endOffset - 1
         for (range in stringPlaceholderRanges) {
             // we extend reformatting range by 1 to the right because otherwise some of spaces are not reformatted
             expression = codeStyleManager.reformatRange(expression, range.getEndOffset() + start, bound + 1, true) as JetExpression

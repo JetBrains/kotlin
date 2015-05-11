@@ -20,12 +20,13 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
 public class RemoveExplicitLambdaParameterTypesIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Remove explicit lambda parameter types (may break code)") {
     override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
         if (element.getValueParameters().none { it.getTypeReference() != null }) return false
-        val arrow = element.getFunctionLiteral().getArrowNode() ?: return false
-        return caretOffset <= arrow.getTextRange().getEndOffset()
+        val arrow = element.getFunctionLiteral().getArrow() ?: return false
+        return caretOffset <= arrow.endOffset
     }
 
     override fun applyTo(element: JetFunctionLiteralExpression, editor: Editor) {

@@ -24,13 +24,15 @@ import org.jetbrains.kotlin.idea.intentions.splitPropertyDeclaration
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class UnfoldPropertyToWhenIntention : JetSelfTargetingRangeIntention<JetProperty>(javaClass(), "Replace property initializer with 'when' expression") {
     override fun applicabilityRange(element: JetProperty): TextRange? {
         if (!element.isLocal()) return null
         val initializer = element.getInitializer() as? JetWhenExpression ?: return null
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(initializer)) return null
-        return TextRange(element.getTextRange().getStartOffset(), initializer.getWhenKeywordElement().getTextRange().getEndOffset())
+        return TextRange(element.startOffset, initializer.getWhenKeywordElement().endOffset)
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {

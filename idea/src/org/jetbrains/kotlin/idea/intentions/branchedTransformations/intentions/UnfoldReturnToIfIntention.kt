@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.copied
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'if' expression") {
     override fun applicabilityRange(element: JetReturnExpression): TextRange? {
         val ifExpression = element.getReturnedExpression() as? JetIfExpression ?: return null
-        return TextRange(element.getTextRange().getStartOffset(), ifExpression.getIfKeyword().getTextRange().getEndOffset())
+        return TextRange(element.startOffset, ifExpression.getIfKeyword().endOffset)
     }
 
     override fun applyTo(element: JetReturnExpression, editor: Editor) {
