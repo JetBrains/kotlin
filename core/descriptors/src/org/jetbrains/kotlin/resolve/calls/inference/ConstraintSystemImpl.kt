@@ -68,9 +68,9 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
         override fun hasViolatedUpperBound() = !isSuccessful() && getSystemWithoutWeakConstraints().getStatus().isSuccessful()
 
-        override fun hasConflictingConstraints() = typeParameterBounds.values().any { it.getValues().size() > 1 }
+        override fun hasConflictingConstraints() = typeParameterBounds.values().any { it.values.size() > 1 }
 
-        override fun hasUnknownParameters() = typeParameterBounds.values().any { it.isEmpty() }
+        override fun hasUnknownParameters() = typeParameterBounds.values().any { it.values.isEmpty() }
 
         override fun hasTypeConstructorMismatch() = errors.any { it is TypeConstructorMismatch }
 
@@ -92,7 +92,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
         val substitutionContext = HashMap<TypeParameterDescriptor, TypeProjection>()
         for ((typeParameter, typeBounds) in typeParameterBounds) {
             val typeProjection: TypeProjection
-            val value = typeBounds.getValue()
+            val value = typeBounds.value
             if (value != null && !TypeUtils.containsSpecialType(value, DONT_CARE)) {
                 typeProjection = TypeProjectionImpl(value)
             }

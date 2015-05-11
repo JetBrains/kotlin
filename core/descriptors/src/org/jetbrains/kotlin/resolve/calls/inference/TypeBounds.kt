@@ -28,11 +28,9 @@ public trait TypeBounds {
 
     public val bounds: Collection<Bound>
 
-    public fun isEmpty(): Boolean
+    public val value: JetType?
 
-    public fun getValue(): JetType?
-
-    public fun getValues(): Collection<JetType>
+    public val values: Collection<JetType>
 
     public enum class BoundKind {
         LOWER_BOUND,

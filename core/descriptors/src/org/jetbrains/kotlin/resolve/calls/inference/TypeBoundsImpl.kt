@@ -45,10 +45,6 @@ public class TypeBoundsImpl(
         bounds.add(Bound(constrainingType, kind, position))
     }
 
-    override fun isEmpty(): Boolean {
-        return getValues().isEmpty()
-    }
-
     private fun filterBounds(bounds: Collection<Bound>, kind: BoundKind): Set<JetType> {
         return filterBounds(bounds, kind, null)
     }
@@ -81,20 +77,16 @@ public class TypeBoundsImpl(
         return result
     }
 
-    override fun getValue(): JetType? {
-        val values = getValues()
-        if (values.size() == 1) {
-            return values.iterator().next()
-        }
-        return null
-    }
+    override val value: JetType?
+        get() = if (values.size() == 1) values.first() else null
 
-    override fun getValues(): Collection<JetType> {
-        if (resultValues == null) {
-            resultValues = computeValues()
+    override val values: Collection<JetType>
+        get() {
+            if (resultValues == null) {
+                resultValues = computeValues()
+            }
+            return resultValues!!
         }
-        return resultValues!!
-    }
 
     private fun computeValues(): Collection<JetType> {
         val values = LinkedHashSet<JetType>()

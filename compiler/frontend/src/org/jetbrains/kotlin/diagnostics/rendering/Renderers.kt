@@ -216,7 +216,7 @@ public object Renderers {
     ): TabledDescriptorRenderer {
         var firstUnknownParameter: TypeParameterDescriptor? = null
         for (typeParameter in inferenceErrorData.constraintSystem.getTypeVariables()) {
-            if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).isEmpty()) {
+            if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).values.isEmpty()) {
                 firstUnknownParameter = typeParameter
                 break
             }
@@ -256,7 +256,7 @@ public object Renderers {
             return result
         }
 
-        val inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeParameterDescriptor).getValue()
+        val inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeParameterDescriptor).value
         if (inferredValueForTypeParameter == null) {
             LOG.error(renderDebugMessage("System without weak constraints is not successful, there is no value for type parameter " + 
                                          typeParameterDescriptor.getName() + "\n: " + systemWithoutWeakConstraints, inferenceErrorData))
@@ -372,7 +372,7 @@ public object Renderers {
             if (renderPosition) type + '(' + bound.position + ')' else type
         }
         val typeVariableName = typeBounds.typeVariable.getName()
-        return if (typeBounds.isEmpty()) {
+        return if (typeBounds.bounds.isEmpty()) {
             typeVariableName.asString()
         }
         else
