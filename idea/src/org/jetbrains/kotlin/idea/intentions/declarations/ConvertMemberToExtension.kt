@@ -36,6 +36,7 @@ public class ConvertMemberToExtension : JetSelfTargetingRangeIntention<JetCallab
         val classBody = element.getParent() as? JetClassBody ?: return null
         if (classBody.getParent() !is JetClass) return null
         if (element.getReceiverTypeReference() != null) return null
+        if (element.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return null
         when (element) {
             is JetProperty -> if (element.hasInitializer()) return null
             is JetSecondaryConstructor -> return null

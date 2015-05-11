@@ -3921,6 +3921,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("override.kt")
+            public void testOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/override.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("private.kt")
             public void testPrivate() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/private.kt");
