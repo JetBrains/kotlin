@@ -153,8 +153,8 @@ public class BranchedUnfoldingUtils {
         assertNotNull(elseExpr);
 
         JetPsiFactory psiFactory = JetPsiFactory(returnExpression);
-        thenExpr.replace(psiFactory.createReturn(thenExpr));
-        elseExpr.replace(psiFactory.createReturn(elseExpr));
+        thenExpr.replace(createExpressionByPattern(psiFactory, "return $0", thenExpr));
+        elseExpr.replace(createExpressionByPattern(psiFactory, "return $0", elseExpr));
 
         returnExpression.replace(newIfExpression);
     }
@@ -172,7 +172,7 @@ public class BranchedUnfoldingUtils {
 
             assertNotNull(currExpr);
 
-            currExpr.replace(JetPsiFactory(returnExpression).createReturn(currExpr));
+            currExpr.replace(createExpressionByPattern(JetPsiFactory(returnExpression), "return $0", currExpr));
         }
 
         returnExpression.replace(newWhenExpression);

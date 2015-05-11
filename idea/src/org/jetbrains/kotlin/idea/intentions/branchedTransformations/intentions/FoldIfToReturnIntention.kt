@@ -36,6 +36,6 @@ public class FoldIfToReturnIntention : JetSelfTargetingOffsetIndependentIntentio
         thenReturn.replace(thenReturn.getReturnedExpression()!!)
         elseReturn.replace(elseReturn.getReturnedExpression()!!)
 
-        element.replace(JetPsiFactory(element).createReturn(element))
+        element.replace(JetPsiFactory(element).createExpressionByPattern("return $0", element))
     }
 }

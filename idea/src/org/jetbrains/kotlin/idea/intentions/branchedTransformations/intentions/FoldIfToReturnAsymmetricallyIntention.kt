@@ -45,7 +45,7 @@ public class FoldIfToReturnAsymmetricallyIntention : JetSelfTargetingOffsetIndep
         thenReturn.replace(thenReturn.getReturnedExpression()!!)
         elseReturn.replace(elseReturn.getReturnedExpression()!!)
 
-        element.replace(psiFactory.createReturn(newIfExpression))
+        element.replace(psiFactory.createExpressionByPattern("return $0", newIfExpression))
         elseBranch.delete()
     }
 }

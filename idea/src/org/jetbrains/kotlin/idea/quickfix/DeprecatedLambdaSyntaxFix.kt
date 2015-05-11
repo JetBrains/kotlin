@@ -158,7 +158,7 @@ private class LambdaToFunctionExpression(
             return
         }
         else {
-            replace(psiFactory.createReturn(this))
+            replace(psiFactory.createExpressionByPattern("return $0", this))
         }
     }
 

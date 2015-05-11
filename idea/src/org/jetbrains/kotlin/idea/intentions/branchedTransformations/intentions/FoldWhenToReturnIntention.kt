@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
-import org.jetbrains.kotlin.psi
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetWhenExpression
+import org.jetbrains.kotlin.psi.*
 
 public class FoldWhenToReturnIntention : JetSelfTargetingOffsetIndependentIntention<JetWhenExpression>(javaClass(), "Replace 'when' expression with return") {
     override fun isApplicableTo(element: JetWhenExpression): Boolean {
@@ -41,7 +39,7 @@ public class FoldWhenToReturnIntention : JetSelfTargetingOffsetIndependentIntent
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
         assert(!element.getEntries().isEmpty())
 
-        val newReturnExpression = psi.JetPsiFactory(element).createReturn(element)
+        val newReturnExpression = JetPsiFactory(element).createExpressionByPattern("return $0", element) as JetReturnExpression
         val newWhenExpression = newReturnExpression.getReturnedExpression() as JetWhenExpression
 
         for (entry in newWhenExpression.getEntries()) {
