@@ -21,9 +21,10 @@ import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.TemplateEditingAdapter
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingIntention
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.JetTypeLookupExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -32,9 +33,9 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetThrowExpression
 
-public class DoubleBangToIfThenIntention : JetSelfTargetingIntention<JetPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression") {
-    override fun isApplicableTo(element: JetPostfixExpression, caretOffset: Int): Boolean {
-        return element.getOperationToken() == JetTokens.EXCLEXCL && element.getOperationReference().getTextRange().containsOffset(caretOffset)
+public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression") {
+    override fun applicabilityRange(element: JetPostfixExpression): TextRange? {
+        return if (element.getOperationToken() == JetTokens.EXCLEXCL)  element.getOperationReference().getTextRange() else null
     }
 
     override fun applyTo(element: JetPostfixExpression, editor: Editor) {
