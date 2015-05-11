@@ -265,6 +265,8 @@ public class KotlinInplaceParameterIntroducer(
                     val name = templateState.getVariableValue(KotlinInplaceVariableIntroducer.PRIMARY_VARIABLE_NAME)?.getText()
                     val typeRefText = templateState.getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)?.getText()
                     updatePreview(name, typeRefText)
+                    descriptor = descriptor.copy(newParameterName = name ?: descriptor.newParameterName,
+                                                 newParameterTypeText = typeRefText ?: descriptor.newParameterTypeText)
                 }
             }
         }

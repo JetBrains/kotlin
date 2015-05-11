@@ -69,7 +69,7 @@ public data class IntroduceParameterDescriptor(
         val parametersUsages: Map<JetParameter, List<PsiReference>>,
         val occurrencesToReplace: List<JetPsiRange>,
         val parametersToRemove: List<JetParameter> = getParametersToRemove(withDefaultValue, parametersUsages, occurrencesToReplace),
-        val occurrenceReplacer: (JetPsiRange) -> Unit = {}
+        val occurrenceReplacer: IntroduceParameterDescriptor.(JetPsiRange) -> Unit = {}
 ) {
     val originalOccurrence: JetPsiRange
         get() = occurrencesToReplace.first { it.getTextRange().intersects(originalRange.getTextRange()) }
@@ -137,7 +137,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
         }
         if (runChangeSignature(callable.getProject(), callableDescriptor, config, callable.analyze(), callable, INTRODUCE_PARAMETER)) {
-            occurrencesToReplace.forEach(occurrenceReplacer)
+            occurrencesToReplace.forEach { occurrenceReplacer(it) }
         }
     }
 }
@@ -275,21 +275,21 @@ public open class KotlinIntroduceParameterHandler(
                     else newParameter
 
                     val originalExpression = JetPsiUtil.safeDeparenthesize(expression)
-                    val newParameterName = addedParameter.getName()!!
-                    val replacement = psiFactory.createExpression(newParameterName)
                     val introduceParameterDescriptor =
                             helper.configure(
                                     IntroduceParameterDescriptor(
                                             originalRange = originalExpression.toRange(),
                                             callable = targetParent,
                                             callableDescriptor = functionDescriptor,
-                                            newParameterName = newParameterName,
+                                            newParameterName = addedParameter.getName()!!,
                                             newParameterTypeText = renderedType,
                                             newArgumentValue = originalExpression,
                                             withDefaultValue = false,
                                             parametersUsages = parametersUsages,
                                             occurrencesToReplace = occurrencesToReplace,
-                                            occurrenceReplacer = { it.elements.single().replace(replacement) }
+                                            occurrenceReplacer = {
+                                                it.elements.single().replace(psiFactory.createExpression(newParameterName))
+                                            }
                                     )
                             )
                     if (isTestMode) {
