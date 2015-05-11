@@ -44,6 +44,6 @@ public class KotlinMissingWhenBodyFixer : SmartEnterProcessorWithFixers.Fixer<Ko
         getRightParenthesis() != null -> getRightParenthesis()
         getSubjectExpression() != null -> null
         getLeftParenthesis() != null -> null
-        else -> getWhenKeywordElement()
+        else -> getWhenKeyword()
     }
 }

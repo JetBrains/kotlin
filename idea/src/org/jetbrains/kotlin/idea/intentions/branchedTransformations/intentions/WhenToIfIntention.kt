@@ -28,7 +28,7 @@ public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpressio
         if (entries.isEmpty()) return null
         val lastEntry = entries.last()
         if (entries.any { it != lastEntry && it.isElse() }) return null
-        return element.getWhenKeywordElement().getTextRange()
+        return element.getWhenKeyword().getTextRange()
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

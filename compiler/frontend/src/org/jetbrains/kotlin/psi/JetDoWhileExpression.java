@@ -34,7 +34,7 @@ public class JetDoWhileExpression extends JetWhileExpressionBase {
 
     @Nullable
     @IfNotParsed
-    public PsiElement getWhileKeywordElement() {
+    public PsiElement getWhileKeyword() {
         //noinspection ConstantConditions
         return findChildByType(JetTokens.WHILE_KEYWORD);
     }

@@ -44,7 +44,7 @@ public class FoldWhenToAssignmentIntention : JetSelfTargetingRangeIntention<JetW
             if (!BranchedFoldingUtils.checkAssignmentsMatch(assignment, firstAssignment)) return null
         }
 
-        return element.getWhenKeywordElement().getTextRange()
+        return element.getWhenKeyword().getTextRange()
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

@@ -29,7 +29,7 @@ public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<JetRet
     override fun applicabilityRange(element: JetReturnExpression): TextRange? {
         val whenExpr = element.getReturnedExpression() as? JetWhenExpression ?: return null
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null
-        return TextRange(element.startOffset, whenExpr.getWhenKeywordElement().endOffset)
+        return TextRange(element.startOffset, whenExpr.getWhenKeyword().endOffset)
     }
 
     override fun applyTo(element: JetReturnExpression, editor: Editor) {

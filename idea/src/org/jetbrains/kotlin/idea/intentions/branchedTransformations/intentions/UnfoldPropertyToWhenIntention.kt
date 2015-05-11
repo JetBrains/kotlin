@@ -32,7 +32,7 @@ public class UnfoldPropertyToWhenIntention : JetSelfTargetingRangeIntention<JetP
         if (!element.isLocal()) return null
         val initializer = element.getInitializer() as? JetWhenExpression ?: return null
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(initializer)) return null
-        return TextRange(element.startOffset, initializer.getWhenKeywordElement().endOffset)
+        return TextRange(element.startOffset, initializer.getWhenKeyword().endOffset)
     }
 
     override fun applyTo(element: JetProperty, editor: Editor) {

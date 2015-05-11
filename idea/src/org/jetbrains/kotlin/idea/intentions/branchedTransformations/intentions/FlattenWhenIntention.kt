@@ -39,7 +39,7 @@ public class FlattenWhenIntention : JetSelfTargetingIntention<JetWhenExpression>
         if (!subject.matches(innerWhen.getSubjectExpression())) return false
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(innerWhen)) return false
 
-        return elseEntry.startOffset <= caretOffset && caretOffset <= innerWhen.getWhenKeywordElement().endOffset
+        return elseEntry.startOffset <= caretOffset && caretOffset <= innerWhen.getWhenKeyword().endOffset
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

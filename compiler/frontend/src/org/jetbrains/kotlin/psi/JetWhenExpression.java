@@ -46,7 +46,7 @@ public class JetWhenExpression extends JetExpressionImpl {
     }
 
     @NotNull
-    public PsiElement getWhenKeywordElement() {
+    public PsiElement getWhenKeyword() {
         //noinspection ConstantConditions
         return findChildByType(JetTokens.WHEN_KEYWORD);
     }

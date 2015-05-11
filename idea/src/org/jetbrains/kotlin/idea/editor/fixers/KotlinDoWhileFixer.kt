@@ -32,7 +32,7 @@ public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
         val start = stmt.range.start
         val body = stmt.getBody()
 
-        val whileKeyword = stmt.getWhileKeywordElement()
+        val whileKeyword = stmt.getWhileKeyword()
         if (body == null) {
             if (whileKeyword == null) {
                 doc.replaceString(start, start + "do".length(), "do {} while()")

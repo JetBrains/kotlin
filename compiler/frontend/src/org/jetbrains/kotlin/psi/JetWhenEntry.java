@@ -28,11 +28,11 @@ public class JetWhenEntry extends JetElementImpl {
     }
 
     public boolean isElse() {
-        return getElseKeywordElement() != null;
+        return getElseKeyword() != null;
     }
 
     @Nullable
-    public PsiElement getElseKeywordElement() {
+    public PsiElement getElseKeyword() {
         return findChildByType(JetTokens.ELSE_KEYWORD);
     }
 

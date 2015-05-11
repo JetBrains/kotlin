@@ -34,7 +34,7 @@ public class FoldWhenToReturnIntention : JetSelfTargetingRangeIntention<JetWhenE
             if (BranchedFoldingUtils.getFoldableBranchedReturn(entry.getExpression()) == null) return null
         }
 
-        return element.getWhenKeywordElement().getTextRange()
+        return element.getWhenKeyword().getTextRange()
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

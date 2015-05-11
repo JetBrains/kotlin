@@ -27,7 +27,7 @@ public class IntroduceWhenSubjectIntention : JetSelfTargetingRangeIntention<JetW
     override fun applicabilityRange(element: JetWhenExpression): TextRange? {
         val subject = element.getSubjectToIntroduce() ?: return null
         setText("Introduce '${subject.getText()}' as argument to 'when'")
-        return element.getWhenKeywordElement().getTextRange()
+        return element.getWhenKeyword().getTextRange()
     }
 
     override fun applyTo(element: JetWhenExpression, editor: Editor) {

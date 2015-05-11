@@ -322,13 +322,13 @@ public object PositioningStrategies {
 
     public val ELSE_ENTRY: PositioningStrategy<JetWhenEntry> = object : PositioningStrategy<JetWhenEntry>() {
         override fun mark(element: JetWhenEntry): List<TextRange> {
-            return markElement(element.getElseKeywordElement()!!)
+            return markElement(element.getElseKeyword()!!)
         }
     }
 
     public val WHEN_EXPRESSION: PositioningStrategy<JetWhenExpression> = object : PositioningStrategy<JetWhenExpression>() {
         override fun mark(element: JetWhenExpression): List<TextRange> {
-            return markElement(element.getWhenKeywordElement())
+            return markElement(element.getWhenKeyword())
         }
     }
 
