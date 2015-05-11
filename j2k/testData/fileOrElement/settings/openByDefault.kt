@@ -20,7 +20,7 @@ abstract class C {
     abstract fun foo()
 }
 
-trait I {
+interface I {
     public fun foo()
 }
 

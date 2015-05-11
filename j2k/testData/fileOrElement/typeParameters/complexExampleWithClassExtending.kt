@@ -1,1 +1,1 @@
-trait CommandHandler<T : Command>
+interface CommandHandler<T : Command>

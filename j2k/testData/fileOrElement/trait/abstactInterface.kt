@@ -1,1 +1,1 @@
-trait I
+interface I

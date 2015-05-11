@@ -1,1 +1,1 @@
-trait CommandHandler<T : INode, String>
+interface CommandHandler<T : INode, String>

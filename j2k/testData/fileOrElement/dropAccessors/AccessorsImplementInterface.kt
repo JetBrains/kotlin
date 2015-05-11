@@ -1,4 +1,4 @@
-trait I {
+interface I {
     public fun getX(): Int
     public fun setX(x: Int)
 }

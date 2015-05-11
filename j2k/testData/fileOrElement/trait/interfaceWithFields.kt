@@ -1,4 +1,4 @@
-trait INode {
+interface INode {
     companion object {
         public val IN: String = "in"
         public val AT: String = "@"

@@ -1,4 +1,4 @@
-trait I {
+interface I {
     public fun foo(i: Int, c: Char, s: String)
     public fun bar()
 }

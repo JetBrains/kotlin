@@ -13,7 +13,7 @@ annotation class Anon(public val value: String) {
 }
 
 Anon("a")
-trait I {
+interface I {
     companion object {
         public val e: Anon.E = Anon.field
     }

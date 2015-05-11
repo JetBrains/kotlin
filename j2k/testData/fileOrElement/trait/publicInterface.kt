@@ -1,1 +1,1 @@
-public trait Test
+public interface Test

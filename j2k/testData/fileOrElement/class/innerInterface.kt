@@ -1,3 +1,3 @@
 class A {
-    trait I
+    interface I
 }

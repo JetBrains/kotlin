@@ -27,7 +27,7 @@ class Trait(
 ) : Class(name, annotations, modifiers, typeParameterList, extendsTypes, null, implementsTypes, body) {
 
     override val keyword: String
-        get() = "trait"
+        get() = "interface"
 
     override fun presentationModifiers(): Modifiers
             = modifiers.filter { it in ACCESS_MODIFIERS }

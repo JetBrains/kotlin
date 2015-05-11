@@ -1,6 +1,6 @@
 package demo
 
-trait WindowListener {
+interface WindowListener {
     public fun windowClosing()
 }
 

@@ -1,1 +1,1 @@
-private trait Test
+private interface Test

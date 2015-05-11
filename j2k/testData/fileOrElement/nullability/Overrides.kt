@@ -12,7 +12,7 @@ open class Base {
     }
 }
 
-trait I {
+interface I {
     public fun zoo(o: Any?): String?
 }
 
