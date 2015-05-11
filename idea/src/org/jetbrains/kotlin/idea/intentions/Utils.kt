@@ -71,3 +71,26 @@ fun JetCallableDeclaration.canRemoveTypeSpecificationByVisibility(): Boolean {
     if (!isOverride && (descriptor as? DeclarationDescriptorWithVisibility)?.getVisibility()?.isPublicAPI() ?: false) return false
     return true
 }
+
+// returns assignment which replaces initializer
+fun splitPropertyDeclaration(property: JetProperty): JetBinaryExpression {
+    val parent = property.getParent()!!
+
+    val initializer = property.getInitializer()!!
+
+    val explicitTypeToSet = if (property.getTypeReference() != null) null else initializer.analyze().getType(initializer)
+
+    val psiFactory = JetPsiFactory(property)
+    var assignment = psiFactory.createExpressionByPattern("$0 = $1", property.getName()!!, initializer)
+
+    assignment = parent.addAfter(assignment, property) as JetBinaryExpression
+    parent.addAfter(psiFactory.createNewLine(), property)
+
+    property.setInitializer(null)
+
+    if (explicitTypeToSet != null) {
+        property.setType(explicitTypeToSet)
+    }
+
+    return assignment
+}

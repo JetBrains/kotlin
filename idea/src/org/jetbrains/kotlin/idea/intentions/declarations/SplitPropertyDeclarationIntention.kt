@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.declarations
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.splitPropertyDeclaration
 import org.jetbrains.kotlin.psi.JetProperty
 
 public class SplitPropertyDeclarationIntention : JetSelfTargetingOffsetIndependentIntention<JetProperty>(javaClass(), "Split property declaration") {
