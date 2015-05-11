@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
 public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
     override fun applicabilityRange(element: JetIfExpression): TextRange? {
@@ -49,7 +51,7 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfE
             else -> throw IllegalStateException()
         }
 
-        val matchesAsStatement = element.isStatement() && (matchingClause?.isNullExpressionOrEmptyBlock() ?: true)
+        val matchesAsStatement = element.isUsedAsStatement(element.analyze()) && (matchingClause?.isNullExpressionOrEmptyBlock() ?: true)
         if (!matchesAsStatement && !(matchingClause?.evaluatesTo(expression) ?: false && expression.isStableVariable())) return null
 
         var text = "Replace 'if' expression with '!!' expression"

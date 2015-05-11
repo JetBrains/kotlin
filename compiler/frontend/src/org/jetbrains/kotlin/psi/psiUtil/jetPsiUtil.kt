@@ -121,7 +121,13 @@ public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
 public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 
 [suppress("UNCHECKED_CAST")]
-public fun <T: PsiElement> PsiElement.replaced(newElement: T): T = replace(newElement) as T
+public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
+    val result = replace(newElement)
+    return if (result is T)
+        result
+    else
+        (result as JetParenthesizedExpression).getExpression() as T
+}
 
 [suppress("UNCHECKED_CAST")]
 public fun <T: PsiElement> T.copied(): T = copy() as T

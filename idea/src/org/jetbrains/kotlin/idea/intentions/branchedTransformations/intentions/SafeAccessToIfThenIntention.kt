@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStatement
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
 public class SafeAccessToIfThenIntention : JetSelfTargetingOffsetIndependentIntention<JetSafeQualifiedExpression>("safe.access.to.if.then", javaClass()) {
     override fun isApplicableTo(element: JetSafeQualifiedExpression): Boolean = true
@@ -38,7 +39,7 @@ public class SafeAccessToIfThenIntention : JetSelfTargetingOffsetIndependentInte
         val psiFactory = JetPsiFactory(element)
         val dotQualifiedExpression = psiFactory.createExpression("${receiverAsString}.${selector!!.getText()}")
 
-        val elseClause = if (element.isStatement()) null else psiFactory.createExpression("null")
+        val elseClause = if (element.isUsedAsStatement(element.analyze())) null else psiFactory.createExpression("null")
         val ifExpression = element.convertToIfNotNullExpression(receiver, dotQualifiedExpression, elseClause)
 
         if (!receiverIsStable) {

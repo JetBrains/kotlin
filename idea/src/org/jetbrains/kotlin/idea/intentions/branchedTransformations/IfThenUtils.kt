@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -58,8 +59,6 @@ fun JetExpression.unwrapBlock(): JetExpression {
     return innerExpression
 }
 
-fun JetExpression.isStatement(): Boolean = isUsedAsStatement(this.analyze())
-
 fun JetExpression?.isNullExpression(): Boolean = this?.unwrapBlock()?.getNode()?.getElementType() == JetNodeTypes.NULL
 
 fun JetExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().isEmpty()
@@ -81,21 +80,17 @@ fun JetExpression.evaluatesTo(other: JetExpression): Boolean {
 }
 
 fun JetExpression.convertToIfNotNullExpression(conditionLhs: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {
-    val condition = JetPsiFactory(this).createExpression("${conditionLhs.getText()} != null")
+    val condition = JetPsiFactory(this).createExpressionByPattern("$0 != null", conditionLhs)
     return this.convertToIfStatement(condition, thenClause, elseClause)
 }
 
 fun JetExpression.convertToIfNullExpression(conditionLhs: JetExpression, thenClause: JetExpression): JetIfExpression {
-    val condition = JetPsiFactory(this).createExpression("${conditionLhs.getText()} == null")
-    return this.convertToIfStatement(condition, thenClause, null)
+    val condition = JetPsiFactory(this).createExpressionByPattern("$0 == null", conditionLhs)
+    return this.convertToIfStatement(condition, thenClause)
 }
 
-fun JetExpression.convertToIfStatement(condition: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {
-    val elseBranch = if (elseClause == null) "" else " else ${elseClause.getText()}"
-    val conditionalString = "if (${condition.getText()}) ${thenClause.getText()}$elseBranch"
-
-    val st = this.replace(conditionalString) as JetExpression
-    return JetPsiUtil.deparenthesize(st) as JetIfExpression
+fun JetExpression.convertToIfStatement(condition: JetExpression, thenClause: JetExpression, elseClause: JetExpression? = null): JetIfExpression {
+    return replaced(JetPsiFactory(this).createIf(condition, thenClause, elseClause))
 }
 
 fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpression, editor: Editor) {
@@ -107,9 +102,6 @@ fun JetIfExpression.introduceValueForCondition(occurrenceInThenClause: JetExpres
                                                  listOf(occurrenceInConditional, occurrenceInThenClause),
                                                  null)
 }
-
-fun JetElement.replace(expressionAsString: String): PsiElement =
-        this.replace(JetPsiFactory(this).createExpression(expressionAsString))
 
 fun JetSimpleNameExpression.inlineIfDeclaredLocallyAndOnlyUsedOnceWithPrompt(editor: Editor) {
     val declaration = this.getReference()?.resolve() as JetDeclaration

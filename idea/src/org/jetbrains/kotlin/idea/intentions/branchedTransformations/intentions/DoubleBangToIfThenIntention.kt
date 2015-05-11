@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.JetTypeLookupExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.psi.JetPostfixExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetThrowExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
 public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression") {
     override fun applicabilityRange(element: JetPostfixExpression): TextRange? {
@@ -44,7 +46,7 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPos
 
         val defaultException = JetPsiFactory(element).createExpression("throw NullPointerException()")
 
-        val isStatement = element.isStatement()
+        val isStatement = element.isUsedAsStatement(element.analyze())
         val isStable = base.isStableVariable()
 
         val ifStatement = if (isStatement)
