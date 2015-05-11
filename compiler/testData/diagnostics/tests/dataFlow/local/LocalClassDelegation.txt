@@ -2,7 +2,7 @@ package
 
 internal fun test(/*0*/ d: kotlin.Any?): kotlin.Unit
 
-internal trait D {
+internal interface D {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open fun foo(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

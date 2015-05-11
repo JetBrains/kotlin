@@ -15,7 +15,7 @@ class B : A {
         get
 }
 
-//internal trait A defined in root package
+//internal interface A defined in root package
 //internal abstract val v: kotlin.Int defined in A
 //public abstract var int: kotlin.Int defined in A
 //private abstract fun <set-int>(<set-?>: kotlin.Int): kotlin.Unit defined in A

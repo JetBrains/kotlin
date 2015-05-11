@@ -9,37 +9,37 @@ package typeInferenceExpectedTypeMismatch {
     internal fun test2(/*0*/ outA: typeInferenceExpectedTypeMismatch.Out<typeInferenceExpectedTypeMismatch.A>, /*1*/ inC: typeInferenceExpectedTypeMismatch.In<typeInferenceExpectedTypeMismatch.C>): kotlin.Unit
     internal fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>
 
-    internal trait A {
+    internal interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait B : typeInferenceExpectedTypeMismatch.A {
+    internal interface B : typeInferenceExpectedTypeMismatch.A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait C : typeInferenceExpectedTypeMismatch.A {
+    internal interface C : typeInferenceExpectedTypeMismatch.A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait In</*0*/ in T> {
+    internal interface In</*0*/ in T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait Out</*0*/ out T> {
+    internal interface Out</*0*/ out T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait Two</*0*/ T, /*1*/ R> {
+    internal interface Two</*0*/ T, /*1*/ R> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

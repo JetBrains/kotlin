@@ -1,6 +1,6 @@
-package 
+package
 
-internal trait Test</*0*/ in I> {
+internal interface Test</*0*/ in I> {
     private/*private to this*/ final val i: I
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     private/*private to this*/ final fun foo(): I

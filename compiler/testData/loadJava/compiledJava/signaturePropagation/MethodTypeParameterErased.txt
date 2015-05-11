@@ -1,8 +1,8 @@
 package test
 
-public trait MethodTypeParameterErased {
+public interface MethodTypeParameterErased {
 
-    public trait Bug</*0*/ T> {
+    public interface Bug</*0*/ T> {
         public abstract fun </*0*/ RET : test.MethodTypeParameterErased.Bug<T!>!> save(): RET!
     }
 

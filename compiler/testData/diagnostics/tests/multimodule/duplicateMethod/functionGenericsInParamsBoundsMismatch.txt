@@ -3,7 +3,7 @@ package
 
 package p {
 
-    public trait B {
+    public interface B {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public abstract fun </*0*/ T> foo(/*0*/ a: T): p.B?
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -17,11 +17,11 @@ package
 
 package p {
 
-    public trait B {
+    public interface B {
         // -- Module: <m1> --
     }
 
-    public trait C : p.B {
+    public interface C : p.B {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public abstract override /*1*/ fun </*0*/ T> foo(/*0*/ a: T): p.B?
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -35,14 +35,14 @@ package
 
 package p {
 
-    public trait B {
+    public interface B {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public abstract fun </*0*/ T : p.Tr?> foo(/*0*/ a: T): p.B?
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public trait Tr {
+    public interface Tr {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -57,15 +57,15 @@ internal fun test(/*0*/ b: p.B?): kotlin.Unit
 
 package p {
 
-    public trait B {
+    public interface B {
         // -- Module: <m3> --
     }
 
-    public trait C : p.B {
+    public interface C : p.B {
         // -- Module: <m2> --
     }
 
-    public trait Tr {
+    public interface Tr {
         // -- Module: <m3> --
     }
 }

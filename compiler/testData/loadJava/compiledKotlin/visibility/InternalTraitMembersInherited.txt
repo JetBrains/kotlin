@@ -1,6 +1,6 @@
 package test
 
-internal trait A {
+internal interface A {
     public open var p: kotlin.Int
         public open fun <get-p>(): kotlin.Int
         internal open fun <set-p>(/*0*/ value: kotlin.Int): kotlin.Unit

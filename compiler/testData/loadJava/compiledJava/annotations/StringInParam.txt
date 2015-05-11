@@ -1,6 +1,6 @@
 package test
 
-public trait StringInParam {
+public interface StringInParam {
 
     public final annotation class Anno : kotlin.Annotation {
         public constructor Anno(/*0*/ value: kotlin.String)

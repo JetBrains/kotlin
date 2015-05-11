@@ -1,6 +1,6 @@
 package test
 
-public trait RecursiveAnnotation {
+public interface RecursiveAnnotation {
 
     test.RecursiveAnnotation.B(value = test.RecursiveAnnotation.A(value = "test": kotlin.String): test.RecursiveAnnotation.A) public final annotation class A : kotlin.Annotation {
         public constructor A(/*0*/ value: kotlin.String)

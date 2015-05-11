@@ -9,7 +9,7 @@ internal final class Sub : Super {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Super {
+internal interface Super {
     internal abstract var v: kotlin.CharSequence
     internal abstract val v2: kotlin.CharSequence
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

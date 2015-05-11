@@ -56,7 +56,7 @@ public trait TwoUpperBounds<T> where T : Number, T : Any
 //public constructor Inner() defined in rendererTest.TheClass.Inner
 //internal final class InternalClass defined in rendererTest
 //public constructor InternalClass() defined in rendererTest.InternalClass
-//internal trait TheTrait defined in rendererTest
+//internal interface TheTrait defined in rendererTest
 //internal abstract fun abstractFun(): kotlin.Unit defined in rendererTest.TheTrait
 //internal companion object : rendererTest.TheClass<kotlin.Int, kotlin.Int> defined in rendererTest.TheTrait
 //private constructor Companion() defined in rendererTest.TheTrait.Companion
@@ -65,5 +65,5 @@ public trait TwoUpperBounds<T> where T : Number, T : Any
 //public constructor WithReified<reified A, reified out B>() defined in rendererTest.WithReified
 //<reified A> defined in rendererTest.WithReified
 //<reified out B> defined in rendererTest.WithReified
-//public trait TwoUpperBounds<T : kotlin.Number> where T : kotlin.Any defined in rendererTest
+//public interface TwoUpperBounds<T : kotlin.Number> where T : kotlin.Any defined in rendererTest
 //<T : kotlin.Number & kotlin.Any> defined in rendererTest.TwoUpperBounds

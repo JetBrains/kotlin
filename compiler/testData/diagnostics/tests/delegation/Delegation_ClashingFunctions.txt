@@ -1,6 +1,6 @@
 package
 
-internal trait One {
+internal interface One {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.Any?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -73,14 +73,14 @@ internal final class Test321 : Three, Two, One {
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Three {
+internal interface Three {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait Two {
+internal interface Two {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract fun foo(): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

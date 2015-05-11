@@ -2,6 +2,6 @@ package test
 
 internal fun foo(/*0*/ r: java.lang.Runnable): kotlin.Unit
 
-public trait TaskObject {
+public interface TaskObject {
     internal abstract fun foo(/*0*/ r: java.lang.Runnable): kotlin.Unit
 }

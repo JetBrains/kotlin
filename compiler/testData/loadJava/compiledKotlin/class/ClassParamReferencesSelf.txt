@@ -4,5 +4,5 @@ internal final class ClassParamReferencesSelf</*0*/ A : test.TraitWithP<A>> {
     /*primary*/ public constructor ClassParamReferencesSelf</*0*/ A : test.TraitWithP<A>>()
 }
 
-internal trait TraitWithP</*0*/ P> {
+internal interface TraitWithP</*0*/ P> {
 }

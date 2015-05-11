@@ -16,7 +16,7 @@ package Jet87 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait B {
+    internal interface B {
         internal open fun bar(): kotlin.Double
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -69,7 +69,7 @@ package Jet87 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait G</*0*/ X> {
+    internal interface G</*0*/ X> {
         internal abstract val </*0*/ A : Jet87.B> bal: kotlin.Double
         internal abstract val </*0*/ Y : Jet87.B> bas: kotlin.Double
         internal abstract val </*0*/ X : Jet87.A> boo: kotlin.Double where X : Jet87.B

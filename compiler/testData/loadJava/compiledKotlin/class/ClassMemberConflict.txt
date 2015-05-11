@@ -20,7 +20,7 @@ internal final class ConstructorTypeParamClassObjectTypeConflict</*0*/ test> {
     internal companion object Companion {
         /*primary*/ private constructor Companion()
 
-        internal trait test {
+        internal interface test {
         }
     }
 }

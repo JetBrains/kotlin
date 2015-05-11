@@ -1,6 +1,6 @@
 // "Create enum 'A'" "false"
 // ACTION: Create class 'A'
-// ACTION: Create trait 'A'
+// ACTION: Create interface 'A'
 // ACTION: Convert to block body
 // ERROR: Unresolved reference: A
 package p

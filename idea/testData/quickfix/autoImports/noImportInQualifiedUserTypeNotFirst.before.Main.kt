@@ -1,5 +1,5 @@
 // "class com.intellij.codeInsight.daemon.impl.quickfix.ImportClassFixBase" "false"
-// ACTION: Create trait 'SomeTest'
+// ACTION: Create interface 'SomeTest'
 // ERROR: Unresolved reference: SomeTest
 
 package testing

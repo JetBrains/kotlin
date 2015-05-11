@@ -1,5 +1,5 @@
 package test
 
-public trait SingleAbstractMethod {
+public interface SingleAbstractMethod {
     internal abstract fun foo(): kotlin.Unit
 }

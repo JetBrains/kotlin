@@ -4,7 +4,7 @@ internal fun </*0*/ T> bar(): A<T>
 internal fun </*0*/ T> baz(/*0*/ f: (T) -> T): A<T>
 internal fun </*0*/ T> boo(/*0*/ t: T): A<T>
 
-internal trait A</*0*/ T> {
+internal interface A</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal abstract fun foo(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

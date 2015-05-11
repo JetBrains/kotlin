@@ -44,7 +44,7 @@ enum class ClassKind(val keyword: String, val description: String) {
     ENUM_CLASS: ClassKind("enum class", "enum")
     ENUM_ENTRY: ClassKind("", "enum constant")
     ANNOTATION_CLASS: ClassKind("annotation class", "annotation")
-    TRAIT: ClassKind("trait", "trait")
+    TRAIT: ClassKind("interface", "interface")
     OBJECT: ClassKind("object", "object")
 }
 

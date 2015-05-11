@@ -9,7 +9,7 @@ package testData.libraries
     }]]
 
     [[internal final class MyInner public () {
-        [internal trait MyInnerInner {
+        [internal interface MyInnerInner {
             [internal abstract fun innerInnerMethod(): kotlin.Unit]
         }]
     }]]

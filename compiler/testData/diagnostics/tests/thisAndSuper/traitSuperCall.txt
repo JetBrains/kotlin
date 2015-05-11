@@ -10,7 +10,7 @@ internal final class A : KTrait {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait KTrait : Test {
+internal interface KTrait : Test {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal open fun ktest(): kotlin.Unit
@@ -18,7 +18,7 @@ internal trait KTrait : Test {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public trait Test {
+public interface Test {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal open fun test(): kotlin.String

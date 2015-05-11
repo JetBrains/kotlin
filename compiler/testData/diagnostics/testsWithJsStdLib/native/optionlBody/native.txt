@@ -42,7 +42,7 @@ kotlin.js.native() internal object O {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-kotlin.js.native() internal trait T {
+kotlin.js.native() internal interface T {
     internal abstract val baz: kotlin.Int
     internal open fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

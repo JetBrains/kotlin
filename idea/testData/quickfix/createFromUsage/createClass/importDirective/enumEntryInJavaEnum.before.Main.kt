@@ -2,7 +2,7 @@
 // ACTION: Create annotation 'A'
 // ACTION: Create class 'A'
 // ACTION: Create enum 'A'
-// ACTION: Create trait 'A'
+// ACTION: Create interface 'A'
 // ERROR: Unresolved reference: A
 import E.<caret>A
 

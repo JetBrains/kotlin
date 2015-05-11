@@ -1,6 +1,6 @@
 package test
 
-public trait EnumInParam {
+public interface EnumInParam {
 
     public final annotation class MyRetention : kotlin.Annotation {
         public constructor MyRetention(/*0*/ value: java.lang.annotation.RetentionPolicy)

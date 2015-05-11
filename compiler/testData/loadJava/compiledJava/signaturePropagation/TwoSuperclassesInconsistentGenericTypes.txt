@@ -1,10 +1,10 @@
 package test
 
-public trait TwoSuperclassesInconsistentGenericTypes {
+public interface TwoSuperclassesInconsistentGenericTypes {
     public abstract fun dummy(): kotlin.Unit
     public abstract fun foo(): kotlin.(Mutable)List<kotlin.String!>!
 
-    public trait Other {
+    public interface Other {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.(Mutable)List<kotlin.String!>!
     }

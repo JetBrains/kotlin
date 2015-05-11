@@ -38,7 +38,7 @@ package override {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait G</*0*/ T> {
+    internal interface G</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal abstract fun foo(/*0*/ t: T): T
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -69,7 +69,7 @@ package override {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait T {
+    internal interface T {
         internal abstract val v: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal abstract fun foo(): kotlin.Unit

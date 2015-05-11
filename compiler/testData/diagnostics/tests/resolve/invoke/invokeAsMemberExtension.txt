@@ -7,7 +7,7 @@ internal fun test(/*0*/ g: G, /*1*/ f: F): kotlin.Unit
 internal fun test(/*0*/ u: U, /*1*/ v: V, /*2*/ x: X): kotlin.Unit
 internal fun </*0*/ T, /*1*/ R> with(/*0*/ receiver: T, /*1*/ f: T.() -> R): R
 
-internal trait A {
+internal interface A {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal open fun test(/*0*/ foo: Foo): kotlin.Unit
@@ -15,7 +15,7 @@ internal trait A {
     internal open fun Foo.invoke(): kotlin.Unit
 }
 
-internal trait B {
+internal interface B {
     internal abstract val foo: Foo
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -31,7 +31,7 @@ internal final class C {
     internal final fun Foo.invoke(): kotlin.Unit
 }
 
-internal trait D {
+internal interface D {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -46,7 +46,7 @@ internal final class E {
     internal final fun Foo.invoke(): kotlin.Unit
 }
 
-internal trait F {
+internal interface F {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -59,7 +59,7 @@ internal final class Foo {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait G {
+internal interface G {
     internal abstract val F.foo: Foo
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -68,14 +68,14 @@ internal trait G {
     internal abstract fun Foo.invoke(): kotlin.Unit
 }
 
-internal trait U {
+internal interface U {
     internal abstract val X.foo: Foo
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait V {
+internal interface V {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -83,7 +83,7 @@ internal trait V {
     internal open fun U.test(/*0*/ x: X): kotlin.Unit
 }
 
-internal trait X {
+internal interface X {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

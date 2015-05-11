@@ -3,5 +3,5 @@
 
 package testData.libraries
 
-[public trait SimpleTrait {
+[public interface SimpleTrait {
 }]

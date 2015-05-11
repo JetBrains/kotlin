@@ -60,7 +60,7 @@ internal final enum class MyEnumBase : kotlin.Enum<MyEnumBase> {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnumBase>
 }
 
-internal trait MyTrait {
+internal interface MyTrait {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

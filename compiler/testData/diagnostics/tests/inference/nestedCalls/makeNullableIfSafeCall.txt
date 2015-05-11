@@ -7,7 +7,7 @@ package a {
     internal fun a.B?.bar(): kotlin.Int
     internal fun a.B?.baz(): kotlin.Int?
 
-    internal trait A {
+    internal interface A {
         internal abstract val b: a.B
         internal abstract val nb: a.B?
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -15,7 +15,7 @@ package a {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait B {
+    internal interface B {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         internal abstract fun foo(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

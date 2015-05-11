@@ -75,8 +75,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
                 findWhatPanel,
                 true
         );
-        derivedTraits = addCheckboxToPanel(
-                JetBundle.message("find.what.derived.traits.checkbox"),
+        derivedTraits = addCheckboxToPanel("&Derived interfaces",
                 getFindUsagesOptions().isDerivedInterfaces,
                 findWhatPanel,
                 true

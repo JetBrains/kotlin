@@ -2,7 +2,7 @@ package test
 
 public /*synthesized*/ fun NullInAnnotation(/*0*/ function: () -> kotlin.Unit): test.NullInAnnotation
 
-public trait NullInAnnotation {
+public interface NullInAnnotation {
     test.NullInAnnotation.Ann(a = null: kotlin.Nothing?, b = {null}: kotlin.Array<out kotlin.String>) public abstract fun foo(): kotlin.Unit
 
     public final annotation class Ann : kotlin.Annotation {

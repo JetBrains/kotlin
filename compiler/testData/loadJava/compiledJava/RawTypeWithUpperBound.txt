@@ -1,12 +1,12 @@
 package test
 
-public trait RawTypeWithUpperBound {
+public interface RawTypeWithUpperBound {
 
-    public trait Bar {
+    public interface Bar {
         public abstract fun f(/*0*/ p0: test.RawTypeWithUpperBound.Foo<*>!): kotlin.Unit
         public abstract fun g(/*0*/ p0: kotlin.(Mutable)List<test.RawTypeWithUpperBound.Foo<*>!>!): kotlin.Unit
     }
 
-    public trait Foo</*0*/ T : kotlin.CharSequence!> {
+    public interface Foo</*0*/ T : kotlin.CharSequence!> {
     }
 }

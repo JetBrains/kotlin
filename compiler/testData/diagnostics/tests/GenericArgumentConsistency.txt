@@ -1,66 +1,66 @@
 package
 
-internal trait A</*0*/ in T> {
+internal interface A</*0*/ in T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait A1</*0*/ out T> {
+internal interface A1</*0*/ out T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait B</*0*/ T> : A<kotlin.Int> {
+internal interface B</*0*/ T> : A<kotlin.Int> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait B1 : A1<kotlin.Int> {
+internal interface B1 : A1<kotlin.Int> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait B2 : A1<kotlin.Any>, B1 {
+internal interface B2 : A1<kotlin.Any>, B1 {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait BA1</*0*/ T> {
+internal interface BA1</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait BB1 : BA1<kotlin.Int> {
+internal interface BB1 : BA1<kotlin.Int> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait BB2 : BA1<kotlin.Any>, BB1 {
+internal interface BB2 : BA1<kotlin.Any>, BB1 {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait C</*0*/ T> : B<T>, A<T> {
+internal interface C</*0*/ T> : B<T>, A<T> {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait C1</*0*/ T> : B<T>, A<kotlin.Any> {
+internal interface C1</*0*/ T> : B<T>, A<kotlin.Any> {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait D : C<kotlin.Boolean>, B<kotlin.Double> {
+internal interface D : C<kotlin.Boolean>, B<kotlin.Double> {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
@@ -68,25 +68,25 @@ internal trait D : C<kotlin.Boolean>, B<kotlin.Double> {
 
 package sx2 {
 
-    internal trait AA1</*0*/ in T> {
+    internal interface AA1</*0*/ in T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB1 : sx2.AA1<kotlin.Int> {
+    internal interface AB1 : sx2.AA1<kotlin.Int> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB2 : sx2.AA1<kotlin.Number>, sx2.AB1, sx2.AB3 {
+    internal interface AB2 : sx2.AA1<kotlin.Number>, sx2.AB1, sx2.AB3 {
         public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB3 : sx2.AA1<kotlin.Comparable<kotlin.Int>> {
+    internal interface AB3 : sx2.AA1<kotlin.Comparable<kotlin.Int>> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -95,25 +95,25 @@ package sx2 {
 
 package x {
 
-    internal trait AA1</*0*/ out T> {
+    internal interface AA1</*0*/ out T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB1 : x.AA1<kotlin.Int> {
+    internal interface AB1 : x.AA1<kotlin.Int> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB2 : x.AA1<kotlin.Number>, x.AB1, x.AB3 {
+    internal interface AB2 : x.AA1<kotlin.Number>, x.AB1, x.AB3 {
         public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB3 : x.AA1<kotlin.Comparable<kotlin.Int>> {
+    internal interface AB3 : x.AA1<kotlin.Comparable<kotlin.Int>> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -122,25 +122,25 @@ package x {
 
 package x2 {
 
-    internal trait AA1</*0*/ out T> {
+    internal interface AA1</*0*/ out T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB1 : x2.AA1<kotlin.Any> {
+    internal interface AB1 : x2.AA1<kotlin.Any> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB2 : x2.AA1<kotlin.Number>, x2.AB1, x2.AB3 {
+    internal interface AB2 : x2.AA1<kotlin.Number>, x2.AB1, x2.AB3 {
         public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB3 : x2.AA1<kotlin.Comparable<kotlin.Int>> {
+    internal interface AB3 : x2.AA1<kotlin.Comparable<kotlin.Int>> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -149,25 +149,25 @@ package x2 {
 
 package x3 {
 
-    internal trait AA1</*0*/ in T> {
+    internal interface AA1</*0*/ in T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB1 : x3.AA1<kotlin.Any> {
+    internal interface AB1 : x3.AA1<kotlin.Any> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB2 : x3.AA1<kotlin.Number>, x3.AB1, x3.AB3 {
+    internal interface AB2 : x3.AA1<kotlin.Number>, x3.AB1, x3.AB3 {
         public open override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait AB3 : x3.AA1<kotlin.Comparable<kotlin.Int>> {
+    internal interface AB3 : x3.AA1<kotlin.Comparable<kotlin.Int>> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

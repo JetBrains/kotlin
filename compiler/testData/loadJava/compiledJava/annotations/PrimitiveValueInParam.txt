@@ -1,6 +1,6 @@
 package test
 
-public trait PrimitiveValueInParam {
+public interface PrimitiveValueInParam {
 
     test.PrimitiveValueInParam.Ann(bool = true: kotlin.Boolean, d = 1.0.toDouble(): kotlin.Double, f = 1.0.toFloat(): kotlin.Float, i = 1: kotlin.Int, l = 1.toLong(): kotlin.Long, str = "str": kotlin.String) public open class A {
         public constructor A()

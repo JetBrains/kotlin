@@ -1,13 +1,13 @@
 package test
 
-public trait InheritProjectionKind {
+public interface InheritProjectionKind {
 
-    public trait Sub : test.InheritProjectionKind.Super {
+    public interface Sub : test.InheritProjectionKind.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(/*0*/ p: kotlin.MutableList<in kotlin.String>): kotlin.Unit
     }
 
-    public trait Super {
+    public interface Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ p: kotlin.MutableList<in kotlin.String>): kotlin.Unit
     }

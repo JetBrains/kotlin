@@ -1,13 +1,13 @@
 package test
 
-public trait InheritReadOnlinessOfArgument {
+public interface InheritReadOnlinessOfArgument {
 
-    public trait Sub : test.InheritReadOnlinessOfArgument.Super {
+    public interface Sub : test.InheritReadOnlinessOfArgument.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
         public abstract override /*1*/ fun foo(): kotlin.List<kotlin.List<kotlin.String>>
     }
 
-    public trait Super {
+    public interface Super {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(): kotlin.List<kotlin.List<kotlin.String>>
     }

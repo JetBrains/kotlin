@@ -2,7 +2,7 @@ package
 
 package kt1248 {
 
-    internal trait ParseResult</*0*/ out T> {
+    internal interface ParseResult</*0*/ out T> {
         public abstract val success: kotlin.Boolean
         public abstract val value: T
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

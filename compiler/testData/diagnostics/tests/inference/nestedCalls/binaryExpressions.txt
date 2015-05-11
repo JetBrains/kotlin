@@ -16,13 +16,13 @@ package h {
     internal fun </*0*/ T> h.Z.foo(/*0*/ a: h.A<T>): h.A<T>
     internal fun </*0*/ T> h.Z.plus(/*0*/ a: h.A<T>): h.A<T>
 
-    internal trait A</*0*/ T> {
+    internal interface A</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal trait Z {
+    internal interface Z {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

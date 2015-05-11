@@ -1,6 +1,6 @@
 package test
 
-public trait ReturnInnerSubclassOfSupersInner {
+public interface ReturnInnerSubclassOfSupersInner {
 
     public open class Sub</*0*/ B> : test.ReturnInnerSubclassOfSupersInner.Super<B!> {
         public constructor Sub</*0*/ B>()

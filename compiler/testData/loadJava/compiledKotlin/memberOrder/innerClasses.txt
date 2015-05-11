@@ -19,9 +19,9 @@ internal final class O {
         /*primary*/ public constructor B2()
     }
 
-    internal trait C1 {
+    internal interface C1 {
     }
 
-    internal trait C2 {
+    internal interface C2 {
     }
 }

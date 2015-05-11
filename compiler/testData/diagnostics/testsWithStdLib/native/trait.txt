@@ -1,6 +1,6 @@
 package
 
-internal trait Tr {
+internal interface Tr {
     kotlin.jvm.native() internal open fun bar(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     kotlin.jvm.native() internal abstract fun foo(): kotlin.Unit

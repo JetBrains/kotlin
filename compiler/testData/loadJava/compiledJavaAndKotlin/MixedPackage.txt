@@ -15,7 +15,7 @@ public final class KotlinClass {
     public constructor KotlinClass()
 }
 
-public trait SamInterface {
+public interface SamInterface {
     public abstract fun instanceMethod(): kotlin.Unit
 }
 

@@ -1,6 +1,6 @@
 package test
 
-internal trait Bbb {
+internal interface Bbb {
 }
 
 internal final class ClassObjectextendsTrait {

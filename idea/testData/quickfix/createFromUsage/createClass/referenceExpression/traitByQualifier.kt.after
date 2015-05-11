@@ -1,9 +1,9 @@
-// "Create trait 'A'" "true"
+// "Create interface 'A'" "true"
 // ERROR: Unresolved reference: B
 package p
 
 fun foo() = A.B
 
-trait A {
+interface A {
 
 }

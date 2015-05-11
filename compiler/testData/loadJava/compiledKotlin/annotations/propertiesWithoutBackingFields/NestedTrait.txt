@@ -7,7 +7,7 @@ internal final annotation class Anno : kotlin.Annotation {
 internal final class Class {
     /*primary*/ public constructor Class()
 
-    internal trait Trait {
+    internal interface Trait {
         test.Anno() internal abstract val property: kotlin.Int
             internal abstract fun <get-property>(): kotlin.Int
     }

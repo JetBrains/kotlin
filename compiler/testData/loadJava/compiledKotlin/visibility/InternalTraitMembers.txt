@@ -1,6 +1,6 @@
 package test
 
-internal trait A {
+internal interface A {
     public abstract var p: kotlin.Int
         public abstract fun <get-p>(): kotlin.Int
         internal abstract fun <set-p>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit

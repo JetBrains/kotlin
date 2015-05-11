@@ -31,8 +31,8 @@ deprecated("") fun deprecatedFun()
 //public fun <out T> withTypeParam(a: kotlin.Array<T>): kotlin.Int defined in rendererTest
 //<out T> defined in rendererTest.withTypeParam
 //value-parameter val a: kotlin.Array<T> defined in rendererTest.withTypeParam
-//internal trait Foo defined in rendererTest
-//internal trait Bar defined in rendererTest
+//internal interface Foo defined in rendererTest
+//internal interface Bar defined in rendererTest
 //internal fun <P : rendererTest.Foo> funTypeParameterWithTwoUpperBounds(): kotlin.Int where P : rendererTest.Bar defined in rendererTest
 //<P : rendererTest.Foo & rendererTest.Bar> defined in rendererTest.funTypeParameterWithTwoUpperBounds
 //kotlin.deprecated internal fun deprecatedFun(): kotlin.Unit defined in rendererTest

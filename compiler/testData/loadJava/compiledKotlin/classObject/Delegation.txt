@@ -10,6 +10,6 @@ internal final class A : test.T {
     }
 }
 
-internal trait T {
+internal interface T {
     internal abstract fun foo(): kotlin.Int
 }

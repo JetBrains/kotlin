@@ -1,6 +1,6 @@
 package test
 
-public trait AnnotationInParam {
+public interface AnnotationInParam {
 
     test.AnnotationInParam.MyAnnotationWithParam(value = test.AnnotationInParam.MyAnnotation(value = "test": kotlin.String): test.AnnotationInParam.MyAnnotation) public open class A {
         public constructor A()

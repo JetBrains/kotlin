@@ -1,13 +1,13 @@
 package test
 
-public trait DeepSamLoop {
+public interface DeepSamLoop {
 
-    public trait Bar {
+    public interface Bar {
         public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Bar!) -> kotlin.Unit)!): kotlin.Unit
         public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Foo!): kotlin.Unit
     }
 
-    public trait Foo {
+    public interface Foo {
         public final /*synthesized*/ fun foo(/*0*/ p0: ((test.DeepSamLoop.Foo!) -> kotlin.Unit)!): kotlin.Unit
         public abstract fun foo(/*0*/ p0: test.DeepSamLoop.Bar!): kotlin.Unit
     }

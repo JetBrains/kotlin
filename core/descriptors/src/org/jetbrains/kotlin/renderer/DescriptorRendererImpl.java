@@ -1057,7 +1057,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             case CLASS:
                 return "class";
             case INTERFACE:
-                return "trait";
+                return "interface";
             case ENUM_CLASS:
                 return "enum class";
             case OBJECT:

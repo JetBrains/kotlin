@@ -54,7 +54,7 @@ internal open class MyClass {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal trait MyTrait {
+internal interface MyTrait {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal open fun f1(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -1,6 +1,6 @@
 package test
 
-public trait ArrayOfEnumInParam {
+public interface ArrayOfEnumInParam {
 
     java.lang.annotation.Target(value = {ElementType.FIELD, ElementType.CONSTRUCTOR}: kotlin.Array<out java.lang.annotation.ElementType>) public final annotation class targetAnnotation : kotlin.Annotation {
         public constructor targetAnnotation(/*0*/ value: kotlin.String)

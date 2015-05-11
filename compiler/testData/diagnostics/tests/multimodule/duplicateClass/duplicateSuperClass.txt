@@ -3,7 +3,7 @@ package
 
 package p {
 
-    public trait A {
+    public interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -32,7 +32,7 @@ package
 package p {
     public fun foo(/*0*/ a: p.A): kotlin.Unit
 
-    public trait A {
+    public interface A {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -48,11 +48,11 @@ internal fun test(): kotlin.Unit
 package p {
     public fun foo(/*0*/ a: p.A): kotlin.Unit
 
-    public trait A {
+    public interface A {
         // -- Module: <m1> --
     }
 
-    public trait A {
+    public interface A {
         // -- Module: <m2> --
     }
 

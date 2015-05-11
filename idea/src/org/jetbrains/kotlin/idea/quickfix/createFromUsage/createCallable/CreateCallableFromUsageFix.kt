@@ -120,7 +120,7 @@ public class CreateCallableFromUsageFix(
             return
         }
 
-        val popupTitle = JetBundle.message("choose.target.class.or.trait.title")
+        val popupTitle = "Choose target class or interface"
         val receiverTypeCandidates = callableBuilder.computeTypeCandidates(callableInfo.receiverTypeInfo)
         if (receiverTypeCandidates.isNotEmpty()) {
             val containers = receiverTypeCandidates

@@ -3,7 +3,7 @@ package test
 public open class RawSuperTypeWithBound {
     public constructor RawSuperTypeWithBound()
 
-    public trait Bound {
+    public interface Bound {
     }
 
     public open inner class Derived : test.RawSuperTypeWithBound.Super<test.RawSuperTypeWithBound.Bound!> {
@@ -13,7 +13,7 @@ public open class RawSuperTypeWithBound {
         public open override /*1*/ fun foo(/*0*/ p0: test.RawSuperTypeWithBound.Bound!): kotlin.Unit
     }
 
-    public trait Super</*0*/ T : test.RawSuperTypeWithBound.Bound!> {
+    public interface Super</*0*/ T : test.RawSuperTypeWithBound.Bound!> {
         public abstract fun dummy(): kotlin.Unit
         public abstract fun foo(/*0*/ p0: T!): kotlin.Unit
     }

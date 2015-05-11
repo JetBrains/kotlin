@@ -1,10 +1,10 @@
-// "Create trait 'A'" "true"
+// "Create interface 'A'" "true"
 package p
 
 import p.X.A
 
 class X {
-    trait A {
+    interface A {
 
     }
 

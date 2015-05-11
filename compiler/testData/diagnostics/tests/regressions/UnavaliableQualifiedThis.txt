@@ -1,6 +1,6 @@
 package
 
-internal trait Iterator</*0*/ out T> {
+internal interface Iterator</*0*/ out T> {
     internal abstract val hasNext: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

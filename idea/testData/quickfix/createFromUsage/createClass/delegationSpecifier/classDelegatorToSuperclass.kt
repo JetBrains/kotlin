@@ -1,5 +1,5 @@
 // "Create class 'A'" "false"
-// ACTION: Create trait 'A'
+// ACTION: Create interface 'A'
 // ERROR: Unresolved reference: A
 package p
 

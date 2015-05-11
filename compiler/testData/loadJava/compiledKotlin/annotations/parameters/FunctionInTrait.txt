@@ -4,6 +4,6 @@ internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
-internal trait Trait {
+internal interface Trait {
     internal open fun foo(/*0*/ test.Anno() x: kotlin.String): kotlin.Int
 }

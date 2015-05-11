@@ -1,8 +1,8 @@
-// "Create trait 'A'" "true"
+// "Create interface 'A'" "true"
 package p
 
 import p.A
 
-trait A {
+interface A {
 
 }

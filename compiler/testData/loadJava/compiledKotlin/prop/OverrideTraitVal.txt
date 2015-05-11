@@ -6,7 +6,7 @@ internal open class Subclass : test.Trait {
         internal open override /*1*/ fun <get-shape>(): kotlin.String
 }
 
-internal trait Trait {
+internal interface Trait {
     internal abstract val shape: kotlin.String
         internal abstract fun <get-shape>(): kotlin.String
 }

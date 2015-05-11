@@ -4,7 +4,7 @@ internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno()
 }
 
-internal trait Trait {
+internal interface Trait {
 
     internal companion object Companion {
         /*primary*/ private constructor Companion()
