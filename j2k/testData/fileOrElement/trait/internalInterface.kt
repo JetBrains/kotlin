@@ -1,1 +1,1 @@
-trait Test
+interface Test

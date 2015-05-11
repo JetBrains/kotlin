@@ -1,6 +1,6 @@
 import java.io.*
 
-trait I {
+interface I {
     throws(IOException::class)
     public fun doIt(stream: InputStream): Int
 }

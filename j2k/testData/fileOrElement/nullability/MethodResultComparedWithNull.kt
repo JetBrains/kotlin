@@ -1,4 +1,4 @@
-trait I {
+interface I {
     public fun getString(): String?
 }
 

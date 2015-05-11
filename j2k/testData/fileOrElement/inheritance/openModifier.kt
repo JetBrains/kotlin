@@ -23,7 +23,7 @@ class C : B() {
     }
 }
 
-trait I {
+interface I {
     public fun f()
 }
 
