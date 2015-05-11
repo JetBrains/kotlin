@@ -4,7 +4,7 @@ SUPERTYPE T IntegerValueType(1)
 SUBTYPE T Byte
 
 type parameter bounds:
-T >: IntegerValueType(1), <: kotlin.Byte
+T >: IntegerValueType(1), <: Byte
 
 status:
 -hasCannotCaptureTypesError: false
@@ -17,4 +17,4 @@ status:
 -isSuccessful: true
 
 result:
-T=kotlin.Byte
+T=Byte

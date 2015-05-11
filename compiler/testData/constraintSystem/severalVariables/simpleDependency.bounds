@@ -3,8 +3,8 @@ VARIABLES T P
 SUBTYPE T Int
 
 type parameter bounds:
-T <: kotlin.Int
-P <: kotlin.Int
+T <: Int
+P <: Int
 
 status:
 -hasCannotCaptureTypesError: false
@@ -17,6 +17,5 @@ status:
 -isSuccessful: true
 
 result:
-T=kotlin.Int
-P=kotlin.Int
-
+T=Int
+P=Int

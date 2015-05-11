@@ -4,7 +4,7 @@ SUPERTYPE T IntegerValueType(1)
 SUBTYPE T Any
 
 type parameter bounds:
-T >: IntegerValueType(1), <: kotlin.Any
+T >: IntegerValueType(1), <: Any
 
 status:
 -hasCannotCaptureTypesError: false
@@ -17,4 +17,4 @@ status:
 -isSuccessful: true
 
 result:
-T=kotlin.Int
+T=Int

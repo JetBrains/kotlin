@@ -4,7 +4,7 @@ SUBTYPE T Int
 SUPERTYPE T Int
 
 type parameter bounds:
-T <: kotlin.Int, >: kotlin.Int
+T <: Int, >: Int
 
 status:
 -hasCannotCaptureTypesError: false
@@ -17,4 +17,4 @@ status:
 -isSuccessful: true
 
 result:
-T=kotlin.Int
+T=Int

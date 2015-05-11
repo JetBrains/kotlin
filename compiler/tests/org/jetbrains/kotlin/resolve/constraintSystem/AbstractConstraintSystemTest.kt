@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.constraintSystem
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL
@@ -108,7 +109,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         for ((typeParameter, variance) in typeParameterDescriptors) {
             val parameterType = testDeclarations.getType(typeParameter.getName().asString())
             val resultType = resultingSubstitutor.substitute(parameterType, variance)
-            result append "${typeParameter.getName()}=${resultType?.let{ Renderers.RENDER_TYPE.render(it) }}\n"
+            result append "${typeParameter.getName()}=${resultType?.let{ DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}\n"
         }
 
         JetTestUtils.assertEqualsToFile(file, "${getConstraintsText(fileText)}${resultingStatus}\n\n${result}\n")

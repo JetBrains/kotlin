@@ -16,4 +16,4 @@ status:
 -isSuccessful: true
 
 result:
-T=kotlin.Int
+T=Int

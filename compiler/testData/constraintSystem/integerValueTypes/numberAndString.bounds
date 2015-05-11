@@ -4,7 +4,7 @@ SUPERTYPE T IntegerValueType(1)
 SUPERTYPE T String
 
 type parameter bounds:
-T >: IntegerValueType(1), >: kotlin.String
+T >: IntegerValueType(1), >: String
 
 status:
 -hasCannotCaptureTypesError: false
@@ -17,4 +17,4 @@ status:
 -isSuccessful: true
 
 result:
-T=kotlin.Comparable<out kotlin.Any?>
+T=Comparable<out Any?>

@@ -4,7 +4,7 @@ SUBTYPE T Int
 SUPERTYPE T String
 
 type parameter bounds:
-T <: kotlin.Int, >: kotlin.String
+T <: Int, >: String
 
 status:
 -hasCannotCaptureTypesError: false
