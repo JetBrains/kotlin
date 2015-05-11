@@ -28,37 +28,37 @@ public enum UnfoldableKind implements Transformer {
     ASSIGNMENT_TO_IF("unfold.assignment.to.if") {
         @Override
         public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
-            BranchedUnfoldingUtils.unfoldAssignmentToIf((JetBinaryExpression) element, editor);
+            BranchedUnfoldingUtils.INSTANCE$.unfoldAssignmentToIf((JetBinaryExpression) element, editor);
         }
     },
     PROPERTY_TO_IF("unfold.property.to.if") {
         @Override
         public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
-            BranchedUnfoldingUtils.unfoldPropertyToIf((JetProperty) element, editor);
+            BranchedUnfoldingUtils.INSTANCE$.unfoldPropertyToIf((JetProperty) element, editor);
         }
     },
     RETURN_TO_IF("unfold.return.to.if") {
         @Override
         public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
-            BranchedUnfoldingUtils.unfoldReturnToIf((JetReturnExpression) element);
+            BranchedUnfoldingUtils.INSTANCE$.unfoldReturnToIf((JetReturnExpression) element);
         }
     },
     ASSIGNMENT_TO_WHEN("unfold.assignment.to.when") {
         @Override
         public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
-            BranchedUnfoldingUtils.unfoldAssignmentToWhen((JetBinaryExpression) element, editor);
+            BranchedUnfoldingUtils.INSTANCE$.unfoldAssignmentToWhen((JetBinaryExpression) element, editor);
         }
     },
     PROPERTY_TO_WHEN("unfold.property.to.when") {
         @Override
         public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
-            BranchedUnfoldingUtils.unfoldPropertyToWhen((JetProperty) element, editor);
+            BranchedUnfoldingUtils.INSTANCE$.unfoldPropertyToWhen((JetProperty) element, editor);
         }
     },
     RETURN_TO_WHEN("unfold.return.to.when") {
         @Override
         public void transform(@NotNull PsiElement element, @NotNull Editor editor, JetFile file) {
-            BranchedUnfoldingUtils.unfoldReturnToWhen((JetReturnExpression) element);
+            BranchedUnfoldingUtils.INSTANCE$.unfoldReturnToWhen((JetReturnExpression) element);
         }
     };
 
