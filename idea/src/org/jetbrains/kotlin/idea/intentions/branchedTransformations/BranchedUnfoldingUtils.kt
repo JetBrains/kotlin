@@ -18,51 +18,12 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.declarations.DeclarationUtils
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
 public object BranchedUnfoldingUtils {
 
     private fun getOutermostLastBlockElement(expression: JetExpression?): JetExpression {
         return JetPsiUtil.getOutermostLastBlockElement(expression, JetPsiUtil.ANY_JET_ELEMENT) as JetExpression
-    }
-
-    public fun getUnfoldableExpressionKind(root: JetExpression?): UnfoldableKind? {
-        if (root == null) return null
-
-        when (root) {
-            is JetBinaryExpression -> {
-                if (root.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return null
-                if (root.getLeft() == null) return null
-
-                val rhs = root.getRight()
-                if (rhs is JetIfExpression) return UnfoldableKind.ASSIGNMENT_TO_IF
-                if (rhs is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(rhs)) {
-                    return UnfoldableKind.ASSIGNMENT_TO_WHEN
-                }
-            }
-
-            is JetReturnExpression -> {
-                val resultExpr = root.getReturnedExpression()
-                if (resultExpr is JetIfExpression) return UnfoldableKind.RETURN_TO_IF
-                if (resultExpr is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(resultExpr)) {
-                    return UnfoldableKind.RETURN_TO_WHEN
-                }
-            }
-
-            is JetProperty -> {
-                if (!root.isLocal()) return null
-
-                val initializer = root.getInitializer()
-
-                if (initializer is JetIfExpression) return UnfoldableKind.PROPERTY_TO_IF
-                if (initializer is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(initializer)) {
-                    return UnfoldableKind.PROPERTY_TO_WHEN
-                }
-            }
-        }
-
-        return null
     }
 
     public val UNFOLD_WITHOUT_CHECK: String = "Expression must be checked before unfolding"

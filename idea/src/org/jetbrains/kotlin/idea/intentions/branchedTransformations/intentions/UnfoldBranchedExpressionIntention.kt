@@ -19,42 +19,74 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.UnfoldableKind
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
-public open class UnfoldBranchedExpressionIntention<T: JetExpression>(
-        val kind: UnfoldableKind, elementType: Class<T>
-) : JetSelfTargetingOffsetIndependentIntention<T>(kind.getKey(), elementType) {
-    override fun isApplicableTo(element: T): Boolean = BranchedUnfoldingUtils.getUnfoldableExpressionKind(element) == kind
+public class UnfoldAssignmentToIfIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'if' expression") {
+    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
+        if (element.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return false
+        if (element.getLeft() == null) return false
+        return element.getRight() is JetIfExpression
+    }
 
-    override fun applyTo(element: T, editor: Editor) {
-        val file = element.getContainingFile()
-        if (file is JetFile) {
-            kind.transform(element, editor, file)
-        }
+    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+        BranchedUnfoldingUtils.unfoldAssignmentToIf(element, editor)
     }
 }
 
-public class UnfoldAssignmentToIfIntention : UnfoldBranchedExpressionIntention<JetBinaryExpression>(
-        UnfoldableKind.ASSIGNMENT_TO_IF, javaClass()
-)
+public class UnfoldPropertyToIfIntention : JetSelfTargetingOffsetIndependentIntention<JetProperty>(javaClass(), "Replace property initializer with 'if' expression") {
+    override fun isApplicableTo(element: JetProperty): Boolean {
+        if (!element.isLocal()) return false
+        return element.getInitializer() is JetIfExpression
+    }
 
-public class UnfoldPropertyToIfIntention : UnfoldBranchedExpressionIntention<JetProperty>(
-        UnfoldableKind.PROPERTY_TO_IF, javaClass()
-)
+    override fun applyTo(element: JetProperty, editor: Editor) {
+        BranchedUnfoldingUtils.unfoldPropertyToIf(element, editor)
+    }
+}
 
-public class UnfoldAssignmentToWhenIntention : UnfoldBranchedExpressionIntention<JetBinaryExpression>(
-        UnfoldableKind.ASSIGNMENT_TO_WHEN, javaClass()
-)
+public class UnfoldAssignmentToWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'when' expression" ) {
+    override fun isApplicableTo(element: JetBinaryExpression): Boolean {
+        if (element.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return false
+        if (element.getLeft() == null) return false
+        val right = element.getRight()
+        return right is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(right)
+    }
 
-public class UnfoldPropertyToWhenIntention : UnfoldBranchedExpressionIntention<JetProperty>(
-        UnfoldableKind.PROPERTY_TO_WHEN, javaClass()
-)
+    override fun applyTo(element: JetBinaryExpression, editor: Editor) {
+        BranchedUnfoldingUtils.unfoldAssignmentToWhen(element, editor)
+    }
+}
 
-public class UnfoldReturnToIfIntention : UnfoldBranchedExpressionIntention<JetReturnExpression>(
-        UnfoldableKind.RETURN_TO_IF, javaClass()
-)
+public class UnfoldPropertyToWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetProperty>(javaClass(), "Replace property initializer with 'when' expression") {
+    override fun isApplicableTo(element: JetProperty): Boolean {
+        if (!element.isLocal()) return false
+        val initializer = element.getInitializer()
+        return initializer is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(initializer)
+    }
 
-public class UnfoldReturnToWhenIntention : UnfoldBranchedExpressionIntention<JetReturnExpression>(
-        UnfoldableKind.RETURN_TO_WHEN, javaClass()
-)
+    override fun applyTo(element: JetProperty, editor: Editor) {
+        BranchedUnfoldingUtils.unfoldPropertyToWhen(element, editor)
+    }
+}
+
+public class UnfoldReturnToIfIntention : JetSelfTargetingOffsetIndependentIntention<JetReturnExpression>(javaClass(), "Replace return with 'if' expression") {
+    override fun isApplicableTo(element: JetReturnExpression): Boolean {
+        return element.getReturnedExpression() is JetIfExpression
+    }
+
+    override fun applyTo(element: JetReturnExpression, editor: Editor) {
+        BranchedUnfoldingUtils.unfoldReturnToIf(element)
+    }
+}
+
+public class UnfoldReturnToWhenIntention : JetSelfTargetingOffsetIndependentIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression") {
+    override fun isApplicableTo(element: JetReturnExpression): Boolean {
+        val expr = element.getReturnedExpression()
+        return expr is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(expr)
+    }
+
+    override fun applyTo(element: JetReturnExpression, editor: Editor) {
+        BranchedUnfoldingUtils.unfoldReturnToWhen(element)
+    }
+}
