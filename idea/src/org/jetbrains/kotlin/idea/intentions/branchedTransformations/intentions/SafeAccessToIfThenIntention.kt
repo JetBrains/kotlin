@@ -25,22 +25,20 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVari
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class SafeAccessToIfThenIntention : JetSelfTargetingOffsetIndependentIntention<JetSafeQualifiedExpression>("safe.access.to.if.then", javaClass()) {
-    override fun isApplicableTo(element: JetSafeQualifiedExpression): Boolean = true
+public class SafeAccessToIfThenIntention : JetSelfTargetingOffsetIndependentIntention<JetSafeQualifiedExpression>(javaClass(), "Replace safe access expression with 'if' expression") {
+    override fun isApplicableTo(element: JetSafeQualifiedExpression): Boolean = element.getSelectorExpression() != null
 
     override fun applyTo(element: JetSafeQualifiedExpression, editor: Editor) {
-        val receiver = JetPsiUtil.deparenthesize(element.getReceiverExpression())!!
-        val selector = JetPsiUtil.deparenthesize(element.getSelectorExpression())
+        val receiver = JetPsiUtil.safeDeparenthesize(element.getReceiverExpression())
+        val selector = element.getSelectorExpression()!!
 
         val receiverIsStable = receiver.isStableVariable()
 
-        val receiverTemplate = if (receiver is JetBinaryExpression) "(%s)" else "%s"
-        val receiverAsString = receiverTemplate.format(receiver.getText())
         val psiFactory = JetPsiFactory(element)
-        val dotQualifiedExpression = psiFactory.createExpression("${receiverAsString}.${selector!!.getText()}")
+        val dotQualified = psiFactory.createExpressionByPattern("$0.$1", receiver, selector)
 
         val elseClause = if (element.isUsedAsStatement(element.analyze())) null else psiFactory.createExpression("null")
-        val ifExpression = element.convertToIfNotNullExpression(receiver, dotQualifiedExpression, elseClause)
+        val ifExpression = element.convertToIfNotNullExpression(receiver, dotQualified, elseClause)
 
         if (!receiverIsStable) {
             val valueToExtract = (ifExpression.getThen() as JetDotQualifiedExpression).getReceiverExpression()
