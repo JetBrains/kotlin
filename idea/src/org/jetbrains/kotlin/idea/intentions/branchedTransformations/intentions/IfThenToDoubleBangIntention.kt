@@ -21,63 +21,50 @@ import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPostfixExpression
-import org.jetbrains.kotlin.psi.JetThrowExpression
+import org.jetbrains.kotlin.psi.*
 
-public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>("if.then.to.double.bang", javaClass()) {
-
+public class IfThenToDoubleBangIntention : JetSelfTargetingOffsetIndependentIntention<JetIfExpression>(javaClass(), "Replace 'if' expression with '!!' expression") {
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         val condition = element.getCondition() as? JetBinaryExpression ?: return false
-        val thenClause = element.getThen()
+        val thenClause = element.getThen() ?: return false
         val elseClause = element.getElse()
 
         val expression = condition.expressionComparedToNull() ?: return false
 
         val token = condition.getOperationToken()
 
-        val throwExpression =
-                when (token) {
-                    JetTokens.EQEQ -> thenClause?.unwrapBlock()
-                    JetTokens.EXCLEQ -> elseClause?.unwrapBlock()
-                    else -> throw IllegalStateException("Token must be either '!=' or '==' ")
-                } as? JetThrowExpression ?: return false
+        val throwExpression: JetThrowExpression
+        val matchingClause: JetExpression?
+        when (token) {
+            JetTokens.EQEQ -> {
+                throwExpression = thenClause.unwrapBlock() as? JetThrowExpression ?: return false
+                matchingClause = elseClause
+            }
 
-        val matchingClause =
-                when (token) {
-                    JetTokens.EQEQ -> elseClause
-                    JetTokens.EXCLEQ -> thenClause
-                    else -> throw IllegalStateException("Token must be either '!=' or '==' ")
-                }
+            JetTokens.EXCLEQ -> {
+                matchingClause = thenClause
+                throwExpression = elseClause?.unwrapBlock() as? JetThrowExpression ?: return false
+            }
+
+            else -> throw IllegalStateException()
+        }
 
         val matchesAsStatement = element.isStatement() && (matchingClause?.isNullExpressionOrEmptyBlock() ?: true)
-        val matches = matchesAsStatement || (matchingClause?.evaluatesTo(expression) ?: false && expression.isStableVariable())
+        if (!matchesAsStatement && !(matchingClause?.evaluatesTo(expression) ?: false && expression.isStableVariable())) return false
 
-        if (matches) {
-            val message =
-                    if (throwExpression.throwsNullPointerExceptionWithNoArguments()) {
-                        JetBundle.message("if.then.to.double.bang")
-                    }
-                    else {
-                        // Warn that custom exception will be overwritten by intention action
-                        JetBundle.message("if.then.to.double.bang.replace.exception")
-                    }
+        var text = "Replace 'if' expression with '!!' expression"
+        if (!throwExpression.throwsNullPointerExceptionWithNoArguments()) {
+            text += " (will remove exception)"
+        }
 
-            setText(message)
-            return true
-        }
-        else {
-            return false
-        }
+        setText(text)
+        return true
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
         val condition = element.getCondition() as JetBinaryExpression
-
         val expression = condition.expressionComparedToNull()!!
-        val resultingExprString = expression.getText() + "!!"
-        val result = element.replace(resultingExprString) as JetPostfixExpression
+        val result = element.replace(JetPsiFactory(element).createExpressionByPattern("$0!!", expression)) as JetPostfixExpression
 
         result.inlineBaseExpressionIfApplicableWithPrompt(editor)
     }
