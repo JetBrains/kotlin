@@ -440,8 +440,8 @@ public class JetControlFlowProcessor {
             if (right != null) {
                 generateInstructions(right);
             }
-            createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, left, right);
             mark(expression);
+            createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, left, right);
         }
 
         private void visitAssignment(
