@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.intentions.declarations.DeclarationUtils
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
 public object BranchedUnfoldingUtils {
@@ -30,33 +30,35 @@ public object BranchedUnfoldingUtils {
     public fun getUnfoldableExpressionKind(root: JetExpression?): UnfoldableKind? {
         if (root == null) return null
 
-        if (JetPsiUtil.isAssignment(root)) {
-            val assignment = root as JetBinaryExpression
+        when (root) {
+            is JetBinaryExpression -> {
+                if (root.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return null
+                if (root.getLeft() == null) return null
 
-            if (assignment.getLeft() == null) return null
-
-            val rhs = assignment.getRight()
-            if (rhs is JetIfExpression) return UnfoldableKind.ASSIGNMENT_TO_IF
-            if (rhs is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(rhs)) {
-                return UnfoldableKind.ASSIGNMENT_TO_WHEN
+                val rhs = root.getRight()
+                if (rhs is JetIfExpression) return UnfoldableKind.ASSIGNMENT_TO_IF
+                if (rhs is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(rhs)) {
+                    return UnfoldableKind.ASSIGNMENT_TO_WHEN
+                }
             }
-        }
-        else if (root is JetReturnExpression) {
-            val resultExpr = root.getReturnedExpression()
 
-            if (resultExpr is JetIfExpression) return UnfoldableKind.RETURN_TO_IF
-            if (resultExpr is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(resultExpr)) {
-                return UnfoldableKind.RETURN_TO_WHEN
+            is JetReturnExpression -> {
+                val resultExpr = root.getReturnedExpression()
+                if (resultExpr is JetIfExpression) return UnfoldableKind.RETURN_TO_IF
+                if (resultExpr is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(resultExpr)) {
+                    return UnfoldableKind.RETURN_TO_WHEN
+                }
             }
-        }
-        else if (root is JetProperty) {
-            if (!root.isLocal()) return null
 
-            val initializer = root.getInitializer()
+            is JetProperty -> {
+                if (!root.isLocal()) return null
 
-            if (initializer is JetIfExpression) return UnfoldableKind.PROPERTY_TO_IF
-            if (initializer is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(initializer)) {
-                return UnfoldableKind.PROPERTY_TO_WHEN
+                val initializer = root.getInitializer()
+
+                if (initializer is JetIfExpression) return UnfoldableKind.PROPERTY_TO_IF
+                if (initializer is JetWhenExpression && JetPsiUtil.checkWhenExpressionHasSingleElse(initializer)) {
+                    return UnfoldableKind.PROPERTY_TO_WHEN
+                }
             }
         }
 

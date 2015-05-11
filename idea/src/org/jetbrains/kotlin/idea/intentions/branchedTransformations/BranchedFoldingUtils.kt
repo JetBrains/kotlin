@@ -17,22 +17,19 @@
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.google.common.base.Predicate
-import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-
-import java.util.ArrayList
 
 object BranchedFoldingUtils {
     private val CHECK_ASSIGNMENT = object : Predicate<JetElement> {
         override fun apply(input: JetElement): Boolean {
-            if (!JetPsiUtil.isAssignment(input)) return false
+            if (input !is JetBinaryExpression) return false
+            if (input.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return false
 
-            val assignment = input as JetBinaryExpression
+            val left = input.getLeft() as? JetSimpleNameExpression ?: return false
+            if (input.getRight() == null) return false
 
-            val left = assignment.getLeft() as? JetSimpleNameExpression ?: return false
-            if (assignment.getRight() == null) return false
-
-            val parent = assignment.getParent()
+            val parent = input.getParent()
             if (parent is JetBlockExpression) {
                 return !JetPsiUtil.checkVariableDeclarationInBlock(parent, left.getText())
             }
