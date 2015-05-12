@@ -326,6 +326,7 @@ enum class ExtractionTarget(val name: String) {
                    && checkSimpleControlFlow(descriptor)
                    && checkSimpleBody(descriptor)
                    && checkNotTrait(descriptor)
+                   && descriptor.receiverParameter == null
         }
     }
 
@@ -340,6 +341,7 @@ enum class ExtractionTarget(val name: String) {
             return checkSignatureAndParent(descriptor)
                    && checkSimpleControlFlow(descriptor)
                    && checkNotTrait(descriptor)
+                   && descriptor.receiverParameter == null
         }
     }
 
