@@ -4,5 +4,4 @@ class Owner {
 
 var Owner.p: Int
     get() = <caret><selection>throw UnsupportedOperationException()</selection>
-    set(v) {
-    }
+    set(v) {}

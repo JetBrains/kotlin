@@ -1,5 +1,4 @@
 class Owner {
 }
 
-fun Owner.f() {
-}
+fun Owner.f() {}

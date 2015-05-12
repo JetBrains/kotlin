@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -38,6 +39,13 @@ fun JetCallableDeclaration.setType(type: JetType) {
     val typeReference = JetPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
     setTypeReference(typeReference)
     ShortenReferences.DEFAULT.process(getTypeReference()!!)
+}
+
+fun JetCallableDeclaration.setReceiverType(type: JetType) {
+    if (type.isError()) return
+    val typeReference = JetPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+    setReceiverTypeReference(typeReference)
+    ShortenReferences.DEFAULT.process(getReceiverTypeReference()!!)
 }
 
 fun JetContainerNode.description(): String? {

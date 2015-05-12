@@ -3897,6 +3897,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("KDoc.kt")
+            public void testKDoc() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/KDoc.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("localFunction.kt")
             public void testLocalFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/localFunction.kt");

@@ -60,8 +60,13 @@ public class JetPropertyAccessor extends JetDeclarationStub<KotlinPropertyAccess
     }
 
     @Nullable
+    public JetParameterList getParameterList() {
+        return getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
+    }
+
+    @Nullable
     public JetParameter getParameter() {
-        JetParameterList parameterList = getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
+        JetParameterList parameterList = getParameterList();
         if (parameterList == null) return null;
         List<JetParameter> parameters = parameterList.getParameters();
         if (parameters.isEmpty()) return null;

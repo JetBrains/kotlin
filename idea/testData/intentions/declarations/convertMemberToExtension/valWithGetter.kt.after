@@ -2,4 +2,4 @@ class Owner {
 }
 
 val Owner.p: Int
-    get() = 1
+  get() = 1

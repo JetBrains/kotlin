@@ -16,18 +16,15 @@
 
 package org.jetbrains.kotlin.idea.intentions.declarations
 
-import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.Function
-import com.intellij.util.containers.ContainerUtil
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.idea.intentions.setReceiverType
+import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -51,108 +48,96 @@ public class ConvertMemberToExtension : JetSelfTargetingRangeIntention<JetCallab
         val file = element.getContainingJetFile()
         val outermostParent = JetPsiUtil.getOutermostParent(element, file, false)
 
-        val receiver = containingClass.getDefaultType().toString() + "."
-        val name = element.getNameIdentifier()!!.getText()
+        val typeParameterList = newTypeParameterList(element)
 
-        val valueParameterList = element.getValueParameterList()
-        val returnTypeRef = element.getTypeReference()
-
-        val extensionText = modifiers(element) +
-                            memberType(element) +
-                            " " +
-                            typeParameters(element) +
-                            receiver +
-                            name +
-                            (if (valueParameterList == null) "" else valueParameterList.getText()) +
-                            (if (returnTypeRef != null) ": " + returnTypeRef.getText() else "") +
-                            body(element)
-
+        val project = element.getProject()
         val psiFactory = JetPsiFactory(element)
-        val extension = psiFactory.createDeclaration<JetDeclaration>(extensionText)
 
-        val added = file.addAfter(extension, outermostParent)
+        val extension = file.addAfter(element, outermostParent) as JetCallableDeclaration
         file.addAfter(psiFactory.createNewLine(), outermostParent)
         file.addAfter(psiFactory.createNewLine(), outermostParent)
         element.delete()
 
-        CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement<PsiElement>(added)
+        extension.setReceiverType(containingClass.getDefaultType())
 
-        val caretAnchor = added.getText().indexOf(CARET_ANCHOR)
-        if (caretAnchor >= 0) {
-            val caretOffset = added.getTextRange().getStartOffset() + caretAnchor
-            val anchor = PsiTreeUtil.findElementOfClassAtOffset(file, caretOffset, javaClass<JetSimpleNameExpression>(), false)
-            if (anchor != null && CARET_ANCHOR == anchor.getReferencedName()) {
-                val throwException = psiFactory.createExpression(THROW_UNSUPPORTED_OPERATION_EXCEPTION)
-                val replaced = anchor.replace(throwException)
-                val range = replaced.getTextRange()
-                editor.getCaretModel().moveToOffset(range.getStartOffset())
-                editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
+        if (typeParameterList != null) {
+            if (extension.getTypeParameterList() != null) {
+                extension.getTypeParameterList()!!.replace(typeParameterList)
+            }
+            else {
+                extension.addBefore(typeParameterList, extension.getReceiverTypeReference())
+                extension.addBefore(psiFactory.createWhiteSpace(), extension.getReceiverTypeReference())
             }
         }
-    }
 
-    private val CARET_ANCHOR = "____CARET_ANCHOR____"
-    private val THROW_UNSUPPORTED_OPERATION_EXCEPTION = " throw UnsupportedOperationException()"
+        extension.getModifierList()?.getModifier(JetTokens.PROTECTED_KEYWORD)?.delete()
+        extension.getModifierList()?.getModifier(JetTokens.ABSTRACT_KEYWORD)?.delete()
 
-    private fun memberType(member: JetCallableDeclaration): String {
-        if (member is JetFunction) {
-            return "fun"
-        }
-        return (member as JetProperty).getValOrVarNode().getText()
-    }
+        var bodyToSelect: JetExpression? = null
 
-    private fun modifiers(member: JetCallableDeclaration): String {
-        val modifierList = member.getModifierList() ?: return ""
-        for (modifierType in JetTokens.VISIBILITY_MODIFIERS.getTypes()) {
-            val modifier = modifierList.getModifier(modifierType as JetModifierKeywordToken)
-            if (modifier != null) {
-                return if (modifierType == JetTokens.PROTECTED_KEYWORD) "" else modifier.getText() + " "
+        fun selectBody(declaration: JetDeclarationWithBody) {
+            if (bodyToSelect == null) {
+                val body = declaration.getBodyExpression()
+                bodyToSelect = if (body is JetBlockExpression) body.getStatements().single() as JetExpression else body
             }
         }
-        return ""
-    }
 
-    private fun typeParameters(member: JetCallableDeclaration): String {
-        val classElement = member.getParent().getParent()
-        assert(classElement is JetClass) { "Must be checked in isAvailable: " + classElement.getText() }
-
-        val allTypeParameters = ContainerUtil.concat<JetTypeParameter>((classElement as JetClass).getTypeParameters(), member.getTypeParameters())
-        if (allTypeParameters.isEmpty()) return ""
-        return "<" + StringUtil.join<JetTypeParameter>(allTypeParameters, object : Function<JetTypeParameter, String> {
-            override fun `fun`(parameter: JetTypeParameter): String {
-                return parameter.getText()
+        when (extension) {
+            is JetFunction -> {
+                if (!extension.hasBody()) {
+                    extension.add(psiFactory.createFunctionBody(THROW_UNSUPPORTED_OPERATION_EXCEPTION))
+                    selectBody(extension)
+                }
             }
-        }, ", ") + "> "
-    }
 
-    private fun body(member: JetCallableDeclaration): String {
-        if (member is JetProperty) {
-            return "\n" + getter(member) + "\n" + setter(member, !synthesizeBody(member.getGetter()))
+            is JetProperty -> {
+                val templateProperty = psiFactory.createDeclaration<JetProperty>("var v: Any\nget()=$THROW_UNSUPPORTED_OPERATION_EXCEPTION\nset(value){$THROW_UNSUPPORTED_OPERATION_EXCEPTION}")
+                val templateGetter = templateProperty.getGetter()!!
+                val templateSetter = templateProperty.getSetter()!!
+
+                var getter = extension.getGetter()
+                if (getter == null) {
+                    getter = extension.addAfter(templateGetter, extension.getTypeReference()) as JetPropertyAccessor
+                    extension.addBefore(psiFactory.createNewLine(), getter)
+                    selectBody(getter)
+                }
+                else if (!getter.hasBody()) {
+                    getter = getter.replace(templateGetter) as JetPropertyAccessor
+                    selectBody(getter)
+                }
+
+                if (extension.isVar()) {
+                    var setter = extension.getSetter()
+                    if (setter == null) {
+                        setter = extension.addAfter(templateSetter, getter) as JetPropertyAccessor
+                        extension.addBefore(psiFactory.createNewLine(), setter)
+                        selectBody(setter)
+                    }
+                    else if (!setter.hasBody()) {
+                        setter = setter.replace(templateSetter) as JetPropertyAccessor
+                        selectBody(setter)
+                    }
+                }
+            }
         }
-        else if (member is JetFunction) {
-            val bodyExpression = member.getBodyExpression() ?: return "{" + CARET_ANCHOR + "}"
-            if (!member.hasBlockBody()) return " = " + bodyExpression.getText()
-            return bodyExpression.getText()
+
+        if (bodyToSelect != null) {
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+
+            val range = bodyToSelect!!.getTextRange()
+            editor.moveCaret(range.getStartOffset(), ScrollType.CENTER)
+            editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
         }
-        else {
-            return ""
-        }
     }
 
-    private fun getter(property: JetProperty): String {
-        val getter = property.getGetter()
-        if (synthesizeBody(getter)) return "get() = " + CARET_ANCHOR
-        return getter!!.getText()
-    }
+    private val THROW_UNSUPPORTED_OPERATION_EXCEPTION = "throw UnsupportedOperationException()"
 
-    private fun setter(property: JetProperty, allowCaretAnchor: Boolean): String {
-        if (!property.isVar()) return ""
-        val setter = property.getSetter()
-        if (synthesizeBody(setter)) return "set(value) {" + (if (allowCaretAnchor) CARET_ANCHOR else THROW_UNSUPPORTED_OPERATION_EXCEPTION) + "}"
-        return setter!!.getText()
-    }
-
-    private fun synthesizeBody(getter: JetPropertyAccessor?): Boolean {
-        return getter == null || getter.getBodyExpression() == null
+    private fun newTypeParameterList(member: JetCallableDeclaration): JetTypeParameterList? {
+        val classElement = member.getParent().getParent() as JetClass
+        val classParams = classElement.getTypeParameters()
+        if (classParams.isEmpty()) return null
+        val allTypeParameters = classParams + member.getTypeParameters()
+        val text = allTypeParameters.map { it.getText() }.joinToString(",", "<", ">")
+        return JetPsiFactory(member).createDeclaration<JetFunction>("fun $text foo()").getTypeParameterList()
     }
 }

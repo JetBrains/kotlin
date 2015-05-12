@@ -1,4 +1,4 @@
 class Owner {
     val <caret>p: Int
-      get() { return 1}
+        get() { return 1}
 }

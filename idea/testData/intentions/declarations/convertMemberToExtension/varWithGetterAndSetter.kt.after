@@ -2,6 +2,5 @@ class Owner {
 }
 
 var Owner.p: Int
-    get() = 1
-    set(v) {
-    }
+  get() = 1
+  set(v) {}
