@@ -1,0 +1,10 @@
+fun foo() {
+    val v: (Int) -> Unit = {
+        <caret>if (it <= 1) {
+        } else {
+            bar()
+        }
+    }
+}
+
+fun bar(){}

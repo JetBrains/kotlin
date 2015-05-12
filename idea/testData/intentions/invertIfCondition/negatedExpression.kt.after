@@ -3,6 +3,5 @@ fun foo(): Boolean {
 }
 
 fun main() {
-    if (foo()) {
-    }
+    if (foo()) return
 }

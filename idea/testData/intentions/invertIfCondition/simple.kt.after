@@ -3,6 +3,5 @@ fun foo(): Boolean {
 }
 
 fun main() {
-    <caret>if (!foo()) {
-    }
+    <caret>if (!foo()) return
 }

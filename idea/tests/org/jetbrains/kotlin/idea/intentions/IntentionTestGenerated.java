@@ -4669,9 +4669,87 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ifThenReturn.kt")
+        public void testIfThenReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/ifThenReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifThenReturn2.kt")
+        public void testIfThenReturn2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/ifThenReturn2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifThenReturn3.kt")
+        public void testIfThenReturn3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/ifThenReturn3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ifThenReturn4.kt")
+        public void testIfThenReturn4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/ifThenReturn4.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("invertableOperator.kt")
         public void testInvertableOperator() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/invertableOperator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatement1.kt")
+        public void testLastStatement1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatement1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatement2.kt")
+        public void testLastStatement2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatement2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatement3.kt")
+        public void testLastStatement3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatement3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatementBeforeBreak.kt")
+        public void testLastStatementBeforeBreak() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatementBeforeBreak.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatementBeforeContinue.kt")
+        public void testLastStatementBeforeContinue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatementBeforeContinue.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatementBeforeReturn.kt")
+        public void testLastStatementBeforeReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatementBeforeReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatementInLambda.kt")
+        public void testLastStatementInLambda() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatementInLambda.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatementInLoop.kt")
+        public void testLastStatementInLoop() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatementInLoop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lastStatementNonUnitMethod.kt")
+        public void testLastStatementNonUnitMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatementNonUnitMethod.kt");
             doTest(fileName);
         }
 
