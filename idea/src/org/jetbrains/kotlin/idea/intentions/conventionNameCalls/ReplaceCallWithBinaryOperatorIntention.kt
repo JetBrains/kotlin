@@ -20,31 +20,40 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
-public class ReplaceUnaryPrefixIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator") {
+public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with binary operator") {
     override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
         val operation = operation(element.functionName) ?: return false
-        val call = element.callExpression ?: return false
-        if (call.getTypeArgumentList() != null) return false
-        if (!call.getValueArguments().isEmpty()) return false
+        val resolvedCall = element.toResolvedCall() ?: return false
+        if (!resolvedCall.getStatus().isSuccess()) return false
+        if (resolvedCall.getCall().getTypeArgumentList() != null) return false
+        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return false
+        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return false
         setText("Replace with '$operation' operator")
         return true
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
         val operation = operation(element.functionName)!!
+        val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
         val receiver = element.getReceiverExpression()
-        element.replace(JetPsiFactory(element).createExpressionByPattern("$0$1", operation, receiver))
+
+        element.replace(JetPsiFactory(element).createExpressionByPattern("$0 $operation $1", receiver, argument))
     }
 
-    private fun operation(functionName: String?) : String? {
+    private fun operation(functionName: String?): String? {
         return when (functionName) {
             "plus" -> "+"
             "minus" -> "-"
-            "not" -> "!"
+            "div" -> "/"
+            "times" -> "*"
+            "mod" -> "%"
+            "rangeTo" -> ".."
             else -> null
         }
     }
