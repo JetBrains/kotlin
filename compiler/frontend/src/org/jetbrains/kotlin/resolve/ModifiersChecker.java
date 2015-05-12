@@ -45,7 +45,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
 public class ModifiersChecker {
     private static final Collection<JetModifierKeywordToken> MODALITY_MODIFIERS =
-            Lists.newArrayList(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, OVERRIDE_KEYWORD);
+            Lists.newArrayList(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, OVERRIDE_KEYWORD, SEALED_KEYWORD);
 
     private static final Collection<JetModifierKeywordToken> VISIBILITY_MODIFIERS =
             Lists.newArrayList(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD);
@@ -370,6 +370,9 @@ public class ModifiersChecker {
         boolean hasAbstractModifier = modifierList.hasModifier(ABSTRACT_KEYWORD);
         boolean hasOverrideModifier = modifierList.hasModifier(OVERRIDE_KEYWORD);
 
+        if (modifierList.hasModifier(SEALED_KEYWORD)) {
+            return Modality.SEALED;
+        }
         if (modifierList.hasModifier(OPEN_KEYWORD)) {
             if (hasAbstractModifier || defaultModality == Modality.ABSTRACT) {
                 return Modality.ABSTRACT;

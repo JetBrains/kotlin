@@ -21,12 +21,13 @@ import org.jetbrains.annotations.NotNull;
 public enum Modality {
     // THE ORDER OF ENTRIES MATTERS HERE
     FINAL(false),
+    SEALED(false),
     OPEN(true),
     ABSTRACT(true);
 
     private final boolean overridable;
 
-    private Modality(boolean overridable) {
+    Modality(boolean overridable) {
         this.overridable = overridable;
     }
 

@@ -185,6 +185,7 @@ public interface Errors {
     DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_TRAIT = DiagnosticFactory0
             .create(WARNING, modifierSetPosition(JetTokens.OPEN_KEYWORD));
     DiagnosticFactory0<JetModifierListOwner> TRAIT_CAN_NOT_BE_FINAL = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
+    DiagnosticFactory0<JetModifierListOwner> TRAIT_CAN_NOT_BE_SEALED = DiagnosticFactory0.create(ERROR, SEALED_MODIFIER);
 
     DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
@@ -203,6 +204,8 @@ public interface Errors {
             .create(ERROR, modifierSetPosition(JetTokens.OPEN_KEYWORD));
     DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_ENUM = DiagnosticFactory0
             .create(ERROR, modifierSetPosition(JetTokens.ABSTRACT_KEYWORD));
+    DiagnosticFactory0<JetModifierListOwner> SEALED_MODIFIER_IN_ENUM = DiagnosticFactory0
+            .create(ERROR, modifierSetPosition(JetTokens.SEALED_KEYWORD));
 
     DiagnosticFactory0<PsiElement> CLASS_IN_SUPERTYPE_FOR_ENUM = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetTypeParameterList> TYPE_PARAMETERS_IN_ENUM = DiagnosticFactory0.create(ERROR);
@@ -213,6 +216,17 @@ public interface Errors {
     DiagnosticFactory1<JetEnumEntry, ClassDescriptor> ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR = DiagnosticFactory1.create(WARNING, DELEGATOR_SUPER_CALL);
     DiagnosticFactory1<JetEnumEntry, ClassDescriptor> ENUM_ENTRY_AFTER_ENUM_MEMBER = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
     DiagnosticFactory0<JetCallExpression> ENUM_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
+
+    // Sealed-specific
+    DiagnosticFactory0<JetModifierListOwner> OPEN_MODIFIER_IN_SEALED = DiagnosticFactory0
+            .create(ERROR, modifierSetPosition(JetTokens.OPEN_KEYWORD));
+    DiagnosticFactory0<JetModifierListOwner> FINAL_MODIFIER_IN_SEALED = DiagnosticFactory0
+            .create(ERROR, modifierSetPosition(JetTokens.FINAL_KEYWORD));
+    DiagnosticFactory0<JetModifierListOwner> ABSTRACT_MODIFIER_IN_SEALED = DiagnosticFactory0
+            .create(WARNING, modifierSetPosition(JetTokens.ABSTRACT_KEYWORD));
+    DiagnosticFactory0<JetCallExpression> SEALED_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SEALED_SUPERTYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetTypeReference> SEALED_SUPERTYPE_IN_LOCAL_CLASS = DiagnosticFactory0.create(ERROR);
 
     // Companion objects
 

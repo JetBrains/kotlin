@@ -11425,6 +11425,75 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/tests/sealed")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Sealed extends AbstractJetDiagnosticsTest {
+            public void testAllFilesPresentInSealed() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/sealed"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("DoubleInner.kt")
+            public void testDoubleInner() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/DoubleInner.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Local.kt")
+            public void testLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/Local.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NeverConstructed.kt")
+            public void testNeverConstructed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverConstructed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NeverDerived.kt")
+            public void testNeverDerived() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverDerived.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NeverEnum.kt")
+            public void testNeverEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverEnum.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NeverFinal.kt")
+            public void testNeverFinal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverFinal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NeverInterface.kt")
+            public void testNeverInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NeverObject.kt")
+            public void testNeverObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NeverOpen.kt")
+            public void testNeverOpen() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/NeverOpen.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RedundantAbstract.kt")
+            public void testRedundantAbstract() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/RedundantAbstract.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/tests/secondaryConstructors")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

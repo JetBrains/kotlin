@@ -34,4 +34,5 @@ class Some {
 // EXIST:  constructor
 // EXIST:  init
 // EXIST:  companion object
+// EXIST:  sealed
 // NOTHING_ELSE

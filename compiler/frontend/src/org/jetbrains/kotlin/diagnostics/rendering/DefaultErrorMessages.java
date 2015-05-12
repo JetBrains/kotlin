@@ -141,11 +141,16 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(ABSTRACT_MODIFIER_IN_TRAIT, "Modifier ''abstract'' is redundant in interface");
         MAP.put(OPEN_MODIFIER_IN_TRAIT, "Modifier ''open'' is redundant in interface");
+        MAP.put(OPEN_MODIFIER_IN_SEALED, "Modifier ''open'' is not applicable for sealed class");
         MAP.put(OPEN_MODIFIER_IN_ENUM, "Modifier ''open'' is not applicable for enum class");
         MAP.put(ABSTRACT_MODIFIER_IN_ENUM, "Modifier ''abstract'' is not applicable for enum class");
+        MAP.put(ABSTRACT_MODIFIER_IN_SEALED, "Modifier ''abstract'' is redundant for sealed class");
+        MAP.put(SEALED_MODIFIER_IN_ENUM, "Modifier ''sealed'' is not applicable for enum class");
+        MAP.put(FINAL_MODIFIER_IN_SEALED, "Modifier ''final'' is not applicable for sealed class");
         MAP.put(ILLEGAL_ENUM_ANNOTATION, "Annotation ''enum'' is only applicable for class");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
         MAP.put(TRAIT_CAN_NOT_BE_FINAL, "Interface cannot be final");
+        MAP.put(TRAIT_CAN_NOT_BE_SEALED, "Interface cannot be sealed");
         MAP.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters");
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
                 "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly"); // TODO: message
@@ -292,6 +297,7 @@ public class DefaultErrorMessages {
         MAP.put(ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR, "Enum entry ''{0}'' uses deprecated super constructor syntax, use ENTRY(arguments) instead", NAME);
         MAP.put(ENUM_ENTRY_AFTER_ENUM_MEMBER, "Enum entry ''{0}'' is not allowed after a member", NAME);
         MAP.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated");
+        MAP.put(SEALED_CLASS_CONSTRUCTOR_CALL, "Sealed types cannot be instantiated");
 
         MAP.put(DELEGATION_IN_TRAIT, "Interfaces cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only interfaces can be delegated to");
@@ -430,6 +436,8 @@ public class DefaultErrorMessages {
         MAP.put(TRAIT_WITH_SUPERCLASS, "An interface cannot inherit from a class");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
+        MAP.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects");
+        MAP.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "Local class cannot extend a sealed class");
         MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");
 
         MAP.put(CYCLIC_CONSTRUCTOR_DELEGATION_CALL, "There's a cycle in the delegation calls chain");

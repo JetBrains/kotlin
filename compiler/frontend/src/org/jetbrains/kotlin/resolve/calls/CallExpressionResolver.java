@@ -211,12 +211,17 @@ public class CallExpressionResolver {
                 return TypeInfoFactoryPackage.noTypeInfo(context);
             }
             if (functionDescriptor instanceof ConstructorDescriptor) {
-                if (DescriptorUtils.isAnnotationClass(functionDescriptor.getContainingDeclaration())
+                DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
+                if (DescriptorUtils.isAnnotationClass(containingDescriptor)
                     && !canInstantiateAnnotationClass(callExpression)) {
                     context.trace.report(ANNOTATION_CLASS_CONSTRUCTOR_CALL.on(callExpression));
                 }
-                if (DescriptorUtils.isEnumClass(functionDescriptor.getContainingDeclaration())) {
+                if (DescriptorUtils.isEnumClass(containingDescriptor)) {
                     context.trace.report(ENUM_CLASS_CONSTRUCTOR_CALL.on(callExpression));
+                }
+                if (containingDescriptor instanceof ClassDescriptor
+                    && ((ClassDescriptor) containingDescriptor).getModality() == Modality.SEALED) {
+                    context.trace.report(SEALED_CLASS_CONSTRUCTOR_CALL.on(callExpression));
                 }
             }
 

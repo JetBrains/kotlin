@@ -394,15 +394,28 @@ public class BodyResolver {
             trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(jetClass.getDelegationSpecifierList()));
         }
 
-        Set<TypeConstructor> parentEnum =
-                jetClass instanceof JetEnumEntry
-                ? Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor())
-                : Collections.<TypeConstructor>emptySet();
+        Set<TypeConstructor> parentEnumOrSealed;
+        if (jetClass instanceof JetEnumEntry) {
+            parentEnumOrSealed = Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor());
+        }
+        else {
+            parentEnumOrSealed = Collections.emptySet();
+            ClassDescriptor currentDescriptor = descriptor;
+            while (currentDescriptor.getContainingDeclaration() instanceof ClassDescriptor) {
+                currentDescriptor = (ClassDescriptor) currentDescriptor.getContainingDeclaration();
+                if (currentDescriptor.getModality() == Modality.SEALED) {
+                    if (parentEnumOrSealed.isEmpty()) {
+                        parentEnumOrSealed = new HashSet<TypeConstructor>();
+                    }
+                    parentEnumOrSealed.add(currentDescriptor.getTypeConstructor());
+                }
+            }
+        }
 
         if (primaryConstructorDelegationCall[0] != null && primaryConstructor != null) {
             recordConstructorDelegationCall(trace, primaryConstructor, primaryConstructorDelegationCall[0]);
         }
-        checkSupertypeList(descriptor, supertypes, parentEnum);
+        checkSupertypeList(descriptor, supertypes, parentEnumOrSealed);
     }
 
     private static void recordConstructorDelegationCall(
@@ -464,7 +477,21 @@ public class BodyResolver {
                 trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
             }
             else if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {
-                trace.report(FINAL_SUPERTYPE.on(typeReference));
+                if (classDescriptor.getModality() == Modality.SEALED) {
+                    DeclarationDescriptor containingDescriptor = supertypeOwner.getContainingDeclaration();
+                    while (containingDescriptor != null && containingDescriptor != classDescriptor) {
+                        containingDescriptor = containingDescriptor.getContainingDeclaration();
+                    }
+                    if (containingDescriptor == null) {
+                        trace.report(SEALED_SUPERTYPE.on(typeReference));
+                    }
+                    else {
+                        trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference));
+                    }
+                }
+                else {
+                    trace.report(FINAL_SUPERTYPE.on(typeReference));
+                }
             }
         }
     }

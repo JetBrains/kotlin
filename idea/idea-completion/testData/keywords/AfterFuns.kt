@@ -38,4 +38,5 @@ class A {
 // EXIST:  init
 /*why?*/
 // EXIST:  companion object
+// EXIST:  sealed
 // NOTHING_ELSE

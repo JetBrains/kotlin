@@ -28,5 +28,6 @@
 // EXIST:  vararg
 /*why?*/
 // EXIST:  companion object
+// EXIST:  sealed
 /*TODO*/
 // NOTHING_ELSE

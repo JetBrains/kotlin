@@ -208,6 +208,8 @@ public object PositioningStrategies {
 
     public val FINAL_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.FINAL_KEYWORD)
 
+    public val SEALED_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.SEALED_KEYWORD)
+
     public val VARIANCE_MODIFIER: PositioningStrategy<JetModifierListOwner> = modifierSetPosition(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD)
 
     public val FOR_REDECLARATION: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {

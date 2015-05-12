@@ -20,6 +20,7 @@
 // EXIST: {"lookupString":"protected","itemText":"protected","attributes":"bold"}
 // EXIST: {"lookupString":"public","itemText":"public","attributes":"bold"}
 // EXIST: {"lookupString":"reified","itemText":"reified","attributes":"bold"}
+// EXIST: {"lookupString":"sealed","itemText":"sealed","attributes":"bold"}
 // EXIST: {"lookupString":"val","itemText":"val","attributes":"bold"}
 // EXIST: {"lookupString":"var","itemText":"var","attributes":"bold"}
 // EXIST: {"lookupString":"vararg","itemText":"vararg","attributes":"bold"}
