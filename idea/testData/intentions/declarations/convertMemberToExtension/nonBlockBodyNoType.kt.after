@@ -1,4 +1,4 @@
 class Owner {
 }
 
-fun Owner.f() = 1
+fun Owner.<caret>f() = 1

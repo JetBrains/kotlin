@@ -1,6 +1,6 @@
 class Owner {
 }
 
-var Owner.p: Int
+var Owner.<caret>p: Int
   get() = 1
   set(v) {}

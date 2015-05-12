@@ -1,5 +1,5 @@
 class Owner {
 }
 
-val Owner.p: Int
+val Owner.<caret>p: Int
   get() = 1

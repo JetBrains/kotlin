@@ -5,5 +5,5 @@
 class Owner {
 }
 
-fun Owner.f(p: Foo): bar.Baz {
+fun Owner.<caret>f(p: Foo): bar.Baz {
 }

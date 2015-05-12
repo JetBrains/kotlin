@@ -1,4 +1,4 @@
 class Owner {
 }
 
-fun Owner.f(): Unit {}
+fun Owner.<caret>f(): Unit {}

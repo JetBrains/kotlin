@@ -1,4 +1,4 @@
 abstract class Owner {
 }
 
-private fun Owner.f() = 1
+private fun Owner.<caret>f() = 1

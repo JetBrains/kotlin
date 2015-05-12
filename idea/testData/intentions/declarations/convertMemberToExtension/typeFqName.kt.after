@@ -1,6 +1,6 @@
 class Owner {
 }
 
-fun Owner.f(p: kotlin.Int): kotlin.String {
+fun Owner.<caret>f(p: kotlin.Int): kotlin.String {
     return p.toString()
 }

@@ -1,4 +1,4 @@
 abstract class Owner<T> {
 }
 
-fun <T> Owner<T>.f(t: T): T = t
+fun <T> Owner<T>.<caret>f(t: T): T = t

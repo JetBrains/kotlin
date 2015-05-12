@@ -121,12 +121,15 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
             }
         }
 
-        if (bodyToSelect != null) {
-            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.getDocument())
 
+        if (bodyToSelect != null) {
             val range = bodyToSelect!!.getTextRange()
             editor.moveCaret(range.getStartOffset(), ScrollType.CENTER)
             editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
+        }
+        else {
+            editor.moveCaret(extension.getTextOffset(), ScrollType.CENTER)
         }
     }
 
