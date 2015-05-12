@@ -1,4 +1,4 @@
-// SHOULD_FAIL_WITH: vararg.not.last
+// IS_APPLICABLE: false
 fun test() {
     class Test{
         fun get(a: Int, vararg b: Int, c: Int = 0) : Int = 0

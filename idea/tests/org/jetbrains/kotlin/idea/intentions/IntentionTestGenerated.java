@@ -372,12 +372,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("missingArgument.kt")
-            public void testMissingArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/missingArgument.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("missingDefaultArgument.kt")
             public void testMissingDefaultArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/missingDefaultArgument.kt");
@@ -387,12 +381,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("multiArgument.kt")
             public void testMultiArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/multiArgument.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("namedAndFunction.kt")
-            public void testNamedAndFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/namedAndFunction.kt");
                 doTest(fileName);
             }
 
@@ -411,12 +399,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("singleArgument.kt")
             public void testSingleArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/singleArgument.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("singleNamedArgument.kt")
-            public void testSingleNamedArgument() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/singleNamedArgument.kt");
                 doTest(fileName);
             }
 
@@ -440,6 +422,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public static class ReplaceInvokeIntention extends AbstractIntentionTest {
             public void testAllFilesPresentInReplaceInvokeIntention() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/attributeCallReplacements/replaceInvokeIntention"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("expressionReceiver.kt")
+            public void testExpressionReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceInvokeIntention/expressionReceiver.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("extensionFunction.kt")

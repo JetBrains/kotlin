@@ -1,4 +1,4 @@
-// SHOULD_FAIL_WITH: skipped.defaults
+// IS_APPLICABLE: false
 fun test() {
     class Test{
         fun contains(a: Int=1, b: Int=2) : Boolean = true

@@ -1,4 +1,4 @@
-// SHOULD_FAIL_WITH: duplicate.or.missing.arguments
+// IS_APPLICABLE: false
 // ERROR: No value passed for parameter b
 fun test() {
     class Test{

@@ -1,1 +1,1 @@
-org.jetbrains.kotlin.idea.intentions.TestableReplaceUnaryPrefixIntention
+org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceUnaryPrefixIntention

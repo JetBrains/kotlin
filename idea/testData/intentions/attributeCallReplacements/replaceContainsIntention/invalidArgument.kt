@@ -1,4 +1,4 @@
-// SHOULD_FAIL_WITH: invalid.arguments
+// IS_APPLICABLE: false
 // ERROR: Cannot find a parameter with this name: c
 fun test() {
     class Test{

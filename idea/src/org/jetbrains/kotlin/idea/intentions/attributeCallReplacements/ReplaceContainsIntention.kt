@@ -16,34 +16,38 @@
 
 package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
 
-import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.idea.intentions.toResolvedCall
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public open class ReplaceContainsIntention : AttributeCallReplacementIntention("replace.contains.with.in") {
+public class ReplaceContainsIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator") {
+    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
+        if (element.functionName != OperatorConventions.CONTAINS.asString()) return false
+        val resolvedCall = element.toResolvedCall() ?: return false
+        if (!resolvedCall.getStatus().isSuccess()) return false
+        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return false
+        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return false
 
-    override fun isApplicableToCall(call: CallDescription): Boolean {
-        return call.functionName == "contains" && call.argumentCount == 1 && !call.hasEmptyArguments
+        val target = resolvedCall.getResultingDescriptor()
+        val returnType = target.getReturnType() ?: return false
+        return target.builtIns.isBooleanOrSubtype(returnType)
     }
 
-    override fun replaceCall(call: CallDescription, editor: Editor) {
-        val resultingDescriptor = call.resolved.getResultingDescriptor()
-        val ret = resultingDescriptor.getReturnType()
-            ?: return intentionFailed(editor, "undefined.returntype")
-
-        if (!resultingDescriptor.builtIns.isBooleanOrSubtype(ret)) {
-            return intentionFailed(editor, "contains.returns.boolean")
-        }
-
-        val argument = (handleErrors(editor, call.getPositionalArguments()) ?: return)[0].getArgumentExpression()
+    override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+        val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
+        val receiver = element.getReceiverExpression()
 
         // Append semicolon to previous statement if needed
-        val psiFactory = JetPsiFactory(call.element)
+        val psiFactory = JetPsiFactory(element)
         if (argument is JetFunctionLiteralExpression) {
-            val previousElement = JetPsiUtil.skipSiblingsBackwardByPredicate(call.element) {
+            val previousElement = JetPsiUtil.skipSiblingsBackwardByPredicate(element) {
                 // I checked, it can't be null.
                 it!!.getNode()?.getElementType() in JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
             }
@@ -53,9 +57,6 @@ public open class ReplaceContainsIntention : AttributeCallReplacementIntention("
             }
         }
 
-        call.element.replace(psiFactory.createExpressionByPattern("$0 in $1",
-                argument,
-                call.element.getReceiverExpression()
-        ))
+        element.replace(psiFactory.createExpressionByPattern("$0 in $1", argument, receiver))
     }
 }

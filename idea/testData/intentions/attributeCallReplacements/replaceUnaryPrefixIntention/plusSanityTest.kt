@@ -1,4 +1,4 @@
-// INTENTION_TEXT: Replace with '+' prefix
+// INTENTION_TEXT: Replace with '+' operator
 fun test() {
     class Test {
         fun plus(): Test = Test()

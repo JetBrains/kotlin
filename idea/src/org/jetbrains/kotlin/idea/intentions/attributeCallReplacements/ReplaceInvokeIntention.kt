@@ -17,21 +17,22 @@
 package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.psi.JetCallExpression
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public open class ReplaceInvokeIntention : AttributeCallReplacementIntention("replace.invoke.with.call") {
-
-    override fun isApplicableToCall(call: CallDescription): Boolean {
-        return call.functionName == OperatorConventions.INVOKE.asString()
+public class ReplaceInvokeIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call") {
+    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
+        return element.functionName == OperatorConventions.INVOKE.asString()
     }
 
-    override fun replaceCall(call: CallDescription, editor: Editor) {
-        call.element.replace(JetPsiFactory(call.element).createExpression(
-                call.element.getReceiverExpression().getText() +
-                (call.callElement.getTypeArgumentList()?.getText() ?: "") +
-                (call.callElement.getValueArgumentList()?.getText() ?: "") +
-                (call.callElement.getFunctionLiteralArguments().fold("") { a, b -> a + " " + b.getText() })
-        ))
+    override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+        val receiver = element.getReceiverExpression()
+        val callExpression = element.callExpression!!
+        callExpression.getCalleeExpression()!!.replace(receiver)
+        element.replace(callExpression)
     }
 }

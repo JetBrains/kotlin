@@ -17,35 +17,35 @@
 package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public open class ReplaceUnaryPrefixIntention : AttributeCallReplacementIntention("replace.unary.operator.with.prefix") {
+public class ReplaceUnaryPrefixIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator") {
+    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
+        val operation = operation(element.functionName) ?: return false
+        val call = element.callExpression ?: return false
+        if (call.getTypeArgumentList() != null) return false
+        if (!call.getValueArguments().isEmpty()) return false
+        setText("Replace with '$operation' operator")
+        return true
+    }
 
-    private fun lookup(name: String?) : String? {
-        return when (name) {
+    override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+        val operation = operation(element.functionName)!!
+        val receiver = element.getReceiverExpression()
+        element.replace(JetPsiFactory(element).createExpressionByPattern("$0$1", operation, receiver))
+    }
+
+    private fun operation(functionName: String?) : String? {
+        return when (functionName) {
             "plus" -> "+"
             "minus" -> "-"
             "not" -> "!"
             else -> null
         }
-    }
-
-    override fun formatArgumentsFor(call: CallDescription): Array<Any?> {
-        return array(lookup(call.functionName))
-    }
-
-    override fun isApplicableToCall(call: CallDescription): Boolean {
-        return (
-            lookup(call.functionName) != null &&
-            !call.hasTypeArguments &&
-            call.argumentCount == 0 &&
-            call.callElement.getValueArgumentList() != null // Has argument expression
-        )
-    }
-
-    override fun replaceCall(call: CallDescription, editor: Editor) {
-        call.element.replace(JetPsiFactory(call.element).createExpression(
-                lookup(call.functionName)!! + call.element.getReceiverExpression().getText()
-        ))
     }
 }

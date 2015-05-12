@@ -174,9 +174,6 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
             }
             assertNull("Expected test to fail.", shouldFailString);
         }
-        catch (IntentionTestException e) {
-            assertEquals("Failure message mismatch.", shouldFailString, e.getMessage());
-        }
         catch (BaseRefactoringProcessor.ConflictsInTestsException e) {
             assertEquals("Failure message mismatch.", shouldFailString, StringUtil.join(e.getMessages(), ", "));
         }

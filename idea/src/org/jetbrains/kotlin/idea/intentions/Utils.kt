@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -31,8 +30,9 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 fun JetCallableDeclaration.setType(type: JetType) {
     if (type.isError()) return
@@ -102,3 +102,15 @@ fun splitPropertyDeclaration(property: JetProperty): JetBinaryExpression {
 
     return assignment
 }
+
+val JetQualifiedExpression.callExpression: JetCallExpression?
+    get() = getSelectorExpression() as? JetCallExpression
+
+val JetQualifiedExpression.functionName: String?
+    get() = (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getText()
+
+fun JetQualifiedExpression.toResolvedCall(): ResolvedCall<out CallableDescriptor>? {
+    val callExpression = callExpression ?: return null
+    return callExpression.getResolvedCall(callExpression.analyze()) ?: return null
+}
+

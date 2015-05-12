@@ -17,13 +17,37 @@
 package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.idea.intentions.toResolvedCall
+import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
-public open class ReplaceBinaryInfixIntention : AttributeCallReplacementIntention("replace.binary.operator.with.infix") {
+public class ReplaceBinaryInfixIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with binary operator") {
+    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
+        val operation = operation(element.functionName) ?: return false
+        val resolvedCall = element.toResolvedCall() ?: return false
+        if (!resolvedCall.getStatus().isSuccess()) return false
+        if (resolvedCall.getCall().getTypeArgumentList() != null) return false
+        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return false
+        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return false
+        setText("Replace with '$operation' operator")
+        return true
+    }
 
-    private fun lookup(name: String?): String? {
-        return when (name) {
+    override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
+        val operation = operation(element.functionName)!!
+        val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
+        val receiver = element.getReceiverExpression()
+
+        element.replace(JetPsiFactory(element).createExpressionByPattern("$0 $operation $1", receiver, argument))
+    }
+
+    private fun operation(functionName: String?): String? {
+        return when (functionName) {
             "plus" -> "+"
             "minus" -> "-"
             "div" -> "/"
@@ -32,29 +56,5 @@ public open class ReplaceBinaryInfixIntention : AttributeCallReplacementIntentio
             "rangeTo" -> ".."
             else -> null
         }
-    }
-
-    override fun formatArgumentsFor(call: CallDescription): Array<Any?> {
-        return array(lookup(call.functionName))
-    }
-
-    override fun isApplicableToCall(call: CallDescription): Boolean {
-        return (
-            lookup(call.functionName) != null &&
-            call.argumentCount == 1 &&
-            !call.hasTypeArguments &&
-            !call.hasEmptyArguments
-        )
-    }
-
-    override fun replaceCall(call: CallDescription, editor: Editor) {
-        val argument = (handleErrors(editor, call.getPositionalArguments()) ?: return)[0].getArgumentExpression()
-
-        val operation = lookup(call.functionName)!! // Lookup must succeed
-        call.element.replace(
-                JetPsiFactory(call.element).createExpressionByPattern("$0 $operation $1",
-                        call.element.getReceiverExpression(), argument
-                )
-        )
     }
 }

@@ -1,3 +1,4 @@
+// IS_APPLICABLE: false
 fun test() {
     class Test{
         fun get(a: Int = 0, b: Int = 1, c: Int = 2, d: Int = 3) : Int = 0
