@@ -1,0 +1,7 @@
+fun Int.foo() {
+    object {
+        fun baz() {
+            this@foo + 1
+        }
+    }
+}

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
 // Explicit reference to function parameter or outer this
 public abstract class JetExplicitReferenceUsage<T: JetElement>(element: T) : JetUsageInfo<T>(element) {
-    protected abstract fun getReplacementText(changeInfo: JetChangeInfo): String
+    abstract fun getReplacementText(changeInfo: JetChangeInfo): String
 
     protected open fun processReplacedElement(element: JetElement) {
 
@@ -45,17 +45,18 @@ public abstract class JetExplicitReferenceUsage<T: JetElement>(element: T) : Jet
 public class JetParameterUsage(
         element: JetSimpleNameExpression,
         private val parameterInfo: JetParameterInfo,
-        private val containingFunction: JetFunctionDefinitionUsage<*>
+        val containingFunction: JetFunctionDefinitionUsage<*>
 ) : JetExplicitReferenceUsage<JetSimpleNameExpression>(element) {
     override fun processReplacedElement(element: JetElement) {
         val qualifiedExpression = element.getParent() as? JetQualifiedExpression
-        if (qualifiedExpression?.getReceiverExpression() == element) {
-            qualifiedExpression!!.addToShorteningWaitSet(Options(removeThis = true))
-        }
+        val elementToShorten = if (qualifiedExpression?.getReceiverExpression() == element) qualifiedExpression!! else element
+        elementToShorten.addToShorteningWaitSet(Options(removeThis = true, removeThisLabels = true))
     }
 
     override fun getReplacementText(changeInfo: JetChangeInfo): String =
-            if (changeInfo.receiverParameterInfo != parameterInfo) parameterInfo.getInheritedName(containingFunction) else "this"
+            if (changeInfo.receiverParameterInfo != parameterInfo) {
+                parameterInfo.getInheritedName(containingFunction)
+            } else "this@${containingFunction.getOriginalFunctionDescriptor().getName().asString()}"
 }
 
 public class JetNonQualifiedOuterThisUsage(

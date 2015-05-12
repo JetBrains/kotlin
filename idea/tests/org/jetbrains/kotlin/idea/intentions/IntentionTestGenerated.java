@@ -3226,6 +3226,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("localObject.kt")
+        public void testLocalObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/localObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("localObjectWithFunctionNameConflict.kt")
+        public void testLocalObjectWithFunctionNameConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/localObjectWithFunctionNameConflict.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("memberFun.kt")
         public void testMemberFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/memberFun.kt");
