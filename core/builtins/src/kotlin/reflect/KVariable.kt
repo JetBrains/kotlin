@@ -21,7 +21,7 @@ package kotlin.reflect
  * Such property is either originally declared in a receiverless context such as a package,
  * or has the receiver bound to it.
  */
-public trait KVariable<out R> : KProperty<R> {
+public interface KVariable<out R> : KProperty<R> {
     /**
      * Returns the current value of the variable.
      */
@@ -31,7 +31,7 @@ public trait KVariable<out R> : KProperty<R> {
 /**
  * Represents a variable declared as a `var`.
  */
-public trait KMutableVariable<R> : KVariable<R>, KMutableProperty<R> {
+public interface KMutableVariable<R> : KVariable<R>, KMutableProperty<R> {
     /**
      * Modifies the value of the variable.
      *

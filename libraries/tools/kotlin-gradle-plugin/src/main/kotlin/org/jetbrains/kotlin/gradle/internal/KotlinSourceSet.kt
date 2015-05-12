@@ -6,7 +6,7 @@ import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.internal.file.DefaultSourceDirectorySet
 import org.gradle.util.ConfigureUtil
 
-trait KotlinSourceSet {
+interface KotlinSourceSet {
 
     fun getKotlin(): SourceDirectorySet
     fun kotlin(configureClosure: Closure<Any?>?): KotlinSourceSet

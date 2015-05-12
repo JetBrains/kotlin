@@ -17,11 +17,11 @@
 package kotlin
 
 /**
- * Classes that inherit from this trait can be represented as a sequence of elements that can
+ * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over.
  * @param T the type of element being iterated over.
  */
-public trait Iterable<out T> {
+public interface Iterable<out T> {
     /**
      * Returns an iterator over the elements of this object.
      */
@@ -29,10 +29,10 @@ public trait Iterable<out T> {
 }
 
 /**
- * Classes that inherit from this trait can be represented as a sequence of elements that can
+ * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over and that supports removing elements during iteration.
  */
-public trait MutableIterable<out T> : Iterable<T> {
+public interface MutableIterable<out T> : Iterable<T> {
     /**
      * Returns an iterator over the elementrs of this sequence that supports removing elements during iteration.
      */
@@ -40,11 +40,11 @@ public trait MutableIterable<out T> : Iterable<T> {
 }
 
 /**
- * A generic collection of elements. Methods in this trait support only read-only access to the collection;
- * read/write access is supported through the [MutableCollection] trait.
+ * A generic collection of elements. Methods in this interface support only read-only access to the collection;
+ * read/write access is supported through the [MutableCollection] interface.
  * @param E the type of elements contained in the collection.
  */
-public trait Collection<out E> : Iterable<E> {
+public interface Collection<out E> : Iterable<E> {
     // Query Operations
     /**
      * Returns the size of the collection.
@@ -72,7 +72,7 @@ public trait Collection<out E> : Iterable<E> {
 /**
  * A generic collection of elements that supports adding and removing elements.
  */
-public trait MutableCollection<E> : Collection<E>, MutableIterable<E> {
+public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
     // Query Operations
     override fun iterator(): MutableIterator<E>
 
@@ -121,11 +121,11 @@ public trait MutableCollection<E> : Collection<E>, MutableIterable<E> {
 }
 
 /**
- * A generic ordered collection of elements. Methods in this trait support only read-only access to the list;
- * read/write access is supported through the [MutableList] trait.
+ * A generic ordered collection of elements. Methods in this interface support only read-only access to the list;
+ * read/write access is supported through the [MutableList] interface.
  * @param E the type of elements contained in the list.
  */
-public trait List<out E> : Collection<E> {
+public interface List<out E> : Collection<E> {
     // Query Operations
     override fun size(): Int
     override fun isEmpty(): Boolean
@@ -177,7 +177,7 @@ public trait List<out E> : Collection<E> {
  * A generic ordered collection of elements that supports adding and removing elements.
  * @param E the type of elements contained in the list.
  */
-public trait MutableList<E> : List<E>, MutableCollection<E> {
+public interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
     override fun add(e: E): Boolean
     override fun remove(o: Any?): Boolean
@@ -225,11 +225,11 @@ public trait MutableList<E> : List<E>, MutableCollection<E> {
 
 /**
  * A generic unordered collection of elements that does not support duplicate elements.
- * Methods in this trait support only read-only access to the set;
- * read/write access is supported through the [MutableSet] trait.
+ * Methods in this interface support only read-only access to the set;
+ * read/write access is supported through the [MutableSet] interface.
  * @param E the type of elements contained in the set.
  */
-public trait Set<out E> : Collection<E> {
+public interface Set<out E> : Collection<E> {
     // Query Operations
     override fun size(): Int
     override fun isEmpty(): Boolean
@@ -245,7 +245,7 @@ public trait Set<out E> : Collection<E> {
  * adding and removing elements.
  * @param E the type of elements contained in the set.
  */
-public trait MutableSet<E> : Set<E>, MutableCollection<E> {
+public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
     override fun iterator(): MutableIterator<E>
 
@@ -263,12 +263,12 @@ public trait MutableSet<E> : Set<E>, MutableCollection<E> {
 /**
  * A collection that holds pairs of objects (keys and values) and supports efficiently retrieving
  * the value corresponding to each key. Map keys are unique; the map holds only one value for each key.
- * Methods in this trait support only read-only access to the map; read-write access is supported through
- * the [MutableMap] trait.
+ * Methods in this interface support only read-only access to the map; read-write access is supported through
+ * the [MutableMap] interface.
  * @param K the type of map keys.
  * @param V the type of map values.
  */
-public trait Map<K, out V> {
+public interface Map<K, out V> {
     // Query Operations
     /**
      * Returns the number of key/value pairs in the map.
@@ -314,7 +314,7 @@ public trait Map<K, out V> {
     /**
      * Represents a key/value pair held by a [Map].
      */
-    public trait Entry<out K, out V> {
+    public interface Entry<out K, out V> {
         /**
          * Returns the key of this key/value pair.
          */
@@ -333,7 +333,7 @@ public trait Map<K, out V> {
  * @param K the type of map keys.
  * @param V the type of map values.
  */
-public trait MutableMap<K, V> : Map<K, V> {
+public interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations
     /**
      * Associates the specified [value] with the specified [key] in the map.
@@ -368,7 +368,7 @@ public trait MutableMap<K, V> : Map<K, V> {
     /**
      * Represents a key/value pair held by a [MutableMap].
      */
-    public trait MutableEntry<K,V>: Map.Entry<K, V> {
+    public interface MutableEntry<K,V>: Map.Entry<K, V> {
         /**
          * Changes the value associated with the key of this entry.
          *

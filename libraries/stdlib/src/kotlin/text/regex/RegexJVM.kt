@@ -19,7 +19,7 @@ package kotlin.text
 import java.util.regex.Pattern
 import java.util.regex.Matcher
 
-private trait FlagEnum {
+private interface FlagEnum {
     public val value: Int
     public val mask: Int
 }

@@ -24,9 +24,9 @@ package kotlin.reflect
  *
  * @param R the type of the property.
  */
-public trait KProperty<out R> : KCallable<R>
+public interface KProperty<out R> : KCallable<R>
 
 /**
  * Represents a property declared as a `var`.
  */
-public trait KMutableProperty<R> : KProperty<R>
+public interface KMutableProperty<R> : KProperty<R>

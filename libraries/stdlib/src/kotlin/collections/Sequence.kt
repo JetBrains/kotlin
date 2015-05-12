@@ -4,7 +4,7 @@ import java.util.Enumeration
 import java.util.NoSuchElementException
 
 deprecated("Use Sequence<T> instead.")
-public trait Stream<out T> {
+public interface Stream<out T> {
     /**
      * Returns an iterator that returns the values from the sequence.
      */
@@ -17,7 +17,7 @@ public trait Stream<out T> {
  *
  * @param T the type of elements in the sequence.
  */
-public trait Sequence<out T> : Stream<T>
+public interface Sequence<out T> : Stream<T>
 
 public fun<T> Stream<T>.toSequence(): Sequence<T> = object : Sequence<T> {
     override fun iterator(): Iterator<T> = this@toSequence.iterator()

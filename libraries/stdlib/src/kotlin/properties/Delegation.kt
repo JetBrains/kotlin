@@ -1,13 +1,13 @@
 package kotlin.properties
 
 /**
- * Base trait that can be used for implementing property delegates of read-only properties. This is provided only for
- * convenience; you don't have to extend this trait as long as your property delegate has methods with the same
+ * Base interface that can be used for implementing property delegates of read-only properties. This is provided only for
+ * convenience; you don't have to extend this interface as long as your property delegate has methods with the same
  * signatures.
  * @param R the type of object which owns the delegated property.
  * @param T the type of the property value.
  */
-public trait ReadOnlyProperty<in R, out T> {
+public interface ReadOnlyProperty<in R, out T> {
     /**
      * Returns the value of the property for the given object.
      * @param thisRef the object for which the value is requested.
@@ -18,13 +18,13 @@ public trait ReadOnlyProperty<in R, out T> {
 }
 
 /**
- * Base trait that can be used for implementing property delegates of read-only properties. This is provided only for
- * convenience; you don't have to extend this trait as long as your property delegate has methods with the same
+ * Base interface that can be used for implementing property delegates of read-only properties. This is provided only for
+ * convenience; you don't have to extend this interface as long as your property delegate has methods with the same
  * signatures.
  * @param R the type of object which owns the delegated property.
  * @param T the type of the property value.
  */
-public trait ReadWriteProperty<in R, T> {
+public interface ReadWriteProperty<in R, T> {
     /**
      * Returns the value of the property for the given object.
      * @param thisRef the object for which the value is requested.

@@ -92,7 +92,7 @@ public fun fails(block: () -> Unit): Throwable? {
  * Abstracts the logic for performing assertions. Specific implementations of [Asserter] can use JUnit
  * or TestNG assertion facilities.
  */
-public trait Asserter {
+public interface Asserter {
     /**
      * Asserts that the specified value is true.
      *

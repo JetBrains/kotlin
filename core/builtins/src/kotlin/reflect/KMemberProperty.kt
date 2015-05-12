@@ -23,7 +23,7 @@ package kotlin.reflect
  *          Must be derived either from a class declaring this property, or any subclass of that class.
  * @param R the type of the property.
  */
-public trait KMemberProperty<T : Any, out R> : KProperty<R> {
+public interface KMemberProperty<T : Any, out R> : KProperty<R> {
     /**
      * Returns the current value of the property.
      *
@@ -35,7 +35,7 @@ public trait KMemberProperty<T : Any, out R> : KProperty<R> {
 /**
  * Represents a `var` property declared in a class.
  */
-public trait KMutableMemberProperty<T : Any, R> : KMemberProperty<T, R>, KMutableProperty<R> {
+public interface KMutableMemberProperty<T : Any, R> : KMemberProperty<T, R>, KMutableProperty<R> {
     /**
      * Modifies the value of the property.
      *

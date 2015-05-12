@@ -24,7 +24,7 @@ package kotlin.reflect
  * @param E the type of the extension receiver.
  * @param R the type of the property.
  */
-public trait KExtensionProperty<E, out R> : KProperty<R> {
+public interface KExtensionProperty<E, out R> : KProperty<R> {
     /**
      * Returns the current value of the property.
      *
@@ -36,7 +36,7 @@ public trait KExtensionProperty<E, out R> : KProperty<R> {
 /**
  * Represents an extension property declared as a `var`.
  */
-public trait KMutableExtensionProperty<E, R> : KExtensionProperty<E, R>, KMutableProperty<R> {
+public interface KMutableExtensionProperty<E, R> : KExtensionProperty<E, R>, KMutableProperty<R> {
     /**
      * Modifies the value of the property.
      *
