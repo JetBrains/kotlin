@@ -716,7 +716,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.declarations.ConvertMemberToExtension</className>
+      <className>org.jetbrains.kotlin.idea.intentions.declarations.ConvertMemberToExtensionIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

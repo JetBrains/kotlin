@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
-public class ConvertMemberToExtension : JetSelfTargetingRangeIntention<JetCallableDeclaration>(javaClass(), "Convert to extension") {
+public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<JetCallableDeclaration>(javaClass(), "Convert to extension") {
     override fun applicabilityRange(element: JetCallableDeclaration): TextRange? {
         val classBody = element.getParent() as? JetClassBody ?: return null
         if (classBody.getParent() !is JetClass) return null
