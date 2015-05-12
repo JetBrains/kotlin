@@ -24,9 +24,13 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
@@ -82,8 +86,12 @@ public final class WhenChecker {
     }
 
     public static boolean isWhenOnEnumExhaustive(
-            @NotNull JetWhenExpression expression, @NotNull BindingTrace trace, @NotNull ClassDescriptor enumClassDescriptor) {
-        assert isEnumClass(enumClassDescriptor);
+            @NotNull JetWhenExpression expression,
+            @NotNull BindingTrace trace,
+            @NotNull ClassDescriptor enumClassDescriptor
+    ) {
+        assert isEnumClass(enumClassDescriptor) :
+                "isWhenOnEnumExhaustive should be called with an enum class descriptor";
         boolean notEmpty = false;
         for (DeclarationDescriptor descriptor : enumClassDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
             if (isEnumEntry(descriptor)) {
@@ -94,6 +102,35 @@ public final class WhenChecker {
             }
         }
         return notEmpty;
+    }
+
+    private static void collectNestedSubclasses(
+            @NotNull ClassDescriptor baseDescriptor,
+            @NotNull ClassDescriptor currentDescriptor,
+            @NotNull Set<ClassDescriptor> subclasses
+    ) {
+        for (DeclarationDescriptor descriptor : currentDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
+            if (descriptor instanceof ClassDescriptor) {
+                ClassDescriptor memberClassDescriptor = (ClassDescriptor) descriptor;
+                if (DescriptorUtils.isDirectSubclass(memberClassDescriptor, baseDescriptor)) {
+                    subclasses.add(memberClassDescriptor);
+                }
+                collectNestedSubclasses(baseDescriptor, memberClassDescriptor, subclasses);
+            }
+        }
+    }
+
+    private static boolean isWhenOnSealedClassExhaustive(
+            @NotNull JetWhenExpression expression,
+            @NotNull BindingTrace trace,
+            @NotNull ClassDescriptor classDescriptor
+    ) {
+        assert classDescriptor.getModality() == Modality.SEALED :
+                "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor";
+        Set<ClassDescriptor> memberClassDescriptors = new HashSet<ClassDescriptor>();
+        collectNestedSubclasses(classDescriptor, classDescriptor, memberClassDescriptors);
+        // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
+        return !memberClassDescriptors.isEmpty() && containsAllClassCases(expression, memberClassDescriptors, trace);
     }
 
     /**
@@ -128,8 +165,10 @@ public final class WhenChecker {
                 exhaustive = isWhenOnBooleanExhaustive(expression, trace);
             }
             else {
-                // TODO: sealed hierarchies, etc.
-                exhaustive = false;
+                ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
+                exhaustive = (classDescriptor != null
+                              && classDescriptor.getModality() == Modality.SEALED
+                              && isWhenOnSealedClassExhaustive(expression, trace, classDescriptor));
             }
         }
         else {
@@ -165,6 +204,51 @@ public final class WhenChecker {
             }
         }
         return false;
+    }
+
+    private static boolean containsAllClassCases(
+            @NotNull JetWhenExpression whenExpression,
+            @NotNull Set<ClassDescriptor> memberDescriptors,
+            @NotNull BindingTrace trace
+    ) {
+        Set<ClassDescriptor> checkedDescriptors = new HashSet<ClassDescriptor>();
+        for (JetWhenEntry whenEntry : whenExpression.getEntries()) {
+            for (JetWhenCondition condition : whenEntry.getConditions()) {
+                boolean negated = false;
+                JetType checkedType = null;
+                if (condition instanceof JetWhenConditionIsPattern) {
+                    JetWhenConditionIsPattern conditionIsPattern = (JetWhenConditionIsPattern) condition;
+                    checkedType = trace.get(BindingContext.TYPE, conditionIsPattern.getTypeReference());
+                    negated = conditionIsPattern.isNegated();
+                }
+                else if (condition instanceof JetWhenConditionWithExpression) {
+                    JetWhenConditionWithExpression conditionWithExpression = (JetWhenConditionWithExpression) condition;
+                    if (conditionWithExpression.getExpression() != null) {
+                        checkedType = trace.getBindingContext().getType(conditionWithExpression.getExpression());
+                    }
+                }
+                if (checkedType == null) {
+                    continue;
+                }
+                ClassDescriptor checkedDescriptor = TypeUtils.getClassDescriptor(checkedType);
+                // Checks are important only for nested subclasses of the sealed class
+                // In additional, check without "is" is important only for objects
+                if (checkedDescriptor == null
+                    || !memberDescriptors.contains(checkedDescriptor)
+                    || (condition instanceof JetWhenConditionWithExpression && !DescriptorUtils.isObject(checkedDescriptor))) {
+                    continue;
+                }
+                if (negated) {
+                    if (checkedDescriptors.contains(checkedDescriptor)) return true; // all members are already there
+                    checkedDescriptors.addAll(memberDescriptors);
+                    checkedDescriptors.remove(checkedDescriptor);
+                }
+                else {
+                    checkedDescriptors.add(checkedDescriptor);
+                }
+            }
+        }
+        return checkedDescriptors.containsAll(memberDescriptors);
     }
 
     public static boolean containsNullCase(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {

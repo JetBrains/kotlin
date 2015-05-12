@@ -1,0 +1,63 @@
+package
+
+internal fun foo(/*0*/ s: Sealed): kotlin.Int
+
+internal sealed class Sealed {
+    public constructor Sealed(/*0*/ x: kotlin.Int)
+    internal final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    internal object First : Sealed {
+        private constructor First()
+        internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal interface ITuple {
+        internal abstract val x: kotlin.Int
+        internal abstract val y: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    internal open class NonFirst : Sealed, Sealed.ITuple {
+        public constructor NonFirst(/*0*/ tuple: Sealed.Tuple)
+        internal final override /*2*/ /*fake_override*/ val x: kotlin.Int
+        internal open override /*1*/ val y: kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+
+        internal object Second : Sealed.NonFirst {
+            private constructor Second()
+            internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+            internal open override /*1*/ /*fake_override*/ val y: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        internal final class Third : Sealed.NonFirst {
+            public constructor Third()
+            internal final override /*1*/ /*fake_override*/ val x: kotlin.Int
+            internal open override /*1*/ /*fake_override*/ val y: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    internal final class Tuple : Sealed.ITuple {
+        public constructor Tuple(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+        internal open override /*1*/ val x: kotlin.Int
+        internal open override /*1*/ val y: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

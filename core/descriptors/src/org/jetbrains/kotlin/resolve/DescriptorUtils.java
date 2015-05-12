@@ -234,21 +234,35 @@ public class DescriptorUtils {
         return false;
     }
 
+    public static boolean isDirectSubclass(@NotNull ClassDescriptor subClass, @NotNull ClassDescriptor superClass) {
+        for (JetType superType : subClass.getTypeConstructor().getSupertypes()) {
+            if (isSameClass(superType, superClass.getOriginal())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean isSubclass(@NotNull ClassDescriptor subClass, @NotNull ClassDescriptor superClass) {
         return isSubtypeOfClass(subClass.getDefaultType(), superClass.getOriginal());
     }
 
-    private static boolean isSubtypeOfClass(@NotNull JetType type, @NotNull DeclarationDescriptor superClass) {
+    private static boolean isSameClass(@NotNull JetType type, @NotNull DeclarationDescriptor other) {
         DeclarationDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         if (descriptor != null) {
             DeclarationDescriptor originalDescriptor = descriptor.getOriginal();
             if (originalDescriptor instanceof ClassifierDescriptor
-                     && superClass instanceof ClassifierDescriptor
-                     && ((ClassifierDescriptor) superClass).getTypeConstructor().equals(((ClassifierDescriptor) originalDescriptor).getTypeConstructor())) {
+                && other instanceof ClassifierDescriptor
+                && ((ClassifierDescriptor) other).getTypeConstructor().equals(
+                    ((ClassifierDescriptor) originalDescriptor).getTypeConstructor())) {
                 return true;
             }
         }
+        return false;
+    }
 
+    private static boolean isSubtypeOfClass(@NotNull JetType type, @NotNull DeclarationDescriptor superClass) {
+        if (isSameClass(type, superClass)) return true;
         for (JetType superType : type.getConstructor().getSupertypes()) {
             if (isSubtypeOfClass(superType, superClass)) {
                 return true;
@@ -446,7 +460,9 @@ public class DescriptorUtils {
     }
 
     public static boolean classCanHaveAbstractMembers(@NotNull ClassDescriptor classDescriptor) {
-        return classDescriptor.getModality() == Modality.ABSTRACT || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
+        return classDescriptor.getModality() == Modality.ABSTRACT
+               || classDescriptor.getModality() == Modality.SEALED
+               || classDescriptor.getKind() == ClassKind.ENUM_CLASS;
     }
 
     public static boolean classCanHaveOpenMembers(@NotNull ClassDescriptor classDescriptor) {
