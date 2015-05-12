@@ -17,16 +17,17 @@
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.functionName
-import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceInvokeIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call") {
-    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
-        return element.functionName == OperatorConventions.INVOKE.asString()
+public class ReplaceInvokeIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call") {
+    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+        if (element.functionName != OperatorConventions.INVOKE.asString()) return null
+        return element.callExpression!!.getCalleeExpression()!!.getTextRange()
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {

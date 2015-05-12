@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.functionName
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
@@ -27,17 +28,18 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceContainsIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator") {
-    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
-        if (element.functionName != OperatorConventions.CONTAINS.asString()) return false
-        val resolvedCall = element.toResolvedCall() ?: return false
-        if (!resolvedCall.getStatus().isSuccess()) return false
-        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return false
-        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return false
+public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator") {
+    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+        if (element.functionName != OperatorConventions.CONTAINS.asString()) return null
+        val resolvedCall = element.toResolvedCall() ?: return null
+        if (!resolvedCall.getStatus().isSuccess()) return null
+        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
+        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return null
 
         val target = resolvedCall.getResultingDescriptor()
-        val returnType = target.getReturnType() ?: return false
-        return target.builtIns.isBooleanOrSubtype(returnType)
+        val returnType = target.getReturnType() ?: return null
+        if (!target.builtIns.isBooleanOrSubtype(returnType)) return null
+        return element.callExpression!!.getCalleeExpression()!!.getTextRange()
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {

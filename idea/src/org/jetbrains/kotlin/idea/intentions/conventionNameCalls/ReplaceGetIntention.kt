@@ -17,23 +17,23 @@
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.functionName
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.buildExpression
-import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class ReplaceGetIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator") {
-    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
-        if (element.functionName != "get") return false
-        val call = element.callExpression ?: return false
-        if (call.getTypeArgumentList() != null) return false
+public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator") {
+    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+        if (element.functionName != "get") return null
+        val call = element.callExpression ?: return null
+        if (call.getTypeArgumentList() != null) return null
         val arguments = call.getValueArguments()
-        if (arguments.isEmpty()) return false
-        if (arguments.any { it.isNamed() }) return false
-        return true
+        if (arguments.isEmpty()) return null
+        if (arguments.any { it.isNamed() }) return null
+        return call.getCalleeExpression()!!.getTextRange()
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {

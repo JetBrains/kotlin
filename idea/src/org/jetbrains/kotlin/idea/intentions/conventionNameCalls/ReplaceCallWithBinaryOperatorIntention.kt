@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.functionName
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
@@ -26,16 +27,16 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
-public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with binary operator") {
-    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
-        val operation = operation(element.functionName) ?: return false
-        val resolvedCall = element.toResolvedCall() ?: return false
-        if (!resolvedCall.getStatus().isSuccess()) return false
-        if (resolvedCall.getCall().getTypeArgumentList() != null) return false
-        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return false
-        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return false
+public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with binary operator") {
+    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+        val operation = operation(element.functionName) ?: return null
+        val resolvedCall = element.toResolvedCall() ?: return null
+        if (!resolvedCall.getStatus().isSuccess()) return null
+        if (resolvedCall.getCall().getTypeArgumentList() != null) return null
+        val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
+        if ((resolvedCall.getArgumentMapping(argument) as ArgumentMatch).valueParameter.getIndex() != 0) return null
         setText("Replace with '$operation' operator")
-        return true
+        return element.callExpression!!.getCalleeExpression()!!.getTextRange()
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {

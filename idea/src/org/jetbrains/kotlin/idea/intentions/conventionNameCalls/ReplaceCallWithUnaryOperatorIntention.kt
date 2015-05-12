@@ -17,21 +17,22 @@
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.functionName
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator") {
-    override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
-        val operation = operation(element.functionName) ?: return false
-        val call = element.callExpression ?: return false
-        if (call.getTypeArgumentList() != null) return false
-        if (!call.getValueArguments().isEmpty()) return false
+public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator") {
+    override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
+        val operation = operation(element.functionName) ?: return null
+        val call = element.callExpression ?: return null
+        if (call.getTypeArgumentList() != null) return null
+        if (!call.getValueArguments().isEmpty()) return null
         setText("Replace with '$operation' operator")
-        return true
+        return call.getCalleeExpression()!!.getTextRange()
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
