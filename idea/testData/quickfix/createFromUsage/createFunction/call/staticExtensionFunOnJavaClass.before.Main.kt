@@ -1,6 +1,5 @@
 // "Create extension function 'foo'" "false"
 // ACTION: Create function 'foo'
-// ACTION: Split property declaration
 // ERROR: Unresolved reference: foo
 
 fun test() {

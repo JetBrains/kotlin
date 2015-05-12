@@ -1,5 +1,7 @@
 // "Create function 'bar'" "false"
 // ACTION: Create annotation 'bar'
+// ACTION: Make private
+// ACTION: Make public
 // ERROR: Unresolved reference: foo
 // ERROR: Unresolved reference: bar
 

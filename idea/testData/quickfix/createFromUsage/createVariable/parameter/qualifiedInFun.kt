@@ -1,5 +1,4 @@
 // "Create parameter 'foo'" "false"
-// ACTION: Split property declaration
 // ACTION: Create extension property 'foo'
 // ACTION: Create property 'foo'
 // ERROR: Unresolved reference: foo

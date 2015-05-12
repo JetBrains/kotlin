@@ -2,7 +2,7 @@
 // ERROR: Function 'foo' without a body must be abstract
 // ACTION: Add function body
 // ACTION: Make 'foo' abstract
-// ACTION: Convert to extension
+// ACTION: Convert member to extension
 // ACTION: Disable 'Convert to extension'
 // ACTION: Disable inspection
 // ACTION: Disable inspection

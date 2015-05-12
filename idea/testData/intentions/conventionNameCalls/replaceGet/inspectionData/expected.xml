@@ -1,32 +1,5 @@
 <problems>
   <problem>
-    <file>unnamedAndNamed.kt</file>
-    <line>6</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/unnamedAndNamed.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
-    <description>Replace 'get' call with index operator</description>
-  </problem>
-
-  <problem>
-    <file>unacceptableVararg.kt</file>
-    <line>7</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/unacceptableVararg.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
-    <description>Replace 'get' call with index operator</description>
-  </problem>
-
-  <problem>
-    <file>singleNamedArgument.kt</file>
-    <line>6</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/singleNamedArgument.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
-    <description>Replace 'get' call with index operator</description>
-  </problem>
-
-  <problem>
     <file>singleArgument.kt</file>
     <line>6</line>
     <module>light_idea_test_case</module>
@@ -36,46 +9,10 @@
   </problem>
 
   <problem>
-    <file>namedAndFunction.kt</file>
-    <line>6</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/namedAndFunction.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
-    <description>Replace 'get' call with index operator</description>
-  </problem>
-
-  <problem>
     <file>multiArgument.kt</file>
     <line>6</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/multiArgument.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
-    <description>Replace 'get' call with index operator</description>
-  </problem>
-
-  <problem>
-    <file>missingDefaultArgument.kt</file>
-    <line>7</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/missingDefaultArgument.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
-    <description>Replace 'get' call with index operator</description>
-  </problem>
-
-  <problem>
-    <file>missingArgument.kt</file>
-    <line>8</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/missingArgument.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
-    <description>Replace 'get' call with index operator</description>
-  </problem>
-
-  <problem>
-    <file>invalidArgument.kt</file>
-    <line>8</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/invalidArgument.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
     <description>Replace 'get' call with index operator</description>
   </problem>
@@ -94,15 +31,6 @@
     <line>6</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/extensionFunction.kt" />
-    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
-    <description>Replace 'get' call with index operator</description>
-  </problem>
-
-  <problem>
-    <file>duplicateArguments.kt</file>
-    <line>9</line>
-    <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/duplicateArguments.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
     <description>Replace 'get' call with index operator</description>
   </problem>
