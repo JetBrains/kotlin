@@ -22,6 +22,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.expressionComparedToNull
 import org.jetbrains.kotlin.idea.util.isNothing
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -32,6 +33,8 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
+
+public class IfNullToElvisInspection : IntentionBasedInspection<JetIfExpression>(IfNullToElvisIntention())
 
 public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpression>(javaClass(), "Replace 'if' with elvis operator"){
     override fun applicabilityRange(element: JetIfExpression): TextRange? {

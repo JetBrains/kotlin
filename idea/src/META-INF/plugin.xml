@@ -681,7 +681,7 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments</className>
+      <className>org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
@@ -875,21 +875,21 @@
       <category>Kotlin</category>
     </intentionAction>
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ExplicitGetInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection"
         displayName="Explicit 'get'"
         groupName="Kotlin"
         enabledByDefault="false"
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfThenToElvisInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisInspection"
         displayName="If-Then foldable to '?:'"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IfThenToSafeAccessInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessInspection"
         displayName="If-Then foldable to '?.'"
         groupName="Kotlin"
         enabledByDefault="true"
@@ -903,14 +903,14 @@
         level="WEAK WARNING"
         />
 
-      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgsInspection"
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsInspection"
         displayName="Type arguments are unnecessary"
         groupName="Kotlin"
         enabledByDefault="true"
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBinaryNegationInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionInspection"
         displayName="Simplify negated binary expression"
         groupName="Kotlin"
         enabledByDefault="true"
@@ -924,7 +924,7 @@
         level="WEAK WARNING"
         />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.IntroduceWhenSubjectInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IntroduceWhenSubjectInspection"
         displayName="Introduce argument to 'when'"
         groupName="Kotlin"
         enabledByDefault="true"

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention
-import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArguments
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
@@ -103,7 +103,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             }
 
             override fun visitTypeArgumentList(typeArgumentList: JetTypeArgumentList) {
-                if (rangeFilter(typeArgumentList) == RangeFilterResult.PROCESS && RemoveExplicitTypeArguments().isApplicableTo(typeArgumentList)) {
+                if (rangeFilter(typeArgumentList) == RangeFilterResult.PROCESS && RemoveExplicitTypeArgumentsIntention().isApplicableTo(typeArgumentList)) {
                     redundantTypeArgs.add(typeArgumentList)
                     return
                 }

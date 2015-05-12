@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.di.InjectorForMacros
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
@@ -28,10 +30,14 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.TypeUtils
 
-public class RemoveExplicitTypeArguments : JetSelfTargetingOffsetIndependentIntention<JetTypeArgumentList>(javaClass(), "Remove explicit type arguments") {
+public class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<JetTypeArgumentList>(RemoveExplicitTypeArgumentsIntention()) {
+    override val problemHighlightType: ProblemHighlightType
+        get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+}
+
+public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeArgumentList>(javaClass(), "Remove explicit type arguments") {
     override fun isApplicableTo(element: JetTypeArgumentList): Boolean {
         val callExpression = element.getParent() as? JetCallExpression ?: return false
         if (callExpression.getTypeArguments().isEmpty()) return false

@@ -19,9 +19,12 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+
+public class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<JetPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
 
 public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingRangeIntention<JetPrefixExpression>(javaClass(), "Simplify negated binary expression") {
 

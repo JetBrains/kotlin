@@ -18,10 +18,13 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
 import org.jetbrains.kotlin.psi.JetWhenExpression
+
+public class IntroduceWhenSubjectInspection : IntentionBasedInspection<JetWhenExpression>(IntroduceWhenSubjectIntention())
 
 public class IntroduceWhenSubjectIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Introduce argument to 'when'") {
     override fun applicabilityRange(element: JetWhenExpression): TextRange? {
