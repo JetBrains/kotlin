@@ -37,12 +37,6 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
             JetTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/intentions"), Pattern.compile("^(inspections\\.test)$"));
         }
 
-        @TestMetadata("attributeCallReplacements/replaceGetIntention/inspectionData/inspections.test")
-        public void testAttributeCallReplacements_replaceGetIntention_inspectionData_Inspections_test() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/attributeCallReplacements/replaceGetIntention/inspectionData/inspections.test");
-            doTest(fileName);
-        }
-
         @TestMetadata("branched/ifThenToElvis/inspectionData/inspections.test")
         public void testBranched_ifThenToElvis_inspectionData_Inspections_test() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToElvis/inspectionData/inspections.test");
@@ -52,6 +46,12 @@ public class JetInspectionTestGenerated extends AbstractJetInspectionTest {
         @TestMetadata("branched/ifThenToSafeAccess/inspectionData/inspections.test")
         public void testBranched_ifThenToSafeAccess_inspectionData_Inspections_test() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/ifThenToSafeAccess/inspectionData/inspections.test");
+            doTest(fileName);
+        }
+
+        @TestMetadata("conventionNameCalls/replaceGetIntention/inspectionData/inspections.test")
+        public void testConventionNameCalls_replaceGetIntention_inspectionData_Inspections_test() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGetIntention/inspectionData/inspections.test");
             doTest(fileName);
         }
 

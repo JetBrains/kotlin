@@ -14,38 +14,25 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
+package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceUnaryPrefixIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator") {
+public class ReplaceInvokeIntention : JetSelfTargetingOffsetIndependentIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call") {
     override fun isApplicableTo(element: JetDotQualifiedExpression): Boolean {
-        val operation = operation(element.functionName) ?: return false
-        val call = element.callExpression ?: return false
-        if (call.getTypeArgumentList() != null) return false
-        if (!call.getValueArguments().isEmpty()) return false
-        setText("Replace with '$operation' operator")
-        return true
+        return element.functionName == OperatorConventions.INVOKE.asString()
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
-        val operation = operation(element.functionName)!!
         val receiver = element.getReceiverExpression()
-        element.replace(JetPsiFactory(element).createExpressionByPattern("$0$1", operation, receiver))
-    }
-
-    private fun operation(functionName: String?) : String? {
-        return when (functionName) {
-            "plus" -> "+"
-            "minus" -> "-"
-            "not" -> "!"
-            else -> null
-        }
+        val callExpression = element.callExpression!!
+        callExpression.getCalleeExpression()!!.replace(receiver)
+        element.replace(callExpression)
     }
 }

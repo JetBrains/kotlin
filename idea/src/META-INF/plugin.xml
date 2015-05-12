@@ -536,27 +536,27 @@
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceGetIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceContainsIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceContainsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceInvokeIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceInvokeIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceUnaryPrefixIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceUnaryPrefixIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 
     <intentionAction>
-      <className>org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceBinaryInfixIntention</className>
+      <className>org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceBinaryInfixIntention</className>
       <category>Kotlin</category>
     </intentionAction>
 

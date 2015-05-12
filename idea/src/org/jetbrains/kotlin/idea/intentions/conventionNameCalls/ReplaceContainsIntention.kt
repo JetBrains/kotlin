@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.intentions.attributeCallReplacements
+package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention

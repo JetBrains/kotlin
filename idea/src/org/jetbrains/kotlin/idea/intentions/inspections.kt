@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInspection.ProblemHighlightType
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
-import org.jetbrains.kotlin.idea.intentions.attributeCallReplacements.ReplaceGetIntention
+import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ReplaceGetIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IntroduceWhenSubjectIntention
