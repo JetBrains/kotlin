@@ -46,18 +46,6 @@ public var Element.childrenText: String
         element.addText(value)
     }
 
-public var Element.id: String
-    get() = this.getAttribute("id") ?: ""
-    set(value) {
-        this.setAttribute("id", value)
-    }
-
-public var Element.style: String
-    get() = this.getAttribute("style") ?: ""
-    set(value) {
-        this.setAttribute("style", value)
-    }
-
 public var Element.classes: String
     get() = this.getAttribute("class") ?: ""
     set(value) {
@@ -179,9 +167,13 @@ public fun Element.get(selector: String): List<Element> {
 public fun Element.addClass(vararg cssClasses: String): Boolean {
     val missingClasses = cssClasses.filterNot { hasClass(it) }
     if (missingClasses.isNotEmpty()) {
+        val presentClasses = classes.trim()
         classes = StringBuilder {
-            append(classes)
-            missingClasses.joinTo(this, " ", " ")
+            append(presentClasses)
+            if (presentClasses != "") {
+                append(" ")
+            }
+            missingClasses.joinTo(this, " ")
         }.toString()
         return true
     }
@@ -195,7 +187,7 @@ public fun Element.addClass(vararg cssClasses: String): Boolean {
 public fun Element.removeClass(vararg cssClasses: String): Boolean {
     if (cssClasses.any { hasClass(it) }) {
         val toBeRemoved = cssClasses.toSet()
-        classes = classes.split("\\s+").filter { it !in toBeRemoved }.joinToString(" ")
+        classes = classes.trim().split("\\s+").filter { it !in toBeRemoved }.joinToString(" ")
         return true
     }
 

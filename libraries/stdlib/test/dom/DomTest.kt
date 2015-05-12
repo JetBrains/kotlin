@@ -37,7 +37,7 @@ class DomTest {
         val xml = e.toXmlString()
         println("element after text ${xml}")
 
-        assertEquals("hello", e.text)
+        assertEquals("hello", e.textContent)
 
     }
 

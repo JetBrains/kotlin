@@ -12,7 +12,7 @@ class BrowserTest {
         registerBrowserPage()
 
         val h1 = document["h1"].first()
-        assertEquals("Hello World!", h1.text)
+        assertEquals("Hello World!", h1.textContent)
     }
 
     protected fun registerBrowserPage() {

@@ -92,6 +92,18 @@ public val CharacterData.length: Int
 public val NamedNodeMap.length: Int
     get() = this.getLength()
 
+public var Element.id: String
+    get() = this.getAttribute("id") ?: ""
+    set(value) {
+        this.setAttribute("id", value)
+        this.setIdAttribute("id", true)
+    }
+
+public var Element.style: String
+    get() = this.getAttribute("style") ?: ""
+    set(value) {
+        this.setAttribute("style", value)
+    }
 
 /**
  * Returns the HTML representation of the node
@@ -132,26 +144,6 @@ public var Element.classSet: MutableSet<String>
     set(value) {
         this.classes = value.join(" ")
     }
-
-/** Adds the given CSS class to this element's 'class' attribute */
-public fun Element.addClass(cssClass: String): Boolean {
-    val classSet = this.classSet
-    val answer = classSet.add(cssClass)
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
-}
-
-/** Removes the given CSS class to this element's 'class' attribute */
-public fun Element.removeClass(cssClass: String): Boolean {
-    val classSet = this.classSet
-    val answer = classSet.remove(cssClass)
-    if (answer) {
-        this.classSet = classSet
-    }
-    return answer
-}
 
 
 /** Creates a new document with the given document builder*/

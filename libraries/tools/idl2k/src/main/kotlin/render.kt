@@ -145,7 +145,7 @@ fun betterFunction(f1: GenerateFunction, f2: GenerateFunction): GenerateFunction
         )
 
 private fun <F, T> Pair<F, F>.map(block: (F) -> T) = block(first) to block(second)
-private fun Pair<String, String>.betterType() = if (listOf("dynamic", "Any", "Any").any { first.contains(it) }) first else second
+private fun Pair<String, String>.betterType() = if (listOf("dynamic", "Any").any { first.contains(it) }) first else second
 private fun Pair<String, String>.betterName() = if (((0..9).map { it.toString() } + listOf("arg")).none { first.toLowerCase().contains(it) }) first else second
 
 fun <K, V> List<Pair<K, V>>.toMultiMap(): Map<K, List<V>> = groupBy { it.first }.mapValues { it.value.map { it.second } }

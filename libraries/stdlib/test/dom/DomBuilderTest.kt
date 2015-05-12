@@ -88,7 +88,7 @@ class DomBuilderTest() {
         }
         val grandChild = doc["grandChild"].firstOrNull()
         if (grandChild != null) {
-            assertEquals("Hello World!", grandChild.text)
+            assertEquals("Hello World!", grandChild.textContent)
             assertEquals(" bar tiny", grandChild.attribute("class"))
 
             // test the classSet

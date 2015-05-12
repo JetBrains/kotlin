@@ -2,7 +2,7 @@
 
 package test
 
-import kotlin.js.dom.html5.localStorage
+import kotlin.browser.localStorage
 
 fun foo() {
     localStorage
