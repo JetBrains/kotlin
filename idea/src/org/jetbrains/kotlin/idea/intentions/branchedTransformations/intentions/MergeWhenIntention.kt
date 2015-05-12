@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 
-public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Merge 'when' expressions") {
+public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Merge with next 'when'", "Merge 'when' expressions") {
     override fun applicabilityRange(element: JetWhenExpression): TextRange? {
         val next = PsiTreeUtil.skipSiblingsForward(element, javaClass<PsiWhiteSpace>()) as? JetWhenExpression ?: return null
 
