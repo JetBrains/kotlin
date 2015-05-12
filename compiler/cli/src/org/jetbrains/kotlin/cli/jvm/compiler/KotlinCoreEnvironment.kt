@@ -44,6 +44,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
@@ -51,6 +52,7 @@ import com.intellij.psi.impl.compiled.ClsStubBuilderFactory
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
+import com.intellij.psi.util.JavaClassSupers
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.JavaElementFinder
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
@@ -366,6 +368,7 @@ public class KotlinCoreEnvironment private constructor(
                 registerFileType(JetFileType.INSTANCE, JetParserDefinition.STD_SCRIPT_SUFFIX)
                 registerParserDefinition(JetParserDefinition())
                 getApplication().registerService(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())
+                getApplication().registerService(javaClass<JavaClassSupers>(), javaClass<JavaClassSupersImpl>())
             }
         }
 
@@ -386,6 +389,7 @@ public class KotlinCoreEnvironment private constructor(
         private fun registerProjectServicesForCLI(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.getProject()) {
                 registerService(javaClass<CoreJavaFileManager>(), ServiceManager.getService(this, javaClass<JavaFileManager>()) as CoreJavaFileManager)
+
                 val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
                 registerService(javaClass<LightClassGenerationSupport>(), cliLightClassGenerationSupport)
                 registerService(javaClass<CliLightClassGenerationSupport>(), cliLightClassGenerationSupport)
