@@ -1,3 +1,3 @@
 package xxx
 
-trait Dependency
+interface Dependency

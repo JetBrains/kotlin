@@ -1,8 +1,8 @@
 package testing.kt
 
-trait Base
+interface Base
 
-trait Derived: <caret>Base
+interface Derived: <caret>Base
 
 // REF: (testing.jj).JavaClass
 // REF: (testing.jj).JavaInterface

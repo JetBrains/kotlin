@@ -1,4 +1,4 @@
-public trait A {
+public interface A {
     public fun foo() {}
 }
 

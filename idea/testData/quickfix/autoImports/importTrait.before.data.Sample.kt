@@ -1,3 +1,3 @@
 package importTrait.data
 
-trait TestTrait
+interface TestTrait

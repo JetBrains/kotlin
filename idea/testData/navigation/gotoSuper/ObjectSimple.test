@@ -1,6 +1,6 @@
 // FILE: b.kt
-trait Some
+interface Some
 object <caret>SomeObject: Some
 // FILE: a.kt
-trait <caret>Some
+interface <caret>Some
 object SomeObject: Some

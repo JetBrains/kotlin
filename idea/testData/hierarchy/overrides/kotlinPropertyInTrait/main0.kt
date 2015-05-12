@@ -1,4 +1,4 @@
-trait T {
+interface T {
     open var <caret>foo: String
 }
 
@@ -8,7 +8,7 @@ open class X: T {
         set(value: String) {}
 }
 
-open trait Y: T {
+open interface Y: T {
     override var foo: String
         get() = ""
         set(value: String) {}

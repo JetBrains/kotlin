@@ -1,4 +1,4 @@
-trait B {
+interface B {
     public val foo: String
 }
 

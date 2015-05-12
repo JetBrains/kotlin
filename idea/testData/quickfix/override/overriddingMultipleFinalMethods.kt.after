@@ -3,15 +3,15 @@ open class A {
     open fun foo() {}
 }
 
-trait X {
+interface X {
     open fun foo() {}
 }
 
-trait Y {
+interface Y {
     open fun foo() {}
 }
 
-trait Z {
+interface Z {
     fun foo() {}
 }
 

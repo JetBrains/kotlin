@@ -2,11 +2,11 @@ package html
 
 import java.util.*
 
-  trait Factory<T> {
+  interface Factory<T> {
     fun create() : T
   }
 
-  trait Element
+  interface Element
 
   class TextElement(val text : String) : Element
 

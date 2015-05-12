@@ -1,6 +1,6 @@
 package enums
 
-trait Base {
+interface Base {
     fun f() {
     }
 }

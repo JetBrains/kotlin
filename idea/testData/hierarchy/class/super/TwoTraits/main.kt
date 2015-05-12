@@ -1,4 +1,4 @@
 class MyClass<caret>: A, B
 
-trait A
-trait B
+interface A
+interface B

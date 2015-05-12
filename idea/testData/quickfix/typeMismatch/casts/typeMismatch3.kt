@@ -1,8 +1,8 @@
 // "Cast expression 'a + a' to 'B'" "true"
-trait A {
+interface A {
     fun plus(x: Any): A
 }
-trait B : A
+interface B : A
 
 fun foo(a: A): B {
     return a + a<caret>

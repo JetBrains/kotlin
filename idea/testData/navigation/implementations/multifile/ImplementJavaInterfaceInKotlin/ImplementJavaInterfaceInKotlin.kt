@@ -1,4 +1,4 @@
-trait KotlinTrait: <caret>JavaBase
+interface KotlinTrait: <caret>JavaBase
 
 class KotlinClass : JavaBase
 

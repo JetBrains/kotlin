@@ -3,7 +3,7 @@
 
 package b
 
-trait A<T>
+interface A<T>
 
 fun infer<T>(a: A<T>) : T {}
 

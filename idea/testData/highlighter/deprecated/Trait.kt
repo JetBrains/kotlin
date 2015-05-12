@@ -1,4 +1,4 @@
-deprecated("Use A instead") trait MyTrait { }
+deprecated("Use A instead") interface MyTrait { }
 
 fun test() {
    val a: <warning descr="[DEPRECATED_SYMBOL_WITH_MESSAGE] 'MyTrait' is deprecated. Use A instead">MyTrait</warning>? = null

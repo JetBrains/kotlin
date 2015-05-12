@@ -1,4 +1,4 @@
-trait A<T> {
+interface A<T> {
     fun foo(value : T) : Unit = println(value)
 }
 

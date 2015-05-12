@@ -1,4 +1,4 @@
-trait Some {
+interface Some {
     fun f1()
     fun f2()
 }

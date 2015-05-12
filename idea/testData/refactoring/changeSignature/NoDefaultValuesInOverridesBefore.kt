@@ -1,4 +1,4 @@
-trait T {
+interface T {
     fun <caret>foo(b: String = "2",
             a: Int = 1)
 }

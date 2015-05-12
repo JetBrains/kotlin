@@ -1,2 +1,2 @@
 // "Remove 'final' modifier" "true"
-<caret>final trait A {}
+<caret>final interface A {}

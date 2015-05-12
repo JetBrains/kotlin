@@ -1,4 +1,4 @@
-trait <info textAttributesKey="KOTLIN_TRAIT">FunctionLike</info> {
+interface <info textAttributesKey="KOTLIN_TRAIT">FunctionLike</info> {
     fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">invoke</info>() {
     }
 }

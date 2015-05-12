@@ -1,31 +1,31 @@
 // "Add parameter to function 'f'" "true"
-trait OA {
+interface OA {
     fun f(a: Int, s: String)
 }
 
-trait OB {
+interface OB {
     fun f(a: Int, s: String)
 }
 
-trait O : OA, OB {
+interface O : OA, OB {
     override fun f(a: Int, s: String)
 }
 
-trait OO : O {
+interface OO : O {
     override fun f(a: Int, s: String) {
     }
 }
 
-trait OOO : OO {
+interface OOO : OO {
     override fun f(a: Int, s: String) {}
 }
 
-trait OOOA : OOO {
+interface OOOA : OOO {
     override fun f(a: Int, s: String) {
     }
 }
 
-trait OOOB : OOO {
+interface OOOB : OOO {
     override fun f(a: Int, s: String) {
     }
 }

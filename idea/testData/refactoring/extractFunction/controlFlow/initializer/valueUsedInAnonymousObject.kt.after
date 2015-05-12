@@ -11,6 +11,6 @@ private fun i(): Int {
     return a
 }
 
-trait T {
+interface T {
     fun foo(n: Int): Int
 }

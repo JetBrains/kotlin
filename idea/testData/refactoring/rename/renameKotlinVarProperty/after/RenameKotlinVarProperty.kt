@@ -1,6 +1,6 @@
 package testing.rename
 
-trait AP {
+interface AP {
     var second: Int // <--- Rename base here, rename as Java getter and setter here
 }
 

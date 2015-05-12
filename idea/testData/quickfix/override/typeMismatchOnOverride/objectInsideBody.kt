@@ -1,6 +1,6 @@
 // "Change 'prop' type to 'Int'" "true"
 // ERROR: Null can not be a value of a non-null type kotlin.Int
-trait Test<T> {
+interface Test<T> {
     val prop : T
 }
 

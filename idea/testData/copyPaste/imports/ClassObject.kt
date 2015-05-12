@@ -1,6 +1,6 @@
 package a
 
-trait T
+interface T
 
 class A {
     companion object: T {

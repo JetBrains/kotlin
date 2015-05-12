@@ -1,4 +1,4 @@
-trait Bar {
+interface Bar {
     fun <T> T.bar() {}
 }
 

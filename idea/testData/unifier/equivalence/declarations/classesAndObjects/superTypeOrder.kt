@@ -1,7 +1,7 @@
 fun foo() {
     open class Z(p: Int)
-    trait T
-    trait U;
+    interface T
+    interface U;
 
     {
         <selection>class A: Z(1), T, U</selection>

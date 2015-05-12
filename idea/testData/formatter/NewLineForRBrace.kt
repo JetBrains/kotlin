@@ -15,9 +15,9 @@ object O1 {}
 object O2 {
     fun test() {}}
 
-trait T1 {}
+interface T1 {}
 
-trait T2 {
+interface T2 {
     val some = 1}
 
 enum class E1 {

@@ -1,4 +1,4 @@
 // "Remove redundant 'abstract' modifier" "true"
-trait A {
+interface A {
     <caret>abstract fun foo()
 }

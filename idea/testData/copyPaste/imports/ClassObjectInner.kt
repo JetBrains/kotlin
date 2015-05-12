@@ -14,7 +14,7 @@ class Outer {
         }
         object NestedObj {
         }
-        trait NestedTrait {
+        interface NestedTrait {
         }
         annotation class NestedAnnotation
     }

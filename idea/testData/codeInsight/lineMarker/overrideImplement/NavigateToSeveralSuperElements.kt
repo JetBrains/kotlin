@@ -1,8 +1,8 @@
-trait <lineMarker></lineMarker>A1 {
+interface <lineMarker></lineMarker>A1 {
     fun <lineMarker></lineMarker>foo()
 }
 
-trait <lineMarker></lineMarker>B1 {
+interface <lineMarker></lineMarker>B1 {
     fun <lineMarker></lineMarker>foo()
 }
 
@@ -17,6 +17,6 @@ NavigateToSeveralSuperElements.kt
     fun <1>foo()
 }
 
-trait B1 {
+interface B1 {
     fun <2>foo()
 */

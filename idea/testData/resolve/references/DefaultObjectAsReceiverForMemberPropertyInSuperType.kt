@@ -1,6 +1,6 @@
 package t
 
-trait Trait {
+interface Trait {
     val some : Int get() = 1
 }
 

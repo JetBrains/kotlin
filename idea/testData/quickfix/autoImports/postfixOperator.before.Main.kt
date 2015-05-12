@@ -3,7 +3,7 @@
 
 package h
 
-trait H
+interface H
 
 fun f(h: H?) {
     var h1 = h

@@ -1,6 +1,6 @@
 package testData.libraries
 
-public trait SimpleTrait {
+public interface SimpleTrait {
 }
 
 public class SimpleClass {
@@ -16,7 +16,7 @@ public class WithInnerAndObject {
     }
 
     class MyInner {
-        trait MyInnerInner {
+        interface MyInnerInner {
             fun innerInnerMethod()
         }
     }

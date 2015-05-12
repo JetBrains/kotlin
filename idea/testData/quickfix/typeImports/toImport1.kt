@@ -4,7 +4,7 @@ package a
 import java.util.Collections
 
 class M {
-    trait A {
+    interface A {
         abstract val l = <caret>Collections.emptyList<Int>()
     }
 }

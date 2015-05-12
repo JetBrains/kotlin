@@ -3,7 +3,7 @@ abstract class A {
     abstract fun foo(arg : Int) : Int;
 }
 
-trait X {
+interface X {
     fun foo(arg : Int) : Int;
 }
 

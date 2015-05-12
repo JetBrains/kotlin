@@ -1,5 +1,5 @@
 fun foo() {
-    public trait T: A
+    public interface T: A
 
     val a = object: A() {}
 

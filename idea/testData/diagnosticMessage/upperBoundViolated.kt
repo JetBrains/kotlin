@@ -18,7 +18,7 @@ fun test2(a: Any, s: MutableSet<String>) {
 }
 
 //--------------
-trait A
+interface A
 class B
 
 fun baz<T: R, R: B>(t: T, r: R) where T: A {

@@ -1,5 +1,5 @@
 // "Change parameter 'a' type of function 'A.times' to 'String'" "true"
-trait A {
+interface A {
     fun times(a: A): A
 }
 

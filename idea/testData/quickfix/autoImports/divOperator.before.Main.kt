@@ -3,7 +3,7 @@
 
 package h
 
-trait H
+interface H
 
 fun f(h: H) {
     h <caret>/ 3

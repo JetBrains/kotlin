@@ -1,4 +1,4 @@
-trait Test {
+interface Test {
     public open fun test()
     protected open val testProp : Int
 }

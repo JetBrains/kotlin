@@ -2,6 +2,6 @@ open class A {
     public open var <caret>foo: String = ""
 }
 
-trait Z {
+interface Z {
     public var foo: String
 }

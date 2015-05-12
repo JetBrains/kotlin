@@ -1,9 +1,9 @@
 // FILE: before.kt
-trait A {
+interface A {
   fun f() {}
 }
 
-trait B : A
+interface B : A
 
 open class C(b : B) : B by b, A {
 }
@@ -13,11 +13,11 @@ class D(b : B) : C(b) {
 }
 
 // FILE: after.kt
-trait A {
+interface A {
   fun <caret>f() {}
 }
 
-trait B : A
+interface B : A
 
 open class C(b : B) : B by b, A {
 }

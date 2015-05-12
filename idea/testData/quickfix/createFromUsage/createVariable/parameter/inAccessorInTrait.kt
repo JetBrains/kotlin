@@ -4,7 +4,7 @@
 // ACTION: Create property 'foo'
 // ERROR: Unresolved reference: foo
 
-trait A {
+interface A {
     val test: Int get() {
         return <caret>foo
     }

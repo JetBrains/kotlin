@@ -1,6 +1,6 @@
 package test
 
-trait T {
+interface T {
     fun foo(): Boolean
 }
 

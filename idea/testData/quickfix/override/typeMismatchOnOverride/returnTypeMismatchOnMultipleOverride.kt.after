@@ -6,7 +6,7 @@ abstract class A {
     abstract fun foo() : S;
 }
 
-trait X {
+interface X {
     fun foo() : T;
 }
 

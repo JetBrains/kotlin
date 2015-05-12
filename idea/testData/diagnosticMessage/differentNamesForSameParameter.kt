@@ -1,11 +1,11 @@
 // !DIAGNOSTICS_NUMBER: 1
 // !DIAGNOSTICS: DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 
-trait A {
+interface A {
     fun foo(x: Int)
 }
 
-trait B {
+interface B {
     fun foo(y: Int) {}
 }
 

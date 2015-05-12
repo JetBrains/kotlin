@@ -2,11 +2,11 @@ open class <caret>A
 
 open class B: A()
 
-trait T: A
+interface T: A
 
 open class C: B()
 
-trait U: T
+interface U: T
 
 object O1: A()
 

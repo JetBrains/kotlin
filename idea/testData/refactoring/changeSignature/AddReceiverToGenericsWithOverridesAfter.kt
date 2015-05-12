@@ -1,6 +1,6 @@
 class U<A>
 
-trait T<A> {
+interface T<A> {
     fun U<A>.foofoofoo<B>(b: B): Int
 }
 

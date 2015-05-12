@@ -1,5 +1,5 @@
 package foo
 
-public trait Foo {
+public interface Foo {
     fun f(): Any
 }

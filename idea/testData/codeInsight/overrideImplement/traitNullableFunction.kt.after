@@ -1,4 +1,4 @@
-trait Some {
+interface Some {
     fun foo(some : Int?) : Int
 }
 

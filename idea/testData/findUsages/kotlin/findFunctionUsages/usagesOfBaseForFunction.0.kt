@@ -1,7 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.JetNamedFunction
 // OPTIONS: usages, skipImports
 
-trait A {
+interface A {
     fun foo()
 }
 

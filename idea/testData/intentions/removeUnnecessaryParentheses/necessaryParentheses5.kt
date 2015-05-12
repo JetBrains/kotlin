@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-trait Foo {
+interface Foo {
     fun get(x : Any) : Foo
     fun plus(x : Any) : Foo
 }

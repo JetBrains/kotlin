@@ -1,6 +1,6 @@
 package something
 
-trait Some<T> {
+interface Some<T> {
     fun someFoo()
     fun someOtherFoo() : Int
     fun someGenericFoo() : T

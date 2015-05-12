@@ -1,5 +1,5 @@
 // "Suppress 'REDUNDANT_NULLABLE' for interface C" "true"
 
-trait C {
+interface C {
     var foo: String?<caret>?
 }

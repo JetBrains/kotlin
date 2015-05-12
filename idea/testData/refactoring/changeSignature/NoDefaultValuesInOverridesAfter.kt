@@ -1,4 +1,4 @@
-trait T {
+interface T {
     fun foo(a: Int = 1,
             b: String = "2")
 }

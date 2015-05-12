@@ -4,9 +4,9 @@
 // ACTION: Edit inspection profile setting
 // ERROR: <html>Return type is '(kotlin.Int) &rarr; kotlin.Int', which is not a subtype of overridden<br/><b>internal</b> <b>abstract</b> <b>val</b> x: (kotlin.String) &rarr; [ERROR : Ay] <i>defined in</i> A</html>
 // ERROR: Unresolved reference: Ay
-trait A {
+interface A {
     val x: (String) -> Ay
 }
-trait B : A {
+interface B : A {
     override val x: (Int) -> Int<caret>
 }

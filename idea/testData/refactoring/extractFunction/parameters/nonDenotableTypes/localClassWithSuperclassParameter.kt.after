@@ -1,6 +1,6 @@
 // PARAM_DESCRIPTOR: val a: foo.A defined in foo.bar
 // PARAM_TYPES: T
-trait T
+interface T
 
 // SIBLING:
 fun foo(): T {

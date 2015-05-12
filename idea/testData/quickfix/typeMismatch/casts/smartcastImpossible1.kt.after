@@ -1,6 +1,6 @@
 // "Cast expression 'a' to 'Foo'" "true"
 
-trait Foo {
+interface Foo {
     fun plus(x: Any) : Foo
 }
 

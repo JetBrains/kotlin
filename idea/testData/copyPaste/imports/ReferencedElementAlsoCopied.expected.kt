@@ -2,7 +2,7 @@
 // ERROR: Function 'ext' must have a body
 package to
 
-trait T
+interface T
 
 class A(i: Int) {}
 

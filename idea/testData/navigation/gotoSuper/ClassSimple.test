@@ -1,6 +1,6 @@
 // FILE: before.kt
-trait Some
+interface Some
 class <caret>SomeObject: Some
 // FILE: after.kt
-trait <caret>Some
+interface <caret>Some
 class SomeObject: Some

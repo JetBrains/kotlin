@@ -11,7 +11,7 @@ class<error> </error>{
 
 }
 
-trait<error> </error>{
+interface<error> </error>{
 
 }
 

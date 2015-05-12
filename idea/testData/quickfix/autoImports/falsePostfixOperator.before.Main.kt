@@ -8,7 +8,7 @@
 
 package h
 
-trait H
+interface H
 
 [suppress("UNUSED_CHANGED_VALUE")]
 fun f(h: H?) {

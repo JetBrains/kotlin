@@ -1,12 +1,12 @@
 // "Change 'B.x' type to '(Int) -> Int'" "true"
-trait A {
+interface A {
     val x: (Int) -> Int
 }
 
-trait B {
+interface B {
     val x: (Int) -> Int
 }
 
-trait C : A, B {
+interface C : A, B {
     override val x: (Int) -> Int<caret>
 }

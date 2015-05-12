@@ -4,7 +4,7 @@ open class A() {
     public open fun publicFun() {}
 }
 
-trait B {
+interface B {
    protected open val protectedProperty : Int
    internal open val internalProperty : Int
    public open val publicProperty : Int

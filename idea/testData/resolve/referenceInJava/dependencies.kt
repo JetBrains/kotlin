@@ -25,7 +25,7 @@ public object KotlinObject {
     fun f() = 1
 }
 
-public trait StaticFieldInClassObjectInTrait {
+public interface StaticFieldInClassObjectInTrait {
     companion object {
         public val XX: String = "xx"
     }
@@ -37,13 +37,13 @@ object PlatformStaticFun {
     }
 }
 
-trait TraitNoImpl {
+interface TraitNoImpl {
     fun foo()
 }
 
 public class TraitWithDelegatedNoImpl(f: TraitNoImpl): TraitNoImpl by f
 
-trait TraitWithImpl {
+interface TraitWithImpl {
     fun foo() = 1
 }
 

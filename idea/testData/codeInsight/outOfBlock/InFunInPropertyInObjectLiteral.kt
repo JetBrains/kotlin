@@ -1,5 +1,5 @@
 // FALSE
-trait Some
+interface Some
 
 fun test() {
     val foo = object: Some {

@@ -1,14 +1,14 @@
 // "Add parameter to function 'f'" "true"
-trait O {
+interface O {
     fun f(a: Int)
 }
 
-trait OO : O {
+interface OO : O {
     override fun f(a: Int) {
     }
 }
 
-trait OOO : OO {
+interface OOO : OO {
     override fun f(a: Int) {}
 }
 

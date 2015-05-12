@@ -1,6 +1,6 @@
 // SET_TRUE: ALIGN_MULTILINE_EXTENDS_LIST
 
-trait A1
+interface A1
 
 enum class EnumTest {
     ENTRY:

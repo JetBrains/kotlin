@@ -1,4 +1,4 @@
-trait G<T> {
+interface G<T> {
     fun foo(t : T) : T
 }
 

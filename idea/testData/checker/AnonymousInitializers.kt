@@ -1,4 +1,4 @@
-trait NoC {
+interface NoC {
   <error>init {
 
   }</error>

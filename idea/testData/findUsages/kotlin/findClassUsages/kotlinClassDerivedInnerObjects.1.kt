@@ -1,7 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.JetClass
 // OPTIONS: derivedClasses
 class Outer {
-    trait Z: A {
+    interface Z: A {
 
     }
 

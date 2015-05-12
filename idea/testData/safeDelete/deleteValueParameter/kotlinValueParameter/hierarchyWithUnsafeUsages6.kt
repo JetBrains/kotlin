@@ -1,4 +1,4 @@
-trait Z {
+interface Z {
     open fun foo(a: Int, b: Int) {
         println(a)
     }

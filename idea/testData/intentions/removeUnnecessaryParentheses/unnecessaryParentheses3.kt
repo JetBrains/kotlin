@@ -1,4 +1,4 @@
-trait Foo {
+interface Foo {
     fun get(x : Any) : Foo
 }
 fun foo(x: Foo) {

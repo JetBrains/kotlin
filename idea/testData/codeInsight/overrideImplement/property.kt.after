@@ -1,4 +1,4 @@
-trait T {
+interface T {
     val v : Int
 }
 

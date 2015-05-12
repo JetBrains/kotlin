@@ -3,6 +3,6 @@ package p
 
 fun foo(): X = <caret>A
 
-trait X {
+interface X {
 
 }

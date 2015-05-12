@@ -1,6 +1,6 @@
 // "Cast expression 'x' to 'Foo<*>'" "true"
 
-trait Foo<T: Number> {
+interface Foo<T: Number> {
     fun bar()
 }
 

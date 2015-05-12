@@ -1,7 +1,7 @@
-trait A {
+interface A {
     fun <caret>foo()
 }
 
-trait Z {
+interface Z {
     fun foo()
 }

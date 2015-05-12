@@ -1,4 +1,4 @@
-trait A
+interface A
 
 fun A.foo(i: Int) = i
 

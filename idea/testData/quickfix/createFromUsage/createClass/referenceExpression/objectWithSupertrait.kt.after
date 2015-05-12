@@ -7,6 +7,6 @@ object A : X {
 
 }
 
-trait X {
+interface X {
 
 }

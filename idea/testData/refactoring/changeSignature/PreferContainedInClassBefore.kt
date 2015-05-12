@@ -2,7 +2,7 @@ class A {
     fun f(param: Int)
 }
 
-trait B {
+interface B {
     fun f(p: Int)
 }
 

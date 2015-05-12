@@ -1,6 +1,6 @@
 package sample
 
-trait <lineMarker descr="*"></lineMarker>S<T> {
+interface <lineMarker descr="*"></lineMarker>S<T> {
     fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;sample.S2</body></html>"></lineMarker>foo(t: T): T
 
     val <lineMarker descr="<html><body>Is implemented in <br/>&nbsp;&nbsp;&nbsp;&nbsp;sample.S2</body></html>"></lineMarker>some: T? get

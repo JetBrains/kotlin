@@ -2,7 +2,7 @@ open class A {
     open fun foo() {}
 }
 
-trait B {
+interface B {
     fun bar()
 }
 

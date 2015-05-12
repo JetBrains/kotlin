@@ -1,6 +1,6 @@
 package test
 
-trait A
+interface A
 
 class <caret>B {
     companion object {

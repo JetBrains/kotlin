@@ -1,5 +1,5 @@
 class A
-trait T
+interface T
 fun foo() {
     object O: A(), T
 }

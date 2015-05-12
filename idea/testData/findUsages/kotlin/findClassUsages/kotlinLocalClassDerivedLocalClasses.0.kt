@@ -5,7 +5,7 @@ fun foo() {
 
     class B: A()
 
-    trait T: A
+    interface T: A
 
     fun bar() {
         class C: A()

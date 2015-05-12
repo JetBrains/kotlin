@@ -1,8 +1,8 @@
 // PARAM_TYPES: V, Data
 // PARAM_DESCRIPTOR: value-parameter val v: V defined in A.B.foo
 open class Data(val x: Int)
-trait DataEx
-trait DataExEx
+interface DataEx
+interface DataExEx
 
 class A<T: Data>(val t: T) where T: DataEx {
     inner class B<U: Data>(val u: U) where U: DataExEx {

@@ -1,9 +1,9 @@
 fun foo() {
     class LocalClass {}
 
-    trait LocalTrait {}
+    interface LocalTrait {}
 
-    trait LocalTraitWithImpl {
+    interface LocalTraitWithImpl {
         fun foo() {}
     }
 

@@ -1,10 +1,10 @@
 fun foo() {
     open class X: A
 
-    trait T: A
+    interface T: A
 
     fun bar() {
-        public trait Y: X
+        public interface Y: X
 
         public class Z: T
     }

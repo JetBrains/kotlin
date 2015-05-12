@@ -1,31 +1,31 @@
 // "Remove parameter 'a'" "true"
-trait OA {
+interface OA {
     fun f(a: Int)
 }
 
-trait OB {
+interface OB {
     fun f(a: Int)
 }
 
-trait O : OA, OB {
+interface O : OA, OB {
     override fun f(a: Int)
 }
 
-trait OO : O {
+interface OO : O {
     override fun f(a: Int) {
     }
 }
 
-trait OOO : OO {
+interface OOO : OO {
     override fun f(a: Int) {}
 }
 
-trait OOOA : OOO {
+interface OOOA : OOO {
     override fun f(a: Int) {
     }
 }
 
-trait OOOB : OOO {
+interface OOOB : OOO {
     override fun f(a: Int) {
     }
 }

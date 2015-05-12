@@ -8,7 +8,7 @@ open class A {
         }
 }
 
-trait Z {
+interface Z {
     var foo: String
 }
 

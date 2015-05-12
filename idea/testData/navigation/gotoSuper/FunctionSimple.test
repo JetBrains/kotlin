@@ -1,5 +1,5 @@
 // FILE: before.kt
-trait Some {
+interface Some {
   fun test()
 }
 class SomeObject: Some {
@@ -8,7 +8,7 @@ class SomeObject: Some {
   }
 }
 // FILE: after.kt
-trait Some {
+interface Some {
   fun <caret>test()
 }
 class SomeObject: Some {

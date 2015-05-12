@@ -1,12 +1,12 @@
 // !DIAGNOSTICS_NUMBER: 1
 // !DIAGNOSTICS: CANNOT_INFER_VISIBILITY
 
-trait T {
+interface T {
     internal val foo: String
 }
 
-trait U {
+interface U {
     protected val foo: String
 }
 
-trait V : T, U
+interface V : T, U

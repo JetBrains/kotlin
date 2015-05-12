@@ -1,6 +1,6 @@
 // KT-4813
 
-trait A
+interface A
 
 fun foo() {
     <selection>object: A {}</selection>

@@ -1,5 +1,5 @@
 fun foo() {
-    trait T
+    interface T
 
     <selection>fun bar1<A, B, C>(a: A, b: B, c: C): A where B: A, C: B, C: T = c</selection>
 

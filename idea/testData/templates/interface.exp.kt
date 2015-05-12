@@ -1,3 +1,3 @@
-trait SomeTrait {
+interface SomeTrait {
     <caret>
 }

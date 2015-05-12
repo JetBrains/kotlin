@@ -1,4 +1,4 @@
-trait B: A {
+interface B: A {
     public override fun foo() {
         throw UnsupportedOperationException()
     }

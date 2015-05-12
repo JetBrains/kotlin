@@ -4,7 +4,7 @@ open class A {
     }
 }
 
-trait Z {
+interface Z {
     fun <caret>foo()
 }
 

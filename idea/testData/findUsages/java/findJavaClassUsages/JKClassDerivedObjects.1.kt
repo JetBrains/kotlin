@@ -1,4 +1,4 @@
-public trait T: A
+public interface T: A
 
 public object O1: A()
 

@@ -4,6 +4,6 @@ class A {
     }
 }
 
-trait Z {
+interface Z {
     fun foo()
 }

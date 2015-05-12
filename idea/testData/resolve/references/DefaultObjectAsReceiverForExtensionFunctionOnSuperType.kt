@@ -1,6 +1,6 @@
 package t
 
-trait Trait
+interface Trait
 
 open class A {
     companion object Companion : Trait {

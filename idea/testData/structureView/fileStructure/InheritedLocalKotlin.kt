@@ -1,4 +1,4 @@
-trait TA {
+interface TA {
     fun some()
     val a: Int
 }

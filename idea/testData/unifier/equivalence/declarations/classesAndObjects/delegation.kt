@@ -1,6 +1,6 @@
 // DISABLE-ERRORS
 fun foo() {
-    trait T
+    interface T
     open class Z(p: Int): T;
 
     {

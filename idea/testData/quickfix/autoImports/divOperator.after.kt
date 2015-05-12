@@ -5,7 +5,7 @@ package h
 
 import util.div
 
-trait H
+interface H
 
 fun f(h: H) {
     h / 3

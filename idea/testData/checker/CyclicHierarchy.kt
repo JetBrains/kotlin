@@ -1,13 +1,13 @@
-trait A {
+interface A {
     fun foo() {}
 }
-trait B : A, <error>E</error> {}
-trait C : <error>B</error> {}
-trait D : <error>B</error> {}
-trait E : <error>F</error> {}
-trait F : <error>D</error>, <error>C</error> {}
-trait G : F {}
-trait H : F {}
+interface B : A, <error>E</error> {}
+interface C : <error>B</error> {}
+interface D : <error>B</error> {}
+interface E : <error>F</error> {}
+interface F : <error>D</error>, <error>C</error> {}
+interface G : F {}
+interface H : F {}
 
 val a : A? = null
 val b : B? = null

@@ -1,7 +1,7 @@
-trait A {
+interface A {
     val <caret>foo: String
 }
 
-trait Z {
+interface Z {
     val foo: String
 }

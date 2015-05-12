@@ -1,6 +1,6 @@
 package test
 
-trait NoImplementationTrait {
+interface NoImplementationTrait {
     fun foo(): Int
     fun some(): String
 }

@@ -2,7 +2,7 @@
 // OPTIONS: usages
 package server
 
-trait Some {
+interface Some {
     companion object {
         val <caret>XX = 1
     }

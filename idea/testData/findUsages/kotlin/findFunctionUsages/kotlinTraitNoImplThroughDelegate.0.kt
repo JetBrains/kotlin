@@ -2,7 +2,7 @@
 // OPTIONS: usages, skipImports
 package server
 
-trait TraitNoImpl {
+interface TraitNoImpl {
     fun <caret>foo()
 }
 

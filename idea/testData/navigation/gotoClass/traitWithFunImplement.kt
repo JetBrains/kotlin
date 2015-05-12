@@ -1,6 +1,6 @@
 package test
 
-trait TraitWithFunImplement {
+interface TraitWithFunImplement {
     fun foo(): Int {
         return 12;
     }

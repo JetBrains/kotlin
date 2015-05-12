@@ -1,6 +1,6 @@
 // PARAM_TYPES: T
 // PARAM_DESCRIPTOR: value-parameter val t: T defined in B.<init>
-trait T
+interface T
 
 class A(a: Int, b: Int): T
 

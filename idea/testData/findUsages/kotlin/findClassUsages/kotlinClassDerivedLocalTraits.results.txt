@@ -1,2 +1,2 @@
-Unclassified usage (14: 15) trait Z: A {
-Unclassified usage (18: 15) trait U: Z {
+Unclassified usage (14: 19) interface Z: A {
+Unclassified usage (18: 19) interface U: Z {

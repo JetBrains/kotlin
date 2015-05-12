@@ -1,9 +1,9 @@
 // "Specify return type explicitly" "true"
 package a
 
-trait A {}
+interface A {}
 
-trait B {}
+interface B {}
 
 class C {
     fun <caret>property() = object : B, A {}

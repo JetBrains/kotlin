@@ -1,7 +1,7 @@
 // NO_ERRORS_DUMP
 package a
 
-trait T
+interface T
 
 fun T.get(thisRef: B, desc: PropertyMetadata): Int {
     return 3

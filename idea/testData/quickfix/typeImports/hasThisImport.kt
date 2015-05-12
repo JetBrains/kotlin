@@ -5,7 +5,7 @@ import java.util.Collections
 import java.util.List
 
 class M {
-    trait A {
+    interface A {
         val l = <caret>Collections.emptyList<Int>()
     }
 }

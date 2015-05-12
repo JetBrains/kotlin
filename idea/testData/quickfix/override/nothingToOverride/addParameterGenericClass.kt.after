@@ -1,5 +1,5 @@
 // "Change function signature to 'fun f(a: Int, x: T)'" "true"
-trait A<R> {
+interface A<R> {
     fun f(a: Int, b: R)
 }
 

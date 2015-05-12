@@ -1,2 +1,2 @@
 // "Remove 'final' modifier" "true"
-<caret>trait A {}
+<caret>interface A {}

@@ -7,4 +7,4 @@ private var i = 2
 fun Int.plus(i: Int = 1) = this + i
 
 class ShouldNotBeVisible1
-trait ShouldNotBeVisible2
+interface ShouldNotBeVisible2

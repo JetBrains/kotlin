@@ -10,7 +10,7 @@ open class X: T() {
     }
 }
 
-open trait Y: T() {
+open interface Y: T() {
     override fun foo() {
 
     }

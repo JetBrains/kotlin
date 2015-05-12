@@ -4,7 +4,7 @@ fun main(args: Array<String>) {
     TImpl().foo()
 }
 
-trait T {
+interface T {
     fun foo() {
         //Breakpoint!
         val a = 1

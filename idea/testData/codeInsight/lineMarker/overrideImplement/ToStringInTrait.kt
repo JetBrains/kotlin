@@ -1,4 +1,4 @@
-public trait Foo {
+public interface Foo {
     override fun <lineMarker descr="Overrides function in 'Any'"></lineMarker>toString() = "str"
 }
 

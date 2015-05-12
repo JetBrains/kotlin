@@ -42,8 +42,8 @@ enum class Enum1 {
     SECOND
 }
 
-trait Trait
-trait Trait1: Trait
+interface Trait
+interface Trait1: Trait
 
 class TestWithWhere<T> where T: Any?
 fun <T> testWithWhere() where T: String {}

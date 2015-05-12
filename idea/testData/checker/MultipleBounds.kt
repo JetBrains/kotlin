@@ -4,7 +4,7 @@ open class A() {
   fun foo() : Int = 1
 }
 
-trait B {
+interface B {
   fun bar() : Double = 1.0;
 }
 

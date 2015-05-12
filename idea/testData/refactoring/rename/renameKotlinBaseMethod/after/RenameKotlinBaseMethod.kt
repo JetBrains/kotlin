@@ -1,6 +1,6 @@
 package testing.rename
 
-trait A {
+interface A {
     fun second() : Int
 }
 

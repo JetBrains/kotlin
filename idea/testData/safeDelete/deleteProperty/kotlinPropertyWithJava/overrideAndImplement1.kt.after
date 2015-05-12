@@ -1,6 +1,6 @@
 open class A {
 }
 
-trait Z {
+interface Z {
     public val foo: String
 }

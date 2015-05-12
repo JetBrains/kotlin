@@ -1,5 +1,5 @@
 // "Change 'A.plus' function return type to '() -> Int'" "true"
-trait A {
+interface A {
     fun plus(a: A): String
 }
 
