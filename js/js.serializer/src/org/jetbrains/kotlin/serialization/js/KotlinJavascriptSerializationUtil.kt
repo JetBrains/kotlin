@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.serialization.SerializationUtil
 import org.jetbrains.kotlin.serialization.StringTable
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -70,11 +71,11 @@ public object KotlinJavascriptSerializationUtil {
             path ->
                 if (!contentMap.containsKey(path)) {
                     when {
-                        KotlinJavascriptSerializedResourcePaths.isPackageMetadataFile(path) ->
+                        isPackageMetadataFile(path) ->
                             ByteArrayInputStream(PACKAGE_DEFAULT_BYTES)
-                        KotlinJavascriptSerializedResourcePaths.isStringTableFile(path) ->
+                        isStringTableFile(path) ->
                             ByteArrayInputStream(STRING_TABLE_DEFAULT_BYTES)
-                        KotlinJavascriptSerializedResourcePaths.isClassesInPackageFile(path) ->
+                        isClassesInPackageFile(path) ->
                             ByteArrayInputStream(CLASSES_IN_PACKAGE_DEFAULT_BYTES)
                         else ->
                             null
@@ -171,17 +172,6 @@ public object KotlinJavascriptSerializationUtil {
         return KotlinJavascriptSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId)
     }
 
-    private fun ByteArray.toContentMap(): Map<String, ByteArray> {
-        val gzipInputStream = GZIPInputStream(ByteArrayInputStream(this))
-        val content = JsProtoBuf.Library.parseFrom(gzipInputStream)
-        gzipInputStream.close()
-
-        val contentMap: MutableMap<String, ByteArray> = hashMapOf()
-        content.getEntryList().forEach { entry -> contentMap[entry.getPath()] = entry.getContent().toByteArray() }
-
-        return contentMap
-    }
-
     private fun ModuleDescriptor.toContentMap(): Map<String, ByteArray> {
         val contentMap = hashMapOf<String, ByteArray>()
 
@@ -213,4 +203,18 @@ public object KotlinJavascriptSerializationUtil {
 
     private fun ModuleDescriptor.toBinaryMetadata(): ByteArray =
             KotlinJavascriptSerializationUtil.contentMapToByteArray(this.toContentMap())
+}
+
+public fun KotlinJavascriptMetadata.forEachFile(operation: (filePath: String, fileContent: ByteArray) -> Unit): Unit =
+        this.body.toContentMap().forEach { operation(it.getKey(), it.getValue()) }
+
+private fun ByteArray.toContentMap(): Map<String, ByteArray> {
+    val gzipInputStream = GZIPInputStream(ByteArrayInputStream(this))
+    val content = JsProtoBuf.Library.parseFrom(gzipInputStream)
+    gzipInputStream.close()
+
+    val contentMap: MutableMap<String, ByteArray> = hashMapOf()
+    content.getEntryList().forEach { entry -> contentMap[entry.getPath()] = entry.getContent().toByteArray() }
+
+    return contentMap
 }
