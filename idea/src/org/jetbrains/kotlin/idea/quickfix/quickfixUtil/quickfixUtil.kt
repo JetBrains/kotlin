@@ -21,6 +21,8 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.JetIntentionAction
 import org.jetbrains.kotlin.idea.quickfix.JetSingleIntentionActionFactory
+import org.jetbrains.kotlin.psi.JetPrimaryConstructor
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
 inline fun <reified T : PsiElement> Diagnostic.createIntentionForFirstParentOfType(
@@ -32,4 +34,9 @@ fun createIntentionFactory(
     factory: (Diagnostic) -> IntentionAction?
 ) = object : JetSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic) = factory(diagnostic)
+}
+
+public fun JetPrimaryConstructor.addConstructorKeyword(): PsiElement? {
+    val keyword = JetPsiFactory(this).createConstructorKeyword()
+    return addAfter(keyword, getModifierList() ?: return null)
 }

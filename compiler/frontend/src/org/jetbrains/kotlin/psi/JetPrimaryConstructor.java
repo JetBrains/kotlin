@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
@@ -85,6 +86,11 @@ public class JetPrimaryConstructor extends JetDeclarationStub<KotlinPlaceHolderS
 
     public boolean hasConstructorKeyword() {
         if (getStub() != null) return true;
-        return findChildByType(JetTokens.CONSTRUCTOR_KEYWORD) != null;
+        return getConstructorKeyword() != null;
+    }
+
+    @Nullable
+    public PsiElement getConstructorKeyword() {
+        return findChildByType(JetTokens.CONSTRUCTOR_KEYWORD);
     }
 }

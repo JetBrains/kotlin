@@ -324,6 +324,9 @@ public class JetPsiFactory(private val project: Project) {
         return createClass("class A()").getPrimaryConstructor()!!
     }
 
+    public fun createConstructorKeyword(): PsiElement =
+            createClass("class A constructor()").getPrimaryConstructor()!!.getConstructorKeyword()!!
+
     public fun createClassLabel(labelName: String): JetSimpleNameExpression {
         return (createExpression("this@" + labelName) as JetThisExpression).getTargetLabel()!!
     }
