@@ -2209,15 +2209,20 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     @Nullable
     private StackValue genSamInterfaceValue(
-            @NotNull final JetExpression expression,
+            @NotNull JetExpression probablyParenthesizedExpression,
             @NotNull final JetVisitor<StackValue, StackValue> visitor
     ) {
-        final SamType samType = bindingContext.get(SAM_VALUE, expression);
-        if (samType == null) return null;
+        final JetExpression expression = JetPsiUtil.deparenthesize(probablyParenthesizedExpression);
+        final SamType samType = bindingContext.get(SAM_VALUE, probablyParenthesizedExpression);
+        if (samType == null || expression == null) return null;
 
         if (expression instanceof JetFunctionLiteralExpression) {
             return genClosure(((JetFunctionLiteralExpression) expression).getFunctionLiteral(), samType,
                               KotlinSyntheticClass.Kind.SAM_LAMBDA);
+        }
+
+        if (expression instanceof JetNamedFunction) {
+            return genClosure((JetNamedFunction) expression, samType, KotlinSyntheticClass.Kind.SAM_LAMBDA);
         }
 
         final Type asmType =

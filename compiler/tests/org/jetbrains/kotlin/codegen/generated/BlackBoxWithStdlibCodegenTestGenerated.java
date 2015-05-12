@@ -102,6 +102,27 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/varargInAnnotationParameter.kt");
             doTestWithStdlib(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/annotations/annotatedLambda")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AnnotatedLambda extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInAnnotatedLambda() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/annotations/annotatedLambda"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("funExpression.kt")
+            public void testFunExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/annotatedLambda/funExpression.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/annotatedLambda/lambda.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxWithStdlib/arrays")

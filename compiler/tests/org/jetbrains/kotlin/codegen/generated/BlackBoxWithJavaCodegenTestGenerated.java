@@ -35,6 +35,18 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
+    @TestMetadata("annotatedSamFunExpression")
+    public void testAnnotatedSamFunExpression() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/annotatedSamFunExpression/");
+        doTestWithJava(fileName);
+    }
+
+    @TestMetadata("annotatedSamLambda")
+    public void testAnnotatedSamLambda() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/annotatedSamLambda/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("classObjectAccessor")
     public void testClassObjectAccessor() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/classObjectAccessor/");
