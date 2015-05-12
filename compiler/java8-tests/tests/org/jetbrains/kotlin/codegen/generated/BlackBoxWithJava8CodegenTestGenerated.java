@@ -35,9 +35,15 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/java8/boxWithJava"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
-    @TestMetadata("defaultMethodCall")
-    public void testDefaultMethodCall() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCall/");
+    @TestMetadata("defaultMethodCallFromTrait")
+    public void testDefaultMethodCallFromTrait() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCallFromTrait/");
+        doTestWithJava(fileName);
+    }
+
+    @TestMetadata("defaultMethodCallViaClass")
+    public void testDefaultMethodCallViaClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodCallViaClass/");
         doTestWithJava(fileName);
     }
 
@@ -47,9 +53,21 @@ public class BlackBoxWithJava8CodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("defaultMethodOverride")
+    public void testDefaultMethodOverride() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/defaultMethodOverride/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("dontDelegateToDefaultMethods")
     public void testDontDelegateToDefaultMethods() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/dontDelegateToDefaultMethods/");
+        doTestWithJava(fileName);
+    }
+
+    @TestMetadata("inheritKotlin")
+    public void testInheritKotlin() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/java8/boxWithJava/inheritKotlin/");
         doTestWithJava(fileName);
     }
 
