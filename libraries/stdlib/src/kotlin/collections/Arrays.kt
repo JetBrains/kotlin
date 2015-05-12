@@ -14,6 +14,8 @@ public inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
     return result as Array<T>
 }
 
-// Returns an empty array of the specified type `T`.
+/**
+ * Returns an empty array of the specified type [T].
+ */
 public inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
 
