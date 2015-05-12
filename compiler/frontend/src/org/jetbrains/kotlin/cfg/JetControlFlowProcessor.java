@@ -1354,6 +1354,11 @@ public class JetControlFlowProcessor {
 
                 if (!isElse) {
                     builder.bindLabel(nextLabel);
+                    // For the last entry of exhaustive when,
+                    // attempt to jump further should lead to error, not to "done"
+                    if (!iterator.hasNext() && WhenChecker.isWhenExhaustive(expression, trace)) {
+                        builder.jumpToError(expression);
+                    }
                 }
             }
             builder.bindLabel(doneLabel);

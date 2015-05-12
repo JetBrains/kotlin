@@ -1,0 +1,46 @@
+== foo ==
+fun foo(flag: Boolean): Int {
+    when (flag) {
+        true -> return 1
+        false -> return 0
+    }
+}
+---------------------
+L0:
+  1 <START>
+    v(flag: Boolean)
+    magic[FAKE_INITIALIZER](flag: Boolean) -> <v0>
+    w(flag|<v0>)
+  2 mark({ when (flag) { true -> return 1 false -> return 0 } })
+    mark(when (flag) { true -> return 1 false -> return 0 })
+    r(flag) -> <v1>
+    mark(true -> return 1)
+    mark(true)
+    r(true) -> <v2>
+    magic[EQUALS_IN_WHEN_CONDITION](true|<v1>, <v2>) -> <v3>
+    jmp?(L4|<v3>)                                                                      NEXT:[mark(false -> return 0), r(1) -> <v4>]
+L3 ['when' entry body]:
+    r(1) -> <v4>
+    ret(*|<v4>) L1                                                                     NEXT:[<END>]
+-   jmp(L2)                                                                            NEXT:[merge(when (flag) { true -> return 1 false -> return 0 }|!<v8>, !<v9>) -> <v10>]    PREV:[]
+L4 [next 'when' entry]:
+    mark(false -> return 0)                                                            PREV:[jmp?(L4|<v3>)]
+    mark(false)
+    r(false) -> <v5>
+    magic[EQUALS_IN_WHEN_CONDITION](false|<v1>, <v5>) -> <v6>
+    jmp?(L6|<v6>)                                                                      NEXT:[jmp(error), r(0) -> <v7>]
+L5 ['when' entry body]:
+    r(0) -> <v7>
+    ret(*|<v7>) L1                                                                     NEXT:[<END>]
+-   jmp(L2)                                                                            NEXT:[merge(when (flag) { true -> return 1 false -> return 0 }|!<v8>, !<v9>) -> <v10>]    PREV:[]
+L6 [next 'when' entry]:
+    jmp(error)                                                                         NEXT:[<ERROR>]                                                                            PREV:[jmp?(L6|<v6>)]
+L2 [after 'when' expression]:
+-   merge(when (flag) { true -> return 1 false -> return 0 }|!<v8>, !<v9>) -> <v10>    PREV:[]
+L1:
+  1 <END>                                                                              NEXT:[<SINK>]                                                                             PREV:[ret(*|<v4>) L1, ret(*|<v7>) L1]
+error:
+    <ERROR>                                                                            PREV:[jmp(error)]
+sink:
+    <SINK>                                                                             PREV:[<ERROR>, <END>]
+=====================

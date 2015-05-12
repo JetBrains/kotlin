@@ -221,6 +221,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/whenConditions.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("whenExhaustive.kt")
+            public void testWhenExhaustive() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/whenExhaustive.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/cfg/conventions")

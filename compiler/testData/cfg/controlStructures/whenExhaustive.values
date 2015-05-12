@@ -1,0 +1,21 @@
+== foo ==
+fun foo(flag: Boolean): Int {
+    when (flag) {
+        true -> return 1
+        false -> return 0
+    }
+}
+---------------------
+                                                         <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](flag: Boolean) -> <v0>
+flag                                                     <v1>: *         NEW: r(flag) -> <v1>
+true                                                     <v2>: *         NEW: r(true) -> <v2>
+true                                                     <v3>: *         NEW: magic[EQUALS_IN_WHEN_CONDITION](true|<v1>, <v2>) -> <v3>
+1                                                        <v4>: Int       NEW: r(1) -> <v4>
+return 1                                                 !<v8>: *
+false                                                    <v5>: *         NEW: r(false) -> <v5>
+false                                                    <v6>: *         NEW: magic[EQUALS_IN_WHEN_CONDITION](false|<v1>, <v5>) -> <v6>
+0                                                        <v7>: Int       NEW: r(0) -> <v7>
+return 0                                                 !<v9>: *
+when (flag) { true -> return 1 false -> return 0 }       <v10>: *        NEW: merge(when (flag) { true -> return 1 false -> return 0 }|!<v8>, !<v9>) -> <v10>
+{ when (flag) { true -> return 1 false -> return 0 } }   <v10>: *        COPY
+=====================
