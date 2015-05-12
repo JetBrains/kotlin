@@ -2222,6 +2222,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notContains.kt")
+            public void testNotContains() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/notContains.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleArgument.kt")
             public void testSimpleArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/simpleArgument.kt");

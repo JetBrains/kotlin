@@ -46,19 +46,24 @@ public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQua
         val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
         val receiver = element.getReceiverExpression()
 
-        // Append semicolon to previous statement if needed
         val psiFactory = JetPsiFactory(element)
+
+        val prefixExpression = element.getParent() as? JetPrefixExpression
+        val expression = if (prefixExpression != null && prefixExpression.getOperationToken() == JetTokens.EXCL) {
+            prefixExpression.replace(psiFactory.createExpressionByPattern("$0 !in $1", argument, receiver))
+        }
+        else {
+            element.replace(psiFactory.createExpressionByPattern("$0 in $1", argument, receiver))
+        }
+
+        // Append semicolon to previous statement if needed
         if (argument is JetFunctionLiteralExpression) {
-            val previousElement = JetPsiUtil.skipSiblingsBackwardByPredicate(element) {
-                // I checked, it can't be null.
-                it!!.getNode()?.getElementType() in JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
+            val previousElement = JetPsiUtil.skipSiblingsBackwardByPredicate(expression) {
+                it.getNode().getElementType() in JetTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
             }
             if (previousElement != null && previousElement is JetExpression) {
-                // If the parent is null, something is very wrong.
                 previousElement.getParent()!!.addAfter(psiFactory.createSemicolon(), previousElement)
             }
         }
-
-        element.replace(psiFactory.createExpressionByPattern("$0 in $1", argument, receiver))
     }
 }
