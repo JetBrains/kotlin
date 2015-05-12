@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
@@ -76,7 +77,7 @@ public final class WhenChecker {
 
         return classDescriptor;
     }
-
+        
     @Nullable
     private static JetType whenSubjectType(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
         JetExpression subjectExpression = expression.getSubjectExpression();
@@ -114,29 +115,55 @@ public final class WhenChecker {
         return notEmpty;
     }
 
+    private static boolean isWhenOnSealedClassExhaustive(
+            @NotNull JetWhenExpression expression, @NotNull BindingTrace trace, @NotNull ClassDescriptor enumClassDescriptor) {
+        // TODO: sealed classes, related problems: KT-6299, KT-7606
+        // All possible subclasses must be defined inside base class
+        // Inner classes / objects are OK, but what should we do with local classes used e.g. in properties / local variables?
+        return false;
+    }
+
+    private static boolean isSealed(@NotNull ClassDescriptor descriptor, @NotNull JetClass klass) {
+        // Class is assumed as sealed if and only if all its constructors are private AND the class itself is abstract
+        for (ConstructorDescriptor constructorDescriptor: descriptor.getConstructors()) {
+            if (constructorDescriptor.getVisibility() != Visibilities.PRIVATE) {
+                return false;
+            }
+        }
+        return PsiUtilPackage.isAbstract(klass);
+    }
+
     private static boolean isPlatformEnum(@NotNull JetType type, @Nullable ClassDescriptor classDescriptor) {
         // instanceof JetClass are Kotlin types, as well as nullable types
         return classDescriptor != null && classDescriptor.getKind() == ClassKind.ENUM_CLASS
                && !(type instanceof JetClass) && !type.isMarkedNullable();
     }
-    
+
     public static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
         JetType type = whenSubjectType(expression, trace.getBindingContext());
         if (type == null) return false;
-        ClassDescriptor classDescriptor = getClassDescriptorOfTypeIfEnum(type);
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
 
         boolean exhaustive;
-        if (classDescriptor == null) {
-            if (KotlinBuiltIns.isBoolean(TypeUtils.makeNotNullable(type))) {
+        if (classDescriptor != null) {
+            if (classDescriptor.getKind() == ClassKind.ENUM_CLASS && !classDescriptor.getModality().isOverridable()) {
+                // Enum
+                exhaustive = isWhenOnEnumExhaustive(expression, trace, classDescriptor);
+            }
+            else if (KotlinBuiltIns.isBoolean(TypeUtils.makeNotNullable(type))) {
+                // Boolean
                 exhaustive = isWhenOnBooleanExhaustive(expression, trace);
             }
+            else if (type instanceof JetClass && isSealed(classDescriptor, (JetClass) type)) {
+                exhaustive = isWhenOnSealedClassExhaustive(expression, trace, classDescriptor);
+            }
             else {
-                // TODO: sealed hierarchies, etc.
                 exhaustive = false;
+
             }
         }
         else {
-            exhaustive = isWhenOnEnumExhaustive(expression, trace, classDescriptor);
+            exhaustive = false;
         }
         if (exhaustive && (!TypeUtils.isNullableType(type) || containsNullCase(expression, trace) || isPlatformEnum(type, classDescriptor))) {
             trace.record(BindingContext.EXHAUSTIVE_WHEN, expression);
