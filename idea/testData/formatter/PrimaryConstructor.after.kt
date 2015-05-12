@@ -26,3 +26,12 @@ class A9 // eol comment
 private // eol comment
 [ann] // eol comment
 ()
+
+class A10
+protected @ann constructor()
+
+class A11
+protected
+@ann
+constructor
+()
