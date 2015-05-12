@@ -1,4 +1,4 @@
-trait <lineMarker></lineMarker>A {
+interface <lineMarker></lineMarker>A {
   fun <lineMarker></lineMarker>a(){
   }
 }

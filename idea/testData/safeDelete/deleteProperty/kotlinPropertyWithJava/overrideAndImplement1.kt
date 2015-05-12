@@ -2,6 +2,6 @@ open class A {
     public open val <caret>foo: String = ""
 }
 
-trait Z {
+interface Z {
     public val foo: String
 }

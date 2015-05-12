@@ -1,25 +1,25 @@
 // FILE: before.kt
-trait A {
+interface A {
     val f: Int
         get() = 2
 }
 
-trait B : A
+interface B : A
 
-trait C : B, A
+interface C : B, A
 
 class SomeClass() : C {
     override val <caret>f: Int = 4
 }
 // FILE: after.kt
-trait A {
+interface A {
     val <caret>f: Int
         get() = 2
 }
 
-trait B : A
+interface B : A
 
-trait C : B, A
+interface C : B, A
 
 class SomeClass() : C {
     override val f: Int = 4

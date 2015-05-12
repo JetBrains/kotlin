@@ -1,6 +1,6 @@
 package override
 
-    trait MyTrait {
+    interface MyTrait {
         fun foo()
     }
 

@@ -1,9 +1,9 @@
-trait <lineMarker></lineMarker>A {
+interface <lineMarker></lineMarker>A {
     fun <lineMarker></lineMarker>f() {
     }
 }
 
-trait <lineMarker></lineMarker>B : A
+interface <lineMarker></lineMarker>B : A
 
 open class <lineMarker></lineMarker>C(b : B) : B by b, A {
 }

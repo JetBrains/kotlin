@@ -2,11 +2,11 @@ fun test(f: Foo) {
     for(i <caret>in f) {}
 }
 
-trait Foo {
+interface Foo {
   fun iterator(): Iterator
 }
 
-trait Iterator {
+interface Iterator {
   fun next(): Any
   fun hasNext(): Boolean
 }

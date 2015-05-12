@@ -1,8 +1,8 @@
 // "Add function to supertype..." "true"
-trait A {
+interface A {
     open fun foo()
 }
-trait B {}
+interface B {}
 class C: A, B {
   <caret>override fun foo() {}
 }

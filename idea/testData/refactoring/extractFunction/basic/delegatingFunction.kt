@@ -1,6 +1,6 @@
 // PARAM_DESCRIPTOR: val t: <no name provided> defined in foo
 // PARAM_TYPES: T
-trait T {
+interface T {
     fun test() {}
 }
 

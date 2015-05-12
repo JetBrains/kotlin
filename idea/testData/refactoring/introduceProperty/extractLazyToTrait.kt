@@ -1,6 +1,6 @@
 // EXTRACTION_TARGET: lazy property
 
-trait T {
+interface T {
     fun foo(): Int = <selection>1</selection>
 }
 

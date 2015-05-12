@@ -1,4 +1,4 @@
 // "Remove 'in' modifier" "true"
-trait A<T> {}
+interface A<T> {}
 
 class B : A<Int> {}

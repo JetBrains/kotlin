@@ -1,6 +1,6 @@
 class U<A>
 
-trait T<A, B> {
+interface T<A, B> {
     fun <caret>foofoofoo<C>(a: A, b: B, c: C): Int
 }
 

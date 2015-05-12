@@ -1,4 +1,4 @@
-trait T {
+interface T {
     val a1: Byte
     val a2: Short
     val a3: Int

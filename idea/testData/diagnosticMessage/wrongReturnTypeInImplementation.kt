@@ -2,21 +2,21 @@
 // !DIAGNOSTICS: ABSTRACT_MEMBER_NOT_IMPLEMENTED
 // !MESSAGE_TYPE: TEXT
 
-trait T1
-trait T2 : T1
-trait T3 : T2
-trait T4 : T3
+interface T1
+interface T2 : T1
+interface T3 : T2
+interface T4 : T3
 
 
-trait A {
+interface A {
     fun f(): T1
 }
 
-trait B {
+interface B {
     fun f(): T2 = null!!
 }
 
-trait C {
+interface C {
     fun f(): T3
 }
 

@@ -1,6 +1,6 @@
 var x : Int <caret>by Baz()
 
-trait Foo {
+interface Foo {
   fun get(p1: Any?, p2: Any?): Int = 1
 }
 

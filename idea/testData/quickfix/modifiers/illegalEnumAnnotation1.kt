@@ -1,3 +1,3 @@
 // "Remove 'enum' modifier" "true"
-<caret>enum trait A {
+<caret>enum interface A {
 }

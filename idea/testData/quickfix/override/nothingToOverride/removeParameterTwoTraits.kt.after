@@ -1,8 +1,8 @@
 // "Change function signature to 'fun f()'" "true"
-trait A {
+interface A {
     fun f()
 }
-trait B {
+interface B {
     fun f()
 }
 

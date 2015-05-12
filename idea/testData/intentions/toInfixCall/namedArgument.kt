@@ -3,6 +3,6 @@ fun foo(x: Foo) {
     x.<caret>foo(bar = x)
 }
 
-trait Foo {
+interface Foo {
     fun foo(baz: Int = 0, bar: Foo? = null)
 }

@@ -1,6 +1,6 @@
 package d
 
-trait T
+interface T
 
 class A(i: Int) {}
 
@@ -31,7 +31,7 @@ class Outer {
     }
     object NestedObj {
     }
-    trait NestedTrait {
+    interface NestedTrait {
     }
     annotation class NestedAnnotation
 }

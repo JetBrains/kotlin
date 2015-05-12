@@ -1,4 +1,4 @@
-trait <lineMarker descr="*"></lineMarker>A {
+interface <lineMarker descr="*"></lineMarker>A {
     fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;B</body></html>"></lineMarker>foo(str: String)
     fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;B</body></html>"></lineMarker>foo()
 }

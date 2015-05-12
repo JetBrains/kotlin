@@ -1,9 +1,9 @@
 // "Make XX.foo open" "true"
-trait X {
+interface X {
     fun foo()
 }
 
-trait XX : X {
+interface XX : X {
     override final fun foo() {
 
     }

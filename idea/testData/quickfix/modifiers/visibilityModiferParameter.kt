@@ -1,5 +1,5 @@
 // "Change visibility modifier" "true"
-trait ParseResult<out T> {
+interface ParseResult<out T> {
     public val success : Boolean
     public val value : T
 }

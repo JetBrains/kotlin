@@ -1,4 +1,4 @@
-public trait TestTrait {
+public interface TestTrait {
     public fun f()
 }
 

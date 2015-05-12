@@ -1,9 +1,9 @@
 // "Change function signature to 'fun f(a: Int)'" "true"
-trait A {
+interface A {
     fun f(a: Int)
 }
 
-trait B : A {
+interface B : A {
 }
 
 class C : B {

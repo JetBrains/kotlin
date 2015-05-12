@@ -10,7 +10,7 @@ fun foo() {
 
         class X
         inner class Y
-        trait T
+        interface T
         object O
 
         val p = 1
@@ -54,7 +54,7 @@ fun foo() {
 
         fun a(p: kotlin.Int): kotlin.Int = b(p) + 1
 
-        trait T
+        interface T
     }
 
     class C {
@@ -67,7 +67,7 @@ fun foo() {
 
         class X
         inner class Y
-        trait T
+        interface T
         object O
 
         val p = 1
@@ -93,7 +93,7 @@ fun foo() {
 
         class X
         inner class Y
-        trait T
+        interface T
         object O
 
         val q = p + 1
@@ -119,7 +119,7 @@ fun foo() {
 
         class XX
         inner class Y
-        trait T
+        interface T
         object O
 
         val p = 1

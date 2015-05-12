@@ -1,5 +1,5 @@
 // IS_APPLICABLE: false
-trait Foo {
+interface Foo {
     fun foo(a: Int, b: Int)
 }
 

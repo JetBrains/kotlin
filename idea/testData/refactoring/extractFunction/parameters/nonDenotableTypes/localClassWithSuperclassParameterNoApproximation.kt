@@ -1,4 +1,4 @@
-trait T
+interface T
 
 // SIBLING:
 fun foo(): T {

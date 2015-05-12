@@ -1,3 +1,3 @@
-trait Some {
+interface Some {
   fun <caret>some()
 }

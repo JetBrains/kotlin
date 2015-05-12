@@ -1,4 +1,4 @@
-trait T {
+interface T {
     fun foo()
     fun bar()
 }

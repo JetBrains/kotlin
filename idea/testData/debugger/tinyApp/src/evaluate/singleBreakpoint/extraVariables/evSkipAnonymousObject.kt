@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     }
 }
 
-trait T {
+interface T {
     fun f() {}
 }
 

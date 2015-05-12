@@ -1,6 +1,6 @@
 class U<A>
 
-trait T<A, B> {
+interface T<A, B> {
     fun foofoofoo<C>(a: List<C>, b: A?, c: U<B>): U<C>?
 }
 

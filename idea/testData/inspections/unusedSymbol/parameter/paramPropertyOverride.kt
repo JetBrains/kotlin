@@ -1,4 +1,4 @@
-trait Trait {
+interface Trait {
     val member: String
 }
 

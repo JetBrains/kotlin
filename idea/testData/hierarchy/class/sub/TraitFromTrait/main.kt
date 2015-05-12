@@ -1,26 +1,26 @@
-trait <caret>A
+interface <caret>A
 
-trait B: A
+interface B: A
 
-class MyClass(a: A = run { trait X: A; object: A {} }) {
-    inner trait G: A {}
+class MyClass(a: A = run { interface X: A; object: A {} }) {
+    inner interface G: A {}
 
     init {
-        trait C: A
+        interface C: A
     }
 
-    fun foo(a: A = run { trait X: A; object: A {} }) {
-        trait D: A
+    fun foo(a: A = run { interface X: A; object: A {} }) {
+        interface D: A
 
         val t = object {
-            inner trait F: A
+            inner interface F: A
         }
     }
 }
 
 val bar: Int
     get() {
-        trait E: A
+        interface E: A
 
         return 0
     }

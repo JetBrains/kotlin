@@ -1,4 +1,4 @@
-trait Z {
+interface Z {
     open fun foo(<caret>a: Int, b: Int)
 }
 

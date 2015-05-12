@@ -1,7 +1,7 @@
 // "Change 'B.x' type to '(String) -> Int'" "true"
-trait A {
+interface A {
     var x: (String) -> Int
 }
-trait B : A {
+interface B : A {
     override var x: (String) -> Int
 }

@@ -8,7 +8,7 @@ class A {
 
         class X
         inner class Y
-        trait T
+        interface T
         object O
 
         val p = 1
@@ -52,5 +52,5 @@ class B {
 
         fun a(p: kotlin.Int): kotlin.Int = b(p) + 1
 
-        trait T
+        interface T
     }

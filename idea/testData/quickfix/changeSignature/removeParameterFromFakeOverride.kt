@@ -1,16 +1,16 @@
 // "Remove parameter 'i'" "true"
-trait Z {
+interface Z {
     fun f(i: Int)
 }
 
-trait ZZ {
+interface ZZ {
     fun f(i: Int)
 }
 
-trait ZZZ: Z, ZZ {
+interface ZZZ: Z, ZZ {
 }
 
-trait ZZZZ : ZZZ {
+interface ZZZZ : ZZZ {
     override fun f(i: Int)
 }
 

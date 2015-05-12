@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.JetClass
 // OPTIONS: derivedClasses
-trait X {
+interface X {
 
 }
 
@@ -12,6 +12,6 @@ open class C: Y {
 
 }
 
-trait Z: A {
+interface Z: A {
 
 }

@@ -1,2 +1,2 @@
-trait A {
+interface A {
 }

@@ -7,7 +7,7 @@ class A {
     val p: Int = 1
 }
 
-trait T {
+interface T {
     fun f() {
     }
 

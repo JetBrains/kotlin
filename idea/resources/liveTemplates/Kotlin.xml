@@ -114,7 +114,7 @@
     </template>
 
     <template resource-bundle="org.jetbrains.kotlin.idea.JetBundle" key="livetemplate.description.interface"
-              name="interface" toReformat="true" toShortenFQNames="true" value="trait $NAME$ {&#10;$END$&#10;}">
+              name="interface" toReformat="true" toShortenFQNames="true" value="interface $NAME$ {&#10;$END$&#10;}">
         <variable alwaysStopAt="true" defaultValue="" expression="" name="NAME" />
         <context>
             <option name="KOTLIN_STATEMENT" value="true"/>

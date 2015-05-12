@@ -1,23 +1,23 @@
 // FILE: before.kt
-trait A {
+interface A {
   fun f() {}
 }
 
-trait B : A
+interface B : A
 
-trait C : B, A
+interface C : B, A
 
 class SomeClass() : C {
   override fun <caret>f() {}
 }
 // FILE: after.kt
-trait A {
+interface A {
   fun <caret>f() {}
 }
 
-trait B : A
+interface B : A
 
-trait C : B, A
+interface C : B, A
 
 class SomeClass() : C {
   override fun f() {}

@@ -1,5 +1,5 @@
 // "Change 'A.x' type to 'Int'" "true"
-trait X {
+interface X {
     val x: Int
 }
 

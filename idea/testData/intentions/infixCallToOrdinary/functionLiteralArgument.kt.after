@@ -1,4 +1,4 @@
-trait Foo {
+interface Foo {
     fun foo(f: (Int) -> Unit)
 }
 fun foo(x: Foo) {

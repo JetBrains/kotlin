@@ -1,4 +1,4 @@
-trait T {
+interface T {
     fun f()
     val g: Int
 }

@@ -24,7 +24,7 @@ class C1
 
 object O6
 
-trait T1
+interface T1
 
 // -----
 
@@ -62,7 +62,7 @@ class C2
 
 object O13 {}
 
-trait T2
+interface T2
 
 // -----
 
@@ -105,7 +105,7 @@ class C3
 object O20 {
 }
 
-trait T3
+interface T3
 
 // -----
 

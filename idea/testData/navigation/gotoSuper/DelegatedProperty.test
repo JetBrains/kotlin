@@ -1,10 +1,10 @@
 // FILE: before.kt
-trait A {
+interface A {
     val f: Int
         get() = 3
 }
 
-trait B : A
+interface B : A
 
 open class C(b : B) : B by b, A {
 }
@@ -14,12 +14,12 @@ class D(b : B) : C(b) {
 }
 
 // FILE: after.kt
-trait A {
+interface A {
     val <caret>f: Int
         get() = 3
 }
 
-trait B : A
+interface B : A
 
 open class C(b : B) : B by b, A {
 }

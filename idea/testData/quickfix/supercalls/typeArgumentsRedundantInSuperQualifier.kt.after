@@ -1,5 +1,5 @@
 // "Remove type arguments" "true"
-trait Foo<T, T> {
+interface Foo<T, T> {
     fun f() {}
 }
 

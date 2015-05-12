@@ -16,7 +16,7 @@ import a.E.ENTRY
     }
     object NestedObj {
     }
-    trait NestedTrait {
+    interface NestedTrait {
     }
     annotation class NestedAnnotation
 }

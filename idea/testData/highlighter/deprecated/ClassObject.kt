@@ -18,7 +18,7 @@ class MyClass(): MyTrait {
     }
 }
 
-trait MyTrait {
+interface MyTrait {
     deprecated("Use A instead") companion object {
         val test: String = ""
     }

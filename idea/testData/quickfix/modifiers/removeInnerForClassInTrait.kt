@@ -1,4 +1,4 @@
 // "Remove 'inner' modifier" "true"
-trait A {
+interface A {
     inne<caret>r class B
 }

@@ -1,6 +1,6 @@
 package dependency
 
-trait Tr {
+interface Tr {
     fun f() {
     }
 }

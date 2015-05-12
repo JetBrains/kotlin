@@ -15,21 +15,21 @@ class InheritingClasses {
         override val ap = 5
     }
 
-    trait C {
+    interface C {
         val c: Int
     }
 
-    trait D<T> : C {
+    interface D<T> : C {
         override val c: Int
     }
 
-    trait E
+    interface E
     class G : B(), C, D<Int>, E
 
 
     class InheritAny {
-        trait SomeTrait
-        trait SomeTrait2
+        interface SomeTrait
+        interface SomeTrait2
 
         class ImplicitAny
 

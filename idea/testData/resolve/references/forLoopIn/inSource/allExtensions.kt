@@ -2,10 +2,10 @@ fun test(f: Foo) {
     for(i <caret>in f) {}
 }
 
-trait Foo
+interface Foo
 fun Foo.iterator(): Iterator
 
-trait Iterator
+interface Iterator
 
 fun Iterator.next(): Any
 fun Iterator.hasNext(): Boolean

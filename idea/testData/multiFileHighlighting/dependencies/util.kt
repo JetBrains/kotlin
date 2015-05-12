@@ -1,10 +1,10 @@
 public package util
 
-trait T {
+interface T {
     fun f()
 }
 
-trait T2 {
+interface T2 {
     fun g() {
     }
 }

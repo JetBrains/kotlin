@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
     args.size()
 }
 
-trait T {
+interface T {
     fun test() = 1
 }
 

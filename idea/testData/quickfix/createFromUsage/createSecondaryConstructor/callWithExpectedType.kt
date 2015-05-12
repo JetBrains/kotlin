@@ -1,6 +1,6 @@
 // "Create secondary constructor" "true"
 
-trait T
+interface T
 
 class A: T
 

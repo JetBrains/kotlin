@@ -2,7 +2,7 @@ package test
 
 import test.A
 
-trait <caret>A {
+interface <caret>A {
 }
 
 class B {

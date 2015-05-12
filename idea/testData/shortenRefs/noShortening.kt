@@ -1,4 +1,4 @@
-trait T : Iterable<String>
+interface T : Iterable<String>
 
 abstract class C : T {
     fun foo(c: C) {

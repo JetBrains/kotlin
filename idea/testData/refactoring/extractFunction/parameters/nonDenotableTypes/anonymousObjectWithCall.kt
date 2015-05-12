@@ -1,4 +1,4 @@
-trait Callable<T> {
+interface Callable<T> {
     fun call(): T
 }
 

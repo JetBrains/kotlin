@@ -5,7 +5,7 @@ open class A {
         }
 }
 
-trait Z {
+interface Z {
     val foo: String
 }
 

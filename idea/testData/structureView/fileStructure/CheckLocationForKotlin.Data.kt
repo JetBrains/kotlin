@@ -1,4 +1,4 @@
-trait First {
+interface First {
     fun foo123()
     fun foo12_()
     fun foo1_3()

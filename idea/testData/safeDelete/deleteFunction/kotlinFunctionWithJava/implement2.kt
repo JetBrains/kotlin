@@ -1,3 +1,3 @@
-trait A {
+interface A {
     fun <caret>foo()
 }

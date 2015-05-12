@@ -1,5 +1,5 @@
-trait First
+interface First
 
-trait Second : First {
+interface Second : First {
     fun foo()
 }

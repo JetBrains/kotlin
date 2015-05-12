@@ -1,4 +1,4 @@
-trait <caret>A
+interface <caret>A
 
 class B: A
 

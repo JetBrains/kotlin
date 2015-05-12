@@ -1,7 +1,7 @@
 // "class org.jetbrains.kotlin.idea.quickfix.RemoveFunctionParametersFix" "false"
 //ERROR: No value passed for parameter other
 
-trait StringComparable {
+interface StringComparable {
     public fun compareTo(other: String): Int = 0
 }
 

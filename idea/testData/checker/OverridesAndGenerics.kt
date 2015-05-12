@@ -1,4 +1,4 @@
-    trait MyTrait<T> {
+    interface MyTrait<T> {
         fun foo(t: T) : T
     }
 

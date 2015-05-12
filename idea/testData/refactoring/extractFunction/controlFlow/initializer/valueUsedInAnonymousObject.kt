@@ -6,6 +6,6 @@ fun main(args: Array<String>) {
     }
 }
 
-trait T {
+interface T {
     fun foo(n: Int): Int
 }

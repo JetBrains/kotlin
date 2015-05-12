@@ -1,14 +1,14 @@
-trait A {
+interface A {
     fun foo()
 }
 
-trait B : A {
+interface B : A {
     fun bar()
 }
 
-trait C
+interface C
 
-trait D : A
+interface D : A
 
 fun test(a: A?) {
     if (a != null && a is B?) {

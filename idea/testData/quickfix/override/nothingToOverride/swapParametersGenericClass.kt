@@ -1,5 +1,5 @@
 // "Change function signature to 'fun f(y: S, x: List<Set<R>>)'" "true"
-trait A<P,Q> {
+interface A<P,Q> {
     fun f(a: Q, b: List<Set<P>>)
 }
 

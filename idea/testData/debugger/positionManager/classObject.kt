@@ -36,7 +36,7 @@ class A {
     }
 }
 
-trait T {
+interface T {
     companion object {
         val prop = 1 // T\$Companion
     }

@@ -1,6 +1,6 @@
 package a
 
-<selection>trait T
+<selection>interface T
 
 class A(i: Int) {}
 

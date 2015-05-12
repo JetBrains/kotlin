@@ -1,14 +1,14 @@
 var x : Int <caret>by Baz()
 
-trait Foo {
+interface Foo {
   fun get(p1: Any?, p2: Any?): Int = 1
 }
 
-trait Bar {
+interface Bar {
   fun get(p1: Any?, p2: Any?): Int
 }
 
-trait Zoo {
+interface Zoo {
   fun set(p1: Any?, p2: Any?, p3: Any?)
 }
 

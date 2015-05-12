@@ -1,13 +1,13 @@
 package test
 
-trait T {
+interface T {
     fun foo() {
     }
 
     fun boo()
 }
 
-trait TT : T {
+interface TT : T {
 }
 
 fun f() {
@@ -23,7 +23,7 @@ fun f() {
     class MyLocalClass {
     }
 
-    trait MyLocalTrait {
+    interface MyLocalTrait {
     }
 
     val myAnonymousObject = object {

@@ -10,10 +10,10 @@ class A
     }
 }
 
-trait A {
+interface A {
 }
 
-trait A
+interface A
 {
 }
 

@@ -1,5 +1,5 @@
 package a
 
-trait A
+interface A
 
 <selection>class C(): A {}</selection>

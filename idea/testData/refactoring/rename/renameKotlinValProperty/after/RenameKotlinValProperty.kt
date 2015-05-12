@@ -1,6 +1,6 @@
 package testing.rename
 
-trait AP {
+interface AP {
     val second: Int // <--- Rename base here
 }
 

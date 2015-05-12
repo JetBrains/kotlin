@@ -1,7 +1,7 @@
 // TRUE
 
 // Problem with lazy initialization of nullable properties
-trait Some
+interface Some
 
 val test: Some = object: Some {
     fun test() {

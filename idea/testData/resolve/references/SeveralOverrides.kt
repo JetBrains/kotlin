@@ -1,12 +1,12 @@
-trait A {
+interface A {
     fun foo()
 }
 
-trait B {
+interface B {
     fun foo()
 }
 
-trait C : A, B {
+interface C : A, B {
 
 }
 

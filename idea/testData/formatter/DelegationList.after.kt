@@ -1,6 +1,6 @@
-trait A1
-trait A2
-trait A3
+interface A1
+interface A2
+interface A3
 
 open class B1
 

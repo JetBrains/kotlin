@@ -1,4 +1,4 @@
-trait T: A {
+interface T: A {
     override fun foo() {
 
     }

@@ -1,8 +1,8 @@
-trait A {
+interface A {
     val foo: String
 }
 
-trait Z {
+interface Z {
     val foo: String
 }
 

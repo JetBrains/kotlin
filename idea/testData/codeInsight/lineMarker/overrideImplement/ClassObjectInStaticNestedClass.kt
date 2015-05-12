@@ -1,4 +1,4 @@
-trait <lineMarker></lineMarker>TestTrait {
+interface <lineMarker></lineMarker>TestTrait {
     fun <lineMarker></lineMarker>test()
 }
 

@@ -1,8 +1,8 @@
-trait T {
+interface T {
     fun foo(): Int
 }
 
-trait U: T
+interface U: T
 
 fun test(t: T): Int {
     return if (t is U)

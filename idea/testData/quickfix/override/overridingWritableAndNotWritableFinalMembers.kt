@@ -3,7 +3,7 @@
 // ERROR: Cannot access '<init>': it is 'private' in 'E'
 // ERROR: 'ordinal' in 'E' is final and cannot be overridden
 enum class E {}
-trait X {
+interface X {
     final fun ordinal() : Int = 42
 }
 

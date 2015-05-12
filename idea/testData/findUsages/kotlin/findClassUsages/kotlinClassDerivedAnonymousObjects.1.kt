@@ -2,7 +2,7 @@
 // OPTIONS: derivedClasses
 
 fun foo() {
-    trait Z: A {
+    interface Z: A {
 
     }
 

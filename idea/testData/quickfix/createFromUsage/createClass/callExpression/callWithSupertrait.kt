@@ -1,5 +1,5 @@
 // "Create class 'Foo'" "true"
 
-trait A
+interface A
 
 fun test(): A = <caret>Foo(2, "2")

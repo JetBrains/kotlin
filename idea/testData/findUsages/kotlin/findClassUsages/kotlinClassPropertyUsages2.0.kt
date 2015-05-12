@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.JetClass
 // OPTIONS: propertyUsages
-trait X {
+interface X {
     val a: String
         get() {
             return ""

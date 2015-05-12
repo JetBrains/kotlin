@@ -20,7 +20,7 @@ class A() {
     }
 }
 
-trait Foo
+interface Foo
 
 fun Foo.ext() {
 }

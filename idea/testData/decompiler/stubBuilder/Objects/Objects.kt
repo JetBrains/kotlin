@@ -25,5 +25,5 @@ public object Objects {
 
 }
 
-trait A {
+interface A {
 }

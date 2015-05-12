@@ -5,7 +5,7 @@ package h
 
 import util.minus
 
-trait H
+interface H
 
 fun f(h: H?) {
     h - "other"

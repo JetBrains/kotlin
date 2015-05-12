@@ -1,7 +1,7 @@
 open class Base {
 }
 
-trait Derived: <warning>Base</warning> {
+interface Derived: <warning>Base</warning> {
     fun foo() {
         f1(this@Derived)
     }

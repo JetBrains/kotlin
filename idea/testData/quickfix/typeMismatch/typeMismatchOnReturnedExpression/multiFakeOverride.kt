@@ -4,7 +4,7 @@
 // ACTION: Disable 'Convert to Expression Body'
 // ACTION: Edit intention settings
 // ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>kotlin.Boolean</td></tr><tr><td>Found:</td><td>kotlin.Int</td></tr></table></html>
-trait A {
+interface A {
     fun f(): Int
 }
 

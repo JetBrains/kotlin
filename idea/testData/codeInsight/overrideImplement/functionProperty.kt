@@ -1,5 +1,5 @@
 // From KT-1648
-trait A {
+interface A {
     val method:() -> Unit?
 }
 

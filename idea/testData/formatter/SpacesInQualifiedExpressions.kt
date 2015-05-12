@@ -1,4 +1,4 @@
-trait Test {
+interface Test {
     fun foo(): Test
 }
 

@@ -1,4 +1,4 @@
-trait A
+interface A
 
 object Some1 :A {
 

@@ -1,5 +1,5 @@
 // "Change 'A.not' function return type to 'A'" "true"
-trait A {
+interface A {
     fun not(): String
     fun times(a: A): A
 }

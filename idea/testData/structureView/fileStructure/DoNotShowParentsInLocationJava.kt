@@ -1,3 +1,3 @@
-trait Third: Second
+interface Third: Second
 
 // WITH_INHERITED

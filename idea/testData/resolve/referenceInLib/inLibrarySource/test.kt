@@ -1,3 +1,3 @@
 package inlibrary.test
 
-trait Test
+interface Test

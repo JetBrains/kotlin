@@ -4,6 +4,6 @@ package lib
 public class Array {
 }
 
-public trait ArrayFactory {
+public interface ArrayFactory {
     fun create() : Array
 }

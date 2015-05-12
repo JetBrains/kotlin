@@ -1,9 +1,9 @@
-trait <lineMarker descr="*"></lineMarker>SkipSupport {
+interface <lineMarker descr="*"></lineMarker>SkipSupport {
     fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportImpl<br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportWithDefaults</body></html>"></lineMarker>skip(why: String)
     fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportWithDefaults</body></html>"></lineMarker>skip()
 }
 
-public trait <lineMarker descr="*"></lineMarker>SkipSupportWithDefaults : SkipSupport {
+public interface <lineMarker descr="*"></lineMarker>SkipSupportWithDefaults : SkipSupport {
     // TODO: should be "Is overriden in SkipSupportImpl"
     override fun <lineMarker descr="<html><body>Is implemented in <br>&nbsp;&nbsp;&nbsp;&nbsp;SkipSupportImpl</body></html>"><lineMarker descr="Implements function in 'SkipSupport'"></lineMarker></lineMarker>skip(why: String) {}
 

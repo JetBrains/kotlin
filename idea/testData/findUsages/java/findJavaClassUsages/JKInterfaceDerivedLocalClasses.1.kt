@@ -1,7 +1,7 @@
 fun foo() {
     open class X: A
 
-    trait T: A
+    interface T: A
 
     fun bar() {
         public open class Y: X()

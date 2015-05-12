@@ -1,6 +1,6 @@
 class C<T : C<T>>
 
-trait Base {
+interface Base {
     fun foo(c: C<*>)
 }
 

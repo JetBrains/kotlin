@@ -1,5 +1,5 @@
 // "Change 'foo' function return type to 'T'" "true"
-trait T
+interface T
 
 fun foo() {
     open class A: T

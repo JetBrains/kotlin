@@ -20,9 +20,9 @@ object O2 {
     }
 }
 
-trait T1 {}
+interface T1 {}
 
-trait T2 {
+interface T2 {
     val some = 1
 }
 

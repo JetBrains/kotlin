@@ -1,5 +1,5 @@
 // "Change parameter 't' type of function 'foo' to 'T'" "true"
-trait T
+interface T
 
 fun Int.foo(t: Int) = this
 

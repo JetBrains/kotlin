@@ -1,4 +1,4 @@
 class A
-trait T
+interface T
 object Test: A(), T {
 }

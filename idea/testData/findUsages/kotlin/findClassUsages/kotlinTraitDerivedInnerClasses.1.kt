@@ -10,11 +10,11 @@ class Outer {
     }
 
     class Inner {
-        trait Z: A {
+        interface Z: A {
 
         }
 
-        trait U: Z {
+        interface U: Z {
 
         }
     }

@@ -1,5 +1,5 @@
 // From KT-1254
-trait T {
+interface T {
     fun Foo() : (String) -> Unit
 }
 

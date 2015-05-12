@@ -1,6 +1,6 @@
 //PARAM_TYPES: C, B
 //PARAM_DESCRIPTOR: value-parameter val c: C defined in foo
-trait A {
+interface A {
     fun doA()
 }
 
@@ -10,7 +10,7 @@ open class AImpl: A {
     }
 }
 
-trait B {
+interface B {
     fun doB()
 }
 

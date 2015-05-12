@@ -8,7 +8,7 @@ open class X: T() {
         set(value: String) {}
 }
 
-trait Y: T {
+interface Y: T {
     override var foo: String
         get() = ""
         set(value: String) {}

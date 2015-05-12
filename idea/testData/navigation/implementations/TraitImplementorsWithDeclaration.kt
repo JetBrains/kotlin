@@ -1,8 +1,8 @@
 package testing
 
-trait Test
+interface Test
 
-trait TestMore: <caret>Test
+interface TestMore: <caret>Test
 
 open class TestClass1: Test
 

@@ -1,6 +1,6 @@
 // "Create function 'foo'" "true"
 
-trait T
+interface T
 
 fun test(t: T) {
     val b: Boolean = t.<caret>foo("1", 2)

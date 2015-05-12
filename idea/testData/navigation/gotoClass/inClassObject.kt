@@ -4,9 +4,9 @@ class InClassObject {
     companion object {
         class ClassObjectClass {}
 
-        trait ClassObjectTrait {}
+        interface ClassObjectTrait {}
 
-        trait ClassObjectTraitWithImpl {
+        interface ClassObjectTraitWithImpl {
             fun foo() {}
         }
 

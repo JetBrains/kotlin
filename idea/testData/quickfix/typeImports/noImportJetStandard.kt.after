@@ -2,7 +2,7 @@
 package a
 
 class M {
-    trait A {
+    interface A {
         abstract val i: Int<caret>
     }
 }

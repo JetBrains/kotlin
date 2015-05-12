@@ -62,7 +62,7 @@ abstract class MyAbstractClass() {
     <error>abstract</error> fun j() {}
 }
 
-trait MyTrait {
+interface MyTrait {
     //properties
 
     val a: Int

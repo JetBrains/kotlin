@@ -4,7 +4,7 @@ fun some() {
   val testInFun = 12
 }
 
-trait SomeTrait {
+interface SomeTrait {
   val testInTrait
 }
 

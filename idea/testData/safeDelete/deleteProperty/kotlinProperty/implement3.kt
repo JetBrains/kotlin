@@ -1,4 +1,4 @@
-trait A {
+interface A {
     var foo: String
 }
 

@@ -4,7 +4,7 @@ object B {
     fun f()
 }
 
-trait T
+interface T
 
 object A: T {
 }
