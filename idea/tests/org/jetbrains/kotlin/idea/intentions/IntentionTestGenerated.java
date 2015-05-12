@@ -1921,6 +1921,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("mergeWithVarSubject.kt")
+                public void testMergeWithVarSubject() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/when/merge/mergeWithVarSubject.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("mergeWithoutSubject.kt")
                 public void testMergeWithoutSubject() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/branched/when/merge/mergeWithoutSubject.kt");

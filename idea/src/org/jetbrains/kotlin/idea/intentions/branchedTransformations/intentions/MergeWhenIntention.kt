@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
@@ -30,7 +31,10 @@ public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpressi
     override fun applicabilityRange(element: JetWhenExpression): TextRange? {
         val next = PsiTreeUtil.skipSiblingsForward(element, javaClass<PsiWhiteSpace>()) as? JetWhenExpression ?: return null
 
-        if (!element.getSubjectExpression().matches(next.getSubjectExpression())) return null
+        val subject1 = element.getSubjectExpression()
+        val subject2 = next.getSubjectExpression()
+        if (!subject1.matches(subject2)) return null
+        if (subject1 != null && !subject1.isStableVariable()) return null
 
         val entries1 = element.getEntries()
         val entries2 = next.getEntries()
