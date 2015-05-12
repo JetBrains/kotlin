@@ -8,7 +8,7 @@ data class Q(val x: Int, val y: Int)
 
 fun bar2(): Array<Q> = null!!
 
-<!DEPRECATED_ANNOTATION_SYNTAX!>[Ann Ann]<!> class A [Ann] (<!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> val prop: Int) {
+<!DEPRECATED_ANNOTATION_SYNTAX!>[Ann Ann]<!> class A [Ann] constructor(<!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> val prop: Int) {
     <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> val x = 1
     <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> fun foo(<!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> x: Int) {
         <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> class B

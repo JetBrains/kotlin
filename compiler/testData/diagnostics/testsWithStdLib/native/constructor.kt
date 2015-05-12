@@ -7,4 +7,4 @@ class A {
     <!INAPPLICABLE_ANNOTATION!>native constructor(<!UNUSED_PARAMETER!>x<!>: Int)
 <!>}
 
-class C <!INAPPLICABLE_ANNOTATION!>[native]()<!>
+class C <!INAPPLICABLE_ANNOTATION!>[native] constructor()<!>

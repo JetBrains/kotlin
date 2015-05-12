@@ -149,6 +149,6 @@ class IllegalModifiers10
 <!ILLEGAL_MODIFIER!>in<!>
 <!ILLEGAL_MODIFIER, INCOMPATIBLE_MODIFIERS!>final<!>
 <!ILLEGAL_MODIFIER!>vararg<!>
-<!ILLEGAL_MODIFIER!>reified<!> ()
+<!ILLEGAL_MODIFIER!>reified<!> constructor()
 
-class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> ()
+class IllegalModifiers11 <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> constructor()

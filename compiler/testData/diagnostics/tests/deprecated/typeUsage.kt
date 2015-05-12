@@ -4,7 +4,7 @@ open class Obsolete {
 }
 
 deprecated("Class")
-open class Obsolete2 [deprecated("Constructor")]() {
+open class Obsolete2 [deprecated("Constructor")] constructor() {
     fun use() {}
 }
 

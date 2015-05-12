@@ -6,4 +6,4 @@ class A {
     }
 }
 
-class C <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] ()<!>
+class C <!PLATFORM_STATIC_ILLEGAL_USAGE!>[platformStatic] constructor()<!>
