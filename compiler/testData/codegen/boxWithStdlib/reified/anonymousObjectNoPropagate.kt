@@ -1,6 +1,6 @@
 import kotlin.test.assertEquals
 
-trait A {
+interface A {
     fun f1(): String
     fun f2(): String
     fun f3(): String

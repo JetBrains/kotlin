@@ -56,7 +56,7 @@ class K : H() {
 }
 
 //-------------
-trait T {
+interface T {
     public fun foo() {}
 }
 
@@ -68,15 +68,15 @@ class M : L() {
     <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 //---------------
-trait R {
+interface R {
     <!INCOMPATIBLE_MODIFIERS!>internal<!> <!INCOMPATIBLE_MODIFIERS!>protected<!> fun foo() {}
 }
 
-trait P : R {
+interface P : R {
     <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 
-trait Q : R {
+interface Q : R {
     protected override fun foo() {}
 }
 

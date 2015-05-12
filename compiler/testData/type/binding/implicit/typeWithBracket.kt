@@ -1,4 +1,4 @@
-trait Inv<I>
+interface Inv<I>
 
 fun <T> getT(): T = null!!
 

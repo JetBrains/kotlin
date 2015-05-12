@@ -1,6 +1,6 @@
 package override.generics
 
-trait MyTrait<T> {
+interface MyTrait<T> {
     fun foo(t: T) : T
 }
 
@@ -9,7 +9,7 @@ abstract class MyAbstractClass<T> {
     abstract val pr : T
 }
 
-trait MyProps<T> {
+interface MyProps<T> {
     val p : T
 }
 

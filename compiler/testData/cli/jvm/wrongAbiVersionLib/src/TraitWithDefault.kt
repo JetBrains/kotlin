@@ -1,5 +1,5 @@
 package wrong
 
-trait TraitWithDefault {
+interface TraitWithDefault {
     fun foo() = 1
 }

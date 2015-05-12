@@ -1,6 +1,6 @@
 // PrivateInTrait
 
-trait PrivateInTrait {
+interface PrivateInTrait {
     private var nn: String
         get() = ""
         set(value) {}

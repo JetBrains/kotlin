@@ -1,7 +1,7 @@
 // KT-4827 UOE at PackageType.throwException()
 // EA-53605
 
-public trait TestInterface {
+public interface TestInterface {
 }
 
 class C {

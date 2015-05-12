@@ -11,7 +11,7 @@ enum class DOMElementTestClasses {
 
 
 // use case 2
-trait EnumStyleClass {
+interface EnumStyleClass {
     fun invoke() {}
 }
 enum class TestClasses : EnumStyleClass {

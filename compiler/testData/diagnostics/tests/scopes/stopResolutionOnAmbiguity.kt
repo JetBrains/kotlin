@@ -1,6 +1,6 @@
 package c
 
-trait B {
+interface B {
     fun bar() {}
 }
 

@@ -1,4 +1,4 @@
-trait Trait : java.lang.Object {
+interface Trait : java.lang.Object {
     fun foo(): String = "239 " + toString()
 }
 

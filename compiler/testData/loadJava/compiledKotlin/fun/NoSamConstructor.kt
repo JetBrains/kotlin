@@ -1,5 +1,5 @@
 package test
 
-public trait Runnable {
+public interface Runnable {
     fun run()
 }

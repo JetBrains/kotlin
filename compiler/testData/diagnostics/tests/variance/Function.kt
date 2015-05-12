@@ -1,9 +1,9 @@
-trait In<in T>
-trait Out<out T>
-trait Inv<T>
+interface In<in T>
+interface Out<out T>
+interface Inv<T>
 fun <T> getT(): T = null!!
 
-trait Test<in I, out O, P> {
+interface Test<in I, out O, P> {
     fun parameters1(i: I, o: <!TYPE_VARIANCE_CONFLICT(O; out; in; O)!>O<!>, p: P)
     fun parameters2(i: In<<!TYPE_VARIANCE_CONFLICT(I; in; out; In<I>)!>I<!>>)
     fun parameters3(i: In<O>)

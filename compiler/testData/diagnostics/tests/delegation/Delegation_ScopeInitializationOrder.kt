@@ -1,8 +1,8 @@
-trait A {
+interface A {
   fun foo() {}
 }
 
-trait B : A {}
+interface B : A {}
 
 class C(b : B) : B by b {
 

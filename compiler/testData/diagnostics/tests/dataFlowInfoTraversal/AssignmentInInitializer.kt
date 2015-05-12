@@ -1,8 +1,8 @@
 // KT-2825  DataFlowInfo is not retained after assignment
 
-trait A
+interface A
 
-trait B : A {
+interface B : A {
     fun foo()
 }
 

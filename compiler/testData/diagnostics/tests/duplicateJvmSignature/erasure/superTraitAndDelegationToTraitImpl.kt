@@ -1,10 +1,10 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-trait A<T> {
+interface A<T> {
     fun foo(l: List<T>)
 }
 
-trait B {
+interface B {
     fun foo(l: List<Int>) {}
 }
 

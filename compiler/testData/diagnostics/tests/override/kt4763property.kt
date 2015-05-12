@@ -1,4 +1,4 @@
-trait P {
+interface P {
     var f: Number
 }
 

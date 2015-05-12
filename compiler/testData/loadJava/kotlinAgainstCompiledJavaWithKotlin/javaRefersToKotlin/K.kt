@@ -1,3 +1,3 @@
 package test
 
-trait K
+interface K

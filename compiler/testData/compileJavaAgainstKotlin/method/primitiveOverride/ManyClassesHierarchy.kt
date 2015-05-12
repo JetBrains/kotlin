@@ -1,10 +1,10 @@
 package test
 
-trait A<T> {
+interface A<T> {
     fun foo(): T
 }
 
-trait B : A<Int>
+interface B : A<Int>
 
 abstract class C : B
 

@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
-trait B {
+interface B {
     fun b_fun() {}
 }
 

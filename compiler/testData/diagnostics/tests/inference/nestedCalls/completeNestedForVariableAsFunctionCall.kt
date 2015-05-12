@@ -1,6 +1,6 @@
 package j
 
-trait MyFunc<T> {}
+interface MyFunc<T> {}
 
 class A(val b: B) {
 }

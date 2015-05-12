@@ -1,4 +1,4 @@
-trait Expr
+interface Expr
 class BinOp(val operator : String) : Expr
 
 fun test(e : Expr) {

@@ -1,6 +1,6 @@
 // Derived
 
-trait Base {
+interface Base {
     fun baz(s: String): String
 }
 

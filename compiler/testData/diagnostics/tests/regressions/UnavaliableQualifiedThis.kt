@@ -1,4 +1,4 @@
-trait Iterator<out T> {
+interface Iterator<out T> {
  fun next() : T
  val hasNext : Boolean
 

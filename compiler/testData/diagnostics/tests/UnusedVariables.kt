@@ -112,7 +112,7 @@ fun testFunctionLiterals() {
     }
 }
 
-trait Trait {
+interface Trait {
     fun foo()
 }
 

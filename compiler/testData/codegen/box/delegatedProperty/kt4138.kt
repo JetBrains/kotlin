@@ -11,7 +11,7 @@ class Foo (val f: Int) {
     }
 }
 
-trait FooTrait {
+interface FooTrait {
     companion object {
         val A: Foo by Delegate(Foo(11))
         var B: Foo by Delegate(Foo(11))

@@ -1,11 +1,11 @@
 package a
 
-trait A {
+interface A {
     val b: B
     val nb: B?
 }
 
-trait B {
+interface B {
     fun foo(): Int
 }
 

@@ -1,12 +1,12 @@
 package test
 
-public trait InheritMutability {
+public interface InheritMutability {
 
-    public trait Super {
+    public interface Super {
         public fun <A: MutableList<String>> foo(a: A)
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun <B: MutableList<String>> foo(a: B)
     }
 }

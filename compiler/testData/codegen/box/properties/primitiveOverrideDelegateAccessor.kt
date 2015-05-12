@@ -3,7 +3,7 @@ class Holder(var value: Int) {
     fun set(that: Any?, desc: PropertyMetadata, newValue: Int) { value = newValue }
 }
 
-trait R<T: Comparable<T>> {
+interface R<T: Comparable<T>> {
     var value: T
 }
 

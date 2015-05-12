@@ -5,12 +5,12 @@ public interface I extends Boo {
 }
 
 // FILE: Baz.kt
-public trait Foo {
+public interface Foo {
     companion object {
         public val EMPTY: Foo = object : Foo{}
     }
 }
 
-trait Boo
+interface Boo
 
 public class Baz : Bar.I

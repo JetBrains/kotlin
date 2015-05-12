@@ -1,6 +1,6 @@
 package test
 
-trait TheTrait {
+interface TheTrait {
   companion object {
   }
 }

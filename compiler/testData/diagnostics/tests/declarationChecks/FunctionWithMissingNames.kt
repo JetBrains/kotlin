@@ -1,6 +1,6 @@
 annotation class a
-trait A
-trait B
+interface A
+interface B
 
 <!FUNCTION_DECLARATION_WITH_NO_NAME, CONFLICTING_OVERLOADS!>fun ()<!> {}
 <!FUNCTION_DECLARATION_WITH_NO_NAME, CONFLICTING_OVERLOADS!>fun A.()<!> {}

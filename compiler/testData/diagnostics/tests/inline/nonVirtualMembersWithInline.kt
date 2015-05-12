@@ -27,7 +27,7 @@ abstract class A {
 }
 
 
-trait B {
+interface B {
 
     inline private fun good1() {}
     inline public final fun good2() {}

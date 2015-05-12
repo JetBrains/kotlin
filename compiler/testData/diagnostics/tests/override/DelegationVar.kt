@@ -1,6 +1,6 @@
 package delegation
 
-trait Aaa {
+interface Aaa {
     var i: Int
 }
 

@@ -1,7 +1,7 @@
 package a
 
-trait Persistent
-trait PersistentFactory<T>
+interface Persistent
+interface PersistentFactory<T>
 
 class Relation<Source: Persistent, Target: Persistent>(
         val sources: PersistentFactory<Source>,

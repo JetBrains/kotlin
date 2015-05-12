@@ -1,6 +1,6 @@
 package a
 
-trait A
+interface A
 
 fun <T> emptyList(): List<T> = throw Exception()
 

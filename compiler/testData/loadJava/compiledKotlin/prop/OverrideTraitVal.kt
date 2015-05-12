@@ -1,7 +1,7 @@
 //ALLOW_AST_ACCESS
 package test
 
-trait Trait {
+interface Trait {
     val shape: String
 }
 

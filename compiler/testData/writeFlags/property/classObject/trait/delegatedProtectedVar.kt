@@ -8,7 +8,7 @@ class TestDelegate() {
     }
 }
 
-trait Test {
+interface Test {
   companion object {
     protected var prop: Int by TestDelegate()
   }

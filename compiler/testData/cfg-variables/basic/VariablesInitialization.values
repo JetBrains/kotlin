@@ -28,7 +28,7 @@ foo                      <v3>: {<: Foo}   NEW: r(foo) -> <v3>
 { foo.c foo.c = 2 42 }   <v5>: *          COPY                                          
 =====================
 == Foo ==
-trait Foo {
+interface Foo {
     var c: Int
 }
 ---------------------

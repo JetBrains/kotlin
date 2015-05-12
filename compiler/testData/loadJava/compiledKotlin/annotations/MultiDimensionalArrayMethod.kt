@@ -3,7 +3,7 @@ package test
 
 annotation class Anno(val s: String)
 
-trait T {
+interface T {
     Anno("foo")
     fun foo(): Array<Array<Array<T>>>
 

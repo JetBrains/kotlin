@@ -1,4 +1,4 @@
-trait B {
+interface B {
   fun bar() {}
 }
 

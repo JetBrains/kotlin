@@ -48,6 +48,6 @@ fun foo() {
     val prop8 = a + 1
 }
 
-trait Foo {
+interface Foo {
     fun f()
 }

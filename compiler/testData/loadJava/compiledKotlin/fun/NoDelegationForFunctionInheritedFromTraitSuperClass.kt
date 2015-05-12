@@ -4,7 +4,7 @@ abstract class A {
     abstract fun foo()
 }
 
-trait X : A {
+interface X : A {
     fun bar() {
     }
 }

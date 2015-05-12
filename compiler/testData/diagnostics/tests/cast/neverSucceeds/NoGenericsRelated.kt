@@ -1,12 +1,12 @@
 // !DIAGNOSTICS: -WARNING +CAST_NEVER_SUCCEEDS
-trait T1
-trait T2
-trait T3
+interface T1
+interface T2
+interface T3
 open class OC1: T1
 open class OC2: OC1(), T2
 class FC1: OC2(), T3
-trait T4: OC1
-trait T5: T2
+interface T4: OC1
+interface T5: T2
 
 fun test<TP1: OC1, TP2: T2, TP3: OC2>(
     t2: T2,

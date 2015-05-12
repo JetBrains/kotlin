@@ -1,6 +1,6 @@
 var index = 0
 
-trait IterableIterator : Iterator<Int> {
+interface IterableIterator : Iterator<Int> {
     fun iterator(): Iterator<Int> = this
 }
 

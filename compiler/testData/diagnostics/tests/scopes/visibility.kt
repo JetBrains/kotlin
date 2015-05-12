@@ -2,7 +2,7 @@
 package test_visibility
 
 <!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> class ProtectedClass
-<!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> trait ProtectedTrait
+<!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> interface ProtectedTrait
 
 <!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> val protected_val : Int = 4
 <!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> fun protected_fun() {}
@@ -42,7 +42,7 @@ fun test3(a: A) {
     a.<!INVISIBLE_MEMBER!>f<!>(0, <!TOO_MANY_ARGUMENTS!>1<!>) //todo .bMethod()
 }
 
-trait T
+interface T
 
 open class C : T {
     protected var i : Int = 34

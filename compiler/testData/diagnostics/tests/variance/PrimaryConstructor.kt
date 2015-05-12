@@ -1,6 +1,6 @@
-trait In<in T>
-trait Out<out T>
-trait Inv<T>
+interface In<in T>
+interface Out<out T>
+interface Inv<T>
 
 fun <T> getT(): T = null!!
 

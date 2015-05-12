@@ -1,6 +1,6 @@
 package foo
 
-trait B {
+interface B {
     val c: Int
         get() = 2
 }

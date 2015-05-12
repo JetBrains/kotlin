@@ -1,6 +1,6 @@
 // FILE: AC.kt
 
-trait A {
+interface A {
     val a: Int
 }
 

@@ -4,7 +4,7 @@ fun foo(block: () -> String) = block()
 
 inline fun<reified T> className(): String = javaClass<T>().getName()
 
-trait A {
+interface A {
     fun f(): String
     fun g(): String
 }

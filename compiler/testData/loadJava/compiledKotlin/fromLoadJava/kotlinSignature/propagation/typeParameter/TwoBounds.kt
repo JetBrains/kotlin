@@ -1,12 +1,12 @@
 package test
 
-public trait TwoBounds {
+public interface TwoBounds {
 
-    public trait Super {
+    public interface Super {
         public fun <A: CharSequence> foo(a: A) where A: Cloneable
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun <B: CharSequence> foo(a: B) where B: Cloneable
     }
 }

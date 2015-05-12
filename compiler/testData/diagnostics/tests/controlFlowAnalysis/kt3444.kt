@@ -3,7 +3,7 @@ fun box() {
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 }
 
-trait X {
+interface X {
     fun f(): Boolean
 }
 

@@ -1,9 +1,9 @@
 // !CHECK_TYPE
-trait A<T>
+interface A<T>
 
-trait In<in T>
+interface In<in T>
 
-trait Out<out T>
+interface Out<out T>
 
 fun <T: Any> doT(t: T?): T = throw Exception("$t")
 fun <T: Any> doOut(o: Out<T?>): T { throw Exception("$o") }

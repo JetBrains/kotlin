@@ -1,7 +1,7 @@
 //KT-2397 Prohibit final methods in traits with no implementation
 package a
 
-trait T {
+interface T {
     <!FINAL_FUNCTION_WITH_NO_BODY!>final<!> fun foo()
     <!FINAL_PROPERTY_IN_TRAIT!>final<!> val b : Int
 

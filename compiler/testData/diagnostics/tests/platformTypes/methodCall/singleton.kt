@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
-trait Foo
+interface Foo
 
 fun test() {
     var nullable: Foo? = null

@@ -1,12 +1,12 @@
-trait A {
+interface A {
     fun test(): String
 }
 
-trait B {
+interface B {
     fun test(): String
 }
 
-trait C: A, B
+interface C: A, B
 
 class Z(val param: String): C {
 

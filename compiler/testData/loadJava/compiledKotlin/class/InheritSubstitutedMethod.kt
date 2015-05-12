@@ -1,7 +1,7 @@
 //ALLOW_AST_ACCESS
 package test
 
-public trait A<T> {
+public interface A<T> {
     fun bar(): T
     fun foo(): T = bar()
 }

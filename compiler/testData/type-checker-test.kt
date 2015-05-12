@@ -38,14 +38,14 @@ fun f(a : Int) : Int {a}
 fun f(a : Float, b : Int) : Float {a}
 fun f<T>(a : Float) : T {a}
 
-trait Parent
-trait A: Parent
-trait B: Parent
+interface Parent
+interface A: Parent
+interface B: Parent
 
-trait Rec<T>
+interface Rec<T>
 class ARec : Rec<ARec>
 class BRec : Rec<BRec>
-trait SubRec<T>: Rec<T>
+interface SubRec<T>: Rec<T>
 
-trait Star<T : Star<T>>
-trait SubStar<T : SubStar<T>> : Star<T>
+interface Star<T : Star<T>>
+interface SubStar<T : SubStar<T>> : Star<T>

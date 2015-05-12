@@ -1,4 +1,4 @@
-trait T {
+interface T {
     final fun component1(): Int = 42
 }
 

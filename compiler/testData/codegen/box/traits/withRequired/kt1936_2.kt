@@ -2,7 +2,7 @@ open class MyClass(param : String) {
     var propterty = param
 }
 
-trait MyTrait : MyClass
+interface MyTrait : MyClass
 {
     fun foo()  = propterty
 }

@@ -1,16 +1,16 @@
 // !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
-trait One {
+interface One {
   public open fun foo() : Int
   private fun boo() = 10
 }
-trait Two {
+interface Two {
   public open fun foo() : Int
 }
 
-trait OneImpl : One {
+interface OneImpl : One {
   public override fun foo() = 1
 }
-trait TwoImpl : Two {
+interface TwoImpl : Two {
   public override fun foo() = 2
 }
 

@@ -1,8 +1,8 @@
-trait One {
+interface One {
   public open fun foo() : Int
   public open fun faz() : Int = 10
 }
-trait Two {
+interface Two {
   public open fun foo() : Int
   public open fun quux() : Int = 100
 }

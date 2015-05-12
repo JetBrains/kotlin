@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNREACHABLE_CODE
-trait Tr<T> {
+interface Tr<T> {
     var v: T
 }
 

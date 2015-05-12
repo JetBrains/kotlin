@@ -1,6 +1,6 @@
 package test
 
-trait B {
+interface B {
     fun foo(kotlinName: Int)
 }
 

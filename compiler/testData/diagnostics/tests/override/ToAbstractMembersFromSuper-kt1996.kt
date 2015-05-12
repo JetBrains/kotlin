@@ -1,10 +1,10 @@
 // http://youtrack.jetbrains.com/issue/KT-1996
 
-trait Foo {
+interface Foo {
     fun foo(): Unit
 }
 
-trait Bar {
+interface Bar {
     fun foo(): Unit
 }
 

@@ -1,6 +1,6 @@
 //KT-2206
 
-trait A {
+interface A {
     var a:Int
         get() = 239
         set(value) {

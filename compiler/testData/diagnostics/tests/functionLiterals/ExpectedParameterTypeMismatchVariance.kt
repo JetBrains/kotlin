@@ -1,7 +1,7 @@
 package a
 
-trait Super
-trait Trait : Super
+interface Super
+interface Trait : Super
 class Sub : Trait
 
 fun foo(f: (Trait) -> Trait) = f

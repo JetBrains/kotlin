@@ -1,6 +1,6 @@
 var result = "Fail"
 
-trait MyTrait
+interface MyTrait
 {
     var property : String
     fun foo()  {

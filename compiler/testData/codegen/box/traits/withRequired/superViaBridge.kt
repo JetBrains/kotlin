@@ -3,7 +3,7 @@ open class Base {
     open fun foo2() { }
 }
 
-trait Derived : Base {
+interface Derived : Base {
     override fun foo() {
         object {
             fun bar() {

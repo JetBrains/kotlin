@@ -1,7 +1,7 @@
 //KT-2226 Parameter used as delegation by object marked as unused
 package a
 
-trait A {
+interface A {
     fun foo() : Int
 }
 

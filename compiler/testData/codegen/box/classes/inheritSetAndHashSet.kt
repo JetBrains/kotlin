@@ -1,6 +1,6 @@
 import java.util.HashSet
 
-trait A : Set<String>
+interface A : Set<String>
 
 class B : A, HashSet<String>()
 

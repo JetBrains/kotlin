@@ -1,6 +1,6 @@
 // !CHECK_TYPE
 
-trait A<R, T: A<R, T>> {
+interface A<R, T: A<R, T>> {
     fun r(): R
     fun t(): T
 }
@@ -10,7 +10,7 @@ fun testA(a: A<*, *>) {
     a.t().checkType { _<A<*, *>>() }
 }
 
-trait B<R, T: B<List<R>, <!UPPER_BOUND_VIOLATED!>T<!>>> {
+interface B<R, T: B<List<R>, <!UPPER_BOUND_VIOLATED!>T<!>>> {
     fun r(): R
     fun t(): T
 }

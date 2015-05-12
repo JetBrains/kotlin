@@ -1,4 +1,4 @@
-trait Pa<X, Y>
+interface Pa<X, Y>
 
 fun foo(<!UNUSED_PARAMETER(IGNORE)!>u<!> : Unit) : Int = 1
 fun bas(<!UNUSED_PARAMETER!>u<!> : Pa<Int, String>) = 3

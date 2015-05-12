@@ -1,3 +1,3 @@
 package test
 
-trait Trtrtr
+interface Trtrtr

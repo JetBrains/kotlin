@@ -1,6 +1,6 @@
 package test
 
-trait A {
+interface A {
   fun foo() {}
 
   fun bar() {}

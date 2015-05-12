@@ -1,6 +1,6 @@
 import kotlin.support.*
 
-trait Stream<T> {
+interface Stream<T> {
     fun iterator(): Iterator<T>
 }
 

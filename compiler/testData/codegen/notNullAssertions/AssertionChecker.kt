@@ -11,7 +11,7 @@ class AssertionChecker(val illegalStateExpected: Boolean) {
 }
 
 
-trait Tr { 
+interface Tr {
     fun foo(): String
 }
 

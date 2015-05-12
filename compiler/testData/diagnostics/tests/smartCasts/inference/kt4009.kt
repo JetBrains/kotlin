@@ -1,9 +1,9 @@
-trait PsiElement {
+interface PsiElement {
     fun getText(): String
     fun getParent(): PsiElement
 }
 
-trait JetExpression : PsiElement
+interface JetExpression : PsiElement
 
 fun foo1(e: PsiElement) {
     var current: PsiElement? = e

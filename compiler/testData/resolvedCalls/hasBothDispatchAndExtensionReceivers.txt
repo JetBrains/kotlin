@@ -2,7 +2,7 @@ class A {
     fun B.foo() {}
 }
 
-trait B
+interface B
 
 fun bar(a: A, b: B) {
     with (a) {

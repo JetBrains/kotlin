@@ -1,9 +1,9 @@
-trait Base {
+interface Base {
     fun f() = 1
 }
     
 open class Left() : Base
 
-trait Right : Base
+interface Right : Base
 
 class Diamond() : Left(), Right

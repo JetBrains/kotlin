@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-trait A<T> {
+interface A<T> {
     fun foo(): Int
 }
 

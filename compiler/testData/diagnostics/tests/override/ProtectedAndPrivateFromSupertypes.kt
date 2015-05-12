@@ -1,10 +1,10 @@
 package test
 
-trait A {
+interface A {
     protected val a: String
 }
 
-trait B {
+interface B {
     protected val a: String
 }
 

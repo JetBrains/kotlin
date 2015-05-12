@@ -12,7 +12,7 @@ public class J {
 
 import p.*
 
-trait Out<out T1>
+interface Out<out T1>
 
 fun <T> f(a: Out<T>, b: Out<T>, c: Out<T>): T = null!!
 fun <T> out(t: T): Out<MutableList<T>> = null!!

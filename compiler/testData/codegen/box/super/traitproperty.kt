@@ -1,4 +1,4 @@
-trait M {
+interface M {
     var backingB : Int
     var b : Int
         get() = backingB

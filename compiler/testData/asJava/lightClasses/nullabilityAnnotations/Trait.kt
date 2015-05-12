@@ -3,7 +3,7 @@
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
-trait Trait {
+interface Trait {
     fun notNull(a: String): String
     fun nullable(a: String?): String?
 

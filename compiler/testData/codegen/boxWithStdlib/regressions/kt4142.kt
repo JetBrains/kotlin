@@ -3,7 +3,7 @@ open class B {
         get() = "OK"
 }
 
-trait A {
+interface A {
     val name: String
 }
 

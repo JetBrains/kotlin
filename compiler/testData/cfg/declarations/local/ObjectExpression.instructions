@@ -1,5 +1,5 @@
 == A ==
-trait A {
+interface A {
     fun foo() : Int
 }
 ---------------------

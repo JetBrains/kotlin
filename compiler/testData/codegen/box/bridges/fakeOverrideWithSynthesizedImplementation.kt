@@ -1,6 +1,6 @@
 open data class A(val value: String)
 
-trait B {
+interface B {
     fun component1(): Any
 }
 

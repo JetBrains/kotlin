@@ -2,7 +2,7 @@
 
 package test
 
-trait A {
+interface A {
     val v: String
         get() = "test"
 }

@@ -1,5 +1,5 @@
-trait Base {
-    fun bar(a: String = "abc"): String = a + " from trait"
+interface Base {
+    fun bar(a: String = "abc"): String = a + " from interface"
 }
 
 class Derived: Base {

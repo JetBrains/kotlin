@@ -6,7 +6,7 @@ class A {
 
 <!ILLEGAL_ENUM_ANNOTATION!>enum<!> object O {}
 
-<!ILLEGAL_ENUM_ANNOTATION!>enum<!> trait T {}
+<!ILLEGAL_ENUM_ANNOTATION!>enum<!> interface T {}
 
 <!ILLEGAL_ENUM_ANNOTATION!>enum<!> fun f() = 0
 

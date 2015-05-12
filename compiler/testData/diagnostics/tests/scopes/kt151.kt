@@ -19,7 +19,7 @@ open class C {
     internal open fun foo() {}
 }
 
-trait T {
+interface T {
     protected fun foo() {}
 }
 

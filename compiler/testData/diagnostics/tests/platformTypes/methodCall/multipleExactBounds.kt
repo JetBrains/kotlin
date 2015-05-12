@@ -1,9 +1,9 @@
 import java.util.HashMap
 
-trait ModuleDescriptorImpl
-trait ModuleInfo
-trait ResolverForModule
-trait ResolverForProject<M1, R1>
+interface ModuleDescriptorImpl
+interface ModuleInfo
+interface ResolverForModule
+interface ResolverForProject<M1, R1>
 
 class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
         <!UNUSED_PARAMETER!>descriptorByModule<!>: Map<M, ModuleDescriptorImpl>,

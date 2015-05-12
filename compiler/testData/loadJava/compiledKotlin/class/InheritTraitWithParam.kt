@@ -1,5 +1,5 @@
 package test
 
-trait Aaa<P>
+interface Aaa<P>
 
 class Bbb() : Aaa<java.util.Random>

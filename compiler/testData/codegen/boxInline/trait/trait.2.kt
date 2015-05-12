@@ -1,6 +1,6 @@
 package test
 
-trait InlineTrait {
+interface InlineTrait {
 
     inline final fun finalInline(s: () -> String): String {
         return s()

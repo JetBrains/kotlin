@@ -1,4 +1,4 @@
-trait SuperTrait {
+interface SuperTrait {
   override fun toString(): String = "!"
 }
 

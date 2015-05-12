@@ -10,7 +10,7 @@ class StandardPipelineFactory(val config : ChannelPipeline.() -> Unit) : Channel
     }
 }
 
-trait ChannelPipeline  {
+interface ChannelPipeline  {
   fun print(any: Any)
 }
 
@@ -19,7 +19,7 @@ class DefaultChannelPipeline : ChannelPipeline {
 
 }
 
-trait ChannelPipelineFactory {
+interface ChannelPipelineFactory {
     fun getPipeline() : ChannelPipeline
 }
 

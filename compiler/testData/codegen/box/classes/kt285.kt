@@ -1,4 +1,4 @@
-trait Trait {
+interface Trait {
     fun foo() = "O"
     override fun toString() = "K"
 }

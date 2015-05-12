@@ -2,9 +2,9 @@
 
 // KT-4034 An expression of type Nothing may not affect 'definite return' analysis
 
-trait JavaClassifierType
-trait TypeUsage
-trait JetType
+interface JavaClassifierType
+interface TypeUsage
+interface JetType
 
 private fun transformClassifierType(classifierType: JavaClassifierType, howThisTypeIsUsed: TypeUsage): JetType? {
     null!!

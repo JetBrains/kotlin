@@ -1,6 +1,6 @@
 package test
 
-public trait MCloseable {
+public interface MCloseable {
     public open fun close()
 }
 

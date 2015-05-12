@@ -1,8 +1,8 @@
-trait T1 {
+interface T1 {
     fun getX() = 1
 }
 
-trait T2 {
+interface T2 {
     val x: Int
         get() = 1
 }

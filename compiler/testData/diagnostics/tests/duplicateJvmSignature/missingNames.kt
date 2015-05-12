@@ -16,7 +16,7 @@ object <!SYNTAX!><!>{
 
 }
 
-trait<!SYNTAX!><!> {
+interface<!SYNTAX!><!> {
 
 }
 
@@ -43,7 +43,7 @@ class Outer {
 
     }
 
-    <!REDECLARATION!>trait<!SYNTAX!><!> {
+    <!REDECLARATION!>interface<!SYNTAX!><!> {
 
     }<!>
 

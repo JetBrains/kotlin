@@ -1,6 +1,6 @@
 // KT-4145
 
-trait A {
+interface A {
     fun foo(): Any
 }
 

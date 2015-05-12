@@ -1,6 +1,6 @@
 package override
 
-trait T {
+interface T {
     fun foo()
     val v : Int
 }
@@ -21,7 +21,7 @@ class Br2(t : T) : Br1(t) {
 
 }
 
-trait G<T> {
+interface G<T> {
     fun foo(t : T) : T
 }
 

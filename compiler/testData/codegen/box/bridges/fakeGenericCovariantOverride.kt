@@ -1,6 +1,6 @@
 // KT-3985
 
-trait Trait<T> {
+interface Trait<T> {
     fun f(): T
 }
 

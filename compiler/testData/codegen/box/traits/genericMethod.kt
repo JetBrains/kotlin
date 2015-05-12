@@ -1,4 +1,4 @@
-trait A<T> {
+interface A<T> {
     val property : T
 
     open  fun a() : T {

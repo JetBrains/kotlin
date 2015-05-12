@@ -2,7 +2,7 @@ open class AL<T> {
     fun get(index: Int) : T? = null
 }
 
-trait ALE<T> : AL<T> {
+interface ALE<T> : AL<T> {
     fun getOrValue(index: Int, value : T) : T = get(index) ?: value
 }
 

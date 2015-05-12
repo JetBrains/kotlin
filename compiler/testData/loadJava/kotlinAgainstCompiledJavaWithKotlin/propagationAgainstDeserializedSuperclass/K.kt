@@ -1,5 +1,5 @@
 package test
 
-trait K {
+interface K {
     public fun foo(l: MutableList<String>): String
 }

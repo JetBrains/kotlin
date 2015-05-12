@@ -1,6 +1,6 @@
 package abstract
 
-trait MyTrait {
+interface MyTrait {
     //properties
     val a: Int
     val a1: Int = <!PROPERTY_INITIALIZER_IN_TRAIT!>1<!>

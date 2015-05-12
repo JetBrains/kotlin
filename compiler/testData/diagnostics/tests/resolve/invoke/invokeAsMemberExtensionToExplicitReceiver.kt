@@ -1,5 +1,5 @@
-trait A
-trait Foo {
+interface A
+interface Foo {
     fun A.invoke()
 }
 

@@ -1,4 +1,4 @@
-trait N
+interface N
 
 open class Base(n: N)
 

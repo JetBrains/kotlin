@@ -1,7 +1,7 @@
-trait Foo
-trait Bar
+interface Foo
+interface Bar
 
-trait A {
+interface A {
     fun <T> foo()
     where T : Foo, T : Bar
     = Unit

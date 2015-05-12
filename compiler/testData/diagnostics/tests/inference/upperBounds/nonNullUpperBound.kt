@@ -4,7 +4,7 @@ fun <T: Any> foo(v: Any): T? = unescape(v)
 
 //--------------
 
-trait A
+interface A
 
 fun <R : A> unescapeA(value: Any): R? = throw Exception("$value")
 

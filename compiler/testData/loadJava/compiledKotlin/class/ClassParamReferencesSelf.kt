@@ -1,5 +1,5 @@
 package test
 
-trait TraitWithP<P>
+interface TraitWithP<P>
 
 class ClassParamReferencesSelf<A : TraitWithP<A>>

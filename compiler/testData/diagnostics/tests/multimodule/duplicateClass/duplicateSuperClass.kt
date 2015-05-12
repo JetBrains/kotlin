@@ -4,7 +4,7 @@
 
 package p
 
-public trait A
+public interface A
 public class B : A
 public class M1 {
     public val b: B = B()
@@ -15,7 +15,7 @@ public class M1 {
 
 package p
 
-public trait A
+public interface A
 
 public fun foo(a: A) {
 }

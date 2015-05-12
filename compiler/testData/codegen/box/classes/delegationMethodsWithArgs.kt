@@ -1,14 +1,14 @@
 package test
 
-trait TextField {
+interface TextField {
     fun getText(): String
 }
 
-trait InputTextField : TextField {
+interface InputTextField : TextField {
     fun setText(text: String)
 }
 
-trait MooableTextField : InputTextField {
+interface MooableTextField : InputTextField {
     fun moo(a: Int, b: Int, c: Int): Int
 }
 

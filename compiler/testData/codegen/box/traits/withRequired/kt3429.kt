@@ -4,7 +4,7 @@ open class Base {
     }
 }
 
-trait Trait: Base {
+interface Trait: Base {
     override fun sayHello(): String {
         return "OK"
     }

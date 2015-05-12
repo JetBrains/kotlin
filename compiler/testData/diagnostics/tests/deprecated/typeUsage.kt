@@ -8,7 +8,7 @@ open class Obsolete2 [deprecated("Constructor")]() {
     fun use() {}
 }
 
-trait Generic<T>
+interface Generic<T>
 
 open class Derived() : <!DEPRECATED_SYMBOL_WITH_MESSAGE!>Obsolete<!>()
 

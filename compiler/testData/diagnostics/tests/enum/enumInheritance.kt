@@ -7,5 +7,5 @@ open class MyClass() {}
 
 enum class MyEnumBase() {}
 
-trait MyTrait {}
+interface MyTrait {}
 

@@ -2,7 +2,7 @@ package test
 
 import org.jetbrains.annotations.*
 
-public trait LoadIterable<T> {
+public interface LoadIterable<T> {
     Mutable
     public fun getIterable(): MutableIterable<T>?
     public fun setIterable([Mutable] p0: MutableIterable<T>?)

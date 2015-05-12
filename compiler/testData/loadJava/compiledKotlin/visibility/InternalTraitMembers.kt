@@ -1,6 +1,6 @@
 package test
 
-trait A {
+interface A {
     internal fun f() : Int
     internal val v : Int
     public var p : Int

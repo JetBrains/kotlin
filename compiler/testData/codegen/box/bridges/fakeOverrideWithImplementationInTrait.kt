@@ -1,8 +1,8 @@
-trait A {
+interface A {
     fun foo(): String = "A"
 }
 
-trait B {
+interface B {
     fun foo(): Any
 }
 

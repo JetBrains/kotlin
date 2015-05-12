@@ -1,12 +1,12 @@
 package org.example
 
-trait SomeTrait {}
+interface SomeTrait {}
 
-trait KotlinProcessor<T> {
+interface KotlinProcessor<T> {
     fun execute(callback: KotlinCallback<T>?);
 }
 
-trait KotlinCallback<T> {
+interface KotlinCallback<T> {
     fun on(t : T);
 }
 

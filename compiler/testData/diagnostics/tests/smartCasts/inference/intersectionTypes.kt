@@ -8,9 +8,9 @@ fun <T> two(u: T, <!UNUSED_PARAMETER!>v<!>: T): T = u
 
 fun <T> three(<!UNUSED_PARAMETER!>a<!>: T, <!UNUSED_PARAMETER!>b<!>: T, c: T): T = c
 
-trait A
-trait B: A
-trait C: A
+interface A
+interface B: A
+interface C: A
 
 fun test(a: A, b: B, c: C) {
     if (a is B && a is C) {

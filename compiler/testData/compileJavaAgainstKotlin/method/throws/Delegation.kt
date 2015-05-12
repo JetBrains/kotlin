@@ -3,7 +3,7 @@ package test
 class E1: Exception()
 class E2: Exception()
 
-trait Trait {
+interface Trait {
     throws()
     fun none()
 

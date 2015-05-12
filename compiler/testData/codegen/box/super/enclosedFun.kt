@@ -1,8 +1,8 @@
-trait BK {
+interface BK {
     fun x() : Int = 50
 }
 
-trait K : BK {
+interface K : BK {
     override fun x() : Int = super.x() * 2
 }
 

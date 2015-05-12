@@ -1,5 +1,5 @@
 class Foo {
-  trait MyClass {
+  interface MyClass {
   }
 }
 

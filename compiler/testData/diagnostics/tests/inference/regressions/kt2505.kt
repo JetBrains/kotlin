@@ -4,7 +4,7 @@
 
 package a
 
-trait MyType {}
+interface MyType {}
 class MyClass<T> : MyType {}
 
 public open class HttpResponse() {

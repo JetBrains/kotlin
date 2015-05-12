@@ -1,13 +1,13 @@
-trait T {
+interface T {
     public var foo: Short
         internal set
 }
 
-trait U {
+interface U {
     public var foo: Short
         protected set
 }
 
-trait V : T, U {
+interface V : T, U {
     <!CANNOT_INFER_VISIBILITY!>override var foo: Short<!>
 }

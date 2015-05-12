@@ -2,7 +2,7 @@
 
 import fieldAccessFromExtensionInTraitImpl as D
 
-trait T {
+interface T {
     fun Int.foo(d: D) = d.result!!
 }
 

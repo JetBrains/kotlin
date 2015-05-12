@@ -1,18 +1,18 @@
-trait In<in T>
-trait Out<out T>
-trait Inv<T>
+interface In<in T>
+interface Out<out T>
+interface Inv<T>
 
-trait TypeBounds1<in I, out O, P, X : <!TYPE_VARIANCE_CONFLICT(I; in; out; I)!>I<!>>
-trait TypeBounds2<in I, out O, P, X : O>
-trait TypeBounds3<in I, out O, P, X : P>
-trait TypeBounds4<in I, out O, P, X : In<I>>
-trait TypeBounds5<in I, out O, P, X : In<<!TYPE_VARIANCE_CONFLICT(O; out; in; In<O>)!>O<!>>>
+interface TypeBounds1<in I, out O, P, X : <!TYPE_VARIANCE_CONFLICT(I; in; out; I)!>I<!>>
+interface TypeBounds2<in I, out O, P, X : O>
+interface TypeBounds3<in I, out O, P, X : P>
+interface TypeBounds4<in I, out O, P, X : In<I>>
+interface TypeBounds5<in I, out O, P, X : In<<!TYPE_VARIANCE_CONFLICT(O; out; in; In<O>)!>O<!>>>
 
-trait WhereTypeBounds1<in I, out O, P, X> where X : <!TYPE_VARIANCE_CONFLICT(I; in; out; I)!>I<!>
-trait WhereTypeBounds2<in I, out O, P, X> where X : O
-trait WhereTypeBounds3<in I, out O, P, X> where X : P
-trait WhereTypeBounds4<in I, out O, P, X> where X : In<I>
-trait WhereTypeBounds5<in I, out O, P, X> where X : In<<!TYPE_VARIANCE_CONFLICT(O; out; in; In<O>)!>O<!>>
+interface WhereTypeBounds1<in I, out O, P, X> where X : <!TYPE_VARIANCE_CONFLICT(I; in; out; I)!>I<!>
+interface WhereTypeBounds2<in I, out O, P, X> where X : O
+interface WhereTypeBounds3<in I, out O, P, X> where X : P
+interface WhereTypeBounds4<in I, out O, P, X> where X : In<I>
+interface WhereTypeBounds5<in I, out O, P, X> where X : In<<!TYPE_VARIANCE_CONFLICT(O; out; in; In<O>)!>O<!>>
 
 class SubClass1<in I, out O, P> : Out<<!TYPE_VARIANCE_CONFLICT(I; in; out; Out<I>)!>I<!>>
 class SubClass2<in I, out O, P> : Out<O>

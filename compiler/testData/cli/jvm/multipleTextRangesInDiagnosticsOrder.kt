@@ -1,7 +1,7 @@
-trait A {
+interface A {
     public val c: Int
 }
 
-trait B: A {
+interface B: A {
     override protected private val c: Int
 }

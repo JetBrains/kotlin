@@ -1,4 +1,4 @@
-trait MyClass {
+interface MyClass {
 }
 
 // TESTED_OBJECT_KIND: class

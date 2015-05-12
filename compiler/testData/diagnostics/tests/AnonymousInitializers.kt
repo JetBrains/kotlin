@@ -1,4 +1,4 @@
-trait NoC {
+interface NoC {
   <!ANONYMOUS_INITIALIZER_IN_TRAIT!>init {
 
   }<!>

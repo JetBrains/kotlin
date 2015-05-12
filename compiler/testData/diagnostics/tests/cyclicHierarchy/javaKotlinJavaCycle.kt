@@ -6,7 +6,7 @@ interface A extends C {
 
 // FILE: B.kt
 
-trait B : <!CYCLIC_INHERITANCE_HIERARCHY!>A<!> {
+interface B : <!CYCLIC_INHERITANCE_HIERARCHY!>A<!> {
     fun bar()
 }
 

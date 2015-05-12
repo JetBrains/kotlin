@@ -2,6 +2,6 @@
 
 object O : Tr<V<*>>
 
-trait Tr<T>
+interface Tr<T>
 
 class V<out S>

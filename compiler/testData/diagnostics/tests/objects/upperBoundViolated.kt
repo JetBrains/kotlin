@@ -1,4 +1,4 @@
-trait Trait<N : Number>
+interface Trait<N : Number>
 
 object O1 : Trait<Int>
 

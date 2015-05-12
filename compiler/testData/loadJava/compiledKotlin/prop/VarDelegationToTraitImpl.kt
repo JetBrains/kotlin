@@ -2,7 +2,7 @@ package test
 
 // test composed from KT-2193
 
-trait A {
+interface A {
     open var v: String
         get() = "test"
         set(value) {

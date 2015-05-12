@@ -1,6 +1,6 @@
-trait A
+interface A
 
-trait B
+interface B
 
 fun test1(): B = <!TYPE_MISMATCH!>object : A<!> {
 }

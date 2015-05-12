@@ -5,7 +5,7 @@ fun String.bar(n: Int): Int? = noImpl
 
 
 native
-trait T {
+interface T {
     nativeGetter
     fun foo(d: Double): String?
     nativeGetter

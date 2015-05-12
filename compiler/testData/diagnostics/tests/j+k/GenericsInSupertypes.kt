@@ -9,7 +9,7 @@ public interface G<TG> {
 
 package p;
 
-public trait A<TA> {
+public interface A<TA> {
     fun foo(p: A<TA>)
 }
 

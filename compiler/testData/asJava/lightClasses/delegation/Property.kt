@@ -1,6 +1,6 @@
 // Derived
 
-trait Base {
+interface Base {
     val boo: String
 }
 

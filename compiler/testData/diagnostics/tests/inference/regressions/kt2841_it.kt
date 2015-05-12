@@ -1,6 +1,6 @@
 package a
 
-trait Closeable {
+interface Closeable {
     fun close() {}
 }
 

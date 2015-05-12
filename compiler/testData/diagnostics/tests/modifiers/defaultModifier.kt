@@ -27,7 +27,7 @@ class D {
     <!COMPANION_OBJECT_NOT_ALLOWED!>companion<!> object
 }
 
-<!ILLEGAL_MODIFIER!>companion<!> trait H {
+<!ILLEGAL_MODIFIER!>companion<!> interface H {
     companion object
 }
 

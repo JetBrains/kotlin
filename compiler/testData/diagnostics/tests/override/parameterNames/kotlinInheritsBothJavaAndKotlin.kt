@@ -6,7 +6,7 @@ interface JavaInterface {
 
 // FILE: kotlin.kt
 
-trait KotlinTrait {
+interface KotlinTrait {
     public fun foo(someOtherName: Int) {}
 }
 

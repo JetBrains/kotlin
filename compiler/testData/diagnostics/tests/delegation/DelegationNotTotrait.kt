@@ -4,7 +4,7 @@ open class Foo() {
 
 class Barrr() : <!DELEGATION_NOT_TO_TRAIT!>Foo<!> by Foo() {}
 
-trait T {}
+interface T {}
 
 class Br(t : T) : T by t {}
 

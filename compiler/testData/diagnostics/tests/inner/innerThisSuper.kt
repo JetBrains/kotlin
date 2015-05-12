@@ -1,4 +1,4 @@
-trait Trait {
+interface Trait {
     fun bar() = 42
 }
 

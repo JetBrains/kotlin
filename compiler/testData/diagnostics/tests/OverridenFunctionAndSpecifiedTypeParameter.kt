@@ -1,5 +1,5 @@
 
-trait Aaa<T> {
+interface Aaa<T> {
   fun zzz(value: T): Unit
 }
 

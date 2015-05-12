@@ -1,6 +1,6 @@
 // !CHECK_TYPE
 
-trait Inv<I>
+interface Inv<I>
 
 fun <S, T: S> Inv<T>.reduce2(): S = null!!
 

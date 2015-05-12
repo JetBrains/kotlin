@@ -4,7 +4,7 @@ class Delegate {
     fun propertyDelegated(p: PropertyMetadata) { name = p.name }
 }
 
-trait A {
+interface A {
     val prop: String
 }
 

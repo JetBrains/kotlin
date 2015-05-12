@@ -1,6 +1,6 @@
 // KT-880 Overload resolution ambiguity
 
-public trait I {
+public interface I {
     open fun test() : Unit
 }
 

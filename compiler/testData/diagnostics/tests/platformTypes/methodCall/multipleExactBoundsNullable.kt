@@ -1,6 +1,6 @@
 import java.util.HashMap
 
-trait ResolverForProject<M1> {
+interface ResolverForProject<M1> {
     val exposeM: M1 get() = null!!
 }
 
@@ -9,7 +9,7 @@ class ResolverForProjectImpl<M>(
         <!UNUSED_PARAMETER!>delegateResolver<!>: ResolverForProject<M>
 ) : ResolverForProject<M>
 
-trait WithFoo {
+interface WithFoo {
     fun foo()
 }
 

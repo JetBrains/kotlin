@@ -3,7 +3,7 @@ open class Foo() {
 }
 
 
-trait T: Foo {
+interface T: Foo {
     public fun xyzzy(): String = o() + k()
     public fun o(): String
 }

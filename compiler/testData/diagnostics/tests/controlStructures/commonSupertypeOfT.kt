@@ -16,7 +16,7 @@ fun <T: Any> fn(t1: T, t2: T?) {
     y.hashCode()
 }
 
-trait Tr {
+interface Tr {
     fun foo()
 }
 

@@ -1,4 +1,4 @@
-trait IActing {
+interface IActing {
   fun act(): String
 }
 

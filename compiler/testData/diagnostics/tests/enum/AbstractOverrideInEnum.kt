@@ -7,6 +7,6 @@ enum class E : T {
     abstract override fun f()
 }
 
-trait T {
+interface T {
     fun f()
 }

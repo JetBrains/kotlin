@@ -2,7 +2,7 @@
 
 package kt1141
 
-public trait SomeTrait {
+public interface SomeTrait {
     fun foo()
 }
 

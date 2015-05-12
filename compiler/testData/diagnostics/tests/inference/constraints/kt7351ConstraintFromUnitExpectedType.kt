@@ -2,9 +2,9 @@
 
 package kt7351
 
-trait Node
+interface Node
 
-trait Source<T> {
+interface Source<T> {
     fun f() : T
 }
 fun <T, S : Source<T>> S.woo() : T = this.f()

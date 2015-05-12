@@ -1,5 +1,5 @@
 
-trait Derived<A>: List<A>
+interface Derived<A>: List<A>
 
 // class: Derived
 // jvm signature:     Derived

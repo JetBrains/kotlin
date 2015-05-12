@@ -1,4 +1,4 @@
-trait TextField {
+interface TextField {
     fun getText(): String
     fun setText(text: String)
 }

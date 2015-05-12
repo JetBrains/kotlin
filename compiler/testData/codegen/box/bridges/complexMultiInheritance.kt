@@ -2,13 +2,13 @@ open class A {
     open fun foo(): Any = "A"
 }
 
-trait B : A
+interface B : A
 
 open class C : A() {
     override fun foo(): Int = 222
 }
 
-trait D {
+interface D {
     fun foo(): Number
 }
 

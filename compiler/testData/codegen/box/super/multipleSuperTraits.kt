@@ -1,8 +1,8 @@
-trait T1 {
+interface T1 {
     fun foo() = "O"
 }
 
-trait T2 {
+interface T2 {
     fun foo() = "K"
 }
 

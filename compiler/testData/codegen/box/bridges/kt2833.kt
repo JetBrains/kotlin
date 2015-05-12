@@ -1,10 +1,10 @@
 package test
 
-public trait FunDependencyEdge {
+public interface FunDependencyEdge {
     val from: FunctionNode
 }
 
-public trait FunctionNode
+public interface FunctionNode
 
 public class FunctionNodeImpl : FunctionNode
 

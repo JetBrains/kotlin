@@ -4,7 +4,7 @@ open class Base {
     }
 }
 
-trait Derived : Base {
+interface Derived : Base {
     override fun foo() : String {
         //super.foo()
         return "OK"

@@ -1,4 +1,4 @@
-trait A {
+interface A {
     fun foo(x: Int = 42): Int
 }
 
@@ -6,7 +6,7 @@ open class B {
     fun foo(x: Int = 239) = x
 }
 
-trait C {
+interface C {
     fun foo(y: Int)
 }
 

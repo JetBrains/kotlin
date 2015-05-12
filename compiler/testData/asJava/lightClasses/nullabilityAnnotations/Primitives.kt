@@ -1,6 +1,6 @@
 // Primitives
 
-trait Primitives {
+interface Primitives {
     fun int(x: Int): Int
 
     val nullableBool: Boolean?

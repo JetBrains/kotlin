@@ -1,5 +1,5 @@
 public class Foo() {
-   public trait MyTrait {
+   public interface MyTrait {
    }
 }
 

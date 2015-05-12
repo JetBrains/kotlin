@@ -1,4 +1,4 @@
-trait A<T> {
+interface A<T> {
     var x: T
 }
 

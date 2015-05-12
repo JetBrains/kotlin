@@ -1,5 +1,5 @@
 == T ==
-trait T
+interface T
 ---------------------
 L0:
   1 <START>

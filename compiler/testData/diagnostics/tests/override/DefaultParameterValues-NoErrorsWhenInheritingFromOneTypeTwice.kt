@@ -1,8 +1,8 @@
-trait Y {
+interface Y {
     fun foo(a : Int = 1)
 }
 
-trait YSub : Y {
+interface YSub : Y {
 
 }
 

@@ -1,4 +1,4 @@
-trait Test<in I, out O> {
+interface Test<in I, out O> {
     val internal_val: <!TYPE_VARIANCE_CONFLICT!>I<!>
     public val public_val: <!TYPE_VARIANCE_CONFLICT!>I<!>
     protected val protected_val: <!TYPE_VARIANCE_CONFLICT!>I<!>

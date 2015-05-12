@@ -1,10 +1,10 @@
 package test
 
-trait X {
+interface X {
     fun foo()
 }
 
-trait Y : X {
+interface Y : X {
 }
 
 class B(val a: X) : X by a, Y {

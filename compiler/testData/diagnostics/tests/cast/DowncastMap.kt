@@ -1,5 +1,5 @@
-trait Map<K, out V>
-trait MutableMap<K, V>: Map<K, V> {
+interface Map<K, out V>
+interface MutableMap<K, V>: Map<K, V> {
   fun set(k: K, v: V)
 }
 

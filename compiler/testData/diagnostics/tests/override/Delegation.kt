@@ -1,18 +1,18 @@
 package test
 
-trait X {
+interface X {
     fun foo(): String? {
         return null
     }
 }
 
-trait Y {
+interface Y {
     fun foo(): String {
         return "foo"
     }
 }
 
-trait Incompatible {
+interface Incompatible {
     fun foo(): Int {
         return 3
     }

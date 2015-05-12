@@ -1,5 +1,5 @@
 // !CHECK_TYPE
-trait Tr<T> {
+interface Tr<T> {
     var v: Tr<T>
 }
 

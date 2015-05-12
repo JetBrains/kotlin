@@ -1,9 +1,9 @@
 //KT-1821 Write test for ITERATOR_AMBIGUITY diagnostic
 
-trait MyCollectionInterface {
+interface MyCollectionInterface {
 }
 
-trait MyAnotherCollectionInterface {
+interface MyAnotherCollectionInterface {
 }
 
 class MyCollection : MyCollectionInterface, MyAnotherCollectionInterface {

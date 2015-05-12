@@ -1,4 +1,4 @@
-trait B<T> {
+interface B<T> {
     fun foo(dd: T): T = dd
 }
 

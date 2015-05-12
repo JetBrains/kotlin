@@ -1,4 +1,4 @@
-trait B
+interface B
 
 fun B.invoke(i: Int) = i
 

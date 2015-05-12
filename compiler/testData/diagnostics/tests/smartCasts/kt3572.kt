@@ -1,4 +1,4 @@
-trait Printer {
+interface Printer {
     fun print()
 }
 

@@ -7,7 +7,7 @@ fun dispatch(request: Request) {
     }
 }
 
-trait Request {
+interface Request {
     fun getRequestURI(): String?
     fun getMethod(): String?
 }

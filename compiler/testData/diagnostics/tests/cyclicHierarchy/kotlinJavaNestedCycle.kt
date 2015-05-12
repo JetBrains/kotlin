@@ -1,11 +1,11 @@
 // FILE: ExceptionTracker.kt
 
-trait ExceptionTracker : <!CYCLIC_INHERITANCE_HIERARCHY!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {
+interface ExceptionTracker : <!CYCLIC_INHERITANCE_HIERARCHY!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {
 }
 
 // FILE: StorageManager.kt
 
-trait StorageManager : <!CYCLIC_INHERITANCE_HIERARCHY!>ExceptionTracker<!> {
+interface StorageManager : <!CYCLIC_INHERITANCE_HIERARCHY!>ExceptionTracker<!> {
     fun foo()
 }
 

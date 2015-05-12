@@ -4,7 +4,7 @@ package kt1875
 
 fun f(a : Int?, b : Int.(Int)->Int) = a?.b(1) //unnecessary safe call warning
 
-trait T {
+interface T {
     val f : ((i: Int) -> Unit)?
 }
 

@@ -1,4 +1,4 @@
 class G<T>
-trait Tr
+interface Tr
 
 fun f(q: Tr) = q is G<*>

@@ -1,6 +1,6 @@
 open class B
-trait C
-trait D
+interface C
+interface D
 class A : C, B, D {
     constructor()
 }

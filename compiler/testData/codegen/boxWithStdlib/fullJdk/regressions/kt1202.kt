@@ -2,7 +2,7 @@ package testeval
 
 import java.util.*
 
-trait Expression
+interface Expression
 class Num(val value : Int) : Expression
 class Sum(val left : Expression, val right : Expression) : Expression
 class Mult(val left : Expression, val right : Expression) : Expression
@@ -16,7 +16,7 @@ fun eval(e : Expression) : Int {
     }
 }
 
-trait ParseResult<out T> {
+interface ParseResult<out T> {
     val success : Boolean
     val value : T
 }

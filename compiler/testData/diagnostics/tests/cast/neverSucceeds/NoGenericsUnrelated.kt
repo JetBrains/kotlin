@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -WARNING +CAST_NEVER_SUCCEEDS
-trait Trait1
-trait Trait2
+interface Trait1
+interface Trait2
 open class OClass1
 open class OClass2
 class FClass1

@@ -1,15 +1,15 @@
 var result = ""
 
-trait D1 {
+interface D1 {
     fun foo(): D1 {
         result += "D1"
         return this
     }
 }
 
-trait F2 : D1
+interface F2 : D1
 
-trait D3 : F2 {
+interface D3 : F2 {
     override fun foo(): D3 {
         result += "D3"
         return this

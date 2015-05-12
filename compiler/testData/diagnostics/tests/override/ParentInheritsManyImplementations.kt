@@ -1,16 +1,16 @@
 package d
 
-trait A {
+interface A {
     fun foo() = 1
 }
 
-trait B {
+interface B {
     fun foo() = 2
 }
 
 open <!MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class C<!> : A, B {}
 
-trait E {
+interface E {
     fun foo(): Int
 }
 

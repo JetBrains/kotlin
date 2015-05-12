@@ -1,4 +1,4 @@
-~T~trait T {
+~T~interface T {
     fun foo() {}
 }
 ~C~open class C() {
@@ -25,7 +25,7 @@
     }
 }
 
-~G~trait G<T> {
+~G~interface G<T> {
     fun foo() {}
 }
 

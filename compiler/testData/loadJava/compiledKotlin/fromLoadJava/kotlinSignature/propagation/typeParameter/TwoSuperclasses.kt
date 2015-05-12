@@ -1,16 +1,16 @@
 package test
 
-public trait TwoSuperclasses {
+public interface TwoSuperclasses {
 
-    public trait Super1 {
+    public interface Super1 {
         public fun <A: CharSequence> foo(a: A)
     }
 
-    public trait Super2 {
+    public interface Super2 {
         public fun <B: CharSequence> foo(a: B)
     }
 
-    public trait Sub: Super1, Super2 {
+    public interface Sub: Super1, Super2 {
         override fun <C: CharSequence> foo(a: C)
     }
 }

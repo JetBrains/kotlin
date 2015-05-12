@@ -1,4 +1,4 @@
-trait A {
+interface A {
     open val foo: String
       get() = "OK"
 }

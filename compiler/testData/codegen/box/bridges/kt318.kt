@@ -1,9 +1,9 @@
 var result = ""
 
-trait Base
+interface Base
 open class Child : Base
 
-trait A<T : Base> {
+interface A<T : Base> {
     fun <E : T> foo(a : E) {
         result += "A"
     }

@@ -1,5 +1,5 @@
-trait A
-trait B
+interface A
+interface B
 
 fun <R: A> R.f() {
 }

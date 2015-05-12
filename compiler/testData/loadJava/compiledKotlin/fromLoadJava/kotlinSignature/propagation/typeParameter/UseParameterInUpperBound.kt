@@ -1,12 +1,12 @@
 package test
 
-public trait UseParameterInUpperBound {
+public interface UseParameterInUpperBound {
 
-    public trait Super {
+    public interface Super {
         public fun <A, B: List<A>> foo(a: A, b: B)
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun <B, A: List<B>> foo(a: B, b: A)
     }
 }

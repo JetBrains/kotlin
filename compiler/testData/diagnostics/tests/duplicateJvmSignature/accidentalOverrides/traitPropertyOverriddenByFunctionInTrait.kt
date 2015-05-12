@@ -1,8 +1,8 @@
-trait T {
+interface T {
     val x: Int
         get() = 1
 }
 
-trait C : T {
+interface C : T {
     <!ACCIDENTAL_OVERRIDE!>fun getX()<!> = 1
 }

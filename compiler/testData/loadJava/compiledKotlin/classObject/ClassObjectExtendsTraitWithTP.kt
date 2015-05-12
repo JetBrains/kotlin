@@ -1,6 +1,6 @@
 package test
 
-trait Bbb<P>
+interface Bbb<P>
 
 class ClassObjectExtendsTraitWithTP {
     companion object : Bbb<String> {

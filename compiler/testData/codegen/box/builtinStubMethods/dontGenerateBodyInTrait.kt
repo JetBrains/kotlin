@@ -1,10 +1,10 @@
-trait A : Collection<String>
-trait B : List<String>
-trait C : Map<Long, Double>
-trait D : Map.Entry<Any, Nothing>
-trait E : Iterator<Int>
+interface A : Collection<String>
+interface B : List<String>
+interface C : Map<Long, Double>
+interface D : Map.Entry<Any, Nothing>
+interface E : Iterator<Int>
 
 fun box(): String {
-    trait F : A, B, C, D, E
+    interface F : A, B, C, D, E
     return "OK"
 }

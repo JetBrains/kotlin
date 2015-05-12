@@ -1,6 +1,6 @@
 package test
 
-trait A {
+interface A {
     internal open fun f() : Int = 0
     internal open val v : Int
         get() = 0

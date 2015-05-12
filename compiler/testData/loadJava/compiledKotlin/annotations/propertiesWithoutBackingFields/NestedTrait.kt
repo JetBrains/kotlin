@@ -3,7 +3,7 @@ package test
 annotation class Anno
 
 class Class {
-    trait Trait {
+    interface Trait {
         [Anno] val property: Int
     }
 }

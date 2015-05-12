@@ -23,7 +23,7 @@ final class Final
 // Special
 annotation class Annotation
 enum class Enum
-trait Trait
+interface Trait
 
 // Deprecation
 deprecated("") class Deprecated

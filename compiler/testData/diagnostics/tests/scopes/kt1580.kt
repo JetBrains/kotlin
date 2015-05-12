@@ -1,8 +1,8 @@
 //FILE:a.kt
-//KT-1580 Can't access nested class/trait from other package
+//KT-1580 Can't access nested class/interface from other package
 package lib
-trait WithInner {
-    trait Inner {
+interface WithInner {
+    interface Inner {
     }
 }
 

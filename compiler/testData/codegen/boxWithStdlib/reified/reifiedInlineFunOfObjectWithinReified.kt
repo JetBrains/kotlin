@@ -6,7 +6,7 @@ inline fun <reified T> className(): String = javaClass<T>().getName()
 
 inline fun <reified T> lambdaShouldBeReified(): String = foo { className<T>() }
 
-trait A {
+interface A {
     fun f(): String
     fun g(): String
 }

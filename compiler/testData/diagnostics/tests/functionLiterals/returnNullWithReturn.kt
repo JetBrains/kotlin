@@ -1,6 +1,6 @@
 package m
 
-trait Element
+interface Element
 
 fun test(handlers: Map<String, Element.()->Unit>) {
 

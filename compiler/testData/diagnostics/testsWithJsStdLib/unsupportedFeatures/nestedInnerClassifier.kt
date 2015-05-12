@@ -4,8 +4,8 @@ class A {
 
         inner <!NON_TOPLEVEL_CLASS_DECLARATION!>class D<!>
 
-        <!NON_TOPLEVEL_CLASS_DECLARATION!>trait T<!> {
-            <!NON_TOPLEVEL_CLASS_DECLARATION!>trait A<!>
+        <!NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
+            <!NON_TOPLEVEL_CLASS_DECLARATION!>interface A<!>
             <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!>
         }
 
@@ -14,8 +14,8 @@ class A {
 
     inner <!NON_TOPLEVEL_CLASS_DECLARATION!>class I<!>
 
-    <!NON_TOPLEVEL_CLASS_DECLARATION!>trait T<!> {
-        <!NON_TOPLEVEL_CLASS_DECLARATION!>trait A<!>
+    <!NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
+        <!NON_TOPLEVEL_CLASS_DECLARATION!>interface A<!>
         <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!>
 
         companion object {}
@@ -30,22 +30,22 @@ class A {
     companion object {}
 }
 
-trait T {
+interface T {
     <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!> {
         <!NON_TOPLEVEL_CLASS_DECLARATION!>class C<!>
 
         inner <!NON_TOPLEVEL_CLASS_DECLARATION!>class D<!>
 
-        <!NON_TOPLEVEL_CLASS_DECLARATION!>trait T<!> {
-            <!NON_TOPLEVEL_CLASS_DECLARATION!>trait A<!>
+        <!NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
+            <!NON_TOPLEVEL_CLASS_DECLARATION!>interface A<!>
             <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!>
         }
 
         companion object {}
     }
 
-    <!NON_TOPLEVEL_CLASS_DECLARATION!>trait T<!> {
-        <!NON_TOPLEVEL_CLASS_DECLARATION!>trait A<!>
+    <!NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
+        <!NON_TOPLEVEL_CLASS_DECLARATION!>interface A<!>
         <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!>
 
         companion object {}
@@ -68,8 +68,8 @@ enum class E {
 
         inner <!NON_TOPLEVEL_CLASS_DECLARATION!>class D<!>
 
-        <!NON_TOPLEVEL_CLASS_DECLARATION!>trait T<!> {
-            <!NON_TOPLEVEL_CLASS_DECLARATION!>trait A<!>
+        <!NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
+            <!NON_TOPLEVEL_CLASS_DECLARATION!>interface A<!>
             <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!>
         }
 
@@ -78,8 +78,8 @@ enum class E {
 
     inner <!NON_TOPLEVEL_CLASS_DECLARATION!>class I<!>
 
-    <!NON_TOPLEVEL_CLASS_DECLARATION!>trait T<!> {
-        <!NON_TOPLEVEL_CLASS_DECLARATION!>trait A<!>
+    <!NON_TOPLEVEL_CLASS_DECLARATION!>interface T<!> {
+        <!NON_TOPLEVEL_CLASS_DECLARATION!>interface A<!>
         <!NON_TOPLEVEL_CLASS_DECLARATION!>class B<!>
 
         companion object {}

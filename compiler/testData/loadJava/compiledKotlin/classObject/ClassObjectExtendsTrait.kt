@@ -1,6 +1,6 @@
 package test
 
-trait Bbb
+interface Bbb
 
 class ClassObjectextendsTrait {
     companion object : Bbb {

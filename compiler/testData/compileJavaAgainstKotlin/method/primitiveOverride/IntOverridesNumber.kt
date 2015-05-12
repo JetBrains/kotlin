@@ -1,6 +1,6 @@
 package test
 
-trait A<T : Number> {
+interface A<T : Number> {
     fun foo(): T
 }
 

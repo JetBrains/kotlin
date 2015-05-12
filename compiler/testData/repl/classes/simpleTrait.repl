@@ -1,5 +1,5 @@
->>> trait A
->>> trait B : A {
+>>> interface A
+>>> interface B : A {
 ...    fun foo() = 45
 ... }
 >>> javaClass<A>().isAssignableFrom(javaClass<B>())

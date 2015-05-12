@@ -2,11 +2,11 @@
 
 package s
 
-trait In<in T>
+interface In<in T>
 
-trait A
-trait B
-trait C: A, B
+interface A
+interface B
+interface C: A, B
 
 fun <T> foo(in1: In<T>, in2: In<T>): T = throw Exception("$in1 $in2")
 

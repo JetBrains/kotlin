@@ -1,7 +1,7 @@
 import kotlin.properties.Delegates
 import java.util.HashMap
 
-trait R {
+interface R {
     fun result(): String
 }
 

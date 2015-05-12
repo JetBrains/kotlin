@@ -1,7 +1,7 @@
 //KT-1191 Wrong detection of unused parameters
 package kt1191
 
-trait FunctionalList<T> {
+interface FunctionalList<T> {
     val size: Int
     val head: T
     val tail: FunctionalList<T>

@@ -10,7 +10,7 @@ val a1: `fromSamePackage`TestClass? = null
 //----------------------------------------------------------------------------------
 package otherPackage
 
-trait ~fromOtherPackage~TestClass
+interface ~fromOtherPackage~TestClass
 
 
 //FILE:fromSamePackage.kt

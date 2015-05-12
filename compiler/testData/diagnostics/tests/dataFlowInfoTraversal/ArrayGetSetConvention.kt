@@ -1,6 +1,6 @@
 // !CHECK_TYPE
 
-trait G {
+interface G {
     fun get(x: Int, y: Int): Int = x + y
     fun set(x: Int, y: Int, value: Int) {}
 }

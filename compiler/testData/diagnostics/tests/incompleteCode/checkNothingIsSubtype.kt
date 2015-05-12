@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 package d
 
-trait A<T>
+interface A<T>
 
 fun infer<T>(<!UNUSED_PARAMETER!>a<!>: A<T>) : T {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 

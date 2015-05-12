@@ -2,6 +2,6 @@
 
 package test
 
-trait A {
+interface A {
     fun f(): String = "test"
 }

@@ -1,10 +1,10 @@
 //inspired by kt3492
-trait BK {
+interface BK {
     fun foo(): String
     fun bar(): String
 }
 
-trait KTrait: BK {
+interface KTrait: BK {
     override fun foo() = bar()
 }
 

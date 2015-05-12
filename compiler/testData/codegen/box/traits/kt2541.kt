@@ -1,4 +1,4 @@
-trait A<T, U> {
+interface A<T, U> {
     fun foo(t: T, u: U) = "OK"
 }
 

@@ -1,5 +1,5 @@
 package test
 
-public trait SubclassOfCollection<E>: MutableCollection<E> {
+public interface SubclassOfCollection<E>: MutableCollection<E> {
     override fun iterator() : MutableIterator<E>
 }

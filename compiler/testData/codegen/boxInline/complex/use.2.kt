@@ -9,7 +9,7 @@ public  class Output(val d: Data) : Closeable {
     public fun doOutput(data: Int): Int = data
 }
 
-public open trait Closeable {
+public open interface Closeable {
     open public fun close() {}
 }
 

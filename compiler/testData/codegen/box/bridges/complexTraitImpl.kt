@@ -5,13 +5,13 @@ abstract class A {
     abstract fun foo(): List<String>
 }
 
-trait B {
+interface B {
     fun foo(): ArrayList<String> = ArrayList(Arrays.asList("B"))
 }
 
 open class C : A(), B
 
-trait D {
+interface D {
     fun foo(): Collection<String>
 }
 

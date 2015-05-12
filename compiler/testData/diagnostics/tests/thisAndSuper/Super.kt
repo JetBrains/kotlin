@@ -1,6 +1,6 @@
 package example
 
-trait T {
+interface T {
     fun foo() {}
 }
 open class C() {
@@ -42,7 +42,7 @@ class A<E>() : C(), T {
     }
 }
 
-trait G<T> {
+interface G<T> {
     fun foo() {}
 }
 

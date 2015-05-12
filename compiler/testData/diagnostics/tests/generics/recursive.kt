@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE
 
-trait Rec<T>
+interface Rec<T>
 class A : Rec<A>
 class B : Rec<B>
 

@@ -1,8 +1,8 @@
 // !CHECK_TYPE
 
-trait A
-trait B: A
-trait C: A
+interface A
+interface B: A
+interface C: A
 
 
 fun test(a: C, b: B) {

@@ -2,7 +2,7 @@
 // FILE: a.kt
 package p
 
-public trait B {
+public interface B {
     public fun getParent(): B?
 }
 
@@ -10,7 +10,7 @@ public trait B {
 // FILE: b.kt
 package p
 
-public trait C : B {
+public interface C : B {
     override fun getParent(): B?
 
 }
@@ -19,11 +19,11 @@ public trait C : B {
 // FILE: b.kt
 package p
 
-public trait B {
+public interface B {
     public fun getParent(): B?
 }
 
-public trait D : B {
+public interface D : B {
     override fun getParent(): B?
 }
 

@@ -1,3 +1,3 @@
-trait T {
+interface T {
   val a = <!PROPERTY_INITIALIZER_IN_TRAIT!><!UNRESOLVED_REFERENCE!>Foo<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()<!>
 }

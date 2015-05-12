@@ -1,4 +1,4 @@
-trait A : MyInt {
+interface A : MyInt {
     override public fun test(): String? {
         return "OK"
     }
