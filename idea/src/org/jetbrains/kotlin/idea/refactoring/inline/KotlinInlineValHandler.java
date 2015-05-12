@@ -42,6 +42,8 @@ import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.RefactoringMessageDialog;
 import com.intellij.util.Function;
+import kotlin.Function1;
+import kotlin.KotlinPackage;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,6 +91,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
     @Override
     public void inlineElement(final Project project, final Editor editor, PsiElement element) {
         final JetProperty val = (JetProperty) element;
+        final JetFile file = val.getContainingJetFile();
         String name = val.getName();
 
         JetExpression initializerInDeclaration = val.getInitializer();
@@ -127,12 +130,27 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         final String typeArgumentsForCall = getTypeArgumentsStringForCall(initializer);
         final String parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer);
 
-        highlightExpressions(project, editor, referenceExpressions);
+        final boolean canHighlight = KotlinPackage.all(
+                referenceExpressions,
+                new Function1<JetExpression, Boolean>() {
+                    @Override
+                    public Boolean invoke(JetExpression expression) {
+                        return expression.getContainingFile() == file;
+                    }
+                }
+        );
+
+        if (canHighlight) {
+            highlightExpressions(project, editor, referenceExpressions);
+        }
         if (!showDialog(project, name, referenceExpressions)) {
-            StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-            if (statusBar != null) {
-                statusBar.setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
+            if (canHighlight) {
+                StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
+                if (statusBar != null) {
+                    statusBar.setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
+                }
             }
+
             return;
         }
 
@@ -167,7 +185,9 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                                     addFunctionLiteralParameterTypes(parametersForFunctionLiteral, inlinedExpressions);
                                 }
 
-                                highlightExpressions(project, editor, inlinedExpressions);
+                                if (canHighlight) {
+                                    highlightExpressions(project, editor, inlinedExpressions);
+                                }
                             }
                         });
                     }
