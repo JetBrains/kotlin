@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.lexer.JetToken
-import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.lexer.JetSingleValueToken
+import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
 public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIndependentIntention<JetPrefixExpression>("simplify.negated.binary.expression", javaClass()) {
@@ -30,20 +30,20 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIn
     }
 
     public fun JetToken.negate(): JetSingleValueToken? = when (this) {
-        JetTokens.IN_KEYWORD    -> JetTokens.NOT_IN
-        JetTokens.NOT_IN        -> JetTokens.IN_KEYWORD
+        JetTokens.IN_KEYWORD -> JetTokens.NOT_IN
+        JetTokens.NOT_IN -> JetTokens.IN_KEYWORD
 
-        JetTokens.IS_KEYWORD    -> JetTokens.NOT_IS
-        JetTokens.NOT_IS        -> JetTokens.IS_KEYWORD
+        JetTokens.IS_KEYWORD -> JetTokens.NOT_IS
+        JetTokens.NOT_IS -> JetTokens.IS_KEYWORD
 
-        JetTokens.EQEQ          -> JetTokens.EXCLEQ
-        JetTokens.EXCLEQ        -> JetTokens.EQEQ
+        JetTokens.EQEQ -> JetTokens.EXCLEQ
+        JetTokens.EXCLEQ -> JetTokens.EQEQ
 
-        JetTokens.LT            -> JetTokens.GTEQ
-        JetTokens.GTEQ          -> JetTokens.LT
+        JetTokens.LT -> JetTokens.GTEQ
+        JetTokens.GTEQ -> JetTokens.LT
 
-        JetTokens.GT            -> JetTokens.LTEQ
-        JetTokens.LTEQ          -> JetTokens.GT
+        JetTokens.GT -> JetTokens.LTEQ
+        JetTokens.LTEQ -> JetTokens.GT
 
         else -> null
     }
