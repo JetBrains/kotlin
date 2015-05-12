@@ -5,5 +5,5 @@ class A(val e: Int) {
 
 fun test(n: Int) {
     val a = A(1)
-    !(0<caret> in a)
+    <caret>!(0 in a)
 }

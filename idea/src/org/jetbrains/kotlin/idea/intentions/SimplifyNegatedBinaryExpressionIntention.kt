@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
-public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIndependentIntention<JetPrefixExpression>(javaClass(), "Simplify negated binary expression") {
+public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingRangeIntention<JetPrefixExpression>(javaClass(), "Simplify negated binary expression") {
 
     private fun IElementType.negate(): JetSingleValueToken? = when (this) {
         JetTokens.IN_KEYWORD -> JetTokens.NOT_IN
@@ -43,7 +44,11 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIn
         else -> null
     }
 
-    override fun isApplicableTo(element: JetPrefixExpression): Boolean {
+    override fun applicabilityRange(element: JetPrefixExpression): TextRange? {
+        return if (isApplicableTo(element)) element.getOperationReference().getTextRange() else null
+    }
+
+    public fun isApplicableTo(element: JetPrefixExpression): Boolean {
         if (element.getOperationToken() != JetTokens.EXCL) return false
 
         val expression = JetPsiUtil.deparenthesize(element.getBaseExpression()) as? JetOperationExpression ?: return false
