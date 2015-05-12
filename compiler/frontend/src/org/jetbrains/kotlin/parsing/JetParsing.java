@@ -444,10 +444,6 @@ public class JetParsing extends AbstractJetParsing {
             if (at(AT)) {
                 IElementType strictlyNextToken = myBuilder.rawLookup(1);
                 if (strictlyNextToken == IDENTIFIER || MODIFIER_KEYWORDS.contains(strictlyNextToken)) {
-                    if (!annotationParsingMode.allowAtAnnotations) {
-                        errorAndAdvance("Only annotations in '[]' can be declared here"); // AT
-                    }
-
                     if (!tryParseModifier(tokenConsumer)) {
                         parseAnnotationEntry();
                     }
@@ -547,7 +543,7 @@ public class JetParsing extends AbstractJetParsing {
             parseAnnotationEntry();
             return true;
         }
-        else if (mode.allowAtAnnotations && at(AT)) {
+        else if (at(AT)) {
             if (myBuilder.rawLookup(1) == IDENTIFIER) {
                 parseAnnotationEntry();
             }
@@ -2263,28 +2259,25 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     enum AnnotationParsingMode {
-        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true, false, false),
-        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true, false, false),
-        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, false, true),
-        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, false, true),
-        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true, true),
-        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(true, false, false, true);
+        FILE_ANNOTATIONS_BEFORE_PACKAGE(false, true, false),
+        FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED(false, true, false),
+        ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, false),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, false),
+        ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true),
+        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(true, false, false);
 
         boolean allowShortAnnotations;
         boolean isFileAnnotationParsingMode;
-        boolean atMemberStart = false;
-        boolean allowAtAnnotations = true;
+        boolean atMemberStart;
 
         AnnotationParsingMode(
                 boolean allowShortAnnotations,
                 boolean isFileAnnotationParsingMode,
-                boolean atMemberStart,
-                boolean allowAtAnnotations
+                boolean atMemberStart
         ) {
             this.allowShortAnnotations = allowShortAnnotations;
             this.isFileAnnotationParsingMode = isFileAnnotationParsingMode;
             this.atMemberStart = atMemberStart;
-            this.allowAtAnnotations = allowAtAnnotations;
         }
     }
 }
