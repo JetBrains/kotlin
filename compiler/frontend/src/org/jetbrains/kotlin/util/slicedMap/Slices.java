@@ -186,14 +186,6 @@ public class Slices {
                 map.put(opposite, value, key);
             }
         }
-        @Override
-        public SlicedMapKey<K, V> makeKey(K key) {
-            if (keyNormalizer == null) {
-                return super.makeKey(key);
-            }
-            return super.makeKey(keyNormalizer.normalize(key));
-        }
-
     }
 
     public static class SetSlice<K> extends BasicRemovableSlice<K, Boolean> {

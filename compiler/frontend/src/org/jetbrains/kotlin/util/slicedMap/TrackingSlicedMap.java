@@ -18,12 +18,13 @@ package org.jetbrains.kotlin.util.slicedMap;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.intellij.openapi.util.Key;
+import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 public class TrackingSlicedMap extends SlicedMapImpl {
@@ -31,7 +32,6 @@ public class TrackingSlicedMap extends SlicedMapImpl {
     private final boolean trackWithStackTraces;
 
     public TrackingSlicedMap(boolean trackWithStackTraces) {
-        super(Maps.<SlicedMapKey<?, ?>, Object>newLinkedHashMap());
         this.trackWithStackTraces = trackWithStackTraces;
     }
 
@@ -55,21 +55,15 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         return super.getKeys(wrapSlice(slice));
     }
 
-    @NotNull
     @Override
-    public Iterator<Map.Entry<SlicedMapKey<?, ?>, ?>> iterator() {
-        Map<SlicedMapKey<?, ?>, Object> map = Maps.newHashMap();
-
-        Iterator<Map.Entry<SlicedMapKey<?, ?>, ?>> iterator = super.iterator();
-
-        //noinspection WhileLoopReplaceableByForEach
-        while (iterator.hasNext()) {
-            Map.Entry<SlicedMapKey<?, ?>, ?> entry = iterator.next();
-            map.put(entry.getKey(), ((TrackableValue<?>) entry.getValue()).value);
-        }
-
-        //noinspection unchecked
-        return (Iterator) map.entrySet().iterator();
+    public void forEach(@NotNull final Function3<WritableSlice, Object, Object, Void> f) {
+        super.forEach(new Function3<WritableSlice, Object, Object, Void>() {
+            @Override
+            public Void invoke(WritableSlice slice, Object key, Object value) {
+                f.invoke(slice, key, ((TrackableValue<?>) value).value);
+                return null;
+            }
+        });
     }
 
     @Override
@@ -143,20 +137,21 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         }
     }
 
-    public class SliceWithStackTrace<K, V> implements RemovableSlice<K, TrackableValue<V>> {
+    private class SliceWithStackTrace<K, V> extends Key<TrackableValue<V>> implements RemovableSlice<K, TrackableValue<V>> {
 
         private final ReadOnlySlice<K, V> delegate;
 
         private SliceWithStackTrace(@NotNull ReadOnlySlice<K, V> delegate) {
+            super(delegate.toString());
             this.delegate = delegate;
         }
 
         // Methods of ReadOnlySlice
 
         @Override
-        public SlicedMapKey<K, TrackableValue<V>> makeKey(K key) {
-            //noinspection unchecked
-            return (SlicedMapKey) delegate.makeKey(key);
+        @NotNull
+        public Key<TrackableValue<V>> getKey() {
+            return this;
         }
 
         @Override

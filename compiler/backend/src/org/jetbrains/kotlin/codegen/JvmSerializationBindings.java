@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Pair;
+import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
@@ -28,7 +29,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.Collection;
-import java.util.Map;
 
 public final class JvmSerializationBindings {
     public static final SerializationMappingSlice<FunctionDescriptor, Method> METHOD_FOR_FUNCTION =
@@ -82,13 +82,18 @@ public final class JvmSerializationBindings {
 
     @NotNull
     public static JvmSerializationBindings union(@NotNull Collection<JvmSerializationBindings> bindings) {
-        MutableSlicedMap result = SlicedMapImpl.create();
+        final MutableSlicedMap result = SlicedMapImpl.create();
+
         for (JvmSerializationBindings binding : bindings) {
-            for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : binding.map) {
-                SlicedMapKey<?, ?> key = entry.getKey();
-                result.put((WritableSlice) key.getSlice(), key.getKey(), entry.getValue());
-            }
+            binding.map.forEach(new Function3<WritableSlice, Object, Object, Void>() {
+                @Override
+                public Void invoke(WritableSlice slice, Object key, Object value) {
+                    result.put(slice, key, value);
+                    return null;
+                }
+            });
         }
+
         return new JvmSerializationBindings(result);
     }
 

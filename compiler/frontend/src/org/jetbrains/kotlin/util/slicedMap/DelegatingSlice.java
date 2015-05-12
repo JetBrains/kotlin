@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.util.slicedMap;
 
+import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -49,8 +50,9 @@ public class DelegatingSlice<K, V> implements WritableSlice<K, V> {
     }
 
     @Override
-    public SlicedMapKey<K, V> makeKey(K key) {
-        return delegate.makeKey(key);
+    @NotNull
+    public Key<V> getKey() {
+        return delegate.getKey();
     }
 
     @Override

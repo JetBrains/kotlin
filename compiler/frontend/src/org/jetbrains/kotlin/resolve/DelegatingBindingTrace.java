@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -161,19 +162,17 @@ public class DelegatingBindingTrace implements BindingTrace {
         clear();
     }
 
-    public void addAllMyDataTo(@NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics) {
-        for (Map.Entry<SlicedMapKey<?, ?>, ?> entry : map) {
-            SlicedMapKey slicedMapKey = entry.getKey();
+    public void addAllMyDataTo(@NotNull final BindingTrace trace, @Nullable final TraceEntryFilter filter, boolean commitDiagnostics) {
+        map.forEach(new Function3<WritableSlice, Object, Object, Void>() {
+            @Override
+            public Void invoke(WritableSlice slice, Object key, Object value) {
+                if (filter == null || filter.accept(slice, key)) {
+                    trace.record(slice, key, value);
+                }
 
-            WritableSlice slice = slicedMapKey.getSlice();
-            Object key = slicedMapKey.getKey();
-            Object value = entry.getValue();
-
-            if (filter == null || filter.accept(slice, key)) {
-                //noinspection unchecked
-                trace.record(slice, key, value);
+                return null;
             }
-        }
+        });
 
         if (!commitDiagnostics) return;
 

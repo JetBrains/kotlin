@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.util.slicedMap;
 
+import kotlin.Function3;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.Map;
 
-public interface SlicedMap extends Iterable<Map.Entry<SlicedMapKey<?, ?>, ?>> {
+public interface SlicedMap {
 
     SlicedMap DO_NOTHING = new SlicedMap() {
         @Override
@@ -35,8 +36,7 @@ public interface SlicedMap extends Iterable<Map.Entry<SlicedMapKey<?, ?>, ?>> {
         }
 
         @Override
-        public Iterator<Map.Entry<SlicedMapKey<?, ?>, ?>> iterator() {
-            return Collections.<Map.Entry<SlicedMapKey<?, ?>, ?>>emptySet().iterator();
+        public void forEach(@NotNull Function3<WritableSlice, Object, Object, Void> f) {
         }
     };
 
@@ -44,4 +44,6 @@ public interface SlicedMap extends Iterable<Map.Entry<SlicedMapKey<?, ?>, ?>> {
 
     // slice.isCollective() must return true
     <K, V> Collection<K> getKeys(WritableSlice<K, V> slice);
+
+    void forEach(@NotNull Function3<WritableSlice, Object, Object, Void> f);
 }
