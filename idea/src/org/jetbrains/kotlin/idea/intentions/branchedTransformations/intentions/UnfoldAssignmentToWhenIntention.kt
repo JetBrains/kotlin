@@ -33,6 +33,7 @@ public class UnfoldAssignmentToWhenIntention : JetSelfTargetingRangeIntention<Je
         if (element.getLeft() == null) return null
         val right = element.getRight() as? JetWhenExpression ?: return null
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(right)) return null
+        if (right.getEntries().any { it.getExpression() == null }) return null
         return TextRange(element.startOffset, right.getWhenKeyword().endOffset)
     }
 

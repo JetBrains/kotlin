@@ -16,36 +16,31 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
-import com.google.common.base.Predicate
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 object BranchedFoldingUtils {
-    private val CHECK_ASSIGNMENT = object : Predicate<JetElement> {
-        override fun apply(input: JetElement): Boolean {
-            if (input !is JetBinaryExpression) return false
-            if (input.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return false
+    public fun getFoldableBranchedAssignment(branch: JetExpression?): JetBinaryExpression? {
+        fun checkAssignment(expression: JetBinaryExpression): Boolean {
+            if (expression.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return false
 
-            val left = input.getLeft() as? JetSimpleNameExpression ?: return false
-            if (input.getRight() == null) return false
+            val left = expression.getLeft() as? JetSimpleNameExpression ?: return false
+            if (expression.getRight() == null) return false
 
-            val parent = input.getParent()
+            val parent = expression.getParent()
             if (parent is JetBlockExpression) {
                 return !JetPsiUtil.checkVariableDeclarationInBlock(parent, left.getText())
             }
 
             return true
         }
-    }
-
-    public fun getFoldableBranchedAssignment(branch: JetExpression?): JetBinaryExpression? {
-        return JetPsiUtil.getOutermostLastBlockElement(branch, CHECK_ASSIGNMENT) as JetBinaryExpression?
+        return (branch?.lastBlockStatementOrThis() as? JetBinaryExpression)?.check(::checkAssignment)
     }
 
     public fun getFoldableBranchedReturn(branch: JetExpression?): JetReturnExpression? {
-        return JetPsiUtil.getOutermostLastBlockElement(branch) {
-            (it as? JetReturnExpression)?.getReturnedExpression() != null
-        } as JetReturnExpression?
+        return (branch?.lastBlockStatementOrThis() as? JetReturnExpression)?.check { it.getReturnedExpression() != null }
     }
 
     public fun checkAssignmentsMatch(a1: JetBinaryExpression, a2: JetBinaryExpression): Boolean {

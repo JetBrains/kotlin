@@ -54,7 +54,7 @@ public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpressi
         val names2 = e2.declarationNames()
         if (names1.any { it in names2 }) return false
 
-        return when (e1.getExpression()?.outermostLastBlockElement()) {
+        return when (e1.getExpression()?.lastBlockStatementOrThis()) {
             is JetReturnExpression, is JetThrowExpression, is JetBreakExpression, is JetContinueExpression -> false
             else -> true
         }

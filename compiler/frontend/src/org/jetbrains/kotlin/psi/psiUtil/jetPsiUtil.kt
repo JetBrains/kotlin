@@ -44,6 +44,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression() ?: return null
@@ -135,8 +136,11 @@ public fun <T: PsiElement> T.copied(): T = copy() as T
 public fun JetElement.blockExpressionsOrSingle(): Sequence<JetElement> =
         if (this is JetBlockExpression) getStatements().asSequence() else sequenceOf(this)
 
-public fun JetElement.outermostLastBlockElement(predicate: (JetElement) -> Boolean = { true }): JetElement? {
-    return JetPsiUtil.getOutermostLastBlockElement(this) { e -> e != null && predicate(e) }
+public fun JetExpression.lastBlockStatementOrThis(): JetExpression {
+    return if (this is JetBlockExpression)
+        this.getStatements().lastIsInstanceOrNull<JetExpression>() ?: this
+    else
+        this
 }
 
 public fun JetBlockExpression.appendElement(element: JetElement): JetElement {

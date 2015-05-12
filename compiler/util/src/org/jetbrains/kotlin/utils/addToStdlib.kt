@@ -53,6 +53,24 @@ public inline fun <reified T> Array<*>.firstIsInstance(): T {
     throw NoSuchElementException("No element of given type found")
 }
 
+public inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
+    when (this) {
+        is List<*> -> {
+            for (i in this.indices.reversed()) {
+                val element = this[i]
+                if (element is T) return element
+            }
+            return null
+        }
+
+        else -> {
+            return reverse().firstIsInstanceOrNull<T>()
+        }
+    }
+}
+
 public fun <T> streamOfLazyValues(vararg elements: () -> T): Stream<T> = elements.stream().map { it() }
 
 public fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
+
+public fun <T: Any> T.check(predicate: (T) -> Boolean): T? = if (predicate(this)) this else null

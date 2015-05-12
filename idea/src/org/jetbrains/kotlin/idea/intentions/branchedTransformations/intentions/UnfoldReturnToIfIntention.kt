@@ -19,13 +19,10 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
-import org.jetbrains.kotlin.psi.JetIfExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetReturnExpression
-import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.copied
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'if' expression") {
@@ -37,8 +34,8 @@ public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<JetRetur
     override fun applyTo(element: JetReturnExpression, editor: Editor) {
         val ifExpression = element.getReturnedExpression() as JetIfExpression
         val newIfExpression = ifExpression.copied()
-        val thenExpr = BranchedUnfoldingUtils.getOutermostLastBlockElement(newIfExpression.getThen())
-        val elseExpr = BranchedUnfoldingUtils.getOutermostLastBlockElement(newIfExpression.getElse())
+        val thenExpr = newIfExpression.getThen()!!.lastBlockStatementOrThis()
+        val elseExpr = newIfExpression.getElse()!!.lastBlockStatementOrThis()
 
         val psiFactory = JetPsiFactory(element)
         thenExpr.replace(psiFactory.createExpressionByPattern("return $0", thenExpr))

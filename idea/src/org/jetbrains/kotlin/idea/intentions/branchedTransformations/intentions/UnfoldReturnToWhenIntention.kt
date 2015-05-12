@@ -23,12 +23,14 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.copied
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression") {
     override fun applicabilityRange(element: JetReturnExpression): TextRange? {
         val whenExpr = element.getReturnedExpression() as? JetWhenExpression ?: return null
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null
+        if (whenExpr.getEntries().any { it.getExpression() == null }) return null
         return TextRange(element.startOffset, whenExpr.getWhenKeyword().endOffset)
     }
 
@@ -37,8 +39,8 @@ public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<JetRet
         val newWhenExpression = whenExpression.copied()
 
         for (entry in newWhenExpression.getEntries()) {
-            val currExpr = BranchedUnfoldingUtils.getOutermostLastBlockElement(entry.getExpression())
-            currExpr.replace(JetPsiFactory(element).createExpressionByPattern("return $0", currExpr))
+            val expr = entry.getExpression()!!.lastBlockStatementOrThis()
+            expr.replace(JetPsiFactory(element).createExpressionByPattern("return $0", expr))
         }
 
         element.replace(newWhenExpression)

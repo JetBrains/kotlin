@@ -600,21 +600,6 @@ public class JetPsiUtil {
                ((JetBinaryExpression) element).getOperationToken().equals(JetTokens.EQ);
     }
 
-    @Nullable
-    public static JetElement getOutermostLastBlockElement(@Nullable JetElement element, @NotNull Predicate<JetElement> checkElement) {
-        if (element == null) return null;
-
-        if (!(element instanceof JetBlockExpression)) return checkElement.apply(element) ? element : null;
-
-        JetBlockExpression block = (JetBlockExpression)element;
-        int n = block.getStatements().size();
-
-        if (n == 0) return null;
-
-        JetElement lastElement = block.getStatements().get(n - 1);
-        return checkElement.apply(lastElement) ? lastElement : null;
-    }
-
     public static boolean checkVariableDeclarationInBlock(@NotNull JetBlockExpression block, @NotNull String varName) {
         for (JetElement element : block.getStatements()) {
             if (element instanceof JetVariableDeclaration) {
