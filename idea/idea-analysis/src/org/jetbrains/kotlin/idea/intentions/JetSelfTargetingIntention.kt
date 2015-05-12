@@ -34,6 +34,8 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
         private val firstElementOfTypeOnly: Boolean = false
 ) : IntentionAction {
 
+    protected val defaultText: String = text
+
     protected fun setText(text: String) {
         this.text = text
     }

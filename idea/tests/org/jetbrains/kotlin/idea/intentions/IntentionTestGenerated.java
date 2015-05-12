@@ -1936,6 +1936,201 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/changeVisibility")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ChangeVisibility extends AbstractIntentionTest {
+        public void testAllFilesPresentInChangeVisibility() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("idea/testData/intentions/changeVisibility/internal")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Internal extends AbstractIntentionTest {
+            public void testAllFilesPresentInInternal() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/internal"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("internalByDefault.kt")
+            public void testInternalByDefault() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/internal/internalByDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/internal/simple.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/changeVisibility/private")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Private extends AbstractIntentionTest {
+            public void testAllFilesPresentInPrivate() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/private"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("noModifierListClass.kt")
+            public void testNoModifierListClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noModifierListFun.kt")
+            public void testNoModifierListFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noModifierListObject.kt")
+            public void testNoModifierListObject() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noModifierListPrimaryConstructor.kt")
+            public void testNoModifierListPrimaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListPrimaryConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noModifierListSecondaryConstructor.kt")
+            public void testNoModifierListSecondaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListSecondaryConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noModifierListTrait.kt")
+            public void testNoModifierListTrait() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListTrait.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noModifierListVal.kt")
+            public void testNoModifierListVal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noModifierListValParam.kt")
+            public void testNoModifierListValParam() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListValParam.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notForAbstract.kt")
+            public void testNotForAbstract() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/notForAbstract.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notForLocal.kt")
+            public void testNotForLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/notForLocal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notForParameter.kt")
+            public void testNotForParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/notForParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withAnnotations.kt")
+            public void testWithAnnotations() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/withAnnotations.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/changeVisibility/protected")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Protected extends AbstractIntentionTest {
+            public void testAllFilesPresentInProtected() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/protected"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("noModifier.kt")
+            public void testNoModifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/noModifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notForObjectMember.kt")
+            public void testNotForObjectMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/notForObjectMember.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notForTopLevel.kt")
+            public void testNotForTopLevel() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/notForTopLevel.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/simple.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/changeVisibility/public")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Public extends AbstractIntentionTest {
+            public void testAllFilesPresentInPublic() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/changeVisibility/public"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("alreadyPublic.kt")
+            public void testAlreadyPublic() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/alreadyPublic.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("caretAfter.kt")
+            public void testCaretAfter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/caretAfter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notForOverride.kt")
+            public void testNotForOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/notForOverride.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primaryConstructor.kt")
+            public void testPrimaryConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/primaryConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primaryConstructorPublicByDefault.kt")
+            public void testPrimaryConstructorPublicByDefault() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/primaryConstructorPublicByDefault.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/simple.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/conventionNameCalls")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

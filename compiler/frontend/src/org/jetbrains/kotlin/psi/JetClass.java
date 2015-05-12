@@ -22,6 +22,7 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -254,5 +255,10 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     public List<JetSecondaryConstructor> getSecondaryConstructors() {
         JetClassBody body = getBody();
         return body != null ? body.getSecondaryConstructors() : Collections.<JetSecondaryConstructor>emptyList();
+    }
+
+    @Nullable
+    public PsiElement getClassOrTraitKeyword() {
+        return findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.TRAIT_KEYWORD));
     }
 }

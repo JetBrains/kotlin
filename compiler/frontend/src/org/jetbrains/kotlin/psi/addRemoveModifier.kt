@@ -52,9 +52,7 @@ internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKey
 
     if (modifier == defaultVisibilityModifier) { // do not insert explicit 'internal' keyword (or 'public' for primary constructor)
         //TODO: code style option
-        if (modifierToReplace != null) {
-            modifierToReplace.delete()
-        }
+        modifierToReplace?.delete()
         return
     }
 
@@ -72,8 +70,17 @@ internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKey
             return newModifierOrder > order
         }
 
-        val anchor = modifierList.getLastChild()?.siblings(forward = false)?.firstOrNull(::placeAfter)
+        val lastChild = modifierList.getLastChild()
+        val anchor = lastChild?.siblings(forward = false)?.firstOrNull(::placeAfter)
         modifierList.addAfter(newModifier, anchor)
+
+        if (anchor == lastChild) { // add line break if needed, otherwise visibility keyword may appear on previous line
+            val whiteSpace = modifierList.getNextSibling() as? PsiWhiteSpace
+            if (whiteSpace != null && whiteSpace.getText().contains('\n')) {
+                modifierList.addAfter(whiteSpace, anchor)
+                whiteSpace.delete()
+            }
+        }
     }
 }
 

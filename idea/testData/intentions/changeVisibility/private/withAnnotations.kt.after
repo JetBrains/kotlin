@@ -1,0 +1,2 @@
+@deprecated("a")
+private<caret> class C

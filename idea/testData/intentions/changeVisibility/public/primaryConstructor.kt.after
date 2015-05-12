@@ -1,0 +1,2 @@
+// INTENTION_TEXT: Make public
+class C <caret>public (val v: Int)
