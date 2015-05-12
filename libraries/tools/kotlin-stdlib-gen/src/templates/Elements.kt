@@ -177,7 +177,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("elementAt(index: Int)") {
         val index = '$' + "index"
-        doc { "Returns element at the given [index] or throws an IndexOutOfBoundsException if the [index] is out of bounds of this collection." }
+        doc { "Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection." }
         returns("T")
         body {
             """
@@ -200,13 +200,15 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("elementAtOrElse(index: Int, defaultValue: (Int) -> T)") {
-        doc { "Returns element at the given [index] or calls [defaultValue] and returns its result if the [index] is out of bounds of this collection." }
+        doc { "Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection." }
         returns("T")
         inline(true)
         body {
             """
             if (this is List<T>)
                 return this.elementAtOrElse(index, defaultValue)
+            if (index < 0)
+                return defaultValue(index)
             val iterator = iterator()
             var count = 0
             while (iterator.hasNext()) {
@@ -219,6 +221,8 @@ fun elements(): List<GenericFunction> {
         }
         body(Sequences) {
             """
+            if (index < 0)
+                return defaultValue(index)
             val iterator = iterator()
             var count = 0
             while (iterator.hasNext()) {
@@ -238,12 +242,14 @@ fun elements(): List<GenericFunction> {
 
 
     templates add f("elementAtOrNull(index: Int)") {
-        doc { "Returns element at the given [index] or `null` if the [index] is out of bounds of this collection." }
+        doc { "Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection." }
         returns("T?")
         body {
             """
             if (this is List<T>)
                 return this.elementAtOrNull(index)
+            if (index < 0)
+                return null
             val iterator = iterator()
             var count = 0
             while (iterator.hasNext()) {
@@ -256,6 +262,8 @@ fun elements(): List<GenericFunction> {
         }
         body(Sequences) {
             """
+            if (index < 0)
+                return null
             val iterator = iterator()
             var count = 0
             while (iterator.hasNext()) {

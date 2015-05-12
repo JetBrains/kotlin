@@ -15,7 +15,7 @@ class IterableWrapper<T>(collection: Iterable<T>) : Iterable<T> {
     }
 }
 
-class IterableTest : IterableTests<Iterable<String>>(iterableOf("foo", "bar"), iterableOf<String>())
+class IterableTest : OrderedIterableTests<Iterable<String>>(iterableOf("foo", "bar"), iterableOf<String>())
 class SetTest : IterableTests<Set<String>>(setOf("foo", "bar"), setOf<String>())
 class LinkedSetTest : IterableTests<LinkedHashSet<String>>(linkedSetOf("foo", "bar"), linkedSetOf<String>())
 class ListTest : OrderedIterableTests<List<String>>(listOf("foo", "bar"), listOf<String>())
