@@ -463,7 +463,7 @@ public class ErrorUtils {
 
         @Override
         public String toString() {
-            return constructor.toString() + (arguments.isEmpty() ? "" : joinToString(arguments, ", ", "<", ">", -1, "..."));
+            return constructor.toString() + (arguments.isEmpty() ? "" : joinToString(arguments, ", ", "<", ">", -1, "...", null));
         }
     }
 

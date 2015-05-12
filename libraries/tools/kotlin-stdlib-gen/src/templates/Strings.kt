@@ -63,7 +63,6 @@ fun strings(): List<GenericFunction> {
 
         exclude(Strings)
         returns("String")
-        annotations("kotlin.jvm.overloads", Iterables)
         body {
             """
             return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
