@@ -31,21 +31,14 @@ import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.TypeUtils
 
-public class RemoveExplicitTypeArguments : JetSelfTargetingOffsetIndependentIntention<JetTypeArgumentList>(
-        "remove.explicit.type.arguments", javaClass()) {
-
+public class RemoveExplicitTypeArguments : JetSelfTargetingOffsetIndependentIntention<JetTypeArgumentList>(javaClass(), "Remove explicit type arguments") {
     override fun isApplicableTo(element: JetTypeArgumentList): Boolean {
-        val callExpression = element.getParent()
-        if (callExpression !is JetCallExpression) return false
-
-        val context = callExpression.analyze()
+        val callExpression = element.getParent() as? JetCallExpression ?: return false
         if (callExpression.getTypeArguments().isEmpty()) return false
 
-        val injector = InjectorForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
-
-        val scope = context[BindingContext.RESOLUTION_SCOPE, callExpression]
-        val originalCall = callExpression.getResolvedCall(context)
-        if (originalCall == null || scope !is JetScope) return false
+        val context = callExpression.analyze()
+        val scope = context[BindingContext.RESOLUTION_SCOPE, callExpression] ?: return false
+        val originalCall = callExpression.getResolvedCall(context) ?: return false
         val untypedCall = CallWithoutTypeArgs(originalCall.getCall())
 
         // todo Check with expected type for other expressions
@@ -59,17 +52,19 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingOffsetIndependentInte
             is JetReturnExpression -> true
             else -> false
         }
-        val jType = if (expectedTypeIsExplicitInCode) {
+        val expectedType = if (expectedTypeIsExplicitInCode) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression] ?: TypeUtils.NO_EXPECTED_TYPE
         }
         else {
             TypeUtils.NO_EXPECTED_TYPE
         }
         val dataFlow = context.getDataFlowInfo(callExpression)
+        val injector = InjectorForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
         val resolutionResults = injector.getCallResolver().resolveFunctionCall(
-                BindingTraceContext(), scope, untypedCall, jType, dataFlow, false)
-        assert (resolutionResults.isSingleResult()) { "Removing type arguments changed resolve for: " +
-                "${callExpression.getTextWithLocation()} to ${resolutionResults.getResultCode()}" }
+                BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)
+        assert (resolutionResults.isSingleResult()) {
+            "Removing type arguments changed resolve for: ${callExpression.getTextWithLocation()} to ${resolutionResults.getResultCode()}"
+        }
 
         val args = originalCall.getTypeArguments()
         val newArgs = resolutionResults.getResultingCall().getTypeArguments()
@@ -78,7 +73,7 @@ public class RemoveExplicitTypeArguments : JetSelfTargetingOffsetIndependentInte
     }
 
     private class CallWithoutTypeArgs(call: Call) : DelegatingCall(call) {
-        override fun getTypeArguments(): List<JetTypeProjection> = listOf()
+        override fun getTypeArguments() = emptyList<JetTypeProjection>()
         override fun getTypeArgumentList() = null
     }
 
