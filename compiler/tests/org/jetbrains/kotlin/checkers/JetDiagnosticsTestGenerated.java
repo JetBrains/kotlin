@@ -4182,6 +4182,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumCommaSemicolonBetween.kt")
+            public void testEnumCommaSemicolonBetween() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumCommaSemicolonBetween.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumEntryCannotHaveClassObject.kt")
             public void testEnumEntryCannotHaveClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumEntryCannotHaveClassObject.kt");
@@ -4257,6 +4263,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("enumOldConstructors.kt")
             public void testEnumOldConstructors() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumOldConstructors.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumSemicolonBetween.kt")
+            public void testEnumSemicolonBetween() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumSemicolonBetween.kt");
                 doTest(fileName);
             }
 

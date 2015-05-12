@@ -223,6 +223,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("EnumSemicolonBetween.kt")
+        public void testEnumSemicolonBetween() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumSemicolonBetween.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("EnumSemicolonBetweenWithMembers.kt")
+        public void testEnumSemicolonBetweenWithMembers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumSemicolonBetweenWithMembers.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("EnumShortCommas.kt")
         public void testEnumShortCommas() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/EnumShortCommas.kt");

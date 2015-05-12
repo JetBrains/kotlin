@@ -3096,6 +3096,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("commaSemicolonDelimiter.kt")
+            public void testCommaSemicolonDelimiter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/commaSemicolonDelimiter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("missedCommas.kt")
             public void testMissedCommas() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/missedCommas.kt");
@@ -3147,6 +3153,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("noSemicolonComment.kt")
             public void testNoSemicolonComment() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noSemicolonComment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("semicolonDelimiter.kt")
+            public void testSemicolonDelimiter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/semicolonDelimiter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("semicolonDelimiterExceptLast.kt")
+            public void testSemicolonDelimiterExceptLast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/semicolonDelimiterExceptLast.kt");
                 doTest(fileName);
             }
 

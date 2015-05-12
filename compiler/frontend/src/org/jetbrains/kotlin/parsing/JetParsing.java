@@ -622,7 +622,7 @@ public class JetParsing extends AbstractJetParsing {
     public enum NameParsingMode {
         REQUIRED,
         ALLOWED,
-        PROHIBITED;
+        PROHIBITED
     }
 
     /*
@@ -771,8 +771,29 @@ public class JetParsing extends AbstractJetParsing {
             if (!parseEnumEntry()) {
                 break;
             }
-            // TODO: syntax without COMMA is deprecated (only last entry is an exception), KT-7605
-            consumeIf(COMMA);
+            // TODO: syntax with SEMICOLON between enum entries is deprecated, KT-7605
+            if (at(SEMICOLON)) {
+                // Semicolon can be legally here only if member follows
+                PsiBuilder.Marker temp = mark();
+                advance(); // SEMICOLON
+                ModifierDetector detector = new ModifierDetector();
+                parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+                if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
+                    // Otherwise it's old syntax that's not supported
+                    temp.rollbackTo();
+                    // Despite of the error, try to restore and parse next enum entry
+                    temp = mark();
+                    advance(); // SEMICOLON
+                    temp.error("Expecting ','");
+                }
+                else {
+                    temp.rollbackTo();
+                }
+            }
+            else {
+                // TODO: syntax without COMMA is deprecated (only last entry is an exception), KT-7605
+                consumeIf(COMMA);
+            }
         }
     }
 
@@ -903,10 +924,7 @@ public class JetParsing extends AbstractJetParsing {
     private IElementType parseMemberDeclarationRest(boolean isEnum, boolean isDefault) {
         IElementType keywordToken = tt();
         IElementType declType = null;
-        if (keywordToken == CLASS_KEYWORD) {
-            declType = parseClass(isEnum);
-        }
-        else if (keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
+        if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
             declType = parseClass(isEnum);
         }
         else if (keywordToken == FUN_KEYWORD) {
