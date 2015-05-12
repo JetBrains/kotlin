@@ -618,6 +618,30 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localClassMember.0.kt")
+            public void testLocalClassMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/localClassMember.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("objectExpressionDeepMember.0.kt")
+            public void testObjectExpressionDeepMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/objectExpressionDeepMember.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("objectExpressionMember.0.kt")
+            public void testObjectExpressionMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/objectExpressionMember.0.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("objectExpressionMember2.0.kt")
+            public void testObjectExpressionMember2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/objectExpressionMember2.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("synthesizedFunction.0.kt")
             public void testSynthesizedFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findFunctionUsages/synthesizedFunction.0.kt");

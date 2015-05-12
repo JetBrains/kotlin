@@ -793,6 +793,14 @@ public class JetPsiUtil {
         return getEnclosingElementForLocalDeclaration(declaration, true);
     }
 
+    private static boolean isMemberOfObjectExpression(@NotNull JetCallableDeclaration propertyOrFunction) {
+        PsiElement parent = PsiTreeUtil.getStubOrPsiParent(propertyOrFunction);
+        if (!(parent instanceof JetClassBody)) return false;
+        PsiElement grandparent = PsiTreeUtil.getStubOrPsiParent(parent);
+        if (!(grandparent instanceof JetObjectDeclaration)) return false;
+        return PsiTreeUtil.getStubOrPsiParent(grandparent) instanceof JetObjectLiteralExpression;
+    }
+
     @Nullable
     public static JetElement getEnclosingElementForLocalDeclaration(@NotNull JetDeclaration declaration, boolean skipParameters) {
         if (declaration instanceof JetTypeParameter && skipParameters) {
@@ -819,10 +827,12 @@ public class JetPsiUtil {
             if (current instanceof JetClassInitializer) {
                 return ((JetClassInitializer) current).getBody();
             }
-            if (current instanceof JetBlockExpression ||
-                current instanceof JetProperty ||
-                current instanceof JetParameter ||
-                current instanceof JetFunction) {
+            if (current instanceof JetProperty || current instanceof JetFunction) {
+                if (parent instanceof JetFile || (parent instanceof JetClassBody && !isMemberOfObjectExpression((JetCallableDeclaration) current))) {
+                    return (JetElement) current;
+                }
+            }
+            if (current instanceof JetBlockExpression || current instanceof JetParameter) {
                 return (JetElement) current;
             }
 
