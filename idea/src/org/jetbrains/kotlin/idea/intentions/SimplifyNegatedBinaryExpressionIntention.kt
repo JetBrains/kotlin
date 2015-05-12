@@ -17,19 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.JetBundle
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.JetSingleValueToken
-import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
-public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIndependentIntention<JetPrefixExpression>("simplify.negated.binary.expression", javaClass()) {
+public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIndependentIntention<JetPrefixExpression>(javaClass(), "Simplify negated binary expression") {
 
-    private fun JetPrefixExpression.unparenthesize(): JetExpression? {
-        return (this.getBaseExpression() as? JetParenthesizedExpression)?.getExpression()
-    }
-
-    public fun JetToken.negate(): JetSingleValueToken? = when (this) {
+    private fun IElementType.negate(): JetSingleValueToken? = when (this) {
         JetTokens.IN_KEYWORD -> JetTokens.NOT_IN
         JetTokens.NOT_IN -> JetTokens.IN_KEYWORD
 
@@ -49,15 +44,19 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIn
     }
 
     override fun isApplicableTo(element: JetPrefixExpression): Boolean {
-        if (element.getOperationReference().getReferencedNameElementType() != JetTokens.EXCL) return false
+        if (element.getOperationToken() != JetTokens.EXCL) return false
 
-        val expression = element.unparenthesize() as? JetOperationExpression
-        if (!(expression is JetIsExpression || expression is JetBinaryExpression)) return false
+        val expression = JetPsiUtil.deparenthesize(element.getBaseExpression()) as? JetOperationExpression ?: return false
+        when (expression) {
+            is JetIsExpression -> { if (expression.getTypeReference() == null) return false }
+            is JetBinaryExpression -> { if (expression.getLeft() == null || expression.getRight() == null) return false }
+            else -> return false
+        }
 
-        val operation = (JetPsiUtil.getOperationToken(expression) as? JetSingleValueToken) ?: return false
-        val negOperation = operation.negate() ?: return false
+        val operation = expression.getOperationReference().getReferencedNameElementType() as? JetSingleValueToken ?: return false
+        val negatedOperation = operation.negate() ?: return false
 
-        setText(JetBundle.message("simplify.negated.binary.expression", operation.getValue(), negOperation.getValue()))
+        setText("Simplify negated '${operation.getValue()}' expression to '${negatedOperation.getValue()}'")
         return true
     }
 
@@ -66,27 +65,15 @@ public class SimplifyNegatedBinaryExpressionIntention : JetSelfTargetingOffsetIn
     }
 
     public fun applyTo(element: JetPrefixExpression) {
-        // Guaranteed to succeed (by isApplicableTo)
-        val expression = element.unparenthesize()!!
-        val invertedOperation = JetPsiUtil.getOperationToken(expression as JetOperationExpression)!!.negate()!!
+        val expression = JetPsiUtil.deparenthesize(element.getBaseExpression())!!
+        val operation = (expression as JetOperationExpression).getOperationReference().getReferencedNameElementType().negate()!!.getValue()
 
         val psiFactory = JetPsiFactory(expression)
-        element.replace(
-                when (expression) {
-                    is JetIsExpression -> {
-                        psiFactory.createExpression(
-                                "${expression.getLeftHandSide().getText() ?: ""} ${invertedOperation.getValue()} ${expression.getTypeReference()?.getText() ?: ""}"
-                        )
-                    }
-                    is JetBinaryExpression -> psiFactory.createExpressionByPattern("$0 $1 $2",
-                            expression.getLeft(),
-                            invertedOperation.getValue(),
-                            expression.getRight()
-                    )
-                    else -> throw IllegalStateException(
-                            "Expression is neither a JetIsExpression or JetBinaryExpression (checked by isApplicableTo): ${expression.getText()}"
-                    )
-                }
-        )
+        val newExpression = when (expression) {
+            is JetIsExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.getLeftHandSide(), operation, expression.getTypeReference()!!)
+            is JetBinaryExpression -> psiFactory.createExpressionByPattern("$0 $1 $2", expression.getLeft()!!, operation, expression.getRight()!!)
+            else -> throw IllegalArgumentException()
+        }
+        element.replace(newExpression)
     }
 }
