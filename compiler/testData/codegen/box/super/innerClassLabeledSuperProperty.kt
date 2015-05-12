@@ -1,4 +1,4 @@
-trait Base {
+interface Base {
     val foo: String
     fun bar(): String
 }

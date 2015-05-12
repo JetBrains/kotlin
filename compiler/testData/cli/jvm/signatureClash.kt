@@ -12,7 +12,7 @@ class A : B() {
 fun getB(): Int = 1
 val b: Int = 1
 
-trait Tr {
+interface Tr {
     fun getTr() = 1
 }
 

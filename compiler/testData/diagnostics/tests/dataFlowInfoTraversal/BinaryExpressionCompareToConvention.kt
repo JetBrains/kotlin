@@ -1,8 +1,8 @@
 // !CHECK_TYPE
 
-trait A
+interface A
 
-trait B : A
+interface B : A
 fun B.compareTo(b: B) = if (this == b) 0 else 1
 
 fun foo(a: A): Boolean {

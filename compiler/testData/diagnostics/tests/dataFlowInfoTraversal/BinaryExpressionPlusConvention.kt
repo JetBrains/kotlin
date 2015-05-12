@@ -1,8 +1,8 @@
 // !CHECK_TYPE
 
-trait A
+interface A
 
-trait B : A
+interface B : A
 fun B.plus(b: B) = if (this == b) b else this
 
 fun foo(a: A): B {

@@ -1,4 +1,4 @@
-trait T {
+interface T {
     <!OVERLOADS_ABSTRACT!>@kotlin.jvm.overloads fun foo(s: String = "OK")<!>
 }
 

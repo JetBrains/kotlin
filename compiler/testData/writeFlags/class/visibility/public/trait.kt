@@ -1,4 +1,4 @@
-public trait MyClass {
+public interface MyClass {
 }
 
 // TESTED_OBJECT_KIND: class

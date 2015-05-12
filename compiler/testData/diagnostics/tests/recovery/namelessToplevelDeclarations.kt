@@ -13,7 +13,7 @@ class<!SYNTAX!><!> {
 
 }
 
-trait<!SYNTAX!><!> {
+interface<!SYNTAX!><!> {
 
 }
 

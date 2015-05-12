@@ -1,4 +1,4 @@
-trait X {
+interface X {
     fun f(): Boolean
 }
 

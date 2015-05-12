@@ -2,21 +2,21 @@
 // FILE: x.kt
 package p
 
-public trait Base<T> {
+public interface Base<T> {
     public fun foo(t: T) {}
 }
 
-public trait A<T> : Base<T>
+public interface A<T> : Base<T>
 
 // MODULE: m2
 // FILE: x.kt
 package p
 
-public trait Base<T> {
+public interface Base<T> {
     public fun foo(t: T) {}
 }
 
-public trait B : Base<String>
+public interface B : Base<String>
 
 // MODULE: m3(m1, m2)
 // FILE: x.kt

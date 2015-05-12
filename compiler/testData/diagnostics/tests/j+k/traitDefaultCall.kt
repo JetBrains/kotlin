@@ -6,7 +6,7 @@ public interface Test {
 }
 
 // FILE: test.kt
-trait KTrait : Test {
+interface KTrait : Test {
     fun ktest() {
         <!TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER!>super.test()<!>
 

@@ -4,7 +4,7 @@ class Klass {
     }
 }
 
-trait Trait {
+interface Trait {
     companion object {
         val NAME = "Trait"
     }

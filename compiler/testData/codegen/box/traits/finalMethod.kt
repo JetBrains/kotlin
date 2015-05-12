@@ -1,6 +1,6 @@
 //KT-2382
 
-trait T {
+interface T {
     final fun foo() = "OK"
 }
 

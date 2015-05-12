@@ -1,43 +1,43 @@
 // FILE: b.kt
-trait A<in T> {}
-trait B<T> : A<Int> {}
-trait C<T> : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>B<T>, A<T><!> {}
-trait C1<T> : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>B<T>, A<Any><!> {}
-trait D : <!INCONSISTENT_TYPE_PARAMETER_VALUES, INCONSISTENT_TYPE_PARAMETER_VALUES!>C<Boolean>, B<Double><!>{}
+interface A<in T> {}
+interface B<T> : A<Int> {}
+interface C<T> : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>B<T>, A<T><!> {}
+interface C1<T> : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>B<T>, A<Any><!> {}
+interface D : <!INCONSISTENT_TYPE_PARAMETER_VALUES, INCONSISTENT_TYPE_PARAMETER_VALUES!>C<Boolean>, B<Double><!>{}
 
-trait A1<out T> {}
-trait B1 : A1<Int> {}
-trait B2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>A1<Any>, B1<!> {}
+interface A1<out T> {}
+interface B1 : A1<Int> {}
+interface B2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>A1<Any>, B1<!> {}
 
-trait BA1<T> {}
-trait BB1 : BA1<Int> {}
-trait BB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>BA1<Any>, BB1<!> {}
+interface BA1<T> {}
+interface BB1 : BA1<Int> {}
+interface BB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>BA1<Any>, BB1<!> {}
 
 
 // FILE: b.kt
 package x
-    trait AA1<out T> {}
-    trait AB1 : AA1<Int> {}
-    trait AB3 : AA1<Comparable<Int>> {}
-    trait AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
+    interface AA1<out T> {}
+    interface AB1 : AA1<Int> {}
+    interface AB3 : AA1<Comparable<Int>> {}
+    interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
 
 // FILE: b.kt
 package x2
-    trait AA1<out T> {}
-    trait AB1 : AA1<Any> {}
-    trait AB3 : AA1<Comparable<Int>> {}
-    trait AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
+    interface AA1<out T> {}
+    interface AB1 : AA1<Any> {}
+    interface AB3 : AA1<Comparable<Int>> {}
+    interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
 
 // FILE: b.kt
 package x3
-    trait AA1<in T> {}
-    trait AB1 : AA1<Any> {}
-    trait AB3 : AA1<Comparable<Int>> {}
-    trait AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
+    interface AA1<in T> {}
+    interface AB1 : AA1<Any> {}
+    interface AB3 : AA1<Comparable<Int>> {}
+    interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
 
 // FILE: b.kt
 package sx2
-    trait AA1<in T> {}
-    trait AB1 : AA1<Int> {}
-    trait AB3 : AA1<Comparable<Int>> {}
-    trait AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}
+    interface AA1<in T> {}
+    interface AB1 : AA1<Int> {}
+    interface AB3 : AA1<Comparable<Int>> {}
+    interface AB2 : <!INCONSISTENT_TYPE_PARAMETER_VALUES!>AA1<Number>, AB1, AB3<!> {}

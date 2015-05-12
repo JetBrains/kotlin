@@ -4,7 +4,7 @@ fun foo(p: Int??) {
 
 }
 
-trait T {
+interface T {
     abstract fun foo()
 }
 

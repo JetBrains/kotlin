@@ -1,4 +1,4 @@
-deprecated("") public trait MyTrait {
+deprecated("") public interface MyTrait {
 }
 
 // TESTED_OBJECT_KIND: class

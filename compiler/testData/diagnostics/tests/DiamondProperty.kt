@@ -1,4 +1,4 @@
-trait Base {
+interface Base {
     var v : Int
         get() = 1
         set(v) {}
@@ -6,6 +6,6 @@ trait Base {
     
 open class Left() : Base
 
-trait Right : Base
+interface Right : Base
 
 class Diamond() : Left(), Right

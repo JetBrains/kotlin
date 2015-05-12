@@ -2,7 +2,7 @@ package test
 
 annotation class Anno
 
-trait Trait {
+interface Trait {
     companion object {
         [Anno] val property: Int
             get() = 42

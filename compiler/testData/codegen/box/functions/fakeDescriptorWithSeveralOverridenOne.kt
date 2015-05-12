@@ -1,12 +1,12 @@
-trait Named {
+interface Named {
     abstract fun getName() : String;
 }
 
-trait MemberDescriptor : Named {}
+interface MemberDescriptor : Named {}
 
-trait ClassifierDescriptor : Named {}
+interface ClassifierDescriptor : Named {}
 
-trait ClassDescriptor : MemberDescriptor, ClassifierDescriptor {}
+interface ClassDescriptor : MemberDescriptor, ClassifierDescriptor {}
 
 class ClassDescriptorImpl : ClassDescriptor {
     override fun getName(): String {

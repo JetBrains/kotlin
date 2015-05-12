@@ -8,10 +8,10 @@ val a1: `fromOtherPackage`TestClass? = null
 
 //FILE:fromRoot.kt
 //----------------------------------------------------------------------------------
-trait ~fromRoot~TestClass
+interface ~fromRoot~TestClass
 
 //FILE:fromOtherPackage.kt
 //----------------------------------------------------------------------------------
 package testing
 
-trait ~fromOtherPackage~TestClass
+interface ~fromOtherPackage~TestClass

@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -BASE_WITH_NULLABLE_UPPER_BOUND
 // !CHECK_TYPE
-trait A<T>
+interface A<T>
 
-trait Out<out T>
+interface Out<out T>
 
 fun <T> foo(a: A<T>, o: Out<T?>): T = throw Exception("$a $o")
 

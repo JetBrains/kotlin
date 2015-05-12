@@ -1,6 +1,6 @@
 // KT-316 Members of traits must be open by default
 
-trait B {
+interface B {
     fun bar() {}
     fun foo() {}
 }

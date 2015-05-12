@@ -1,4 +1,4 @@
-trait Named {
+interface Named {
     fun name(): String
 }
 

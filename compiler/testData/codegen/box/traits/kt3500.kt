@@ -1,8 +1,8 @@
-trait BK {
+interface BK {
     fun foo(): String = 10.toString()
 }
 
-trait KTrait: BK {
+interface KTrait: BK {
     override fun foo() = 30.toString()
 }
 

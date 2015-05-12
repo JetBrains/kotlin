@@ -12,8 +12,8 @@ public fun Int.ext(): Int {}
 
 public fun <out T> withTypeParam(a: Array<T>): Int {}
 
-trait Foo
-trait Bar
+interface Foo
+interface Bar
 
 fun <P> funTypeParameterWithTwoUpperBounds() where P : Foo, P : Bar = 17
 

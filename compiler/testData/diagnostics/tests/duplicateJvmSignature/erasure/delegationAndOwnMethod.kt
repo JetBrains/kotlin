@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-trait Foo<T> {
+interface Foo<T> {
     fun foo(l: List<T>)
 }
 

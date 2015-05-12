@@ -2,7 +2,7 @@ open class Ccc() {
     fun foo() = 1
 }
 
-trait Ttt {
+interface Ttt {
     fun foo(): Int
 }
 

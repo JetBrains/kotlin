@@ -1,6 +1,6 @@
 // C
 
-trait Tr {
+interface Tr {
     fun foo(): Any
     val v: Any
 }

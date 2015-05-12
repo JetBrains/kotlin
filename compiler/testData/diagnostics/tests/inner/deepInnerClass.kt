@@ -1,4 +1,4 @@
-trait P<U, Y>
+interface P<U, Y>
 
 class A<T> {
     class B {

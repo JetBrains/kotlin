@@ -1,12 +1,12 @@
 // !DIAGNOSTICS: -CONFLICTING_JVM_DECLARATIONS
-trait One {
+interface One {
     public fun foo(): Any?
 }
-trait Two {
+interface Two {
     public fun foo(): String?
 }
 
-trait Three {
+interface Three {
     public fun foo(): String
 }
 

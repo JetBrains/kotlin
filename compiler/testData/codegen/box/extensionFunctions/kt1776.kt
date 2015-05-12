@@ -1,4 +1,4 @@
-trait Expr {
+interface Expr {
     public fun ttFun() : Int = 12
 }
 

@@ -1,7 +1,7 @@
 open class B {
     constructor() {}
 }
-trait C
+interface C
 class A : B, C {
     <caret>constructor() { }
 }

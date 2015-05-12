@@ -3,7 +3,7 @@ package test
 
 class ConstructorTypeParamClassObjectTypeConflict<test> {
     companion object {
-        trait test
+        interface test
     }
 
     val some: test? = throw Exception()

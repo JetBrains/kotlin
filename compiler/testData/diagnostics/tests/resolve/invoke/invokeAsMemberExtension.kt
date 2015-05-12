@@ -1,7 +1,7 @@
 class Foo
 
 //no variable
-trait A {
+interface A {
     fun Foo.invoke() {}
 
     fun test(foo: Foo) {
@@ -10,7 +10,7 @@ trait A {
 }
 
 //variable as member
-trait B {
+interface B {
     val foo: Foo
 }
 
@@ -38,7 +38,7 @@ fun test(c: C, b: B) {
 
 
 //variable as extension,
-trait D {
+interface D {
 }
 val D.foo: Foo
     get() = Foo()
@@ -66,9 +66,9 @@ fun test(e: E, d: D) {
 }
 
 //variable as member extension
-trait F
+interface F
 
-trait G {
+interface G {
     val F.foo: Foo
     fun Foo.invoke()
 
@@ -92,13 +92,13 @@ fun test(g: G, f: F) {
 }
 
 //variable as member extension (2)
-trait X
+interface X
 
-trait U {
+interface U {
     val X.foo: Foo
 }
 
-trait V {
+interface V {
     fun Foo.invoke() {}
 
     fun U.test(x: X) {

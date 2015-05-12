@@ -1,6 +1,6 @@
 // C
 
-trait Base {
+interface Base {
     fun foo(): Any
 }
 

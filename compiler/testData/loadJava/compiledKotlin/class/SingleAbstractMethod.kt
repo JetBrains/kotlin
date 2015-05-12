@@ -1,5 +1,5 @@
 package test
 
-public trait SingleAbstractMethod {
+public interface SingleAbstractMethod {
     fun foo()
 }

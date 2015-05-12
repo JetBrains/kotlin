@@ -33,7 +33,7 @@ object A {
     companion object
 }
 
-trait A {
+interface A {
     companion object
 
     class C {

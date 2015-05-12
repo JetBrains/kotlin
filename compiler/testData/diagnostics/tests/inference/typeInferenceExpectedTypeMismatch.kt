@@ -11,14 +11,14 @@ fun newList<S>() : ArrayList<S> {
     return ArrayList<S>()
 }
 
-trait Out<out T>
-trait In<in T>
+interface Out<out T>
+interface In<in T>
 
-trait Two<T, R>
+interface Two<T, R>
 
-trait A
-trait B: A
-trait C: A
+interface A
+interface B: A
+interface C: A
 
 fun <T, R> foo(o: Out<T>, i: In<R>): Two<T, R> = throw Exception("$o $i")
 

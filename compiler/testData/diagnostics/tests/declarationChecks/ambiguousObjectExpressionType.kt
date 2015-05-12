@@ -1,4 +1,4 @@
-trait MyTrait {
+interface MyTrait {
   fun f1() {}
 }
 

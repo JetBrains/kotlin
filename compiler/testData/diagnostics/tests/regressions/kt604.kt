@@ -1,13 +1,13 @@
 // KT-604 Internal frontend error
 
-trait ChannelPipeline {
+interface ChannelPipeline {
 
 }
 
 class DefaultChannelPipeline() : ChannelPipeline {
 }
 
-trait ChannelPipelineFactory{
+interface ChannelPipelineFactory{
     fun getPipeline() : ChannelPipeline
 }
 

@@ -1,6 +1,6 @@
 package override.normal
 
-trait MyTrait {
+interface MyTrait {
     fun foo()
     val pr : Unit
 }

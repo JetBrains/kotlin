@@ -2,7 +2,7 @@
 
 package test
 
-trait A {
+interface A {
     var v: String
         get() = "test"
         set(value) {

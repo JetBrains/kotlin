@@ -11,6 +11,6 @@ fun bar(foo: Foo) {
     42
 }
 
-trait Foo {
+interface Foo {
     var c: Int
 }

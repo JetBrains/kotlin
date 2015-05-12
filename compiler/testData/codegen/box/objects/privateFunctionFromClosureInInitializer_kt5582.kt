@@ -1,4 +1,4 @@
-trait T
+interface T
 
 object Foo {
     private fun foo(p: T) = p

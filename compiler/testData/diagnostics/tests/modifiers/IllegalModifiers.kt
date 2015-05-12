@@ -10,7 +10,7 @@ abstract class A() {
     <!ILLEGAL_MODIFIER!>abstract<!> protected set
 }
 
-<!TRAIT_CAN_NOT_BE_FINAL!>final<!> trait T {}
+<!TRAIT_CAN_NOT_BE_FINAL!>final<!> interface T {}
 
 class FinalClass() {
     <!NON_FINAL_MEMBER_IN_FINAL_CLASS!>open<!> fun foo() {}

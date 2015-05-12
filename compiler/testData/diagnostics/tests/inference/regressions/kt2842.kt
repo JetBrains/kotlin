@@ -1,6 +1,6 @@
 package c
 
-trait A<T>
+interface A<T>
 
 fun test(a: A<Int>?) {
     a<!UNSAFE_CALL!>.<!>foo() //no error

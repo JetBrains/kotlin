@@ -1,4 +1,4 @@
-trait Trait<T : Enum<T>> : Enum<T> {
+interface Trait<T : Enum<T>> : Enum<T> {
     val value : String get() = name()
 }
 

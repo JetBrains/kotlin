@@ -1,6 +1,6 @@
 import java.util.ArrayList
 
-trait Tr {
+interface Tr {
    fun extra() : String = "_"
 }
 

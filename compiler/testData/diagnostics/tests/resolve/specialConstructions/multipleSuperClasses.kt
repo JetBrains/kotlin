@@ -1,11 +1,11 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
-trait A
-trait B
+interface A
+interface B
 
-trait C: A, B
-trait D: A, B
-trait E: A, B
+interface C: A, B
+interface D: A, B
+interface E: A, B
 
 fun foo(c: C?, d: D?, e: E?) {
     val a: A? = <!TYPE_MISMATCH!>c ?: d<!> ?: e

@@ -1,18 +1,18 @@
 package test
 
-public trait DeeplySubstitutedClassParameter {
+public interface DeeplySubstitutedClassParameter {
 
-    public trait Super<T> {
+    public interface Super<T> {
         public fun foo(t: T)
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Middle<E>: Super<E> {
+    public interface Middle<E>: Super<E> {
         override fun foo(t: E)
     }
 
-    public trait Sub: Middle<String> {
+    public interface Sub: Middle<String> {
         override fun foo(t: String)
     }
 }

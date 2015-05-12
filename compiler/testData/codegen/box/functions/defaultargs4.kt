@@ -1,4 +1,4 @@
-trait A {
+interface A {
     fun bar2(arg: Int = 239) : Int
 
     fun bar(arg: Int = 240) : Int = bar2(arg/2)

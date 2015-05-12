@@ -1,4 +1,4 @@
-trait A {
+interface A {
     enum class E {
         ENTRY
     }

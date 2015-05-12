@@ -2,7 +2,7 @@ import kotlin.test.assertEquals
 
 fun foo(block: () -> String) = block()
 
-trait A {
+interface A {
     fun f(): String
     fun g(): String
 }

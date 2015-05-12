@@ -1,10 +1,10 @@
-trait In<in I>
-trait Out<out O>
-trait Inv<P>
+interface In<in I>
+interface Out<out O>
+interface Inv<P>
 fun <T> getT(): T = null!!
 
 
-trait Test<in I : Any, out O : Any, P : Any> {
+interface Test<in I : Any, out O : Any, P : Any> {
     fun ok1(i: I?) : O?
     fun ok2(i: In<O?>?) : Out<O?>?
     fun ok3(i: Inv<in O?>) = getT<Inv<in I?>>()

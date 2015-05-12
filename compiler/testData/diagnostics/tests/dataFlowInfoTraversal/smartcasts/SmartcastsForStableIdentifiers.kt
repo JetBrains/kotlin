@@ -74,7 +74,7 @@ fun Any?.foo() : Int {
 }
 
 
-trait T {}
+interface T {}
 
 open class C {
     fun foo() {

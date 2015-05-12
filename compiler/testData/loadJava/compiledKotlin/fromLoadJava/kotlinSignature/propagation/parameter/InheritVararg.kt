@@ -1,14 +1,14 @@
 package test
 
-public trait InheritVararg {
+public interface InheritVararg {
 
-    public trait Super {
+    public interface Super {
         public fun foo(vararg p0: String?)
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun foo(vararg p0: String?)
     }
 }

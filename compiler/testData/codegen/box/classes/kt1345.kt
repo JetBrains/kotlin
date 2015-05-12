@@ -1,10 +1,10 @@
-trait Creator<T> {
+interface Creator<T> {
     fun create() : T
 }
 
 class Actor(val code: String = "OK")
 
-trait Factory : Creator<Actor>
+interface Factory : Creator<Actor>
 
 class MyFactory() : Factory {
     override fun create(): Actor = Actor()

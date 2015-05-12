@@ -1,12 +1,12 @@
 package test
 
-public trait InheritReadOnliness {
+public interface InheritReadOnliness {
 
-    public trait Super {
+    public interface Super {
         public fun <A: List<String>> foo(a: A)
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun <B: List<String>> foo(a: B)
     }
 }

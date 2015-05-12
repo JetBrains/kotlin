@@ -4,7 +4,7 @@ open class B {
 
 class BB : B()
 
-trait Z<T :B > {
+interface Z<T :B > {
     fun T.getString() : String {
         return p
     }

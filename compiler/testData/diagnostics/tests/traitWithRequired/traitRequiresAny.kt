@@ -1,4 +1,4 @@
-trait AnyTrait : <!TRAIT_WITH_SUPERCLASS!>Any<!>
+interface AnyTrait : <!TRAIT_WITH_SUPERCLASS!>Any<!>
 
 class Foo : AnyTrait
 

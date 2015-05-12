@@ -1,11 +1,11 @@
 package test
 
-trait A {
+interface A {
     public val c: String
         get() = "OK"
 }
 
-trait B {
+interface B {
     protected val c: String
 }
 

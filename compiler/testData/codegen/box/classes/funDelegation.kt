@@ -2,7 +2,7 @@ open class Base() {
     fun n(n : Int) : Int = n + 1
 }
 
-trait Abstract {}
+interface Abstract {}
 
 class Derived1() : Base(), Abstract {}
 class Derived2() : Abstract, Base() {}

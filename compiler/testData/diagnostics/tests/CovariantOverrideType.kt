@@ -1,4 +1,4 @@
-trait A {
+interface A {
     fun foo() : Int = 1
     fun foo2() : Int = 1
     fun foo1() : Int = 1

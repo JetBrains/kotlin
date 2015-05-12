@@ -1,6 +1,6 @@
 package test
 
-public trait JavaBeanAbstractGetter {
+public interface JavaBeanAbstractGetter {
     //final val red: Int
     public abstract fun getRed(): Int
     //final val blue: Int

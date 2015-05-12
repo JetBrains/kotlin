@@ -1,8 +1,8 @@
-trait A<T> {
+interface A<T> {
     open fun foo(t: T) = "A"
 }
 
-trait B : A<String>
+interface B : A<String>
 
 enum class Z(val name: String) : B {
     Z1 : Z("Z1")

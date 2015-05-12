@@ -1,10 +1,10 @@
 package h
 
-trait A<T> {}
+interface A<T> {}
 
 fun <T> newA(): A<T> = throw Exception()
 
-trait Z
+interface Z
 
 fun <T> id(t: T): T = t
 

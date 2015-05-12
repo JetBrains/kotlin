@@ -1,8 +1,8 @@
-trait ISized {
+interface ISized {
     val size : Int
 }
 
-trait javaUtilIterator<T> : Iterator<T> {
+interface javaUtilIterator<T> : Iterator<T> {
     fun remove() : Unit {
         throw UnsupportedOperationException()
     }
@@ -16,13 +16,13 @@ class MyIterator<T>(val array : ReadOnlyArray<T>) : javaUtilIterator<T> {
     override fun next() : T = array.get(index++)
 }
 
-trait ReadOnlyArray<out T> : ISized, Iterable<T> {
+interface ReadOnlyArray<out T> : ISized, Iterable<T> {
   fun get(index : Int) : T
 
   override fun iterator() : Iterator<T> = MyIterator<T>(this)
 }
 
-trait WriteOnlyArray<in T> : ISized {
+interface WriteOnlyArray<in T> : ISized {
   fun set(index : Int, value : T) : Unit
 
   fun set(from: Int, count: Int, value: T) {

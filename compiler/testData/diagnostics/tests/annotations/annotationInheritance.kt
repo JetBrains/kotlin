@@ -1,6 +1,6 @@
 val a = object: T {}
 open class C
-trait T
+interface T
 
 annotation class Ann: <!SUPERTYPES_FOR_ANNOTATION_CLASS!>C()<!>
 annotation class Ann2: <!SUPERTYPES_FOR_ANNOTATION_CLASS!>T<!>

@@ -1,6 +1,6 @@
 open class Base
 
-trait Derived : Base {
+interface Derived : Base {
     fun foo(): String {
         return object {
             fun bar() = baz(this@Derived)

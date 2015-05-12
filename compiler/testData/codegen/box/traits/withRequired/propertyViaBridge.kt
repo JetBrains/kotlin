@@ -1,6 +1,6 @@
 open class Base
 
-trait Trait : Base {
+interface Trait : Base {
     private val value : String
         get() = "OK"
         

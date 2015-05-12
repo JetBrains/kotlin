@@ -8,7 +8,7 @@ import testing.allUnder.*
 
 // The goal is to activate lazy resolve in order Second, Other
 class FirstOrder: `other`Other, FirstInternal
-trait FirstInternal: `exact`Second
+interface FirstInternal: `exact`Second
 
 
 
@@ -22,7 +22,7 @@ import testing.allUnder.*
 
 // The goal is to activate lazy resolve in order Other, Second
 class FirstOrder: FirstInternal, `other`Other
-trait FirstInternal: `exact`Second
+interface FirstInternal: `exact`Second
 
 
 
@@ -30,16 +30,16 @@ trait FirstInternal: `exact`Second
 //----------------------------------------------------------------------------------
 package testing.allUnder
 
-trait ~allUnder~Second
+interface ~allUnder~Second
 
 //FILE:secondForExactImport.kt
 //----------------------------------------------------------------------------------
 package testing.exact
 
-trait ~exact~Second
+interface ~exact~Second
 
 //FILE:someOther.kt
 //----------------------------------------------------------------------------------
 package testing.other
 
-trait ~other~Other
+interface ~other~Other

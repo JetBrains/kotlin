@@ -1,6 +1,6 @@
 var result = ""
 
-trait A {
+interface A {
     var foo: String
         get() = result
         set(value) {

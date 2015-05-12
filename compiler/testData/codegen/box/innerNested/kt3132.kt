@@ -1,5 +1,5 @@
 class Test {
-    trait Foo { }
+    interface Foo { }
 
     class FooImplNested: Foo { }
     

@@ -8,7 +8,7 @@ enum class Enum {
 
     class Nested
 
-    trait Trait
+    interface Trait
 
     val c: Int = 1
 

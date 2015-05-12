@@ -1,4 +1,4 @@
-trait ATrait {
+interface ATrait {
     open fun foo2(): String = "OK"
 }
 

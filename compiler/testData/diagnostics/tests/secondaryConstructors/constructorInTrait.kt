@@ -1,3 +1,3 @@
-trait A {
+interface A {
     <!CONSTRUCTOR_IN_TRAIT!>constructor()
 <!>}

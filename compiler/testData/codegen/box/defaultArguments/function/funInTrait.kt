@@ -1,4 +1,4 @@
-trait Foo {
+interface Foo {
     fun foo(a: Double = 1.0): Double
 }
 

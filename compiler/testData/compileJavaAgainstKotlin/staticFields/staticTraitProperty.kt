@@ -1,6 +1,6 @@
 package test
 
-trait Test {
+interface Test {
 
   companion object {
     public val valProp: Int = 10

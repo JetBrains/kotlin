@@ -1,7 +1,7 @@
 //KT-1248 Control visibility of overrides needed
 package kt1248
 
-trait ParseResult<out T> {
+interface ParseResult<out T> {
     public val success : Boolean
     public val value : T
 }

@@ -1,4 +1,4 @@
-trait TestTrait : Simple {}
+interface TestTrait : Simple {}
 class Test : TestTrait {}
 
 fun box(): String {

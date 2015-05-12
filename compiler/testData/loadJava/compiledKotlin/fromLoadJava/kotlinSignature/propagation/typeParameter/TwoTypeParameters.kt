@@ -1,12 +1,12 @@
 package test
 
-public trait TwoTypeParameters {
+public interface TwoTypeParameters {
 
-    public trait Super {
+    public interface Super {
         public fun <A: CharSequence, B: Cloneable> foo(a: A, b: B)
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun <B: CharSequence, A: Cloneable> foo(a: B, b: A)
     }
 }

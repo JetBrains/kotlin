@@ -2,7 +2,7 @@ open class A {
     open fun foo(): Any = "A"
 }
 
-trait B : A {
+interface B : A {
     override fun foo(): String = "B"
 }
 

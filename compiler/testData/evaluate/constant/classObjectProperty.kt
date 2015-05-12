@@ -44,6 +44,6 @@ fun foo() {
     }
 }
 
-trait Foo {
+interface Foo {
     fun f()
 }

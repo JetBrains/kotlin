@@ -4,9 +4,9 @@
 
 package p
 
-public trait A<T>
-public trait C
-public trait D<T>
+public interface A<T>
+public interface C
+public interface D<T>
 public class B : A<Int>, C, D<Int>
 public class M1 {
     public val b: B = B()
@@ -17,9 +17,9 @@ public class M1 {
 
 package p
 
-public trait A
-public trait C<T>
-public trait D<T>
+public interface A
+public interface C<T>
+public interface D<T>
 
 public fun a(a: A) {
 }

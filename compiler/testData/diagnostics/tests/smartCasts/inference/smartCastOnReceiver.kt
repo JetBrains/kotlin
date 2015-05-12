@@ -1,5 +1,5 @@
-trait A
-trait B
+interface A
+interface B
 
 class Test {
     fun test(a: A?, b: B, list: MutableList<Pair<A, B>>) {

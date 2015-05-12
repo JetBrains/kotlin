@@ -1,4 +1,4 @@
-trait Test {
+interface Test {
   companion object {
     protected var prop: Int = 0
       private set

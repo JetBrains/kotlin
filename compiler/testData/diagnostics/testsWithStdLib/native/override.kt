@@ -1,6 +1,6 @@
 import kotlin.jvm.*
 
-trait Base {
+interface Base {
     fun foo()
 }
 

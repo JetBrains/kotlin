@@ -1,11 +1,11 @@
 import java.util.ArrayList
 import java.util.Arrays
 
-trait A {
+interface A {
     fun foo(): Collection<String>
 }
 
-trait B : A {
+interface B : A {
     override fun foo(): MutableCollection<String>
 }
 

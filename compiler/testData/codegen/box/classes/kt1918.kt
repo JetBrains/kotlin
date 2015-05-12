@@ -1,7 +1,7 @@
 class Bar {
 }
 
-trait Foo {
+interface Foo {
     fun xyzzy(x: Any?): String
 }
 

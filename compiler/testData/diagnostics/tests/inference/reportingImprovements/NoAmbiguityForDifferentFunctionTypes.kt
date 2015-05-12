@@ -1,6 +1,6 @@
 package a
 
-trait Closeable {}
+interface Closeable {}
 class C : Closeable {}
 
 fun <T: Closeable, R> T.foo(block: (T)-> R) = block

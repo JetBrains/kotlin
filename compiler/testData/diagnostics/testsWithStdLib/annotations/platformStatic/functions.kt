@@ -27,7 +27,7 @@ class A {
     }
 }
 
-trait B {
+interface B {
     companion object {
         <!PLATFORM_STATIC_NOT_IN_OBJECT!>platformStatic fun a1()<!> {
 

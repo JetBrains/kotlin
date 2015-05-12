@@ -15,5 +15,5 @@
 <!ILLEGAL_MODIFIER!>final<!> object B4 {}
 
 <!ILLEGAL_MODIFIER!>override<!> enum class C {}
-<!ILLEGAL_MODIFIER!>override<!> trait D {}
+<!ILLEGAL_MODIFIER!>override<!> interface D {}
 <!ILLEGAL_MODIFIER!>override<!> annotation class E

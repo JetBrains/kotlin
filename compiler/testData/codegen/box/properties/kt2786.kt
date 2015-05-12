@@ -1,4 +1,4 @@
-trait FooTrait {
+interface FooTrait {
         val propertyTest: String
 }
 

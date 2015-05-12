@@ -5,7 +5,7 @@ open class C {
     internal open fun foo() {}
 }
 
-trait T {
+interface T {
     protected fun foo() {}
 }
 
@@ -17,11 +17,11 @@ open class A {
     internal open fun foo() {}
 }
 
-trait B {
+interface B {
     protected fun foo() {}
 }
 
-trait D {
+interface D {
     public fun foo() {}
 }
 

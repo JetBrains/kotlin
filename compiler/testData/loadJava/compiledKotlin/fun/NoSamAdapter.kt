@@ -1,6 +1,6 @@
 package test
 
-public trait TaskObject {
+public interface TaskObject {
     fun foo(r: Runnable)
 }
 

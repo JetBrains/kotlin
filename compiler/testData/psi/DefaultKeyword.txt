@@ -158,7 +158,7 @@ JetFile: DefaultKeyword.kt
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   CLASS
-    PsiElement(trait)('trait')
+    PsiElement(interface)('interface')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('A')
     PsiWhiteSpace(' ')

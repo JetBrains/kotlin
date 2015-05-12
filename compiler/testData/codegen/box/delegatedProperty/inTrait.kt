@@ -2,7 +2,7 @@ class Delegate {
     fun get(t: Any?, p: PropertyMetadata): Int = 1
 }
 
-trait A {
+interface A {
     val prop: Int
 }
 

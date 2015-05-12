@@ -1,8 +1,8 @@
 //FILE:a.kt
-//KT-1579 Can't import nested class/trait
+//KT-1579 Can't import nested class/interface
 package lib
-trait WithInner {
-    trait Inner {
+interface WithInner {
+    interface Inner {
     }
 }
 //FILE:b.kt

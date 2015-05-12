@@ -1,8 +1,8 @@
-trait AL {
+interface AL {
     fun get(index: Int) : Any? = null
 }
 
-trait ALE<T> : AL {
+interface ALE<T> : AL {
     fun getOrNull(index: Int, value: T) : T {
         val r = get(index) as? T
         return r ?: value

@@ -1,4 +1,4 @@
-trait Element {
+interface Element {
     fun render(builder: StringBuilder, indent: String)
 }
 

@@ -1,6 +1,6 @@
 package test
 
-trait A {
+interface A {
     private val a: String
       get() = "AAAA!"
 }

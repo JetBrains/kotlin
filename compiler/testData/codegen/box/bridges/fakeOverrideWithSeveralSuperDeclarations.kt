@@ -1,12 +1,12 @@
-trait D1 {
+interface D1 {
     fun foo(): Any
 }
 
-trait D2 {
+interface D2 {
     fun foo(): Number
 }
 
-trait F3 : D1, D2
+interface F3 : D1, D2
 
 open class D4 {
     fun foo(): Int = 42

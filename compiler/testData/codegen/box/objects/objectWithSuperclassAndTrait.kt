@@ -4,7 +4,7 @@ open class A {
     }
 }
 
-trait T {
+interface T {
     open fun foo(): Int {
         return 3
     }

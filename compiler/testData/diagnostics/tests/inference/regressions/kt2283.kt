@@ -2,7 +2,7 @@
 package a
 
 
-trait Foo<A>
+interface Foo<A>
 
 fun <A, B> Foo<A>.map(<!UNUSED_PARAMETER!>f<!>: (A) -> B): Foo<B> = object : Foo<B> {}
 

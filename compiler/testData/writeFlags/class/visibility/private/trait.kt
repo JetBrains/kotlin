@@ -1,4 +1,4 @@
-private trait MyClass {
+private interface MyClass {
 }
 
 // TESTED_OBJECT_KIND: class

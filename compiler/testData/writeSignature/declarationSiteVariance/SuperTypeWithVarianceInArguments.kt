@@ -1,6 +1,6 @@
 
-trait Base<A, in B, out C>
-trait Intermediate<A>
+interface Base<A, in B, out C>
+interface Intermediate<A>
 class Derived<A, B, C>: Intermediate<Base<A, B, C>>
 
 // class: Derived

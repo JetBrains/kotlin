@@ -1,15 +1,15 @@
 //ALLOW_AST_ACCESS
 package test
 
-public trait SameProjectionKind {
+public interface SameProjectionKind {
 
-    public trait Super {
+    public interface Super {
         public fun foo(): MutableCollection<out Number?>?
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun foo(): MutableCollection<out Number?>?
     }
 }

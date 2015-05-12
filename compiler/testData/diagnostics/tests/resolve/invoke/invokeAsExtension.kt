@@ -8,7 +8,7 @@ fun test(foo: Foo) {
 }
 
 //variable as member
-trait A {
+interface A {
     val foo: Foo
 }
 
@@ -22,7 +22,7 @@ fun test(a: A) {
 }
 
 //variable as extension
-trait B {
+interface B {
 }
 val B.foo: Foo
     get() = Foo()
@@ -36,9 +36,9 @@ fun test(b: B) {
 }
 
 //variable as member extension
-trait C
+interface C
 
-trait D {
+interface D {
     val C.foo: Foo
 
     fun test(c: C) {

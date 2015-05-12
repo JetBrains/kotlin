@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-trait A {
+interface A {
     val prop: Int
 }
 

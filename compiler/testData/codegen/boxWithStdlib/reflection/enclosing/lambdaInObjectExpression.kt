@@ -1,4 +1,4 @@
-trait C {
+interface C {
     val a: Any
 }
 

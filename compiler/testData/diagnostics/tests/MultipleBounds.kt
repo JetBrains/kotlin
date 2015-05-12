@@ -4,11 +4,11 @@ open class A() {
   fun foo() : Int = 1
 }
 
-trait B {
+interface B {
   fun bar() : Double = 1.0;
 }
 
-trait G<X> {
+interface G<X> {
     val <X : A> boo: Double  where X : B
     val <A> bal: Double  where A : B
     val <Y : B> bas: Double where <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>X<!> : B

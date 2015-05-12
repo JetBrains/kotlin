@@ -1,10 +1,10 @@
-trait A<T, U> {
+interface A<T, U> {
     fun foo(t: T, u: U) = "A"
 }
 
-trait B<U> : A<String, U>
+interface B<U> : A<String, U>
 
-trait C<T> : A<T, Int>
+interface C<T> : A<T, Int>
 
 class Z : B<Int>, C<String> {
     override fun foo(t: String, u: Int) = "Z"

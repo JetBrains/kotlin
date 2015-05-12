@@ -3,7 +3,7 @@ package test.regressions.kt1149
 import java.util.ArrayList
 import kotlin.util.*
 
-public trait SomeTrait {
+public interface SomeTrait {
     fun foo()
 }
 

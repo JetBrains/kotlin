@@ -4,7 +4,7 @@ class G<T>(val s: T) {
 
 }
 
-public trait ErrorsJvmTrait {
+public interface ErrorsJvmTrait {
     companion object {
         public val param : G<String> = G("STRING")
     }

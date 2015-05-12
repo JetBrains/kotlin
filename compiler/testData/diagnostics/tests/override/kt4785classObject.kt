@@ -1,8 +1,8 @@
-trait A {
+interface A {
     internal fun foo()
 }
 
-trait B {
+interface B {
     protected fun foo() {}
 }
 

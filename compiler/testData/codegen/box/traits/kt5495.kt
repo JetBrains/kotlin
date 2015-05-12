@@ -1,5 +1,5 @@
 fun box(): String {
-    trait A {
+    interface A {
         fun foo() = "OK"
     }
 

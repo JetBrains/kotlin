@@ -1,5 +1,5 @@
 
-trait Base<A, in B, out C>
+interface Base<A, in B, out C>
 class Derived<A, B, C>: Base<A, B, C>
 
 // class: Derived

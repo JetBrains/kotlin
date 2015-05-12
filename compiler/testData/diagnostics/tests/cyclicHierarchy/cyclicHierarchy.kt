@@ -1,13 +1,13 @@
-trait A {
+interface A {
     fun foo() {}
 }
-trait B : A, <!CYCLIC_INHERITANCE_HIERARCHY!>E<!> {}
-trait C : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!> {}
-trait D : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!> {}
-trait E : <!CYCLIC_INHERITANCE_HIERARCHY!>F<!> {}
-trait F : <!CYCLIC_INHERITANCE_HIERARCHY!>D<!>, <!CYCLIC_INHERITANCE_HIERARCHY!>C<!> {}
-trait G : F {}
-trait H : F {}
+interface B : A, <!CYCLIC_INHERITANCE_HIERARCHY!>E<!> {}
+interface C : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!> {}
+interface D : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!> {}
+interface E : <!CYCLIC_INHERITANCE_HIERARCHY!>F<!> {}
+interface F : <!CYCLIC_INHERITANCE_HIERARCHY!>D<!>, <!CYCLIC_INHERITANCE_HIERARCHY!>C<!> {}
+interface G : F {}
+interface H : F {}
 
 val a : A? = null
 val b : B? = null

@@ -1,4 +1,4 @@
-trait A : Comparable<A>
+interface A : Comparable<A>
 
 class B(val x: Int) : A {
     override fun compareTo(other: A) = x.compareTo((other as B).x)

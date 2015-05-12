@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_PARAMETER
 // !CHECK_TYPE
 // t is unused due to KT-4233
-trait Tr<T> {
+interface Tr<T> {
     var v: T
 }
 

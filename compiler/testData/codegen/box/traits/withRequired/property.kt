@@ -2,7 +2,7 @@ open class Base {
     var s = "Fail"
 }
 
-trait Trait : Base {
+interface Trait : Base {
     var value : String
         get() = s
         set(value) { s = value }

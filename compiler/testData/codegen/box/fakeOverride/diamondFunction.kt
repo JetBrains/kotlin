@@ -1,4 +1,4 @@
-trait T {
+interface T {
     fun foo(): Unit
 }
 
@@ -6,7 +6,7 @@ open class A : T {
     override fun foo() {}
 }
 
-trait B : T
+interface B : T
 
 class C : A(), B
 class D : B, A()

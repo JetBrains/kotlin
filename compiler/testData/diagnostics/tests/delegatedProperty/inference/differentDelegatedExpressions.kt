@@ -38,11 +38,11 @@ object O {
     fun getMyProperty<A, B>() = MyProperty<A, B>()
 }
 
-trait MyPropertyContainer {
+interface MyPropertyContainer {
     fun <R, T> getMyProperty(): MyProperty<R, T>
 }
 
-trait Outer {
+interface Outer {
     fun getContainer(): MyPropertyContainer
 }
 

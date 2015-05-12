@@ -1,6 +1,6 @@
 package a.b
 
-trait Test {
+interface Test {
     fun invoke(): String {
         return "OK"
     }

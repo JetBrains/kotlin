@@ -1,8 +1,8 @@
-trait A {
+interface A {
     fun b(a : Int)
 }
 
-trait B : A {}
+interface B : A {}
 
 class C1 : A {
     override fun b(<!PARAMETER_NAME_CHANGED_ON_OVERRIDE!>b<!> : Int) {}

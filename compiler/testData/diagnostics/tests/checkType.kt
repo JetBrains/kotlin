@@ -1,8 +1,8 @@
 // !CHECK_TYPE
 
-trait A
-trait B : A
-trait C : B
+interface A
+interface B : A
+interface C : B
 
 fun test(b: B) {
     b checkType { _<B>() }

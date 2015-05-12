@@ -1,9 +1,9 @@
-trait In<in T>
-trait Out<out T>
-trait Inv<T>
-trait Pair<out X, out Y>
+interface In<in T>
+interface Out<out T>
+interface Inv<T>
+interface Pair<out X, out Y>
 
-trait Test<in I, out O, P> {
+interface Test<in I, out O, P> {
     fun ok1(i: I)
     fun ok2(i: In<O>)
     fun ok3(i: In<In<I>>)

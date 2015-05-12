@@ -1,9 +1,9 @@
-trait BK {
+interface BK {
     fun foo(): String
     fun bar(): String
 }
 
-trait K : BK {
+interface K : BK {
     override fun foo() = bar()
 }
 

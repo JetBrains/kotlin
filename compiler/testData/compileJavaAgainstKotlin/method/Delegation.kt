@@ -1,6 +1,6 @@
 package test
 
-trait Trait {
+interface Trait {
     fun foo()
     val bar: Int
 }

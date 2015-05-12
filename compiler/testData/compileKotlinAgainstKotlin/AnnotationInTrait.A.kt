@@ -5,7 +5,7 @@ import java.lang.annotation.*
 Retention(RetentionPolicy.RUNTIME)
 annotation class Ann
 
-trait Tr {
+interface Tr {
     Ann
     fun foo() {}
 }

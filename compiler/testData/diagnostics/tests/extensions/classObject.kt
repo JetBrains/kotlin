@@ -1,4 +1,4 @@
-trait Tr
+interface Tr
 
 class A { companion object }
 class B { companion object : Tr }

@@ -1,9 +1,9 @@
 //KT-2320 failure of complex case of type inference
 package i
 
-trait NotMap<B>
+interface NotMap<B>
 
-trait Entry<B> {
+interface Entry<B> {
     fun getValue(): B
 }
 

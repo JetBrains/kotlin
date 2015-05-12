@@ -10,7 +10,7 @@ fun f(a: Any?) {
   }
 }
 
-trait B {
+interface B {
   fun foo() {}
 }
 open class X(<!UNUSED_PARAMETER!>b<!>: B)

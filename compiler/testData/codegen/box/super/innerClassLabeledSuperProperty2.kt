@@ -1,5 +1,5 @@
 //inspired by kt3492
-trait Base {
+interface Base {
     val foo: String
     fun bar(): String
 }

@@ -1,6 +1,6 @@
 //KT-4415 Class Auto-Cast Bug
 
-trait SelfJson
+interface SelfJson
 
 object A {
     fun find(<!UNUSED_PARAMETER!>clz<!>:Class<*>){  }

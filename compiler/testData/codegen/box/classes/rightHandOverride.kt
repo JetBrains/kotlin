@@ -1,6 +1,6 @@
 // Changed when traits were introduced. May not make sense any more
 
-trait Left {}
+interface Left {}
 open class Right() {
     open fun f() = 42
 }

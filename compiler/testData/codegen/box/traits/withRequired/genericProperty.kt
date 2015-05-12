@@ -2,7 +2,7 @@ abstract class Base<T> {
     abstract var s: T
 }
 
-trait Trait<T> : Base<T> {
+interface Trait<T> : Base<T> {
     var value : T
         get() = s
         set(value) { s = value }

@@ -6,7 +6,7 @@ fun <T> java.util.Enumeration<T>.iterator() = object: Iterator<T> {
   override fun next() = nextElement()
 }
 
-trait MyIterator<T> {
+interface MyIterator<T> {
 
   fun hasNext() : Boolean
 

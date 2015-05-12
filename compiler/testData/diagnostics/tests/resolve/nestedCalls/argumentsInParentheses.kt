@@ -1,4 +1,4 @@
-trait Foo<T>
+interface Foo<T>
 
 class Bar {
     fun <T> invoke(): Foo<T> = throw Exception()

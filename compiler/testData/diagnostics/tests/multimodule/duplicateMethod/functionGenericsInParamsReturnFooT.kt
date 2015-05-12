@@ -4,9 +4,9 @@
 // FILE: a.kt
 package p
 
-public trait Foo<T>
+public interface Foo<T>
 
-public trait B {
+public interface B {
     public fun <T> foo(a: T): Foo<T>
 }
 
@@ -14,7 +14,7 @@ public trait B {
 // FILE: b.kt
 package p
 
-public trait C : B {
+public interface C : B {
     override fun <T> foo(a: T): Foo<T>
 
 }
@@ -23,9 +23,9 @@ public trait C : B {
 // FILE: b.kt
 package p
 
-public trait Foo<T>
+public interface Foo<T>
 
-public trait B {
+public interface B {
     public fun <T> foo(a: T): Foo<T>
 }
 

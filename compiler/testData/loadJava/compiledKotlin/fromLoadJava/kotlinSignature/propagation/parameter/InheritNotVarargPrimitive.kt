@@ -1,14 +1,14 @@
 package test
 
-public trait InheritNotVarargPrimitive {
+public interface InheritNotVarargPrimitive {
 
-    public trait Super {
+    public interface Super {
         public fun foo(p0: IntArray?)
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun foo(p0: IntArray?)
     }
 }

@@ -1,10 +1,10 @@
 fun foo<T, P: T>() = 42
 
-trait A
-trait B : A
-trait C : B
+interface A
+interface B : A
+interface C : B
 
-trait Consumer<in T>
-trait Producer<out T>
+interface Consumer<in T>
+interface Producer<out T>
 
-trait My<T>
+interface My<T>

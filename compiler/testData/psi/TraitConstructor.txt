@@ -2,7 +2,7 @@ JetFile: TraitConstructor.kt
   PACKAGE_DIRECTIVE
     <empty list>
   CLASS
-    PsiElement(trait)('trait')
+    PsiElement(interface)('interface')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('TestTrait')
     PRIMARY_CONSTRUCTOR
@@ -43,7 +43,7 @@ JetFile: TraitConstructor.kt
         PsiElement(RPAR)(')')
   PsiWhiteSpace('\n')
   CLASS
-    PsiElement(trait)('trait')
+    PsiElement(interface)('interface')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('TestTrait')
     PRIMARY_CONSTRUCTOR

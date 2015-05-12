@@ -1,4 +1,4 @@
-trait Inv<I>
+interface Inv<I>
 
 val foo: Inv<out ((Inv<Int>)?)> = null!!
 /*

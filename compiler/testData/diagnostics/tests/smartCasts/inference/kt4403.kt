@@ -1,7 +1,7 @@
 //KT-4403 Wrong "type mismatch" on smart cast with inference
 
-trait A
-trait B : A
+interface A
+interface B : A
 
 fun <T> T.f(): T = this
 

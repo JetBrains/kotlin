@@ -10,4 +10,4 @@ fun func() {}
 class C
 
 [file:]
-trait T
+interface T

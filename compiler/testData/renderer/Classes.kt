@@ -22,7 +22,7 @@ public open class TheClass<out T : Int, X> [AnotherAnnotation] () {
 internal class InternalClass {
 }
 
-trait TheTrait {
+interface TheTrait {
   fun abstractFun()
 
   companion object : TheClass<Int, Int> {
@@ -32,7 +32,7 @@ trait TheTrait {
 
 public class WithReified<reified A, reified out B>
 
-public trait TwoUpperBounds<T> where T : Number, T : Any
+public interface TwoUpperBounds<T> where T : Number, T : Any
 
 //package rendererTest
 //internal final annotation class TheAnnotation : kotlin.Annotation defined in rendererTest

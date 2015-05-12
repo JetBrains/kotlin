@@ -1,4 +1,4 @@
-trait Addable {
+interface Addable {
     fun add(s: String): Boolean = true
 }
 

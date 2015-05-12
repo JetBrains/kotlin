@@ -17,7 +17,7 @@ native
 fun String.bar(): Int = noImpl
 
 native
-trait T {
+interface T {
     val baz: Int
 
     fun foo()

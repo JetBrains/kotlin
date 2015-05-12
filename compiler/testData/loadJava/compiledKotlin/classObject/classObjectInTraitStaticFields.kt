@@ -1,7 +1,7 @@
 //ALLOW_AST_ACCESS
 package test
 
-trait Test {
+interface Test {
 
     companion object {
 

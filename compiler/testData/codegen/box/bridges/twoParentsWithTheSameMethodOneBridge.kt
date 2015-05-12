@@ -1,8 +1,8 @@
-trait A<T> {
+interface A<T> {
     fun foo(t: T) = "A"
 }
 
-trait B<T> {
+interface B<T> {
     fun foo(t: T) = "B"
 }
 

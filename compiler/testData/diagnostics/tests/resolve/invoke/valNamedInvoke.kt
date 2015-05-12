@@ -1,4 +1,4 @@
-trait A
+interface A
 
 fun foo(invoke: A.()->Unit, a: A) {
     a.invoke()

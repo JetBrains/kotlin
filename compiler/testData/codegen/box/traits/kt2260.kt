@@ -1,4 +1,4 @@
-trait Flusher {
+interface Flusher {
     fun flush() = "OK"
 }
 

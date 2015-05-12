@@ -11,7 +11,7 @@ class SimpleSubclass : JavaInterface {
 }
 
 
-trait SubtraitWithFakeOverride : JavaInterface
+interface SubtraitWithFakeOverride : JavaInterface
 
 class Subclass : SubtraitWithFakeOverride {
     override fun foo(otherKotlinName: Int) {}

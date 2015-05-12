@@ -1,14 +1,14 @@
 package test
 
-public trait Super1 {
+public interface Super1 {
     val x: String
     val y: CharSequence
 }
 
-public trait Super2 {
+public interface Super2 {
     val x: CharSequence
     val y: String
 }
 
-public trait Sub: Super1, Super2 {
+public interface Sub: Super1, Super2 {
 }

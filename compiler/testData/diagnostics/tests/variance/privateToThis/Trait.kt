@@ -1,4 +1,4 @@
-internal trait Test</*0*/ in I> {
+internal interface Test</*0*/ in I> {
     private/*private to this*/ final fun foo(): I {
         throw Exception()
     }

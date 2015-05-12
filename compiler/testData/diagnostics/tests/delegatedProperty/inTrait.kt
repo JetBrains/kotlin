@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-trait T {
+interface T {
   val a: Int <!DELEGATED_PROPERTY_IN_TRAIT!>by Delegate()<!>
 }
 

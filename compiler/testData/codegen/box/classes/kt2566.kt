@@ -6,7 +6,7 @@ open class B : A() {
     override fun foo() = super.foo()
 }
 
-trait I
+interface I
 
 class C : I, B() {
     override fun foo() = super<B>.foo()

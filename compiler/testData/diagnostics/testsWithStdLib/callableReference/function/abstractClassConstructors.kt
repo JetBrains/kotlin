@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
-trait A
+interface A
 abstract class B
 annotation class C
 enum class D

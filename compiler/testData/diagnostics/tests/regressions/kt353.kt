@@ -1,6 +1,6 @@
 // KT-353 Generic type argument inference sometimes doesn't work
 
-trait A {
+interface A {
     fun <T> gen() : T
 }
 

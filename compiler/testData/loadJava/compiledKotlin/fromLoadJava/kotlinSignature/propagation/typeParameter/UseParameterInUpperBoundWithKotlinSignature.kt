@@ -1,12 +1,12 @@
 package test
 
-public trait UseParameterInUpperBoundWithKotlinSignature {
+public interface UseParameterInUpperBoundWithKotlinSignature {
 
-    public trait Super {
+    public interface Super {
         public fun <A, B: List<A>> foo(a: A, b: B)
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun <B, A: List<B>> foo(b: B, a: A)
     }
 }

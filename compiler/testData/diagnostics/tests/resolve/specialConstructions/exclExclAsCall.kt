@@ -1,6 +1,6 @@
 package a
 
-trait A
+interface A
 
 fun <T>id(t: T): T = t
 fun doList(l: List<Int>) = l

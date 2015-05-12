@@ -1,8 +1,8 @@
-trait A {
+interface A {
     fun foo()
 }
 
-trait B {
+interface B {
     fun bar()
 }
 

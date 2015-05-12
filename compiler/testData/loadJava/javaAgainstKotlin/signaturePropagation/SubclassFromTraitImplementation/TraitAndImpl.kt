@@ -1,6 +1,6 @@
 package test
 
-trait Trait {
+interface Trait {
   fun foo(): String = "foo"
 
   fun bar(): String = "bar"

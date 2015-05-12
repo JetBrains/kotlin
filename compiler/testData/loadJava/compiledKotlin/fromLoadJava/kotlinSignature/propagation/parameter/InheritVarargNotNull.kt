@@ -1,15 +1,15 @@
 //ALLOW_AST_ACCESS
 package test
 
-public trait InheritVarargNotNull {
+public interface InheritVarargNotNull {
 
-    public trait Super {
+    public interface Super {
         public fun foo(vararg p: String)
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun foo(vararg p: String)
     }
 }

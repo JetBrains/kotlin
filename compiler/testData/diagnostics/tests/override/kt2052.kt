@@ -1,4 +1,4 @@
-trait Runnable {
+interface Runnable {
     fun run()
 }
 

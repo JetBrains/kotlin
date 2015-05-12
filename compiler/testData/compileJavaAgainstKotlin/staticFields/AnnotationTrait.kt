@@ -8,7 +8,7 @@ annotation class ALong(val value: Long)
 annotation class ADouble(val value: Double)
 annotation class AFloat(val value: Float)
 
-trait Test {
+interface Test {
 
     companion object {
         val vstring: String = "Test"

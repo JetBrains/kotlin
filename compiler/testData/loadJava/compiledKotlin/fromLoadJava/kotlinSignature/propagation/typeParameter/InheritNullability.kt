@@ -1,12 +1,12 @@
 package test
 
-public trait InheritNullability {
+public interface InheritNullability {
 
-    public trait Super {
+    public interface Super {
         public fun <A: CharSequence> foo(a: A)
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun <B: CharSequence> foo(a: B)
     }
 }

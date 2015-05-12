@@ -4,7 +4,7 @@
 In a supertype list:
  Same type should not be mentioned twice
  Same type should not be indirectly mentioned with incoherent type arguments
- Every trait's required dependencies should be satisfied
+ Every interface's required dependencies should be satisfied
  No final types should appear
  Only one class is allowed
 */
@@ -17,24 +17,24 @@ open class C2 {}
 
 open class C3 {}
 
-trait T1 {}
+interface T1 {}
 
-trait T2<T> {}
+interface T2<T> {}
 
-trait Test<!CONSTRUCTOR_IN_TRAIT!>()<!> {
+interface Test<!CONSTRUCTOR_IN_TRAIT!>()<!> {
 }
 
-trait Test1 : <!TRAIT_WITH_SUPERCLASS!>C2<!><!SUPERTYPE_INITIALIZED_IN_TRAIT!>()<!> {}
+interface Test1 : <!TRAIT_WITH_SUPERCLASS!>C2<!><!SUPERTYPE_INITIALIZED_IN_TRAIT!>()<!> {}
 
-trait Test2 : <!TRAIT_WITH_SUPERCLASS!>C2<!> {}
+interface Test2 : <!TRAIT_WITH_SUPERCLASS!>C2<!> {}
 
-trait Test3 : <!TRAIT_WITH_SUPERCLASS!>C2<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST!>C3<!> {}
+interface Test3 : <!TRAIT_WITH_SUPERCLASS!>C2<!>, <!MANY_CLASSES_IN_SUPERTYPE_LIST!>C3<!> {}
 
-trait Test4 : T1 {}
+interface Test4 : T1 {}
 
-trait Test5 : T1, <!SUPERTYPE_APPEARS_TWICE!>T1<!> {}
+interface Test5 : T1, <!SUPERTYPE_APPEARS_TWICE!>T1<!> {}
 
-trait Test6 : <!TRAIT_WITH_SUPERCLASS, FINAL_SUPERTYPE!>C1<!> {}
+interface Test6 : <!TRAIT_WITH_SUPERCLASS, FINAL_SUPERTYPE!>C1<!> {}
 
 class CTest1() : OC1() {}
 

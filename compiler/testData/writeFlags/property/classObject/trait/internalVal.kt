@@ -1,4 +1,4 @@
-trait Test {
+interface Test {
   companion object {
     val prop: Int = 0;
   }

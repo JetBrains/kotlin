@@ -2,7 +2,7 @@ open class Base {
     val pr : String = "OK"
 }
 
-trait Trait : Base {
+interface Trait : Base {
     fun f() : String {
         return this.pr
     }

@@ -1,18 +1,18 @@
-trait P
-trait R
+interface P
+interface R
 
-trait A {
+interface A {
     fun foo(p: P): R
     fun dynamic(p: dynamic): dynamic
 }
 
-trait B : A {
+interface B : A {
     override fun foo(p: dynamic): dynamic
     override fun dynamic(p: P): R
 }
 
-trait A1 {
+interface A1 {
     fun foo(p: dynamic): dynamic
 }
 
-trait C : A, A1
+interface C : A, A1

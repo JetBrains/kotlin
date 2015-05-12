@@ -1,6 +1,6 @@
 package a
 
-trait A
+interface A
 fun doList(l: List<Int>) = l
 fun doInt(i: Int) = i
 fun getList(): List<Int>? = null

@@ -1,4 +1,4 @@
-trait T1 {
+interface T1 {
     fun foo()
 }
 
@@ -9,7 +9,7 @@ enum class EnumImplementingTraitWithFun: T1 {
     <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>E2<!>
 }
 
-trait T2 {
+interface T2 {
     val bar: Int
 }
 

@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
-trait Foo<T>
-trait Foo1<<!INCOMPATIBLE_MODIFIERS!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> T>
-trait Foo2<<!REPEATED_MODIFIER!>in<!> <!REPEATED_MODIFIER!>in<!> T>
+interface Foo<T>
+interface Foo1<<!INCOMPATIBLE_MODIFIERS!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> T>
+interface Foo2<<!REPEATED_MODIFIER!>in<!> <!REPEATED_MODIFIER!>in<!> T>
 
 fun test1(foo: Foo<<!INCOMPATIBLE_MODIFIERS!>in<!> <!INCOMPATIBLE_MODIFIERS!>out<!> Int>) = foo
 fun test2(): Foo<<!REPEATED_MODIFIER!>in<!> <!REPEATED_MODIFIER!>in<!> Int> = throw Exception()

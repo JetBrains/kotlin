@@ -2,11 +2,11 @@ abstract class A {
     abstract fun foo(): Any
 }
 
-trait B {
+interface B {
     fun foo(): String = "B"
 }
 
-trait C : A, B
+interface C : A, B
 
 class D : A(), C
 

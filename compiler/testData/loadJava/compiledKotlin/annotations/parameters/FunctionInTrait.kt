@@ -3,6 +3,6 @@ package test
 
 annotation class Anno
 
-trait Trait {
+interface Trait {
     fun foo([Anno] x: String) = 42
 }

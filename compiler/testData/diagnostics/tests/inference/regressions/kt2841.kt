@@ -1,6 +1,6 @@
 package a
 
-trait Closeable {}
+interface Closeable {}
 class C : Closeable {}
 
 public inline fun <T: Closeable, R> T.use1(block: (T)-> R) : R {

@@ -24,7 +24,7 @@ class LI : ListTag() {}
 public fun ListTag.item(body: LI.() -> Unit): Unit {}
 fun HtmlTag.a(contents: A.() -> Unit) {}
 
-trait A : HtmlTag {
+interface A : HtmlTag {
     public var text: String
 }
 

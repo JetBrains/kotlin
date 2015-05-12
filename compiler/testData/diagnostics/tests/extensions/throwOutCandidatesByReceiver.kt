@@ -23,7 +23,7 @@ fun test3(s: String?) {
     s.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>("a")
 }
 
-trait A
+interface A
 fun <T: A> T.c() {}
 
 fun test4() {

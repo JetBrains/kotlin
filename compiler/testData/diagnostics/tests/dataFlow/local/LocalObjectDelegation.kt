@@ -1,6 +1,6 @@
 // KT-2225 Object expression delegation parameter should be checked with data flow info
 
-trait A {
+interface A {
     fun foo() : Int
 }
 

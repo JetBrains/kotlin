@@ -5,6 +5,6 @@ class O {
     inner class A2
     class B1
     inner class B2
-    trait C1
-    trait C2
+    interface C1
+    interface C2
 }

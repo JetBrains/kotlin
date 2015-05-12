@@ -2,8 +2,8 @@
 
 package arrays
 
-trait A
-trait B
+interface A
+interface B
 
 object CAB : A, B
 object DAB : A, B

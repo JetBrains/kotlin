@@ -1,6 +1,6 @@
 // KT-2100
 
-trait I {
+interface I {
     val x : String
 }
 

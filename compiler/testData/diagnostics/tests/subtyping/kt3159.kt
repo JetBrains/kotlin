@@ -1,4 +1,4 @@
-trait Super {
+interface Super {
     var v: CharSequence
     val v2: CharSequence
 }

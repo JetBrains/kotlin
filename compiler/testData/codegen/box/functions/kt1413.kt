@@ -1,6 +1,6 @@
 package t
 
-trait I{
+interface I{
     fun f()
 }
 

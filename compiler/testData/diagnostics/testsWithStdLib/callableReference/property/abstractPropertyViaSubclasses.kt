@@ -2,7 +2,7 @@
 
 import kotlin.reflect.KMemberProperty
 
-trait Base {
+interface Base {
     val x: Any
 }
 

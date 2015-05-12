@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-trait JPAEntityClass<D> {
+interface JPAEntityClass<D> {
     fun <T> T.findByName(s: String): D {null!!}
 }
 

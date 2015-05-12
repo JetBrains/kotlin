@@ -1,6 +1,6 @@
 // C
 
-trait Base<T> {
+interface Base<T> {
     fun foo(t: T): T
 }
 

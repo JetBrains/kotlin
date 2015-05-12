@@ -1,4 +1,4 @@
-trait N { fun foo() = 1 }
+interface N { fun foo() = 1 }
 
 class WithClassObject {
     companion object {}

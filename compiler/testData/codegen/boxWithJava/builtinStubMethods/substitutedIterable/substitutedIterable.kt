@@ -1,4 +1,4 @@
-trait MyIterable<T> : Iterable<T>
+interface MyIterable<T> : Iterable<T>
 
 class E : RuntimeException()
 fun foo(): MyIterable<String> = throw E()

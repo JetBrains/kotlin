@@ -1,5 +1,5 @@
 //KT-2206
-trait A {
+interface A {
     fun f():Int = 239
 }
 

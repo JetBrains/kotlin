@@ -2,7 +2,7 @@ open class Var() {
   open var v : Int = 1
 }
 
-trait VarT {
+interface VarT {
   var v : Int
 }
 

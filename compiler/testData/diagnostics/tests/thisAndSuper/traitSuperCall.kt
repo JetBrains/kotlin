@@ -1,12 +1,12 @@
 // FILE: test.kt
 
-public trait Test {
+public interface Test {
     fun test(): String {
         return "123";
     }
 }
 
-trait KTrait : Test {
+interface KTrait : Test {
     fun ktest() {
         super.test()
 

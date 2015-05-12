@@ -1,4 +1,4 @@
-trait T
+interface T
 
 class A(a: Int, b: Int): T
 

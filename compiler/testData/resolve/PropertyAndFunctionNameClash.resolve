@@ -1,6 +1,6 @@
 open class HtmlTag
 
-trait NavigationBuilder {
+interface NavigationBuilder {
     public var text: ((String) -> String)?
     ~in_NB~var inNavigationBuilder: Int
 }
@@ -10,7 +10,7 @@ fun HtmlTag.navigation(body: NavigationBuilder.() -> Unit) {
 fun HtmlTag.a(contents: A.() -> Unit) {
 }
 
-trait A : HtmlTag {
+interface A : HtmlTag {
     ~text_in_A~var text: String
     ~in_A~var inA: Int
 }

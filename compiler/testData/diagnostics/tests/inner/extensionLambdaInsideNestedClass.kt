@@ -22,6 +22,6 @@ class B {
 
 open class Request(private val handler: ActionContext.() -> Unit) {}
 
-trait ActionContext {
+interface ActionContext {
     val session : Map<String, String>
 }

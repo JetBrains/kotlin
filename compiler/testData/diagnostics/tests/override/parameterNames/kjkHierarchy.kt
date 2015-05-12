@@ -1,6 +1,6 @@
 // FILE: Super.kt
 
-trait Super {
+interface Super {
     fun foo(superName: Int)
 }
 

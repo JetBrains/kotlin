@@ -1,8 +1,8 @@
 package test
 
-public trait PropagateTypeArgumentNullable {
+public interface PropagateTypeArgumentNullable {
 
-    public trait Super {
+    public interface Super {
         public fun outS(p: List<String?>)
 
         public fun invOutS(p : MutableList<List<String?>>)
@@ -15,7 +15,7 @@ public trait PropagateTypeArgumentNullable {
 
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun outS(p: List<String?>)
 
         override fun invOutS(p : MutableList<List<String?>>)

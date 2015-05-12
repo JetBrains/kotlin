@@ -51,7 +51,7 @@ sink:
     <SINK>                                       INIT: in: {foo=ID} out: {foo=ID}    USE: in: {} out: {}
 =====================
 == Foo ==
-trait Foo {
+interface Foo {
     var c: Int
 }
 ---------------------

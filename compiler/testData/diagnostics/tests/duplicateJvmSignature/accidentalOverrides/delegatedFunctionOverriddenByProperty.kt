@@ -1,8 +1,8 @@
-trait B {
+interface B {
     fun getX() = 1
 }
 
-trait D {
+interface D {
     val x: Int
 }
 

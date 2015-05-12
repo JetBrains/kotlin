@@ -38,7 +38,7 @@ fun test() {
 
 fun use(vararg a: Any?) = a
 
-trait Inv<T>
+interface Inv<T>
 
 fun <T> exactBound(t: T, l: Inv<T>): T = throw Exception("$t $l")
 
@@ -50,7 +50,7 @@ fun testExactBound(invS: Inv<String>, invI: Inv<Int>, invB: Inv<Byte>) {
     b checkType { _<Byte>() }
 }
 
-trait Cov<out T>
+interface Cov<out T>
 
 fun <T> lowerBound(t: T, l : Cov<T>): T = throw Exception("$t $l")
 
@@ -62,7 +62,7 @@ fun testLowerBound(cov: Cov<String>, covN: Cov<Number>) {
     n checkType { _<Number>() }
 }
 
-trait Contr<in T>
+interface Contr<in T>
 
 fun <T> upperBound(t: T, l: Contr<T>): T = throw Exception("$t $l")
 

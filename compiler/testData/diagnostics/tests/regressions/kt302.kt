@@ -2,11 +2,11 @@
 
 package kt302
 
-trait A {
+interface A {
     open fun foo() {}
 }
 
-trait B {
+interface B {
     open fun foo() {}
 }
 

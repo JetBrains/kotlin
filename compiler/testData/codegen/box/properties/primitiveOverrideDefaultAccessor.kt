@@ -1,4 +1,4 @@
-trait R<T: Comparable<T>> {
+interface R<T: Comparable<T>> {
     var value: T
 }
 

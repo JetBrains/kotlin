@@ -1,4 +1,4 @@
-trait T {
+interface T {
     val foo: String
 }
 
@@ -9,7 +9,7 @@ open class A : T {
 class B : A(), T
 class C : T, A()
 
-trait U : T
+interface U : T
 
 class D : U, A()
 class E : A(), U

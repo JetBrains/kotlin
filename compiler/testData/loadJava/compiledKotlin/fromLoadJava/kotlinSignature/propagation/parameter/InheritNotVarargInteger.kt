@@ -1,15 +1,15 @@
 //ALLOW_AST_ACCESS
 package test
 
-public trait InheritNotVarargInteger {
+public interface InheritNotVarargInteger {
 
-    public trait Super {
+    public interface Super {
         public fun foo(p0: Array<out Int>?)
 
         public fun dummy() // to avoid loading as SAM interface
     }
 
-    public trait Sub: Super {
+    public interface Sub: Super {
         override fun foo(p0: Array<out Int>?)
     }
 }

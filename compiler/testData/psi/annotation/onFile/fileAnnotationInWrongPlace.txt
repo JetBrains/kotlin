@@ -88,6 +88,6 @@ JetFile: fileAnnotationInWrongPlace.kt
           <empty list>
         PsiElement(RBRACKET)(']')
     PsiWhiteSpace('\n')
-    PsiElement(trait)('trait')
+    PsiElement(interface)('interface')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('T')
