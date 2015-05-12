@@ -38,7 +38,7 @@ public fun mapOf<K, V>(): Map<K, V> = emptyMap()
  * @sample test.collections.MapTest.createUsingPairs
  */
 public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
-    val answer = HashMap<K, V>(mapCapacityForValues(values))
+    val answer = HashMap<K, V>(mapCapacity(values.size()))
     answer.putAll(*values)
     return answer
 }
@@ -51,7 +51,7 @@ public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
  * @sample test.collections.MapTest.createLinkedMap
  */
 public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
-    val answer = LinkedHashMap<K, V>(mapCapacityForValues(values))
+    val answer = LinkedHashMap<K, V>(mapCapacity(values.size()))
     answer.putAll(*values)
     return answer
 }
@@ -62,20 +62,16 @@ public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
  * very large sizes, allows support non-collection classes, and provides consistency for all map based class construction.
  */
 
-private val MAX_POWER_OF_TWO: Int = 1 shl (Integer.SIZE - 2)
+private val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
 
 private fun mapCapacity(expectedSize: Int): Int {
     if (expectedSize < 3) {
         return expectedSize + 1
     }
-    if (expectedSize < MAX_POWER_OF_TWO) {
+    if (expectedSize < INT_MAX_POWER_OF_TWO) {
         return expectedSize + expectedSize / 3
     }
-    return Integer.MAX_VALUE // any large value
-}
-
-private fun <T> mapCapacityForValues(values: Array<T>): Int {
-    return mapCapacity(values.size())
+    return Int.MAX_VALUE // any large value
 }
 
 /**

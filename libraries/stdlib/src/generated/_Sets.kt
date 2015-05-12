@@ -264,7 +264,7 @@ public fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun <T> Array<out T>.toMutableSet(): MutableSet<T> {
-    val set = LinkedHashSet<T>(size())
+    val set = LinkedHashSet<T>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }
@@ -273,7 +273,7 @@ public fun <T> Array<out T>.toMutableSet(): MutableSet<T> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun BooleanArray.toMutableSet(): MutableSet<Boolean> {
-    val set = LinkedHashSet<Boolean>(size())
+    val set = LinkedHashSet<Boolean>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }
@@ -282,7 +282,7 @@ public fun BooleanArray.toMutableSet(): MutableSet<Boolean> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun ByteArray.toMutableSet(): MutableSet<Byte> {
-    val set = LinkedHashSet<Byte>(size())
+    val set = LinkedHashSet<Byte>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }
@@ -291,7 +291,7 @@ public fun ByteArray.toMutableSet(): MutableSet<Byte> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun CharArray.toMutableSet(): MutableSet<Char> {
-    val set = LinkedHashSet<Char>(size())
+    val set = LinkedHashSet<Char>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }
@@ -300,7 +300,7 @@ public fun CharArray.toMutableSet(): MutableSet<Char> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun DoubleArray.toMutableSet(): MutableSet<Double> {
-    val set = LinkedHashSet<Double>(size())
+    val set = LinkedHashSet<Double>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }
@@ -309,7 +309,7 @@ public fun DoubleArray.toMutableSet(): MutableSet<Double> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun FloatArray.toMutableSet(): MutableSet<Float> {
-    val set = LinkedHashSet<Float>(size())
+    val set = LinkedHashSet<Float>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }
@@ -318,7 +318,7 @@ public fun FloatArray.toMutableSet(): MutableSet<Float> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun IntArray.toMutableSet(): MutableSet<Int> {
-    val set = LinkedHashSet<Int>(size())
+    val set = LinkedHashSet<Int>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }
@@ -327,7 +327,7 @@ public fun IntArray.toMutableSet(): MutableSet<Int> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun LongArray.toMutableSet(): MutableSet<Long> {
-    val set = LinkedHashSet<Long>(size())
+    val set = LinkedHashSet<Long>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }
@@ -336,7 +336,7 @@ public fun LongArray.toMutableSet(): MutableSet<Long> {
  * Returns a mutable set containing all distinct elements from the given collection.
  */
 public fun ShortArray.toMutableSet(): MutableSet<Short> {
-    val set = LinkedHashSet<Short>(size())
+    val set = LinkedHashSet<Short>(mapCapacity(size()))
     for (item in this) set.add(item)
     return set
 }

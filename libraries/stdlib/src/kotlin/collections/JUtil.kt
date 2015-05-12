@@ -46,7 +46,7 @@ public fun listOf<T>(vararg values: T): List<T> = if (values.size() == 0) emptyL
 public fun listOf<T>(): List<T> = emptyList()
 
 /** Returns a new read-only ordered set with the given elements. */
-public fun setOf<T>(vararg values: T): Set<T> = if (values.size() == 0) emptySet() else values.toCollection(LinkedHashSet<T>(mapCapacityForValues(values)))
+public fun setOf<T>(vararg values: T): Set<T> = if (values.size() == 0) emptySet() else values.toCollection(LinkedHashSet<T>(mapCapacity(values.size())))
 
 /** Returns an empty read-only set. */
 public fun setOf<T>(): Set<T> = emptySet()
@@ -58,10 +58,10 @@ public fun linkedListOf<T>(vararg values: T): LinkedList<T> = values.toCollectio
 public fun arrayListOf<T>(vararg values: T): ArrayList<T> = values.toCollection(ArrayList(values.size()))
 
 /** Returns a new [HashSet] with the given elements. */
-public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(mapCapacityForValues(values)))
+public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(mapCapacity(values.size())))
 
 /** Returns a new [LinkedHashSet] with the given elements. */
-public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(mapCapacityForValues(values)))
+public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(mapCapacity(values.size())))
 
 /**
  * Returns an [IntRange] of the valid indices for this collection.

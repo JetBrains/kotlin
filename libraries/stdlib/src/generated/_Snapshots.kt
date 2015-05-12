@@ -21,56 +21,72 @@ public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
  * Returns an ArrayList of all elements
  */
 public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
-    return this.asList().toArrayList()
+    val list = ArrayList<Boolean>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun ByteArray.toArrayList(): ArrayList<Byte> {
-    return this.asList().toArrayList()
+    val list = ArrayList<Byte>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun CharArray.toArrayList(): ArrayList<Char> {
-    return this.asList().toArrayList()
+    val list = ArrayList<Char>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun DoubleArray.toArrayList(): ArrayList<Double> {
-    return this.asList().toArrayList()
+    val list = ArrayList<Double>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun FloatArray.toArrayList(): ArrayList<Float> {
-    return this.asList().toArrayList()
+    val list = ArrayList<Float>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun IntArray.toArrayList(): ArrayList<Int> {
-    return this.asList().toArrayList()
+    val list = ArrayList<Int>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun LongArray.toArrayList(): ArrayList<Long> {
-    return this.asList().toArrayList()
+    val list = ArrayList<Long>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
  * Returns an ArrayList of all elements
  */
 public fun ShortArray.toArrayList(): ArrayList<Short> {
-    return this.asList().toArrayList()
+    val list = ArrayList<Short>(size())
+    for (item in this) list.add(item)
+    return list
 }
 
 /**
@@ -84,6 +100,8 @@ public fun <T> Collection<T>.toArrayList(): ArrayList<T> {
  * Returns an ArrayList of all elements
  */
 public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
+    if (this is Collection<T>)
+        return this.toArrayList()
     return toCollection(ArrayList<T>())
 }
 

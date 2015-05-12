@@ -19,7 +19,7 @@ fun sets(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val set = LinkedHashSet<T>(size())
+            val set = LinkedHashSet<T>(mapCapacity(size()))
             for (item in this) set.add(item)
             return set
             """

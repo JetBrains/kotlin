@@ -48,9 +48,23 @@ fun snapshots(): List<GenericFunction> {
         doc { "Returns an ArrayList of all elements" }
         returns("ArrayList<T>")
         body { "return toCollection(ArrayList<T>())" }
+        body(Iterables) {
+            """
+            if (this is Collection<T>)
+                return this.toArrayList()
+            return toCollection(ArrayList<T>())
+            """
+        }
         body(Collections) { "return ArrayList(this)" }
         body(Strings) { "return toCollection(ArrayList<T>(length()))" }
-        body(ArraysOfObjects, ArraysOfPrimitives) { "return this.asList().toArrayList()" }
+        body(ArraysOfObjects) { "return this.asList().toArrayList()" }
+        body(ArraysOfPrimitives) {
+            """
+            val list = ArrayList<T>(size())
+            for (item in this) list.add(item)
+            return list
+            """
+        }
     }
 
     templates add f("toList()") {
