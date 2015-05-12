@@ -371,6 +371,10 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseTopLevelDeclaration() {
+        if (at(SEMICOLON)) {
+            advance(); // SEMICOLON
+            return;
+        }
         PsiBuilder.Marker decl = mark();
 
         ModifierDetector detector = new ModifierDetector();
@@ -928,6 +932,10 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseMemberDeclaration() {
+        if (at(SEMICOLON)) {
+            advance(); // SEMICOLON
+            return;
+        }
         PsiBuilder.Marker decl = mark();
 
         ModifierDetector detector = new ModifierDetector();

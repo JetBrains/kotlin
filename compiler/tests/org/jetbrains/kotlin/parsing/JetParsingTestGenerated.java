@@ -565,6 +565,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("semicolonBetweenDeclarations.kt")
+        public void testSemicolonBetweenDeclarations() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/semicolonBetweenDeclarations.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("SimpleClassMembers.kt")
         public void testSimpleClassMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/SimpleClassMembers.kt");
