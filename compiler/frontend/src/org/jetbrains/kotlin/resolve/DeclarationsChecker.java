@@ -282,6 +282,10 @@ public class DeclarationsChecker {
             }
         }
 
+        if (declaration.getModifierList() != null && !declaration.hasConstructorKeyword()) {
+            trace.report(MISSING_CONSTRUCTOR_KEYWORD.on(declaration.getModifierList()));
+        }
+
         checkConstructorDeclaration(primaryConstructor, declaration);
     }
 

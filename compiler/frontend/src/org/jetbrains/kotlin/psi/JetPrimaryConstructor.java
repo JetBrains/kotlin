@@ -82,4 +82,9 @@ public class JetPrimaryConstructor extends JetDeclarationStub<KotlinPlaceHolderS
         assert classOrNull != null : "This method should be called when parent is JetClass";
         return classOrNull;
     }
+
+    public boolean hasConstructorKeyword() {
+        if (getStub() != null) return true;
+        return findChildByType(JetTokens.CONSTRUCTOR_KEYWORD) != null;
+    }
 }

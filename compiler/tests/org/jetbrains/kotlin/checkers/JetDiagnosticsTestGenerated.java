@@ -7659,6 +7659,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("primaryConstructorMissingKeyword.kt")
+            public void testPrimaryConstructorMissingKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/primaryConstructorMissingKeyword.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("repeatedModifiers.kt")
             public void testRepeatedModifiers() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/modifiers/repeatedModifiers.kt");
