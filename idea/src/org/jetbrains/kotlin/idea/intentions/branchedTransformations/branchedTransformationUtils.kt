@@ -16,15 +16,10 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.psi.typeRefHelpers.getTypeReference
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 
 fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
     val factory = JetPsiFactory(this)
@@ -149,57 +144,4 @@ public fun JetWhenExpression.introduceSubject(): JetWhenExpression {
     } as JetWhenExpression
 
     return replaced(whenExpression)
-}
-
-public fun JetWhenExpression.canMergeWithNext(): Boolean {
-    fun checkConditions(e1: JetWhenEntry, e2: JetWhenEntry): Boolean =
-            e1.getConditions().toList().toRange().matches(e2.getConditions().toList().toRange())
-
-    fun JetWhenEntry.declarationNames(): Set<String> =
-            getExpression()?.blockExpressionsOrSingle()
-                    ?.filter { it is JetNamedDeclaration }
-                    ?.map { it.getName() }
-                    ?.filterNotNull()?.toSet() ?: emptySet()
-
-    fun checkBodies(e1: JetWhenEntry, e2: JetWhenEntry): Boolean {
-        if (ContainerUtil.intersects(e1.declarationNames(), e2.declarationNames())) return false
-
-        return when (e1.getExpression()?.outermostLastBlockElement()) {
-            is JetReturnExpression, is JetThrowExpression, is JetBreakExpression, is JetContinueExpression -> false
-            else -> true
-        }
-    }
-
-    val sibling = PsiTreeUtil.skipSiblingsForward(this, javaClass<PsiWhiteSpace>())
-
-    if (sibling !is JetWhenExpression) return false
-    if (!getSubjectExpression().matches(sibling.getSubjectExpression())) return false
-
-    val entries1 = getEntries()
-    val entries2 = sibling.getEntries()
-    return entries1.size() == entries2.size() && (entries1 zip entries2).all { pair ->
-        checkConditions(pair.first, pair.second) && checkBodies(pair.first, pair.second)
-    }
-}
-
-public fun JetWhenExpression.mergeWithNext() {
-    fun JetExpression?.mergeWith(that: JetExpression?): JetExpression? = when {
-        this == null -> that
-        that == null -> this
-        else -> {
-            val block = if (this is JetBlockExpression) this else replaced(wrapInBlock())
-            for (element in that.blockExpressionsOrSingle()) {
-                val expression = block.appendElement(element)
-                block.addBefore(JetPsiFactory(this).createNewLine(), expression)
-            }
-            block
-        }
-    }
-
-    val sibling = PsiTreeUtil.skipSiblingsForward(this, javaClass<PsiWhiteSpace>()) as JetWhenExpression
-    for ((entry1, entry2) in getEntries() zip sibling.getEntries()) {
-        entry1.getExpression() mergeWith entry2.getExpression()
-    }
-
-    getParent()?.deleteChildRange(getNextSibling(), sibling)
 }
