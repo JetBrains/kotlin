@@ -39,7 +39,7 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
     @Override
     public Name getName() {
         String name = getPsi().getName();
-        assert name != null : "Member must have a name: " + getPsi();
+        assert name != null && Name.isValidIdentifier(name) : "Member must have a name: " + getPsi().getText();
         return Name.identifier(name);
     }
 
