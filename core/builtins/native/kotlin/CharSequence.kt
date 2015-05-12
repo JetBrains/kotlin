@@ -19,7 +19,7 @@ package kotlin
 /**
  * Represents a readable sequence of [Char] values.
  */
-public trait CharSequence {
+public interface CharSequence {
     /**
      * Returns the length of this character sequence.
      */

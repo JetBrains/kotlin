@@ -22,7 +22,7 @@ package kotlin
  * bytecode generation for it. Progressions with a step of -1 can be created through the
  * `downTo` method on classes representing primitive types.
  */
-public trait Progression<out N : Any> : Iterable<N> {
+public interface Progression<out N : Any> : Iterable<N> {
     /**
      * The start value of the progression.
      */

@@ -19,9 +19,9 @@ package kotlin.reflect
 /**
  * Represents a property declared in a package.
  */
-public trait KTopLevelProperty<out R> : KProperty<R>
+public interface KTopLevelProperty<out R> : KProperty<R>
 
 /**
  * Represents a package property declared as a `var`.
  */
-public trait KMutableTopLevelProperty<R> : KTopLevelProperty<R>, KMutableProperty<R>
+public interface KMutableTopLevelProperty<R> : KTopLevelProperty<R>, KMutableProperty<R>

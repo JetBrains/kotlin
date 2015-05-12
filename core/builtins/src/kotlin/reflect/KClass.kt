@@ -24,7 +24,7 @@ package kotlin.reflect
  *
  * @param T the type of the class.
  */
-public trait KClass<T> {
+public interface KClass<T> {
     /**
      * The simple name of the class as it was declared in the source code,
      * or `null` if the class has no name (e.g. anonymous object literals).

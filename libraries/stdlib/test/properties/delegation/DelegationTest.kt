@@ -4,7 +4,7 @@ import org.junit.Test as test
 import kotlin.test.*
 import kotlin.properties.*
 
-trait WithBox {
+interface WithBox {
     fun box(): String
 }
 

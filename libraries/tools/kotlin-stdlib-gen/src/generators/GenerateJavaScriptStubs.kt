@@ -87,7 +87,7 @@ $imports
             val interfaces = klass.getInterfaces()
             val extends = if (interfaces != null && interfaces.size == 1) ": ${interfaces[0]?.getSimpleName()}" else ""
 
-            println("native public trait ${klass.getSimpleName()}$extends {")
+            println("native public interface ${klass.getSimpleName()}$extends {")
 
             val methods = klass.getDeclaredMethods().sortBy { it.getName()!! }
             if (methods != null) {

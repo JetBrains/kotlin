@@ -17,9 +17,9 @@
 package kotlin
 
 /**
- * Classes that inherit from this trait support creating field-by-field copies of their instances.
+ * Classes that inherit from this interface support creating field-by-field copies of their instances.
  */
-public trait Cloneable {
+public interface Cloneable {
     /**
      * Creates and returns a field-by-field copy of this object.
      */

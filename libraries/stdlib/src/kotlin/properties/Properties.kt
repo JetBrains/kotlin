@@ -14,7 +14,7 @@ public class ChangeEvent(
 }
 
 deprecated("This class is part of an old, incomplete and suboptimal design of change notifications and is going to be removed")
-public trait ChangeListener {
+public interface ChangeListener {
     public fun onPropertyChange(event: ChangeEvent): Unit
 }
 

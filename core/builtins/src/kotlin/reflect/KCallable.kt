@@ -21,7 +21,7 @@ package kotlin.reflect
  *
  * @param R return type of the callable.
  */
-public trait KCallable<out R> {
+public interface KCallable<out R> {
     /**
      * The name of this callable as it was declared in the source code.
      */

@@ -19,7 +19,7 @@ package kotlin
 /**
  * Holder for special values of floating point types.
  */
-public trait FloatingPointConstants<T> {
+public interface FloatingPointConstants<T> {
     /**
      * A constant holding the positive infinity value.
      */

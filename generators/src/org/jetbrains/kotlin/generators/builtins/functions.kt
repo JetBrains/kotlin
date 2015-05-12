@@ -65,7 +65,7 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
     override fun generateBody() {
         for (i in 0..MAX_PARAM_COUNT) {
             generateDocumentation(i)
-            out.print("public trait " + kind.getClassName(i))
+            out.print("public interface " + kind.getClassName(i))
             generateTypeParameters(i, true)
             generateSuperClass(i)
             generateFunctionClassBody(i)

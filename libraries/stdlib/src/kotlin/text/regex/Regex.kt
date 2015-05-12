@@ -17,7 +17,7 @@
 package kotlin.text
 
 /** Represents a collection of captured groups in a single match. */
-public trait MatchGroupCollection : Collection<MatchGroup?> {
+public interface MatchGroupCollection : Collection<MatchGroup?> {
 
     /** Returns a group with the specified [index]
      *
@@ -34,7 +34,7 @@ public trait MatchGroupCollection : Collection<MatchGroup?> {
 /**
  * Represents the results from a single regular expression match.
  */
-public trait MatchResult {
+public interface MatchResult {
     /** The range of indices in the original string where match was captured. */
     public val range: IntRange
     /** The substring from the input string captured by this match. */

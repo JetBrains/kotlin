@@ -86,8 +86,8 @@ public fun StringTemplate.toHtml(formatter: HtmlFormatter = HtmlFormatter()): St
  * how to format values for a particular [[Locale]] such as with the [[LocaleFormatter]] or
  * to escape particular characters in different output formats such as [[HtmlFormatter]
  */
-deprecated("This trait is part of an experimental implementation of string templates and is going to be removed")
-public trait Formatter {
+deprecated("This interface is part of an experimental implementation of string templates and is going to be removed")
+public interface Formatter {
     public fun format(buffer: Appendable, value: Any?): Unit
 }
 

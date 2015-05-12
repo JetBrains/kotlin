@@ -20,7 +20,7 @@ package kotlin
  * An iterator over a collection or another entity that can be represented as a sequence of elements.
  * Allows to sequentially access the elements.
  */
-public trait Iterator<out T> {
+public interface Iterator<out T> {
     /**
      * Returns the next element in the iteration.
      */
@@ -36,7 +36,7 @@ public trait Iterator<out T> {
  * An iterator over a mutable collection. Provides the ability to remove elements while iterating.
  * @see MutableCollection.iterator
  */
-public trait MutableIterator<out T> : Iterator<T> {
+public interface MutableIterator<out T> : Iterator<T> {
     /**
      * Removes from the underlying collection the last element returned by this iterator.
      */
@@ -47,7 +47,7 @@ public trait MutableIterator<out T> : Iterator<T> {
  * An iterator over a collection that supports indexed access.
  * @see List.listIterator
  */
-public trait ListIterator<out T> : Iterator<T> {
+public interface ListIterator<out T> : Iterator<T> {
     // Query Operations
     override fun next(): T
     override fun hasNext(): Boolean
@@ -77,7 +77,7 @@ public trait ListIterator<out T> : Iterator<T> {
  * An iterator over a mutable collection that supports indexed access. Provides the ability
  * to add, modify and remove elements while iterating.
  */
-public trait MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
+public interface MutableListIterator<T> : ListIterator<T>, MutableIterator<T> {
     // Query Operations
     override fun next(): T
     override fun hasNext(): Boolean

@@ -19,7 +19,7 @@ package kotlin
 /**
  * Represents a property in a Kotlin class.
  */
-public trait PropertyMetadata {
+public interface PropertyMetadata {
     /**
      * The name of the property.
      */
