@@ -541,48 +541,7 @@ public class JetParsing extends AbstractJetParsing {
      */
     private boolean parseAnnotation(AnnotationParsingMode mode) {
         if (at(LBRACKET)) {
-            PsiBuilder.Marker annotation = mark();
-
-            myBuilder.disableNewlines();
-            advance(); // LBRACKET
-
-            if (mode.isFileAnnotationParsingMode) {
-                if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(at(FILE_KEYWORD) && lookahead(1) == COLON)) {
-                    annotation.rollbackTo();
-                    myBuilder.restoreNewlinesState();
-                    return false;
-                }
-
-                String message = "Expecting \"" + FILE_KEYWORD.getValue() + COLON.getValue() + "\" prefix for file annotations";
-                expect(FILE_KEYWORD, message);
-                expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET));
-            }
-            else if (at(FILE_KEYWORD) && lookahead(1) == COLON) {
-                errorAndAdvance("File annotations are only allowed before package declaration", 2);
-            }
-
-            if (!at(IDENTIFIER)) {
-                error("Expecting a list of annotations");
-            }
-            else {
-                parseAnnotationEntry();
-                while (at(COMMA)) {
-                    errorAndAdvance("No commas needed to separate annotations");
-                }
-
-                while (at(IDENTIFIER)) {
-                    parseAnnotationEntry();
-                    while (at(COMMA)) {
-                        errorAndAdvance("No commas needed to separate annotations");
-                    }
-                }
-            }
-
-            expect(RBRACKET, "Expecting ']' to close the annotation list");
-            myBuilder.restoreNewlinesState();
-
-            annotation.done(ANNOTATION);
-            return true;
+            return parseAnnotationList(mode);
         }
         else if (mode.allowShortAnnotations && at(IDENTIFIER)) {
             parseAnnotationEntry();
@@ -599,6 +558,60 @@ public class JetParsing extends AbstractJetParsing {
         }
 
         return false;
+    }
+
+    private boolean parseAnnotationList(AnnotationParsingMode mode) {
+        PsiBuilder.Marker annotation = mark();
+
+        myBuilder.disableNewlines();
+        advance(); // LBRACKET
+
+        if (!parseAnnotationTargetIfNeeded(mode)) {
+            annotation.rollbackTo();
+            myBuilder.restoreNewlinesState();
+            return false;
+        }
+
+        if (!at(IDENTIFIER)) {
+            error("Expecting a list of annotations");
+        }
+        else {
+            parseAnnotationEntry();
+            while (at(COMMA)) {
+                errorAndAdvance("No commas needed to separate annotations");
+            }
+
+            while (at(IDENTIFIER)) {
+                parseAnnotationEntry();
+                while (at(COMMA)) {
+                    errorAndAdvance("No commas needed to separate annotations");
+                }
+            }
+        }
+
+        expect(RBRACKET, "Expecting ']' to close the annotation list");
+        myBuilder.restoreNewlinesState();
+
+        annotation.done(ANNOTATION);
+        return true;
+    }
+
+    // Returns true if we should continue parse annotation
+    private boolean parseAnnotationTargetIfNeeded(AnnotationParsingMode mode) {
+        if (mode.isFileAnnotationParsingMode) {
+            if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(at(FILE_KEYWORD) && lookahead(1) == COLON)) {
+                return false;
+            }
+
+            String message = "Expecting \"" + FILE_KEYWORD.getValue() + COLON.getValue() + "\" prefix for file annotations";
+            expect(FILE_KEYWORD, message);
+            expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET));
+        }
+        else if (at(FILE_KEYWORD) && lookahead(1) == COLON) {
+            errorAndAdvance("File annotations are only allowed before package declaration", 2);
+        }
+
+        return true;
     }
 
     /*
