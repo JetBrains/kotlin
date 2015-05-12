@@ -1531,6 +1531,45 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             }
         }
 
+        @TestMetadata("compiler/testData/psi/primaryConstructor")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class PrimaryConstructor extends AbstractJetParsingTest {
+            public void testAllFilesPresentInPrimaryConstructor() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/primaryConstructor"), Pattern.compile("^(.*)\\.kts?$"), true);
+            }
+
+            @TestMetadata("local.kt")
+            public void testLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/primaryConstructor/local.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("nestedClassAmbiguity.kt")
+            public void testNestedClassAmbiguity() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/primaryConstructor/nestedClassAmbiguity.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("recovery.kt")
+            public void testRecovery() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/primaryConstructor/recovery.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("recoveryNestedClassAmbiguity.kt")
+            public void testRecoveryNestedClassAmbiguity() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/primaryConstructor/recoveryNestedClassAmbiguity.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("valid.kt")
+            public void testValid() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/primaryConstructor/valid.kt");
+                doParsingTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/psi/propertyDelegate")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

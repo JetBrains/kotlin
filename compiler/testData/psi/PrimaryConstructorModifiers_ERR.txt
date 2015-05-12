@@ -20,7 +20,7 @@ JetFile: PrimaryConstructorModifiers_ERR.kt
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
         PsiElement(private)('private')
-    PsiErrorElement:Expecting primary constructor parameter list
+    PsiErrorElement:Expecting 'constructor' keyword
       <empty list>
     PsiWhiteSpace(' ')
     CLASS_BODY

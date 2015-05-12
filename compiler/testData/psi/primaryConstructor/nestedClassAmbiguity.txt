@@ -1,0 +1,232 @@
+JetFile: nestedClassAmbiguity.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Outer1')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Nested1')
+        PsiWhiteSpace('\n\n    ')
+        PRIMARY_CONSTRUCTOR
+          MODIFIER_LIST
+            PsiElement(private)('private')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
+          PsiElement(constructor)('constructor')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Outer2')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Nested2')
+      PsiElement(SEMICOLON)(';')
+      PsiWhiteSpace('\n\n    ')
+      SECONDARY_CONSTRUCTOR
+        MODIFIER_LIST
+          PsiElement(private)('private')
+          PsiWhiteSpace(' ')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('Ann')
+        PsiWhiteSpace(' ')
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n')
+        CONSTRUCTOR_DELEGATION_CALL
+          CONSTRUCTOR_DELEGATION_REFERENCE
+            <empty list>
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Outer3')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Nested3')
+        PsiWhiteSpace('\n\n    ')
+        PRIMARY_CONSTRUCTOR
+          MODIFIER_LIST
+            PsiElement(private)('private')
+            PsiWhiteSpace(' ')
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+          PsiWhiteSpace(' ')
+          PsiElement(constructor)('constructor')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        DELEGATION_SPECIFIER_LIST
+          DELEGATOR_SUPER_CALL
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                PsiErrorElement:Type expected
+                  PsiElement(super)('super')
+            VALUE_ARGUMENT_LIST
+              PsiElement(LPAR)('(')
+              PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        CLASS_BODY
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Outer4')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      OBJECT_DECLARATION
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('Nested4')
+      PsiWhiteSpace('\n    ')
+      SECONDARY_CONSTRUCTOR
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          CONSTRUCTOR_DELEGATION_REFERENCE
+            <empty list>
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      OBJECT_DECLARATION
+        PsiElement(object)('object')
+        PsiWhiteSpace(' ')
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('Nested5')
+      PsiWhiteSpace(' ')
+      SECONDARY_CONSTRUCTOR
+        MODIFIER_LIST
+          PsiElement(private)('private')
+        PsiWhiteSpace(' ')
+        PsiElement(constructor)('constructor')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        CONSTRUCTOR_DELEGATION_CALL
+          CONSTRUCTOR_DELEGATION_REFERENCE
+            PsiElement(super)('super')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  OBJECT_DECLARATION
+    PsiElement(object)('object')
+    PsiWhiteSpace(' ')
+    OBJECT_DECLARATION_NAME
+      PsiElement(IDENTIFIER)('TopLevel')
+  PsiWhiteSpace(' ')
+  MODIFIER_LIST
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('constructor')
+      VALUE_ARGUMENT_LIST
+        PsiElement(LPAR)('(')
+        VALUE_ARGUMENT
+          PsiErrorElement:Expecting an expression
+            <empty list>
+        PsiErrorElement:Expecting ')'
+          PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('x')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(COLON)(':')
+  PsiWhiteSpace(' ')
+  MODIFIER_LIST
+    ANNOTATION_ENTRY
+      CONSTRUCTOR_CALLEE
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+  PsiErrorElement:Expecting a top level declaration
+    PsiElement(RPAR)(')')
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

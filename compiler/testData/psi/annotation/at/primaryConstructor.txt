@@ -8,9 +8,8 @@ JetFile: primaryConstructor.kt
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
-        PsiErrorElement:Only annotations in '[]' can be declared here
-          PsiElement(AT)('@')
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -35,9 +34,8 @@ JetFile: primaryConstructor.kt
     PsiWhiteSpace(' ')
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
-        PsiErrorElement:Only annotations in '[]' can be declared here
-          PsiElement(AT)('@')
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -126,9 +124,7 @@ JetFile: primaryConstructor.kt
                     PsiElement(IDENTIFIER)('Ann4')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Only annotations in '[]' can be declared here
-          PsiElement(AT)('@')
-        PsiElement(private)('private')
+        PsiElement(private)('@private')
         PsiWhiteSpace(' ')
         PsiErrorElement:Expected modifier or annotation after '@'
           PsiElement(AT)('@')
@@ -153,9 +149,8 @@ JetFile: primaryConstructor.kt
       MODIFIER_LIST
         PsiElement(private)('private')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Only annotations in '[]' can be declared here
-          PsiElement(AT)('@')
         ANNOTATION_ENTRY
+          PsiElement(AT)('@')
           CONSTRUCTOR_CALLEE
             TYPE_REFERENCE
               USER_TYPE
@@ -175,7 +170,7 @@ JetFile: primaryConstructor.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('Int')
             PsiElement(RPAR)(')')
-    PsiErrorElement:Expecting primary constructor parameter list
+    PsiErrorElement:Expecting 'constructor' keyword
       <empty list>
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
@@ -204,9 +199,7 @@ JetFile: primaryConstructor.kt
                     PsiElement(IDENTIFIER)('Ann5')
           PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Only annotations in '[]' can be declared here
-          PsiElement(AT)('@')
-        PsiElement(private)('private')
+        PsiElement(private)('@private')
         PsiWhiteSpace(' ')
         PsiErrorElement:Expected modifier or annotation after '@'
           PsiElement(AT)('@')

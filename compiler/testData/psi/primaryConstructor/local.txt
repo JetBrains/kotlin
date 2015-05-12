@@ -1,0 +1,47 @@
+JetFile: local.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('A1')
+        PsiWhiteSpace(' ')
+        PRIMARY_CONSTRUCTOR
+          PsiElement(constructor)('constructor')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('A2')
+        PsiWhiteSpace(' ')
+        PRIMARY_CONSTRUCTOR
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Ann')
+            PsiWhiteSpace(' ')
+            PsiElement(private)('private')
+          PsiWhiteSpace(' ')
+          PsiElement(constructor)('constructor')
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

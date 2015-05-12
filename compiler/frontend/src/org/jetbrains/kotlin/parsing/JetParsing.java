@@ -438,9 +438,8 @@ public class JetParsing extends AbstractJetParsing {
         PsiBuilder.Marker list = mark();
         boolean empty = true;
         while (!eof()) {
-            if (annotationParsingMode.atMemberStart && atSet(SOFT_KEYWORDS_AT_MEMBER_START)) {
-                break;
-            }
+            if (annotationParsingMode.atMemberStart && atSet(SOFT_KEYWORDS_AT_MEMBER_START)) break;
+            if (annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST && atSet(CONSTRUCTOR_KEYWORD, WHERE_KEYWORD)) break;
 
             if (at(AT)) {
                 IElementType strictlyNextToken = myBuilder.rawLookup(1);
@@ -689,7 +688,7 @@ public class JetParsing extends AbstractJetParsing {
         boolean hasConstructorModifiers = parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
-        if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON)) {
+        if ((object && at(CONSTRUCTOR_KEYWORD)) || (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD))) {
             beforeConstructorModifiers.rollbackTo();
             constructorModifiersMarker.drop();
             return object ? OBJECT_DECLARATION : CLASS;
@@ -698,17 +697,27 @@ public class JetParsing extends AbstractJetParsing {
         // We are still inside a class declaration
         beforeConstructorModifiers.drop();
 
+        boolean hasConstructorKeyword = at(CONSTRUCTOR_KEYWORD);
+        if (hasConstructorKeyword) {
+            advance(); // CONSTRUCTOR_KEYWORD
+        }
+
         if (at(LPAR)) {
             parseValueParameterList(false, /* typeRequired  = */ true, TokenSet.create(LBRACE, RBRACE));
             primaryConstructorMarker.done(PRIMARY_CONSTRUCTOR);
         }
-        else if (hasConstructorModifiers) {
+        else if (hasConstructorModifiers || hasConstructorKeyword) {
             // A comprehensive error message for cases like:
             //    class A private : Foo
             // or
             //    class A private {
             primaryConstructorMarker.done(PRIMARY_CONSTRUCTOR);
-            error("Expecting primary constructor parameter list");
+            if (hasConstructorKeyword) {
+                error("Expecting primary constructor parameter list");
+            }
+            else {
+                error("Expecting 'constructor' keyword");
+            }
         }
         else {
             primaryConstructorMarker.drop();
@@ -2246,7 +2255,7 @@ public class JetParsing extends AbstractJetParsing {
         ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, false, true),
         ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, false, true),
         ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true, true),
-        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(false, false, false, false);
+        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(true, false, false, true);
 
         boolean allowShortAnnotations;
         boolean isFileAnnotationParsingMode;
