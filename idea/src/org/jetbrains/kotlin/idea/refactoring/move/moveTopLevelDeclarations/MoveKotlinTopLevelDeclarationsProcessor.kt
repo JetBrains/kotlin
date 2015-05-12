@@ -241,8 +241,8 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
             val targetPsi = moveTarget.getOrCreateTargetPsi(declaration)
             val targetFile =
                     if (targetPsi is PsiDirectory) {
-                        val existingFile = if (targetPsi != file!!.getContainingDirectory()) targetPsi.findFile(file.getName()) else null
-                        existingFile ?: declaration.getFileNameAfterMove()?.let {createKotlinFile(it, targetPsi)}
+                        val targetFileName = declaration.getFileNameAfterMove()
+                        targetPsi.findFile(targetFileName) ?: createKotlinFile(targetFileName, targetPsi)
                     }
                     else targetPsi
 

@@ -51,8 +51,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
             for (element in elements) {
                 if (element !is JetNamedDeclaration) continue
 
-                val fileName = element.getFileNameAfterMove()
-                if (fileName != null && !fileNames.add(fileName)) {
+                if (!fileNames.add(element.getFileNameAfterMove())) {
                     val message = RefactoringBundle.getCannotRefactorMessage(
                             RefactoringBundle.message("there.are.going.to.be.multiple.destination.files.with.the.same.name")
                     )
