@@ -460,13 +460,13 @@ private fun JetType.processTypeIfExtractable(
         } as? JetTypeParameter
 
         when {
+            typeToCheck.isResolvableInScope(targetScope, true) ->
+                extractable
+
             typeParameter != null -> {
                 typeParameters.add(TypeParameter(typeParameter, typeParameter.collectRelevantConstraints()))
                 extractable
             }
-
-            typeToCheck.isResolvableInScope(targetScope, false) ->
-                extractable
 
             options.allowSpecialClassNames && typeToCheck.isSpecial() ->
                 extractable

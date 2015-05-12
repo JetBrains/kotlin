@@ -207,6 +207,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             val extractionTarget = propertyTargets.single {
                 it.name == InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// EXTRACTION_TARGET: ")
             }
+            val explicitPreviousSibling = file.findElementByComment("// SIBLING:")
             val helper = object : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
                 override fun configureAndRun(
                         project: Project,
@@ -223,12 +224,11 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                     )
                 }
             }
-            KotlinIntroducePropertyHandler(helper).invoke(
-                    fixture.getProject(),
-                    fixture.getEditor(),
-                    file,
-                    DataManager.getInstance().getDataContext(fixture.getEditor().getComponent())
-            )
+            val handler = KotlinIntroducePropertyHandler(helper)
+            val editor = fixture.getEditor()
+            handler.selectElements(editor, file) { elements, previousSibling ->
+                handler.doInvoke(getProject(), editor, file as JetFile, elements, explicitPreviousSibling ?: previousSibling)
+            }
         }
     }
 

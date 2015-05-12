@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import kotlin.test.*
 import com.intellij.openapi.application.*
 import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.*
 import java.util.*
 
@@ -52,53 +53,60 @@ public class KotlinIntroducePropertyHandler(
         }
     }
 
-    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        if (file !is JetFile) return
+    public fun selectElements(editor: Editor, file: PsiFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
         selectElementsWithTargetSibling(
-                operationName = INTRODUCE_PROPERTY,
-                editor = editor,
-                file = file,
-                getContainers = { elements, parent ->
+                INTRODUCE_PROPERTY,
+                editor,
+                file,
+                { elements, parent ->
                     parent.getExtractionContainers(strict = true, includeAll = true).filter { it is JetClassBody || it is JetFile }
-                }
-        ) { elements, targetSibling ->
-            val adjustedElements = (elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements
-            if (adjustedElements.isNotEmpty()) {
-                val options = ExtractionOptions(extractAsProperty = true)
-                val extractionData = ExtractionData(file, adjustedElements.toRange(), targetSibling, null, options)
-                ExtractionEngine(helper).run(editor, extractionData) {
-                    val property = it.declaration as JetProperty
-                    val descriptor = it.config.descriptor
+                },
+                continuation
+        )
+    }
 
-                    editor.getCaretModel().moveToOffset(property.getTextOffset())
-                    editor.getSelectionModel().removeSelection()
-                    if (editor.getSettings().isVariableInplaceRenameEnabled() && !ApplicationManager.getApplication().isUnitTestMode()) {
-                        with(PsiDocumentManager.getInstance(project)) {
-                            commitDocument(editor.getDocument())
-                            doPostponedOperationsAndUnblockDocument(editor.getDocument())
-                        }
+    public fun doInvoke(project: Project, editor: Editor, file: JetFile, elements: List<PsiElement>, targetSibling: PsiElement) {
+        val adjustedElements = (elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements
+        if (adjustedElements.isNotEmpty()) {
+            val options = ExtractionOptions(extractAsProperty = true)
+            val extractionData = ExtractionData(file, adjustedElements.toRange(), targetSibling, null, options)
+            ExtractionEngine(helper).run(editor, extractionData) {
+                val property = it.declaration as JetProperty
+                val descriptor = it.config.descriptor
 
-                        val introducer = KotlinInplacePropertyIntroducer(
-                                property = property,
-                                editor = editor,
-                                project = project,
-                                title = INTRODUCE_PROPERTY,
-                                doNotChangeVar = false,
-                                exprType = descriptor.controlFlow.outputValueBoxer.returnType,
-                                extractionResult = it,
-                                availableTargets = propertyTargets.filter { it.isAvailable(descriptor) }
-                        )
-                        introducer.performInplaceRefactoring(LinkedHashSet(descriptor.suggestedNames))
+                editor.getCaretModel().moveToOffset(property.getTextOffset())
+                editor.getSelectionModel().removeSelection()
+                if (editor.getSettings().isVariableInplaceRenameEnabled() && !ApplicationManager.getApplication().isUnitTestMode()) {
+                    with(PsiDocumentManager.getInstance(project)) {
+                        commitDocument(editor.getDocument())
+                        doPostponedOperationsAndUnblockDocument(editor.getDocument())
                     }
-                    else {
-                        processDuplicatesSilently(it.duplicateReplacers, project)
-                    }
+
+                    val introducer = KotlinInplacePropertyIntroducer(
+                            property = property,
+                            editor = editor,
+                            project = project,
+                            title = INTRODUCE_PROPERTY,
+                            doNotChangeVar = false,
+                            exprType = descriptor.controlFlow.outputValueBoxer.returnType,
+                            extractionResult = it,
+                            availableTargets = propertyTargets.filter { it.isAvailable(descriptor) }
+                    )
+                    introducer.performInplaceRefactoring(LinkedHashSet(descriptor.suggestedNames))
                 }
-            }
-            else {
-                showErrorHintByKey(project, editor, "cannot.refactor.no.expression", INTRODUCE_PROPERTY)
+                else {
+                    processDuplicatesSilently(it.duplicateReplacers, project)
+                }
             }
         }
+        else {
+            showErrorHintByKey(project, editor, "cannot.refactor.no.expression", INTRODUCE_PROPERTY)
+        }
+    }
+
+    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
+        if (file !is JetFile) return
+        selectElements(editor, file) { elements, targetSibling -> doInvoke(project, editor, file, elements, targetSibling) }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
