@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 import com.intellij.find.findUsages.AbstractFindUsagesDialog
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
 import com.intellij.psi.search.PsiElementProcessor
 import com.intellij.psi.search.PsiElementProcessorAdapter
 import com.intellij.usageView.UsageInfo
@@ -40,12 +38,14 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import java.util.Collections
 import com.intellij.find.findUsages.JavaFindUsagesHandler
 import com.intellij.find.findUsages.JavaFindUsagesHandlerFactory
-import com.intellij.psi.PsiMethod
+import com.intellij.psi.*
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.util.CommonProcessors
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 
 public class KotlinFindClassUsagesHandler(
         jetClass: JetClassOrObject,
@@ -54,20 +54,22 @@ public class KotlinFindClassUsagesHandler(
     public override fun getFindUsagesDialog(
             isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean
     ): AbstractFindUsagesDialog {
-        val lightClass = LightClassUtil.getPsiClass(getElement())
-        if (lightClass != null) {
-            return KotlinFindClassUsagesDialog(lightClass, getProject(), getFactory().findClassOptions, toShowInNewTab, mustOpenInNewTab, isSingleFile, this)
-        }
-
-        return super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
+        return KotlinFindClassUsagesDialog(getElement(),
+                                           getProject(),
+                                           getFactory().findClassOptions,
+                                           toShowInNewTab,
+                                           mustOpenInNewTab,
+                                           isSingleFile,
+                                           this)
     }
+
     protected override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         val kotlinOptions = options as KotlinClassFindUsagesOptions
 
         fun processInheritors(): Boolean {
-            val request = HierarchySearchRequest(element, options.searchScope!!, options.isCheckDeepInheritance)
+            val request = HierarchySearchRequest(element, options.searchScope, options.isCheckDeepInheritance)
             return request.searchInheritors().forEach(
-                    PsiElementProcessorAdapter<PsiClass>(
+                    PsiElementProcessorAdapter(
                             object : PsiElementProcessor<PsiClass> {
                                 public override fun execute(element: PsiClass): Boolean {
                                     val traitOrInterface = element.isInterface()
