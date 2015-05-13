@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlock
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -32,7 +32,7 @@ public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingOffsetIndepen
     override fun isApplicableTo(element: JetIfExpression): Boolean {
         if (element.getElse() != null) return false
 
-        val throwExpr = element.getThen()?.unwrapBlock() as? JetThrowExpression
+        val throwExpr = element.getThen()?.unwrapBlockOrParenthesis() as? JetThrowExpression
         val thrownExpr = getSelector(throwExpr?.getThrownExpression())
         if (thrownExpr !is JetCallExpression) return false
 
@@ -45,7 +45,7 @@ public class ConvertIfWithThrowToAssertIntention : JetSelfTargetingOffsetIndepen
     override fun applyTo(element: JetIfExpression, editor: Editor) {
         val condition = element.getCondition() ?: return
 
-        val thenExpr = element.getThen()?.unwrapBlock() as JetThrowExpression
+        val thenExpr = element.getThen()?.unwrapBlockOrParenthesis() as JetThrowExpression
         val thrownExpr = getSelector(thenExpr.getThrownExpression()) as JetCallExpression
 
         val psiFactory = JetPsiFactory(element)

@@ -89,18 +89,18 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
                 if (left != null && right != null && (op == JetTokens.ANDAND || op == JetTokens.OROR)) {
                     val simpleLeft = simplifyExpression(left)
                     val simpleRight = simplifyExpression(right)
-                    when {
-                        simpleLeft.canBeReducedToTrue() -> return toSimplifiedBooleanBinaryExpressionWithConstantOperand(true, simpleRight, op)
+                    return when {
+                        simpleLeft.canBeReducedToTrue() -> toSimplifiedBooleanBinaryExpressionWithConstantOperand(true, simpleRight, op)
 
-                        simpleLeft.canBeReducedToFalse() -> return toSimplifiedBooleanBinaryExpressionWithConstantOperand(false, simpleRight, op)
+                        simpleLeft.canBeReducedToFalse() -> toSimplifiedBooleanBinaryExpressionWithConstantOperand(false, simpleRight, op)
 
-                        simpleRight.canBeReducedToTrue() -> return toSimplifiedBooleanBinaryExpressionWithConstantOperand(true, simpleLeft, op)
+                        simpleRight.canBeReducedToTrue() -> toSimplifiedBooleanBinaryExpressionWithConstantOperand(true, simpleLeft, op)
 
-                        simpleRight.canBeReducedToFalse() -> return toSimplifiedBooleanBinaryExpressionWithConstantOperand(false, simpleLeft, op)
+                        simpleRight.canBeReducedToFalse() -> toSimplifiedBooleanBinaryExpressionWithConstantOperand(false, simpleLeft, op)
 
                         else -> {
                             val opText = expression.getOperationReference().getText()
-                            return psiFactory.createExpressionByPattern("$0 $opText $1", simpleLeft, simpleRight)
+                            psiFactory.createExpressionByPattern("$0 $opText $1", simpleLeft, simpleRight)
                         }
                     }
                 }
@@ -118,7 +118,7 @@ public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndep
         }
     }
 
-    private fun simplifyExpression(element: JetExpression) = element.replaced(toSimplifiedExpression(element))
+    private fun simplifyExpression(expression: JetExpression) = expression.replaced(toSimplifiedExpression(expression))
 
     private fun JetExpression.canBeReducedToBooleanConstant(constant: Boolean?): Boolean {
         val bindingContext = this.analyze()

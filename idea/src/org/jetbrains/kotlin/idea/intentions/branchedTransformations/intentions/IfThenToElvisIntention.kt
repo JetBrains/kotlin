@@ -52,7 +52,7 @@ public class IfThenToElvisIntention : JetSelfTargetingOffsetIndependentIntention
     }
 
     private fun JetExpression.isNotNullExpression(): Boolean {
-        val innerExpression = this.unwrapBlock()
+        val innerExpression = this.unwrapBlockOrParenthesis()
         return innerExpression !is JetBlockExpression && innerExpression.getNode().getElementType() != JetNodeTypes.NULL
     }
 
@@ -66,8 +66,8 @@ public class IfThenToElvisIntention : JetSelfTargetingOffsetIndependentIntention
 
         val thenClause = element.getThen()!!
         val elseClause = element.getElse()!!
-        val thenExpression = thenClause.unwrapBlock()
-        val elseExpression = elseClause.unwrapBlock()
+        val thenExpression = thenClause.unwrapBlockOrParenthesis()
+        val elseExpression = elseClause.unwrapBlockOrParenthesis()
 
         val (left, right) =
                 when(condition.getOperationToken()) {

@@ -41,13 +41,13 @@ public class IfThenToDoubleBangIntention : JetSelfTargetingRangeIntention<JetIfE
         val matchingClause: JetExpression?
         when (token) {
             JetTokens.EQEQ -> {
-                throwExpression = thenClause.unwrapBlock() as? JetThrowExpression ?: return null
+                throwExpression = thenClause.unwrapBlockOrParenthesis() as? JetThrowExpression ?: return null
                 matchingClause = elseClause
             }
 
             JetTokens.EXCLEQ -> {
                 matchingClause = thenClause
-                throwExpression = elseClause?.unwrapBlock() as? JetThrowExpression ?: return null
+                throwExpression = elseClause?.unwrapBlockOrParenthesis() as? JetThrowExpression ?: return null
             }
 
             else -> throw IllegalStateException()

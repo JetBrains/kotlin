@@ -50,7 +50,7 @@ fun JetBinaryExpression.expressionComparedToNull(): JetExpression? {
     return if (leftIsNull) right else left
 }
 
-fun JetExpression.unwrapBlock(): JetExpression {
+fun JetExpression.unwrapBlockOrParenthesis(): JetExpression {
     val innerExpression = JetPsiUtil.safeDeparenthesize(this)
     if (innerExpression is JetBlockExpression) {
         val statement = innerExpression.getStatements().singleOrNull() as? JetExpression ?: return this
@@ -59,7 +59,7 @@ fun JetExpression.unwrapBlock(): JetExpression {
     return innerExpression
 }
 
-fun JetExpression?.isNullExpression(): Boolean = this?.unwrapBlock()?.getNode()?.getElementType() == JetNodeTypes.NULL
+fun JetExpression?.isNullExpression(): Boolean = this?.unwrapBlockOrParenthesis()?.getNode()?.getElementType() == JetNodeTypes.NULL
 
 fun JetExpression?.isNullExpressionOrEmptyBlock(): Boolean = this.isNullExpression() || this is JetBlockExpression && this.getStatements().isEmpty()
 
@@ -76,7 +76,7 @@ fun JetThrowExpression.throwsNullPointerExceptionWithNoArguments(): Boolean {
 }
 
 fun JetExpression.evaluatesTo(other: JetExpression): Boolean {
-    return this.unwrapBlock().getText() == other.getText()
+    return this.unwrapBlockOrParenthesis().getText() == other.getText()
 }
 
 fun JetExpression.convertToIfNotNullExpression(conditionLhs: JetExpression, thenClause: JetExpression, elseClause: JetExpression?): JetIfExpression {
