@@ -77,12 +77,6 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestMultiFile(fileName);
     }
 
-    @TestMetadata("nestedPackages")
-    public void testNestedPackages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/nestedPackages/");
-        doTestMultiFile(fileName);
-    }
-
     @TestMetadata("packageLocalClassNotImportedWithDefaultImport")
     public void testPackageLocalClassNotImportedWithDefaultImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/packageLocalClassNotImportedWithDefaultImport/");

@@ -379,6 +379,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PrivateFromOuterPackage.kt")
+        public void testPrivateFromOuterPackage() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/PrivateFromOuterPackage.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ProcessingEmptyImport.kt")
         public void testProcessingEmptyImport() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ProcessingEmptyImport.kt");
