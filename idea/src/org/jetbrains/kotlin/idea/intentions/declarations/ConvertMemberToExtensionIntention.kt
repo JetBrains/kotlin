@@ -41,6 +41,8 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
         return (element.getNameIdentifier() ?: return null).getTextRange()
     }
 
+    //TODO: local class
+
     override fun applyTo(element: JetCallableDeclaration, editor: Editor) {
         val descriptor = element.resolveToDescriptor()
         val containingClass = descriptor.getContainingDeclaration() as ClassDescriptor
@@ -85,6 +87,7 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
         when (extension) {
             is JetFunction -> {
                 if (!extension.hasBody()) {
+                    //TODO: methods in PSI for setBody
                     extension.add(psiFactory.createBlock(THROW_UNSUPPORTED_OPERATION_EXCEPTION))
                     selectBody(extension)
                 }
@@ -133,6 +136,7 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
         }
     }
 
+    //TODO: reuse TEMPLATE_FROM_USAGE_FUNCTION_BODY
     private val THROW_UNSUPPORTED_OPERATION_EXCEPTION = "throw UnsupportedOperationException()"
 
     private fun newTypeParameterList(member: JetCallableDeclaration): JetTypeParameterList? {
