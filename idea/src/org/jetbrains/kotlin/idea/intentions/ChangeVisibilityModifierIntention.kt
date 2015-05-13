@@ -20,10 +20,14 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 
 public open class ChangeVisibilityModifierIntention protected(
         val modifier: JetModifierKeywordToken
@@ -32,19 +36,33 @@ public open class ChangeVisibilityModifierIntention protected(
     override fun applicabilityRange(element: JetDeclaration): TextRange? {
         val modifierList = element.getModifierList()
         if (modifierList?.hasModifier(modifier) ?: false) return null
-        if (modifierList?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false) return null
+
+//        val descriptor = element.resolveToDescriptor() as? DeclarationDescriptorWithVisibility ?: return null
+        val bindingContext = element.analyze()
+        var descriptor = (if (element is JetPrimaryConstructor) //TODO: temporary code
+            ((element.getParent() as JetClass).resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor()
+        else
+            bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]) as? DeclarationDescriptorWithVisibility ?: return null
+        if (descriptor is ValueParameterDescriptor) {
+            descriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor] ?: return null
+        }
+        val targetVisibility = modifier.toVisibility()
+        if (descriptor.getVisibility() == targetVisibility) return null
+
+        if (modifierList?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false) {
+            val callableDescriptor = descriptor  as? CallableDescriptor ?: return null
+            // cannot make visibility less than (or non-comparable with) any of the supers
+            if (callableDescriptor.getOverriddenDescriptors().any { val c = Visibilities.compare(it.getVisibility(), targetVisibility); c == null || c > 0  }) return null
+        }
 
         setText(defaultText)
 
-        val modifierToChange = modifierToChange(element)
-        if (modifierToChange != null) {
-            return modifierToChange.getTextRange()
+        val modifierElement = element.visibilityModifier()
+        if (modifierElement != null) {
+            return modifierElement.getTextRange()
         }
 
-        val defaultRange = canAddVisibilityModifier(element) ?: return null
-
-        val defaultVisibility = if (element is JetPrimaryConstructor) JetTokens.PUBLIC_KEYWORD else JetTokens.INTERNAL_KEYWORD
-        if (modifier == defaultVisibility) return null
+        val defaultRange = noModifierYetApplicabilityRange(element) ?: return null
 
         if (element is JetPrimaryConstructor && defaultRange.isEmpty()) {
             setText("Make primary constructor ${modifier.getValue()}") // otherwise it may be confusing
@@ -57,30 +75,39 @@ public open class ChangeVisibilityModifierIntention protected(
     }
 
     override fun applyTo(element: JetDeclaration, editor: Editor) {
-        val modifierToChange = modifierToChange(element)
+        val modifierToChange = element.visibilityModifier()
         if (modifierToChange != null) {
-            val newModifier = JetPsiFactory(element).createModifierList(modifier).getModifier(modifier)!!
-            modifierToChange.replace(newModifier)
+            modifierToChange.replace(JetPsiFactory(element).createModifier(modifier))
         }
         else {
             element.addModifier(modifier)
         }
     }
 
-    private fun modifierToChange(element: JetDeclaration): PsiElement? {
-        val modifierList = element.getModifierList() ?: return null
+    private fun JetDeclaration.visibilityModifier(): PsiElement? {
+        val modifierList = getModifierList() ?: return null
         return JetTokens.VISIBILITY_MODIFIERS.getTypes()
                        .asSequence()
                        .map { modifierList.getModifier(it as JetModifierKeywordToken) }
                        .firstOrNull { it != null } ?: return null
     }
 
-    private fun canAddVisibilityModifier(declaration: JetDeclaration): TextRange? {
+    private fun JetModifierKeywordToken.toVisibility(): Visibility {
+        return when (this) {
+            JetTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
+            JetTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
+            JetTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
+            JetTokens.INTERNAL_KEYWORD -> Visibilities.INTERNAL
+            else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
+        }
+    }
+
+    private fun noModifierYetApplicabilityRange(declaration: JetDeclaration): TextRange? {
         if (JetPsiUtil.isLocal(declaration)) return null
         return when (declaration) {
             is JetNamedFunction -> declaration.getFunKeyword()?.getTextRange()
             is JetProperty -> declaration.getValOrVarNode().getTextRange()
-            is JetClass -> declaration.getClassOrTraitKeyword()?.getTextRange()
+            is JetClass -> declaration.getClassOrInterfaceKeyword()?.getTextRange()
             is JetObjectDeclaration -> declaration.getObjectKeyword().getTextRange()
             is JetPrimaryConstructor -> declaration.getValueParameterList()?.let { TextRange.from(it.startOffset, 0) } //TODO: use constructor keyword if exist
             is JetSecondaryConstructor -> declaration.getConstructorKeyword().getTextRange()

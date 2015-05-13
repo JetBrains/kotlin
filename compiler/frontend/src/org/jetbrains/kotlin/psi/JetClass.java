@@ -253,7 +253,7 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     }
 
     @Nullable
-    public PsiElement getClassOrTraitKeyword() {
-        return findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.TRAIT_KEYWORD));
+    public PsiElement getClassOrInterfaceKeyword() {
+        return findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.INTERFACE_KEYWORD));
     }
 }

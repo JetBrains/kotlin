@@ -44,7 +44,7 @@ internal fun addModifier(owner: JetModifierListOwner, modifier: JetModifierKeywo
 }
 
 internal fun addModifier(modifierList: JetModifierList, modifier: JetModifierKeywordToken, defaultVisibilityModifier: JetModifierKeywordToken) {
-    val newModifier = JetPsiFactory(modifierList).createModifierList(modifier).getModifier(modifier)!!
+    val newModifier = JetPsiFactory(modifierList).createModifier(modifier)
     val modifierToReplace = MODIFIERS_TO_REPLACE[modifier]
             ?.map { modifierList.getModifier(it) }
             ?.filterNotNull()

@@ -114,6 +114,7 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
         }
 
         override fun getText(): String {
+            // TODO: not too long
             return "Add constructor parameters from " +
                    superConstructor.getContainingDeclaration().getName().asString() +
                    superConstructor.getValueParameters().map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.getType()) }.joinToString(", ", "(", ")")
@@ -132,7 +133,9 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
                 val parametersToAdd = ArrayList<JetParameter>()
                 for (parameter in superParameters) {
                     val name = renderer.renderName(parameter.getName())
-                    parameterNames.add(name)
+                    val varargElementType = parameter.getVarargElementType()
+
+                    parameterNames.add(if (varargElementType != null) "*$name" else name)
 
                     val nameString = parameter.getName().asString()
                     val existingParameter = oldParameters.firstOrNull { it.getName() == nameString }
@@ -141,7 +144,10 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
                         if (type.isSubtypeOf(parameter.getType())) continue // use existing parameter
                     }
 
-                    val parameterText = name + ":" + renderer.renderType(parameter.getType())
+                    val parameterText = if (varargElementType != null)
+                        "vararg " + name + ":" + renderer.renderType(varargElementType)
+                    else
+                        name + ":" + renderer.renderType(parameter.getType())
                     parametersToAdd.add(factory.createParameter(parameterText))
                 }
 

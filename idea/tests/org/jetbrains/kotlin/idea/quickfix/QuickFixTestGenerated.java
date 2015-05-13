@@ -4943,6 +4943,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/someParametersAlreadyExist.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("vararg1.kt")
+        public void testVararg1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/vararg1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("vararg2.kt")
+        public void testVararg2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/vararg2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("vararg3.kt")
+        public void testVararg3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/vararg3.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/suppress")

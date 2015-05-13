@@ -1963,6 +1963,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/internal/simple.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("valParameter.kt")
+            public void testValParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/internal/valParameter.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/intentions/changeVisibility/private")
@@ -1985,6 +1991,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noModifierListInterface.kt")
+            public void testNoModifierListInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListInterface.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noModifierListObject.kt")
             public void testNoModifierListObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListObject.kt");
@@ -2000,12 +2012,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("noModifierListSecondaryConstructor.kt")
             public void testNoModifierListSecondaryConstructor() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListSecondaryConstructor.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("noModifierListTrait.kt")
-            public void testNoModifierListTrait() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/private/noModifierListTrait.kt");
                 doTest(fileName);
             }
 
@@ -2066,15 +2072,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notForInternalOverride.kt")
+            public void testNotForInternalOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/notForInternalOverride.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("notForObjectMember.kt")
             public void testNotForObjectMember() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/notForObjectMember.kt");
                 doTest(fileName);
             }
 
+            @TestMetadata("notForOverride.kt")
+            public void testNotForOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/notForOverride.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("notForTopLevel.kt")
             public void testNotForTopLevel() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/notForTopLevel.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("overrideVisibilityToDefault.kt")
+            public void testOverrideVisibilityToDefault() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/protected/overrideVisibilityToDefault.kt");
                 doTest(fileName);
             }
 
@@ -2105,9 +2129,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("notForOverride.kt")
-            public void testNotForOverride() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/notForOverride.kt");
+            @TestMetadata("forOverride.kt")
+            public void testForOverride() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/changeVisibility/public/forOverride.kt");
                 doTest(fileName);
             }
 

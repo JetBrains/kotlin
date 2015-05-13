@@ -28,6 +28,7 @@ import com.intellij.util.LocalTimeCounter
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName
@@ -225,12 +226,16 @@ public class JetPsiFactory(private val project: Project) {
         return createClass("class Foo {\n $decl \n}").getSecondaryConstructors().first()
     }
 
-    public fun createModifierList(modifier: JetKeywordToken): JetModifierList {
+    public fun createModifierList(modifier: JetModifierKeywordToken): JetModifierList {
         return createModifierList(modifier.getValue())
     }
 
     public fun createModifierList(text: String): JetModifierList {
         return createProperty(text + " val x").getModifierList()!!
+    }
+
+    public fun createModifier(modifier: JetModifierKeywordToken): PsiElement {
+        return createModifierList(modifier.getValue()).getModifier(modifier)!!
     }
 
     public fun createAnnotationEntry(text: String): JetAnnotationEntry {
