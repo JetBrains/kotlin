@@ -171,7 +171,7 @@ public class QualifiedExpressionResolver {
     }
 
     @NotNull
-    private Collection<DeclarationDescriptor> lookupSelectorDescriptors(
+    public Collection<DeclarationDescriptor> lookupSelectorDescriptors(
             @NotNull JetSimpleNameExpression selector,
             @NotNull Collection<DeclarationDescriptor> declarationDescriptors,
             @NotNull BindingTrace trace,

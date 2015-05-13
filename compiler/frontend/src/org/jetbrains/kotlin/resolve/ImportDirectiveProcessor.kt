@@ -21,11 +21,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetImportDirective
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import java.util.ArrayList
 import kotlin.platform.platformStatic
 
 public class ImportDirectiveProcessor(
@@ -44,20 +43,11 @@ public class ImportDirectiveProcessor(
         }
 
         val importedReference = importDirective.getImportedReference() ?: return JetScope.Empty
-
-        val scope = JetModuleUtil.getImportsResolutionScope(moduleDescriptor, allowClassesFromDefaultPackage)
-        val descriptors = if (importedReference is JetQualifiedExpression) {
-            //store result only when we find all descriptors, not only classes on the second phase
-            qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                    importedReference, scope, moduleDescriptor, trace, lookupMode, lookupMode.isEverything()
-            )
-        }
-        else {
-            assert(importedReference is JetSimpleNameExpression)
-            qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                    importedReference as JetSimpleNameExpression, scope, moduleDescriptor, trace, lookupMode, true, lookupMode.isEverything()
-            )
-        }
+        val importPath = importDirective.getImportPath() ?: return JetScope.Empty
+        val (packageViewDescriptor, selectorsToLookUp) = tryResolvePackagesFromRightToLeft(
+                moduleDescriptor, trace, importPath.fqnPart(), importedReference
+        )
+        val descriptors = lookUpMembersFromLeftToRight(moduleDescriptor, trace, packageViewDescriptor, selectorsToLookUp, lookupMode)
 
         val referenceExpression = JetPsiUtil.getLastReference(importedReference)
         if (importDirective.isAllUnder()) {
@@ -79,6 +69,86 @@ public class ImportDirectiveProcessor(
         else {
             val aliasName = JetPsiUtil.getAliasName(importDirective) ?: return JetScope.Empty
             return SingleImportScope(aliasName, descriptors)
+        }
+    }
+
+    private fun tryResolvePackagesFromRightToLeft(
+            moduleDescriptor: ModuleDescriptor,
+            trace: BindingTrace,
+            fqName: FqName,
+            jetExpression: JetExpression?
+    ): Pair<PackageViewDescriptor, List<JetSimpleNameExpression>> {
+        val selectorsToLookUp = ArrayList<JetSimpleNameExpression>()
+
+        fun recTryResolvePackagesFromRightToLeft(
+                fqName: FqName,
+                jetExpression: JetExpression?
+        ): PackageViewDescriptor {
+            val packageView = moduleDescriptor.getPackage(fqName)
+            if (jetExpression == null) {
+                assert(fqName.isRoot())
+                return packageView.sure { "Root package does not exist in module $moduleDescriptor" }
+            }
+            return when {
+                packageView != null -> {
+                    recordPackageViews(jetExpression, packageView, trace)
+                    packageView
+                }
+                else -> {
+                    assert(!fqName.isRoot())
+                    val (expressionRest, selector) = jetExpression.getReceiverAndSelector()
+                    if (selector != null) {
+                        selectorsToLookUp.add(selector)
+                    }
+                    recTryResolvePackagesFromRightToLeft(fqName.parent(), expressionRest)
+                }
+            }
+        }
+
+        val packageView = recTryResolvePackagesFromRightToLeft(fqName, jetExpression)
+        return Pair(packageView, selectorsToLookUp.reverse())
+    }
+
+    private fun recordPackageViews(jetExpression: JetExpression, packageView: PackageViewDescriptor, trace: BindingTrace) {
+        trace.record(BindingContext.REFERENCE_TARGET, JetPsiUtil.getLastReference(jetExpression), packageView)
+        val containingView = packageView.getContainingDeclaration()
+        val (receiver, _) = jetExpression.getReceiverAndSelector()
+        if (containingView != null && receiver != null) {
+            recordPackageViews(receiver, containingView, trace)
+        }
+    }
+
+    private fun lookUpMembersFromLeftToRight(
+            moduleDescriptor: ModuleDescriptor,
+            trace: BindingTrace,
+            packageView: PackageViewDescriptor,
+            selectorsToLookUp: List<JetSimpleNameExpression>,
+            lookupMode: QualifiedExpressionResolver.LookupMode
+    ): Collection<DeclarationDescriptor> {
+        var currentDescriptors: Collection<DeclarationDescriptor> = listOf(packageView)
+        for ((i, selector) in selectorsToLookUp.withIndex()) {
+            currentDescriptors = qualifiedExpressionResolver.lookupSelectorDescriptors(
+                    selector, currentDescriptors, trace, moduleDescriptor, lookupMode, lookupMode.isEverything()
+            )
+            val isLastReference = i == selectorsToLookUp.size() - 1
+            if (!isLastReference && !canImportMembersFrom(currentDescriptors, selector, trace, lookupMode)) {
+                return emptyList()
+            }
+        }
+        return currentDescriptors
+    }
+
+    private fun JetExpression.getReceiverAndSelector(): Pair<JetExpression?, JetSimpleNameExpression?> {
+        when (this) {
+            is JetDotQualifiedExpression -> {
+                return Pair(this.getReceiverExpression(), this.getSelectorExpression() as? JetSimpleNameExpression)
+            }
+            is JetSimpleNameExpression -> {
+                return Pair(null, this)
+            }
+            else -> {
+                throw AssertionError("Invalid expression in import $this of class ${this.javaClass}")
+            }
         }
     }
 
