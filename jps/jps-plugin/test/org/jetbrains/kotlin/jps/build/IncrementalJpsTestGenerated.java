@@ -299,6 +299,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("optionalParameter")
+        public void testOptionalParameter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/optionalParameter/");
+            doTest(fileName);
+        }
+
         @TestMetadata("ourClassReferenced")
         public void testOurClassReferenced() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/ourClassReferenced/");
@@ -552,6 +558,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class KotlinUsedInJava extends AbstractIncrementalJpsTest {
+            @TestMetadata("addOptionalParameter")
+            public void testAddOptionalParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/addOptionalParameter/");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInKotlinUsedInJava() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/withJava/kotlinUsedInJava"), Pattern.compile("^([^\\.]+)$"), true);
             }
