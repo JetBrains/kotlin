@@ -48,8 +48,8 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
         javaArgs.add("-cp");
         javaArgs.add(UtilsPackage.join(Arrays.asList(
                 getCompilerLib().getAbsolutePath() + File.separator + "kotlin-compiler.jar",
-                ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
-                ForTestCompileRuntime.reflectJarForTests().getAbsolutePath()
+                new File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar").getAbsolutePath(),
+                new File("dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-reflect.jar").getAbsolutePath()
         ), File.pathSeparator));
         javaArgs.add("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler");
 
