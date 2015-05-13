@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForBodyResolve
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -421,14 +420,13 @@ public abstract class ElementResolver protected(
                     val filePackage = resolveSession.getModuleDescriptor().getPackage(fqName)
                                       ?: error("File package should be already resolved and be found")
 
-                    val scope = filePackage.getMemberScope()
                     val descriptors = if (element is JetDotQualifiedExpression) {
                         qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                                element, rootPackage.getMemberScope(), scope, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false)
+                                element, rootPackage.getMemberScope(), filePackage, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false)
                     }
                     else {
                         qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                                element as JetSimpleNameExpression, rootPackage.getMemberScope(), scope, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false, false)
+                                element as JetSimpleNameExpression, rootPackage.getMemberScope(), filePackage, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false, false)
                     }
 
                     return descriptors.firstIsInstanceOrNull<PackageViewDescriptor>()?.getMemberScope()

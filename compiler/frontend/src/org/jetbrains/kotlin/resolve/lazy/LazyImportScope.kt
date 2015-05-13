@@ -101,7 +101,7 @@ class LazyImportResolver(
                     try {
                         val resolver = resolveSession.getQualifiedExpressionResolver()
                         val directiveImportScope = resolver.processImportReference(
-                                directive, rootScope, packageView.getMemberScope(), traceForImportResolve, mode)
+                                directive, rootScope, packageView, traceForImportResolve, mode)
                         val descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
 
                         if (mode == LookupMode.EVERYTHING) {

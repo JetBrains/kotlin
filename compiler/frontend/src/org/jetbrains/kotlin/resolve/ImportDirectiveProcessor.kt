@@ -33,7 +33,7 @@ public class ImportDirectiveProcessor(
     public fun processImportReference(
             importDirective: JetImportDirective,
             scope: JetScope,
-            scopeToCheckVisibility: JetScope,
+            shouldBeVisibleFrom: DeclarationDescriptor,
             trace: BindingTrace,
             lookupMode: QualifiedExpressionResolver.LookupMode
     ): JetScope {
@@ -47,13 +47,13 @@ public class ImportDirectiveProcessor(
         val descriptors = if (importedReference is JetQualifiedExpression) {
             //store result only when we find all descriptors, not only classes on the second phase
             qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                    importedReference, scope, scopeToCheckVisibility, trace, lookupMode, lookupMode.isEverything()
+                    importedReference, scope, shouldBeVisibleFrom, trace, lookupMode, lookupMode.isEverything()
             )
         }
         else {
             assert(importedReference is JetSimpleNameExpression)
             qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                    importedReference as JetSimpleNameExpression, scope, scopeToCheckVisibility, trace, lookupMode, true, lookupMode.isEverything()
+                    importedReference as JetSimpleNameExpression, scope, shouldBeVisibleFrom, trace, lookupMode, true, lookupMode.isEverything()
             )
         }
 
