@@ -41,26 +41,26 @@ public class ImportDirectiveProcessor(
             trace.report(Errors.UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")) // TODO
             return JetScope.Empty
         }
+
         val importedReference = importDirective.getImportedReference() ?: return JetScope.Empty
 
-        val descriptors: Collection<DeclarationDescriptor>
-        if (importedReference is JetQualifiedExpression) {
+        val descriptors = if (importedReference is JetQualifiedExpression) {
             //store result only when we find all descriptors, not only classes on the second phase
-            descriptors = qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                    importedReference, scope, scopeToCheckVisibility, trace, lookupMode, lookupMode == QualifiedExpressionResolver.LookupMode.EVERYTHING
+            qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
+                    importedReference, scope, scopeToCheckVisibility, trace, lookupMode, lookupMode.isEverything()
             )
         }
         else {
             assert(importedReference is JetSimpleNameExpression)
-            descriptors = qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                    importedReference as JetSimpleNameExpression, scope, scopeToCheckVisibility, trace, lookupMode, true, lookupMode == QualifiedExpressionResolver.LookupMode.EVERYTHING
+            qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
+                    importedReference as JetSimpleNameExpression, scope, scopeToCheckVisibility, trace, lookupMode, true, lookupMode.isEverything()
             )
         }
 
         val referenceExpression = JetPsiUtil.getLastReference(importedReference)
         if (importDirective.isAllUnder()) {
             if (!canAllUnderImportFrom(descriptors) && referenceExpression != null) {
-                val toReportOn = descriptors.filterIsInstance<ClassDescriptor>().iterator().next()
+                val toReportOn = descriptors.filterIsInstance<ClassDescriptor>().first()
                 trace.report(Errors.CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON.on(referenceExpression, toReportOn))
             }
 
@@ -75,8 +75,7 @@ public class ImportDirectiveProcessor(
             return importsScope
         }
         else {
-            val aliasName = JetPsiUtil.getAliasName(importDirective)
-            if (aliasName == null) return JetScope.Empty
+            val aliasName = JetPsiUtil.getAliasName(importDirective) ?: return JetScope.Empty
             return SingleImportScope(aliasName, descriptors)
         }
     }
@@ -86,34 +85,27 @@ public class ImportDirectiveProcessor(
             if (descriptors.isEmpty()) {
                 return true
             }
-            for (descriptor in descriptors) {
-                if (descriptor !is ClassDescriptor) {
-                    return true
-                }
-                if (canAllUnderImportFromClass(descriptor)) {
-                    return true
-                }
-            }
-            return false
+            return descriptors.any { it !is ClassDescriptor || canAllUnderImportFromClass(it) }
         }
 
-        public fun canAllUnderImportFromClass(descriptor: ClassDescriptor): Boolean {
-            return !descriptor.getKind().isSingleton()
-        }
+        public fun canAllUnderImportFromClass(descriptor: ClassDescriptor): Boolean = !descriptor.getKind().isSingleton()
 
-        platformStatic public fun canImportMembersFrom(descriptors: Collection<DeclarationDescriptor>, reference: JetSimpleNameExpression, trace: BindingTrace, lookupMode: QualifiedExpressionResolver.LookupMode): Boolean {
-            if (lookupMode == QualifiedExpressionResolver.LookupMode.ONLY_CLASSES_AND_PACKAGES) {
+        platformStatic public fun canImportMembersFrom(
+                descriptors: Collection<DeclarationDescriptor>,
+                reference: JetSimpleNameExpression,
+                trace: BindingTrace,
+                lookupMode: QualifiedExpressionResolver.LookupMode
+        ): Boolean {
+            if (lookupMode.isOnlyClassesAndPackages()) {
                 return true
             }
 
-            if (descriptors.size() == 1) {
-                return canImportMembersFrom(descriptors.iterator().next(), reference, trace, lookupMode)
-            }
+            descriptors.singleOrNull()?.let { return canImportMembersFrom(it, reference, trace, lookupMode) }
 
             val temporaryTrace = TemporaryBindingTrace.create(trace, "trace to find out if members can be imported from", reference)
             var canImport = false
             for (descriptor in descriptors) {
-                canImport = canImport or canImportMembersFrom(descriptor, reference, temporaryTrace, lookupMode)
+                canImport = canImport || canImportMembersFrom(descriptor, reference, temporaryTrace, lookupMode)
             }
             if (!canImport) {
                 temporaryTrace.commit()
@@ -121,12 +113,14 @@ public class ImportDirectiveProcessor(
             return canImport
         }
 
-        private fun canImportMembersFrom(descriptor: DeclarationDescriptor, reference: JetSimpleNameExpression, trace: BindingTrace, lookupMode: QualifiedExpressionResolver.LookupMode): Boolean {
-            assert(lookupMode == QualifiedExpressionResolver.LookupMode.EVERYTHING)
-            if (descriptor is PackageViewDescriptor) {
-                return true
-            }
-            if (descriptor is ClassDescriptor) {
+        private fun canImportMembersFrom(
+                descriptor: DeclarationDescriptor,
+                reference: JetSimpleNameExpression,
+                trace: BindingTrace,
+                lookupMode: QualifiedExpressionResolver.LookupMode
+        ): Boolean {
+            assert(lookupMode.isEverything())
+            if (descriptor is PackageViewDescriptor || descriptor is ClassDescriptor) {
                 return true
             }
             trace.report(Errors.CANNOT_IMPORT_FROM_ELEMENT.on(reference, descriptor))
@@ -134,3 +128,6 @@ public class ImportDirectiveProcessor(
         }
     }
 }
+
+private fun QualifiedExpressionResolver.LookupMode.isEverything() = this == QualifiedExpressionResolver.LookupMode.EVERYTHING
+private fun QualifiedExpressionResolver.LookupMode.isOnlyClassesAndPackages() = this == QualifiedExpressionResolver.LookupMode.ONLY_CLASSES_AND_PACKAGES
