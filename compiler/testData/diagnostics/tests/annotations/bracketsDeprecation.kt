@@ -29,6 +29,6 @@ fun bar2(): Array<Q> = null!!
 val y: Array<[<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>] String?> = arrayOfNulls(1)
 val block: ([<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>] x: <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> String) -> <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> String = { "" }
 interface B
-interface D : [<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>] B
+interface D : <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> B
 
 Ann(<!ANNOTATION_PARAMETER_MUST_BE_CONST!><!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> 1<!>) class MyClass

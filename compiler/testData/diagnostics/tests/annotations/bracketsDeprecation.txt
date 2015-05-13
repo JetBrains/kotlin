@@ -30,7 +30,7 @@ internal interface B {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal interface D : B {
+internal interface D : [Ann()] B {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

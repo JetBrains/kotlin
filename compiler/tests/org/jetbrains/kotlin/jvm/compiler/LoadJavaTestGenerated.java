@@ -2283,6 +2283,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledKotlin(fileName);
                 }
 
+                @TestMetadata("SupertypesAndBounds.kt")
+                public void testSupertypesAndBounds() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/SupertypesAndBounds.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
                 @TestMetadata("TypeAnnotationWithArguments.kt")
                 public void testTypeAnnotationWithArguments() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");

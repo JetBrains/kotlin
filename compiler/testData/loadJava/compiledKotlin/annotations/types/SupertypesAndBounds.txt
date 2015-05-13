@@ -1,0 +1,12 @@
+package test
+
+internal final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A()
+}
+
+internal interface Foo</*0*/ T : [test.A()] kotlin.Number> : [test.A()] kotlin.CharSequence {
+    internal abstract fun </*0*/ E, /*1*/ F : [test.A()] E> bar(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun charAt(/*0*/ index: kotlin.Int): kotlin.Char
+    public abstract override /*1*/ /*fake_override*/ fun length(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+}

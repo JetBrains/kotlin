@@ -438,6 +438,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("SupertypesAndBounds.kt")
+            public void testSupertypesAndBounds() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/SupertypesAndBounds.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("TypeAnnotationWithArguments.kt")
             public void testTypeAnnotationWithArguments() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");

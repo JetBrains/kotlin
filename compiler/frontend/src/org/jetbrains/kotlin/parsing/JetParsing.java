@@ -1472,8 +1472,6 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * annotations delegationSpecifier
-     *
      * delegationSpecifier
      *   : constructorInvocation // type and constructor arguments
      *   : userType
@@ -1486,8 +1484,6 @@ public class JetParsing extends AbstractJetParsing {
      */
     private void parseDelegationSpecifier() {
         PsiBuilder.Marker delegator = mark();
-        parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
-
         PsiBuilder.Marker reference = mark();
         parseTypeRef();
 
