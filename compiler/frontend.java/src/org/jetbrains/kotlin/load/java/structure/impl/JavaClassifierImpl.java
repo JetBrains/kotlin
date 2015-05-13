@@ -32,7 +32,7 @@ public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaEleme
         super(psiClass);
     }
 
-    @NotNull
+    @Nullable
     @Override
     public PsiAnnotationOwner getAnnotationOwnerPsi() {
         return getPsi().getModifierList();
