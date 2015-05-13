@@ -105,6 +105,9 @@ public class QuickFixRegistrar {
                                                                                                                         true));
         QuickFixes.factories.put(OPEN_MODIFIER_IN_TRAIT, RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OPEN_KEYWORD, true));
         QuickFixes.factories.put(TRAIT_CAN_NOT_BE_FINAL, removeFinalModifierFactory);
+        QuickFixes.factories.put(DEPRECATED_TRAIT_KEYWORD, DeprecatedTraitSyntaxFix.Companion);
+        QuickFixes.factories.put(DEPRECATED_TRAIT_KEYWORD, DeprecatedTraitSyntaxFix.Companion.createWholeProjectFixFactory());
+
         QuickFixes.factories.put(REDUNDANT_PROJECTION, RemoveModifierFix.createRemoveProjectionFactory(true));
         QuickFixes.factories.put(INCOMPATIBLE_MODIFIERS, RemoveModifierFix.createRemoveModifierFactory(false));
         QuickFixes.factories.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, RemoveModifierFix.createRemoveVarianceFactory());

@@ -297,6 +297,10 @@ public class DeclarationsChecker {
 
     private void checkTraitModifiers(JetClass aClass) {
         reportErrorIfHasIllegalModifier(aClass);
+        ASTNode traitKeyword = aClass.getNode().findChildByType(JetTokens.TRAIT_KEYWORD);
+        if (traitKeyword != null) {
+            trace.report(Errors.DEPRECATED_TRAIT_KEYWORD.on(traitKeyword.getPsi()));
+        }
         JetModifierList modifierList = aClass.getModifierList();
         if (modifierList == null) return;
         if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {

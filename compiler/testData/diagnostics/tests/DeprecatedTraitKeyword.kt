@@ -1,0 +1,2 @@
+<!DEPRECATED_TRAIT_KEYWORD!>trait<!> A {
+}

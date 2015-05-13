@@ -181,6 +181,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("DeprecatedTraitKeyword.kt")
+        public void testDeprecatedTraitKeyword() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DeprecatedTraitKeyword.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("DiamondFunction.kt")
         public void testDiamondFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/DiamondFunction.kt");
