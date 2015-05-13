@@ -61,6 +61,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         debuggerSettings.SKIP_CONSTRUCTORS = fileText.getValueForSetting("SKIP_CONSTRUCTORS", oldSettings.SKIP_CONSTRUCTORS)
         debuggerSettings.SKIP_CLASSLOADERS = fileText.getValueForSetting("SKIP_CLASSLOADERS", oldSettings.SKIP_CLASSLOADERS)
         debuggerSettings.TRACING_FILTERS_ENABLED = fileText.getValueForSetting("TRACING_FILTERS_ENABLED", oldSettings.TRACING_FILTERS_ENABLED)
+        debuggerSettings.SKIP_GETTERS = fileText.getValueForSetting("SKIP_GETTERS", oldSettings.SKIP_GETTERS)
     }
 
     private fun String.getValueForSetting(name: String, defaultValue: Boolean): Boolean {
@@ -84,6 +85,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         debuggerSettings.SKIP_CONSTRUCTORS = oldSettings.SKIP_CONSTRUCTORS
         debuggerSettings.SKIP_CLASSLOADERS = oldSettings.SKIP_CLASSLOADERS
         debuggerSettings.TRACING_FILTERS_ENABLED = oldSettings.TRACING_FILTERS_ENABLED
+        debuggerSettings.SKIP_GETTERS = oldSettings.SKIP_GETTERS
     }
 
     protected val dp: DebugProcessImpl

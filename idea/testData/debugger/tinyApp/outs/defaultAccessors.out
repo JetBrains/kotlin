@@ -1,0 +1,22 @@
+LineBreakpoint created at defaultAccessors.kt:5
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! defaultAccessors.DefaultAccessorsPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+defaultAccessors.kt:5
+defaultAccessors.kt:11
+defaultAccessors.kt:17
+defaultAccessors.kt:11
+defaultAccessors.kt:12
+defaultAccessors.kt:17
+defaultAccessors.kt:13
+defaultAccessors.kt:6
+defaultAccessors.kt:21
+defaultAccessors.kt:22
+simpleLibFile.kt:8
+defaultAccessors.kt:22
+defaultAccessors.kt:23
+simpleLibFile.kt:8
+defaultAccessors.kt:24
+defaultAccessors.kt:7
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

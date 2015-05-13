@@ -223,6 +223,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("defaultAccessors.kt")
+        public void testDefaultAccessors() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/defaultAccessors.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("forLoop.kt")
         public void testForLoop() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepInto/stepInto/forLoop.kt");
