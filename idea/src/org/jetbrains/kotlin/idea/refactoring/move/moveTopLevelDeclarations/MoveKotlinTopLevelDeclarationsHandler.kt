@@ -69,8 +69,18 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         [suppress("UNCHECKED_CAST")]
         val elementsToSearch = elements.toSet() as Set<JetNamedDeclaration>
 
-        val sourceFile = elementsToSearch.mapTo(LinkedHashSet<JetFile>()) { it.getContainingJetFile() }.singleOrNull()
+        val sourceFiles = elementsToSearch.mapTo(LinkedHashSet<JetFile>()) { it.getContainingJetFile() }
+        val sourceFile = sourceFiles.singleOrNull()
         if (sourceFile == null) {
+            if (sourceFiles.all { it.getDeclarations().size() == 1 }) {
+                MoveFilesOrDirectoriesUtil.doMove(project,
+                                                  sourceFiles.toTypedArray(),
+                                                  arrayOf(targetContainer),
+                                                  null)
+
+                return true
+            }
+
             CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("move.title"), "All declarations must belong to the same file", null, project)
             return false
         }
