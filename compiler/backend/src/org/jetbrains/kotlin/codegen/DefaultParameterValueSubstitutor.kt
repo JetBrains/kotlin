@@ -70,7 +70,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
      *     implementation in the companion object class)
      * @return true if the overloads annotation was found on the element, false otherwise
      */
-    fun generateOverloadsIfNeeded(methodElement: JetElement,
+    fun generateOverloadsIfNeeded(methodElement: JetElement?,
                                   functionDescriptor: FunctionDescriptor,
                                   delegateFunctionDescriptor: FunctionDescriptor,
                                   owner: CodegenContext<*>,

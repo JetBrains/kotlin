@@ -118,8 +118,11 @@ public class FunctionCodegen {
         generateOverloadsWithDefaultValues(function, functionDescriptor, functionDescriptor);
     }
 
-    public void generateOverloadsWithDefaultValues(@NotNull JetNamedFunction function,
-            FunctionDescriptor functionDescriptor, FunctionDescriptor delegateFunctionDescriptor) {
+    public void generateOverloadsWithDefaultValues(
+            @Nullable JetNamedFunction function,
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull FunctionDescriptor delegateFunctionDescriptor
+    ) {
         new DefaultParameterValueSubstitutor(state).generateOverloadsIfNeeded(function,
                                                                               functionDescriptor,
                                                                               delegateFunctionDescriptor,
@@ -303,7 +306,11 @@ public class FunctionCodegen {
     }
 
     @Nullable
-    private static Type getThisTypeForFunction(@NotNull FunctionDescriptor functionDescriptor, @NotNull MethodContext context, @NotNull JetTypeMapper typeMapper) {
+    private static Type getThisTypeForFunction(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @NotNull MethodContext context,
+            @NotNull JetTypeMapper typeMapper
+    ) {
         ReceiverParameterDescriptor dispatchReceiver = functionDescriptor.getDispatchReceiverParameter();
         if (functionDescriptor instanceof ConstructorDescriptor) {
             return typeMapper.mapType(functionDescriptor);
@@ -382,14 +389,15 @@ public class FunctionCodegen {
             //add this
             if (thisType != null) {
                 mv.visitLocalVariable("this", thisType.getDescriptor(), null, methodBegin, methodEnd, shift);
-            } else {
+            }
+            else {
                 //TODO: provide thisType for callable reference
             }
             shift++;
         }
 
         for (int i = 0; i < params.size(); i++) {
-            JvmMethodParameterSignature param =  params.get(i);
+            JvmMethodParameterSignature param = params.get(i);
             JvmMethodParameterKind kind = param.getKind();
             String parameterName;
 
@@ -749,7 +757,8 @@ public class FunctionCodegen {
     ) {
         int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
-        MethodVisitor mv = v.newMethod(DiagnosticsPackage.Bridge(descriptor, origin), flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
+        MethodVisitor mv =
+                v.newMethod(DiagnosticsPackage.Bridge(descriptor, origin), flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();
@@ -776,7 +785,8 @@ public class FunctionCodegen {
     }
 
     public void genDelegate(@NotNull FunctionDescriptor functionDescriptor, FunctionDescriptor overriddenDescriptor, StackValue field) {
-        genDelegate(functionDescriptor, overriddenDescriptor.getOriginal(), (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(), field);
+        genDelegate(functionDescriptor, overriddenDescriptor.getOriginal(),
+                    (ClassDescriptor) overriddenDescriptor.getContainingDeclaration(), field);
     }
 
     public void genDelegate(

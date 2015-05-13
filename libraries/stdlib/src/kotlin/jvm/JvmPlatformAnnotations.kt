@@ -25,5 +25,5 @@ import java.lang.annotation.RetentionPolicy
  * If a method has N parameters and M of which have default values, M overloads are generated: the first one
  * takes N-1 parameters (all but the last one that takes a default value), the second takes N-2 parameters, and so on.
  */
-Retention(RetentionPolicy.SOURCE)
+Retention(RetentionPolicy.CLASS)
 public annotation class overloads

@@ -190,6 +190,8 @@ public class PackageCodegen {
                         memberCodegen.functionCodegen.generateDefaultIfNeeded(
                                 context.intoFunction(function), function, OwnerKind.PACKAGE, DefaultParameterValueLoader.DEFAULT, null
                         );
+
+                        memberCodegen.functionCodegen.generateOverloadsWithDefaultValues(null, function, function);
                     }
                     else if (member instanceof DeserializedPropertyDescriptor) {
                         memberCodegen.propertyCodegen.generateInPackageFacade((DeserializedPropertyDescriptor) member);
