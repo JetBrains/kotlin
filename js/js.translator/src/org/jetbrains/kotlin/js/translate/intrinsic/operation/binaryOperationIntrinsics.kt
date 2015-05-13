@@ -73,7 +73,7 @@ public class BinaryOperationIntrinsics {
 
 trait BinaryOperationIntrinsicFactory {
 
-    public fun getSupportTokens(): ImmutableSet<JetToken>
+    public fun getSupportTokens(): ImmutableSet<out JetToken>
 
     public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic?
 }

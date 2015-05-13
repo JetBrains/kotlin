@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator") {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
-        if (element.functionName != OperatorConventions.CONTAINS.asString()) return null
+        if (element.calleeName != OperatorConventions.CONTAINS.asString()) return null
         val resolvedCall = element.toResolvedCall() ?: return null
         if (!resolvedCall.getStatus().isSuccess()) return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null

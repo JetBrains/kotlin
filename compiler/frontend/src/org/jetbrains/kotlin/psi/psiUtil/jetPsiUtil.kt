@@ -136,12 +136,8 @@ public fun <T: PsiElement> T.copied(): T = copy() as T
 public fun JetElement.blockExpressionsOrSingle(): Sequence<JetElement> =
         if (this is JetBlockExpression) getStatements().asSequence() else sequenceOf(this)
 
-public fun JetExpression.lastBlockStatementOrThis(): JetExpression {
-    return if (this is JetBlockExpression)
-        this.getStatements().lastIsInstanceOrNull<JetExpression>() ?: this
-    else
-        this
-}
+public fun JetExpression.lastBlockStatementOrThis(): JetExpression
+        = (this as? JetBlockExpression)?.getStatements()?.lastIsInstanceOrNull<JetExpression>() ?: this
 
 public fun JetBlockExpression.appendElement(element: JetElement): JetElement {
     val rBrace = getRBrace()

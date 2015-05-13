@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.lexer.JetSingleValueToken;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -48,7 +49,7 @@ public class OperatorConventions {
             DOUBLE, FLOAT, LONG, INT, SHORT, BYTE, CHAR
     );
 
-    public static final ImmutableBiMap<JetToken, Name> UNARY_OPERATION_NAMES = ImmutableBiMap.<JetToken, Name>builder()
+    public static final ImmutableBiMap<JetSingleValueToken, Name> UNARY_OPERATION_NAMES = ImmutableBiMap.<JetSingleValueToken, Name>builder()
             .put(JetTokens.PLUSPLUS, Name.identifier("inc"))
             .put(JetTokens.MINUSMINUS, Name.identifier("dec"))
             .put(JetTokens.PLUS, Name.identifier("plus"))
@@ -56,7 +57,7 @@ public class OperatorConventions {
             .put(JetTokens.EXCL, Name.identifier("not"))
             .build();
 
-    public static final ImmutableBiMap<JetToken, Name> BINARY_OPERATION_NAMES = ImmutableBiMap.<JetToken, Name>builder()
+    public static final ImmutableBiMap<JetSingleValueToken, Name> BINARY_OPERATION_NAMES = ImmutableBiMap.<JetSingleValueToken, Name>builder()
             .put(JetTokens.MUL, Name.identifier("times"))
             .put(JetTokens.PLUS, Name.identifier("plus"))
             .put(JetTokens.MINUS, Name.identifier("minus"))
@@ -65,25 +66,25 @@ public class OperatorConventions {
             .put(JetTokens.RANGE, Name.identifier("rangeTo"))
             .build();
 
-    public static final ImmutableSet<JetToken> NOT_OVERLOADABLE = 
-            ImmutableSet.<JetToken>of(JetTokens.ANDAND, JetTokens.OROR, JetTokens.ELVIS, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ);
+    public static final ImmutableSet<JetSingleValueToken> NOT_OVERLOADABLE =
+            ImmutableSet.of(JetTokens.ANDAND, JetTokens.OROR, JetTokens.ELVIS, JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ);
     
-    public static final ImmutableSet<JetToken> INCREMENT_OPERATIONS =
-            ImmutableSet.<JetToken>of(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS);
+    public static final ImmutableSet<JetSingleValueToken> INCREMENT_OPERATIONS =
+            ImmutableSet.of(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS);
 
-    public static final ImmutableSet<JetToken> COMPARISON_OPERATIONS =
-            ImmutableSet.<JetToken>of(JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ);
+    public static final ImmutableSet<JetSingleValueToken> COMPARISON_OPERATIONS =
+            ImmutableSet.of(JetTokens.LT, JetTokens.GT, JetTokens.LTEQ, JetTokens.GTEQ);
 
-    public static final ImmutableSet<JetToken> EQUALS_OPERATIONS =
-            ImmutableSet.<JetToken>of(JetTokens.EQEQ, JetTokens.EXCLEQ);
+    public static final ImmutableSet<JetSingleValueToken> EQUALS_OPERATIONS =
+            ImmutableSet.of(JetTokens.EQEQ, JetTokens.EXCLEQ);
 
-    public static final ImmutableSet<JetToken> IDENTITY_EQUALS_OPERATIONS =
-            ImmutableSet.<JetToken>of(JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ);
+    public static final ImmutableSet<JetSingleValueToken> IDENTITY_EQUALS_OPERATIONS =
+            ImmutableSet.of(JetTokens.EQEQEQ, JetTokens.EXCLEQEQEQ);
 
-    public static final ImmutableSet<JetToken> IN_OPERATIONS =
-            ImmutableSet.<JetToken>of(JetTokens.IN_KEYWORD, JetTokens.NOT_IN);
+    public static final ImmutableSet<JetSingleValueToken> IN_OPERATIONS =
+            ImmutableSet.<JetSingleValueToken>of(JetTokens.IN_KEYWORD, JetTokens.NOT_IN);
 
-    public static final ImmutableBiMap<JetToken, Name> ASSIGNMENT_OPERATIONS = ImmutableBiMap.<JetToken, Name>builder()
+    public static final ImmutableBiMap<JetSingleValueToken, Name> ASSIGNMENT_OPERATIONS = ImmutableBiMap.<JetSingleValueToken, Name>builder()
             .put(JetTokens.MULTEQ, Name.identifier("timesAssign"))
             .put(JetTokens.DIVEQ, Name.identifier("divAssign"))
             .put(JetTokens.PERCEQ, Name.identifier("modAssign"))
@@ -91,7 +92,7 @@ public class OperatorConventions {
             .put(JetTokens.MINUSEQ, Name.identifier("minusAssign"))
             .build();
 
-    public static final ImmutableBiMap<JetToken, JetToken> ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableBiMap.<JetToken, JetToken>builder()
+    public static final ImmutableBiMap<JetSingleValueToken, JetSingleValueToken> ASSIGNMENT_OPERATION_COUNTERPARTS = ImmutableBiMap.<JetSingleValueToken, JetSingleValueToken>builder()
             .put(JetTokens.MULTEQ, JetTokens.MUL)
             .put(JetTokens.DIVEQ, JetTokens.DIV)
             .put(JetTokens.PERCEQ, JetTokens.PERC)
@@ -99,7 +100,7 @@ public class OperatorConventions {
             .put(JetTokens.MINUSEQ, JetTokens.MINUS)
             .build();
 
-    public static final ImmutableBiMap<JetToken, Name> BOOLEAN_OPERATIONS = ImmutableBiMap.<JetToken, Name>builder()
+    public static final ImmutableBiMap<JetSingleValueToken, Name> BOOLEAN_OPERATIONS = ImmutableBiMap.<JetSingleValueToken, Name>builder()
              .put(JetTokens.ANDAND, Name.identifier("and"))
              .put(JetTokens.OROR, Name.identifier("or"))
              .build();

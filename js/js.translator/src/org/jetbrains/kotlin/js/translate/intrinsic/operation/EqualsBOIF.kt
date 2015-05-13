@@ -81,7 +81,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    override public fun getSupportTokens(): ImmutableSet<JetToken> = OperatorConventions.EQUALS_OPERATIONS
+    override public fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS
 
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (JsDescriptorUtils.isBuiltin(descriptor) || TopLevelFIF.EQUALS_IN_ANY.apply(descriptor)) {

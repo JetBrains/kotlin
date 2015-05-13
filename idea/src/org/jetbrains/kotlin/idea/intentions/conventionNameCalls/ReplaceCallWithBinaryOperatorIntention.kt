@@ -20,16 +20,18 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with binary operator") {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
-        val operation = operation(element.functionName) ?: return null
+        val operation = operation(element.calleeName) ?: return null
         val resolvedCall = element.toResolvedCall() ?: return null
         if (!resolvedCall.getStatus().isSuccess()) return null
         if (resolvedCall.getCall().getTypeArgumentList() != null) return null
@@ -40,7 +42,7 @@ public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeInten
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
-        val operation = operation(element.functionName)!!
+        val operation = operation(element.calleeName)!!
         val argument = element.callExpression!!.getValueArguments().single().getArgumentExpression()!!
         val receiver = element.getReceiverExpression()
 
@@ -48,14 +50,7 @@ public class ReplaceCallWithBinaryOperatorIntention : JetSelfTargetingRangeInten
     }
 
     private fun operation(functionName: String?): String? {
-        return when (functionName) {
-            "plus" -> "+"
-            "minus" -> "-"
-            "div" -> "/"
-            "times" -> "*"
-            "mod" -> "%"
-            "rangeTo" -> ".."
-            else -> null
-        }
+        if (functionName == null) return null
+        return OperatorConventions.BINARY_OPERATION_NAMES.inverse()[Name.identifier(functionName)]?.getValue()
     }
 }

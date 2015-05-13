@@ -64,7 +64,7 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    override public fun getSupportTokens(): ImmutableSet<JetToken> = OperatorConventions.COMPARISON_OPERATIONS
+    override public fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
 
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (descriptor.isDynamic()) return CompareToIntrinsic

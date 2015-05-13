@@ -20,13 +20,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class ReplaceInvokeIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'invoke' with direct call") {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
-        if (element.functionName != OperatorConventions.INVOKE.asString()) return null
+        if (element.calleeName != OperatorConventions.INVOKE.asString()) return null
         return element.callExpression!!.getCalleeExpression()!!.getTextRange()
     }
 

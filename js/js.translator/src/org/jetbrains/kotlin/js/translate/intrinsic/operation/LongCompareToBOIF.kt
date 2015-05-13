@@ -69,7 +69,7 @@ public object LongCompareToBOIF : BinaryOperationIntrinsicFactory {
     private val LONG_COMPARE_TO_CHAR  = CompareToBinaryIntrinsic( ID, { longFromInt(charToInt(it)) })
     private val LONG_COMPARE_TO_LONG  = CompareToBinaryIntrinsic( ID, ID )
 
-    override public fun getSupportTokens(): ImmutableSet<JetToken> = OperatorConventions.COMPARISON_OPERATIONS
+    override public fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
 
     override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (JsDescriptorUtils.isBuiltin(descriptor)) {

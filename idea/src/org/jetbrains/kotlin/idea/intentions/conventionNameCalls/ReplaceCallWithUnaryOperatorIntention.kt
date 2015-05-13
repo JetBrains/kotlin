@@ -20,14 +20,16 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.intentions.functionName
+import org.jetbrains.kotlin.idea.intentions.calleeName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator") {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
-        val operation = operation(element.functionName) ?: return null
+        val operation = operation(element.calleeName) ?: return null
         val call = element.callExpression ?: return null
         if (call.getTypeArgumentList() != null) return null
         if (!call.getValueArguments().isEmpty()) return null
@@ -36,17 +38,13 @@ public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntent
     }
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
-        val operation = operation(element.functionName)!!
+        val operation = operation(element.calleeName)!!
         val receiver = element.getReceiverExpression()
         element.replace(JetPsiFactory(element).createExpressionByPattern("$0$1", operation, receiver))
     }
 
     private fun operation(functionName: String?) : String? {
-        return when (functionName) {
-            "plus" -> "+"
-            "minus" -> "-"
-            "not" -> "!"
-            else -> null
-        }
+        if (functionName == null) return null
+        return OperatorConventions.UNARY_OPERATION_NAMES.inverse()[Name.identifier(functionName)]?.getValue()
     }
 }

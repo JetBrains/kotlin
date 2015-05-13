@@ -106,7 +106,7 @@ fun splitPropertyDeclaration(property: JetProperty): JetBinaryExpression {
 val JetQualifiedExpression.callExpression: JetCallExpression?
     get() = getSelectorExpression() as? JetCallExpression
 
-val JetQualifiedExpression.functionName: String?
+val JetQualifiedExpression.calleeName: String?
     get() = (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getText()
 
 fun JetQualifiedExpression.toResolvedCall(): ResolvedCall<out CallableDescriptor>? {
