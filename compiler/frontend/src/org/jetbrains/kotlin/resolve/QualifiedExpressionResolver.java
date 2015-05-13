@@ -21,7 +21,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.psi.util.PsiTreeUtil;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +42,7 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 
 public class QualifiedExpressionResolver {
     private SymbolUsageValidator symbolUsageValidator;
+    private final ImportDirectiveProcessor importDirectiveProcessor = new ImportDirectiveProcessor(this);
 
     /**
      * @deprecated Instance of this class should be obtained from the Injector
@@ -71,25 +71,6 @@ public class QualifiedExpressionResolver {
         EVERYTHING
     }
 
-    public static boolean canAllUnderImportFrom(@NotNull Collection<DeclarationDescriptor> descriptors) {
-        if (descriptors.isEmpty()) {
-            return true;
-        }
-        for (DeclarationDescriptor descriptor : descriptors) {
-            if (!(descriptor instanceof ClassDescriptor)) {
-                return true;
-            }
-            if (canAllUnderImportFromClass((ClassDescriptor) descriptor)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean canAllUnderImportFromClass(@NotNull ClassDescriptor descriptor) {
-        return !descriptor.getKind().isSingleton();
-    }
-
     @NotNull
     public JetScope processImportReference(
             @NotNull JetImportDirective importDirective,
@@ -98,94 +79,7 @@ public class QualifiedExpressionResolver {
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
-        if (importDirective.isAbsoluteInRootPackage()) {
-            trace.report(UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")); // TODO
-            return JetScope.Empty.INSTANCE$;
-        }
-        JetExpression importedReference = importDirective.getImportedReference();
-        if (importedReference == null) {
-            return JetScope.Empty.INSTANCE$;
-        }
-
-        Collection<DeclarationDescriptor> descriptors;
-        if (importedReference instanceof JetQualifiedExpression) {
-            //store result only when we find all descriptors, not only classes on the second phase
-            descriptors = lookupDescriptorsForQualifiedExpression(
-                    (JetQualifiedExpression) importedReference, scope, scopeToCheckVisibility, trace,
-                    lookupMode, lookupMode == LookupMode.EVERYTHING);
-        }
-        else {
-            assert importedReference instanceof JetSimpleNameExpression;
-            descriptors = lookupDescriptorsForSimpleNameReference(
-                    (JetSimpleNameExpression) importedReference, scope, scopeToCheckVisibility, trace,
-                    lookupMode, true, lookupMode == LookupMode.EVERYTHING);
-        }
-
-        JetSimpleNameExpression referenceExpression = JetPsiUtil.getLastReference(importedReference);
-        if (importDirective.isAllUnder()) {
-            if (!canAllUnderImportFrom(descriptors) && referenceExpression != null) {
-                ClassDescriptor toReportOn = KotlinPackage.filterIsInstance(descriptors, ClassDescriptor.class).iterator().next();
-                trace.report(CANNOT_IMPORT_ON_DEMAND_FROM_SINGLETON.on(referenceExpression, toReportOn));
-            }
-
-            if (referenceExpression == null || !canImportMembersFrom(descriptors, referenceExpression, trace, lookupMode)) {
-                return JetScope.Empty.INSTANCE$;
-            }
-
-            AllUnderImportsScope importsScope = new AllUnderImportsScope();
-            for (DeclarationDescriptor descriptor : descriptors) {
-                importsScope.addAllUnderImport(descriptor);
-            }
-            return importsScope;
-        }
-        else {
-            Name aliasName = JetPsiUtil.getAliasName(importDirective);
-            if (aliasName == null) return JetScope.Empty.INSTANCE$;
-            return new SingleImportScope(aliasName, descriptors);
-        }
-    }
-
-    private static boolean canImportMembersFrom(
-            @NotNull Collection<DeclarationDescriptor> descriptors,
-            @NotNull JetSimpleNameExpression reference,
-            @NotNull BindingTrace trace,
-            @NotNull LookupMode lookupMode
-    ) {
-        if (lookupMode == LookupMode.ONLY_CLASSES_AND_PACKAGES) {
-            return true;
-        }
-
-        if (descriptors.size() == 1) {
-            return canImportMembersFrom(descriptors.iterator().next(), reference, trace, lookupMode);
-        }
-
-        TemporaryBindingTrace temporaryTrace =
-                TemporaryBindingTrace.create(trace, "trace to find out if members can be imported from", reference);
-        boolean canImport = false;
-        for (DeclarationDescriptor descriptor : descriptors) {
-            canImport |= canImportMembersFrom(descriptor, reference, temporaryTrace, lookupMode);
-        }
-        if (!canImport) {
-            temporaryTrace.commit();
-        }
-        return canImport;
-    }
-
-    private static boolean canImportMembersFrom(
-            @NotNull DeclarationDescriptor descriptor,
-            @NotNull JetSimpleNameExpression reference,
-            @NotNull BindingTrace trace,
-            @NotNull LookupMode lookupMode
-    ) {
-        assert lookupMode == LookupMode.EVERYTHING;
-        if (descriptor instanceof PackageViewDescriptor) {
-            return true;
-        }
-        if (descriptor instanceof ClassDescriptor) {
-            return true;
-        }
-        trace.report(CANNOT_IMPORT_FROM_ELEMENT.on(reference, descriptor));
-        return false;
+        return importDirectiveProcessor.processImportReference(importDirective, scope, scopeToCheckVisibility, trace, lookupMode);
     }
 
     @NotNull
@@ -211,27 +105,29 @@ public class QualifiedExpressionResolver {
         JetScope filteredScope = filterOutPackagesIfNeeded(outerScope, onlyClassifiers);
 
         if (qualifier == null) {
-            return lookupDescriptorsForSimpleNameReference(referenceExpression, filteredScope, outerScope, trace, LookupMode.ONLY_CLASSES_AND_PACKAGES,
+            return lookupDescriptorsForSimpleNameReference(referenceExpression, filteredScope, outerScope, trace,
+                                                           LookupMode.ONLY_CLASSES_AND_PACKAGES,
                                                            false, true);
         }
         Collection<DeclarationDescriptor> declarationDescriptors = lookupDescriptorsForUserType(qualifier, outerScope, trace, false);
-        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, filteredScope, LookupMode.ONLY_CLASSES_AND_PACKAGES, true);
+        return lookupSelectorDescriptors(referenceExpression, declarationDescriptors, trace, filteredScope,
+                                         LookupMode.ONLY_CLASSES_AND_PACKAGES, true);
     }
 
     private static JetScope filterOutPackagesIfNeeded(final JetScope outerScope, boolean noPackages) {
         return !noPackages ? outerScope : new AbstractScopeAdapter() {
 
-                    @NotNull
-                    @Override
-                    protected JetScope getWorkerScope() {
-                        return outerScope;
-                    }
+            @NotNull
+            @Override
+            protected JetScope getWorkerScope() {
+                return outerScope;
+            }
 
-                    @Nullable
-                    @Override
-                    public PackageViewDescriptor getPackage(@NotNull Name name) {
-                        return null;
-                    }
+            @Nullable
+            @Override
+            public PackageViewDescriptor getPackage(@NotNull Name name) {
+                return null;
+            }
         };
     }
 
@@ -265,7 +161,8 @@ public class QualifiedExpressionResolver {
 
         JetSimpleNameExpression selector = (JetSimpleNameExpression) selectorExpression;
         JetSimpleNameExpression lastReference = JetPsiUtil.getLastReference(receiverExpression);
-        if (lastReference == null || !canImportMembersFrom(declarationDescriptors, lastReference, trace, lookupMode)) {
+        if (lastReference == null || !ImportDirectiveProcessor.canImportMembersFrom(declarationDescriptors, lastReference, trace,
+                                                                                    lookupMode)) {
             return Collections.emptyList();
         }
 
@@ -454,7 +351,7 @@ public class QualifiedExpressionResolver {
             if (descriptor instanceof ClassifierDescriptor) {
                 symbolUsageValidator.validateTypeUsage((ClassifierDescriptor) descriptor, trace, referenceExpression);
             }
-            
+
             if (descriptor instanceof DeclarationDescriptorWithVisibility) {
                 checkVisibility((DeclarationDescriptorWithVisibility) descriptor, trace, referenceExpression, scopeToCheckVisibility);
             }
@@ -518,7 +415,9 @@ public class QualifiedExpressionResolver {
     ) {
         if (!Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, scopeToCheckVisibility.getContainingDeclaration())) {
             Visibility visibility = descriptor.getVisibility();
-            if (PsiTreeUtil.getParentOfType(referenceExpression, JetImportDirective.class) != null && !visibility.mustCheckInImports()) return;
+            if (PsiTreeUtil.getParentOfType(referenceExpression, JetImportDirective.class) != null && !visibility.mustCheckInImports()) {
+                return;
+            }
             //noinspection ConstantConditions
             trace.report(INVISIBLE_REFERENCE.on(referenceExpression, descriptor, visibility, descriptor.getContainingDeclaration()));
         }

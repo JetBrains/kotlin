@@ -33,7 +33,7 @@ class AllUnderImportsScope : JetScope {
         if (descriptor is PackageViewDescriptor) {
             scopes.add(NoSubpackagesInPackageScope(descriptor))
         }
-        else if (descriptor is ClassDescriptor && QualifiedExpressionResolver.canAllUnderImportFromClass(descriptor)) {
+        else if (descriptor is ClassDescriptor && ImportDirectiveProcessor.canAllUnderImportFromClass(descriptor)) {
             scopes.add(descriptor.getStaticScope())
             scopes.add(descriptor.getUnsubstitutedInnerClassesScope())
         }
