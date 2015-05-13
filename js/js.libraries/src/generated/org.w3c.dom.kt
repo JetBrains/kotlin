@@ -3022,7 +3022,7 @@ native public open class DragEventInit : MouseEventInit() {
     var dataTransfer: DataTransfer?
 }
 
-native public trait Window : EventTarget {
+native public trait Window : EventTarget, UnionMessagePortOrWindow {
     var caches: CacheStorage
         get() = noImpl
         set(value) = noImpl
@@ -3638,20 +3638,20 @@ native public open class MessageEvent(type: String, eventInitDict: MessageEventI
     var lastEventId: String
         get() = noImpl
         set(value) = noImpl
-    var source: dynamic
+    var source: UnionMessagePortOrWindow?
         get() = noImpl
         set(value) = noImpl
     var ports: Array<dynamic>
         get() = noImpl
         set(value) = noImpl
-    fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: dynamic, originArg: String, lastEventIdArg: String, sourceArg: dynamic, portsArg: Array<dynamic>): Unit = noImpl
+    fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: dynamic, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrWindow, portsArg: Array<dynamic>): Unit = noImpl
 }
 
 native public open class MessageEventInit : EventInit() {
     var data: dynamic
     var origin: String
     var lastEventId: String
-    var source: dynamic
+    var source: UnionMessagePortOrWindow?
     var ports: Array<MessagePort>
 }
 
@@ -3759,7 +3759,7 @@ native public open class MessageChannel {
         set(value) = noImpl
 }
 
-native public trait MessagePort : EventTarget, Transferable {
+native public trait MessagePort : EventTarget, UnionMessagePortOrWindow, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker, Transferable {
     var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -4834,6 +4834,9 @@ native public marker trait UnionAudioTrackOrTextTrackOrVideoTrack {
 }
 
 native public marker trait UnionElementOrMouseEvent {
+}
+
+native public marker trait UnionMessagePortOrWindow {
 }
 
 native public marker trait UnionElementOrProcessingInstruction {

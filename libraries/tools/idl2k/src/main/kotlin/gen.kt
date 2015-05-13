@@ -170,7 +170,7 @@ fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<Typede
             .filter { it.value.memberTypes.all { type -> type in declaredTypes } }
     val typedefsMarkersMap = typedefsToBeGenerated.groupBy { it.name }.mapValues { mapUnionType(it.value.first().value).copy(name = it.key) }
 
-    val typeNamesToUnions = anonymousUnionTypes.flatMap { unionType -> unionType.memberTypes.map { unionMember -> unionMember to unionType.name } }.toMultiMap() +
+    val typeNamesToUnions = anonymousUnionTypes.flatMap { unionType -> unionType.memberTypes.map { unionMember -> unionMember to unionType.name } }.toMultiMap() merge
             typedefsToBeGenerated.flatMap { typedef -> typedef.value.memberTypes.map { unionMember -> unionMember to typedef.name } }.toMultiMap()
 
     return GenerateUnionTypes(

@@ -102,6 +102,7 @@ private fun mapType(repository: Repository, type: String): String =
         type.startsWith("unrestricted") -> mapType(repository, type.substring(12))
         type.startsWith("sequence<") -> "Array<${mapType(repository, type.removePrefix("sequence<").removeSuffix(">").trim())}>"
         type.startsWith("sequence") -> "Array<dynamic>"
+        type.startsWith("Union<") -> "Union<" + splitUnionType(type).map { mapType(repository, it) }.join(",") + ">"
         type in repository.typeDefs -> mapTypedef(repository, type)
         type in repository.enums -> "String"
         type.contains("->") -> {

@@ -13,8 +13,6 @@ fun main(args: Array<String>) {
         System.exit(1)
         return
     }
-    outDir.deleteRecursively()
-    outDir.mkdirs()
 
     val repository = srcDir.walkTopDown().filter { it.isDirectory() || it.extension == "idl" }.asSequence().filter { it.isFile() }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
         val fileRepository = parseIDL(ANTLRFileStream(e.getAbsolutePath(), "UTF-8"))
@@ -30,6 +28,9 @@ fun main(args: Array<String>) {
     val definitions = mapDefinitions(repository, repository.interfaces.values())
     val unions = generateUnions(definitions, repository.typeDefs.values())
     val allPackages = definitions.map { it.namespace }.distinct().sort()
+
+    outDir.deleteRecursively()
+    outDir.mkdirs()
 
     allPackages.forEach { pkg ->
         File(outDir, pkg + ".kt").bufferedWriter().use { w ->
