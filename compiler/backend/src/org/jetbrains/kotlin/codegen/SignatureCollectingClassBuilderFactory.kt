@@ -74,8 +74,7 @@ public abstract class SignatureCollectingClassBuilderFactory(
         }
 
         override fun done() {
-            var hasDuplicateSignatures = false
-            for ((signature, elementsAndDescriptors) in signatures.entrySet()!!) {
+            for ((signature, elementsAndDescriptors) in signatures.entrySet()) {
                 if (elementsAndDescriptors.size() == 1) continue // no clash
                 handleClashingSignatures(ConflictingJvmDeclarationsData(
                         classInternalName,
@@ -83,7 +82,6 @@ public abstract class SignatureCollectingClassBuilderFactory(
                         signature,
                         elementsAndDescriptors
                 ))
-                hasDuplicateSignatures = true
             }
             onClassDone(classCreatedFor, classInternalName, signatures)
             super.done()
