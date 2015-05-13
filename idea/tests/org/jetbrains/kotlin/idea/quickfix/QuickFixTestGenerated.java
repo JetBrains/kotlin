@@ -4896,6 +4896,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("displayLongSignatures1.kt")
+        public void testDisplayLongSignatures1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/displayLongSignatures1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("displayLongSignatures2.kt")
+        public void testDisplayLongSignatures2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/displayLongSignatures2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("genericClass.kt")
         public void testGenericClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/supertypeInitialization/genericClass.kt");

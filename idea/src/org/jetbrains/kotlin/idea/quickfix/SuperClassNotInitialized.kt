@@ -38,11 +38,14 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.ArrayList
 
 public object SuperClassNotInitialized : JetIntentionActionsFactory() {
+    private val DISPLAY_MAX_PARAMS = 5
+
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val delegator = diagnostic.getPsiElement() as JetDelegatorToSuperClass
         val classOrObjectDeclaration = delegator.getParent().getParent() as? JetClassOrObject ?: return null
@@ -65,10 +68,30 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
             val typeArgsMap = superClass.getTypeConstructor().getParameters().zip(superType.getArguments()).toMap()
             val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
 
-            for (constructor in constructors) {
-                if (constructor.getValueParameters().isNotEmpty()) {
-                    val substitutedConstructor = constructor.substitute(substitutor) as ConstructorDescriptor
-                    fixes.add(AddParametersFix(delegator, classOrObjectDeclaration, substitutedConstructor))
+            val substitutedConstructors = constructors
+                    .filter { it.getValueParameters().isNotEmpty() }
+                    .map { it.substitute(substitutor) as ConstructorDescriptor }
+
+            if (substitutedConstructors.isNotEmpty()) {
+                val parameterTypes: List<List<JetType>> = substitutedConstructors.map {
+                    it.getValueParameters().map { it.getType() }
+                }
+
+                fun canRenderOnlyFirstParameters(n: Int) = parameterTypes.map { it.take(n) }.toSet().size() == parameterTypes.size()
+
+                val maxParams = parameterTypes.map { it.size() }.max()!!
+                val maxParamsToDisplay = if (maxParams <= DISPLAY_MAX_PARAMS) {
+                    maxParams
+                }
+                else {
+                    (DISPLAY_MAX_PARAMS..maxParams-1).firstOrNull(::canRenderOnlyFirstParameters) ?: maxParams
+                }
+
+                for ((constructor, types) in substitutedConstructors.zip(parameterTypes)) {
+                    val typesRendered = types.take(maxParamsToDisplay).map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }
+                    val parameterString = typesRendered.joinToString(", ", "(", if (types.size() <= maxParamsToDisplay) ")" else ",...)")
+                    val text = "Add constructor parameters from " + superClass.getName().asString() + parameterString
+                    fixes.add(AddParametersFix(delegator, classOrObjectDeclaration, constructor, text))
                 }
             }
         }
@@ -103,58 +126,52 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
     private class AddParametersFix(
             element: JetDelegatorToSuperClass,
             val classDeclaration: JetClass,
-            val superConstructor: ConstructorDescriptor
+            val superConstructor: ConstructorDescriptor, //TODO: do not hold descriptor!
+            private val text: String
     ) : JetIntentionAction<JetDelegatorToSuperClass>(element) {
 
         override fun getFamilyName() = "Add constructor parameters from superclass"
 
         override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-            //TODO: can ConstructorDescriptor become invalid?
             return super.isAvailable(project, editor, file) && superConstructor.getValueParameters().none { it.getType().isError() }
         }
 
-        override fun getText(): String {
-            // TODO: not too long
-            return "Add constructor parameters from " +
-                   superConstructor.getContainingDeclaration().getName().asString() +
-                   superConstructor.getValueParameters().map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it.getType()) }.joinToString(", ", "(", ")")
-        }
+        override fun getText()= text
 
         override fun invoke(project: Project, editor: Editor?, file: JetFile) {
             val factory = JetPsiFactory(project)
             val renderer = IdeDescriptorRenderers.SOURCE_CODE
 
             val superParameters = superConstructor.getValueParameters()
+            assert(superParameters.isNotEmpty())
             val parameterNames = ArrayList<String>()
             val typeRefsToShorten = ArrayList<JetTypeReference>()
-            if (!superParameters.isEmpty()) {
-                val parameterList = classDeclaration.createPrimaryConstructorParameterListIfAbsent()
-                val oldParameters = parameterList.getParameters()
-                val parametersToAdd = ArrayList<JetParameter>()
-                for (parameter in superParameters) {
-                    val name = renderer.renderName(parameter.getName())
-                    val varargElementType = parameter.getVarargElementType()
+            val parameterList = classDeclaration.createPrimaryConstructorParameterListIfAbsent()
+            val oldParameters = parameterList.getParameters()
+            val parametersToAdd = ArrayList<JetParameter>()
+            for (parameter in superParameters) {
+                val name = renderer.renderName(parameter.getName())
+                val varargElementType = parameter.getVarargElementType()
 
-                    parameterNames.add(if (varargElementType != null) "*$name" else name)
+                parameterNames.add(if (varargElementType != null) "*$name" else name)
 
-                    val nameString = parameter.getName().asString()
-                    val existingParameter = oldParameters.firstOrNull { it.getName() == nameString }
-                    if (existingParameter != null) {
-                        val type = (existingParameter.resolveToDescriptor() as ValueParameterDescriptor).getType()
-                        if (type.isSubtypeOf(parameter.getType())) continue // use existing parameter
-                    }
-
-                    val parameterText = if (varargElementType != null)
-                        "vararg " + name + ":" + renderer.renderType(varargElementType)
-                    else
-                        name + ":" + renderer.renderType(parameter.getType())
-                    parametersToAdd.add(factory.createParameter(parameterText))
+                val nameString = parameter.getName().asString()
+                val existingParameter = oldParameters.firstOrNull { it.getName() == nameString }
+                if (existingParameter != null) {
+                    val type = (existingParameter.resolveToDescriptor() as ValueParameterDescriptor).getType()
+                    if (type.isSubtypeOf(parameter.getType())) continue // use existing parameter
                 }
 
-                for (parameter in parametersToAdd) {
-                    val newParameter = parameterList.addParameter(parameter)
-                    typeRefsToShorten.add(newParameter.getTypeReference())
-                }
+                val parameterText = if (varargElementType != null)
+                    "vararg " + name + ":" + renderer.renderType(varargElementType)
+                else
+                    name + ":" + renderer.renderType(parameter.getType())
+                parametersToAdd.add(factory.createParameter(parameterText))
+            }
+
+            for (parameter in parametersToAdd) {
+                val newParameter = parameterList.addParameter(parameter)
+                typeRefsToShorten.add(newParameter.getTypeReference())
             }
 
             val delegatorCall = factory.createDelegatorToSuperCall(element.getText() + "(" + parameterNames.joinToString(",") + ")")
