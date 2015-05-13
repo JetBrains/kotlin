@@ -66,7 +66,7 @@ class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedI
 
 class LazyImportResolver(
         val resolveSession: ResolveSession,
-        val packageView: PackageViewDescriptor,
+        val moduleDescriptor: ModuleDescriptor,
         val indexedImports: IndexedImports,
         private val traceForImportResolve: BindingTrace,
         includeRootPackageClasses: Boolean
@@ -101,11 +101,11 @@ class LazyImportResolver(
                     try {
                         val resolver = resolveSession.getQualifiedExpressionResolver()
                         val directiveImportScope = resolver.processImportReference(
-                                directive, rootScope, packageView, traceForImportResolve, mode)
+                                directive, rootScope, moduleDescriptor, traceForImportResolve, mode)
                         val descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
 
                         if (mode == LookupMode.EVERYTHING) {
-                            PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(packageView.getModule(), traceForImportResolve, directive, descriptors)
+                            PlatformTypesMappedToKotlinChecker.checkPlatformTypesMappedToKotlin(moduleDescriptor, traceForImportResolve, directive, descriptors)
                         }
 
                         importResolveStatus = ImportResolveStatus(mode, directiveImportScope, descriptors)
@@ -219,6 +219,7 @@ class LazyImportResolver(
 }
 
 class LazyImportScope(
+        private val containingDeclaration: DeclarationDescriptor,
         private val importResolver: LazyImportResolver,
         private val filteringKind: LazyImportScope.FilteringKind,
         private val debugName: String
@@ -235,7 +236,7 @@ class LazyImportScope(
         val visibility = descriptor.getVisibility()
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
         if (!visibility.mustCheckInImports()) return includeVisible
-        return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.packageView) == includeVisible
+        return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.moduleDescriptor) == includeVisible
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? {
@@ -285,7 +286,7 @@ class LazyImportScope(
 
     override fun getOwnDeclaredDescriptors() = listOf<DeclarationDescriptor>()
 
-    override fun getContainingDeclaration() = importResolver.packageView
+    override fun getContainingDeclaration() = containingDeclaration
 
     override fun toString() = "LazyImportScope: " + debugName
 
@@ -293,7 +294,7 @@ class LazyImportScope(
         p.println(javaClass.getSimpleName(), ": ", debugName, " {")
         p.pushIndent()
 
-        p.println("packageDescriptor = ", importResolver.packageView)
+        p.println("containingDeclaration = ", containingDeclaration)
 
         importResolver.printScopeStructure(p)
 

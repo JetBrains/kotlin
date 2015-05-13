@@ -75,11 +75,11 @@ public class QualifiedExpressionResolver {
     public JetScope processImportReference(
             @NotNull JetImportDirective importDirective,
             @NotNull JetScope scope,
-            @NotNull DeclarationDescriptor shouldBeVisibleFrom,
+            @NotNull ModuleDescriptor moduleDescriptor,
             @NotNull BindingTrace trace,
             @NotNull LookupMode lookupMode
     ) {
-        return importDirectiveProcessor.processImportReference(importDirective, scope, shouldBeVisibleFrom, trace, lookupMode);
+        return importDirectiveProcessor.processImportReference(importDirective, scope, moduleDescriptor, trace, lookupMode);
     }
 
     @NotNull
