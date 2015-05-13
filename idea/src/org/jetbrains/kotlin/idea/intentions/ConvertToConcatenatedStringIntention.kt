@@ -40,7 +40,7 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndepe
                     entry.toSeparateString(quote, convertExplicitly = (index == 0), isFinalEntry = (index == entries.lastIndex))
                 }
                 .join(separator = "+")
-                .replaceAll("""$quote\+$quote""", "")
+                .replace("""$quote+$quote""", "")
 
         val replacement = JetPsiFactory(element).createExpression(text)
         element.replace(replacement)

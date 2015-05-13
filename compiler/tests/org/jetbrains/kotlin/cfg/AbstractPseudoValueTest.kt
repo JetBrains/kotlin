@@ -46,7 +46,7 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
         }
 
         fun elementText(element: JetElement?): String =
-                element?.getText()?.replaceAll("\\s+", " ") ?: ""
+                element?.getText()?.replace("\\s+".toRegex(), " ") ?: ""
 
         fun valueDecl(value: PseudoValue): String {
             val typePredicate = expectedTypePredicateMap.getOrPut(value) { getExpectedTypePredicate(value, bindingContext) }

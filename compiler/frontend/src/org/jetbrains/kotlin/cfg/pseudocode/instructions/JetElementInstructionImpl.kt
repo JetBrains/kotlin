@@ -24,5 +24,5 @@ public abstract class JetElementInstructionImpl(
         lexicalScope: LexicalScope
 ) : InstructionImpl(lexicalScope), JetElementInstruction {
     protected fun render(element: PsiElement): String =
-            element.getText()?.replaceAll("\\s+", " ") ?: ""
+            element.getText()?.replace("\\s+".toRegex(), " ") ?: ""
 }

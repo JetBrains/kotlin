@@ -63,8 +63,8 @@ public fun buildDecompiledText(
         !classHeader.isCompatibleAbiVersion -> {
             DecompiledText(
                     INCOMPATIBLE_ABI_VERSION_COMMENT
-                            .replaceAll(CURRENT_ABI_VERSION_MARKER, JvmAbi.VERSION.toString())
-                            .replaceAll(FILE_ABI_VERSION_MARKER, classHeader.version.toString()),
+                            .replace(CURRENT_ABI_VERSION_MARKER, JvmAbi.VERSION.toString())
+                            .replace(FILE_ABI_VERSION_MARKER, classHeader.version.toString()),
                     mapOf())
         }
         classHeader.isCompatiblePackageFacadeKind() ->

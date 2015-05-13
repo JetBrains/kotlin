@@ -57,7 +57,7 @@ public trait AbstractSMAPBaseTest {
         if (InTextDirectivesUtils.isDirectiveDefined(fileContent, smapPrefix)) {
             InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, smapPrefix)
             var smapData = fileContent.substring(fileContent.indexOf(smapPrefix))
-            smapData = smapData.replaceAll("//", "").trim()
+            smapData = smapData.replace("//", "").trim()
 
             return SMAPAndFile(if (smapData.startsWith("SMAP ABSENT")) null else smapData,
                                SMAPAndFile.getPath(file.getVirtualFile().getCanonicalPath()!!))

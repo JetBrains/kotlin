@@ -114,18 +114,18 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = fileToKotlin("final class C {" + text + "}", settings, project).replaceAll("class C \\{", "").replaceAll("object C \\{", "")
+        val result = fileToKotlin("final class C {" + text + "}", settings, project).replace("class C {", "").replace("object C {", "")
         return result.substring(0, (result.lastIndexOf("}"))).trim()
     }
 
     private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val result = methodToKotlin("void main() {" + text + "}", settings, project)
-        return result.substring(0, result.lastIndexOf("}")).replaceFirst("fun main\\(\\) \\{", "").trim()
+        return result.substring(0, result.lastIndexOf("}")).replaceFirstLiteral("fun main() {", "").trim()
     }
 
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
         val result = statementToKotlin("final Object o =" + code + "}", settings, project)
-        return result.replaceFirst("val o:Any\\? = ", "").replaceFirst("val o:Any = ", "").replaceFirst("val o = ", "").trim()
+        return result.replaceFirstLiteral("val o:Any? = ", "").replaceFirstLiteral("val o:Any = ", "").replaceFirstLiteral("val o = ", "").trim()
     }
 
     override fun getProjectDescriptor()

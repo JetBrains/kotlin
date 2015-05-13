@@ -59,11 +59,11 @@ public object JavaToKotlinTranslator {
 
         return code
                 .trim()
-                .replaceAll("\r\n", "\n")
-                .replaceAll(" \n", "\n")
-                .replaceAll("\n ", "\n")
-                .replaceAll("\n+", "\n")
-                .replaceAll(" +", " ")
+                .replace("\r\n", "\n")
+                .replace(" \n", "\n")
+                .replace("\n ", "\n")
+                .replace("\n+".toRegex(), "\n")
+                .replace(" +".toRegex(), " ")
                 .trim()
     }
 

@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 import java.io.File
 import java.util.Collections
-import java.util.regex.Pattern
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -255,7 +254,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         fun printDescriptor(descriptor: NodeDescriptorImpl, indent: Int): Boolean {
             if (descriptor is DefaultNodeDescriptor) return true
 
-            val label = descriptor.getLabel()!!.replaceAll("Package\\$[\\w]*\\$[0-9a-f]+", "Package\\$@packagePartHASH")
+            val label = descriptor.getLabel()!!.replace("Package\\$[\\w]*\\$[0-9a-f]+".toRegex(), "Package\\$@packagePartHASH")
             if (label.endsWith(XDebuggerUIConstants.COLLECTING_DATA_MESSAGE)) return true
 
             val curIndent = " ".repeat(indent)
@@ -338,18 +337,18 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
             }
             catch (e: EvaluateException) {
-                Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage()?.replaceFirst("id=[0-9]*", "id=ID"))
+                Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage()?.replaceFirst(ID_PART_REGEX, "id=ID"))
             }
         }
     }
 
     private fun Value.asString(): String {
         if (this is ObjectValue && this.value is ObjectReference) {
-            val regexMatcher = PACKAGE_PART_PATTERN.matcher(this.toString())
-            return regexMatcher.replaceAll("$1@packagePartHASH").replaceFirst("id=[0-9]*", "id=ID")
+            return this.toString().replace(PACKAGE_PART_REGEX, "$1@packagePartHASH").replaceFirst(ID_PART_REGEX, "id=ID")
         }
         return this.toString()
     }
 }
 
-private val PACKAGE_PART_PATTERN = Pattern.compile("(Package\\$[\\w]*\\$)([0-9a-f]+)");
+private val PACKAGE_PART_REGEX = "(Package\\$[\\w]*\\$)([0-9a-f]+)".toRegex()
+private val ID_PART_REGEX = "id=[0-9]*".toRegex()

@@ -109,7 +109,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
 
             null -> ""
 
-            else -> "\${" + expressionText.replaceAll("\n+", " ") + "}"
+            else -> "\${" + expressionText.replace("\n+".toRegex(), " ") + "}"
         }
     }
 }

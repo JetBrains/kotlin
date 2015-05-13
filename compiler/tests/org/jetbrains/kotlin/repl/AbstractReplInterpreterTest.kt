@@ -27,9 +27,11 @@ import java.io.File
 import java.util.ArrayDeque
 import java.util.ArrayList
 import java.util.regex.Pattern
+import kotlin.text.Regex
 
 private val START_PATTERN = Pattern.compile(">>>( *)(.*)$")
 private val INCOMPLETE_PATTERN = Pattern.compile("\\.\\.\\.( *)(.*)$")
+private val TRAILING_NEWLINE_REGEX = Regex("\n$")
 
 private val INCOMPLETE_LINE_MESSAGE = "incomplete line"
 
@@ -89,8 +91,8 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
             Assert.assertEquals(
                     "After evaluation of: $code",
-                    StringUtil.convertLineSeparators(expected).replaceFirst("\n$", ""),
-                    StringUtil.convertLineSeparators(actual).replaceFirst("\n$", "")
+                    StringUtil.convertLineSeparators(expected).replaceFirst(TRAILING_NEWLINE_REGEX, ""),
+                    StringUtil.convertLineSeparators(actual).replaceFirst(TRAILING_NEWLINE_REGEX, "")
             )
         }
     }

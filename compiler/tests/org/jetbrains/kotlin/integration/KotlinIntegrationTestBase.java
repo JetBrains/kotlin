@@ -28,6 +28,8 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Function1;
 import kotlin.KotlinPackage;
+import kotlin.text.Regex;
+import kotlin.text.MatchResult;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
@@ -39,8 +41,6 @@ import org.junit.Rule;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.regex.MatchResult;
-import java.util.regex.Pattern;
 
 import static org.junit.Assert.*;
 
@@ -79,12 +79,12 @@ public abstract class KotlinIntegrationTestBase {
         String contentWithRelativePaths = content.replace(baseDir.getAbsolutePath(), pathId);
 
         @Language("RegExp")
-        String RELATIVE_PATH_WITH_MIXED_SEPARATOR = Pattern.quote(pathId) + "[-.\\w/\\\\]*";
+        String RELATIVE_PATH_WITH_MIXED_SEPARATOR = Regex.Companion.escape(pathId) + "[-.\\w/\\\\]*";
 
-        return KotlinPackage.replaceAll(contentWithRelativePaths, RELATIVE_PATH_WITH_MIXED_SEPARATOR, new Function1<MatchResult, String>() {
+        return new Regex(RELATIVE_PATH_WITH_MIXED_SEPARATOR).replace(contentWithRelativePaths, new Function1<MatchResult, String>() {
             @Override
             public String invoke(MatchResult mr) {
-                return FileUtil.toSystemIndependentName(mr.group());
+                return FileUtil.toSystemIndependentName(mr.getValue());
             }
         });
     }

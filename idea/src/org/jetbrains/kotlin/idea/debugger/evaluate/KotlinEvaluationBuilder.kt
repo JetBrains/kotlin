@@ -194,7 +194,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         }
 
         private fun getClassName(fileName: String): String {
-            return fileName.substringBeforeLast(".class").replaceAll("/", ".")
+            return fileName.substringBeforeLast(".class").replace("/", ".")
         }
 
         private fun runEval4j(context: EvaluationContextImpl, compiledData: CompiledDataDescriptor): InterpreterResult {
