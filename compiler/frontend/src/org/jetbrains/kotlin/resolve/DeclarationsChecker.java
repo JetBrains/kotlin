@@ -247,6 +247,11 @@ public class DeclarationsChecker {
         checkTypeParameters(aClass);
 
         if (aClass.isInterface()) {
+            ASTNode traitKeyword = aClass.getNode().findChildByType(JetTokens.TRAIT_KEYWORD);
+            if (traitKeyword != null) {
+                trace.report(Errors.DEPRECATED_TRAIT_KEYWORD.on(traitKeyword.getPsi()));
+            }
+
             checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);
         }

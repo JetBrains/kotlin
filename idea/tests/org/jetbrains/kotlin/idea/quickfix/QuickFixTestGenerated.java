@@ -3277,6 +3277,20 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/traitToInterface")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TraitToInterface extends AbstractQuickFixTest {
+            public void testAllFilesPresentInTraitToInterface() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/traitToInterface"), Pattern.compile("^(\\w+)\\.kt$"), true);
+            }
+
+            @TestMetadata("traitToInterface.kt")
+            public void testTraitToInterface() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/traitToInterface/traitToInterface.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/modifiers")

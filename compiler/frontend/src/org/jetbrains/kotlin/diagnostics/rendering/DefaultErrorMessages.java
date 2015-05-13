@@ -262,6 +262,7 @@ public class DefaultErrorMessages {
         MAP.put(ENUM_ENTRY_AFTER_ENUM_MEMBER, "Enum entry ''{0}'' is not allowed after a member", NAME);
         MAP.put(DELEGATION_IN_TRAIT, "Interfaces cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only interfaces can be delegated to");
+        MAP.put(DEPRECATED_TRAIT_KEYWORD, "'trait' keyword is deprecated, use 'interface' instead");
         MAP.put(UNMET_TRAIT_REQUIREMENT, "Super interface ''{0}'' requires subclasses to extend ''{1}''", NAME, NAME);
         MAP.put(NO_CONSTRUCTOR, "This class does not have a constructor");
         MAP.put(NOT_A_CLASS, "Not a class");
