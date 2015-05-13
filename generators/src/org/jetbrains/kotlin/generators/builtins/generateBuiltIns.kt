@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.generators.builtins.generateBuiltIns
 import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIterators
 import org.jetbrains.kotlin.generators.builtins.arrays.GenerateArrays
 import org.jetbrains.kotlin.generators.builtins.functionImpl.GenerateFunctionImpl
-import org.jetbrains.kotlin.generators.builtins.functions.FunctionKind
 import org.jetbrains.kotlin.generators.builtins.functions.GenerateFunctions
 import org.jetbrains.kotlin.generators.builtins.iterators.GenerateIterators
 import org.jetbrains.kotlin.generators.builtins.progressionIterators.GenerateProgressionIterators
@@ -67,11 +66,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     assertExists(BUILT_INS_SRC_DIR)
     assertExists(RUNTIME_JVM_DIR)
 
-    for (kind in FunctionKind.values()) {
-        val dir = if (kind == FunctionKind.FUNCTION) RUNTIME_JVM_DIR else BUILT_INS_SRC_DIR
-        generate(File(dir, kind.fileName)) { GenerateFunctions(it, kind) }
-    }
-
+    generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/functions/Functions.kt")) { GenerateFunctions(it) }
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/internal/FunctionImpl.java")) { GenerateFunctionImpl(it) }
     generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Arrays.kt")) { GenerateArrays(it) }
     generate(File(BUILT_INS_NATIVE_DIR, "kotlin/Primitives.kt")) { GeneratePrimitives(it) }

@@ -21,30 +21,11 @@ import java.io.PrintWriter
 
 val MAX_PARAM_COUNT = 22
 
-enum class FunctionKind(
-        val classFqNamePrefix: String,
-        val docPrefix: String,
-        val hasReceiverParameter: Boolean
-) {
-    FUNCTION : FunctionKind("kotlin.jvm.functions.Function", "A function", false)
-    EXTENSION_FUNCTION : FunctionKind("kotlin.ExtensionFunction", "An extension function", true)
-
-    val classNamePrefix: String get() = classFqNamePrefix.substringAfterLast('.')
-    val packageFqName: String get() = classFqNamePrefix.substringBeforeLast('.')
-    val fileName: String get() = classFqNamePrefix.replace('.', '/') + "s.kt"
-
-    fun getClassName(i: Int) = classNamePrefix + i
-}
-
-class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSourceGenerator(out) {
-    override fun getPackage() = kind.packageFqName
+class GenerateFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun getPackage() = "kotlin.jvm.functions"
 
     fun generateTypeParameters(i: Int, variance: Boolean) {
         out.print("<")
-        if (kind.hasReceiverParameter) {
-            if (variance) out.print("in ")
-            out.print("T, ")
-        }
 
         for (j in 1..i) {
             if (variance) out.print("in ")
@@ -64,7 +45,7 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
     override fun generateBody() {
         for (i in 0..MAX_PARAM_COUNT) {
             generateDocumentation(i)
-            out.print("public interface " + kind.getClassName(i))
+            out.print("public interface Function$i")
             generateTypeParameters(i, variance = true)
             generateSuperClass()
             generateFunctionClassBody(i)
@@ -73,7 +54,7 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
 
     fun generateDocumentation(i: Int) {
         val suffix = if (i == 1) "" else "s"
-        out.println("/** ${kind.docPrefix} that takes $i argument${suffix}. */")
+        out.println("/** A function that takes $i argument${suffix}. */")
     }
 
     fun generateSuperClass() {
@@ -91,11 +72,12 @@ class GenerateFunctions(out: PrintWriter, val kind: FunctionKind) : BuiltInsSour
     fun generateInvokeSignature(i: Int) {
         if (i == 0) {
             out.println("    /** Invokes the function. */")
-        } else {
+        }
+        else {
             val suffix = if (i == 1) "" else "s"
             out.println("    /** Invokes the function with the specified argument${suffix}. */")
         }
-        out.print("    public fun ${if (kind.hasReceiverParameter) "T." else ""}invoke(")
+        out.print("    public fun invoke(")
         for (j in 1..i) {
             out.print("p$j: P$j")
             if (j < i) {
