@@ -800,7 +800,13 @@ public class JetPsiUtil {
         }
         else if (declaration instanceof JetParameter) {
             PsiElement parent = declaration.getParent();
-            if (skipParameters && parent != null && parent.getParent() instanceof JetNamedFunction) {
+
+            // val/var parameter of primary constructor should not be considered as local
+            if (((JetParameter) declaration).getValOrVarNode() != null && parent != null && parent.getParent() instanceof JetPrimaryConstructor) {
+                return null;
+            }
+
+            else if (skipParameters && parent != null && parent.getParent() instanceof JetNamedFunction) {
                 declaration = (JetNamedFunction) parent.getParent();
             }
         }
