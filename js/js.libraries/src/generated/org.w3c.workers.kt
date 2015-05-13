@@ -89,7 +89,7 @@ native public trait ServiceWorker : EventTarget, UnionMessagePortOrServiceWorker
     var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
+    fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public trait ServiceWorkerContainer : EventTarget {
@@ -118,7 +118,7 @@ native public open class RegistrationOptions {
 }
 
 native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = noImpl) : Event(type, eventInitDict) {
-    var data: dynamic
+    var data: Any?
         get() = noImpl
         set(value) = noImpl
     var origin: String
@@ -133,11 +133,11 @@ native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: 
     var ports: Array<dynamic>
         get() = noImpl
         set(value) = noImpl
-    fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: dynamic, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Array<dynamic>): Unit = noImpl
+    fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Array<dynamic>): Unit = noImpl
 }
 
 native public open class ServiceWorkerMessageEventInit : EventInit() {
-    var data: dynamic
+    var data: Any?
     var origin: String
     var lastEventId: String
     var source: UnionMessagePortOrServiceWorker?
@@ -154,7 +154,7 @@ native public trait Client : UnionClientOrMessagePortOrServiceWorker {
     var id: String
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
+    fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public trait WindowClient : Client {
@@ -205,7 +205,7 @@ native public open class FetchEventInit : ExtendableEventInit() {
 }
 
 native public open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
-    var data: dynamic
+    var data: Any?
         get() = noImpl
         set(value) = noImpl
     var origin: String
@@ -220,11 +220,11 @@ native public open class ExtendableMessageEvent(type: String, eventInitDict: Ext
     var ports: Array<dynamic>
         get() = noImpl
         set(value) = noImpl
-    fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: dynamic, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Array<dynamic>): Unit = noImpl
+    fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Array<dynamic>): Unit = noImpl
 }
 
 native public open class ExtendableMessageEventInit : ExtendableEventInit() {
-    var data: dynamic
+    var data: Any?
     var origin: String
     var lastEventId: String
     var source: UnionClientOrMessagePortOrServiceWorker?

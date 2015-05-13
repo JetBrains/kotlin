@@ -62,7 +62,7 @@ native public open class Notification(title: String, options: NotificationOption
     var sticky: Boolean
         get() = noImpl
         set(value) = noImpl
-    var data: dynamic
+    var data: Any?
         get() = noImpl
         set(value) = noImpl
     fun close(): Unit = noImpl
@@ -80,7 +80,7 @@ native public open class NotificationOptions {
     var silent: Boolean = false
     var noscreen: Boolean = false
     var sticky: Boolean = false
-    var data: dynamic = null
+    var data: Any? = null
 }
 
 native public open class GetNotificationOptions {

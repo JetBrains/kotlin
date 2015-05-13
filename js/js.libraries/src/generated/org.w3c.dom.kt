@@ -54,7 +54,7 @@ native public trait HTMLPropertiesCollection : HTMLCollection {
 }
 
 native public trait PropertyNodeList : NodeList {
-    fun getValues(): Array<dynamic> = noImpl
+    fun getValues(): Array<Any?> = noImpl
 }
 
 native public trait DOMStringMap {
@@ -290,7 +290,7 @@ native public open class Document : Node {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic, dynamic, String, Int, Int, dynamic) -> dynamic)?
+    var onerror: ((dynamic, dynamic, String, Int, Int, Any?) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -506,7 +506,7 @@ native public trait HTMLElement : Element {
     var properties: HTMLPropertiesCollection
         get() = noImpl
         set(value) = noImpl
-    var itemValue: dynamic
+    var itemValue: Any?
         get() = noImpl
         set(value) = noImpl
     var hidden: Boolean
@@ -623,7 +623,7 @@ native public trait HTMLElement : Element {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic, dynamic, String, Int, Int, dynamic) -> dynamic)?
+    var onerror: ((dynamic, dynamic, String, Int, Int, Any?) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -2699,12 +2699,12 @@ native public trait HTMLCanvasElement : HTMLElement, CanvasImageSource, ImageBit
     var height: Int
         get() = noImpl
         set(value) = noImpl
-    fun getContext(contextId: String, vararg arguments: dynamic): RenderingContext? = noImpl
-    fun probablySupportsContext(contextId: String, vararg arguments: dynamic): Boolean = noImpl
+    fun getContext(contextId: String, vararg arguments: Any?): RenderingContext? = noImpl
+    fun probablySupportsContext(contextId: String, vararg arguments: Any?): Boolean = noImpl
     fun setContext(context: RenderingContext): Unit = noImpl
     fun transferControlToProxy(): CanvasProxy = noImpl
-    fun toDataURL(type: String = noImpl, vararg arguments: dynamic): String = noImpl
-    fun toBlob(_callback: ((File) -> Unit)?, type: String = noImpl, vararg arguments: dynamic): Unit = noImpl
+    fun toDataURL(type: String = noImpl, vararg arguments: Any?): String = noImpl
+    fun toBlob(_callback: ((File) -> Unit)?, type: String = noImpl, vararg arguments: Any?): Unit = noImpl
 }
 
 native public trait CanvasProxy : Transferable {
@@ -3080,7 +3080,7 @@ native public trait Window : EventTarget, UnionMessagePortOrWindow {
     var top: Window
         get() = noImpl
         set(value) = noImpl
-    var opener: dynamic
+    var opener: Any?
         get() = noImpl
         set(value) = noImpl
     var parent: Window
@@ -3170,7 +3170,7 @@ native public trait Window : EventTarget, UnionMessagePortOrWindow {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic, dynamic, String, Int, Int, dynamic) -> dynamic)?
+    var onerror: ((dynamic, dynamic, String, Int, Int, Any?) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -3345,20 +3345,20 @@ native public trait Window : EventTarget, UnionMessagePortOrWindow {
     fun confirm(message: String = ""): Boolean = noImpl
     fun prompt(message: String = "", default: String = ""): String? = noImpl
     fun print(): Unit = noImpl
-    fun showModalDialog(url: String, argument: dynamic = noImpl): dynamic = noImpl
+    fun showModalDialog(url: String, argument: Any? = noImpl): Any? = noImpl
     fun requestAnimationFrame(callback: (Double) -> Unit): Int = noImpl
     fun cancelAnimationFrame(handle: Int): Unit = noImpl
-    fun postMessage(message: dynamic, targetOrigin: String, transfer: Array<Transferable> = noImpl): Unit = noImpl
+    fun postMessage(message: Any?, targetOrigin: String, transfer: Array<Transferable> = noImpl): Unit = noImpl
     fun captureEvents(): Unit = noImpl
     fun releaseEvents(): Unit = noImpl
     fun getSelection(): Selection = noImpl
     fun btoa(btoa: String): String = noImpl
     fun atob(atob: String): String = noImpl
-    fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
-    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
+    fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
     fun clearTimeout(handle: Int = 0): Unit = noImpl
-    fun setInterval(handler: () -> dynamic, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
-    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
+    fun setInterval(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
     fun clearInterval(handle: Int = 0): Unit = noImpl
     fun createImageBitmap(image: ImageBitmapSource): dynamic = noImpl
     fun createImageBitmap(image: ImageBitmapSource, sx: Int, sy: Int, sw: Int, sh: Int): dynamic = noImpl
@@ -3375,14 +3375,14 @@ native public trait History {
     var length: Int
         get() = noImpl
         set(value) = noImpl
-    var state: dynamic
+    var state: Any?
         get() = noImpl
         set(value) = noImpl
     fun go(delta: Int = noImpl): Unit = noImpl
     fun back(): Unit = noImpl
     fun forward(): Unit = noImpl
-    fun pushState(data: dynamic, title: String, url: String? = null): Unit = noImpl
-    fun replaceState(data: dynamic, title: String, url: String? = null): Unit = noImpl
+    fun pushState(data: Any?, title: String, url: String? = null): Unit = noImpl
+    fun replaceState(data: Any?, title: String, url: String? = null): Unit = noImpl
 }
 
 native public trait Location {
@@ -3395,13 +3395,13 @@ native public trait Location {
 }
 
 native public open class PopStateEvent(type: String, eventInitDict: PopStateEventInit = noImpl) : Event(type, eventInitDict) {
-    var state: dynamic
+    var state: Any?
         get() = noImpl
         set(value) = noImpl
 }
 
 native public open class PopStateEventInit : EventInit() {
-    var state: dynamic
+    var state: Any?
 }
 
 native public open class HashChangeEvent(type: String, eventInitDict: HashChangeEventInit = noImpl) : Event(type, eventInitDict) {
@@ -3489,7 +3489,7 @@ native public open class ErrorEvent(type: String, eventInitDict: ErrorEventInit 
     var colno: Int
         get() = noImpl
         set(value) = noImpl
-    var error: dynamic
+    var error: Any?
         get() = noImpl
         set(value) = noImpl
 }
@@ -3499,7 +3499,7 @@ native public open class ErrorEventInit : EventInit() {
     var filename: String
     var lineno: Int
     var colno: Int
-    var error: dynamic
+    var error: Any?
 }
 
 native public trait Navigator {
@@ -3629,7 +3629,7 @@ native public trait ImageBitmap : CanvasImageSource, ImageBitmapSource {
 }
 
 native public open class MessageEvent(type: String, eventInitDict: MessageEventInit = noImpl) : Event(type, eventInitDict) {
-    var data: dynamic
+    var data: Any?
         get() = noImpl
         set(value) = noImpl
     var origin: String
@@ -3644,11 +3644,11 @@ native public open class MessageEvent(type: String, eventInitDict: MessageEventI
     var ports: Array<dynamic>
         get() = noImpl
         set(value) = noImpl
-    fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: dynamic, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrWindow, portsArg: Array<dynamic>): Unit = noImpl
+    fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrWindow, portsArg: Array<dynamic>): Unit = noImpl
 }
 
 native public open class MessageEventInit : EventInit() {
-    var data: dynamic
+    var data: Any?
     var origin: String
     var lastEventId: String
     var source: UnionMessagePortOrWindow?
@@ -3763,7 +3763,7 @@ native public trait MessagePort : EventTarget, UnionMessagePortOrWindow, UnionMe
     var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
+    fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
     fun start(): Unit = noImpl
     fun close(): Unit = noImpl
 }
@@ -3782,7 +3782,7 @@ native public open class BroadcastChannel(channel: String) : EventTarget {
     var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: dynamic): Unit = noImpl
+    fun postMessage(message: Any?): Unit = noImpl
     fun close(): Unit = noImpl
 }
 
@@ -3796,7 +3796,7 @@ native public trait WorkerGlobalScope : EventTarget {
     var location: WorkerLocation
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic, dynamic, String, Int, Int, dynamic) -> dynamic)?
+    var onerror: ((dynamic, dynamic, String, Int, Int, Any?) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onlanguagechange: ((Event) -> dynamic)?
@@ -3815,11 +3815,11 @@ native public trait WorkerGlobalScope : EventTarget {
     fun importScripts(vararg urls: String): Unit = noImpl
     fun createImageBitmap(image: ImageBitmapSource): dynamic = noImpl
     fun createImageBitmap(image: ImageBitmapSource, sx: Int, sy: Int, sw: Int, sh: Int): dynamic = noImpl
-    fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
-    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
+    fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
     fun clearTimeout(handle: Int = 0): Unit = noImpl
-    fun setInterval(handler: () -> dynamic, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
-    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
+    fun setInterval(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
     fun clearInterval(handle: Int = 0): Unit = noImpl
     fun btoa(btoa: String): String = noImpl
     fun atob(atob: String): String = noImpl
@@ -3830,7 +3830,7 @@ native public trait DedicatedWorkerGlobalScope : WorkerGlobalScope {
     var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
+    fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public trait SharedWorkerGlobalScope : WorkerGlobalScope {
@@ -3853,7 +3853,7 @@ native public open class Worker(scriptURL: String) : EventTarget {
         get() = noImpl
         set(value) = noImpl
     fun terminate(): Unit = noImpl
-    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
+    fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public open class SharedWorker(scriptURL: String, name: String = noImpl) : EventTarget {
@@ -4239,14 +4239,14 @@ native public open class EventInit {
 }
 
 native public open class CustomEvent(type: String, eventInitDict: CustomEventInit = noImpl) : Event(type, eventInitDict) {
-    var detail: dynamic
+    var detail: Any?
         get() = noImpl
         set(value) = noImpl
-    fun initCustomEvent(type: String, bubbles: Boolean, cancelable: Boolean, detail: dynamic): Unit = noImpl
+    fun initCustomEvent(type: String, bubbles: Boolean, cancelable: Boolean, detail: Any?): Unit = noImpl
 }
 
 native public open class CustomEventInit : EventInit() {
-    var detail: dynamic = null
+    var detail: Any? = null
 }
 
 native public trait EventTarget {

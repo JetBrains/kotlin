@@ -74,7 +74,7 @@ native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
     var responseType: String
         get() = noImpl
         set(value) = noImpl
-    var response: dynamic
+    var response: Any?
         get() = noImpl
         set(value) = noImpl
     var responseText: String

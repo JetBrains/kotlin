@@ -32,7 +32,7 @@ private val typeMapper = mapOf(
         "long" to "Int",
         "float" to "Float",
         "double" to "Double",
-        "any" to "dynamic",
+        "any" to "Any?",
         "DOMTimeStamp" to "Number",
         "object" to "dynamic", // TODO map to Any?
         "WindowProxy" to "Window",
@@ -93,6 +93,8 @@ fun String.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<String
     else -> "dynamic"
 }
 
+private fun String.dynamicIfAnyType() = if (this == "Any?") "dynamic" else this
+
 private fun mapType(repository: Repository, type: String): String =
     when {
         type in typeMapper -> typeMapper[type]!!
@@ -110,7 +112,7 @@ private fun mapType(repository: Repository, type: String): String =
 
             // TODO: Remove takeWhile { !vararg } when we have varargs supported. See KT-3115
             function.copy(
-                    returnType = mapType(repository, function.returnType),
+                    returnType = mapType(repository, function.returnType).dynamicIfAnyType(),
                     parameterTypes = function.parameterTypes.takeWhile { !it.vararg }.map { it.copy(type = mapType(repository, it.type)) }
             ).text
         }
