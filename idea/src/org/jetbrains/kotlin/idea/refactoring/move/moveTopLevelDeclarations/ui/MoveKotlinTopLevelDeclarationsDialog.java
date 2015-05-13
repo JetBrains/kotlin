@@ -92,12 +92,11 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private JCheckBox cbSearchInComments;
-    private JCheckBox cbSearchTextOccurences;
+    private JCheckBox cbSearchTextOccurrences;
     private JPanel mainPanel;
     private ReferenceEditorComboWithBrowseButton classPackageChooser;
     private ComboboxWithBrowseButton destinationFolderCB;
     private JPanel targetPanel;
-    private JLabel targetDestinationLabel;
     private JRadioButton rbMoveToPackage;
     private JRadioButton rbMoveToFile;
     private TextFieldWithBrowseButton fileChooser;
@@ -184,7 +183,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     private void initSearchOptions(boolean searchInComments, boolean searchForTextOccurences) {
         cbSearchInComments.setSelected(searchInComments);
-        cbSearchTextOccurences.setSelected(searchForTextOccurences);
+        cbSearchTextOccurrences.setSelected(searchForTextOccurences);
     }
 
     private void initMoveToButtons(boolean moveToPackage) {
@@ -365,20 +364,12 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     @Override
     protected JComponent createCenterPanel() {
-        boolean isDestinationVisible = hasAnySourceRoots();
-        destinationFolderCB.setVisible(isDestinationVisible);
-        targetDestinationLabel.setVisible(isDestinationVisible);
-        return null;
-    }
-
-    @Override
-    protected JComponent createNorthPanel() {
         return mainPanel;
     }
 
     @Override
     protected String getDimensionServiceKey() {
-        return "#com.intellij.refactoring.move.moveClassesOrPackages.MoveKotlinTopLevelDeclarationsDialog.classes";
+        return "#" + getClass().getName();
     }
 
     protected final String getTargetPackage() {
@@ -426,7 +417,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private boolean isSearchInNonJavaFiles() {
-        return cbSearchTextOccurences.isSelected();
+        return cbSearchTextOccurrences.isSelected();
     }
 
     private boolean isSearchInComments() {
