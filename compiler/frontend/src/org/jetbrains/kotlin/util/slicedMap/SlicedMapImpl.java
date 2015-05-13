@@ -78,6 +78,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
     @Override
     public void clear() {
         map.clear();
+        collectiveSliceKeys = null;
     }
 
     @Override
