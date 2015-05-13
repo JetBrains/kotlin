@@ -15,6 +15,7 @@ import org.w3c.dom.parsing.*
 import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.files.*
+import org.w3c.time.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
@@ -22,10 +23,10 @@ native public open class Notification(title: String, options: NotificationOption
     var permission: String
         get() = noImpl
         set(value) = noImpl
-    var onclick: (Event) -> Unit
+    var onclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var title: String
@@ -61,7 +62,7 @@ native public open class Notification(title: String, options: NotificationOption
     var sticky: Boolean
         get() = noImpl
         set(value) = noImpl
-    var data: Any?
+    var data: dynamic
         get() = noImpl
         set(value) = noImpl
     fun close(): Unit = noImpl
@@ -79,10 +80,7 @@ native public open class NotificationOptions {
     var silent: Boolean = false
     var noscreen: Boolean = false
     var sticky: Boolean = false
-    var data: Any? = null
-}
-
-native public trait NotificationPermissionCallback {
+    var data: dynamic = null
 }
 
 native public open class GetNotificationOptions {

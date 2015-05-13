@@ -35,11 +35,12 @@ val GenerateAttribute.setterNoImpl: Boolean
     get() = getterSetterNoImpl && !readOnly
 
 val String.typeSignature: String
-    get() = if (contains("->")) "()" else this
+    get() = if (contains("->")) "Function${FunctionType(this).arity}" else this
 
 val GenerateAttribute.signature: String
     get() = "$name:${type.typeSignature}"
-fun GenerateAttribute.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<String> = standardTypes()) = this.copy(type = type.dynamicIfUnknownType(allTypes, standardTypes))
+
+fun GenerateAttribute.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<String> = standardTypes()) = copy(type = type.dynamicIfUnknownType(allTypes, standardTypes))
 
 enum class NativeGetterOrSetter {
     NONE
@@ -51,7 +52,6 @@ enum class GenerateDefinitionKind {
     TRAIT
     CLASS
 }
-
 
 class UnionType(val namespace: String, types: Collection<String>) {
     val memberTypes = HashSet(types)
@@ -93,10 +93,15 @@ val GenerateFunction.signature: String
     get() = arguments.map { it.type.typeSignature }.joinToString(", ", "$name(", ")")
 
 fun GenerateFunction.dynamicIfUnknownType(allTypes : Set<String>) = standardTypes().let { standardTypes ->
-    this.copy(returnType = returnType.dynamicIfUnknownType(allTypes, standardTypes), arguments = arguments.map { it.dynamicIfUnknownType(allTypes, standardTypes) })
+    copy(returnType = returnType.dynamicIfUnknownType(allTypes, standardTypes), arguments = arguments.map { it.dynamicIfUnknownType(allTypes, standardTypes) })
 }
 
 fun InterfaceDefinition.findExtendedAttribute(name: String) = extendedAttributes.firstOrNull { it.call == name }
 fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttribute(name) ?: null != null
 fun InterfaceDefinition.findConstructor() = findExtendedAttribute("Constructor")
 
+data class GenerateUnionTypes(
+        val typeNamesToUnions : Map<String, List<String>>,
+        val anonymousUnionsMap : Map<String, GenerateTraitOrClass>,
+        val typedefsMarkersMap : Map<String, GenerateTraitOrClass>
+)

@@ -32,12 +32,10 @@ private val typeMapper = mapOf(
         "long" to "Int",
         "float" to "Float",
         "double" to "Double",
-        "any" to "Any?",
+        "any" to "dynamic",
         "DOMTimeStamp" to "Number",
         "object" to "dynamic", // TODO map to Any?
-        "EventHandler" to "(Event) -> Unit",
         "WindowProxy" to "Window",
-        "Function" to "() -> dynamic",
         "USVString" to "String",
         "DOMString" to "String",
         "ByteString" to "String",
@@ -57,31 +55,60 @@ fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String, Genera
     }
 }
 
+data class FunctionType(val parameterTypes : List<Attribute>, val returnType : String)
+val FunctionType.arity : Int
+    get() = parameterTypes.size()
+val FunctionType.text : String
+    get() = "(${parameterTypes.map { it.formatFunctionTypePart() }.join(",")}) -> ${returnType}"
+
+fun FunctionType(text : String) : FunctionType {
+    val (parameters, returnType) = text.split("->".toRegex()).map {it.trim()}.filter { it != "" }
+
+    return FunctionType(
+            parameterTypes = parameters.removeSurrounding("(", ")").split(',')
+                    .map { it.trim() }
+                    .filter { !it.isEmpty() }
+                    .map { Attribute(name = "", type = it.removePrefix("vararg "), vararg = it.startsWith("vararg ")) }
+                    .toList(),
+            returnType = returnType
+    )
+}
+
 fun standardTypes() = typeMapper.values().map {it.dropNullable()}.toSet()
 fun String.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<String> = standardTypes()): String = when {
-    startsWith("Union<") -> UnionType("", splitUnionType(this)).name.dynamicIfUnknownType(allTypes, standardTypes).copyNullabilityFrom(this)
-    endsWith("?") -> this.dropNullable().dynamicIfUnknownType(allTypes, standardTypes).ensureNullable()
-    contains("->") -> {
-        val (parameters, returnType) = this.split("->".toRegex()).map {it.trim()}.filter { it != "" }
-
-        "(${parameters.removeSurrounding("(", ")").split(',').map {it.dynamicIfUnknownType(allTypes, standardTypes)}.join(",")}) -> ${returnType.dynamicIfUnknownType(allTypes, standardTypes)}"
-    }
     this in allTypes -> this
     this in standardTypes -> this
+    startsWith("Array<") -> "Array<" + removePrefix("Array<").removeSuffix(">").dynamicIfUnknownType(allTypes, standardTypes) + ">"
+    startsWith("Union<") -> UnionType("", splitUnionType(this)).name.dynamicIfUnknownType(allTypes, standardTypes).copyNullabilityFrom(this)
+    this != dropNullable() -> dropNullable().dynamicIfUnknownType(allTypes, standardTypes).ensureNullable()
+    contains("->") -> {
+        FunctionType(this).let { function ->
+            function.copy(
+                    returnType = function.returnType.dynamicIfUnknownType(allTypes, standardTypes),
+                    parameterTypes = function.parameterTypes.map { it.copy(type = it.type.dynamicIfUnknownType(allTypes, standardTypes)) }
+            ).text
+        }
+    }
     else -> "dynamic"
 }
 
 private fun mapType(repository: Repository, type: String): String =
     when {
         type in typeMapper -> typeMapper[type]!!
-        type.endsWith("?") -> mapType(repository, type.dropNullable()).ensureNullable()
+        type.isNullable() -> mapType(repository, type.dropNullable()).ensureNullable()
         type.endsWith("...") -> mapType(repository, type.substring(0, type.length() - 3))
         type.endsWith("[]") -> "Array<${mapType(repository, type.substring(0, type.length() - 2))}>"
         type.startsWith("unrestricted") -> mapType(repository, type.substring(12))
-        type.startsWith("sequence") -> "Any" // TODO how do we handle sequences?
+        type.startsWith("sequence<") -> "Array<${mapType(repository, type.removePrefix("sequence<").removeSuffix(">").trim())}>"
+        type.startsWith("sequence") -> "Array<dynamic>"
         type in repository.typeDefs -> mapTypedef(repository, type)
         type in repository.enums -> "String"
-        type.endsWith("Callback") -> "() -> Unit"
+        type.contains("->") -> FunctionType(type).let { function ->
+            function.copy(
+                    returnType = mapType(repository, function.returnType),
+                    parameterTypes = function.parameterTypes.takeWhile { !it.vararg }.map { it.copy(type = mapType(repository, it.type)) }
+            ).text
+        }
         type.startsWith("Promise<") -> "dynamic"
         repository.interfaces[type].hasExtendedAttribute("NoInterfaceObject") -> "dynamic"
         else -> type
@@ -99,7 +126,7 @@ private fun mapTypedef(repository: Repository, type: String): String {
 // Union<A, Union<B>, C>    ->  [A, B, C]
 // Union<Union<Union<A, B>>, C>    ->  [A, B, C]
 private fun splitUnionType(unionType: String) =
-        unionType.replaceAll("Union<", "").replaceAll("[>]+", "").split("\\s*,\\s*".toRegex()).distinct().map {it.replaceAll("\\?$", "")}
+        unionType.replace("Union<".toRegex(), "").replace("[>]+".toRegex(), "").split("\\s*,\\s*".toRegex()).distinct().map {it.replace("\\?$".toRegex(), "")}
 
 private fun GenerateFunction?.allTypes() = if (this != null) sequenceOf(returnType) + arguments.asSequence().map { it.type } else emptySequence()
 

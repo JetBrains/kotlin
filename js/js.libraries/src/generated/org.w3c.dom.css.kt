@@ -15,6 +15,7 @@ import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.files.*
 import org.w3c.notifications.*
+import org.w3c.time.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
@@ -444,7 +445,7 @@ native public trait CSSStyleDeclaration {
     var flexWrap: String
         get() = noImpl
         set(value) = noImpl
-    var attribute: String
+    var cssFloat: String
         get() = noImpl
         set(value) = noImpl
     var font: String
@@ -850,9 +851,6 @@ native public trait CSSStyleDeclaration {
         get() = noImpl
         set(value) = noImpl
     var parentRule: CSSRule?
-        get() = noImpl
-        set(value) = noImpl
-    var cssFloat: String
         get() = noImpl
         set(value) = noImpl
     var _dashed_attribute: String

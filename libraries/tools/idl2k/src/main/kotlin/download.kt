@@ -23,11 +23,14 @@ import java.io.File
 import java.net.URL
 
 val urls = listOf(
+//        "http://heycam.github.io/webidl/" to "org.w3c.webidl"
         "https://raw.githubusercontent.com/whatwg/html-mirror/master/source" to "org.w3c.dom",
         "https://html.spec.whatwg.org/" to "org.w3c.dom",
         "https://raw.githubusercontent.com/whatwg/dom/master/dom.html" to "org.w3c.dom",
         "http://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
         "https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html" to "org.w3c.dom",
+        "http://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
+        "http://www.w3.org/TR/hr-time/" to "org.w3c.time",
         "https://raw.githubusercontent.com/whatwg/xhr/master/Overview.src.html" to "org.w3c.xhr",
         "https://raw.githubusercontent.com/w3c/FileAPI/gh-pages/index.html" to "org.w3c.files",
         "https://raw.githubusercontent.com/whatwg/notifications/master/notifications.html" to "org.w3c.notifications",

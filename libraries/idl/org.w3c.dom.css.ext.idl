@@ -93,7 +93,7 @@ partial interface CSSStyleDeclaration {
     attribute String flexGrow;
     attribute String flexShrink;
     attribute String flexWrap;
-    attribute String float;
+    attribute String cssFloat;
     attribute String font;
     attribute String fontFamily;
     attribute String fontFeatureSettings;

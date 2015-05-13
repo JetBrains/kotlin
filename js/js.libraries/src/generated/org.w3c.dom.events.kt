@@ -15,6 +15,7 @@ import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.files.*
 import org.w3c.notifications.*
+import org.w3c.time.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 

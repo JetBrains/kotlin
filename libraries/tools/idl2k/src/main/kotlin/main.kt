@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
     outDir.deleteRecursively()
     outDir.mkdirs()
 
-    val repository = srcDir.walkTopDown().filter { it.isDirectory() || it.extension == "idl" }.asSequence().filter {it.isFile()}.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
+    val repository = srcDir.walkTopDown().filter { it.isDirectory() || it.extension == "idl" }.asSequence().filter { it.isFile() }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
         val fileRepository = parseIDL(ANTLRFileStream(e.getAbsolutePath(), "UTF-8"))
 
         Repository(
@@ -28,6 +28,7 @@ fun main(args: Array<String>) {
     }
 
     val definitions = mapDefinitions(repository, repository.interfaces.values())
+    val unions = generateUnions(definitions, repository.typeDefs.values())
     val allPackages = definitions.map { it.namespace }.distinct().sort()
 
     allPackages.forEach { pkg ->
@@ -43,19 +44,19 @@ fun main(args: Array<String>) {
             w.appendln("package ${pkg}")
             w.appendln()
 
-            allPackages.filter {it != pkg}.forEach { import ->
+            allPackages.filter { it != pkg }.forEach { import ->
                 w.appendln("import ${import}.*")
             }
             w.appendln()
 
-            w.render(pkg, definitions, repository.typeDefs.values())
+            w.render(pkg, definitions, unions)
         }
     }
 }
 
-private fun <K, V> Map<K, List<V>>.reduceValues(reduce : (V, V) -> V = {a, b -> b}) : Map<K, V> = mapValues { it.value.reduce(reduce) }
+private fun <K, V> Map<K, List<V>>.reduceValues(reduce: (V, V) -> V = { a, b -> b }): Map<K, V> = mapValues { it.value.reduce(reduce) }
 
-private fun <K, V> Map<K, V>.mergeReduce(other : Map<K, V>, reduce : (V, V) -> V = {a, b -> b}) : Map<K, V> {
+private fun <K, V> Map<K, V>.mergeReduce(other: Map<K, V>, reduce: (V, V) -> V = { a, b -> b }): Map<K, V> {
     val result = LinkedHashMap<K, V>(this.size() + other.size())
     result.putAll(this)
     other.forEach { e ->
@@ -63,7 +64,8 @@ private fun <K, V> Map<K, V>.mergeReduce(other : Map<K, V>, reduce : (V, V) -> V
 
         if (existing == null) {
             result[e.key] = e.value
-        } else {
+        }
+        else {
             result[e.key] = reduce(e.value, existing)
         }
     }
@@ -71,7 +73,7 @@ private fun <K, V> Map<K, V>.mergeReduce(other : Map<K, V>, reduce : (V, V) -> V
     return result
 }
 
-private fun <K, V> Map<K, List<V>>.merge(other : Map<K, List<V>>) : Map<K, List<V>> {
+private fun <K, V> Map<K, List<V>>.merge(other: Map<K, List<V>>): Map<K, List<V>> {
     val result = LinkedHashMap<K, MutableList<V>>(size() + other.size())
     this.forEach {
         result[it.key] = ArrayList(it.value)
@@ -80,7 +82,8 @@ private fun <K, V> Map<K, List<V>>.merge(other : Map<K, List<V>>) : Map<K, List<
         val list = result[it.key]
         if (list == null) {
             result[it.key] = ArrayList(it.value)
-        } else {
+        }
+        else {
             list.addAll(it.value)
         }
     }

@@ -16,28 +16,29 @@ import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.files.*
 import org.w3c.notifications.*
+import org.w3c.time.*
 import org.w3c.workers.*
 
 native public trait XMLHttpRequestEventTarget : EventTarget {
-    var onloadstart: (Event) -> Unit
+    var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onprogress: (Event) -> Unit
+    var onprogress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onabort: (Event) -> Unit
+    var onabort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onload: (Event) -> Unit
+    var onload: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ontimeout: (Event) -> Unit
+    var ontimeout: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadend: (Event) -> Unit
+    var onloadend: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
 }
@@ -46,7 +47,7 @@ native public trait XMLHttpRequestUpload : XMLHttpRequestEventTarget {
 }
 
 native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
-    var onreadystatechange: (Event) -> Unit
+    var onreadystatechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var readyState: Short
@@ -73,7 +74,7 @@ native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
     var responseType: String
         get() = noImpl
         set(value) = noImpl
-    var response: Any?
+    var response: dynamic
         get() = noImpl
         set(value) = noImpl
     var responseText: String
@@ -104,7 +105,7 @@ native public open class FormData(form: HTMLFormElement = noImpl) {
     fun append(name: String, value: dynamic): Unit = noImpl
     fun delete(name: String): Unit = noImpl
     fun get(name: String): dynamic = noImpl
-    fun getAll(name: String): Any = noImpl
+    fun getAll(name: String): Array<dynamic> = noImpl
     fun has(name: String): Boolean = noImpl
     fun set(name: String, value: dynamic): Unit = noImpl
 }

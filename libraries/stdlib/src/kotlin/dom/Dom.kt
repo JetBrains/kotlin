@@ -170,7 +170,7 @@ public fun Element.addClass(vararg cssClasses: String): Boolean {
         val presentClasses = classes.trim()
         classes = StringBuilder {
             append(presentClasses)
-            if (presentClasses != "") {
+            if (!presentClasses.isEmpty()) {
                 append(" ")
             }
             missingClasses.joinTo(this, " ")

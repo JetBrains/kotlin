@@ -65,7 +65,7 @@ private fun Appendable.renderFunctionDeclaration(allTypes: Set<String>, f: Gener
 
     when (f.nativeGetterOrSetter) {
         NativeGetterOrSetter.GETTER -> append("nativeGetter ")
-        NativeGetterOrSetter.GETTER -> append("nativeSetter ")
+        NativeGetterOrSetter.SETTER -> append("nativeSetter ")
     }
 
     if (override) {
@@ -150,33 +150,19 @@ private fun Pair<String, String>.betterName() = if (((0..9).map { it.toString() 
 
 fun <K, V> List<Pair<K, V>>.toMultiMap(): Map<K, List<V>> = groupBy { it.first }.mapValues { it.value.map { it.second } }
 
-fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<TypedefDefinition>) {
+fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, unions : GenerateUnionTypes) {
     val declaredTypes = ifaces.toMap { it.name }
 
-    val anonymousUnionTypes = collectUnionTypes(declaredTypes)
-    val anonymousUnionTypeTraits = generateUnionTypeTraits(anonymousUnionTypes)
-    val anonymousUnionsMap = anonymousUnionTypeTraits.toMap { it.name }
-
-    val typedefsToBeGenerated = typedefs.filter { it.types.startsWith("Union<") }
-            .filter { it.namespace == namespace }
-            .map { NamedValue(it.name, UnionType(namespace, splitUnionType(it.types))) }
-            .filter { it.value.memberTypes.all { type -> type in declaredTypes } }
-    val typedefsMarkerTraits = typedefsToBeGenerated.groupBy { it.name }.mapValues { mapUnionType(it.value.first().value).copy(name = it.key) }
-
-    // TODO better name, extract duplication
-    val typeNamesToUnions = anonymousUnionTypes.flatMap { unionType -> unionType.memberTypes.map { unionMember -> unionMember to unionType.name } }.toMultiMap()
-    typedefsToBeGenerated.flatMap { typedef -> typedef.value.memberTypes.map { unionMember -> unionMember to typedef.name } }.toMultiMap()
-
-    val allTypes = declaredTypes + anonymousUnionsMap + typedefsMarkerTraits
+    val allTypes = declaredTypes + unions.anonymousUnionsMap + unions.typedefsMarkersMap
     declaredTypes.values().filter { it.namespace == namespace }.forEach {
-        render(allTypes, typeNamesToUnions, it)
+        render(allTypes, unions.typeNamesToUnions, it)
     }
 
-    anonymousUnionTypeTraits.filter { it.namespace == "" || it.namespace == namespace }.forEach {
+    unions.anonymousUnionsMap.values().filter { it.namespace == "" || it.namespace == namespace }.forEach {
         render(allTypes, emptyMap(), it, markerAnnotation = true)
     }
 
-    typedefsMarkerTraits.values().filter { it.namespace == "" || it.namespace == namespace }.forEach {
+    unions.typedefsMarkersMap.values().filter { it.namespace == "" || it.namespace == namespace }.forEach {
         render(allTypes, emptyMap(), it, markerAnnotation = true)
     }
 }

@@ -15,6 +15,7 @@ import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.files.*
 import org.w3c.notifications.*
+import org.w3c.time.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
@@ -39,13 +40,13 @@ native public trait HTMLOptionsCollection : HTMLCollection {
     var selectedIndex: Int
         get() = noImpl
         set(value) = noImpl
-    fun set(index: Int, option: HTMLOptionElement?): Unit? = noImpl
+    nativeSetter fun set(index: Int, option: HTMLOptionElement?): Unit = noImpl
     fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = null): Unit = noImpl
     fun remove(index: Int): Unit = noImpl
 }
 
 native public trait HTMLPropertiesCollection : HTMLCollection {
-    var names: dynamic
+    var names: Array<String>
         get() = noImpl
         set(value) = noImpl
 //    override fun namedItem(name: String): PropertyNodeList? = noImpl
@@ -53,20 +54,17 @@ native public trait HTMLPropertiesCollection : HTMLCollection {
 }
 
 native public trait PropertyNodeList : NodeList {
-    fun getValues(): Any = noImpl
+    fun getValues(): Array<dynamic> = noImpl
 }
 
 native public trait DOMStringMap {
     nativeGetter fun get(name: String): String? = noImpl
-    fun set(name: String, value: String): Unit? = noImpl
+    nativeSetter fun set(name: String, value: String): Unit = noImpl
 }
 
 native public trait DOMElementMap {
     nativeGetter fun get(name: String): Element? = noImpl
-    fun set(name: String, value: Element): Unit? = noImpl
-}
-
-native public trait FileCallback {
+    nativeSetter fun set(name: String, value: Element): Unit = noImpl
 }
 
 native public open class Document : Node {
@@ -76,10 +74,10 @@ native public open class Document : Node {
     var fullscreenElement: Element?
         get() = noImpl
         set(value) = noImpl
-    var onfullscreenchange: (Event) -> Unit
+    var onfullscreenchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onfullscreenerror: (Event) -> Unit
+    var onfullscreenerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var styleSheets: StyleSheetList
@@ -94,7 +92,7 @@ native public open class Document : Node {
     var preferredStyleSheetSet: String?
         get() = noImpl
         set(value) = noImpl
-    var styleSheetSets: dynamic
+    var styleSheetSets: Array<String>
         get() = noImpl
         set(value) = noImpl
     var location: Location?
@@ -163,7 +161,7 @@ native public open class Document : Node {
     var commands: HTMLCollection
         get() = noImpl
         set(value) = noImpl
-    var onreadystatechange: (Event) -> Unit
+    var onreadystatechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var fgColor: String
@@ -220,193 +218,193 @@ native public open class Document : Node {
     var documentElement: Element?
         get() = noImpl
         set(value) = noImpl
-    var onabort: (Event) -> Unit
+    var onabort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onautocomplete: (Event) -> Unit
+    var onautocomplete: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onautocompleteerror: (Event) -> Unit
+    var onautocompleteerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onblur: (Event) -> Unit
+    var onblur: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncancel: (Event) -> Unit
+    var oncancel: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncanplay: (Event) -> Unit
+    var oncanplay: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncanplaythrough: (Event) -> Unit
+    var oncanplaythrough: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onchange: (Event) -> Unit
+    var onchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onclick: (Event) -> Unit
+    var onclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onclose: (Event) -> Unit
+    var onclose: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncontextmenu: (Event) -> Unit
+    var oncontextmenu: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncuechange: (Event) -> Unit
+    var oncuechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondblclick: (Event) -> Unit
+    var ondblclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondrag: (Event) -> Unit
+    var ondrag: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragend: (Event) -> Unit
+    var ondragend: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragenter: (Event) -> Unit
+    var ondragenter: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragexit: (Event) -> Unit
+    var ondragexit: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragleave: (Event) -> Unit
+    var ondragleave: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragover: (Event) -> Unit
+    var ondragover: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragstart: (Event) -> Unit
+    var ondragstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondrop: (Event) -> Unit
+    var ondrop: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondurationchange: (Event) -> Unit
+    var ondurationchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onemptied: (Event) -> Unit
+    var onemptied: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onended: (Event) -> Unit
+    var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: OnErrorEventHandlerNonNull?
+    var onerror: ((dynamic,dynamic,String,Int,Int,dynamic) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onfocus: (Event) -> Unit
+    var onfocus: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oninput: (Event) -> Unit
+    var oninput: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oninvalid: (Event) -> Unit
+    var oninvalid: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeydown: (Event) -> Unit
+    var onkeydown: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeypress: (Event) -> Unit
+    var onkeypress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeyup: (Event) -> Unit
+    var onkeyup: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onload: (Event) -> Unit
+    var onload: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadeddata: (Event) -> Unit
+    var onloadeddata: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadedmetadata: (Event) -> Unit
+    var onloadedmetadata: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadstart: (Event) -> Unit
+    var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousedown: (Event) -> Unit
+    var onmousedown: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseenter: (Event) -> Unit
+    var onmouseenter: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseleave: (Event) -> Unit
+    var onmouseleave: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousemove: (Event) -> Unit
+    var onmousemove: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseout: (Event) -> Unit
+    var onmouseout: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseover: (Event) -> Unit
+    var onmouseover: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseup: (Event) -> Unit
+    var onmouseup: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousewheel: (Event) -> Unit
+    var onmousewheel: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpause: (Event) -> Unit
+    var onpause: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onplay: (Event) -> Unit
+    var onplay: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onplaying: (Event) -> Unit
+    var onplaying: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onprogress: (Event) -> Unit
+    var onprogress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onratechange: (Event) -> Unit
+    var onratechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onreset: (Event) -> Unit
+    var onreset: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onresize: (Event) -> Unit
+    var onresize: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onscroll: (Event) -> Unit
+    var onscroll: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onseeked: (Event) -> Unit
+    var onseeked: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onseeking: (Event) -> Unit
+    var onseeking: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onselect: (Event) -> Unit
+    var onselect: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onshow: (Event) -> Unit
+    var onshow: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsort: (Event) -> Unit
+    var onsort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onstalled: (Event) -> Unit
+    var onstalled: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsubmit: (Event) -> Unit
+    var onsubmit: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsuspend: (Event) -> Unit
+    var onsuspend: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ontimeupdate: (Event) -> Unit
+    var ontimeupdate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ontoggle: (Event) -> Unit
+    var ontoggle: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onvolumechange: (Event) -> Unit
+    var onvolumechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onwaiting: (Event) -> Unit
+    var onwaiting: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var children: HTMLCollection
@@ -508,7 +506,7 @@ native public trait HTMLElement : Element {
     var properties: HTMLPropertiesCollection
         get() = noImpl
         set(value) = noImpl
-    var itemValue: Any?
+    var itemValue: dynamic
         get() = noImpl
         set(value) = noImpl
     var hidden: Boolean
@@ -553,193 +551,193 @@ native public trait HTMLElement : Element {
     var commandChecked: Boolean?
         get() = noImpl
         set(value) = noImpl
-    var onabort: (Event) -> Unit
+    var onabort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onautocomplete: (Event) -> Unit
+    var onautocomplete: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onautocompleteerror: (Event) -> Unit
+    var onautocompleteerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onblur: (Event) -> Unit
+    var onblur: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncancel: (Event) -> Unit
+    var oncancel: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncanplay: (Event) -> Unit
+    var oncanplay: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncanplaythrough: (Event) -> Unit
+    var oncanplaythrough: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onchange: (Event) -> Unit
+    var onchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onclick: (Event) -> Unit
+    var onclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onclose: (Event) -> Unit
+    var onclose: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncontextmenu: (Event) -> Unit
+    var oncontextmenu: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncuechange: (Event) -> Unit
+    var oncuechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondblclick: (Event) -> Unit
+    var ondblclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondrag: (Event) -> Unit
+    var ondrag: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragend: (Event) -> Unit
+    var ondragend: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragenter: (Event) -> Unit
+    var ondragenter: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragexit: (Event) -> Unit
+    var ondragexit: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragleave: (Event) -> Unit
+    var ondragleave: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragover: (Event) -> Unit
+    var ondragover: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragstart: (Event) -> Unit
+    var ondragstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondrop: (Event) -> Unit
+    var ondrop: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondurationchange: (Event) -> Unit
+    var ondurationchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onemptied: (Event) -> Unit
+    var onemptied: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onended: (Event) -> Unit
+    var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: OnErrorEventHandlerNonNull?
+    var onerror: ((dynamic,dynamic,String,Int,Int,dynamic) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onfocus: (Event) -> Unit
+    var onfocus: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oninput: (Event) -> Unit
+    var oninput: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oninvalid: (Event) -> Unit
+    var oninvalid: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeydown: (Event) -> Unit
+    var onkeydown: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeypress: (Event) -> Unit
+    var onkeypress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeyup: (Event) -> Unit
+    var onkeyup: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onload: (Event) -> Unit
+    var onload: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadeddata: (Event) -> Unit
+    var onloadeddata: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadedmetadata: (Event) -> Unit
+    var onloadedmetadata: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadstart: (Event) -> Unit
+    var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousedown: (Event) -> Unit
+    var onmousedown: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseenter: (Event) -> Unit
+    var onmouseenter: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseleave: (Event) -> Unit
+    var onmouseleave: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousemove: (Event) -> Unit
+    var onmousemove: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseout: (Event) -> Unit
+    var onmouseout: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseover: (Event) -> Unit
+    var onmouseover: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseup: (Event) -> Unit
+    var onmouseup: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousewheel: (Event) -> Unit
+    var onmousewheel: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpause: (Event) -> Unit
+    var onpause: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onplay: (Event) -> Unit
+    var onplay: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onplaying: (Event) -> Unit
+    var onplaying: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onprogress: (Event) -> Unit
+    var onprogress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onratechange: (Event) -> Unit
+    var onratechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onreset: (Event) -> Unit
+    var onreset: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onresize: (Event) -> Unit
+    var onresize: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onscroll: (Event) -> Unit
+    var onscroll: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onseeked: (Event) -> Unit
+    var onseeked: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onseeking: (Event) -> Unit
+    var onseeking: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onselect: (Event) -> Unit
+    var onselect: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onshow: (Event) -> Unit
+    var onshow: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsort: (Event) -> Unit
+    var onsort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onstalled: (Event) -> Unit
+    var onstalled: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsubmit: (Event) -> Unit
+    var onsubmit: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsuspend: (Event) -> Unit
+    var onsuspend: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ontimeupdate: (Event) -> Unit
+    var ontimeupdate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ontoggle: (Event) -> Unit
+    var ontoggle: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onvolumechange: (Event) -> Unit
+    var onvolumechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onwaiting: (Event) -> Unit
+    var onwaiting: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var contentEditable: String
@@ -872,43 +870,43 @@ native public trait HTMLBodyElement : HTMLElement {
     var background: String
         get() = noImpl
         set(value) = noImpl
-    var onafterprint: (Event) -> Unit
+    var onafterprint: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onbeforeprint: (Event) -> Unit
+    var onbeforeprint: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onbeforeunload: OnBeforeUnloadEventHandlerNonNull?
+    var onbeforeunload: ((Event) -> String?)?
         get() = noImpl
         set(value) = noImpl
-    var onhashchange: (Event) -> Unit
+    var onhashchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onlanguagechange: (Event) -> Unit
+    var onlanguagechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onoffline: (Event) -> Unit
+    var onoffline: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ononline: (Event) -> Unit
+    var ononline: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpagehide: (Event) -> Unit
+    var onpagehide: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpageshow: (Event) -> Unit
+    var onpageshow: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpopstate: (Event) -> Unit
+    var onpopstate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onstorage: (Event) -> Unit
+    var onstorage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onunload: (Event) -> Unit
+    var onunload: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
 }
@@ -1237,7 +1235,7 @@ native public trait HTMLParamElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLVideoElement : HTMLMediaElement {
+native public trait HTMLVideoElement : HTMLMediaElement, CanvasImageSource, ImageBitmapSource {
     var width: Int
         get() = noImpl
         set(value) = noImpl
@@ -1433,13 +1431,13 @@ native public trait AudioTrackList : EventTarget {
     var length: Int
         get() = noImpl
         set(value) = noImpl
-    var onchange: (Event) -> Unit
+    var onchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onaddtrack: (Event) -> Unit
+    var onaddtrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onremovetrack: (Event) -> Unit
+    var onremovetrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     nativeGetter fun get(index: Int): AudioTrack? = noImpl
@@ -1471,13 +1469,13 @@ native public trait VideoTrackList : EventTarget {
     var selectedIndex: Int
         get() = noImpl
         set(value) = noImpl
-    var onchange: (Event) -> Unit
+    var onchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onaddtrack: (Event) -> Unit
+    var onaddtrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onremovetrack: (Event) -> Unit
+    var onremovetrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     nativeGetter fun get(index: Int): VideoTrack? = noImpl
@@ -1539,46 +1537,46 @@ native public open class MediaController : EventTarget {
     var muted: Boolean
         get() = noImpl
         set(value) = noImpl
-    var onemptied: (Event) -> Unit
+    var onemptied: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadedmetadata: (Event) -> Unit
+    var onloadedmetadata: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadeddata: (Event) -> Unit
+    var onloadeddata: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncanplay: (Event) -> Unit
+    var oncanplay: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncanplaythrough: (Event) -> Unit
+    var oncanplaythrough: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onplaying: (Event) -> Unit
+    var onplaying: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onended: (Event) -> Unit
+    var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onwaiting: (Event) -> Unit
+    var onwaiting: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondurationchange: (Event) -> Unit
+    var ondurationchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ontimeupdate: (Event) -> Unit
+    var ontimeupdate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onplay: (Event) -> Unit
+    var onplay: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpause: (Event) -> Unit
+    var onpause: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onratechange: (Event) -> Unit
+    var onratechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onvolumechange: (Event) -> Unit
+    var onvolumechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun pause(): Unit = noImpl
@@ -1590,13 +1588,13 @@ native public trait TextTrackList : EventTarget {
     var length: Int
         get() = noImpl
         set(value) = noImpl
-    var onchange: (Event) -> Unit
+    var onchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onaddtrack: (Event) -> Unit
+    var onaddtrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onremovetrack: (Event) -> Unit
+    var onremovetrack: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     nativeGetter fun get(index: Int): TextTrack? = noImpl
@@ -1628,7 +1626,7 @@ native public trait TextTrack : EventTarget, UnionAudioTrackOrTextTrackOrVideoTr
     var activeCues: TextTrackCueList?
         get() = noImpl
         set(value) = noImpl
-    var oncuechange: (Event) -> Unit
+    var oncuechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun addCue(cue: TextTrackCue): Unit = noImpl
@@ -1659,10 +1657,10 @@ native public trait TextTrackCue : EventTarget {
     var pauseOnExit: Boolean
         get() = noImpl
         set(value) = noImpl
-    var onenter: (Event) -> Unit
+    var onenter: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onexit: (Event) -> Unit
+    var onexit: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
 }
@@ -2256,7 +2254,7 @@ native public trait HTMLSelectElement : HTMLElement {
     fun namedItem(name: String): HTMLOptionElement? = noImpl
     fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = null): Unit = noImpl
     fun remove(index: Int): Unit = noImpl
-    fun set(index: Int, option: HTMLOptionElement?): Unit? = noImpl
+    nativeSetter fun set(index: Int, option: HTMLOptionElement?): Unit = noImpl
     fun checkValidity(): Boolean = noImpl
     fun reportValidity(): Boolean = noImpl
     fun setCustomValidity(error: String): Unit = noImpl
@@ -2694,22 +2692,22 @@ native public trait HTMLTemplateElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLCanvasElement : HTMLElement {
+native public trait HTMLCanvasElement : HTMLElement, CanvasImageSource, ImageBitmapSource {
     var width: Int
         get() = noImpl
         set(value) = noImpl
     var height: Int
         get() = noImpl
         set(value) = noImpl
-    fun getContext(contextId: String, vararg arguments: Any?): RenderingContext? = noImpl
-    fun probablySupportsContext(contextId: String, vararg arguments: Any?): Boolean = noImpl
+    fun getContext(contextId: String, vararg arguments: dynamic): RenderingContext? = noImpl
+    fun probablySupportsContext(contextId: String, vararg arguments: dynamic): Boolean = noImpl
     fun setContext(context: RenderingContext): Unit = noImpl
     fun transferControlToProxy(): CanvasProxy = noImpl
-    fun toDataURL(type: String = noImpl, vararg arguments: Any?): String = noImpl
-    fun toBlob(_callback: ((dynamic) -> Unit)?, type: String = noImpl, vararg arguments: Any?): Unit = noImpl
+    fun toDataURL(type: String = noImpl, vararg arguments: dynamic): String = noImpl
+    fun toBlob(_callback: ((File) -> Unit)?, type: String = noImpl, vararg arguments: dynamic): Unit = noImpl
 }
 
-native public trait CanvasProxy {
+native public trait CanvasProxy : Transferable {
     fun setContext(context: RenderingContext): Unit = noImpl
 }
 
@@ -2717,7 +2715,7 @@ native public open class CanvasRenderingContext2DSettings {
     var alpha: Boolean = true
 }
 
-native public open class CanvasRenderingContext2D {
+native public open class CanvasRenderingContext2D : RenderingContext, CanvasImageSource, ImageBitmapSource {
     var canvas: HTMLCanvasElement
         get() = noImpl
         set(value) = noImpl
@@ -2829,8 +2827,8 @@ native public open class CanvasRenderingContext2D {
     fun getImageData(sx: Double, sy: Double, sw: Double, sh: Double): ImageData = noImpl
     fun putImageData(imagedata: ImageData, dx: Double, dy: Double): Unit = noImpl
     fun putImageData(imagedata: ImageData, dx: Double, dy: Double, dirtyX: Double, dirtyY: Double, dirtyWidth: Double, dirtyHeight: Double): Unit = noImpl
-    fun setLineDash(segments: Any): Unit = noImpl
-    fun getLineDash(): Any = noImpl
+    fun setLineDash(segments: Array<Double>): Unit = noImpl
+    fun getLineDash(): Array<Double> = noImpl
     fun closePath(): Unit = noImpl
     fun moveTo(x: Double, y: Double): Unit = noImpl
     fun lineTo(x: Double, y: Double): Unit = noImpl
@@ -2901,7 +2899,7 @@ native public open class HitRegionOptions {
     var role: String? = null
 }
 
-native public open class ImageData(sw: Int, sh: Int) {
+native public open class ImageData(sw: Int, sh: Int) : ImageBitmapSource {
     var width: Int
         get() = noImpl
         set(value) = noImpl
@@ -2941,8 +2939,8 @@ native public open class DrawingStyle(scope: Element = noImpl) {
     var direction: String
         get() = noImpl
         set(value) = noImpl
-    fun setLineDash(segments: Any): Unit = noImpl
-    fun getLineDash(): Any = noImpl
+    fun setLineDash(segments: Array<Double>): Unit = noImpl
+    fun getLineDash(): Array<Double> = noImpl
 }
 
 native public open class Path2D {
@@ -2980,7 +2978,7 @@ native public trait DataTransfer {
     var items: DataTransferItemList
         get() = noImpl
         set(value) = noImpl
-    var types: dynamic
+    var types: Array<String>
         get() = noImpl
         set(value) = noImpl
     var files: FileList
@@ -3010,11 +3008,8 @@ native public trait DataTransferItem {
     var type: String
         get() = noImpl
         set(value) = noImpl
-    fun getAsString(_callback: ((dynamic) -> Unit)?): Unit = noImpl
+    fun getAsString(_callback: ((String) -> Unit)?): Unit = noImpl
     fun getAsFile(): File? = noImpl
-}
-
-native public trait FunctionStringCallback {
 }
 
 native public open class DragEvent(type: String, eventInitDict: DragEventInit = noImpl) : MouseEvent(noImpl, noImpl) {
@@ -3082,7 +3077,7 @@ native public trait Window : EventTarget {
     var top: Window
         get() = noImpl
         set(value) = noImpl
-    var opener: Any?
+    var opener: dynamic
         get() = noImpl
         set(value) = noImpl
     var parent: Window
@@ -3100,232 +3095,232 @@ native public trait Window : EventTarget {
     var applicationCache: ApplicationCache
         get() = noImpl
         set(value) = noImpl
-    var onabort: (Event) -> Unit
+    var onabort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onautocomplete: (Event) -> Unit
+    var onautocomplete: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onautocompleteerror: (Event) -> Unit
+    var onautocompleteerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onblur: (Event) -> Unit
+    var onblur: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncancel: (Event) -> Unit
+    var oncancel: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncanplay: (Event) -> Unit
+    var oncanplay: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncanplaythrough: (Event) -> Unit
+    var oncanplaythrough: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onchange: (Event) -> Unit
+    var onchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onclick: (Event) -> Unit
+    var onclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onclose: (Event) -> Unit
+    var onclose: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncontextmenu: (Event) -> Unit
+    var oncontextmenu: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncuechange: (Event) -> Unit
+    var oncuechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondblclick: (Event) -> Unit
+    var ondblclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondrag: (Event) -> Unit
+    var ondrag: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragend: (Event) -> Unit
+    var ondragend: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragenter: (Event) -> Unit
+    var ondragenter: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragexit: (Event) -> Unit
+    var ondragexit: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragleave: (Event) -> Unit
+    var ondragleave: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragover: (Event) -> Unit
+    var ondragover: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondragstart: (Event) -> Unit
+    var ondragstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondrop: (Event) -> Unit
+    var ondrop: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondurationchange: (Event) -> Unit
+    var ondurationchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onemptied: (Event) -> Unit
+    var onemptied: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onended: (Event) -> Unit
+    var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: OnErrorEventHandlerNonNull?
+    var onerror: ((dynamic,dynamic,String,Int,Int,dynamic) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onfocus: (Event) -> Unit
+    var onfocus: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oninput: (Event) -> Unit
+    var oninput: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oninvalid: (Event) -> Unit
+    var oninvalid: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeydown: (Event) -> Unit
+    var onkeydown: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeypress: (Event) -> Unit
+    var onkeypress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onkeyup: (Event) -> Unit
+    var onkeyup: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onload: (Event) -> Unit
+    var onload: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadeddata: (Event) -> Unit
+    var onloadeddata: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadedmetadata: (Event) -> Unit
+    var onloadedmetadata: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadstart: (Event) -> Unit
+    var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousedown: (Event) -> Unit
+    var onmousedown: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseenter: (Event) -> Unit
+    var onmouseenter: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseleave: (Event) -> Unit
+    var onmouseleave: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousemove: (Event) -> Unit
+    var onmousemove: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseout: (Event) -> Unit
+    var onmouseout: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseover: (Event) -> Unit
+    var onmouseover: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmouseup: (Event) -> Unit
+    var onmouseup: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmousewheel: (Event) -> Unit
+    var onmousewheel: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpause: (Event) -> Unit
+    var onpause: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onplay: (Event) -> Unit
+    var onplay: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onplaying: (Event) -> Unit
+    var onplaying: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onprogress: (Event) -> Unit
+    var onprogress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onratechange: (Event) -> Unit
+    var onratechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onreset: (Event) -> Unit
+    var onreset: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onresize: (Event) -> Unit
+    var onresize: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onscroll: (Event) -> Unit
+    var onscroll: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onseeked: (Event) -> Unit
+    var onseeked: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onseeking: (Event) -> Unit
+    var onseeking: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onselect: (Event) -> Unit
+    var onselect: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onshow: (Event) -> Unit
+    var onshow: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsort: (Event) -> Unit
+    var onsort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onstalled: (Event) -> Unit
+    var onstalled: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsubmit: (Event) -> Unit
+    var onsubmit: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onsuspend: (Event) -> Unit
+    var onsuspend: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ontimeupdate: (Event) -> Unit
+    var ontimeupdate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ontoggle: (Event) -> Unit
+    var ontoggle: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onvolumechange: (Event) -> Unit
+    var onvolumechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onwaiting: (Event) -> Unit
+    var onwaiting: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onafterprint: (Event) -> Unit
+    var onafterprint: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onbeforeprint: (Event) -> Unit
+    var onbeforeprint: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onbeforeunload: OnBeforeUnloadEventHandlerNonNull?
+    var onbeforeunload: ((Event) -> String?)?
         get() = noImpl
         set(value) = noImpl
-    var onhashchange: (Event) -> Unit
+    var onhashchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onlanguagechange: (Event) -> Unit
+    var onlanguagechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onoffline: (Event) -> Unit
+    var onoffline: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ononline: (Event) -> Unit
+    var ononline: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpagehide: (Event) -> Unit
+    var onpagehide: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpageshow: (Event) -> Unit
+    var onpageshow: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpopstate: (Event) -> Unit
+    var onpopstate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onstorage: (Event) -> Unit
+    var onstorage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onunload: (Event) -> Unit
+    var onunload: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var sessionStorage: Storage
@@ -3347,20 +3342,20 @@ native public trait Window : EventTarget {
     fun confirm(message: String = ""): Boolean = noImpl
     fun prompt(message: String = "", default: String = ""): String? = noImpl
     fun print(): Unit = noImpl
-    fun showModalDialog(url: String, argument: Any? = noImpl): Any? = noImpl
-    fun requestAnimationFrame(callback: (dynamic) -> Unit): Int = noImpl
+    fun showModalDialog(url: String, argument: dynamic = noImpl): dynamic = noImpl
+    fun requestAnimationFrame(callback: (Double) -> Unit): Int = noImpl
     fun cancelAnimationFrame(handle: Int): Unit = noImpl
-    fun postMessage(message: Any?, targetOrigin: String, transfer: Any = noImpl): Unit = noImpl
+    fun postMessage(message: dynamic, targetOrigin: String, transfer: Array<Transferable> = noImpl): Unit = noImpl
     fun captureEvents(): Unit = noImpl
     fun releaseEvents(): Unit = noImpl
     fun getSelection(): Selection = noImpl
     fun btoa(btoa: String): String = noImpl
     fun atob(atob: String): String = noImpl
-    fun setTimeout(handler: (dynamic) -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
-    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
+    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
     fun clearTimeout(handle: Int = 0): Unit = noImpl
-    fun setInterval(handler: (dynamic) -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
-    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setInterval(handler: () -> dynamic, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
+    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
     fun clearInterval(handle: Int = 0): Unit = noImpl
     fun createImageBitmap(image: ImageBitmapSource): dynamic = noImpl
     fun createImageBitmap(image: ImageBitmapSource, sx: Int, sy: Int, sw: Int, sh: Int): dynamic = noImpl
@@ -3377,18 +3372,18 @@ native public trait History {
     var length: Int
         get() = noImpl
         set(value) = noImpl
-    var state: Any?
+    var state: dynamic
         get() = noImpl
         set(value) = noImpl
     fun go(delta: Int = noImpl): Unit = noImpl
     fun back(): Unit = noImpl
     fun forward(): Unit = noImpl
-    fun pushState(data: Any?, title: String, url: String? = null): Unit = noImpl
-    fun replaceState(data: Any?, title: String, url: String? = null): Unit = noImpl
+    fun pushState(data: dynamic, title: String, url: String? = null): Unit = noImpl
+    fun replaceState(data: dynamic, title: String, url: String? = null): Unit = noImpl
 }
 
 native public trait Location {
-    var ancestorOrigins: dynamic
+    var ancestorOrigins: Array<String>
         get() = noImpl
         set(value) = noImpl
     fun assign(url: String): Unit = noImpl
@@ -3397,13 +3392,13 @@ native public trait Location {
 }
 
 native public open class PopStateEvent(type: String, eventInitDict: PopStateEventInit = noImpl) : Event(type, eventInitDict) {
-    var state: Any?
+    var state: dynamic
         get() = noImpl
         set(value) = noImpl
 }
 
 native public open class PopStateEventInit : EventInit() {
-    var state: Any?
+    var state: dynamic
 }
 
 native public open class HashChangeEvent(type: String, eventInitDict: HashChangeEventInit = noImpl) : Event(type, eventInitDict) {
@@ -3440,28 +3435,28 @@ native public trait ApplicationCache : EventTarget {
     var status: Short
         get() = noImpl
         set(value) = noImpl
-    var onchecking: (Event) -> Unit
+    var onchecking: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onnoupdate: (Event) -> Unit
+    var onnoupdate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ondownloading: (Event) -> Unit
+    var ondownloading: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onprogress: (Event) -> Unit
+    var onprogress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onupdateready: (Event) -> Unit
+    var onupdateready: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var oncached: (Event) -> Unit
+    var oncached: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onobsolete: (Event) -> Unit
+    var onobsolete: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun update(): Unit = noImpl
@@ -3491,7 +3486,7 @@ native public open class ErrorEvent(type: String, eventInitDict: ErrorEventInit 
     var colno: Int
         get() = noImpl
         set(value) = noImpl
-    var error: Any?
+    var error: dynamic
         get() = noImpl
         set(value) = noImpl
 }
@@ -3501,16 +3496,7 @@ native public open class ErrorEventInit : EventInit() {
     var filename: String
     var lineno: Int
     var colno: Int
-    var error: Any?
-}
-
-native public trait EventHandlerNonNull {
-}
-
-native public trait OnErrorEventHandlerNonNull {
-}
-
-native public trait OnBeforeUnloadEventHandlerNonNull {
+    var error: dynamic
 }
 
 native public trait Navigator {
@@ -3541,7 +3527,7 @@ native public trait Navigator {
     var language: String?
         get() = noImpl
         set(value) = noImpl
-    var languages: dynamic
+    var languages: Array<String>
         get() = noImpl
         set(value) = noImpl
     var onLine: Boolean
@@ -3630,7 +3616,7 @@ native public trait External {
     fun IsSearchProviderInstalled(engineURL: String): Int = noImpl
 }
 
-native public trait ImageBitmap {
+native public trait ImageBitmap : CanvasImageSource, ImageBitmapSource {
     var width: Int
         get() = noImpl
         set(value) = noImpl
@@ -3640,7 +3626,7 @@ native public trait ImageBitmap {
 }
 
 native public open class MessageEvent(type: String, eventInitDict: MessageEventInit = noImpl) : Event(type, eventInitDict) {
-    var data: Any?
+    var data: dynamic
         get() = noImpl
         set(value) = noImpl
     var origin: String
@@ -3652,18 +3638,18 @@ native public open class MessageEvent(type: String, eventInitDict: MessageEventI
     var source: dynamic
         get() = noImpl
         set(value) = noImpl
-    var ports: dynamic
+    var ports: Array<dynamic>
         get() = noImpl
         set(value) = noImpl
-    fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: dynamic, portsArg: Any?): Unit = noImpl
+    fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: dynamic, originArg: String, lastEventIdArg: String, sourceArg: dynamic, portsArg: Array<dynamic>): Unit = noImpl
 }
 
 native public open class MessageEventInit : EventInit() {
-    var data: Any?
+    var data: dynamic
     var origin: String
     var lastEventId: String
     var source: dynamic
-    var ports: Any
+    var ports: Array<MessagePort>
 }
 
 native public open class EventSource(url: String, eventSourceInitDict: EventSourceInit = noImpl) : EventTarget {
@@ -3676,13 +3662,13 @@ native public open class EventSource(url: String, eventSourceInitDict: EventSour
     var readyState: Short
         get() = noImpl
         set(value) = noImpl
-    var onopen: (Event) -> Unit
+    var onopen: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun close(): Unit = noImpl
@@ -3708,13 +3694,13 @@ native public open class WebSocket(url: String, protocols: dynamic = noImpl) : E
     var bufferedAmount: Int
         get() = noImpl
         set(value) = noImpl
-    var onopen: (Event) -> Unit
+    var onopen: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onclose: (Event) -> Unit
+    var onclose: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var extensions: String
@@ -3723,7 +3709,7 @@ native public open class WebSocket(url: String, protocols: dynamic = noImpl) : E
     var protocol: String
         get() = noImpl
         set(value) = noImpl
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var binaryType: String
@@ -3770,11 +3756,11 @@ native public open class MessageChannel {
         set(value) = noImpl
 }
 
-native public trait MessagePort : EventTarget, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
-    var onmessage: (Event) -> Unit
+native public trait MessagePort : EventTarget, Transferable {
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: Any?, transfer: Any = noImpl): Unit = noImpl
+    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
     fun start(): Unit = noImpl
     fun close(): Unit = noImpl
 }
@@ -3783,20 +3769,17 @@ native public open class PortCollection {
     fun add(port: MessagePort): Unit = noImpl
     fun remove(port: MessagePort): Unit = noImpl
     fun clear(): Unit = noImpl
-    fun iterate(callback: (dynamic) -> Unit): Unit = noImpl
-}
-
-native public trait PortCollectionCallback {
+    fun iterate(callback: (MessagePort) -> Unit): Unit = noImpl
 }
 
 native public open class BroadcastChannel(channel: String) : EventTarget {
     var name: String
         get() = noImpl
         set(value) = noImpl
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: Any?): Unit = noImpl
+    fun postMessage(message: dynamic): Unit = noImpl
     fun close(): Unit = noImpl
 }
 
@@ -3810,16 +3793,16 @@ native public trait WorkerGlobalScope : EventTarget {
     var location: WorkerLocation
         get() = noImpl
         set(value) = noImpl
-    var onerror: OnErrorEventHandlerNonNull?
+    var onerror: ((dynamic,dynamic,String,Int,Int,dynamic) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onlanguagechange: (Event) -> Unit
+    var onlanguagechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onoffline: (Event) -> Unit
+    var onoffline: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ononline: (Event) -> Unit
+    var ononline: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var navigator: WorkerNavigator
@@ -3829,11 +3812,11 @@ native public trait WorkerGlobalScope : EventTarget {
     fun importScripts(vararg urls: String): Unit = noImpl
     fun createImageBitmap(image: ImageBitmapSource): dynamic = noImpl
     fun createImageBitmap(image: ImageBitmapSource, sx: Int, sy: Int, sw: Int, sh: Int): dynamic = noImpl
-    fun setTimeout(handler: (dynamic) -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
-    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
+    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
     fun clearTimeout(handle: Int = 0): Unit = noImpl
-    fun setInterval(handler: (dynamic) -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
-    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setInterval(handler: () -> dynamic, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
+    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: dynamic): Int = noImpl
     fun clearInterval(handle: Int = 0): Unit = noImpl
     fun btoa(btoa: String): String = noImpl
     fun atob(atob: String): String = noImpl
@@ -3841,10 +3824,10 @@ native public trait WorkerGlobalScope : EventTarget {
 }
 
 native public trait DedicatedWorkerGlobalScope : WorkerGlobalScope {
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: Any?, transfer: Any = noImpl): Unit = noImpl
+    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public trait SharedWorkerGlobalScope : WorkerGlobalScope {
@@ -3854,27 +3837,27 @@ native public trait SharedWorkerGlobalScope : WorkerGlobalScope {
     var applicationCache: ApplicationCache
         get() = noImpl
         set(value) = noImpl
-    var onconnect: (Event) -> Unit
+    var onconnect: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
 }
 
 native public open class Worker(scriptURL: String) : EventTarget {
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun terminate(): Unit = noImpl
-    fun postMessage(message: Any?, transfer: Any = noImpl): Unit = noImpl
+    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public open class SharedWorker(scriptURL: String, name: String = noImpl) : EventTarget {
     var port: MessagePort
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
 }
@@ -3907,7 +3890,7 @@ native public trait WorkerNavigator {
     var language: String?
         get() = noImpl
         set(value) = noImpl
-    var languages: dynamic
+    var languages: Array<String>
         get() = noImpl
         set(value) = noImpl
     var onLine: Boolean
@@ -3927,7 +3910,7 @@ native public trait Storage {
     fun getItem(key: String): String? = noImpl
     nativeGetter fun get(key: String): String? = noImpl
     fun setItem(key: String, value: String): Unit = noImpl
-    fun set(key: String, value: String): Unit? = noImpl
+    nativeSetter fun set(key: String, value: String): Unit = noImpl
     fun removeItem(key: String): Unit = noImpl
     fun clear(): Unit = noImpl
 }
@@ -4028,13 +4011,13 @@ native public trait HTMLMarqueeElement : HTMLElement {
     var width: String
         get() = noImpl
         set(value) = noImpl
-    var onbounce: (Event) -> Unit
+    var onbounce: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onfinish: (Event) -> Unit
+    var onfinish: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onstart: (Event) -> Unit
+    var onstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun start(): Unit = noImpl
@@ -4048,43 +4031,43 @@ native public trait HTMLFrameSetElement : HTMLElement {
     var rows: String
         get() = noImpl
         set(value) = noImpl
-    var onafterprint: (Event) -> Unit
+    var onafterprint: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onbeforeprint: (Event) -> Unit
+    var onbeforeprint: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onbeforeunload: OnBeforeUnloadEventHandlerNonNull?
+    var onbeforeunload: ((Event) -> String?)?
         get() = noImpl
         set(value) = noImpl
-    var onhashchange: (Event) -> Unit
+    var onhashchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onlanguagechange: (Event) -> Unit
+    var onlanguagechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onoffline: (Event) -> Unit
+    var onoffline: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var ononline: (Event) -> Unit
+    var ononline: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpagehide: (Event) -> Unit
+    var onpagehide: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpageshow: (Event) -> Unit
+    var onpageshow: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onpopstate: (Event) -> Unit
+    var onpopstate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onstorage: (Event) -> Unit
+    var onstorage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onunload: (Event) -> Unit
+    var onunload: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
 }
@@ -4140,7 +4123,7 @@ native public trait HTMLFontElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLImageElement : HTMLElement {
+native public trait HTMLImageElement : HTMLElement, CanvasImageSource, ImageBitmapSource {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -4253,14 +4236,14 @@ native public open class EventInit {
 }
 
 native public open class CustomEvent(type: String, eventInitDict: CustomEventInit = noImpl) : Event(type, eventInitDict) {
-    var detail: Any?
+    var detail: dynamic
         get() = noImpl
         set(value) = noImpl
-    fun initCustomEvent(type: String, bubbles: Boolean, cancelable: Boolean, detail: Any?): Unit = noImpl
+    fun initCustomEvent(type: String, bubbles: Boolean, cancelable: Boolean, detail: dynamic): Unit = noImpl
 }
 
 native public open class CustomEventInit : EventInit() {
-    var detail: Any? = null
+    var detail: dynamic = null
 }
 
 native public trait EventTarget {
@@ -4293,13 +4276,10 @@ native public trait HTMLCollection : UnionElementOrHTMLCollection {
     nativeGetter fun get(name: String): Element? = noImpl
 }
 
-native public open class MutationObserver(callback: (dynamic) -> Unit) {
+native public open class MutationObserver(callback: (Array<MutationRecord>,MutationObserver) -> Unit) {
     fun observe(target: Node, options: MutationObserverInit): Unit = noImpl
     fun disconnect(): Unit = noImpl
-    fun takeRecords(): Any = noImpl
-}
-
-native public trait MutationCallback {
+    fun takeRecords(): Array<MutationRecord> = noImpl
 }
 
 native public open class MutationObserverInit {
@@ -4309,7 +4289,7 @@ native public open class MutationObserverInit {
     var subtree: Boolean = false
     var attributeOldValue: Boolean
     var characterDataOldValue: Boolean
-    var attributeFilter: Any
+    var attributeFilter: Array<String>
 }
 
 native public trait MutationRecord {

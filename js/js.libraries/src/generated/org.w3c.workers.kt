@@ -16,6 +16,7 @@ import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.files.*
 import org.w3c.notifications.*
+import org.w3c.time.*
 import org.w3c.xhr.*
 
 native public trait ServiceWorkerRegistration : EventTarget {
@@ -31,7 +32,7 @@ native public trait ServiceWorkerRegistration : EventTarget {
     var scope: String
         get() = noImpl
         set(value) = noImpl
-    var onupdatefound: (Event) -> Unit
+    var onupdatefound: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var APISpace: dynamic
@@ -51,22 +52,22 @@ native public trait ServiceWorkerGlobalScope : WorkerGlobalScope {
     var registration: ServiceWorkerRegistration
         get() = noImpl
         set(value) = noImpl
-    var oninstall: (Event) -> Unit
+    var oninstall: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onactivate: (Event) -> Unit
+    var onactivate: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onfetch: (Event) -> Unit
+    var onfetch: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onfunctionalevent: (Event) -> Unit
+    var onfunctionalevent: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onnotificationclick: (Event) -> Unit
+    var onnotificationclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun skipWaiting(): dynamic = noImpl
@@ -82,13 +83,13 @@ native public trait ServiceWorker : EventTarget, UnionMessagePortOrServiceWorker
     var id: String
         get() = noImpl
         set(value) = noImpl
-    var onstatechange: (Event) -> Unit
+    var onstatechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: Any?, transfer: Any = noImpl): Unit = noImpl
+    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public trait ServiceWorkerContainer : EventTarget {
@@ -98,13 +99,13 @@ native public trait ServiceWorkerContainer : EventTarget {
     var ready: dynamic
         get() = noImpl
         set(value) = noImpl
-    var oncontrollerchange: (Event) -> Unit
+    var oncontrollerchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onmessage: (Event) -> Unit
+    var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun register(scriptURL: String, options: RegistrationOptions = noImpl): dynamic = noImpl
@@ -117,7 +118,7 @@ native public open class RegistrationOptions {
 }
 
 native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = noImpl) : Event(type, eventInitDict) {
-    var data: Any?
+    var data: dynamic
         get() = noImpl
         set(value) = noImpl
     var origin: String
@@ -129,18 +130,18 @@ native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: 
     var source: UnionMessagePortOrServiceWorker?
         get() = noImpl
         set(value) = noImpl
-    var ports: dynamic
+    var ports: Array<dynamic>
         get() = noImpl
         set(value) = noImpl
-    fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Any?): Unit = noImpl
+    fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: dynamic, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Array<dynamic>): Unit = noImpl
 }
 
 native public open class ServiceWorkerMessageEventInit : EventInit() {
-    var data: Any?
+    var data: dynamic
     var origin: String
     var lastEventId: String
     var source: UnionMessagePortOrServiceWorker?
-    var ports: Any
+    var ports: Array<MessagePort>
 }
 
 native public trait Client : UnionClientOrMessagePortOrServiceWorker {
@@ -153,7 +154,7 @@ native public trait Client : UnionClientOrMessagePortOrServiceWorker {
     var id: String
         get() = noImpl
         set(value) = noImpl
-    fun postMessage(message: Any?, transfer: Any = noImpl): Unit = noImpl
+    fun postMessage(message: dynamic, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public trait WindowClient : Client {
@@ -204,7 +205,7 @@ native public open class FetchEventInit : ExtendableEventInit() {
 }
 
 native public open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
-    var data: Any?
+    var data: dynamic
         get() = noImpl
         set(value) = noImpl
     var origin: String
@@ -216,25 +217,25 @@ native public open class ExtendableMessageEvent(type: String, eventInitDict: Ext
     var source: UnionClientOrMessagePortOrServiceWorker?
         get() = noImpl
         set(value) = noImpl
-    var ports: dynamic
+    var ports: Array<dynamic>
         get() = noImpl
         set(value) = noImpl
-    fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Any?): Unit = noImpl
+    fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: dynamic, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Array<dynamic>): Unit = noImpl
 }
 
 native public open class ExtendableMessageEventInit : ExtendableEventInit() {
-    var data: Any?
+    var data: dynamic
     var origin: String
     var lastEventId: String
     var source: UnionClientOrMessagePortOrServiceWorker?
-    var ports: Any
+    var ports: Array<MessagePort>
 }
 
 native public trait Cache {
     fun match(request: dynamic, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun matchAll(request: dynamic = noImpl, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun add(request: dynamic): dynamic = noImpl
-    fun addAll(requests: Any): dynamic = noImpl
+    fun addAll(requests: Array<dynamic>): dynamic = noImpl
     fun put(request: dynamic, response: Response): dynamic = noImpl
     fun delete(request: dynamic, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun keys(request: dynamic = noImpl, options: CacheQueryOptions = noImpl): dynamic = noImpl

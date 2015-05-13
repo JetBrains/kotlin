@@ -5100,4 +5100,10 @@ dictionary EditingInputEventInit : EventInit {
   DOMString command;
   DOMString value;
 };
+partial interface Window {
+  long requestAnimationFrame(FrameRequestCallback callback);
+  void cancelAnimationFrame(long handle);
+};
+
+callback FrameRequestCallback = void (DOMHighResTimeStamp time);
 

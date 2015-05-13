@@ -15,6 +15,7 @@ import org.w3c.dom.parsing.*
 import org.w3c.dom.svg.*
 import org.w3c.files.*
 import org.w3c.notifications.*
+import org.w3c.time.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
@@ -22,7 +23,7 @@ native public open class Headers(init: dynamic = noImpl) {
     fun append(name: String, value: String): Unit = noImpl
     fun delete(name: String): Unit = noImpl
     fun get(name: String): String? = noImpl
-    fun getAll(name: String): Any = noImpl
+    fun getAll(name: String): Array<String> = noImpl
     fun has(name: String): Boolean = noImpl
     fun set(name: String, value: String): Unit = noImpl
 }

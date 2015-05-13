@@ -15,10 +15,11 @@ import org.w3c.dom.parsing.*
 import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.notifications.*
+import org.w3c.time.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class Blob {
+native public open class Blob : ImageBitmapSource {
     var size: Long
         get() = noImpl
         set(value) = noImpl
@@ -36,7 +37,7 @@ native public open class BlobPropertyBag {
     var type: String = ""
 }
 
-native public open class File(fileBits: Any, fileName: String, options: FilePropertyBag = noImpl) : Blob() {
+native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob() {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -68,22 +69,22 @@ native public open class FileReader : EventTarget {
     var error: dynamic
         get() = noImpl
         set(value) = noImpl
-    var onloadstart: (Event) -> Unit
+    var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onprogress: (Event) -> Unit
+    var onprogress: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onload: (Event) -> Unit
+    var onload: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onabort: (Event) -> Unit
+    var onabort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: (Event) -> Unit
+    var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onloadend: (Event) -> Unit
+    var onloadend: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun readAsArrayBuffer(blob: Blob): Unit = noImpl

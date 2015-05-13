@@ -74,7 +74,7 @@ definition
 ;
 
 module
-	: 'module' IDENTIFIER_WEBIDL '{' definitions '}' ';'?
+	: 'module' IDENTIFIER_WEBIDL '{' definitions '}' ';'
 	;
 
 callbackOrInterface

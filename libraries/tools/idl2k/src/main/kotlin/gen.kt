@@ -10,21 +10,24 @@ private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet()
     }
 }
 
+fun String.isNullable() = endsWith(")?") || (endsWith("?") && !contains("->"))
+
 fun String.ensureNullable() = when {
-    endsWith("?") -> this
     this == "dynamic" -> this
+    isNullable() -> this
     contains("->") -> "($this)?"
     else -> "$this?"
 }
 
 fun String.dropNullable() = when {
     endsWith(")?") -> this.removeSuffix("?").removeSurrounding("(", ")")
+    contains("->") -> this
     endsWith("?") -> this.removeSuffix("?")
     else -> this
 }
 
 fun String.copyNullabilityFrom(type : String) = when {
-    type.endsWith("?") -> ensureNullable()
+    type.isNullable() -> ensureNullable()
     else -> this
 }
 
@@ -32,7 +35,7 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
         function.attributes.map { it.call }.toSet().let { attributes ->
             GenerateFunction(
                     name = functionName,
-                    returnType = mapType(repository, function.returnType).let { mapped -> if (nativeGetterOrSetter != NativeGetterOrSetter.NONE) mapped.ensureNullable() else mapped },
+                    returnType = mapType(repository, function.returnType).let { mapped -> if (nativeGetterOrSetter == NativeGetterOrSetter.GETTER) mapped.ensureNullable() else mapped },
                     arguments = function.parameters.map {
                         GenerateAttribute(
                                 name = it.name,
@@ -59,9 +62,11 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
         val interfaceType = repository.interfaces[it.type.dropNullable()]
         when {
             interfaceType == null -> it
+            interfaceType.operations.size() != 1 -> it
             interfaceType.callback -> interfaceType.operations.single().let { callbackFunction ->
                 it.copy(type = callbackFunction.parameters
-                        .map { mapType(repository, it.type) }
+                        .map { it.copy(type = mapType(repository, it.type)) }
+                        .map { it.formatFunctionTypePart() }
                         .join(",", "(", ") -> ${mapType(repository, callbackFunction.returnType)}")
                         .copyNullabilityFrom(it.type))
             }
@@ -71,7 +76,8 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
 
     val functionWithCallbackOrNull = when {
         callbackArgumentsAsLambdas == function.parameters -> null
-        else -> generateFunction(repository, function.copy(parameters = callbackArgumentsAsLambdas), function.name, NativeGetterOrSetter.NONE)
+        realFunction != null -> generateFunction(repository, function.copy(parameters = callbackArgumentsAsLambdas), function.name, NativeGetterOrSetter.NONE)
+        else -> null
     }
 
     return listOf(realFunction, getterOrSetterFunction, functionWithCallbackOrNull).filterNotNull()
@@ -88,8 +94,8 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
         )
 
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
-private fun resolveDefinitionType(repository: Repository, iface: InterfaceDefinition, constructor: ExtendedAttribute? = iface.findConstructor()): GenerateDefinitionKind =
-        if (iface.dictionary || constructor != null || iface.superTypes(repository).any { resolveDefinitionType(repository, it) == GenerateDefinitionKind.CLASS }) {
+private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructor: ExtendedAttribute? = iface.findConstructor()): GenerateDefinitionKind =
+        if (iface.dictionary || constructor != null || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }) {
             GenerateDefinitionKind.CLASS
         }
         else {
@@ -108,7 +114,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
     val constructorSuperCalls = iface.superTypes
             .map { repository.interfaces[it] }
             .filterNotNull()
-            .filter { resolveDefinitionType(repository, it) == GenerateDefinitionKind.CLASS }
+            .filter { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }
             .map {
                 val superConstructor = it.findConstructor()
                 GenerateFunctionCall(
@@ -123,10 +129,10 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
                 )
             }
 
-    val entityType = resolveDefinitionType(repository, iface, constructor)
+    val entityKind = resolveDefinitionKind(repository, iface, constructor)
     val extensions = repository.externals[iface.name]?.map { repository.interfaces[it] }?.filterNotNull() ?: emptyList()
 
-    return GenerateTraitOrClass(iface.name, iface.namespace, entityType, iface.superTypes,
+    return GenerateTraitOrClass(iface.name, iface.namespace, entityKind, iface.superTypes,
             memberAttributes = (iface.mapAttributes(repository) + extensions.flatMap { it.mapAttributes(repository) }).distinct().toList(),
             memberFunctions = (iface.mapOperations(repository) + extensions.flatMap { it.mapOperations(repository) }).distinct().toList(),
             constants = (iface.constants.map {it.mapConstant(repository)} + extensions.flatMap { it.constants.map {it.mapConstant(repository)} }.distinct().toList()),
@@ -151,3 +157,25 @@ fun generateUnionTypeTraits(allUnionTypes : Iterable<UnionType>): List<GenerateT
 
 fun mapDefinitions(repository: Repository, definitions: Iterable<InterfaceDefinition>) =
         definitions.filter { "NoInterfaceObject" !in it.extendedAttributes.map { it.call } }.map { generateTrait(repository, it) }
+
+fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<TypedefDefinition>) : GenerateUnionTypes {
+    val declaredTypes = ifaces.toMap { it.name }
+
+    val anonymousUnionTypes = collectUnionTypes(declaredTypes)
+    val anonymousUnionTypeTraits = generateUnionTypeTraits(anonymousUnionTypes)
+    val anonymousUnionsMap = anonymousUnionTypeTraits.toMap { it.name }
+
+    val typedefsToBeGenerated = typedefs.filter { it.types.startsWith("Union<") }
+            .map { NamedValue(it.name, UnionType(it.namespace, splitUnionType(it.types))) }
+            .filter { it.value.memberTypes.all { type -> type in declaredTypes } }
+    val typedefsMarkersMap = typedefsToBeGenerated.groupBy { it.name }.mapValues { mapUnionType(it.value.first().value).copy(name = it.key) }
+
+    val typeNamesToUnions = anonymousUnionTypes.flatMap { unionType -> unionType.memberTypes.map { unionMember -> unionMember to unionType.name } }.toMultiMap() +
+            typedefsToBeGenerated.flatMap { typedef -> typedef.value.memberTypes.map { unionMember -> unionMember to typedef.name } }.toMultiMap()
+
+    return GenerateUnionTypes(
+            typeNamesToUnions = typeNamesToUnions,
+            anonymousUnionsMap = anonymousUnionsMap,
+            typedefsMarkersMap = typedefsMarkersMap
+    )
+}
