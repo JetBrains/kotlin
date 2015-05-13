@@ -4747,6 +4747,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lastStatementInLoop2.kt")
+        public void testLastStatementInLoop2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatementInLoop2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("lastStatementNonUnitMethod.kt")
         public void testLastStatementNonUnitMethod() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/invertIfCondition/lastStatementNonUnitMethod.kt");
