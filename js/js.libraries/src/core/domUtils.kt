@@ -17,7 +17,6 @@
 package org.w3c.dom
 
 import java.util.AbstractList
-import kotlin.js.splitWithRegex
 
 private class HTMLCollectionListView(val collection: HTMLCollection) : AbstractList<HTMLElement>() {
     override fun size(): Int = collection.length
