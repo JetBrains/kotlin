@@ -2,9 +2,12 @@ LineBreakpoint created at twoLambdasOnOneLineSecond.kt:9
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! twoLambdasOnOneLineSecond.TwoLambdasOnOneLineSecondPackage
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 twoLambdasOnOneLineSecond.kt:9
-twoLambdasOnOneLineSecond.kt:16
+twoLambdasOnOneLineSecond.kt:14
 twoLambdasOnOneLineSecond.kt:9
-twoLambdasOnOneLineSecond.kt:16
+twoLambdasOnOneLineSecond.kt:0
+twoLambdasOnOneLineSecond.kt:14
+twoLambdasOnOneLineSecond.kt:9
+twoLambdasOnOneLineSecond.kt:14
 twoLambdasOnOneLineSecond.kt:9
 Compile bytecode for it
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'

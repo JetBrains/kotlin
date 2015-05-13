@@ -4,15 +4,13 @@ fun main(args: Array<String>) {
     val a = A()
     // EXPRESSION: it
     // RESULT: 2: I
-    // STEP_INTO: 4
+    // STEP_INTO: 7
     //Breakpoint!
-    a.foo { counter++; a }.foo { a }
+    a.foo(1) { a }.foo(2) { a }
 }
 
-var counter = 1
-
 class A {
-    fun foo(f: (Int) -> A): A {
-        return f(counter)
+    fun foo(i: Int, f: (Int) -> A): A {
+        return f(i)
     }
 }
