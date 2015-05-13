@@ -14,106 +14,93 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.vfilefinder;
+package org.jetbrains.kotlin.idea.vfilefinder
 
-import com.intellij.ide.highlighter.JavaClassFileType;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.util.indexing.*;
-import com.intellij.util.io.KeyDescriptor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache;
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
-import org.jetbrains.kotlin.name.FqName;
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.util.indexing.*
+import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
+import org.jetbrains.kotlin.name.FqName
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
+import java.io.DataInput
+import java.io.DataOutput
+import java.io.IOException
+import java.util.Collections
 
-public final class KotlinClassFileIndex extends ScalarIndexExtension<FqName> {
+public class KotlinClassFileIndex : ScalarIndexExtension<FqName>() {
 
-    private static final Logger LOG = Logger.getInstance(KotlinClassFileIndex.class);
-    private static final int VERSION = 2;
-    public static final ID<FqName, Void> KEY = ID.create(KotlinClassFileIndex.class.getCanonicalName());
+    override fun getName(): ID<FqName, Void> {
+        return KEY
+    }
 
-    private static final KeyDescriptor<FqName> KEY_DESCRIPTOR = new KeyDescriptor<FqName>() {
-        @Override
-        public void save(@NotNull DataOutput out, FqName value) throws IOException {
-            out.writeUTF(value.asString());
+    override fun getIndexer(): DataIndexer<FqName, Void, FileContent> {
+        return INDEXER
+    }
+
+    override fun getKeyDescriptor(): KeyDescriptor<FqName> {
+        return KEY_DESCRIPTOR
+    }
+
+    override fun getInputFilter(): FileBasedIndex.InputFilter {
+        return INPUT_FILTER
+    }
+
+    override fun dependsOnFileContent(): Boolean {
+        return true
+    }
+
+    override fun getVersion(): Int {
+        return VERSION
+    }
+
+    companion object {
+
+        private val LOG = Logger.getInstance(javaClass<KotlinClassFileIndex>())
+        private val VERSION = 2
+        public val KEY: ID<FqName, Void> = ID.create<FqName, Void>(javaClass<KotlinClassFileIndex>().getCanonicalName())
+
+        private val KEY_DESCRIPTOR = object : KeyDescriptor<FqName> {
+            throws(IOException::class)
+            override fun save(out: DataOutput, value: FqName) {
+                out.writeUTF(value.asString())
+            }
+
+            throws(IOException::class)
+            override fun read(`in`: DataInput): FqName {
+                return FqName(`in`.readUTF())
+            }
+
+            override fun getHashCode(value: FqName): Int {
+                return value.asString().hashCode()
+            }
+
+            override fun isEqual(val1: FqName?, val2: FqName?): Boolean {
+                return if (val1 == null) val2 == null else val1 == val2
+            }
         }
 
-        @Override
-        public FqName read(@NotNull DataInput in) throws IOException {
-            return new FqName(in.readUTF());
+        private val INPUT_FILTER = object : FileBasedIndex.InputFilter {
+            override fun acceptInput(file: VirtualFile): Boolean {
+                return file.getFileType() == JavaClassFileType.INSTANCE
+            }
         }
-
-        @Override
-        public int getHashCode(FqName value) {
-            return value.asString().hashCode();
-        }
-
-        @Override
-        public boolean isEqual(FqName val1, FqName val2) {
-            return val1 == null ? val2 == null : val1.equals(val2);
-        }
-    };
-
-    private static final FileBasedIndex.InputFilter INPUT_FILTER = new FileBasedIndex.InputFilter() {
-        @Override
-        public boolean acceptInput(@NotNull VirtualFile file) {
-            return file.getFileType() == JavaClassFileType.INSTANCE;
-        }
-    };
-    public static final DataIndexer<FqName, Void, FileContent> INDEXER = new DataIndexer<FqName, Void, FileContent>() {
-        @NotNull
-        @Override
-        public Map<FqName, Void> map(@NotNull FileContent inputData) {
-            try {
-                KotlinJvmBinaryClass kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(inputData.getFile());
-                if (kotlinClass != null && kotlinClass.getClassHeader().getIsCompatibleAbiVersion()) {
-                    return Collections.singletonMap(kotlinClass.getClassId().asSingleFqName(), null);
+        public val INDEXER: DataIndexer<FqName, Void, FileContent> = object : DataIndexer<FqName, Void, FileContent> {
+            override fun map(inputData: FileContent): Map<FqName, Void> {
+                try {
+                    val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(inputData.getFile())
+                    if (kotlinClass != null && kotlinClass.getClassHeader().isCompatibleAbiVersion) {
+                        return Collections.singletonMap<FqName, Void>(kotlinClass.getClassId().asSingleFqName(), null)
+                    }
                 }
+                catch (e: Throwable) {
+                    LOG.warn("Error while indexing file " + inputData.getFileName(), e)
+                }
+
+                return emptyMap()
             }
-            catch (Throwable e) {
-                LOG.warn("Error while indexing file " + inputData.getFileName(), e);
-            }
-            return Collections.emptyMap();
         }
-    };
-
-    @NotNull
-    @Override
-    public ID<FqName, Void> getName() {
-        return KEY;
-    }
-
-    @NotNull
-    @Override
-    public DataIndexer<FqName, Void, FileContent> getIndexer() {
-        return INDEXER;
-    }
-
-    @NotNull
-    @Override
-    public KeyDescriptor<FqName> getKeyDescriptor() {
-        return KEY_DESCRIPTOR;
-    }
-
-    @NotNull
-    @Override
-    public FileBasedIndex.InputFilter getInputFilter() {
-        return INPUT_FILTER;
-    }
-
-    @Override
-    public boolean dependsOnFileContent() {
-        return true;
-    }
-
-    @Override
-    public int getVersion() {
-        return VERSION;
     }
 }
