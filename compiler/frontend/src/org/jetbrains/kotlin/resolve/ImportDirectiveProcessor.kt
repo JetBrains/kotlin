@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.JetImportDirective
@@ -32,10 +33,10 @@ public class ImportDirectiveProcessor(
 ) {
     public fun processImportReference(
             importDirective: JetImportDirective,
-            scope: JetScope,
-            shouldBeVisibleFrom: DeclarationDescriptor,
+            moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
-            lookupMode: QualifiedExpressionResolver.LookupMode
+            lookupMode: QualifiedExpressionResolver.LookupMode,
+            allowClassesFromDefaultPackage: Boolean
     ): JetScope {
         if (importDirective.isAbsoluteInRootPackage()) {
             trace.report(Errors.UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")) // TODO
@@ -44,16 +45,17 @@ public class ImportDirectiveProcessor(
 
         val importedReference = importDirective.getImportedReference() ?: return JetScope.Empty
 
+        val scope = JetModuleUtil.getImportsResolutionScope(moduleDescriptor, allowClassesFromDefaultPackage)
         val descriptors = if (importedReference is JetQualifiedExpression) {
             //store result only when we find all descriptors, not only classes on the second phase
             qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                    importedReference, scope, shouldBeVisibleFrom, trace, lookupMode, lookupMode.isEverything()
+                    importedReference, scope, moduleDescriptor, trace, lookupMode, lookupMode.isEverything()
             )
         }
         else {
             assert(importedReference is JetSimpleNameExpression)
             qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                    importedReference as JetSimpleNameExpression, scope, shouldBeVisibleFrom, trace, lookupMode, true, lookupMode.isEverything()
+                    importedReference as JetSimpleNameExpression, scope, moduleDescriptor, trace, lookupMode, true, lookupMode.isEverything()
             )
         }
 

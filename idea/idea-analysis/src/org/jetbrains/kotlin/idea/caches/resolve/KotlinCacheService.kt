@@ -225,10 +225,9 @@ private class ResolutionFacadeImpl(private val project: Project, private val cac
     override fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName, isDefaultImport: Boolean): Collection<DeclarationDescriptor> {
         val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
         val resolveSession = cache.getLazyResolveSession(moduleDescriptor)
-        val scope = JetModuleUtil.getImportsResolutionScope(moduleDescriptor, !isDefaultImport)
         val resolver = resolveSession.getQualifiedExpressionResolver()
         return resolver.processImportReference(
-                importDirective, moduleDescriptor, scope, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
+                importDirective, moduleDescriptor, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING, !isDefaultImport).getAllDescriptors()
     }
 
     override fun <T> get(extension: CacheExtension<T>): T {
