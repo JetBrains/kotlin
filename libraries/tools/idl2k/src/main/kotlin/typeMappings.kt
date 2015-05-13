@@ -56,13 +56,14 @@ fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String, Genera
 }
 
 data class FunctionType(val parameterTypes : List<Attribute>, val returnType : String)
+
 val FunctionType.arity : Int
     get() = parameterTypes.size()
 val FunctionType.text : String
     get() = "(${parameterTypes.map { it.formatFunctionTypePart() }.join(",")}) -> ${returnType}"
 
 fun FunctionType(text : String) : FunctionType {
-    val (parameters, returnType) = text.split("->".toRegex()).map {it.trim()}.filter { it != "" }
+    val (parameters, returnType) = text.split("->".toRegex()).map { it.trim() }.filter { it != "" }
 
     return FunctionType(
             parameterTypes = parameters.removeSurrounding("(", ")").split(',')
@@ -80,14 +81,14 @@ fun String.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<String
     this in standardTypes -> this
     startsWith("Array<") -> "Array<" + removePrefix("Array<").removeSuffix(">").dynamicIfUnknownType(allTypes, standardTypes) + ">"
     startsWith("Union<") -> UnionType("", splitUnionType(this)).name.dynamicIfUnknownType(allTypes, standardTypes).copyNullabilityFrom(this)
-    this != dropNullable() -> dropNullable().dynamicIfUnknownType(allTypes, standardTypes).ensureNullable()
+    isNullable() -> dropNullable().dynamicIfUnknownType(allTypes, standardTypes).ensureNullable()
     contains("->") -> {
-        FunctionType(this).let { function ->
-            function.copy(
-                    returnType = function.returnType.dynamicIfUnknownType(allTypes, standardTypes),
-                    parameterTypes = function.parameterTypes.map { it.copy(type = it.type.dynamicIfUnknownType(allTypes, standardTypes)) }
-            ).text
-        }
+        val function = FunctionType(this)
+
+        function.copy(
+                returnType = function.returnType.dynamicIfUnknownType(allTypes, standardTypes),
+                parameterTypes = function.parameterTypes.map { it.copy(type = it.type.dynamicIfUnknownType(allTypes, standardTypes)) }
+        ).text
     }
     else -> "dynamic"
 }
@@ -103,7 +104,10 @@ private fun mapType(repository: Repository, type: String): String =
         type.startsWith("sequence") -> "Array<dynamic>"
         type in repository.typeDefs -> mapTypedef(repository, type)
         type in repository.enums -> "String"
-        type.contains("->") -> FunctionType(type).let { function ->
+        type.contains("->") -> {
+            val function = FunctionType(type)
+
+            // TODO: Remove takeWhile { !vararg } when we have varargs supported. See KT-3115
             function.copy(
                     returnType = mapType(repository, function.returnType),
                     parameterTypes = function.parameterTypes.takeWhile { !it.vararg }.map { it.copy(type = mapType(repository, it.type)) }

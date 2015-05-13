@@ -15,7 +15,7 @@ import org.w3c.dom.svg.*
 import org.w3c.fetch.*
 import org.w3c.files.*
 import org.w3c.notifications.*
-import org.w3c.time.*
+import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
@@ -3024,6 +3024,9 @@ native public open class DragEventInit : MouseEventInit() {
 
 native public trait Window : EventTarget {
     var caches: CacheStorage
+        get() = noImpl
+        set(value) = noImpl
+    var performance: Performance
         get() = noImpl
         set(value) = noImpl
     var window: Window

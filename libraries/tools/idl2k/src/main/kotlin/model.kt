@@ -101,7 +101,7 @@ fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtended
 fun InterfaceDefinition.findConstructor() = findExtendedAttribute("Constructor")
 
 data class GenerateUnionTypes(
-        val typeNamesToUnions : Map<String, List<String>>,
-        val anonymousUnionsMap : Map<String, GenerateTraitOrClass>,
-        val typedefsMarkersMap : Map<String, GenerateTraitOrClass>
+        val typeNamesToUnionsMap: Map<String, List<String>>,
+        val anonymousUnionsMap: Map<String, GenerateTraitOrClass>,
+        val typedefsMarkersMap: Map<String, GenerateTraitOrClass>
 )

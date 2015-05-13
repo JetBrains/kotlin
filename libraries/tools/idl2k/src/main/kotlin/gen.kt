@@ -174,7 +174,7 @@ fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<Typede
             typedefsToBeGenerated.flatMap { typedef -> typedef.value.memberTypes.map { unionMember -> unionMember to typedef.name } }.toMultiMap()
 
     return GenerateUnionTypes(
-            typeNamesToUnions = typeNamesToUnions,
+            typeNamesToUnionsMap = typeNamesToUnions,
             anonymousUnionsMap = anonymousUnionsMap,
             typedefsMarkersMap = typedefsMarkersMap
     )

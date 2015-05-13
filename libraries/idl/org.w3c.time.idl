@@ -1,8 +1,0 @@
-namespace org.w3c.time;
-
-
-typedef double DOMHighResTimeStamp;
-partial interface Performance {
-  DOMHighResTimeStamp now();
-};
-

@@ -42,7 +42,7 @@ private fun String.parse() = if (this.startsWith("0x")) BigInteger(this.substrin
 private fun String.replaceWrongConstants(type: String) = if (this == "noImpl" || type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong())) "noImpl" else this
 private fun String.replaceKeywords() = if (this in keywords) this + "_" else this
 
-private fun Appendable.renderArgumentsDeclaration(allTypes: Set<String>, args: List<GenerateAttribute>, omitDefaults: Boolean) =
+private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>, omitDefaults: Boolean) =
         args.map {
             StringBuilder {
                 if (it.vararg) {
@@ -60,7 +60,7 @@ private fun Appendable.renderArgumentsDeclaration(allTypes: Set<String>, args: L
 
 private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.map { it.replaceKeywords() }.join(", ")})"
 
-private fun Appendable.renderFunctionDeclaration(allTypes: Set<String>, f: GenerateFunction, override: Boolean) {
+private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: Boolean) {
     indent(1)
 
     when (f.nativeGetterOrSetter) {
@@ -76,7 +76,7 @@ private fun Appendable.renderFunctionDeclaration(allTypes: Set<String>, f: Gener
         append("native(\"${f.name}\") ")
     }
     append("fun ${f.name.replaceKeywords()}(")
-    renderArgumentsDeclaration(allTypes, f.arguments, override)
+    renderArgumentsDeclaration(f.arguments, override)
     appendln("): ${f.returnType} = noImpl")
 }
 
@@ -93,7 +93,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     append(iface.name)
     if (iface.constructor != null && iface.constructor.arguments.isNotEmpty()) {
         append("(")
-        renderArgumentsDeclaration(allTypes.keySet(), iface.constructor.arguments.map { it.dynamicIfUnknownType(allTypes.keySet()) }, false)
+        renderArgumentsDeclaration(iface.constructor.arguments.map { it.dynamicIfUnknownType(allTypes.keySet()) }, false)
         append(")")
     }
 
@@ -120,7 +120,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         renderAttributeDeclaration(arg, arg.signature in superSignatures)
     }
     iface.memberFunctions.filter { it !in superFunctions }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
-        renderFunctionDeclaration(allTypes.keySet(), it, it.signature in superSignatures)
+        renderFunctionDeclaration(it, it.signature in superSignatures)
     }
     if (iface.constants.isNotEmpty()) {
         appendln()
@@ -155,7 +155,7 @@ fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, uni
 
     val allTypes = declaredTypes + unions.anonymousUnionsMap + unions.typedefsMarkersMap
     declaredTypes.values().filter { it.namespace == namespace }.forEach {
-        render(allTypes, unions.typeNamesToUnions, it)
+        render(allTypes, unions.typeNamesToUnionsMap, it)
     }
 
     unions.anonymousUnionsMap.values().filter { it.namespace == "" || it.namespace == namespace }.forEach {

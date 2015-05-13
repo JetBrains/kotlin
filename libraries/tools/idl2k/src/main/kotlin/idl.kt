@@ -259,7 +259,7 @@ class ConstantVisitor : WebIDLBaseVisitor<Constant>() {
 }
 
 class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val namespace: String, val declarations: MutableList<Definition>) : WebIDLBaseVisitor<Definition>() {
-    private var kind: DefinitionKind = DefinitionKind.INTERFACE
+    private var kind = DefinitionKind.INTERFACE
     private var name = ""
     private val memberAttributes = ArrayList<ExtendedAttribute>()
     private val operations = ArrayList<Operation>()

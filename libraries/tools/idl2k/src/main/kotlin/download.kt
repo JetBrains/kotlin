@@ -23,26 +23,31 @@ import java.io.File
 import java.net.URL
 
 val urls = listOf(
-//        "http://heycam.github.io/webidl/" to "org.w3c.webidl"
         "https://raw.githubusercontent.com/whatwg/html-mirror/master/source" to "org.w3c.dom",
         "https://html.spec.whatwg.org/" to "org.w3c.dom",
         "https://raw.githubusercontent.com/whatwg/dom/master/dom.html" to "org.w3c.dom",
-        "http://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
         "https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html" to "org.w3c.dom",
         "http://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
-        "http://www.w3.org/TR/hr-time/" to "org.w3c.time",
-        "https://raw.githubusercontent.com/whatwg/xhr/master/Overview.src.html" to "org.w3c.xhr",
-        "https://raw.githubusercontent.com/w3c/FileAPI/gh-pages/index.html" to "org.w3c.files",
-        "https://raw.githubusercontent.com/whatwg/notifications/master/notifications.html" to "org.w3c.notifications",
-        "https://raw.githubusercontent.com/whatwg/fullscreen/master/Overview.src.html" to "org.w3c.fullscreen",
-        "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
-        "http://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html" to "org.w3c.workers",
-        "https://raw.githubusercontent.com/whatwg/fetch/master/Overview.src.html" to "org.w3c.fetch",
-        "http://www.w3.org/TR/vibration/" to "org.w3c.vibration",
+        "http://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
         "http://dev.w3.org/csswg/cssom/" to "org.w3c.dom.css",
+        "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
+
         "http://web.archive.org/web/20150317051602/http://www.w3.org/TR/SVG11/single-page.html" to "org.w3c.dom.svg",
         "https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl" to "org.khronos.webgl",
-        "https://www.khronos.org/registry/typedarray/specs/latest/typedarray.idl" to "org.khronos.webgl"
+        "https://www.khronos.org/registry/typedarray/specs/latest/typedarray.idl" to "org.khronos.webgl",
+
+        "https://raw.githubusercontent.com/whatwg/xhr/master/Overview.src.html" to "org.w3c.xhr",
+        "https://raw.githubusercontent.com/whatwg/fetch/master/Overview.src.html" to "org.w3c.fetch",
+        "https://raw.githubusercontent.com/w3c/FileAPI/gh-pages/index.html" to "org.w3c.files",
+
+        "https://raw.githubusercontent.com/whatwg/notifications/master/notifications.html" to "org.w3c.notifications",
+        "https://raw.githubusercontent.com/whatwg/fullscreen/master/Overview.src.html" to "org.w3c.fullscreen",
+        "http://www.w3.org/TR/vibration/" to "org.w3c.vibration",
+
+        "http://www.w3.org/TR/hr-time/" to "org.w3c.performance",
+        "http://www.w3.org/TR/2012/REC-navigation-timing-20121217/" to "org.w3c.performance",
+
+        "http://slightlyoff.github.io/ServiceWorker/spec/service_worker/index.html" to "org.w3c.workers"
 )
 
 fun main(args: Array<String>) {
@@ -61,7 +66,7 @@ fun main(args: Array<String>) {
             w.appendln()
 
             e.value.forEach { pair ->
-                val (url, _) = pair
+                val (url) = pair
                 println("Loading ${url}...")
 
                 if (url.endsWith(".idl")) {
