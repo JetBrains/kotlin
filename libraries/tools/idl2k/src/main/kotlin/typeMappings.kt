@@ -60,7 +60,7 @@ data class FunctionType(val parameterTypes : List<Attribute>, val returnType : S
 val FunctionType.arity : Int
     get() = parameterTypes.size()
 val FunctionType.text : String
-    get() = "(${parameterTypes.map { it.formatFunctionTypePart() }.join(",")}) -> ${returnType}"
+    get() = "(${parameterTypes.map { it.formatFunctionTypePart() }.join(", ")}) -> ${returnType}"
 
 fun FunctionType(text : String) : FunctionType {
     val (parameters, returnType) = text.split("->".toRegex()).map { it.trim() }.filter { it != "" }

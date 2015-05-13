@@ -67,7 +67,7 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
                 it.copy(type = callbackFunction.parameters
                         .map { it.copy(type = mapType(repository, it.type)) }
                         .map { it.formatFunctionTypePart() }
-                        .join(",", "(", ") -> ${mapType(repository, callbackFunction.returnType)}")
+                        .join(", ", "(", ") -> ${mapType(repository, callbackFunction.returnType)}")
                         .copyNullabilityFrom(it.type))
             }
             else -> it

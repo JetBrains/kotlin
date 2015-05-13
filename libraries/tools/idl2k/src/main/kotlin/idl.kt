@@ -290,7 +290,7 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
         name = getName(ctx)
 
         val function = OperationVisitor(memberAttributes.toList()).visit(ctx)
-        typedefType = "(${function.parameters.map { it.formatFunctionTypePart() }.join(",")}) -> ${function.returnType}"
+        typedefType = "(${function.parameters.map { it.formatFunctionTypePart() }.join(", ")}) -> ${function.returnType}"
 
         memberAttributes.clear()
         return defaultResult()

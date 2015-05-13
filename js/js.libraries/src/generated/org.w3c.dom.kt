@@ -290,7 +290,7 @@ native public open class Document : Node {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic,dynamic,String,Int,Int,dynamic) -> dynamic)?
+    var onerror: ((dynamic, dynamic, String, Int, Int, dynamic) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -623,7 +623,7 @@ native public trait HTMLElement : Element {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic,dynamic,String,Int,Int,dynamic) -> dynamic)?
+    var onerror: ((dynamic, dynamic, String, Int, Int, dynamic) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -3170,7 +3170,7 @@ native public trait Window : EventTarget {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic,dynamic,String,Int,Int,dynamic) -> dynamic)?
+    var onerror: ((dynamic, dynamic, String, Int, Int, dynamic) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -3796,7 +3796,7 @@ native public trait WorkerGlobalScope : EventTarget {
     var location: WorkerLocation
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic,dynamic,String,Int,Int,dynamic) -> dynamic)?
+    var onerror: ((dynamic, dynamic, String, Int, Int, dynamic) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onlanguagechange: ((Event) -> dynamic)?
@@ -4279,7 +4279,7 @@ native public trait HTMLCollection : UnionElementOrHTMLCollection {
     nativeGetter fun get(name: String): Element? = noImpl
 }
 
-native public open class MutationObserver(callback: (Array<MutationRecord>,MutationObserver) -> Unit) {
+native public open class MutationObserver(callback: (Array<MutationRecord>, MutationObserver) -> Unit) {
     fun observe(target: Node, options: MutationObserverInit): Unit = noImpl
     fun disconnect(): Unit = noImpl
     fun takeRecords(): Array<MutationRecord> = noImpl
