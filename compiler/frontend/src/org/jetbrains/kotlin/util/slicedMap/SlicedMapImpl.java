@@ -26,6 +26,7 @@ import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 public class SlicedMapImpl implements MutableSlicedMap {
@@ -35,7 +36,7 @@ public class SlicedMapImpl implements MutableSlicedMap {
     }
 
     private final Map<Object, UserDataHolderImpl> map = new THashMap<Object, UserDataHolderImpl>(0);
-    private final Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = ArrayListMultimap.create();
+    private Multimap<WritableSlice<?, ?>, Object> collectiveSliceKeys = null;
 
     @Override
     public <K, V> void put(WritableSlice<K, V> slice, K key, V value) {
@@ -63,6 +64,10 @@ public class SlicedMapImpl implements MutableSlicedMap {
         }
 
         if (slice.isCollective()) {
+            if (collectiveSliceKeys == null) {
+                collectiveSliceKeys = ArrayListMultimap.create();
+            }
+
             collectiveSliceKeys.put(slice, key);
         }
 
@@ -88,6 +93,8 @@ public class SlicedMapImpl implements MutableSlicedMap {
     @SuppressWarnings("unchecked")
     public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
         assert slice.isCollective() : "Keys are not collected for slice " + slice;
+
+        if (collectiveSliceKeys == null) return Collections.emptyList();
         return (Collection<K>) collectiveSliceKeys.get(slice);
     }
 
