@@ -1,6 +1,7 @@
 namespace org.w3c.notifications;
 
 
+// Downloaded from https://raw.githubusercontent.com/whatwg/notifications/master/notifications.html
 [Constructor(DOMString title, optional NotificationOptions options),
  Exposed=(Window,Worker)]
 interface Notification : EventTarget {

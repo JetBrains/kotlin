@@ -1,6 +1,7 @@
 namespace org.w3c.dom.css;
 
 
+// Downloaded from http://dev.w3.org/csswg/cssom/
 [ArrayClass]interface MediaList {
   [TreatNullAs=EmptyString] stringifier attribute DOMString mediaText;
   readonly attribute unsigned long length;

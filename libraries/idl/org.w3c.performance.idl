@@ -1,10 +1,12 @@
 namespace org.w3c.performance;
 
 
+// Downloaded from http://www.w3.org/TR/hr-time/
 typedef double DOMHighResTimeStamp;
 partial interface Performance {
   DOMHighResTimeStamp now();
 };
+// Downloaded from http://www.w3.org/TR/2012/REC-navigation-timing-20121217/
 interface PerformanceTiming {
   readonly attribute unsigned long long navigationStart;
   readonly attribute unsigned long long unloadEventStart;

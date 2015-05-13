@@ -1,6 +1,7 @@
 namespace org.w3c.fullscreen;
 
 
+// Downloaded from https://raw.githubusercontent.com/whatwg/fullscreen/master/Overview.src.html
 partial interface Element {
   void requestFullscreen();
 };

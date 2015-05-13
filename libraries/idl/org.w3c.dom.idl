@@ -1,6 +1,7 @@
 namespace org.w3c.dom;
 
 
+// Downloaded from https://raw.githubusercontent.com/whatwg/html-mirror/master/source
 typedef (Int8Array or Uint8Array or Uint8ClampedArray or
          Int16Array or Uint16Array or
          Int32Array or Uint32Array or
@@ -2018,6 +2019,7 @@ partial interface Window {
   void captureEvents();
   void releaseEvents();
 };
+// Downloaded from https://html.spec.whatwg.org/
 typedef (Int8Array or Uint8Array or Uint8ClampedArray or
          Int16Array or Uint16Array or
          Int32Array or Uint32Array or
@@ -4129,6 +4131,7 @@ partial interface Window {
   void captureEvents();
   void releaseEvents();
 };
+// Downloaded from https://raw.githubusercontent.com/whatwg/dom/master/dom.html
 [Constructor(DOMString type, optional EventInit eventInitDict),
  Exposed=(Window,Worker)]
 interface Event {
@@ -5049,6 +5052,7 @@ interface DOMTokenList {
 interface DOMSettableTokenList : DOMTokenList {
             attribute DOMString value;
 };
+// Downloaded from https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html
 interface Selection {
   readonly attribute Node? anchorNode;
   readonly attribute unsigned long anchorOffset;
@@ -5100,6 +5104,7 @@ dictionary EditingInputEventInit : EventInit {
   DOMString command;
   DOMString value;
 };
+// Downloaded from http://www.w3.org/TR/animation-timing/
 partial interface Window {
   long requestAnimationFrame(FrameRequestCallback callback);
   void cancelAnimationFrame(long handle);

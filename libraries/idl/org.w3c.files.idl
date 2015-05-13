@@ -1,6 +1,7 @@
 namespace org.w3c.files;
 
 
+// Downloaded from https://raw.githubusercontent.com/w3c/FileAPI/gh-pages/index.html
 [Constructor, Constructor(sequence<(ArrayBuffer or ArrayBufferView or Blob or DOMString)> blobParts, optional BlobPropertyBag options), Exposed=Window,Worker] interface Blob {
       
       readonly attribute unsigned long long size;

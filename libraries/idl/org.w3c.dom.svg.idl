@@ -1,6 +1,7 @@
 namespace org.w3c.dom.svg;
 
 
+// Downloaded from http://web.archive.org/web/20150317051602/http://www.w3.org/TR/SVG11/single-page.html
 interface SVGDocument : Document,
                         DocumentEvent {
   readonly attribute DOMString title;

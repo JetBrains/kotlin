@@ -69,6 +69,7 @@ fun main(args: Array<String>) {
                 val (url) = pair
                 println("Loading ${url}...")
 
+                w.appendln("// Downloaded from $url")
                 if (url.endsWith(".idl")) {
                     w.appendln(URL(url).readText())
                 } else {

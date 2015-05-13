@@ -1,6 +1,7 @@
 namespace org.w3c.dom.parsing;
 
 
+// Downloaded from http://www.w3.org/TR/DOM-Parsing/
 [Constructor]
 interface DOMParser {
  [NewObject] Document parseFromString (DOMString str, SupportedType type);

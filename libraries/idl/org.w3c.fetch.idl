@@ -1,6 +1,7 @@
 namespace org.w3c.fetch;
 
 
+// Downloaded from https://raw.githubusercontent.com/whatwg/fetch/master/Overview.src.html
 typedef (Headers or sequence<sequence<ByteString>> or OpenEndedDictionary<ByteString>) HeadersInit;
 [Constructor(optional HeadersInit init),
  Exposed=(Window,Worker)]
