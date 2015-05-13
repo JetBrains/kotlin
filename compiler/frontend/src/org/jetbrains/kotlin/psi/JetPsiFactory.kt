@@ -321,6 +321,9 @@ public class JetPsiFactory(private val project: Project) {
         return (createExpression("this@" + labelName) as JetThisExpression).getTargetLabel()!!
     }
 
+    public fun createLabeledExpression(labelName: String): JetLabeledExpression
+        = createExpression("$labelName@ 1") as JetLabeledExpression
+
     public fun createFieldIdentifier(fieldName: String): JetExpression {
         return createExpression("$" + fieldName)
     }
