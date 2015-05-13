@@ -305,31 +305,31 @@ class StringJVMTest {
 
     test fun testReplaceAllClosure() {
         val s = "test123zzz"
-        val result = s.replaceAll("\\d+") { mr ->
-            "[" + mr.group() + "]"
+        val result = s.replace("\\d+".toRegex()) { mr ->
+            "[" + mr.value + "]"
         }
         assertEquals("test[123]zzz", result)
     }
 
     test fun testReplaceAllClosureAtStart() {
         val s = "123zzz"
-        val result = s.replaceAll("\\d+") { mr ->
-            "[" + mr.group() + "]"
+        val result = s.replace("\\d+".toRegex()) { mr ->
+            "[" + mr.value + "]"
         }
         assertEquals("[123]zzz", result)
     }
 
     test fun testReplaceAllClosureAtEnd() {
         val s = "test123"
-        val result = s.replaceAll("\\d+") { mr ->
-            "[" + mr.group() + "]"
+        val result = s.replace("\\d+".toRegex()) { mr ->
+            "[" + mr.value + "]"
         }
         assertEquals("test[123]", result)
     }
 
     test fun testReplaceAllClosureEmpty() {
         val s = ""
-        val result = s.replaceAll("\\d+") { mr ->
+        val result = s.replace("\\d+".toRegex()) { mr ->
             "x"
         }
         assertEquals("", result)

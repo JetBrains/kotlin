@@ -204,7 +204,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
 
         sourcesInfo = sources.map { source ->
             val relativePath = relativePath(source)
-            val htmlPath = relativePath.replaceFirst("\\.kt$", "") + ".html"
+            val htmlPath = relativePath.replaceFirst("\\.kt$".toRegex(), "") + ".html"
             SourceInfo(source, relativePath, htmlPath)
         }
     }

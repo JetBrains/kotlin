@@ -46,7 +46,7 @@ class SyntaxHighlighter() {
                 lexer.advance()
                 val token = lexer.getTokenType()
                 if (token == null) break
-                val tokenText = lexer.getTokenSequence().toString().replaceAll("\n", "\r\n")
+                val tokenText = lexer.getTokenSequence().toString().replace("\n", "\r\n")
                 var style: String? = null
                 if (token is JetKeywordToken) {
                     style = "keyword"
