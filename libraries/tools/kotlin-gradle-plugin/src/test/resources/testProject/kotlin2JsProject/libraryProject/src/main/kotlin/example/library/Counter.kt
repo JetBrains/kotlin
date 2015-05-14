@@ -5,7 +5,7 @@ import kotlin.js.dom.html.window
 
 public class Counter(val el: Text) {
     fun step(n: Int) {
-        el.replaceWholeText("Counter: ${n}")
+        el.wholeText = "Counter: ${n}"
         window.setTimeout({step(n+1)}, 1000)
     }
 
