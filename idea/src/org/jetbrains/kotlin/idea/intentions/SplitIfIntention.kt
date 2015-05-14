@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaClass(), "Split if into 2 if's") {
     override fun isApplicableTo(element: JetExpression, caretOffset: Int): Boolean {
@@ -41,24 +43,36 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaCla
         val expression = operator.getParent() as JetBinaryExpression
         val rightExpression = JetPsiUtil.safeDeparenthesize(getRight(expression, ifExpression!!.getCondition()!!))
         val leftExpression = JetPsiUtil.safeDeparenthesize(expression.getLeft()!!)
-        val thenExpression = ifExpression.getThen()!!
-        val elseExpression = ifExpression.getElse()
+        val thenBranch = ifExpression.getThen()!!
+        val elseBranch = ifExpression.getElse()
 
         val psiFactory = JetPsiFactory(element)
-        val innerIf = psiFactory.createIf(rightExpression, thenExpression, elseExpression)
-        val newIf = when (operator.getReferencedNameElementType()) {
-            JetTokens.ANDAND -> psiFactory.createIf(leftExpression, psiFactory.wrapInABlock(innerIf), elseExpression)
 
-            JetTokens.OROR -> psiFactory.createIf(leftExpression, thenExpression, innerIf)
+        val innerIf = psiFactory.createIf(rightExpression, thenBranch, elseBranch)
+
+        when (operator.getReferencedNameElementType()) {
+            JetTokens.ANDAND -> ifExpression.replace(psiFactory.createIf(leftExpression, psiFactory.wrapInABlock(innerIf), elseBranch))
+
+            JetTokens.OROR -> {
+                val container = ifExpression.getParent()
+
+                if (container is JetBlockExpression && elseBranch == null && thenBranch.lastBlockStatementOrThis().isExitStatement()) { // special case
+                    container.addAfter(innerIf, ifExpression)
+                    container.addAfter(psiFactory.createNewLine(), ifExpression)
+                    ifExpression.replace(psiFactory.createIf(leftExpression, thenBranch))
+                    return
+                }
+
+                ifExpression.replace(psiFactory.createIf(leftExpression, thenBranch, innerIf))
+            }
 
             else -> throw IllegalArgumentException()
         }
-        ifExpression.replace(newIf)
     }
 
     private fun getRight(element: JetBinaryExpression, condition: JetExpression): JetExpression {
         //gets the textOffset of the right side of the JetBinaryExpression in context to condition
-        val startOffset = element.getRight()!!.getTextOffset() - condition.getTextOffset()
+        val startOffset = element.getRight()!!.startOffset - condition.startOffset
         val rightString = condition.getText()!!.substring(startOffset, condition.getTextLength())
 
         return JetPsiFactory(element).createExpression(rightString)

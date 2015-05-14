@@ -208,13 +208,6 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
         return null
     }
 
-    private fun JetExpression.isExitStatement(): Boolean {
-        when (this) {
-            is JetContinueExpression, is JetBreakExpression, is JetThrowExpression, is JetReturnExpression -> return true
-            else -> return false
-        }
-    }
-
     companion object {
         private val NEGATABLE_OPERATORS = setOf(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ,
                 JetTokens.EXCLEQEQEQ, JetTokens.IS_KEYWORD, JetTokens.NOT_IS, JetTokens.IN_KEYWORD,

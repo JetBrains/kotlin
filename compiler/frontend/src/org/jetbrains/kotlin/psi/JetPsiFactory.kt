@@ -360,7 +360,7 @@ public class JetPsiFactory(private val project: Project) {
         return JetBlockCodeFragment(project, "fragment.kt", text, null, context)
     }
 
-    public fun createIf(condition: JetExpression, thenExpr: JetExpression, elseExpr: JetExpression?): JetIfExpression {
+    public fun createIf(condition: JetExpression, thenExpr: JetExpression, elseExpr: JetExpression? = null): JetIfExpression {
         return (if (elseExpr != null)
             createExpressionByPattern("if ($0) $1 else $2", condition, thenExpr, elseExpr) as JetIfExpression
         else

@@ -6405,6 +6405,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ifOrReturn.kt")
+        public void testIfOrReturn() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/ifOrReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ifWithElse.kt")
         public void testIfWithElse() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/ifWithElse.kt");

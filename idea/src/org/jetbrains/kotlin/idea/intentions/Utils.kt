@@ -114,3 +114,10 @@ fun JetQualifiedExpression.toResolvedCall(): ResolvedCall<out CallableDescriptor
     return callExpression.getResolvedCall(callExpression.analyze()) ?: return null
 }
 
+fun JetExpression.isExitStatement(): Boolean {
+    when (this) {
+        is JetContinueExpression, is JetBreakExpression, is JetThrowExpression, is JetReturnExpression -> return true
+        else -> return false
+    }
+}
+
