@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.util.slicedMap;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.util.Key;
 import kotlin.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -137,7 +136,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         }
     }
 
-    private class SliceWithStackTrace<K, V> extends Key<TrackableValue<V>> implements RemovableSlice<K, TrackableValue<V>> {
+    private class SliceWithStackTrace<K, V> extends AbstractWritableSlice<K, TrackableValue<V>> implements RemovableSlice<K, TrackableValue<V>> {
 
         private final ReadOnlySlice<K, V> delegate;
 
@@ -147,12 +146,6 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         }
 
         // Methods of ReadOnlySlice
-
-        @Override
-        @NotNull
-        public Key<TrackableValue<V>> getKey() {
-            return this;
-        }
 
         @Override
         public TrackableValue<V> computeValue(SlicedMap map, K key, TrackableValue<V> value, boolean valueNotFound) {

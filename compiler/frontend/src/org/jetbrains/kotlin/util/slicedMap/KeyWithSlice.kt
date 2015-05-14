@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.util.slicedMap;
+package org.jetbrains.kotlin.util.slicedMap
 
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.util.Key
 
-public interface ReadOnlySlice<K, V> {
-    @NotNull
-    KeyWithSlice<K, V, ? extends ReadOnlySlice<K, V>> getKey();
-
-    V computeValue(SlicedMap map, K key, V value, boolean valueNotFound);
-
-    /**
-     * @return a slice that only retrieves the value from the storage and skips any computeValue() calls
-     */
-    ReadOnlySlice<K, V> makeRawValueVersion();
+abstract class KeyWithSlice<K, V, out Slice : ReadOnlySlice<K, V>>(debugName: String) : Key<V>(debugName) {
+    abstract val slice: Slice
 }

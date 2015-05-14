@@ -16,7 +16,13 @@
 
 package org.jetbrains.kotlin.util.slicedMap;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface WritableSlice<K, V> extends ReadOnlySlice<K, V> {
+    @NotNull
+    @Override
+    KeyWithSlice<K, V, WritableSlice<K, V>> getKey();
+
     // True to put, false to skip
     boolean check(K key, V value);
 
