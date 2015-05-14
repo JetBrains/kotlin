@@ -246,7 +246,8 @@ enum class MoveAction {
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
                 DeferredJetFileKotlinMoveTarget(project, FqName(packageName)) {
                     val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
-                    createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
+                    createKotlinFile(guessNewFileName(mainFile as JetFile, listOf(elementToMove))!!,
+                                     moveDestination.getTargetDirectory(mainFile))
                 }
             } ?: config.getString("targetFile").let { filePath ->
                 JetFileKotlinMoveTarget(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as JetFile)

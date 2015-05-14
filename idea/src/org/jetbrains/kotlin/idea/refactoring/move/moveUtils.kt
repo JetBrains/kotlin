@@ -156,8 +156,9 @@ fun createMoveUsageInfoIfPossible(
     return MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
 }
 
-public fun guessNewFileName(declarationsToMove: Collection<JetNamedDeclaration>): String? {
+public fun guessNewFileName(sourceFile: JetFile, declarationsToMove: Collection<JetNamedDeclaration>): String? {
     if (declarationsToMove.isEmpty()) return null
+    if (sourceFile.getDeclarations() == declarationsToMove) return sourceFile.getName()
 
     val representative = declarationsToMove.firstOrNull { it is JetClassOrObject } ?: declarationsToMove.first()
     return "${representative.getName()}.${JetFileType.EXTENSION}"
