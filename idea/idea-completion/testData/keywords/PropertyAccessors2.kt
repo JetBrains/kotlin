@@ -33,4 +33,5 @@ class Some {
 /*why?*/
 // EXIST:  constructor
 // EXIST:  init
-// NUMBER: 27
+// EXIST:  companion
+// NOTHING_ELSE: true

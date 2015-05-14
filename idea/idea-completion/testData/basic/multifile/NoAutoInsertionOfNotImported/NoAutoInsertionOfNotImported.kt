@@ -4,4 +4,4 @@ class A : NotImported<caret>
 
 // AUTOCOMPLETE_SETTING: true
 // EXIST: NotImportedClass
-// NUMBER: 1
+// NOTHING_ELSE: true

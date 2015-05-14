@@ -7,4 +7,4 @@ class Test {
 }
 
 // EXIST: util
-// NUMBER: 1
+// NOTHING_ELSE: true

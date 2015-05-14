@@ -3,3 +3,4 @@ class A(x: Int) {
 }
 
 // EXIST: this, super
+// NOTHING_ELSE: true

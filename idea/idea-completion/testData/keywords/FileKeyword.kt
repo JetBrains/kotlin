@@ -1,4 +1,4 @@
 [<caret>]
 
 // EXIST: file
-// NUMBER: 1
+// NOTHING_ELSE: true

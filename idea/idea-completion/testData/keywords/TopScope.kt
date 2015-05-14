@@ -27,4 +27,6 @@
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 24
+// EXIST:  companion
+/*TODO*/
+// NOTHING_ELSE: true

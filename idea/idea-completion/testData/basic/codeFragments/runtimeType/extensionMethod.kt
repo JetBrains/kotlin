@@ -14,7 +14,7 @@ fun Base.funExtBase() { }
 
 // INVOCATION_COUNT: 1
 // EXIST: funExtBase, funExtDerived
-// NUMBER: 2
+// NOTHING_ELSE: true
 
 
 // RUNTIME_TYPE: Derived

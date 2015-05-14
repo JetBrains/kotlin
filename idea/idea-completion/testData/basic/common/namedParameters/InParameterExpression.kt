@@ -8,4 +8,4 @@ fun test() = small(paramFirst = param<caret>)
 // EXIST: paramTest
 // ABSENT: {"lookupString":"paramFirst","tailText":" Int","itemText":"paramFirst ="}
 // ABSENT: paramSecond
-// NUMBER: 1
+// NOTHING_ELSE: true

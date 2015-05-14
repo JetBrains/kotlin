@@ -4,4 +4,4 @@ val x = InputStreamReader<caret>
 
 // INVOCATION_COUNT: 2
 // EXIST: { lookupString:"InputStreamReader", tailText:" (java.io)" }
-// NUMBER: 1
+// NOTHING_ELSE: true

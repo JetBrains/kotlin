@@ -9,4 +9,4 @@ fun firstFun() {
 
 // INVOCATION_COUNT: 1
 // EXIST: Testing
-// NUMBER: 1
+// NOTHING_ELSE: true

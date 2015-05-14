@@ -9,4 +9,4 @@ fun firstFun() {
 // EXIST: helloFunPreventAutoInsert
 // EXIST: helloWithParams
 // ABSENT: helloFake
-// NUMBER: 3
+// NOTHING_ELSE: true

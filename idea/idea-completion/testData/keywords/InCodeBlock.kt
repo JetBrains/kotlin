@@ -21,4 +21,4 @@ fun foo() {
 // EXIST: var
 // EXIST: when
 // EXIST: while
-// NUMBER: 19
+// NOTHING_ELSE: true

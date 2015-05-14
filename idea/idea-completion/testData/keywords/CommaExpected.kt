@@ -7,4 +7,4 @@ fun foo() {
 // EXIST: as
 // EXIST: in
 // EXIST: is
-// NUMBER: 5
+// NOTHING_ELSE: true

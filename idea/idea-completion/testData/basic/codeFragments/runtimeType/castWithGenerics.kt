@@ -16,6 +16,6 @@ class Derived: Base<String>() {
 
 // INVOCATION_COUNT: 1
 // EXIST: funInBase, funWithOverride, funWithoutOverride
-// NUMBER: 3
+// NOTHING_ELSE: true
 
 // RUNTIME_TYPE: Derived

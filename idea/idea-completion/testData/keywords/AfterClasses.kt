@@ -37,4 +37,6 @@ class B {
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 22
+// EXIST:  companion
+/*TODO*/
+// NOTHING_ELSE: true

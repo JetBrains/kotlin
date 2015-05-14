@@ -9,4 +9,4 @@ fun bar() {
 // EXIST: { lookupString: "C2", itemText: "C2<X>" }
 // EXIST: { lookupString: "C2", itemText: "C2<Y>" }
 // EXIST: { lookupString: "C3", itemText: "C3" }
-// NUMBER: 7
+// NOTHING_ELSE: true

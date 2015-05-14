@@ -7,4 +7,4 @@ fun test(p: Int) = foo(12, third = "", <caret>)
 // ABSENT: first
 // ABSENT: third
 // EXIST: second
-// NUMBER: 1
+// NOTHING_ELSE: true

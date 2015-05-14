@@ -14,4 +14,4 @@ fun foo(): T {
 // EXIST: foo
 // EXIST: object
 // ABSENT: Other
-// NUMBER: 3
+// NOTHING_ELSE: true

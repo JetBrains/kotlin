@@ -123,6 +123,8 @@ public class ExpectedCompletionUtils {
     private static final String NUMBER_JS_LINE_PREFIX = "NUMBER_JS:";
     private static final String NUMBER_JAVA_LINE_PREFIX = "NUMBER_JAVA:";
 
+    private static final String NOTHING_ELSE_PREFIX = "NOTHING_ELSE:";
+
     private static final String INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:";
     private static final String WITH_ORDER_PREFIX = "WITH_ORDER:";
     private static final String AUTOCOMPLETE_SETTING_PREFIX = "AUTOCOMPLETE_SETTING:";
@@ -142,6 +144,7 @@ public class ExpectedCompletionUtils {
             INVOCATION_COUNT_PREFIX,
             WITH_ORDER_PREFIX,
             AUTOCOMPLETE_SETTING_PREFIX,
+            NOTHING_ELSE_PREFIX,
             RUNTIME_TYPE,
             AstAccessControl.INSTANCE$.getALLOW_AST_ACCESS_DIRECTIVE());
 
@@ -214,6 +217,10 @@ public class ExpectedCompletionUtils {
         }
     }
 
+    public static boolean isNothingElseExpected(String fileText) {
+        return Boolean.TRUE.equals(InTextDirectivesUtils.getPrefixedBoolean(fileText, NOTHING_ELSE_PREFIX));
+    }
+
     @Nullable
     public static Integer getInvocationCount(String fileText) {
         return InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX);
@@ -232,9 +239,11 @@ public class ExpectedCompletionUtils {
         InTextDirectivesUtils.assertHasUnknownPrefixes(fileText, KNOWN_PREFIXES);
     }
 
-    public static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items, boolean checkOrder) {
+    public static void assertContainsRenderedItems(CompletionProposal[] expected, LookupElement[] items, boolean checkOrder, boolean nothingElse) {
         List<CompletionProposal> itemsInformation = getItemsInformation(items);
         String allItemsString = listToString(itemsInformation);
+
+        Set<CompletionProposal> leftItems = nothingElse ? new LinkedHashSet<CompletionProposal>(itemsInformation) : null;
 
         int indexOfPrevious = Integer.MIN_VALUE;
 
@@ -251,6 +260,10 @@ public class ExpectedCompletionUtils {
                                       !checkOrder || index > indexOfPrevious);
                     indexOfPrevious = index;
 
+                    if (leftItems != null) {
+                        leftItems.remove(proposal);
+                    }
+
                     break;
                 }
             }
@@ -263,6 +276,10 @@ public class ExpectedCompletionUtils {
                     Assert.fail("Expected " + expectedProposal + " not found in:\n" + allItemsString);
                 }
             }
+        }
+
+        if (leftItems != null && !leftItems.isEmpty()) {
+            Assert.fail("No items not mentioned in EXIST directives expected but some found:\n" + listToString(leftItems));
         }
     }
 

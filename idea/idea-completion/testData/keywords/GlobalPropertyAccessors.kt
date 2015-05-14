@@ -37,4 +37,6 @@ var a : Int
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 25
+// EXIST:  companion
+/*TODO*/
+// NOTHING_ELSE: true

@@ -6,4 +6,4 @@ fun f() {
 
 // EXIST: extFun1
 // EXIST: extFun2
-// NUMBER: 2
+// NOTHING_ELSE: true

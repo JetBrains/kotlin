@@ -15,4 +15,4 @@ fun foo(c: C): T {
 // EXIST: { lookupString: "Inner2", itemText: "Inner2", tailText: "()", typeText: "C.Inner2" }
 // ABSENT: Inner3
 // ABSENT: Nested
-// NUMBER: 2
+// NOTHING_ELSE: true

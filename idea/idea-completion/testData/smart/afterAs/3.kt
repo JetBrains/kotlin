@@ -7,6 +7,6 @@ fun bar(o: Any) {
     foo(o as <caret>)
 }
 
-// NUMBER: 2
 // EXIST: { lookupString:"List", itemText:"List<String>" }
 // EXIST: { lookupString:"String", itemText:"String" }
+// NOTHING_ELSE: true

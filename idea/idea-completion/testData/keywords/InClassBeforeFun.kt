@@ -35,4 +35,5 @@ public class Test {
 // EXIST:  constructor
 // EXIST:  init
 /*why?*/
-// NUMBER: 24
+// EXIST:  companion
+// NOTHING_ELSE: true

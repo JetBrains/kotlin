@@ -14,4 +14,4 @@ fun foo() {
 // EXIST: { lookupString: "continue@myDo", itemText: "continue", tailText: "@myDo", attributes: "bold" }
 // EXIST: { lookupString: "continue@myWhile", itemText: "continue", tailText: "@myWhile", attributes: "bold" }
 // EXIST: { lookupString: "continue@myFor", itemText: "continue", tailText: "@myFor", attributes: "bold" }
-// NUMBER: 3
+// NOTHING_ELSE: true

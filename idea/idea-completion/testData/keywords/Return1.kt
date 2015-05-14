@@ -11,4 +11,4 @@ inline fun takeHandler2(handler: () -> Unit){}
 // EXIST: { lookupString: "return", itemText: "return", tailText: null, attributes: "bold" }
 // EXIST: { lookupString: "return@takeHandler1", itemText: "return", tailText: "@takeHandler1", attributes: "bold" }
 // EXIST: { lookupString: "return@takeHandler2", itemText: "return", tailText: "@takeHandler2", attributes: "bold" }
-// NUMBER: 3
+// NOTHING_ELSE: true

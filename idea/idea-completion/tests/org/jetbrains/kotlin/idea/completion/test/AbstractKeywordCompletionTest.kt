@@ -26,9 +26,8 @@ public abstract class AbstractKeywordCompletionTest : JetFixtureCompletionBaseTe
     override fun getPlatform() = TargetPlatform.JVM
 
     override fun complete(invocationCount: Int): Array<LookupElement>? {
-        val items = myFixture.complete(CompletionType.BASIC)
-        if (items == null) return null
-        return items.filter { it.getObject() is KeywordLookupObject }.copyToArray()
+        val items = myFixture.complete(CompletionType.BASIC) ?: return null
+        return items.filter { it.getObject() is KeywordLookupObject }.toTypedArray()
     }
 
     override fun getProjectDescriptor() = JetLightProjectDescriptor.INSTANCE

@@ -14,4 +14,4 @@ fun foo() = <caret>
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 14
+// NOTHING_ELSE: true

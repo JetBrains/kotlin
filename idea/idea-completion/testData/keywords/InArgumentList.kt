@@ -20,4 +20,4 @@ fun foo(p: Int) {
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 15
+// NOTHING_ELSE: true

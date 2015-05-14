@@ -9,4 +9,4 @@ fun firstFun() {
 
 // INVOCATION_COUNT: 1
 // EXIST: { lookupString:"toLinkedList", itemText:"toLinkedList", tailText:"() for Iterable<T> in kotlin" }
-// NUMBER: 1
+// NOTHING_ELSE: true

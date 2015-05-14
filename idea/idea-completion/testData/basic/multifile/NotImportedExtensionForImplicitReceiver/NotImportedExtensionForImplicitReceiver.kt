@@ -11,4 +11,4 @@ class C {
 // EXIST: helloProp
 // EXIST: helloForC
 // ABSENT: helloFake
-// NUMBER: 4
+// NOTHING_ELSE: true

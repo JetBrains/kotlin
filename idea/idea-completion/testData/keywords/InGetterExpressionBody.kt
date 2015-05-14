@@ -15,4 +15,4 @@ val prop: Int
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NUMBER: 14
+// NOTHING_ELSE: true

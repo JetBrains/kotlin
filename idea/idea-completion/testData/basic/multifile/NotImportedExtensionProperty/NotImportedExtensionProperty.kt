@@ -9,4 +9,4 @@ fun firstFun() {
 // EXIST: { lookupString: "helloProp2", attributes: "bold" }
 // ABSENT: helloProp3
 // ABSENT: helloProp4
-// NUMBER: 2
+// NOTHING_ELSE: true

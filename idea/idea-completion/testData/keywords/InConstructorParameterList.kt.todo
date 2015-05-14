@@ -9,4 +9,4 @@ class C(<caret>)
 // EXIST: protected
 // EXIST: internal
 // EXIST: override
-// NUMBER: 8
+// NOTHING_ELSE: true

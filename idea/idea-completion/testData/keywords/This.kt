@@ -25,4 +25,4 @@ fun takeHandler3(handler: Char.() -> Unit){}
 // EXIST: { lookupString: "this@Inner", itemText: "this", tailText: "@Inner", typeText: "Outer.Nested.Inner", attributes: "bold" }
 // EXIST: { lookupString: "this@Nested", itemText: "this", tailText: "@Nested", typeText: "Outer.Nested", attributes: "bold" }
 // ABSENT: "this@Outer"
-// NUMBER: 6
+// NOTHING_ELSE: true

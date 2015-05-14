@@ -2,4 +2,4 @@ val String.foo: Int
     get() = this@<caret>.length()
 
 // EXIST: "this@foo"
-// NUMBER: 1
+// NOTHING_ELSE: true

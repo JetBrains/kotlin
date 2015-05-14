@@ -28,21 +28,22 @@ val COMPLETION_TEST_DATA_BASE_PATH: String
 fun testCompletion(fileText: String, platform: TargetPlatform?, complete: (Int) -> Array<LookupElement>?, defaultInvocationCount: Int = 0) {
     testWithAutoCompleteSetting(fileText) {
         val invocationCount = ExpectedCompletionUtils.getInvocationCount(fileText) ?: defaultInvocationCount
-        val items = complete(invocationCount) ?: array()
+        val items = complete(invocationCount) ?: emptyArray()
 
         ExpectedCompletionUtils.assertDirectivesValid(fileText)
 
         val expected = ExpectedCompletionUtils.itemsShouldExist(fileText, platform)
         val unexpected = ExpectedCompletionUtils.itemsShouldAbsent(fileText, platform)
         val itemsNumber = ExpectedCompletionUtils.getExpectedNumber(fileText, platform)
+        val nothingElse = ExpectedCompletionUtils.isNothingElseExpected(fileText)
 
-        Assert.assertTrue("Should be some assertions about completion", expected.size != 0 || unexpected.size != 0 || itemsNumber != null)
-        ExpectedCompletionUtils.assertContainsRenderedItems(expected, items, ExpectedCompletionUtils.isWithOrder(fileText))
+        Assert.assertTrue("Should be some assertions about completion", expected.size() != 0 || unexpected.size() != 0 || itemsNumber != null || nothingElse)
+        ExpectedCompletionUtils.assertContainsRenderedItems(expected, items, ExpectedCompletionUtils.isWithOrder(fileText), nothingElse)
         ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, items)
 
         if (itemsNumber != null) {
             val expectedItems = ExpectedCompletionUtils.listToString(ExpectedCompletionUtils.getItemsInformation(items))
-            Assert.assertEquals("Invalid number of completion items: ${expectedItems}", itemsNumber, items.size)
+            Assert.assertEquals("Invalid number of completion items: ${expectedItems}", itemsNumber, items.size())
         }
     }
 }

@@ -29,4 +29,5 @@ class TestClass {
 /*why?*/
 // EXIST:  constructor
 // EXIST:  init
-// NUMBER: 24
+// EXIST:  companion
+// NOTHING_ELSE: true
