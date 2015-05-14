@@ -30,15 +30,10 @@ JetFile: EnumSemicolonBetweenWithMembers.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('SOUTH')
-      PsiErrorElement:Expecting member declaration
-        PsiElement(SEMICOLON)(';')
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('SOUTH')
+      PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n    ')
       OBJECT_DECLARATION
         MODIFIER_LIST
@@ -64,24 +59,14 @@ JetFile: EnumSemicolonBetweenWithMembers.kt
           PsiWhiteSpace('\n    ')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('WEST')
-      PsiErrorElement:Expecting member declaration
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('WEST')
+      PsiErrorElement:Expecting ','
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n    ')
-      MODIFIER_LIST
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('EAST')
-      PsiErrorElement:Expecting member declaration
-        <empty list>
+      ENUM_ENTRY
+        OBJECT_DECLARATION_NAME
+          PsiElement(IDENTIFIER)('EAST')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

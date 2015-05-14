@@ -259,6 +259,7 @@ public class DefaultErrorMessages {
         MAP.put(LOCAL_ENUM_NOT_ALLOWED, "Enum class ''{0}'' cannot be local", NAME);
         MAP.put(ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER, "Enum entry ''{0}'' should have a correct delimiter ''{1}'' after it", NAME, STRING);
         MAP.put(ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR, "Enum entry ''{0}'' uses deprecated super constructor syntax, use ENTRY(arguments) instead", NAME);
+        MAP.put(ENUM_ENTRY_AFTER_ENUM_MEMBER, "Enum entry ''{0}'' is not allowed after a member", NAME);
         MAP.put(DELEGATION_IN_TRAIT, "Interfaces cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only interfaces can be delegated to");
         MAP.put(UNMET_TRAIT_REQUIREMENT, "Super interface ''{0}'' requires subclasses to extend ''{1}''", NAME, NAME);

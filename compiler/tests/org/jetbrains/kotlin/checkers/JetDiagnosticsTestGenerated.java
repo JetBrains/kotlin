@@ -4188,6 +4188,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("enumEntriesAtTheEnd.kt")
+            public void testEnumEntriesAtTheEnd() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumEntriesAtTheEnd.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("enumEntryCannotHaveClassObject.kt")
             public void testEnumEntryCannotHaveClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumEntryCannotHaveClassObject.kt");
@@ -4227,6 +4233,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("enumMissingName.kt")
             public void testEnumMissingName() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMissingName.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumMixed.kt")
+            public void testEnumMixed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMixed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumMixedWithCommas.kt")
+            public void testEnumMixedWithCommas() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMixedWithCommas.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumMixedWithSemicolons.kt")
+            public void testEnumMixedWithSemicolons() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/enumMixedWithSemicolons.kt");
                 doTest(fileName);
             }
 

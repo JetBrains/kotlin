@@ -754,7 +754,7 @@ public class JetParsing extends AbstractJetParsing {
         parseEnumEntries();
         // TODO: syntax without SEMICOLON is deprecated, KT-7605
         consumeIf(SEMICOLON);
-        parseMembers();
+        parseMembers(true); // Members can include also entries, but it's deprecated syntax
 
         expect(RBRACE, "Expecting '}' to close enum class body");
         myBuilder.restoreNewlinesState();
@@ -771,29 +771,33 @@ public class JetParsing extends AbstractJetParsing {
             if (!parseEnumEntry()) {
                 break;
             }
-            // TODO: syntax with SEMICOLON between enum entries is deprecated, KT-7605
-            if (at(SEMICOLON)) {
-                // Semicolon can be legally here only if member follows
-                PsiBuilder.Marker temp = mark();
+            parseEnumEntryDelimiter();
+        }
+    }
+
+    private void parseEnumEntryDelimiter() {
+        // TODO: syntax with SEMICOLON between enum entries is deprecated, KT-7605
+        if (at(SEMICOLON)) {
+            // Semicolon can be legally here only if member follows
+            PsiBuilder.Marker temp = mark();
+            advance(); // SEMICOLON
+            ModifierDetector detector = new ModifierDetector();
+            parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
+            if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
+                // Otherwise it's old syntax that's not supported
+                temp.rollbackTo();
+                // Despite of the error, try to restore and parse next enum entry
+                temp = mark();
                 advance(); // SEMICOLON
-                ModifierDetector detector = new ModifierDetector();
-                parseModifierList(detector, ONLY_ESCAPED_REGULAR_ANNOTATIONS);
-                if (!atSet(SOFT_KEYWORDS_AT_MEMBER_START) && at(IDENTIFIER)) {
-                    // Otherwise it's old syntax that's not supported
-                    temp.rollbackTo();
-                    // Despite of the error, try to restore and parse next enum entry
-                    temp = mark();
-                    advance(); // SEMICOLON
-                    temp.error("Expecting ','");
-                }
-                else {
-                    temp.rollbackTo();
-                }
+                temp.error("Expecting ','");
             }
             else {
-                // TODO: syntax without COMMA is deprecated (only last entry is an exception), KT-7605
-                consumeIf(COMMA);
+                temp.rollbackTo();
             }
+        }
+        else {
+            // TODO: syntax without COMMA is deprecated (only last entry is an exception), KT-7605
+            consumeIf(COMMA);
         }
     }
 
@@ -879,11 +883,23 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private void parseMembers() {
+        parseMembers(false);
+    }
+
+    private void parseMembers(boolean deprecatedEnumEntryPossible) {
         while (!eof()) {
             if (at(RBRACE)) {
                 break;
             }
-            parseMemberDeclaration();
+            if (deprecatedEnumEntryPossible && parseEnumEntry()) {
+                // Enum entry is deprecated here
+                // Error is generated later in DeclarationsChecker
+                parseEnumEntryDelimiter();
+                consumeIf(SEMICOLON);
+            }
+            else {
+                parseMemberDeclaration();
+            }
         }
     }
 

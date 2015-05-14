@@ -585,6 +585,16 @@ public class DeclarationsChecker {
         return !enumEntryExpectedDelimiter(enumEntry).isEmpty();
     }
 
+    static public boolean enumEntryAfterEnumMember(@NotNull JetEnumEntry enumEntry) {
+        PsiElement previous = enumEntry.getPrevSibling();
+        while (previous != null) {
+            if (previous instanceof JetEnumEntry) return false;
+            if (previous instanceof JetDeclaration) return true;
+            previous = previous.getPrevSibling();
+        }
+        return false;
+    }
+
     private void checkEnumEntry(@NotNull JetEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
         DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
         assert DescriptorUtils.isEnumClass(declaration) : "Enum entry should be declared in enum class: " + classDescriptor;
@@ -596,6 +606,9 @@ public class DeclarationsChecker {
         String neededDelimiter = enumEntryExpectedDelimiter(enumEntry);
         if (!neededDelimiter.isEmpty()) {
             trace.report(Errors.ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER.on(enumEntry, classDescriptor, neededDelimiter));
+        }
+        if (enumEntryAfterEnumMember(enumEntry)) {
+            trace.report(Errors.ENUM_ENTRY_AFTER_ENUM_MEMBER.on(enumEntry, classDescriptor));
         }
 
         List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
