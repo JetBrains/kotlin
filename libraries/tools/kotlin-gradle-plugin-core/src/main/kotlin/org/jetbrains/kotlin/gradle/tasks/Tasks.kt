@@ -36,15 +36,10 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.IOException
 import java.lang.ref.WeakReference
-import java.util.zip.ZipFile
-import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.Opcodes.*
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
 val ANNOTATIONS_PLUGIN_NAME = "org.jetbrains.kotlin.kapt"
-
-val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCompile() {
     abstract protected val compiler: CLICompiler<T>
@@ -114,6 +109,8 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
     val srcDirsSources = HashSet<SourceDirectorySet>()
 
+    val annotationProcessingManager = AnnotationProcessingManager(this)
+
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
         args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
@@ -135,7 +132,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         val pluginOptions = arrayListOf(*basePluginOptions)
 
         if (aptFiles.isNotEmpty()) {
-            val annotationDeclarationsFile = File(args.destination, "annotations.txt")
+            val annotationDeclarationsFile = annotationProcessingManager.getAnnotationFile(args.destination)
             if (annotationDeclarationsFile.exists()) annotationDeclarationsFile.delete()
             pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + annotationDeclarationsFile)
         }
@@ -175,126 +172,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             FileUtils.copyDirectory(outputDirFile, getDestinationDir())
         }
 
-        [suppress("UNCHECKED_CAST")]
-        val javaTask = (getExtensions().getExtraProperties().get("javaTask") as? WeakReference<JavaCompile>)?.get()
-        if (javaTask != null && aptFiles.isNotEmpty()) {
-            val aptStubsDir = File(outputDirFile, "0apt")
-
-            val annotationDeclarationsFile = File(aptStubsDir, "annotations.txt")
-
-            val javaAptSourceDir = File(aptStubsDir, "java_src")
-            val stubOutputDir = File(outputDirFile, "wrappers")
-            javaAptSourceDir.mkdirs()
-            stubOutputDir.mkdirs()
-
-            javaTask.source(javaAptSourceDir)
-            javaTask.setClasspath(javaTask.getClasspath() + getProject().files(stubOutputDir))
-
-            // Generate a simple Java source file with annotation to launch Java APT even if there's no Java files
-            javaAptSourceDir.mkdirs()
-            val javaHackPackageDir = File(javaAptSourceDir, "__gen/annotation")
-            val javaHackClFile = File(javaHackPackageDir, "Cl.java")
-            javaHackClFile.writeText("package __gen.annotation;" + "class Cl { @javax.inject.Inject boolean v; }")
-
-            val annotationProcessors = lookupAnnotationProcessors(aptFiles)
-            for (processor in annotationProcessors) {
-                generateAnnotationProcessorWrapper(processor, stubOutputDir)
-            }
-
-            val annotationProcessorWrappers = annotationProcessors
-                    .map { "__gen.AnnotationProcessorWrapper_${it.replace('.', '_')}" }
-                    .joinToString(",")
-
-            val compilerArgs = javaTask.getOptions().getCompilerArgs()
-            val processorArgIndex = compilerArgs.indexOfFirst { "-processor" == it }
-
-            // Already has a "-processor" argument (and it is not the last one)
-            if (processorArgIndex >= 0 && compilerArgs.size() > (processorArgIndex + 1)) {
-                compilerArgs[processorArgIndex + 1] =
-                        compilerArgs[processorArgIndex + 1] + "," + annotationProcessorWrappers
-            }
-            else {
-                compilerArgs.add("-processor")
-                compilerArgs.add(annotationProcessorWrappers)
-            }
-
-            javaTask.getOptions().setCompilerArgs(compilerArgs)
-
-            javaTask.doLast {
-                annotationDeclarationsFile.delete()
-                javaAptSourceDir.deleteRecursively()
-            }
-        }
-    }
-
-    private fun lookupAnnotationProcessors(files: Set<File>): Set<String> {
-        fun withZipFile(file: File, job: (ZipFile) -> Unit) {
-            var zipFile: ZipFile? = null
-            try {
-                zipFile = ZipFile(file)
-                job(zipFile)
-            }
-            catch (e: IOException) {
-                // Do nothing (do not continue to search for annotation processors on error)
-            }
-            catch (e: IllegalStateException) {
-                // ZipFile was already closed for some reason
-            }
-            finally {
-                try {
-                    zipFile?.close()
-                }
-                catch (e: IOException) {}
-            }
-        }
-
-        val annotationProcessors = hashSetOf<String>()
-
-        fun processLines(lines: Sequence<String>) {
-            for (line in lines) {
-                if (line.isBlank() || !JAVA_FQNAME_PATTERN.matcher(line).matches()) continue
-                annotationProcessors.add(line)
-            }
-        }
-
-        for (file in files) {
-            withZipFile(file) { zipFile ->
-                val entry = zipFile.getEntry("META-INF/services/javax.annotation.processing.Processor")
-                if (entry != null) {
-                    zipFile.getInputStream(entry).reader().useLines { lines ->
-                        processLines(lines)
-                    }
-                }
-            }
-        }
-
-        return annotationProcessors
-    }
-
-    private fun generateAnnotationProcessorWrapper(processorFqName: String, outputDirectory: File) {
-        val className = "AnnotationProcessorWrapper_${processorFqName.replace('.', '_')}"
-
-        val bytes = with (ClassWriter(0)) {
-            val superClass = "org/kotlin/annotations/AnnotationProcessorWrapper"
-
-            visit(49, ACC_PUBLIC + ACC_SUPER, className, null,
-                    superClass, null)
-
-            visitSource("$className.java", null)
-
-            with (visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)) {
-                visitVarInsn(ALOAD, 0)
-                visitLdcInsn(processorFqName)
-                visitMethodInsn(INVOKESPECIAL, superClass, "<init>", "(Ljava.lang.String;)V", false)
-                visitInsn(RETURN)
-                visitMaxs(2, 1)
-                visitEnd()
-            }
-
-            visitEnd()
-            toByteArray()
-        }
-        File(outputDirectory, "$className.class").writeBytes(bytes)
+        annotationProcessingManager.afterKotlinCompile(outputDirFile)
     }
 
     // override setSource to track source directory sets
