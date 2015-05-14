@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.JetNameReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
+object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
