@@ -344,6 +344,19 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             final MoveDestination moveDestination = ((DestinationFolderComboBox) destinationFolderCB).selectDirectory(targetPackage, false);
             if (moveDestination == null) return null;
 
+            final String targetFileName = tfFileNameInPackage.getText();
+
+            PsiDirectory directory = moveDestination.getTargetIfExists(sourceFile);
+            if (directory != null && directory.findFile(targetFileName) != null) {
+                String question = "File '" +
+                                  directory.getVirtualFile().getPath() +
+                                  "/" +
+                                  targetFileName +
+                                  "' already exists. Do you want to move selected declarations to this file?";
+                int ret = Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"), Messages.getQuestionIcon());
+                if (ret != Messages.YES) return null;
+            }
+
             return new DeferredJetFileKotlinMoveTarget(
                     myProject,
                     new FqName(targetPackage.getQualifiedName()),
@@ -351,7 +364,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                         @Override
                         public JetFile invoke() {
                             PsiDirectory directory = moveDestination.getTargetDirectory(sourceFile);
-                            return RefactoringPackage.getOrCreateKotlinFile(tfFileNameInPackage.getText(), directory);
+                            return RefactoringPackage.getOrCreateKotlinFile(targetFileName, directory);
                         }
                     }
             );
