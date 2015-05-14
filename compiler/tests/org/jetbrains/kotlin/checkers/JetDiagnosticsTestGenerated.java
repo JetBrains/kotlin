@@ -5400,9 +5400,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt6541_extensionForExtensionFunction.kt")
+            public void testKt6541_extensionForExtensionFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt6541_extensionForExtensionFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt6869.kt")
             public void testKt6869() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt6869.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("kt7383_starProjectedFunction.kt")
+            public void testKt7383_starProjectedFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionLiterals/kt7383_starProjectedFunction.kt");
                 doTest(fileName);
             }
 
@@ -10760,6 +10772,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("invokeAsMemberExtensionToExplicitReceiver.kt")
                 public void testInvokeAsMemberExtensionToExplicitReceiver() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsMemberExtensionToExplicitReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("invokeNonExtensionLambdaInContext.kt")
+                public void testInvokeNonExtensionLambdaInContext() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/invoke/invokeNonExtensionLambdaInContext.kt");
                     doTest(fileName);
                 }
 

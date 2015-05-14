@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks;
 
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -39,8 +37,6 @@ import static org.jetbrains.kotlin.resolve.BindingContext.CALL;
 import static org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL;
 
 public class TracingStrategyForInvoke extends AbstractTracingStrategy {
-    private static final Logger LOG = Logger.getInstance(TracingStrategyForInvoke.class);
-
     private final JetType calleeType;
 
     public TracingStrategyForInvoke(
@@ -92,9 +88,6 @@ public class TracingStrategyForInvoke extends AbstractTracingStrategy {
 
     private void functionExpectedOrNoReceiverAllowed(BindingTrace trace) {
         if (KotlinBuiltIns.isFunctionType(calleeType)) {
-            LOG.assertTrue(call.getExplicitReceiver().exists(),
-                           "'Invoke' is not found on expression of function type (" + calleeType + "): "
-                           + PsiUtilPackage.getTextWithLocation(call.getCallElement()));
             trace.report(NO_RECEIVER_ALLOWED.on(reference));
         }
         else {
