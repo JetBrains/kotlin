@@ -711,14 +711,15 @@
     </target>
 
     <macrodef name="pack-runtime-jar">
+        <attribute name="jar-dir" default="${kotlin-home}/lib"/>
         <attribute name="jar-name"/>
         <attribute name="implementation-title"/>
         <element name="jar-content"/>
 
         <sequential>
-            <delete file="${kotlin-home}/lib/@{jar-name}" failonerror="false"/>
+            <delete file="@{jar-dir}/@{jar-name}" failonerror="false"/>
 
-            <jar destfile="${kotlin-home}/lib/@{jar-name}" duplicate="fail">
+            <jar destfile="@{jar-dir}/@{jar-name}" duplicate="fail">
                 <jar-content/>
                 <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
 
@@ -745,7 +746,7 @@
             </jar-content>
         </pack-runtime-jar>
 
-        <pack-runtime-jar jar-name="kotlin-reflect.jar" implementation-title="${manifest.impl.title.kotlin.jvm.reflect}">
+        <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-reflect-before-jarjar.jar" implementation-title="${manifest.impl.title.kotlin.jvm.reflect}">
             <jar-content>
                 <fileset dir="${output}/classes/reflection"/>
                 <fileset dir="${output}/classes/core"/>
@@ -754,26 +755,59 @@
             </jar-content>
         </pack-runtime-jar>
 
-        <jar destfile="${kotlin-home}/lib/kotlin-reflect.jar" update="true">
+        <jar destfile="${output}/kotlin-reflect-before-jarjar.jar" update="true">
             <manifest>
                 <attribute name="Class-Path" value="kotlin-runtime.jar"/>
             </manifest>
         </jar>
+
+        <delete file="${output}/kotlin-reflect-jarjar.jar" failonerror="false"/>
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="dependencies/jarjar.jar"/>
+        <jarjar jarfile="${output}/kotlin-reflect-jarjar.jar" filesonly="true" filesetmanifest="merge">
+            <zipfileset src="${output}/kotlin-reflect-before-jarjar.jar"/>
+            <rule pattern="org.jetbrains.kotlin.**" result="kotlin.reflect.jvm.internal.impl.@1"/>
+            <rule pattern="com.google.protobuf.**" result="kotlin.reflect.jvm.internal.impl.com.google.protobuf.@1"/>
+            <rule pattern="javax.inject.**" result="kotlin.reflect.jvm.internal.impl.javax.inject.@1"/>
+        </jarjar>
+
+        <kotlinc src="${basedir}/generators/infrastructure/strip-kotlin-annotations.kts" output="">
+            <compilerarg value="-script"/>
+            <compilerarg value="kotlin/jvm/internal/.*"/> <!-- Annotations to strip -->
+            <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
+            <compilerarg value="${output}/kotlin-reflect-jarjar.jar"/>
+            <compilerarg value="${kotlin-home}/lib/kotlin-reflect.jar"/>
+            <classpath>
+                <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
+            </classpath>
+        </kotlinc>
     </target>
 
     <target name="pack-runtime-sources">
+
+        <!-- Rename packages in the sources of reflection impl (core) -->
+        <delete dir="${output}/core.src" failonerror="false"/>
+        <copy todir="${output}/core.src/kotlin/reflect/jvm/internal/impl">
+            <fileset dir="core">
+                <include name="descriptor.loader.java/src/**"/>
+                <include name="descriptors/src/**"/>
+                <include name="descriptors.runtime/src/**"/>
+                <include name="deserialization/src/**"/>
+                <include name="util.runtime/src/**"/>
+            </fileset>
+            <cutdirsmapper dirs="5"/> <!-- module/src/org/jetbrains/kotlin -->
+        </copy>
+        <replaceregexp match="org\.jetbrains\.kotlin" replace="kotlin.reflect.jvm.internal.impl" flags="g">
+            <fileset dir="${output}/core.src"/>
+        </replaceregexp>
+
         <pack-runtime-jar jar-name="kotlin-runtime-sources.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}">
             <jar-content>
                 <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
                 <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/descriptor.loader.java/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/descriptors/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/descriptors.runtime/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/deserialization/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
-                <fileset dir="${basedir}/core/util.runtime/src" includes="**/*"/>
                 <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
+                <fileset dir="${output}/core.src" includes="**/*"/>
             </jar-content>
         </pack-runtime-jar>
     </target>

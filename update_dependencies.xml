@@ -139,8 +139,8 @@
         </unzip>
 
         <!-- JarJar -->
-        <get src="http://jarjar.googlecode.com/files/jarjar-1.2.jar" dest="dependencies/download/jarjar-1.2.jar" usetimestamp="true"/>
-        <copy file="dependencies/download/jarjar-1.2.jar" tofile="dependencies/jarjar.jar" overwrite="true"/>
+        <get src="http://jarjar.googlecode.com/files/jarjar-1.4.jar" dest="dependencies/download/jarjar-1.4.jar" usetimestamp="true"/>
+        <copy file="dependencies/download/jarjar-1.4.jar" tofile="dependencies/jarjar.jar" overwrite="true"/>
 
         <!-- ant 1.7.0, 1.8.0 -->
         <get-ant-library version="1.7.0" folderName="ant-1.7"/>
