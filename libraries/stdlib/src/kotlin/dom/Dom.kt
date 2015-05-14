@@ -208,7 +208,7 @@ public fun Node.removeFromParent() {
     parentNode?.removeChild(this)
 }
 
-private class NodeListAsList(val delegate: NodeList) : AbstractList<Node>() {
+private class NodeListAsList(private val delegate: NodeList) : AbstractList<Node>() {
     override fun size(): Int = delegate.length
 
     override fun get(index: Int): Node = when {
