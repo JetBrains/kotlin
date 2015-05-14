@@ -238,16 +238,8 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
             val file = declaration.getContainingFile() as? JetFile
             assert(file != null) { "${declaration.javaClass}: ${declaration.getText()}" }
 
-            val targetPsi = moveTarget.getOrCreateTargetPsi(declaration)
-            val targetFile =
-                    if (targetPsi is PsiDirectory) {
-                        val targetFileName = declaration.getFileNameAfterMove()
-                        targetPsi.findFile(targetFileName) ?: createKotlinFile(targetFileName, targetPsi)
-                    }
-                    else targetPsi
-
-            assert(targetFile is JetFile) { "Couldn't create Kotlin file for: ${declaration.javaClass}: ${declaration.getText()}" }
-            targetFile as JetFile
+            val targetFile = moveTarget.getOrCreateTargetPsi(declaration) as? JetFile
+                             ?: throw AssertionError("Couldn't create Kotlin file for: ${declaration.javaClass}: ${declaration.getText()}")
 
             if (options.updateInternalReferences) {
                 val packageNameInfo = PackageNameInfo(file!!.getPackageFqName(), targetFile.getPackageFqName())

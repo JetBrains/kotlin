@@ -37,13 +37,11 @@ import com.intellij.refactoring.move.moveInner.MoveInnerProcessor
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.util.ActionRunner
+import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.JetFileKotlinMoveTarget
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveDestinationKotlinMoveTarget
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsOptions
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.JetFile
@@ -246,7 +244,10 @@ enum class MoveAction {
             val elementToMove = elementAtCaret!!.getNonStrictParentOfType<JetNamedDeclaration>()!!
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->
-                MoveDestinationKotlinMoveTarget(MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName)))
+                DeferredJetFileKotlinMoveTarget(project, FqName(packageName)) {
+                    val moveDestination = MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), packageName))
+                    createKotlinFile(guessNewFileName(listOf(elementToMove))!!, moveDestination.getTargetDirectory(mainFile))
+                }
             } ?: config.getString("targetFile").let { filePath ->
                 JetFileKotlinMoveTarget(PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(filePath)!!) as JetFile)
             }

@@ -28,23 +28,11 @@ import kotlin.properties.Delegates
 
 public trait KotlinMoveTarget {
     val packageWrapper: PackageWrapper?
-    fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiElement?
-    fun getTargetPsiIfExists(originalPsi: PsiElement): PsiElement?
+    fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiFile?
+    fun getTargetPsiIfExists(originalPsi: PsiElement): PsiFile?
 
     // Check possible errors and return corresponding message, or null if no errors are detected
     fun verify(file: PsiFile): String?
-}
-
-public class MoveDestinationKotlinMoveTarget(val moveDestination: MoveDestination): KotlinMoveTarget {
-    override val packageWrapper: PackageWrapper? = moveDestination.getTargetPackage()
-
-    override fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiElement? =
-            moveDestination.getTargetDirectory(originalPsi.getContainingFile())
-
-    override fun getTargetPsiIfExists(originalPsi: PsiElement): PsiElement? =
-            moveDestination.getTargetIfExists(originalPsi.getContainingFile())
-
-    override fun verify(file: PsiFile): String? = moveDestination.verify(file)
 }
 
 public class JetFileKotlinMoveTarget(val targetFile: JetFile): KotlinMoveTarget {
@@ -52,9 +40,9 @@ public class JetFileKotlinMoveTarget(val targetFile: JetFile): KotlinMoveTarget 
         PackageWrapper(PsiManager.getInstance(targetFile.getProject()), packageName)
     }
 
-    override fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiElement? = targetFile
+    override fun getOrCreateTargetPsi(originalPsi: PsiElement) = targetFile
 
-    override fun getTargetPsiIfExists(originalPsi: PsiElement): PsiElement? = targetFile
+    override fun getTargetPsiIfExists(originalPsi: PsiElement) = targetFile
 
     // No additional verification is needed
     override fun verify(file: PsiFile): String? = null
@@ -68,9 +56,9 @@ public class DeferredJetFileKotlinMoveTarget(
 
     override val packageWrapper: PackageWrapper = PackageWrapper(PsiManager.getInstance(project), packageFqName.asString())
 
-    override fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiElement? = createdFile
+    override fun getOrCreateTargetPsi(originalPsi: PsiElement) = createdFile
 
-    override fun getTargetPsiIfExists(originalPsi: PsiElement): PsiElement? = null
+    override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
 
     // No additional verification is needed
     override fun verify(file: PsiFile): String? = null

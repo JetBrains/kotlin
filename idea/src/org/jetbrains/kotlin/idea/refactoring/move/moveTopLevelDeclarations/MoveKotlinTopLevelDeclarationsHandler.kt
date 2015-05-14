@@ -16,54 +16,32 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations
 
-import com.intellij.refactoring.move.MoveHandlerDelegate
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.refactoring.move.MoveCallback
-import com.intellij.psi.PsiReference
-import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
-import org.jetbrains.kotlin.psi.JetClass
-import com.intellij.psi.PsiPackage
-import com.intellij.psi.PsiDirectory
-import org.jetbrains.kotlin.psi.psiUtil.getPackage
-import org.jetbrains.kotlin.idea.refactoring.move.getFileNameAfterMove
-import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
-import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.openapi.actionSystem.LangDataKeys
-import org.jetbrains.kotlin.psi.JetNamedFunction
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiPackage
+import com.intellij.psi.PsiReference
+import com.intellij.refactoring.JavaRefactoringSettings
+import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.move.MoveCallback
+import com.intellij.refactoring.move.MoveHandlerDelegate
+import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesImpl
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
-import java.util.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import java.util.HashSet
+import java.util.LinkedHashSet
 
 public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     private fun doMoveWithCheck(
             project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?
     ): Boolean {
-        fun checkNameConflicts(): Boolean {
-            val fileNames = HashSet<String>()
-            for (element in elements) {
-                if (element !is JetNamedDeclaration) continue
-
-                if (!fileNames.add(element.getFileNameAfterMove())) {
-                    val message = RefactoringBundle.getCannotRefactorMessage(
-                            RefactoringBundle.message("there.are.going.to.be.multiple.destination.files.with.the.same.name")
-                    )
-                    CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("move.title"), message, null, project)
-                    return false
-                }
-            }
-
-            return true
-        }
-
-        if (!checkNameConflicts()) return false
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
 
         [suppress("UNCHECKED_CAST")]
