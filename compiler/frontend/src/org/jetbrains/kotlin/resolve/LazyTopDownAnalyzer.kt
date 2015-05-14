@@ -14,357 +14,301 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.lazy.*;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
-import org.jetbrains.kotlin.resolve.resolveUtil.ResolveUtilPackage;
-import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker;
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.lazy.*
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.resolveUtil.*
+import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 
-import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import javax.inject.Inject
+import java.util.ArrayList
 
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import org.jetbrains.kotlin.diagnostics.Errors.*
 
 public class LazyTopDownAnalyzer {
-    private BindingTrace trace;
+    private var trace: BindingTrace? = null
 
-    private DeclarationResolver declarationResolver;
+    private var declarationResolver: DeclarationResolver? = null
 
-    private OverrideResolver overrideResolver;
+    private var overrideResolver: OverrideResolver? = null
 
-    private OverloadResolver overloadResolver;
+    private var overloadResolver: OverloadResolver? = null
 
-    private VarianceChecker varianceChecker;
+    private var varianceChecker: VarianceChecker? = null
 
-    private ModuleDescriptor moduleDescriptor;
+    private var moduleDescriptor: ModuleDescriptor? = null
 
-    private LazyDeclarationResolver lazyDeclarationResolver;
+    private var lazyDeclarationResolver: LazyDeclarationResolver? = null
 
-    private BodyResolver bodyResolver;
+    private var bodyResolver: BodyResolver? = null
 
-    private TopLevelDescriptorProvider topLevelDescriptorProvider;
+    private var topLevelDescriptorProvider: TopLevelDescriptorProvider? = null
 
-    private FileScopeProvider fileScopeProvider;
+    private var fileScopeProvider: FileScopeProvider? = null
 
-    private DeclarationScopeProvider declarationScopeProvider;
+    private var declarationScopeProvider: DeclarationScopeProvider? = null
 
-    @Inject
-    public void setLazyDeclarationResolver(@NotNull LazyDeclarationResolver lazyDeclarationResolver) {
-        this.lazyDeclarationResolver = lazyDeclarationResolver;
+    Inject
+    public fun setLazyDeclarationResolver(lazyDeclarationResolver: LazyDeclarationResolver) {
+        this.lazyDeclarationResolver = lazyDeclarationResolver
     }
 
-    @Inject
-    public void setTopLevelDescriptorProvider(@NotNull TopLevelDescriptorProvider topLevelDescriptorProvider) {
-        this.topLevelDescriptorProvider = topLevelDescriptorProvider;
+    Inject
+    public fun setTopLevelDescriptorProvider(topLevelDescriptorProvider: TopLevelDescriptorProvider) {
+        this.topLevelDescriptorProvider = topLevelDescriptorProvider
     }
 
-    @Inject
-    public void setFileScopeProvider(@NotNull FileScopeProvider fileScopeProvider) {
-        this.fileScopeProvider = fileScopeProvider;
+    Inject
+    public fun setFileScopeProvider(fileScopeProvider: FileScopeProvider) {
+        this.fileScopeProvider = fileScopeProvider
     }
 
-    @Inject
-    public void setDeclarationScopeProvider(DeclarationScopeProviderImpl declarationScopeProvider) {
-        this.declarationScopeProvider = declarationScopeProvider;
+    Inject
+    public fun setDeclarationScopeProvider(declarationScopeProvider: DeclarationScopeProviderImpl) {
+        this.declarationScopeProvider = declarationScopeProvider
     }
 
-    @Inject
-    public void setTrace(@NotNull BindingTrace trace) {
-        this.trace = trace;
+    Inject
+    public fun setTrace(trace: BindingTrace) {
+        this.trace = trace
     }
 
-    @Inject
-    public void setDeclarationResolver(@NotNull DeclarationResolver declarationResolver) {
-        this.declarationResolver = declarationResolver;
+    Inject
+    public fun setDeclarationResolver(declarationResolver: DeclarationResolver) {
+        this.declarationResolver = declarationResolver
     }
 
-    @Inject
-    public void setOverrideResolver(@NotNull OverrideResolver overrideResolver) {
-        this.overrideResolver = overrideResolver;
+    Inject
+    public fun setOverrideResolver(overrideResolver: OverrideResolver) {
+        this.overrideResolver = overrideResolver
     }
 
-    @Inject
-    public void setVarianceChecker(@NotNull VarianceChecker varianceChecker) {
-        this.varianceChecker = varianceChecker;
+    Inject
+    public fun setVarianceChecker(varianceChecker: VarianceChecker) {
+        this.varianceChecker = varianceChecker
     }
 
-    @Inject
-    public void setOverloadResolver(@NotNull OverloadResolver overloadResolver) {
-        this.overloadResolver = overloadResolver;
+    Inject
+    public fun setOverloadResolver(overloadResolver: OverloadResolver) {
+        this.overloadResolver = overloadResolver
     }
 
-    @Inject
-    public void setModuleDescriptor(@NotNull ModuleDescriptor moduleDescriptor) {
-        this.moduleDescriptor = moduleDescriptor;
+    Inject
+    public fun setModuleDescriptor(moduleDescriptor: ModuleDescriptor) {
+        this.moduleDescriptor = moduleDescriptor
     }
 
-    @Inject
-    public void setBodyResolver(@NotNull BodyResolver bodyResolver) {
-        this.bodyResolver = bodyResolver;
+    Inject
+    public fun setBodyResolver(bodyResolver: BodyResolver) {
+        this.bodyResolver = bodyResolver
     }
 
-    @NotNull
-    public TopDownAnalysisContext analyzeDeclarations(
-            @NotNull TopDownAnalysisMode topDownAnalysisMode,
-            @NotNull Collection<? extends PsiElement> declarations,
-            @NotNull DataFlowInfo outerDataFlowInfo
-    ) {
-        final TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo);
+    public fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
+        val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo)
 
-        final Multimap<FqName, JetElement> topLevelFqNames = HashMultimap.create();
+        val topLevelFqNames = HashMultimap.create<FqName, JetElement>()
 
-        final List<JetProperty> properties = new ArrayList<JetProperty>();
-        final List<JetNamedFunction> functions = new ArrayList<JetNamedFunction>();
+        val properties = ArrayList<JetProperty>()
+        val functions = ArrayList<JetNamedFunction>()
 
         // fill in the context
-        for (PsiElement declaration : declarations) {
-            declaration.accept(
-                    new JetVisitorVoid() {
-                        private void registerDeclarations(@NotNull List<JetDeclaration> declarations) {
-                            for (JetDeclaration jetDeclaration : declarations) {
-                                jetDeclaration.accept(this);
+        for (declaration in declarations) {
+            declaration.accept(object : JetVisitorVoid() {
+                private fun registerDeclarations(declarations: List<JetDeclaration>) {
+                    for (jetDeclaration in declarations) {
+                        jetDeclaration.accept(this)
+                    }
+                }
+
+                override fun visitDeclaration(dcl: JetDeclaration) {
+                    throw IllegalArgumentException("Unsupported declaration: " + dcl + " " + dcl.getText())
+                }
+
+                override fun visitJetFile(file: JetFile) {
+                    if (file.isScript()) {
+                        val script = file.getScript()
+                        assert(script != null)
+
+                        DescriptorResolver.registerFileInPackage(trace, file)
+                        c.getScripts().put(script, topLevelDescriptorProvider!!.getScriptDescriptor(script))
+                    }
+                    else {
+                        val packageDirective = file.getPackageDirective()
+                        assert(packageDirective != null) { "No package in a non-script file: " + file }
+
+                        c.addFile(file)
+
+                        packageDirective!!.accept(this)
+                        DescriptorResolver.registerFileInPackage(trace, file)
+
+                        registerDeclarations(file.getDeclarations())
+
+                        topLevelFqNames.put(file.getPackageFqName(), packageDirective)
+                    }
+                }
+
+                override fun visitPackageDirective(directive: JetPackageDirective) {
+                    DescriptorResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
+                }
+
+                override fun visitImportDirective(importDirective: JetImportDirective) {
+                    val fileScope = fileScopeProvider!!.getFileScope(importDirective.getContainingJetFile()) as LazyFileScope
+                    fileScope.forceResolveImport(importDirective)
+                }
+
+                private fun visitClassOrObject(classOrObject: JetClassOrObject) {
+                    val descriptor = lazyDeclarationResolver!!.getClassDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes
+
+                    c.getDeclaredClasses().put(classOrObject, descriptor)
+                    registerDeclarations(classOrObject.getDeclarations())
+                    registerTopLevelFqName(topLevelFqNames, classOrObject, descriptor)
+
+                    checkClassOrObjectDeclarations(classOrObject, descriptor)
+                }
+
+                private fun checkClassOrObjectDeclarations(classOrObject: JetClassOrObject, classDescriptor: ClassDescriptor) {
+                    var companionObjectAlreadyFound = false
+                    for (jetDeclaration in classOrObject.getDeclarations()) {
+                        if (jetDeclaration is JetObjectDeclaration && jetDeclaration.isCompanion()) {
+                            if (companionObjectAlreadyFound) {
+                                trace!!.report(MANY_COMPANION_OBJECTS.on(jetDeclaration))
                             }
+                            companionObjectAlreadyFound = true
                         }
-
-                        @Override
-                        public void visitDeclaration(@NotNull JetDeclaration dcl) {
-                            throw new IllegalArgumentException("Unsupported declaration: " + dcl + " " + dcl.getText());
-                        }
-
-                        @Override
-                        public void visitJetFile(@NotNull JetFile file) {
-                            if (file.isScript()) {
-                                JetScript script = file.getScript();
-                                assert script != null;
-
-                                DescriptorResolver.registerFileInPackage(trace, file);
-                                c.getScripts().put(script, topLevelDescriptorProvider.getScriptDescriptor(script));
+                        else if (jetDeclaration is JetSecondaryConstructor) {
+                            if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
+                                trace!!.report(SECONDARY_CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
                             }
-                            else {
-                                JetPackageDirective packageDirective = file.getPackageDirective();
-                                assert packageDirective != null : "No package in a non-script file: " + file;
-
-                                c.addFile(file);
-
-                                packageDirective.accept(this);
-                                DescriptorResolver.registerFileInPackage(trace, file);
-
-                                registerDeclarations(file.getDeclarations());
-
-                                topLevelFqNames.put(file.getPackageFqName(), packageDirective);
+                            else if (classDescriptor.getKind() == ClassKind.INTERFACE) {
+                                trace!!.report(CONSTRUCTOR_IN_TRAIT.on(jetDeclaration))
                             }
-                        }
-
-                        @Override
-                        public void visitPackageDirective(@NotNull JetPackageDirective directive) {
-                            DescriptorResolver.resolvePackageHeader(directive, moduleDescriptor, trace);
-                        }
-
-                        @Override
-                        public void visitImportDirective(@NotNull JetImportDirective importDirective) {
-                            LazyFileScope fileScope = (LazyFileScope) fileScopeProvider.getFileScope(
-                                    importDirective.getContainingJetFile());
-                            fileScope.forceResolveImport(importDirective);
-                        }
-
-                        private void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
-                            ClassDescriptorWithResolutionScopes descriptor =
-                                    (ClassDescriptorWithResolutionScopes) lazyDeclarationResolver.getClassDescriptor(classOrObject);
-
-                            c.getDeclaredClasses().put(classOrObject, descriptor);
-                            registerDeclarations(classOrObject.getDeclarations());
-                            registerTopLevelFqName(topLevelFqNames, classOrObject, descriptor);
-
-                            checkClassOrObjectDeclarations(classOrObject, descriptor);
-                        }
-
-                        private void checkClassOrObjectDeclarations(JetClassOrObject classOrObject, ClassDescriptor classDescriptor) {
-                            boolean companionObjectAlreadyFound = false;
-                            for (JetDeclaration jetDeclaration : classOrObject.getDeclarations()) {
-                                if (jetDeclaration instanceof JetObjectDeclaration && ((JetObjectDeclaration) jetDeclaration).isCompanion()) {
-                                    if (companionObjectAlreadyFound) {
-                                        trace.report(MANY_COMPANION_OBJECTS.on((JetObjectDeclaration) jetDeclaration));
-                                    }
-                                    companionObjectAlreadyFound = true;
-                                }
-                                else if (jetDeclaration instanceof JetSecondaryConstructor) {
-                                    if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
-                                        trace.report(SECONDARY_CONSTRUCTOR_IN_OBJECT.on((JetSecondaryConstructor) jetDeclaration));
-                                    }
-                                    else if (classDescriptor.getKind() == ClassKind.INTERFACE) {
-                                        trace.report(CONSTRUCTOR_IN_TRAIT.on(jetDeclaration));
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void visitClass(@NotNull JetClass klass) {
-                            visitClassOrObject(klass);
-                            registerPrimaryConstructorParameters(klass);
-                        }
-
-                        private void registerPrimaryConstructorParameters(@NotNull JetClass klass) {
-                            for (JetParameter jetParameter : klass.getPrimaryConstructorParameters()) {
-                                if (jetParameter.hasValOrVarNode()) {
-                                    c.getPrimaryConstructorParameterProperties().put(
-                                            jetParameter,
-                                            (PropertyDescriptor) lazyDeclarationResolver.resolveToDescriptor(jetParameter)
-                                    );
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor) {
-                            ClassDescriptor classDescriptor =
-                                    (ClassDescriptor) lazyDeclarationResolver.resolveToDescriptor(constructor.getClassOrObject());
-                            if (!DescriptorUtils.canHaveSecondaryConstructors(classDescriptor)) {
-                                return;
-                            }
-                            c.getSecondaryConstructors().put(
-                                    constructor,
-                                    (ConstructorDescriptor) lazyDeclarationResolver.resolveToDescriptor(constructor)
-                            );
-                            registerScope(c, constructor);
-                        }
-
-                        @Override
-                        public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
-                            visitClassOrObject(enumEntry);
-                        }
-
-                        @Override
-                        public void visitObjectDeclaration(@NotNull JetObjectDeclaration declaration) {
-                            visitClassOrObject(declaration);
-                        }
-
-                        @Override
-                        public void visitAnonymousInitializer(@NotNull JetClassInitializer initializer) {
-                            registerScope(c, initializer);
-                            JetClassOrObject classOrObject = PsiTreeUtil.getParentOfType(initializer, JetClassOrObject.class);
-                            c.getAnonymousInitializers().put(
-                                    initializer,
-                                    (ClassDescriptorWithResolutionScopes) lazyDeclarationResolver.resolveToDescriptor(classOrObject)
-                            );
-                        }
-
-                        @Override
-                        public void visitTypedef(@NotNull JetTypedef typedef) {
-                            trace.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"));
-                        }
-
-                        @Override
-                        public void visitMultiDeclaration(@NotNull JetMultiDeclaration multiDeclaration) {
-                            // Ignore: multi-declarations are only allowed locally
-                        }
-
-                        @Override
-                        public void visitNamedFunction(@NotNull JetNamedFunction function) {
-                            functions.add(function);
-                        }
-
-                        @Override
-                        public void visitProperty(@NotNull JetProperty property) {
-                            properties.add(property);
                         }
                     }
-            );
+                }
+
+                override fun visitClass(klass: JetClass) {
+                    visitClassOrObject(klass)
+                    registerPrimaryConstructorParameters(klass)
+                }
+
+                private fun registerPrimaryConstructorParameters(klass: JetClass) {
+                    for (jetParameter in klass.getPrimaryConstructorParameters()) {
+                        if (jetParameter.hasValOrVarNode()) {
+                            c.getPrimaryConstructorParameterProperties().put(jetParameter, lazyDeclarationResolver!!.resolveToDescriptor(jetParameter) as PropertyDescriptor)
+                        }
+                    }
+                }
+
+                override fun visitSecondaryConstructor(constructor: JetSecondaryConstructor) {
+                    val classDescriptor = lazyDeclarationResolver!!.resolveToDescriptor(constructor.getClassOrObject()) as ClassDescriptor
+                    if (!DescriptorUtils.canHaveSecondaryConstructors(classDescriptor)) {
+                        return
+                    }
+                    c.getSecondaryConstructors().put(constructor, lazyDeclarationResolver!!.resolveToDescriptor(constructor) as ConstructorDescriptor)
+                    registerScope(c, constructor)
+                }
+
+                override fun visitEnumEntry(enumEntry: JetEnumEntry) {
+                    visitClassOrObject(enumEntry)
+                }
+
+                override fun visitObjectDeclaration(declaration: JetObjectDeclaration) {
+                    visitClassOrObject(declaration)
+                }
+
+                override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
+                    registerScope(c, initializer)
+                    val classOrObject = PsiTreeUtil.getParentOfType<JetClassOrObject>(initializer, javaClass<JetClassOrObject>())
+                    c.getAnonymousInitializers().put(initializer, lazyDeclarationResolver!!.resolveToDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes)
+                }
+
+                override fun visitTypedef(typedef: JetTypedef) {
+                    trace!!.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"))
+                }
+
+                override fun visitMultiDeclaration(multiDeclaration: JetMultiDeclaration) {
+                    // Ignore: multi-declarations are only allowed locally
+                }
+
+                override fun visitNamedFunction(function: JetNamedFunction) {
+                    functions.add(function)
+                }
+
+                override fun visitProperty(property: JetProperty) {
+                    properties.add(property)
+                }
+            })
         }
 
-        createFunctionDescriptors(c, functions);
+        createFunctionDescriptors(c, functions)
 
-        createPropertyDescriptors(c, topLevelFqNames, properties);
+        createPropertyDescriptors(c, topLevelFqNames, properties)
 
-        resolveAllHeadersInClasses(c);
+        resolveAllHeadersInClasses(c)
 
-        declarationResolver.checkRedeclarationsInPackages(topLevelDescriptorProvider, topLevelFqNames);
-        declarationResolver.checkRedeclarations(c);
+        declarationResolver!!.checkRedeclarationsInPackages(topLevelDescriptorProvider, topLevelFqNames)
+        declarationResolver!!.checkRedeclarations(c)
 
-        ResolveUtilPackage.checkTraitRequirements(c.getDeclaredClasses(), trace);
+        checkTraitRequirements(c.getDeclaredClasses(), trace)
 
-        overrideResolver.check(c);
+        overrideResolver!!.check(c)
 
-        varianceChecker.check(c);
+        varianceChecker!!.check(c)
 
-        declarationResolver.resolveAnnotationsOnFiles(c, fileScopeProvider);
+        declarationResolver!!.resolveAnnotationsOnFiles(c, fileScopeProvider)
 
-        overloadResolver.process(c);
+        overloadResolver!!.process(c)
 
-        bodyResolver.resolveBodies(c);
+        bodyResolver!!.resolveBodies(c)
 
-        return c;
+        return c
     }
 
-    private static void resolveAllHeadersInClasses(TopDownAnalysisContext c) {
-        for (ClassDescriptorWithResolutionScopes classDescriptor : c.getAllClasses()) {
-            ((LazyClassDescriptor) classDescriptor).resolveMemberHeaders();
+    private fun resolveAllHeadersInClasses(c: TopDownAnalysisContext) {
+        for (classDescriptor in c.getAllClasses()) {
+            (classDescriptor as LazyClassDescriptor).resolveMemberHeaders()
         }
     }
 
-    private void createPropertyDescriptors(
-            TopDownAnalysisContext c,
-            Multimap<FqName, JetElement> topLevelFqNames,
-            List<JetProperty> properties
-    ) {
-        for (JetProperty property : properties) {
-            PropertyDescriptor descriptor = (PropertyDescriptor) lazyDeclarationResolver.resolveToDescriptor(property);
+    private fun createPropertyDescriptors(c: TopDownAnalysisContext, topLevelFqNames: Multimap<FqName, JetElement>, properties: List<JetProperty>) {
+        for (property in properties) {
+            val descriptor = lazyDeclarationResolver!!.resolveToDescriptor(property) as PropertyDescriptor
 
-            c.getProperties().put(property, descriptor);
-            registerTopLevelFqName(topLevelFqNames, property, descriptor);
+            c.getProperties().put(property, descriptor)
+            registerTopLevelFqName(topLevelFqNames, property, descriptor)
 
-            registerScope(c, property);
-            registerScope(c, property.getGetter());
-            registerScope(c, property.getSetter());
+            registerScope(c, property)
+            registerScope(c, property.getGetter())
+            registerScope(c, property.getSetter())
         }
     }
 
-    private void createFunctionDescriptors(
-            TopDownAnalysisContext c,
-            List<JetNamedFunction> functions
-    ) {
-        for (JetNamedFunction function : functions) {
-            c.getFunctions().put(
-                    function,
-                    (SimpleFunctionDescriptor) lazyDeclarationResolver.resolveToDescriptor(function)
-            );
-            registerScope(c, function);
+    private fun createFunctionDescriptors(c: TopDownAnalysisContext, functions: List<JetNamedFunction>) {
+        for (function in functions) {
+            c.getFunctions().put(function, lazyDeclarationResolver!!.resolveToDescriptor(function) as SimpleFunctionDescriptor)
+            registerScope(c, function)
         }
     }
 
-    private void registerScope(
-            @NotNull TopDownAnalysisContext c,
-            @Nullable JetDeclaration declaration
-    ) {
-        if (declaration == null) return;
-        c.registerDeclaringScope(
-                declaration,
-                declarationScopeProvider.getResolutionScopeForDeclaration(declaration)
-        );
+    private fun registerScope(c: TopDownAnalysisContext, declaration: JetDeclaration?) {
+        if (declaration == null) return
+        c.registerDeclaringScope(declaration, declarationScopeProvider!!.getResolutionScopeForDeclaration(declaration))
     }
 
-    private static void registerTopLevelFqName(
-            @NotNull Multimap<FqName, JetElement> topLevelFqNames,
-            @NotNull JetNamedDeclaration declaration,
-            @NotNull DeclarationDescriptor descriptor
-    ) {
+    private fun registerTopLevelFqName(topLevelFqNames: Multimap<FqName, JetElement>, declaration: JetNamedDeclaration, descriptor: DeclarationDescriptor) {
         if (DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            FqName fqName = declaration.getFqName();
+            val fqName = declaration.getFqName()
             if (fqName != null) {
-                topLevelFqNames.put(fqName, declaration);
+                topLevelFqNames.put(fqName, declaration)
             }
         }
     }
