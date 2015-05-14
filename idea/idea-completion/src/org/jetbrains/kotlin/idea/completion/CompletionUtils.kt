@@ -358,7 +358,7 @@ fun LookupElementFactory.createBackingFieldLookupElement(
     val bindingContext = resolutionFacade.analyze(declaration)
     if (!bindingContext[BindingContext.BACKING_FIELD_REQUIRED, property]) return null
 
-    val lookupElement = createLookupElement(resolutionFacade, property, true)
+    val lookupElement = createLookupElement(property, true)
     return object : LookupElementDecorator<LookupElement>(lookupElement) {
         override fun getLookupString() = "$" + super.getLookupString()
         override fun getAllLookupStrings() = setOf(getLookupString())

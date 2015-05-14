@@ -142,10 +142,10 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
                 receiverTypes = receiverTypes.map { it.makeNotNullable() }
             }
 
-            LookupElementFactory(receiverTypes)
+            LookupElementFactory(resolutionFacade, receiverTypes)
         }
         else {
-            LookupElementFactory(emptyList())
+            LookupElementFactory(resolutionFacade, emptyList())
         }
     }
 

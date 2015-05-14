@@ -16,29 +16,27 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
+import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import com.intellij.codeInsight.completion.InsertionContext
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.LookupElementFactory
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.idea.completion.ExpectedInfo
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeUtils
 
 // adds java static members, enum members and members from companion object
 class StaticMembers(
         val bindingContext: BindingContext,
-        val resolutionFacade: ResolutionFacade,
         val lookupElementFactory: LookupElementFactory
 ) {
     public fun addToCollection(collection: MutableCollection<LookupElement>,
@@ -100,7 +98,7 @@ class StaticMembers(
     }
 
     private fun createLookupElement(memberDescriptor: DeclarationDescriptor, classDescriptor: ClassDescriptor): LookupElement {
-        val lookupElement = lookupElementFactory.createLookupElement(memberDescriptor, resolutionFacade, bindingContext, false)
+        val lookupElement = lookupElementFactory.createLookupElement(memberDescriptor, bindingContext, false)
         val qualifierPresentation = classDescriptor.getName().asString()
         val qualifierText = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classDescriptor)
 
@@ -131,7 +129,7 @@ class StaticMembers(
                 var text = qualifierText + "." + IdeDescriptorRenderers.SOURCE_CODE.renderName(memberDescriptor.getName())
 
                 context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
-                context.setTailOffset(context.getStartOffset() + text.length)
+                context.setTailOffset(context.getStartOffset() + text.length())
 
                 if (memberDescriptor is FunctionDescriptor) {
                     getDelegate().handleInsert(context)

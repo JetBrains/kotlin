@@ -24,14 +24,11 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetValueArgument
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.JetType
@@ -264,11 +261,10 @@ fun functionType(function: FunctionDescriptor): JetType? {
 
 fun LookupElementFactory.createLookupElement(
         descriptor: DeclarationDescriptor,
-        resolutionFacade: ResolutionFacade,
         bindingContext: BindingContext,
         boldImmediateMembers: Boolean
 ): LookupElement {
-    var element = createLookupElement(resolutionFacade, descriptor, boldImmediateMembers)
+    var element = createLookupElement(descriptor, boldImmediateMembers)
 
     if (descriptor is FunctionDescriptor && descriptor.getValueParameters().isNotEmpty()) {
         element = element.keepOldArgumentListOnTab()

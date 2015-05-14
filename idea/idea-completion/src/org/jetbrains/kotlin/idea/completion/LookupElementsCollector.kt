@@ -71,7 +71,7 @@ class LookupElementsCollector(
 
     private fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, withReceiverCast: Boolean) {
         run {
-            var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
+            var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
 
             if (withReceiverCast) {
                 lookupElement = lookupElement.withReceiverCast()
@@ -97,7 +97,7 @@ class LookupElementsCollector(
                 if (KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameterType)) {
                     val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
                     if (parameterCount > 1) {
-                        var lookupElement = lookupElementFactory.createLookupElement(resolutionFacade, descriptor, true)
+                        var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
 
                         lookupElement = object : LookupElementDecorator<LookupElement>(lookupElement) {
                             override fun renderElement(presentation: LookupElementPresentation) {

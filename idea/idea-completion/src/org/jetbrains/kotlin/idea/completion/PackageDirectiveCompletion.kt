@@ -16,14 +16,16 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.CompletionParameters
+import com.intellij.codeInsight.completion.CompletionResultSet
+import com.intellij.codeInsight.completion.PlainPrefixMatcher
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.patterns.PlatformPatterns
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPackageDirective
 
 /**
  * Performs completion in package directive. Should suggest only packages and avoid showing fake package produced by
@@ -52,7 +54,7 @@ object PackageDirectiveCompletion {
 
             val variants = ReferenceVariantsHelper(bindingContext, { true }).getPackageReferenceVariants(ref.expression, prefixMatcher.asNameFilter())
             for (variant in variants) {
-                val lookupElement = LookupElementFactory(listOf()).createLookupElement(resolutionFacade, variant, false)
+                val lookupElement = LookupElementFactory(resolutionFacade, listOf()).createLookupElement(variant, false)
                 if (!lookupElement.getLookupString().contains(DUMMY_IDENTIFIER)) {
                     result.addElement(lookupElement)
                 }

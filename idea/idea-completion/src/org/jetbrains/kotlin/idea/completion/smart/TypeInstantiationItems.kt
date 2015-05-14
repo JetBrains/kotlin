@@ -122,7 +122,7 @@ class TypeInstantiationItems(
             typeArgs: List<TypeProjection>,
             tail: Tail?
     ): LookupElement? {
-        var lookupElement = lookupElementFactory.createLookupElement(classifier, resolutionFacade, bindingContext, false)
+        var lookupElement = lookupElementFactory.createLookupElement(classifier, bindingContext, false)
 
         if (DescriptorUtils.isNonCompanionObject(classifier)) {
             return lookupElement.addTail(tail)
@@ -252,7 +252,7 @@ class TypeInstantiationItems(
             val samConstructor = scope.getFunctions(`class`.getName())
                                          .filterIsInstance<SamConstructorDescriptor>()
                                          .singleOrNull() ?: return
-            val lookupElement = lookupElementFactory.createLookupElement(samConstructor, resolutionFacade, bindingContext, false)
+            val lookupElement = lookupElementFactory.createLookupElement(samConstructor, bindingContext, false)
                     .assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
                     .addTail(tail)
             collection.add(lookupElement)

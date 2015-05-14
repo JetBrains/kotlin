@@ -17,34 +17,30 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.InsertHandler
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.lookup.*
+import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
 import com.intellij.openapi.util.Iconable
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.completion.handlers.*
+import org.jetbrains.kotlin.idea.util.TypeNullability
+import org.jetbrains.kotlin.idea.util.nullability
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
-import org.jetbrains.kotlin.idea.completion.handlers.*
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.asJava.KotlinLightClass
-import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
-import com.intellij.codeInsight.lookup.DefaultLookupItemRenderer
 import org.jetbrains.kotlin.types.TypeUtils
-import com.intellij.codeInsight.lookup.impl.LookupCellRenderer
-import org.jetbrains.kotlin.idea.util.nullability
-import org.jetbrains.kotlin.idea.util.TypeNullability
 
 public class LookupElementFactory(
+        private val resolutionFacade: ResolutionFacade,
         private val receiverTypes: Collection<JetType>
 ) {
     public fun createLookupElement(
-            resolutionFacade: ResolutionFacade,
             descriptor: DeclarationDescriptor,
             boldImmediateMembers: Boolean
     ): LookupElement {
@@ -52,7 +48,7 @@ public class LookupElementFactory(
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        var element = createLookupElement(resolutionFacade, _descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
+        var element = createLookupElement(_descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor))
 
         val weight = callableWeight(descriptor)
         if (weight != null) {
@@ -127,7 +123,6 @@ public class LookupElementFactory(
     }
 
     private fun createLookupElement(
-            resolutionFacade: ResolutionFacade,
             descriptor: DeclarationDescriptor,
             declaration: PsiElement?
     ): LookupElement {

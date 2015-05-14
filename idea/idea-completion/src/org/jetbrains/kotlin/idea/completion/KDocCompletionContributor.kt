@@ -20,7 +20,6 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.PlatformPatterns.psiElement
 import com.intellij.patterns.StandardPatterns
 import com.intellij.util.ProcessingContext
@@ -78,14 +77,14 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
                 .filter { it.getName().asString() !in documentedParameters }
 
         descriptors.forEach {
-            resultSet.addElement(lookupElementFactory.createLookupElement(resolutionFacade, it, false))
+            resultSet.addElement(lookupElementFactory.createLookupElement(it, false))
         }
     }
 
     private fun addLinkCompletions(declarationDescriptor: DeclarationDescriptor) {
         val scope = getResolutionScope(resolutionFacade, declarationDescriptor)
         scope.getDescriptors(nameFilter = prefixMatcher.asNameFilter()).forEach {
-            val element = lookupElementFactory.createLookupElement(resolutionFacade, it, false)
+            val element = lookupElementFactory.createLookupElement(it, false)
             resultSet.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {
                     // insert only plain name here, no qualifier/parentheses/etc.
