@@ -1,1 +1,1 @@
-class A : (categoryName: <!SYNTAX!><!>) <!SYNTAX!>{<!SYNTAX!><!><!>
+class A : (categoryName: <!SYNTAX!><!>)<!SYNTAX!><!> <!SYNTAX!><!>{<!SYNTAX!><!>

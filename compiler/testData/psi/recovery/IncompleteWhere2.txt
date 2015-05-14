@@ -1,0 +1,39 @@
+JetFile: IncompleteWhere2.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Outer')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('Inner')
+        TYPE_PARAMETER_LIST
+          PsiElement(LT)('<')
+          TYPE_PARAMETER
+            PsiElement(IDENTIFIER)('T')
+          PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        PsiElement(where)('where')
+        PsiWhiteSpace(' ')
+        TYPE_CONSTRAINT_LIST
+          TYPE_CONSTRAINT
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('T')
+            PsiErrorElement:Expecting ':' before the upper bound
+              <empty list>
+            PsiWhiteSpace('\n')
+            TYPE_REFERENCE
+              PsiErrorElement:Type expected
+                <empty list>
+      PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n\n')
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('Next')

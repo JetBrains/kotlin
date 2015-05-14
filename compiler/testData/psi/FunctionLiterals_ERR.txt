@@ -504,12 +504,9 @@ JetFile: FunctionLiterals_ERR.kt
             PsiWhiteSpace(' ')
             VALUE_PARAMETER
               PsiErrorElement:Expecting parameter name
-                PsiElement(RBRACE)('}')
-            PsiErrorElement:Expecting '->' or ','
-              <empty list>
-          PsiWhiteSpace('\n')
+                <empty list>
           BLOCK
             <empty list>
           PsiElement(RBRACE)('}')
-      PsiErrorElement:Expecting '}'
-        <empty list>
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

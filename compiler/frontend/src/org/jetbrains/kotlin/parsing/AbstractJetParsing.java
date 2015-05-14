@@ -101,7 +101,7 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
 
     protected void errorWithRecovery(String message, TokenSet recoverySet) {
         IElementType tt = tt();
-        if (recoverySet == null || recoverySet.contains(tt)
+        if (recoverySet == null || recoverySet.contains(tt) || tt == LBRACE || tt == RBRACE
                 || (recoverySet.contains(EOL_OR_SEMICOLON)
                         && (eof() || tt == SEMICOLON || myBuilder.newlineBeforeCurrentToken()))) {
             error(message);
@@ -258,6 +258,8 @@ import static org.jetbrains.kotlin.lexer.JetTokens.*;
     }
 
     protected void errorUntil(String message, TokenSet tokenSet) {
+        assert tokenSet.contains(LBRACE) : "Cannot include LBRACE into error element!";
+        assert tokenSet.contains(RBRACE) : "Cannot include RBRACE into error element!";
         PsiBuilder.Marker error = mark();
         skipUntil(tokenSet);
         error.error(message);

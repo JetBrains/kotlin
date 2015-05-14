@@ -6,8 +6,13 @@ JetFile: Properties_ERR.kt
     PsiWhiteSpace(' ')
     PsiErrorElement:Expecting property name or receiver type
       PsiElement(MINUS)('-')
-    PsiWhiteSpace(' ')
     PsiErrorElement:Property getter or setter expected
+      <empty list>
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
@@ -15,8 +20,13 @@ JetFile: Properties_ERR.kt
     PsiElement(var)('var')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('f')
-    PsiWhiteSpace(' ')
     PsiErrorElement:Property getter or setter expected
+      <empty list>
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
@@ -159,10 +169,12 @@ JetFile: Properties_ERR.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RBRACE)('}')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n   ')
   PsiErrorElement:Expecting a top level declaration
     PsiElement(LPAR)('(')
@@ -209,6 +221,8 @@ JetFile: Properties_ERR.kt
       PsiElement(get)('get')
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
       PsiErrorElement:Expecting function body
-        PsiElement(MINUS)('-')
+        <empty list>
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(MINUS)('-')

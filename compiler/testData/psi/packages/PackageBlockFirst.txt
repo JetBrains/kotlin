@@ -5,32 +5,34 @@ JetFile: PackageBlockFirst.kt
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foobar')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LBRACE)('{')
-  PsiWhiteSpace('\n  ')
-  PROPERTY
-    PsiElement(val)('val')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('a')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace(' ')
-    INTEGER_CONSTANT
-      PsiElement(INTEGER_LITERAL)('1')
-  PsiWhiteSpace('\n  ')
-  PROPERTY
-    PsiElement(val)('val')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('b')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace(' ')
-    DOT_QUALIFIED_EXPRESSION
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('foobar')
-      PsiElement(DOT)('.')
-      REFERENCE_EXPRESSION
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('a')
-  PsiWhiteSpace('\n')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RBRACE)('}')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        INTEGER_CONSTANT
+          PsiElement(INTEGER_LITERAL)('1')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(val)('val')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('b')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        DOT_QUALIFIED_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('foobar')
+          PsiElement(DOT)('.')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('a')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

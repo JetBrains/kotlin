@@ -26,7 +26,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
@@ -78,11 +77,10 @@ public class JetNamedFunction extends JetTypeParameterListOwnerStub<KotlinFuncti
         return getEqualsToken() == null;
     }
 
-    @NotNull
+    @Nullable
+    @IfNotParsed // "function" with no "fun" keyword is created by parser for "{...}" on top-level or in class body
     public PsiElement getFunKeyword() {
-        PsiElement element = findChildByType(JetTokens.FUN_KEYWORD);
-        assert element != null : "'fun' must be present: " + PsiUtilPackage.getElementTextWithContext(this);
-        return element;
+        return findChildByType(JetTokens.FUN_KEYWORD);
     }
 
     @Override

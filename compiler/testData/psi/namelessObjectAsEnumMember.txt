@@ -32,6 +32,5 @@ JetFile: namelessObjectAsEnumMember.kt
         PsiWhiteSpace('\n')
         OBJECT_DECLARATION_NAME
           PsiErrorElement:Name expected
-            PsiElement(RBRACE)('}')
-      PsiErrorElement:Expecting '}' to close enum class body
-        <empty list>
+            <empty list>
+      PsiElement(RBRACE)('}')

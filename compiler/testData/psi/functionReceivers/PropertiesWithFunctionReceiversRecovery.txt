@@ -29,7 +29,11 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
       PsiElement(LT)('<')
       PsiElement(IDENTIFIER)('P')
       PsiElement(GT)('>')
-      PsiWhiteSpace(' ')
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace(' ')
       PsiElement(RBRACE)('}')
@@ -258,8 +262,13 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
       PsiElement(RPAR)(')')
     PsiElement(DOT)('.')
     PsiElement(IDENTIFIER)('foo')
-    PsiWhiteSpace(' ')
     PsiErrorElement:Property getter or setter expected
+      <empty list>
+  PsiWhiteSpace(' ')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')

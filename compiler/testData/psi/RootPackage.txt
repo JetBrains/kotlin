@@ -18,114 +18,116 @@ JetFile: RootPackage.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(package)('package')
   PsiWhiteSpace(' ')
-  MODIFIER_LIST
-    ANNOTATION_ENTRY
-      CONSTRUCTOR_CALLEE
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('foo')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('bar')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LBRACE)('{')
-  PsiWhiteSpace('\n  ')
   FUN
-    PsiElement(fun)('fun')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('foo')
-    VALUE_PARAMETER_LIST
-      PsiElement(LPAR)('(')
-      PsiElement(RPAR)(')')
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
     PsiWhiteSpace(' ')
     BLOCK
       PsiElement(LBRACE)('{')
-      PsiWhiteSpace('\n    ')
-      DOT_QUALIFIED_EXPRESSION
-        DOT_QUALIFIED_EXPRESSION
-          DOT_QUALIFIED_EXPRESSION
-            ROOT_PACKAGE
-              PsiElement(package)('package')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
-          PsiElement(DOT)('.')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('X')
-      PsiWhiteSpace('\n    ')
-      DOT_QUALIFIED_EXPRESSION
-        DOT_QUALIFIED_EXPRESSION
-          DOT_QUALIFIED_EXPRESSION
-            ROOT_PACKAGE
-              PsiElement(package)('package')
-            PsiElement(DOT)('.')
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('foo')
-          PsiElement(DOT)('.')
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('bar')
-        PsiElement(DOT)('.')
-        CALL_EXPRESSION
-          REFERENCE_EXPRESSION
-            PsiElement(IDENTIFIER)('X')
-          VALUE_ARGUMENT_LIST
-            PsiElement(LPAR)('(')
-            PsiElement(RPAR)(')')
-      PsiWhiteSpace('\n    ')
-      WHEN
-        PsiElement(when)('when')
+      PsiWhiteSpace('\n  ')
+      FUN
+        PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('e')
-        PsiElement(RPAR)(')')
+        PsiElement(IDENTIFIER)('foo')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiElement(LBRACE)('{')
-        PsiWhiteSpace('\n      ')
-        WHEN_ENTRY
-          WHEN_CONDITION_IS_PATTERN
-            PsiElement(is)('is')
-            PsiWhiteSpace(' ')
-            TYPE_REFERENCE
-              USER_TYPE
-                USER_TYPE
-                  USER_TYPE
-                    PsiElement(package)('package')
-                    PsiElement(DOT)('.')
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('foo')
-                  PsiElement(DOT)('.')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('bar')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n    ')
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                ROOT_PACKAGE
+                  PsiElement(package)('package')
                 PsiElement(DOT)('.')
                 REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('X')
-                TYPE_ARGUMENT_LIST
-                  PsiElement(LT)('<')
-                  TYPE_PROJECTION
-                    TYPE_REFERENCE
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+            PsiElement(DOT)('.')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('X')
+          PsiWhiteSpace('\n    ')
+          DOT_QUALIFIED_EXPRESSION
+            DOT_QUALIFIED_EXPRESSION
+              DOT_QUALIFIED_EXPRESSION
+                ROOT_PACKAGE
+                  PsiElement(package)('package')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('foo')
+              PsiElement(DOT)('.')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('bar')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('X')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          WHEN
+            PsiElement(when)('when')
+            PsiWhiteSpace(' ')
+            PsiElement(LPAR)('(')
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('e')
+            PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n      ')
+            WHEN_ENTRY
+              WHEN_CONDITION_IS_PATTERN
+                PsiElement(is)('is')
+                PsiWhiteSpace(' ')
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
                       USER_TYPE
                         PsiElement(package)('package')
                         PsiElement(DOT)('.')
                         REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('Y')
-                  PsiElement(GT)('>')
-          PsiWhiteSpace(' ')
-          PsiElement(ARROW)('->')
-          PsiWhiteSpace(' ')
-          BLOCK
-            PsiElement(LBRACE)('{')
+                          PsiElement(IDENTIFIER)('foo')
+                      PsiElement(DOT)('.')
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('bar')
+                    PsiElement(DOT)('.')
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('X')
+                    TYPE_ARGUMENT_LIST
+                      PsiElement(LT)('<')
+                      TYPE_PROJECTION
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            PsiElement(package)('package')
+                            PsiElement(DOT)('.')
+                            REFERENCE_EXPRESSION
+                              PsiElement(IDENTIFIER)('Y')
+                      PsiElement(GT)('>')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiElement(RBRACE)('}')
+            PsiWhiteSpace('\n    ')
             PsiElement(RBRACE)('}')
-        PsiWhiteSpace('\n    ')
-        PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n  ')
+          PsiWhiteSpace('\n  ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RBRACE)('}')

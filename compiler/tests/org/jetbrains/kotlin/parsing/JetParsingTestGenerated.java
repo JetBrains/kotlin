@@ -1620,6 +1620,18 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("CatchKeywordRBrace.kt")
+            public void testCatchKeywordRBrace() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/CatchKeywordRBrace.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("CloseBraceAtTopLevel.kt")
+            public void testCloseBraceAtTopLevel() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/CloseBraceAtTopLevel.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("DoWhileWithEmptyCondition.kt")
             public void testDoWhileWithEmptyCondition() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/DoWhileWithEmptyCondition.kt");
@@ -1698,6 +1710,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("IfKeywordRBrace.kt")
+            public void testIfKeywordRBrace() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IfKeywordRBrace.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("IfWithEmptyCondition.kt")
             public void testIfWithEmptyCondition() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IfWithEmptyCondition.kt");
@@ -1716,9 +1734,99 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("IncompleteAccessor1.kt")
+            public void testIncompleteAccessor1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteAccessor1.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteAccessor2.kt")
+            public void testIncompleteAccessor2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteAccessor2.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteClassDeclaration.kt")
+            public void testIncompleteClassDeclaration() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteClassDeclaration.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteClassTypeParameters.kt")
+            public void testIncompleteClassTypeParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteClassTypeParameters.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteForRBrace.kt")
+            public void testIncompleteForRBrace() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteForRBrace.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteFun.kt")
+            public void testIncompleteFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteFun.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteFunDeclaration.kt")
+            public void testIncompleteFunDeclaration() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteFunDeclaration.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteFunTypeParameters.kt")
+            public void testIncompleteFunTypeParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteFunTypeParameters.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteTypeParameters.kt")
+            public void testIncompleteTypeParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteTypeParameters.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteTypeRefWithPackageKeyword.kt")
+            public void testIncompleteTypeRefWithPackageKeyword() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteTypeRefWithPackageKeyword.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteValTypeParameters.kt")
+            public void testIncompleteValTypeParameters() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteValTypeParameters.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteWhenElse.kt")
+            public void testIncompleteWhenElse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteWhenElse.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteWhere.kt")
+            public void testIncompleteWhere() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteWhere.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("IncompleteWhere2.kt")
+            public void testIncompleteWhere2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/IncompleteWhere2.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("initRecovery.kt")
             public void testInitRecovery() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/initRecovery.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("InvalidCharAfterPropertyName.kt")
+            public void testInvalidCharAfterPropertyName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/InvalidCharAfterPropertyName.kt");
                 doParsingTest(fileName);
             }
 

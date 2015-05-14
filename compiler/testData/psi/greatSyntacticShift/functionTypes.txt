@@ -14,24 +14,26 @@ JetFile: functionTypes.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(package)('package')
   PsiWhiteSpace(' ')
-  MODIFIER_LIST
-    ANNOTATION_ENTRY
-      CONSTRUCTOR_CALLEE
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('n')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LBRACE)('{')
-  PsiWhiteSpace('\n  ')
-  CLASS
-    PsiElement(class)('class')
+  FUN
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('n')
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('B')
-  PsiWhiteSpace('\n')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RBRACE)('}')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n  ')
+      CLASS
+        PsiElement(class)('class')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('B')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   CLASS
     MODIFIER_LIST

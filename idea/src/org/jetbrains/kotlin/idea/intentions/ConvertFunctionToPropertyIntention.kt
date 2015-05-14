@@ -16,50 +16,40 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetNamedFunction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
-import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
-import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
-import com.intellij.psi.PsiNamedElement
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.search
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.JetCallElement
-import java.util.ArrayList
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.codegen.PropertyCodegen
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.psi.psiUtil.siblings
-import com.intellij.psi.PsiReference
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.UserDataProperty
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.idea.util.supertypes
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.JetProperty
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.*
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.idea.refactoring.getContainingScope
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.codegen.PropertyCodegen
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.core.refactoring.reportDeclarationConflict
+import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
+import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
+import org.jetbrains.kotlin.idea.refactoring.getContainingScope
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchTarget
+import org.jetbrains.kotlin.idea.search.usagesSearch.search
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.supertypes
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
+import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import java.util.ArrayList
 
 public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(javaClass(), "Convert function to property") {
     private var JetNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
@@ -71,7 +61,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
     ): CallableRefactoring<FunctionDescriptor>(project, descriptor, context, getText()) {
         private val elementsToShorten = ArrayList<JetElement>()
 
-        private fun convertJetFunction(originalFunction: JetNamedFunction, psiFactory: JetPsiFactory) {
+        private fun convertFunction(originalFunction: JetNamedFunction, psiFactory: JetPsiFactory) {
             val function = originalFunction.copy() as JetNamedFunction
 
             val propertySample = psiFactory.createProperty("val foo: Int get() = 1")
@@ -81,7 +71,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
                 originalFunction.typeFqNameToAdd?.let { function.setTypeReference(psiFactory.createType(it)) }
             }
 
-            function.getFunKeyword().replace(propertySample.getValOrVarNode().getPsi())
+            function.getFunKeyword()!!.replace(propertySample.getValOrVarNode().getPsi())
             function.getValueParameterList()?.delete()
             val insertAfter = (function.getEqualsToken() ?: function.getBodyExpression())
                     ?.siblings(forward = false, withItself = false)
@@ -172,7 +162,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
 
                     callables.forEach {
                         when (it) {
-                            is JetNamedFunction -> convertJetFunction(it, psiFactory)
+                            is JetNamedFunction -> convertFunction(it, psiFactory)
                             is PsiMethod -> it.setName(getterName)
                         }
                     }

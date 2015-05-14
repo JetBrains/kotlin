@@ -643,6 +643,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("InterfaceNameBeforeRunBug.kt")
+        public void testInterfaceNameBeforeRunBug() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/InterfaceNameBeforeRunBug.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("JavaPackage.kt")
         public void testJavaPackage() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/JavaPackage.kt");

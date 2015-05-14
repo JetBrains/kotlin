@@ -20,7 +20,6 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -79,7 +78,7 @@ public open class ChangeVisibilityModifierIntention protected(
     private fun canAddVisibilityModifier(declaration: JetDeclaration): TextRange? {
         if (JetPsiUtil.isLocal(declaration)) return null
         return when (declaration) {
-            is JetNamedFunction -> declaration.getFunKeyword().getTextRange()
+            is JetNamedFunction -> declaration.getFunKeyword()?.getTextRange()
             is JetProperty -> declaration.getValOrVarNode().getTextRange()
             is JetClass -> declaration.getClassOrTraitKeyword()?.getTextRange()
             is JetObjectDeclaration -> declaration.getObjectKeyword().getTextRange()

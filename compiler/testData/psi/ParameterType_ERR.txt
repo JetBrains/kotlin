@@ -43,11 +43,13 @@ JetFile: ParameterType_ERR.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LBRACE)('{')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RBRACE)('}')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace(' ')
+      PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
@@ -74,10 +76,12 @@ JetFile: ParameterType_ERR.kt
   PsiErrorElement:Expecting a top level declaration
     PsiElement(RPAR)(')')
   PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(LBRACE)('{')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(RBRACE)('}')
+  FUN
+    PsiErrorElement:Expecting a top level declaration
+      <empty list>
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
   FUN
     PsiElement(fun)('fun')

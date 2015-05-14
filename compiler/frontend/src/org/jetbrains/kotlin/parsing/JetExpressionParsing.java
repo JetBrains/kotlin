@@ -137,7 +137,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     TokenSet.create(EOL_OR_SEMICOLON));
 
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
-            SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
+            SEMICOLON, ARROW, COMMA, LBRACE, RBRACE, RPAR, RBRACKET
     );
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -887,7 +887,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // ELSE_KEYWORD
 
             if (!at(ARROW)) {
-                errorUntil("Expecting '->'", TokenSet.create(ARROW,
+                errorUntil("Expecting '->'", TokenSet.create(ARROW, LBRACE,
                                                              RBRACE, EOL_OR_SEMICOLON));
             }
 
@@ -901,7 +901,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     parseExpressionPreferringBlocks();
                 }
             }
-            else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
+            else if (!atSet(WHEN_CONDITION_RECOVERY_SET) && !at(LBRACE)) {
                 errorAndAdvance("Expecting '->'");
             }
         }
@@ -1554,7 +1554,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             PsiBuilder.Marker catchBlock = mark();
             advance(); // CATCH_KEYWORD
 
-            TokenSet recoverySet = TokenSet.create(LBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
+            TokenSet recoverySet = TokenSet.create(LBRACE, RBRACE, FINALLY_KEYWORD, CATCH_KEYWORD);
             if (atSet(recoverySet)) {
                 error("Expecting exception variable declaration");
             }

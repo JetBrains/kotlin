@@ -259,7 +259,11 @@ JetFile: PropertiesFollowedByInitializers.kt
           PsiElement(RBRACKET)(']')
           PsiWhiteSpace(' ')
           PsiElement(abstract)('abstract')
-          PsiWhiteSpace(' ')
+      PsiWhiteSpace(' ')
+      FUN
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        BLOCK
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
