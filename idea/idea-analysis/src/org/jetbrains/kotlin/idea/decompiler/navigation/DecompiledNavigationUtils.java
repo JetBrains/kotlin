@@ -49,6 +49,7 @@ public final class DecompiledNavigationUtils {
             @NotNull Project project,
             @NotNull DeclarationDescriptor referencedDescriptor
     ) {
+        if (DescriptorUtils.isLocal(referencedDescriptor)) return null;
         VirtualFile virtualFile;
 
         if (JsProjectDetector.isJsProject(project) &&
