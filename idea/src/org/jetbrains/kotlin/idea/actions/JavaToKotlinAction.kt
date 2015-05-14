@@ -111,7 +111,7 @@ public class JavaToKotlinAction : AnAction() {
     private fun allJavaFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<PsiJavaFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
-                .sequence()
+                .asSequence()
                 .map { manager.findFile(it) as? PsiJavaFile }
                 .filterNotNull()
     }
@@ -134,7 +134,7 @@ public class JavaToKotlinAction : AnAction() {
         for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
             val virtualFile = psiFile.getVirtualFile()
             try {
-                virtualFile.rename(null, virtualFile.getNameWithoutExtension() + ".kt")
+                virtualFile.rename(this, virtualFile.getNameWithoutExtension() + ".kt")
                 virtualFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
                 result.add(virtualFile)
             }
