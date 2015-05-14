@@ -22,13 +22,12 @@ import com.google.common.collect.Sets;
 import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.util.CachedValue;
-import com.intellij.psi.util.CachedValueProvider;
-import com.intellij.psi.util.CachedValuesManager;
-import com.intellij.psi.util.PsiModificationTracker;
+import com.intellij.psi.util.*;
 import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.SLRUCache;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -121,7 +121,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
             answer.addAll(lightClassGenerationSupport.getPackageClasses(qualifiedName.parent(), scope));
         }
 
-        return answer.toArray(new PsiClass[answer.size()]);
+        return sortByClasspath(answer, scope).toArray(new PsiClass[answer.size()]);
     }
 
     // Finds explicitly declared classes and objects, not package classes
@@ -209,7 +209,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
             }
         }
 
-        return answer.toArray(new PsiClass[answer.size()]);
+        return sortByClasspath(answer, scope).toArray(new PsiClass[answer.size()]);
     }
 
     @Override
@@ -267,5 +267,28 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         public String toString() {
             return fqName + " in " + scope;
         }
+    }
+
+    @NotNull
+    public static Comparator<PsiElement> byClasspathComparator(@NotNull final GlobalSearchScope searchScope) {
+        return new Comparator<PsiElement>() {
+            @Override
+            public int compare(@NotNull PsiElement o1, @NotNull PsiElement o2) {
+                VirtualFile f1 = PsiUtilCore.getVirtualFile(o1);
+                VirtualFile f2 = PsiUtilCore.getVirtualFile(o2);
+                if (f1 == f2) return 0;
+                if (f1 == null) return -1;
+                if (f2 == null) return 1;
+                return searchScope.compare(f2, f1);
+            }
+        };
+    }
+
+    private static Collection<PsiClass> sortByClasspath(@NotNull List<PsiClass> classes, @NotNull GlobalSearchScope searchScope) {
+        if (classes.size() > 1) {
+            ContainerUtil.quickSort(classes, byClasspathComparator(searchScope));
+        }
+
+        return classes;
     }
 }

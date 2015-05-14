@@ -21,10 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.libraries.LibraryUtil;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.ClassFileViewProvider;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
 import com.intellij.psi.impl.compiled.ClsClassImpl;
 import com.intellij.psi.impl.compiled.ClsFileImpl;
@@ -71,12 +68,12 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
 
     private final Project project;
 
-    private final Comparator<JetFile> jetFileComparator;
+    private final Comparator<PsiElement> scopeFileComparator;
     private final PsiManager psiManager;
 
     public IDELightClassGenerationSupport(@NotNull Project project) {
         this.project = project;
-        this.jetFileComparator = byScopeComparator(GlobalSearchScope.allScope(project));
+        this.scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project));
         this.psiManager = PsiManager.getInstance(project);
     }
 
@@ -87,7 +84,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         assert !files.isEmpty() : "No files in package";
 
         List<JetFile> sortedFiles = new ArrayList<JetFile>(files);
-        Collections.sort(sortedFiles, jetFileComparator);
+        Collections.sort(sortedFiles, scopeFileComparator);
 
         JetFile file = sortedFiles.get(0);
         ResolveSessionForBodies session = KotlinCacheService.getInstance(file.getProject()).getLazyResolveSession(file);
@@ -319,36 +316,7 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         for (Map.Entry<IdeaModuleInfo, List<JetFile>> entry : filesByInfo.entrySet()) {
             result.add(new KotlinLightPackageClassInfo(entry.getValue(), entry.getKey()));
         }
-        sortByClasspath(wholeScope, result);
         return result;
-    }
-
-    @NotNull
-    private static Comparator<JetFile> byScopeComparator(@NotNull final GlobalSearchScope searchScope) {
-        return new Comparator<JetFile>() {
-            @Override
-            public int compare(@NotNull JetFile o1, @NotNull JetFile o2) {
-                VirtualFile f1 = o1.getVirtualFile();
-                VirtualFile f2 = o2.getVirtualFile();
-                if (f1 == f2) return 0;
-                if (f1 == null) return -1;
-                if (f2 == null) return 1;
-                return searchScope.compare(f1, f2);
-            }
-        };
-    }
-
-    private static void sortByClasspath(@NotNull GlobalSearchScope wholeScope, @NotNull List<KotlinLightPackageClassInfo> result) {
-        final Comparator<JetFile> byScopeComparator = byScopeComparator(wholeScope);
-        Collections.sort(result, new Comparator<KotlinLightPackageClassInfo>() {
-            @Override
-            public int compare(@NotNull KotlinLightPackageClassInfo info1, @NotNull KotlinLightPackageClassInfo info2) {
-                JetFile file1 = info1.getFiles().iterator().next();
-                JetFile file2 = info2.getFiles().iterator().next();
-                //classes earlier that would appear earlier on classpath should go first
-                return -byScopeComparator.compare(file1, file2);
-            }
-        });
     }
 
     private static final class KotlinLightPackageClassInfo {
