@@ -4192,47 +4192,6 @@ native public trait HTMLImageElement : HTMLElement, CanvasImageSource, ImageBitm
 native public trait HTMLPictureElement : HTMLElement {
 }
 
-native public open class Event(type: String, eventInitDict: EventInit = noImpl) {
-    var type: String
-        get() = noImpl
-        set(value) = noImpl
-    var target: EventTarget?
-        get() = noImpl
-        set(value) = noImpl
-    var currentTarget: EventTarget?
-        get() = noImpl
-        set(value) = noImpl
-    var eventPhase: Short
-        get() = noImpl
-        set(value) = noImpl
-    var bubbles: Boolean
-        get() = noImpl
-        set(value) = noImpl
-    var cancelable: Boolean
-        get() = noImpl
-        set(value) = noImpl
-    var defaultPrevented: Boolean
-        get() = noImpl
-        set(value) = noImpl
-    var isTrusted: Boolean
-        get() = noImpl
-        set(value) = noImpl
-    var timeStamp: Number
-        get() = noImpl
-        set(value) = noImpl
-    fun stopPropagation(): Unit = noImpl
-    fun stopImmediatePropagation(): Unit = noImpl
-    fun preventDefault(): Unit = noImpl
-    fun initEvent(type: String, bubbles: Boolean, cancelable: Boolean): Unit = noImpl
-
-    companion object {
-        val NONE: Short = 0
-        val CAPTURING_PHASE: Short = 1
-        val AT_TARGET: Short = 2
-        val BUBBLING_PHASE: Short = 3
-    }
-}
-
 native public open class EventInit {
     var bubbles: Boolean = false
     var cancelable: Boolean = false
@@ -4247,18 +4206,6 @@ native public open class CustomEvent(type: String, eventInitDict: CustomEventIni
 
 native public open class CustomEventInit : EventInit() {
     var detail: Any? = null
-}
-
-native public trait EventTarget {
-    fun addEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
-    fun addEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
-    fun removeEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
-    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
-    fun dispatchEvent(event: Event): Boolean = noImpl
-}
-
-native public trait EventListener {
-    fun handleEvent(event: Event): Unit = noImpl
 }
 
 native public trait NodeList {
