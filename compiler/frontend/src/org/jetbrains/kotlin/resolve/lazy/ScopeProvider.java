@@ -71,11 +71,6 @@ public class ScopeProvider implements DeclarationScopeProvider, FileScopeProvide
         this.defaultImports = resolveSession.getStorageManager().createLazyValue(new Function0<Collection<JetImportDirective>>() {
             @Override
             public Collection<JetImportDirective> invoke() {
-                PackageViewDescriptor rootPackage = resolveSession.getModuleDescriptor().getPackage(FqName.ROOT);
-                if (rootPackage == null) {
-                    throw new IllegalStateException("Root package not found");
-                }
-
                 JetImportsFactory importsFactory = resolveSession.getJetImportsFactory();
                 List<ImportPath> defaultImports = resolveSession.getModuleDescriptor().getDefaultImports();
 
