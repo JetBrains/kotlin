@@ -37,5 +37,5 @@ class A {
 // EXIST:  constructor
 // EXIST:  init
 /*why?*/
-// EXIST:  companion
+// EXIST:  companion object
 // NOTHING_ELSE: true

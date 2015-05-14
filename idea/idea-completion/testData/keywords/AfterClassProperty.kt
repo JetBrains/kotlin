@@ -34,5 +34,5 @@ class MouseMovedEventArgs
 // EXIST:  constructor
 // EXIST:  init
 /*why?*/
-// EXIST:  companion
+// EXIST:  companion object
 // NOTHING_ELSE: true

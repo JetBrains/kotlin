@@ -28,6 +28,6 @@ package Test
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// EXIST:  companion
+// EXIST:  companion object
 /*TODO*/
 // NOTHING_ELSE: true

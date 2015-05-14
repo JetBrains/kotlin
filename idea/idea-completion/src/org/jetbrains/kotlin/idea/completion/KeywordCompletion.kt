@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.filters.*
 import com.intellij.psi.filters.position.LeftNeighbour
 import com.intellij.psi.filters.position.PositionElementFilter
@@ -31,7 +33,8 @@ import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.prevLeafSkipWhitespacesAndComments
+import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 object KeywordLookupObject
@@ -54,7 +57,20 @@ object KeywordCompletion {
 
         val parserFilter = buildFilter(position)
         for (keywordToken in ALL_KEYWORDS) {
-            val keyword = keywordToken.getValue()
+            var keyword = keywordToken.getValue()
+
+            if (keyword == COMPANION_KEYWORD.getValue()) { // complete "companion object" instead of simply "companion" unless we are before "object" already
+                fun PsiElement.isSpace() = this is PsiWhiteSpace && '\n' !in getText()
+
+                var next = position.nextLeaf { !(it.isSpace() || it.getText() == "$") }?.getText()
+                if (next != null && next.startsWith("$")) {
+                    next = next.substring(1)
+                }
+                if (next != OBJECT_KEYWORD.getValue()) {
+                    keyword += " " + OBJECT_KEYWORD.getValue()
+                }
+            }
+
             if (keyword.startsWith(prefix)/* use simple matching by prefix, not prefix matcher from completion*/ && parserFilter(keywordToken)) {
                 val element = LookupElementBuilder.create(KeywordLookupObject, keyword)
                         .bold()
@@ -79,7 +95,7 @@ object KeywordCompletion {
 
     private class CommentFilter() : ElementFilter {
         override fun isAcceptable(element : Any?, context : PsiElement?)
-                = (element is PsiElement) && JetPsiUtil.isInComment(element as PsiElement)
+                = (element is PsiElement) && JetPsiUtil.isInComment(element)
 
         override fun isClassAcceptable(hintClass: Class<out Any?>)
                 = true
@@ -109,14 +125,14 @@ object KeywordCompletion {
                 is JetWithExpressionInitializer -> {
                     val initializer = _parent.getInitializer()
                     if (prevParent == initializer) {
-                        return buildFilterWithContext("val v = ", initializer, position)
+                        return buildFilterWithContext("val v = ", initializer!!, position)
                     }
                 }
 
                 is JetParameter -> {
                     val default = _parent.getDefaultValue()
                     if (prevParent == default) {
-                        return buildFilterWithContext("val v = ", default, position)
+                        return buildFilterWithContext("val v = ", default!!, position)
                     }
                 }
             }
@@ -158,14 +174,14 @@ object KeywordCompletion {
         return { keywordTokenType ->
             val postfix = KEYWORD_TO_DUMMY_POSTFIX[keywordTokenType] ?: ""
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
-            val elementAt = file.findElementAt(prefixText.length)!!
+            val elementAt = file.findElementAt(prefixText.length())!!
 
             when {
                 !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> false
 
                 elementAt.getNonStrictParentOfType<PsiErrorElement>() != null -> false
 
-                elementAt.prevLeafSkipWhitespacesAndComments() is PsiErrorElement -> false
+                elementAt.prevLeaf { it !is PsiWhiteSpace && it !is PsiComment } is PsiErrorElement -> false
 
                 else -> true
             }
@@ -194,14 +210,14 @@ object KeywordCompletion {
         while (child != position) {
             if (child is JetDeclaration) {
                 if (child == prevDeclaration) {
-                    builder.appendReducedText(child!!)
+                    builder.appendReducedText(child)
                 }
             }
             else {
                 builder.append(child!!.getText())
             }
 
-            child = child!!.getNextSibling()
+            child = child.getNextSibling()
         }
     }
 

@@ -95,6 +95,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("CompanionObjectBeforeObject.kt")
+    public void testCompanionObjectBeforeObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/CompanionObjectBeforeObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ContinueWithLabel.kt")
     public void testContinueWithLabel() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ContinueWithLabel.kt");

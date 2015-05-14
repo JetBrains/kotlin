@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordCompletionHandlerTest {
+    @TestMetadata("AddCompanionToObject.kt")
+    public void testAddCompanionToObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/AddCompanionToObject.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInKeywords() throws Exception {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/keywords"), Pattern.compile("^(.+)\\.kt$"), true);
     }
@@ -38,6 +44,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
     @TestMetadata("Break.kt")
     public void testBreak() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/Break.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CompanionObject.kt")
+    public void testCompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/CompanionObject.kt");
         doTest(fileName);
     }
 

@@ -16,35 +16,26 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
-import org.jetbrains.kotlin.psi.*
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.lexer.JetTokens
-import java.util.Collections
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import java.util.ArrayList
-import kotlin.test.assertTrue
-import com.intellij.psi.search.SearchScope
-import com.intellij.psi.search.PsiSearchScopeUtil
-import com.intellij.psi.PsiParameterList
-import com.intellij.psi.PsiParameter
-import com.intellij.psi.PsiPackage
-import com.intellij.psi.JavaDirectoryService
-import com.intellij.psi.PsiDirectory
-import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import com.intellij.lang.ASTNode
-import com.intellij.openapi.util.Condition
-import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.PsiComment
-import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.*
+import com.intellij.psi.search.PsiSearchScopeUtil
+import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
+import java.util.ArrayList
+import java.util.Collections
+import kotlin.test.assertTrue
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression() ?: return null
@@ -419,25 +410,17 @@ public fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement?
 public fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement?
         = PsiTreeUtil.nextLeaf(this, skipEmptyElements)
 
-public fun PsiElement.prevLeafSkipWhitespacesAndComments(): PsiElement? {
+public fun PsiElement.prevLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
     var leaf = prevLeaf()
-    while (leaf is PsiWhiteSpace || leaf is PsiComment) {
+    while (leaf != null && !filter(leaf)) {
         leaf = leaf.prevLeaf()
     }
     return leaf
 }
 
-public fun PsiElement.prevLeafSkipWhitespaces(): PsiElement? {
-    var leaf = prevLeaf()
-    while (leaf is PsiWhiteSpace) {
-        leaf = leaf.prevLeaf()
-    }
-    return leaf
-}
-
-public fun PsiElement.nextLeafSkipWhitespacesAndComments(): PsiElement? {
+public fun PsiElement.nextLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
     var leaf = nextLeaf()
-    while (leaf is PsiWhiteSpace || leaf is PsiComment) {
+    while (leaf != null && !filter(leaf)) {
         leaf = leaf.nextLeaf()
     }
     return leaf

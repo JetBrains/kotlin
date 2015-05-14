@@ -1,0 +1,3 @@
+class C {
+    compa<caret>
+}
