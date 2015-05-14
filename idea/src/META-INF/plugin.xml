@@ -72,7 +72,7 @@
     </action>
     <action id="ConvertJavaToKotlin" class="org.jetbrains.kotlin.idea.actions.JavaToKotlinAction"
             text="Convert Java File to Kotlin File">
-      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift J"/>
+      <keyboard-shortcut keymap="$default" first-keystroke="control alt shift K"/>
       <add-to-group group-id="CodeMenu" anchor="last"/>
     </action>
 
