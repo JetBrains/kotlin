@@ -22,6 +22,8 @@ public class Test {
 // EXIST:  open
 // EXIST:  out
 /*why?*/
+// EXIST:  reified
+/*why?*/
 // EXIST:  override
 // EXIST:  private
 // EXIST:  protected
@@ -33,4 +35,4 @@ public class Test {
 // EXIST:  constructor
 // EXIST:  init
 /*why?*/
-// NUMBER: 23
+// NUMBER: 24

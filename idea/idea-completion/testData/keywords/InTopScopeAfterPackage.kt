@@ -17,6 +17,8 @@ package Test
 // EXIST:  open
 // EXIST:  out
 /*why?*/
+// EXIST:  reified
+/*why?*/
 // EXIST:  override
 // EXIST:  private
 // EXIST:  protected
@@ -26,4 +28,4 @@ package Test
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 22
+// NUMBER: 23

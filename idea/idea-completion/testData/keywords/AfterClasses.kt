@@ -26,6 +26,8 @@ class B {
 // EXIST:  open
 // EXIST:  out
 /*why?*/
+// EXIST:  reified
+/*why?*/
 // EXIST:  override
 // EXIST:  private
 // EXIST:  protected
@@ -35,4 +37,4 @@ class B {
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 21
+// NUMBER: 22

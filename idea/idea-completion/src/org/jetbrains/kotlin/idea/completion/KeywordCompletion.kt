@@ -16,30 +16,28 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.filters.*
 import com.intellij.psi.filters.position.LeftNeighbour
-import org.jetbrains.kotlin.psi.*
-import com.intellij.psi.PsiElement
 import com.intellij.psi.filters.position.PositionElementFilter
-import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.psi.PsiErrorElement
-import org.jetbrains.kotlin.lexer.JetKeywordToken
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
-import org.jetbrains.kotlin.psi.psiUtil.siblings
-
-import org.jetbrains.kotlin.lexer.JetTokens.*
-import org.jetbrains.kotlin.psi.psiUtil.prevLeafSkipWhitespacesAndComments
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import com.intellij.psi.tree.IElementType
-import com.intellij.codeInsight.lookup.LookupElement
+import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
+import org.jetbrains.kotlin.idea.completion.handlers.KotlinKeywordInsertHandler
+import org.jetbrains.kotlin.lexer.JetKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.prevLeafSkipWhitespacesAndComments
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 
 object KeywordLookupObject
 
 object KeywordCompletion {
-    private val NON_ACTUAL_KEYWORDS = setOf(REIFIED_KEYWORD,
-                                            CAPITALIZED_THIS_KEYWORD,
+    private val NON_ACTUAL_KEYWORDS = setOf(CAPITALIZED_THIS_KEYWORD,
                                             TYPE_ALIAS_KEYWORD,
                                             TRAIT_KEYWORD)
     private val ALL_KEYWORDS = (KEYWORDS.getTypes() + SOFT_KEYWORDS.getTypes())

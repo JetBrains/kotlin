@@ -16,6 +16,8 @@ class TestClass {
 // EXIST:  open
 // EXIST:  out
 /*why?*/
+// EXIST:  reified
+/*why?*/
 // EXIST:  override
 // EXIST:  private
 // EXIST:  protected
@@ -27,4 +29,4 @@ class TestClass {
 /*why?*/
 // EXIST:  constructor
 // EXIST:  init
-// NUMBER: 23
+// NUMBER: 24

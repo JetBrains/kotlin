@@ -20,6 +20,8 @@ class MouseMovedEventArgs
 // EXIST:  open
 // EXIST:  out
 /*why?*/
+// EXIST:  reified
+/*why?*/
 // EXIST:  override
 // EXIST:  private
 // EXIST:  protected
@@ -32,4 +34,4 @@ class MouseMovedEventArgs
 // EXIST:  constructor
 // EXIST:  init
 /*why?*/
-// NUMBER: 26
+// NUMBER: 27

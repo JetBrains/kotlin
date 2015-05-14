@@ -25,6 +25,8 @@ var a : Int
 // EXIST:  open
 // EXIST:  out
 /*why?*/
+// EXIST:  reified
+/*why?*/
 // EXIST:  override
 // EXIST:  private
 // EXIST:  protected
@@ -35,4 +37,4 @@ var a : Int
 // EXIST:  var
 // EXIST:  vararg
 /*why?*/
-// NUMBER: 24
+// NUMBER: 25
