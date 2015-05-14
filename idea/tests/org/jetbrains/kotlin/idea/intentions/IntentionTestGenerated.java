@@ -6375,147 +6375,147 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/splitIf"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
-        @TestMetadata("splitIfAndOr.kt")
-        public void testSplitIfAndOr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfAndOr.kt");
+        @TestMetadata("and.kt")
+        public void testAnd() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/and.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfAndOrWithBraces.kt")
-        public void testSplitIfAndOrWithBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfAndOrWithBraces.kt");
+        @TestMetadata("caretOnIf.kt")
+        public void testCaretOnIf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/caretOnIf.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfAndWithBraces.kt")
-        public void testSplitIfAndWithBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfAndWithBraces.kt");
+        @TestMetadata("ifAndOr.kt")
+        public void testIfAndOr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/ifAndOr.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfCaretOnIf.kt")
-        public void testSplitIfCaretOnIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfCaretOnIf.kt");
+        @TestMetadata("ifAndOrWithBraces.kt")
+        public void testIfAndOrWithBraces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/ifAndOrWithBraces.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfNestedIf.kt")
-        public void testSplitIfNestedIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfNestedIf.kt");
+        @TestMetadata("ifAndWithBraces.kt")
+        public void testIfAndWithBraces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/ifAndWithBraces.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfNestedIfNotApplicable.kt")
-        public void testSplitIfNestedIfNotApplicable() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfNestedIfNotApplicable.kt");
+        @TestMetadata("ifWithElse.kt")
+        public void testIfWithElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/ifWithElse.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfNestedInside.kt")
-        public void testSplitIfNestedInside() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfNestedInside.kt");
+        @TestMetadata("localFunction.kt")
+        public void testLocalFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/localFunction.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfNestedOutside.kt")
-        public void testSplitIfNestedOutside() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfNestedOutside.kt");
+        @TestMetadata("nestedIf.kt")
+        public void testNestedIf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/nestedIf.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfNotIf.kt")
-        public void testSplitIfNotIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfNotIf.kt");
+        @TestMetadata("nestedIfNotApplicable.kt")
+        public void testNestedIfNotApplicable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/nestedIfNotApplicable.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfOnIfWithOr.kt")
-        public void testSplitIfOnIfWithOr() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfOnIfWithOr.kt");
+        @TestMetadata("nestedIfOutside.kt")
+        public void testNestedIfOutside() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/nestedIfOutside.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfOneAND.kt")
-        public void testSplitIfOneAND() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfOneAND.kt");
+        @TestMetadata("nestedInside.kt")
+        public void testNestedInside() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/nestedInside.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfOperatorAsFunctionParam.kt")
-        public void testSplitIfOperatorAsFunctionParam() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfOperatorAsFunctionParam.kt");
+        @TestMetadata("notIf.kt")
+        public void testNotIf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/notIf.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfOperatorOutsideIf.kt")
-        public void testSplitIfOperatorOutsideIf() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfOperatorOutsideIf.kt");
+        @TestMetadata("onIfWithOr.kt")
+        public void testOnIfWithOr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/onIfWithOr.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfOrAnd.kt")
-        public void testSplitIfOrAnd() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfOrAnd.kt");
+        @TestMetadata("operatorAsFunctionParam.kt")
+        public void testOperatorAsFunctionParam() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/operatorAsFunctionParam.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfOrWithBraces.kt")
-        public void testSplitIfOrWithBraces() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfOrWithBraces.kt");
+        @TestMetadata("operatorOutsideIf.kt")
+        public void testOperatorOutsideIf() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/operatorOutsideIf.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfTwoOperatorsFirst.kt")
-        public void testSplitIfTwoOperatorsFirst() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfTwoOperatorsFirst.kt");
+        @TestMetadata("orAnd.kt")
+        public void testOrAnd() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/orAnd.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfTwoOperatorsSecond.kt")
-        public void testSplitIfTwoOperatorsSecond() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfTwoOperatorsSecond.kt");
+        @TestMetadata("orWithBraces.kt")
+        public void testOrWithBraces() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/orWithBraces.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfWithElse.kt")
-        public void testSplitIfWithElse() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfWithElse.kt");
+        @TestMetadata("twoOperatorsFirst.kt")
+        public void testTwoOperatorsFirst() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/twoOperatorsFirst.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfWithFunction.kt")
-        public void testSplitIfWithFunction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfWithFunction.kt");
+        @TestMetadata("twoOperatorsSecond.kt")
+        public void testTwoOperatorsSecond() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/twoOperatorsSecond.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfWithNotOperator.kt")
-        public void testSplitIfWithNotOperator() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfWithNotOperator.kt");
+        @TestMetadata("withNotOperator.kt")
+        public void testWithNotOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/withNotOperator.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfWithNotOperatorGood.kt")
-        public void testSplitIfWithNotOperatorGood() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfWithNotOperatorGood.kt");
+        @TestMetadata("withNotOperatorGood.kt")
+        public void testWithNotOperatorGood() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/withNotOperatorGood.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfWithOR.kt")
-        public void testSplitIfWithOR() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfWithOR.kt");
+        @TestMetadata("withOR.kt")
+        public void testWithOR() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/withOR.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfWithORElse.kt")
-        public void testSplitIfWithORElse() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfWithORElse.kt");
+        @TestMetadata("withORElse.kt")
+        public void testWithORElse() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/withORElse.kt");
             doTest(fileName);
         }
 
-        @TestMetadata("splitIfWrongCaretLocation.kt")
-        public void testSplitIfWrongCaretLocation() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/splitIfWrongCaretLocation.kt");
+        @TestMetadata("wrongCaretLocation.kt")
+        public void testWrongCaretLocation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/wrongCaretLocation.kt");
             doTest(fileName);
         }
     }
