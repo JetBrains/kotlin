@@ -39,9 +39,10 @@ public abstract class IntentionBasedInspection<T : JetElement>(
                 val intention: JetSelfTargetingRangeIntention<T>,
                 val targetElement: T
         ): LocalQuickFix {
+            // store text into variable because intention instance is shared and may change its text later
             private val text = intention.getText()
 
-            override fun getFamilyName() = getName()
+            override fun getFamilyName() = intention.getFamilyName()
 
             override fun getName() = text
 
@@ -62,13 +63,11 @@ public abstract class IntentionBasedInspection<T : JetElement>(
 
                 val ranges = intentions
                         .map {
-                            val range = it.applicabilityRange(targetElement)
-                            if (range != null) {
+                            it.applicabilityRange(targetElement)?.let { range ->
                                 val elementRange = targetElement.getTextRange()
-                                assert(range in elementRange, "Wrong applicabilityRange() result for $it - should be within element's range")
+                                assert(range in elementRange) { "Wrong applicabilityRange() result for $it - should be within element's range" }
                                 range.shiftRight(-elementRange.getStartOffset())
                             }
-                            else null
                         }
                         .filterNotNull()
                 if (ranges.isEmpty()) return
