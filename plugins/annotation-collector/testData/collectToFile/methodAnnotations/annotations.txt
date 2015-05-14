@@ -1,0 +1,5 @@
+a javax.inject.Inject 0
+p org.test 0
+m 0 0/SomeClass annotatedFunction
+a javax.inject.Named 1
+m 1 0/SomeClass$annotatedFunction$1 invoke

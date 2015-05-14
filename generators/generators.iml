@@ -30,5 +30,6 @@
     <orderEntry type="module" module-name="android-jps-plugin" scope="TEST" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="idea-completion" scope="TEST" />
+    <orderEntry type="module" module-name="annotation-collector" scope="TEST" />
   </component>
 </module>

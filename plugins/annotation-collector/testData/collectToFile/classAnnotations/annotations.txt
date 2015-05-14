@@ -1,0 +1,4 @@
+a javax.inject.Named 0
+p org.test 0
+c 0 0/SomeClass
+c 0 0/SomeObject

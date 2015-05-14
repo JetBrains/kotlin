@@ -20,6 +20,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.android.*
+import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.asJava.AbstractKotlinLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
@@ -782,6 +783,12 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractAndroidBytecodeShapeTest>()) {
             model("codegen/bytecodeShape", recursive = false, extension = null)
+        }
+    }
+
+    testGroup("plugins/annotation-collector/test", "plugins/annotation-collector/testData") {
+        testClass(javaClass<AbstractAnnotationProcessorBoxTest>()) {
+            model("collectToFile", recursive = false, extension = null)
         }
     }
 

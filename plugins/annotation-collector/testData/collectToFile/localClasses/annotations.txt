@@ -1,0 +1,9 @@
+a javax.inject.Named 0
+p org.test 0
+c 0 0/SomeClass$someFunction$LocalClass
+a javax.inject.Inject 1
+f 1 0/SomeClass$someFunction$LocalClass annotatedProperty
+a org.jetbrains.annotations.Nullable 2
+f 2 0/SomeClass$someFunction$LocalClass annotatedProperty
+m 2 0/SomeClass$someFunction$LocalClass getAnnotatedProperty
+m 1 0/SomeClass$someFunction$LocalClass annotatedFunction
