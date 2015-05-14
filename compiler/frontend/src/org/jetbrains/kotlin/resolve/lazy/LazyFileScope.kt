@@ -76,10 +76,10 @@ class LazyFileScope private constructor(
             val packageFragment = resolveSession.getPackageFragment(file.getPackageFqName())
                     .sure { "Could not find fragment ${file.getPackageFqName()} for file ${file.getName()}" }
 
-            val aliasImportResolver = LazyImportResolver(resolveSession, moduleDescriptor, AliasImportsIndexed(imports), traceForImportResolve, true)
-            val allUnderImportResolver = LazyImportResolver(resolveSession, moduleDescriptor, AllUnderImportsIndexed(imports), traceForImportResolve, true)
-            val defaultAliasImportResolver = LazyImportResolver(resolveSession, moduleDescriptor, AliasImportsIndexed(defaultImports), traceForDefaultImportResolve, false)
-            val defaultAllUnderImportResolver = LazyImportResolver(resolveSession, moduleDescriptor, AllUnderImportsIndexed(defaultImports), traceForDefaultImportResolve, false)
+            val aliasImportResolver = LazyImportResolver(resolveSession, moduleDescriptor, AliasImportsIndexed(imports), traceForImportResolve)
+            val allUnderImportResolver = LazyImportResolver(resolveSession, moduleDescriptor, AllUnderImportsIndexed(imports), traceForImportResolve)
+            val defaultAliasImportResolver = LazyImportResolver(resolveSession, moduleDescriptor, AliasImportsIndexed(defaultImports), traceForDefaultImportResolve)
+            val defaultAllUnderImportResolver = LazyImportResolver(resolveSession, moduleDescriptor, AllUnderImportsIndexed(defaultImports), traceForDefaultImportResolve)
 
             val scopeChain = ArrayList<JetScope>()
 

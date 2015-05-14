@@ -34,9 +34,9 @@ public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
     return getResolutionFacade().resolveToDescriptor(this)
 }
 
-public fun JetFile.resolveImportReference(fqName: FqName, isDefaultImport: Boolean = false): Collection<DeclarationDescriptor> {
+public fun JetFile.resolveImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
     val facade = getResolutionFacade()
-    return facade.resolveImportReference(facade.findModuleDescriptor(this), fqName, isDefaultImport)
+    return facade.resolveImportReference(facade.findModuleDescriptor(this), fqName)
 }
 
 //NOTE: the difference between analyze and analyzeFully is 'intentionally' unclear

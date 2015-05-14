@@ -34,8 +34,7 @@ public class ImportDirectiveProcessor(
             importDirective: JetImportDirective,
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
-            lookupMode: QualifiedExpressionResolver.LookupMode,
-            allowClassesFromDefaultPackage: Boolean
+            lookupMode: QualifiedExpressionResolver.LookupMode
     ): JetScope {
         if (importDirective.isAbsoluteInRootPackage()) {
             trace.report(Errors.UNSUPPORTED.on(importDirective, "TypeHierarchyResolver")) // TODO

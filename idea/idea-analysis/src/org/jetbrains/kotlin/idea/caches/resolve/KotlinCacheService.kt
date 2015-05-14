@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.utils.keysToMap
@@ -222,12 +225,12 @@ private class ResolutionFacadeImpl(private val project: Project, private val cac
         return cache.getLazyResolveSession(file).getScopeProvider().getFileScope(file)
     }
 
-    override fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName, isDefaultImport: Boolean): Collection<DeclarationDescriptor> {
+    override fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName): Collection<DeclarationDescriptor> {
         val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
         val resolveSession = cache.getLazyResolveSession(moduleDescriptor)
         val resolver = resolveSession.getQualifiedExpressionResolver()
         return resolver.processImportReference(
-                importDirective, moduleDescriptor, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING, !isDefaultImport).getAllDescriptors()
+                importDirective, moduleDescriptor, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
     }
 
     override fun <T> get(extension: CacheExtension<T>): T {

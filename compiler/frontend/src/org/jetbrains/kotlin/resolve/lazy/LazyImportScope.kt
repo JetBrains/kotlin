@@ -67,8 +67,7 @@ class LazyImportResolver(
         val resolveSession: ResolveSession,
         val moduleDescriptor: ModuleDescriptor,
         val indexedImports: IndexedImports,
-        private val traceForImportResolve: BindingTrace,
-        private val includeRootPackageClasses: Boolean
+        private val traceForImportResolve: BindingTrace
 ) {
     private val importedScopesProvider = resolveSession.getStorageManager().createMemoizedFunction {
         directive: JetImportDirective -> ImportDirectiveResolveCache(directive)
@@ -99,7 +98,7 @@ class LazyImportResolver(
                     try {
                         val resolver = resolveSession.getQualifiedExpressionResolver()
                         val directiveImportScope = resolver.processImportReference(
-                                directive, moduleDescriptor, traceForImportResolve, mode, includeRootPackageClasses)
+                                directive, moduleDescriptor, traceForImportResolve, mode)
                         val descriptors = if (directive.isAllUnder()) emptyList() else directiveImportScope.getAllDescriptors()
 
                         if (mode == LookupMode.EVERYTHING) {
