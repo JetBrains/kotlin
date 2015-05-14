@@ -33,3 +33,20 @@ public fun booleanArrayOf(vararg content : Boolean): BooleanArray = noImpl
 
 library("copyToArray")
 public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl
+
+
+/**
+ * Returns an immutable list containing only the specified object [value].
+ */
+public fun listOf<T>(value: T): List<T> = arrayListOf(value)
+
+/**
+ * Returns an immutable set containing only the specified object [value].
+ */
+public fun setOf<T>(value: T): Set<T> = hashSetOf(value)
+
+/**
+ * Returns an immutable map, mapping only the specified key to the
+ * specified value.
+ */
+public fun mapOf<K, V>(keyValuePair: Pair<K, V>): Map<K, V> = hashMapOf(keyValuePair)

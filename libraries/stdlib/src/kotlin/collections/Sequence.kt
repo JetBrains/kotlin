@@ -68,12 +68,7 @@ public fun <T> sequenceOf(progression: Progression<T>): Sequence<T> = object : S
 public fun <T> emptySequence(): Sequence<T> = EmptySequence
 
 private object EmptySequence : Sequence<Nothing> {
-    override fun iterator(): Iterator<Nothing> = EmptySequenceIterator
-}
-
-private object EmptySequenceIterator : Iterator<Nothing> {
-    override fun next(): Nothing = throw NoSuchElementException("Sequence is empty.")
-    override fun hasNext(): Boolean = false
+    override fun iterator(): Iterator<Nothing> = EmptyIterator
 }
 
 deprecated("Use FilteringSequence<T> instead")

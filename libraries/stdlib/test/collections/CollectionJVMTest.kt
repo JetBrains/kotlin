@@ -1,5 +1,9 @@
 package test.collections
 
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import kotlin.test.*
 
 import java.util.*
@@ -141,5 +145,26 @@ class CollectionJVMTest {
 
         val charValues: List<Char> = src.filterIsInstance<Char>()
         assertEquals(0, charValues.size())
+    }
+
+    test fun emptyListIsSerializable() = testSingletonSerialization(emptyList<Any>())
+
+    test fun emptySetIsSerializable() = testSingletonSerialization(emptySet<Any>())
+
+
+    private fun testSingletonSerialization(value: Any) {
+        val outputStream = ByteArrayOutputStream()
+        val objectOuputStream = ObjectOutputStream(outputStream)
+
+        objectOuputStream.writeObject(value)
+        objectOuputStream.close()
+        outputStream.close()
+
+        val inputStream = ByteArrayInputStream(outputStream.toByteArray())
+        val inputObjectStream = ObjectInputStream(inputStream)
+        val result = inputObjectStream.readObject()
+
+        assertEquals(value, result)
+        assertTrue(value === result)
     }
 }

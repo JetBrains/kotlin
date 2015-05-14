@@ -1,34 +1,39 @@
 package kotlin
 
+import java.io.Serializable
 import java.util.*
 
-private object EmptyMap : Map<Any, Any> {
-    private val map = HashMap<Any, Any>()
+private object EmptyMap : Map<Any, Nothing>, Serializable {
+    override fun equals(other: Any?): Boolean = other is Map<*,*> && other.isEmpty()
+    override fun hashCode(): Int = 0
+    override fun toString(): String = "{}"
 
-    override fun containsKey(key: Any?): Boolean = map.containsKey(key)
-    override fun containsValue(value: Any?): Boolean = map.containsValue(value)
-    override fun entrySet(): Set<Map.Entry<Any, Any>> = map.entrySet()
-    override fun get(key: Any?): Any? = map.get(key)
-    override fun keySet(): Set<Any> = map.keySet()
-    override fun values(): Collection<Any> = map.values()
-    override fun isEmpty(): Boolean = map.isEmpty()
-    override fun size(): Int = map.size()
-    override fun equals(other: Any?): Boolean = map.equals(other)
-    override fun hashCode(): Int = map.hashCode()
-    override fun toString(): String = map.toString()
+    override fun size(): Int = 0
+    override fun isEmpty(): Boolean = true
+
+    override fun containsKey(key: Any?): Boolean = false
+    override fun containsValue(value: Any?): Boolean = false
+    override fun get(key: Any?): Nothing? = null
+    override fun entrySet(): Set<Map.Entry<Any, Nothing>> = EmptySet
+    override fun keySet(): Set<Any> = EmptySet
+    override fun values(): Collection<Nothing> = EmptyList
+
+    private fun readResolve(): Any = EmptyMap
 }
 
-/** Returns an empty read-only map of specified type */
+/** Returns an empty read-only map of specified type. The returned map is serializable (JVM). */
 public fun emptyMap<K, V>(): Map<K, V> = EmptyMap as Map<K, V>
 
 /**
  * Returns a new read-only map with the specified contents, given as a list of pairs
  * where the first value is the key and the second is the value. If multiple pairs have
  * the same key, the resulting map will contain the value from the last of those pairs.
+ *
+ * The returned map is serializable (JVM).
  */
-public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size() == 0) emptyMap() else linkedMapOf(*values)
+public fun mapOf<K, V>(vararg values: Pair<K, V>): Map<K, V> = if (values.size() > 0) linkedMapOf(*values) else emptyMap()
 
-/** Returns an empty read-only map */
+/** Returns an empty read-only map. The returned map is serializable (JVM). */
 public fun mapOf<K, V>(): Map<K, V> = emptyMap()
 
 /**
@@ -77,8 +82,7 @@ private fun mapCapacity(expectedSize: Int): Int {
 /**
  * Returns the [Map] if its not null, or the empty [Map] otherwise.
  */
-public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V>
-       = if (this != null) this else emptyMap()
+public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V> = this ?: emptyMap()
 
 /**
  * Checks if the map contains the given key. This method allows to use the `x in map` syntax for checking

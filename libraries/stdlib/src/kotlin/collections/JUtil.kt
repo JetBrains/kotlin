@@ -1,54 +1,76 @@
 package kotlin
 
+import java.io.Serializable
 import java.util.*
 
-private object EmptyList : List<Any> {
-    private val list = ArrayList<Any>()
-
-    override fun contains(o: Any?): Boolean = list.contains(o)
-    override fun containsAll(c: Collection<Any?>): Boolean = list.containsAll(c)
-    override fun get(index: Int): Any = list.get(index)
-    override fun indexOf(o: Any?): Int = list.indexOf(o)
-    override fun isEmpty(): Boolean = list.isEmpty()
-    override fun iterator(): Iterator<Any> = list.iterator()
-    override fun lastIndexOf(o: Any?): Int = list.lastIndexOf(o)
-    override fun listIterator(): ListIterator<Any> = list.listIterator()
-    override fun listIterator(index: Int): ListIterator<Any> =list.listIterator(index)
-    override fun size(): Int = list.size()
-    override fun subList(fromIndex: Int, toIndex: Int): List<Any> = list.subList(fromIndex, toIndex)
-    override fun equals(other: Any?): Boolean = list.equals(other)
-    override fun hashCode(): Int = list.hashCode()
-    override fun toString(): String = list.toString()
+private object EmptyIterator : ListIterator<Nothing> {
+    override fun hasNext(): Boolean = false
+    override fun hasPrevious(): Boolean = false
+    override fun nextIndex(): Int = 0
+    override fun previousIndex(): Int = -1
+    override fun next(): Nothing = throw NoSuchElementException()
+    override fun previous(): Nothing = throw NoSuchElementException()
 }
 
-private object EmptySet : Set<Any> {
-    private val set = HashSet<Any>()
+private object EmptyList : List<Nothing>, Serializable {
+    override fun equals(other: Any?): Boolean = other is List<*> && other.isEmpty()
+    override fun hashCode(): Int = 1
+    override fun toString(): String = "[]"
 
-    override fun contains(o: Any?): Boolean = set.contains(o)
-    override fun containsAll(c: Collection<Any?>): Boolean = set.containsAll(c)
-    override fun isEmpty(): Boolean = set.isEmpty()
-    override fun iterator(): Iterator<Any> = set.iterator()
-    override fun size(): Int = set.size()
-    override fun equals(other: Any?): Boolean = set.equals(other)
-    override fun hashCode(): Int = set.hashCode()
-    override fun toString(): String = set.toString()
+    override fun size(): Int = 0
+    override fun isEmpty(): Boolean = true
+    override fun contains(o: Any?): Boolean = false
+    override fun containsAll(c: Collection<Any?>): Boolean = c.isEmpty()
+
+    override fun get(index: Int): Nothing = throw IndexOutOfBoundsException("Index $index is out of bound of empty list.")
+    override fun indexOf(o: Any?): Int = -1
+    override fun lastIndexOf(o: Any?): Int = -1
+
+    override fun iterator(): Iterator<Nothing> = EmptyIterator
+    override fun listIterator(): ListIterator<Nothing> = EmptyIterator
+    override fun listIterator(index: Int): ListIterator<Nothing> {
+        if (index != 0) throw IndexOutOfBoundsException("Index: $index")
+        return EmptyIterator
+    }
+
+    override fun subList(fromIndex: Int, toIndex: Int): List<Nothing> {
+        if (fromIndex == 0 && toIndex == 0) return this
+        throw IndexOutOfBoundsException("fromIndex: $fromIndex, toIndex: $toIndex")
+    }
+
+    private fun readResolve(): Any = EmptyList
 }
 
-/** Returns an empty read-only list. */
-public fun emptyList<T>(): List<T> = EmptyList as List<T>
-/** Returns an empty read-only set. */
-public fun emptySet<T>(): Set<T> = EmptySet as Set<T>
+private object EmptySet : Set<Nothing>, Serializable {
+    override fun equals(other: Any?): Boolean = other is Set<*> && other.isEmpty()
+    override fun hashCode(): Int = 0
+    override fun toString(): String = "[]"
 
-/** Returns a new read-only list of given elements */
-public fun listOf<T>(vararg values: T): List<T> = if (values.size() == 0) emptyList() else arrayListOf(*values)
+    override fun size(): Int = 0
+    override fun isEmpty(): Boolean = true
+    override fun contains(o: Any?): Boolean = false
+    override fun containsAll(c: Collection<Any?>): Boolean = c.isEmpty()
 
-/** Returns an empty read-only list. */
+    override fun iterator(): Iterator<Nothing> = EmptyIterator
+
+    private fun readResolve(): Any = EmptySet
+}
+
+/** Returns an empty read-only list.  The returned list is serializable (JVM). */
+public fun emptyList<T>(): List<T> = EmptyList
+/** Returns an empty read-only set.  The returned set is serializable (JVM). */
+public fun emptySet<T>(): Set<T> = EmptySet
+
+/** Returns a new read-only list of given elements.  The returned list is serializable (JVM). */
+public fun listOf<T>(vararg values: T): List<T> = if (values.size() > 0) arrayListOf(*values) else emptyList()
+
+/** Returns an empty read-only list.  The returned list is serializable (JVM). */
 public fun listOf<T>(): List<T> = emptyList()
 
-/** Returns a new read-only ordered set with the given elements. */
-public fun setOf<T>(vararg values: T): Set<T> = if (values.size() == 0) emptySet() else values.toCollection(LinkedHashSet<T>(mapCapacity(values.size())))
+/** Returns a new read-only ordered set with the given elements.  The returned set is serializable (JVM). */
+public fun setOf<T>(vararg values: T): Set<T> = if (values.size() > 0) values.toSet() else emptySet()
 
-/** Returns an empty read-only set. */
+/** Returns an empty read-only set.  The returned set is serializable (JVM). */
 public fun setOf<T>(): Set<T> = emptySet()
 
 /** Returns a new [LinkedList] with the given elements. */
