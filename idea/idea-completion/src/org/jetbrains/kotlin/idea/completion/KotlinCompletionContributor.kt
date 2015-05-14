@@ -95,8 +95,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
                     // search expression to be replaced - go up while we are the first child of parent expression
                     var expression = parent as JetExpression
                     parent = expression.getParent()
-                    while (parent is JetExpression && parent!!.getFirstChild() == expression) {
-                        expression = parent as JetExpression
+                    while (parent is JetExpression && parent.getFirstChild() == expression) {
+                        expression = parent
                         parent = expression.getParent()
                     }
 
@@ -180,7 +180,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 val text = builder.toString()
                 val file = JetPsiFactory(tokenBefore.getProject()).createFile(text)
                 val declaration = file.getDeclarations().singleOrNull() ?: return null
-                if (declaration.getTextLength() != text.length) return null
+                if (declaration.getTextLength() != text.length()) return null
                 val containsErrorElement = !PsiTreeUtil.processElements(file, PsiElementProcessor<PsiElement>{ it !is PsiErrorElement })
                 return if (containsErrorElement) null else tail + "$"
             }
@@ -384,7 +384,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 JetTokens.LPAR -> balance++
                 JetTokens.RPAR -> balance--
             }
-            current = current!!.prevLeaf()
+            current = current.prevLeaf()
         }
         return balance
     }

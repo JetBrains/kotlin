@@ -101,6 +101,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ReplaceFunctionCallByProperty.kt")
+    public void testReplaceFunctionCallByProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ReplaceFunctionCallByProperty.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReplaceFunctionCallByPropertyArgs.kt")
+    public void testReplaceFunctionCallByPropertyArgs() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ReplaceFunctionCallByPropertyArgs.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SecondTypeArg.kt")
     public void testSecondTypeArg() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/SecondTypeArg.kt");

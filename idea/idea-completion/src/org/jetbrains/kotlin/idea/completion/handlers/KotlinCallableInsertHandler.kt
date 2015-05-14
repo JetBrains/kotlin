@@ -20,7 +20,6 @@ import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
@@ -52,11 +51,6 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
     private fun addImport(context : InsertionContext, item : LookupElement) {
         PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
 
-        val startOffset = context.getStartOffset()
-        val element = context.getFile().findElementAt(startOffset)
-
-        if (element == null) return
-
         val file = context.getFile()
         val o = item.getObject()
         if (file is JetFile && o is DeclarationDescriptorLookupObject) {
@@ -77,7 +71,30 @@ public abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler
     }
 }
 
-public object KotlinPropertyInsertHandler : KotlinCallableInsertHandler()
+public object KotlinPropertyInsertHandler : KotlinCallableInsertHandler() {
+    public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        super.handleInsert(context, item)
+
+        if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
+            deleteEmptyParenthesis(context)
+        }
+    }
+
+    private fun deleteEmptyParenthesis(context: InsertionContext) {
+        val psiDocumentManager = PsiDocumentManager.getInstance(context.getProject())
+        psiDocumentManager.commitAllDocuments()
+        psiDocumentManager.doPostponedOperationsAndUnblockDocument(context.getDocument())
+
+        val offset = context.getTailOffset()
+        val document = context.getDocument()
+        val chars = document.getCharsSequence()
+
+        val lParenOffset = chars.indexOfSkippingSpace('(', offset) ?: return
+        val rParenOffset = chars.indexOfSkippingSpace(')', lParenOffset + 1) ?: return
+
+        document.deleteString(offset, rParenOffset + 1)
+    }
+}
 
 public enum class CaretPosition {
     IN_BRACKETS
@@ -143,8 +160,8 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         val closingBracket = if (braces) '}' else ')'
 
         if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
-            val offset1 = skipSpaces(chars, offset)
-            if (offset1 < document.getTextLength()) {
+            val offset1 = chars.skipSpaces(offset)
+            if (offset1 < chars.length()) {
                 if (chars[offset1] == '<') {
                     PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
                     val token = context.getFile().findElementAt(offset1)!!
@@ -158,9 +175,9 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
             }
         }
 
-        var openingBracketOffset = indexOfSkippingSpace(document, openingBracket, offset)
+        var openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)
         var inBracketsShift = 0
-        if (openingBracketOffset == -1) {
+        if (openingBracketOffset == null) {
             if (braces) {
                 if (completionChar == ' ' || completionChar == '{') {
                     context.setAddCompletionChar(false)
@@ -180,13 +197,12 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
             PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
         }
 
-        openingBracketOffset = indexOfSkippingSpace(document, openingBracket, offset)
-        assert(openingBracketOffset != -1, "If there wasn't open bracket it should already have been inserted")
+        openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
 
-        val closeBracketOffset = indexOfSkippingSpace(document, closingBracket, openingBracketOffset + 1)
+        val closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
+
         val editor = context.getEditor()
-
-        if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == -1) {
+        if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {
             editor.getCaretModel().moveToOffset(openingBracketOffset + 1 + inBracketsShift)
             AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(editor, offsetElement)
         }
@@ -197,7 +213,7 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
 
         if (lambdaInfo != null && lambdaInfo.explicitParameters) {
-            insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset + 1), lambdaInfo.lambdaType)
+            insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo.lambdaType)
         }
     }
 
@@ -211,22 +227,8 @@ public class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val 
         public val NO_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.AFTER_BRACKETS, null)
         public val WITH_PARAMETERS_HANDLER: KotlinFunctionInsertHandler = KotlinFunctionInsertHandler(CaretPosition.IN_BRACKETS, null)
 
-        private fun indexOfSkippingSpace(document: Document, ch : Char, startIndex : Int) : Int {
-            val text = document.getCharsSequence()
-            for (i in startIndex..text.length() - 1) {
-                val currentChar = text[i]
-                if (ch == currentChar) return i
-                if (currentChar != ' ' && currentChar != '\t') return -1
-            }
-            return -1
-        }
-
-        private fun skipSpaces(chars: CharSequence, index : Int) : Int
-                = (index..chars.length() - 1).firstOrNull { val c = chars[it]; c != ' ' && c != '\t' } ?: chars.length()
-
-        private fun isInsertSpacesInOneLineFunctionEnabled(project : Project)
-                = CodeStyleSettingsManager.getSettings(project)
-                      .getCustomSettings(javaClass<JetCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
+        private fun isInsertSpacesInOneLineFunctionEnabled(project: Project)
+                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(javaClass<JetCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
     }
 }
 
