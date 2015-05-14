@@ -32,11 +32,13 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.*
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 import com.intellij.psi.impl.compiled.ClsStubBuilderFactory
 import com.intellij.psi.meta.MetaDataContributor
 import com.intellij.psi.stubs.BinaryFileStubBuilders
+import com.intellij.psi.util.JavaClassSupers
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
@@ -75,6 +77,8 @@ public abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
             override fun hasHardcodedContracts(element: PsiElement): Boolean = false
         })
+
+        applicationEnvironment.getApplication().registerService(javaClass<JavaClassSupers>(), javaClass<JavaClassSupersImpl>())
 
         for (root in PathUtil.getJdkClassesRoots()) {
             javaCoreEnvironment.addJarToClassPath(root)
