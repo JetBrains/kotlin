@@ -27,6 +27,7 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.compiled.ClsFileImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.*
 import com.sun.jdi.AbsentInformationException
@@ -44,11 +45,13 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.decompiler.JetClsFile
 import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -169,15 +172,25 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
     }
 
     override fun getAllClasses(sourcePosition: SourcePosition): List<ReferenceType> {
-        if (sourcePosition.getFile() !is JetFile) {
-            throw NoDataException.INSTANCE
+        val psiFile = sourcePosition.getFile()
+        if (psiFile is JetFile) {
+            val names = classNameForPositionAndInlinedOnes(sourcePosition)
+            val result = ArrayList<ReferenceType>()
+            for (name in names) {
+                result.addAll(myDebugProcess.getVirtualMachineProxy().classesByName(name))
+            }
+            return result
         }
-        val names = classNameForPositionAndInlinedOnes(sourcePosition)
-        val result = ArrayList<ReferenceType>()
-        for (name in names) {
-            result.addAll(myDebugProcess.getVirtualMachineProxy().classesByName(name))
+
+        if (psiFile is ClsFileImpl) {
+            val decompiledPsiFile = psiFile.getDecompiledPsiFile()
+            if (decompiledPsiFile is JetClsFile && sourcePosition.getLine() == -1) {
+                val className = PackageClassUtils.getPackageClassInternalName(decompiledPsiFile.getPackageFqName())
+                return myDebugProcess.getVirtualMachineProxy().classesByName(className)
+            }
         }
-        return result
+
+        throw NoDataException.INSTANCE
     }
 
     private fun classNameForPositionAndInlinedOnes(sourcePosition: SourcePosition): List<String> {
