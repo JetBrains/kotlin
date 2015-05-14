@@ -52,4 +52,13 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
     <description>Replace 'get' call with index operator</description>
   </problem>
+
+  <problem>
+    <file>qualifier.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/qualifier.kt" />
+    <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Explicit 'get'</problem_class>
+    <description>Replace 'get' call with index operator</description>
+  </problem>
 </problems>

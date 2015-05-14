@@ -2237,9 +2237,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("qualifier.kt")
+            public void testQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/qualifier.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("rangeToSanityTest.kt")
             public void testRangeToSanityTest() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/rangeToSanityTest.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("super.kt")
+            public void testSuper() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithBinaryOperator/super.kt");
                 doTest(fileName);
             }
 
@@ -2339,6 +2351,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("plusSanityTest.kt")
             public void testPlusSanityTest() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/plusSanityTest.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("qualifier.kt")
+            public void testQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/qualifier.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("super.kt")
+            public void testSuper() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator/super.kt");
                 doTest(fileName);
             }
 
@@ -2453,9 +2477,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("qualifier.kt")
+            public void testQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/qualifier.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleArgument.kt")
             public void testSimpleArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/simpleArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("super.kt")
+            public void testSuper() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceContains/super.kt");
                 doTest(fileName);
             }
 
@@ -2546,6 +2582,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("qualifier.kt")
+            public void testQualifier() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/qualifier.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("sanityCheck.kt")
             public void testSanityCheck() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/sanityCheck.kt");
@@ -2555,6 +2597,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("singleArgument.kt")
             public void testSingleArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/singleArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("staticMethod.kt")
+            public void testStaticMethod() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/staticMethod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("super.kt")
+            public void testSuper() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/super.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelFun.kt")
+            public void testTopLevelFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/conventionNameCalls/replaceGet/topLevelFun.kt");
                 doTest(fileName);
             }
 

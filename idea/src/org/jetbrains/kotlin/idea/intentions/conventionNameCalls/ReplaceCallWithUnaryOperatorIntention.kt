@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
+import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -30,9 +31,13 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions
 public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator") {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
+
         val call = element.callExpression ?: return null
         if (call.getTypeArgumentList() != null) return null
         if (!call.getValueArguments().isEmpty()) return null
+
+        if (!element.isReceiverExpressionWithValue()) return null
+
         setText("Replace with '$operation' operator")
         return call.getCalleeExpression()!!.getTextRange()
     }

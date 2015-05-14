@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
+import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.buildExpression
@@ -33,9 +34,13 @@ public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifie
         if (element.calleeName != "get") return null
         val call = element.callExpression ?: return null
         if (call.getTypeArgumentList() != null) return null
+
         val arguments = call.getValueArguments()
         if (arguments.isEmpty()) return null
         if (arguments.any { it.isNamed() }) return null
+
+        if (!element.isReceiverExpressionWithValue()) return null
+
         return call.getCalleeExpression()!!.getTextRange()
     }
 

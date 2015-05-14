@@ -121,3 +121,10 @@ fun JetExpression.isExitStatement(): Boolean {
     }
 }
 
+// returns false for call of super, static method or method from package
+fun JetQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
+    val receiver = getReceiverExpression()
+    if (receiver is JetSuperExpression) return false
+    return analyze().getType(receiver) != null
+}
+
