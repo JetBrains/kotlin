@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.test;
 
+import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.SdkModificator;
-import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.AnnotationOrderRootType;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
@@ -41,7 +41,7 @@ public class PluginTestCaseBase {
     }
 
     private static Sdk getSdk(String sdkHome) {
-        Sdk sdk = new JavaSdkImpl().createJdk("JDK", sdkHome, true);
+        Sdk sdk = JavaSdk.getInstance().createJdk("JDK", sdkHome, true);
         SdkModificator modificator = sdk.getSdkModificator();
         VirtualFile file = LocalFileSystem.getInstance().findFileByIoFile(JetTestUtils.getJdkAnnotationsJar());
         assert file != null;
