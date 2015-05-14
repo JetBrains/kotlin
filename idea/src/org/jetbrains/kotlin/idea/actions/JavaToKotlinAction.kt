@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressManager
@@ -34,13 +33,12 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
-import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
-import org.jetbrains.kotlin.utils.addIfNotNull
+import java.io.File
 import java.io.IOException
 import java.util.ArrayList
 
@@ -133,8 +131,9 @@ public class JavaToKotlinAction : AnAction() {
         val result = ArrayList<VirtualFile>()
         for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
             val virtualFile = psiFile.getVirtualFile()
+            val fileName = uniqueKotlinFileName(virtualFile)
             try {
-                virtualFile.rename(this, virtualFile.getNameWithoutExtension() + ".kt")
+                virtualFile.rename(this, fileName)
                 virtualFile.setBinaryContent(CharsetToolkit.getUtf8Bytes(text))
                 result.add(virtualFile)
             }
@@ -143,5 +142,16 @@ public class JavaToKotlinAction : AnAction() {
             }
         }
         return result
+    }
+
+    private fun uniqueKotlinFileName(javaFile: VirtualFile): String {
+        val ioFile = File(javaFile.getPath().replace('/', File.separatorChar))
+
+        var i = 0
+        while (true) {
+            val fileName = javaFile.getNameWithoutExtension() + (if (i > 0) i else "") + ".kt"
+            if (!ioFile.resolveSibling(fileName).exists()) return fileName
+            i++
+        }
     }
 }
