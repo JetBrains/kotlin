@@ -21,40 +21,31 @@ import com.google.common.collect.Multimap
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT
+import org.jetbrains.kotlin.diagnostics.Errors.MANY_COMPANION_OBJECTS
+import org.jetbrains.kotlin.diagnostics.Errors.SECONDARY_CONSTRUCTOR_IN_OBJECT
+import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.resolveUtil.*
+import org.jetbrains.kotlin.resolve.resolveUtil.checkTraitRequirements
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
-
-import javax.inject.Inject
 import java.util.ArrayList
-
-import org.jetbrains.kotlin.diagnostics.Errors.*
+import javax.inject.Inject
 
 public class LazyTopDownAnalyzer {
     private var trace: BindingTrace? = null
-
     private var declarationResolver: DeclarationResolver? = null
-
     private var overrideResolver: OverrideResolver? = null
-
     private var overloadResolver: OverloadResolver? = null
-
     private var varianceChecker: VarianceChecker? = null
-
     private var moduleDescriptor: ModuleDescriptor? = null
-
     private var lazyDeclarationResolver: LazyDeclarationResolver? = null
-
     private var bodyResolver: BodyResolver? = null
-
     private var topLevelDescriptorProvider: TopLevelDescriptorProvider? = null
-
     private var fileScopeProvider: FileScopeProvider? = null
-
     private var declarationScopeProvider: DeclarationScopeProvider? = null
 
     Inject
@@ -135,10 +126,9 @@ public class LazyTopDownAnalyzer {
 
                 override fun visitJetFile(file: JetFile) {
                     if (file.isScript()) {
-                        val script = file.getScript()
-                        assert(script != null)
+                        val script = file.getScript() ?: throw AssertionError("getScript() is null for file: $file")
 
-                        DescriptorResolver.registerFileInPackage(trace, file)
+                        DescriptorResolver.registerFileInPackage(trace!!, file)
                         c.getScripts().put(script, topLevelDescriptorProvider!!.getScriptDescriptor(script))
                     }
                     else {
@@ -148,7 +138,7 @@ public class LazyTopDownAnalyzer {
                         c.addFile(file)
 
                         packageDirective!!.accept(this)
-                        DescriptorResolver.registerFileInPackage(trace, file)
+                        DescriptorResolver.registerFileInPackage(trace!!, file)
 
                         registerDeclarations(file.getDeclarations())
 
@@ -157,7 +147,7 @@ public class LazyTopDownAnalyzer {
                 }
 
                 override fun visitPackageDirective(directive: JetPackageDirective) {
-                    DescriptorResolver.resolvePackageHeader(directive, moduleDescriptor, trace)
+                    DescriptorResolver.resolvePackageHeader(directive, moduleDescriptor!!, trace!!)
                 }
 
                 override fun visitImportDirective(importDirective: JetImportDirective) {
@@ -255,16 +245,16 @@ public class LazyTopDownAnalyzer {
 
         resolveAllHeadersInClasses(c)
 
-        declarationResolver!!.checkRedeclarationsInPackages(topLevelDescriptorProvider, topLevelFqNames)
+        declarationResolver!!.checkRedeclarationsInPackages(topLevelDescriptorProvider!!, topLevelFqNames)
         declarationResolver!!.checkRedeclarations(c)
 
-        checkTraitRequirements(c.getDeclaredClasses(), trace)
+        checkTraitRequirements(c.getDeclaredClasses(), trace!!)
 
         overrideResolver!!.check(c)
 
         varianceChecker!!.check(c)
 
-        declarationResolver!!.resolveAnnotationsOnFiles(c, fileScopeProvider)
+        declarationResolver!!.resolveAnnotationsOnFiles(c, fileScopeProvider!!)
 
         overloadResolver!!.process(c)
 
