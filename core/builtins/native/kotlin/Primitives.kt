@@ -23,7 +23,7 @@ package kotlin
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
 public class Byte private () : Number, Comparable<Byte> {
-    companion object {}
+    companion object : IntegerConstants<Byte> {}
 
 /**
  * Compares this value with the specified value for order.
@@ -326,7 +326,7 @@ public class Char private () : Comparable<Char> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
 public class Short private () : Number, Comparable<Short> {
-    companion object {}
+    companion object : IntegerConstants<Short> {}
 
 /**
  * Compares this value with the specified value for order.
@@ -484,7 +484,7 @@ public class Short private () : Number, Comparable<Short> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
 public class Int private () : Number, Comparable<Int> {
-    companion object {}
+    companion object : IntegerConstants<Int> {}
 
 /**
  * Compares this value with the specified value for order.
@@ -657,7 +657,7 @@ public class Int private () : Number, Comparable<Int> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
 public class Long private () : Number, Comparable<Long> {
-    companion object {}
+    companion object : IntegerConstants<Long> {}
 
 /**
  * Compares this value with the specified value for order.

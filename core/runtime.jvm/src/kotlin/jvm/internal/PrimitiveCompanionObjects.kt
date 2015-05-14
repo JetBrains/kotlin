@@ -28,10 +28,27 @@ private object FloatCompanionObject : FloatingPointConstants<Float> {
     override val NaN : Float = java.lang.Float.NaN
 }
 
-private object IntCompanionObject {}
-private object LongCompanionObject {}
-private object ShortCompanionObject {}
-private object ByteCompanionObject {}
+private object IntCompanionObject : IntegerConstants<Int> {
+    override val MIN_VALUE: Int = java.lang.Integer.MIN_VALUE
+    override val MAX_VALUE: Int = java.lang.Integer.MAX_VALUE
+}
+
+private object LongCompanionObject : IntegerConstants<Long> {
+    override val MIN_VALUE: Long = java.lang.Long.MIN_VALUE
+    override val MAX_VALUE: Long = java.lang.Long.MAX_VALUE
+}
+
+private object ShortCompanionObject : IntegerConstants<Short> {
+    override val MIN_VALUE: Short = java.lang.Short.MIN_VALUE
+    override val MAX_VALUE: Short = java.lang.Short.MAX_VALUE
+}
+
+private object ByteCompanionObject : IntegerConstants<Byte> {
+    override val MIN_VALUE: Byte = java.lang.Byte.MIN_VALUE
+    override val MAX_VALUE: Byte = java.lang.Byte.MAX_VALUE
+}
+
+
 private object CharCompanionObject {}
 
 private object StringCompanionObject {}

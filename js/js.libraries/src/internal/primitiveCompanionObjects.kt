@@ -28,10 +28,26 @@ private object FloatCompanionObject : FloatingPointConstants<Float> {
     override val NaN : Float = js("Number.NaN")
 }
 
-private object IntCompanionObject {}
-private object LongCompanionObject {}
-private object ShortCompanionObject {}
-private object ByteCompanionObject {}
+private object IntCompanionObject : IntegerConstants<Int> {
+    override val MIN_VALUE: Int = -0x80000000
+    override val MAX_VALUE: Int =  0x7FFFFFFF
+}
+
+private object LongCompanionObject : IntegerConstants<Long> {
+    override val MIN_VALUE: Long = js("Kotlin.Long.MIN_VALUE")
+    override val MAX_VALUE: Long = js("Kotlin.Long.MAX_VALUE")
+}
+
+private object ShortCompanionObject : IntegerConstants<Short> {
+    override val MIN_VALUE: Short = -0x8000
+    override val MAX_VALUE: Short = 0x7FFF
+}
+
+private object ByteCompanionObject : IntegerConstants<Byte> {
+    override val MIN_VALUE: Byte = -0x80
+    override val MAX_VALUE: Byte = 0x7F
+}
+
 private object CharCompanionObject {}
 
 private object StringCompanionObject {}

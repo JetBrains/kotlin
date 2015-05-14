@@ -15,14 +15,6 @@
  */
 package kotlin.jvm
 
-/**
- * A constant holding the minimum value an `Int` can have, -2^31.
- */
-public val Int.Companion.MIN_VALUE: Int get() = java.lang.Integer.MIN_VALUE
-/**
- * A constant holding the maximum value an `Int` can have, 2^31-1.
- */
-public val Int.Companion.MAX_VALUE: Int get() = java.lang.Integer.MAX_VALUE
 
 /**
  * A constant holding the smallest positive nonzero value of type `Double`, 2^-1074.
@@ -41,30 +33,3 @@ public val Float.Companion.MIN_VALUE: Float get() = java.lang.Float.MIN_VALUE
  * * A constant holding the largest positive finite value of type `Float`, (2-2^-23)*2^127.
  */
 public val Float.Companion.MAX_VALUE: Float get() = java.lang.Float.MAX_VALUE
-
-/**
- * A constant holding the minimum value a `Long` can have, -2^63.
- */
-public val Long.Companion.MIN_VALUE: Long get() = java.lang.Long.MIN_VALUE
-/**
- * A constant holding the maximum value a `Long` can have, 2^63-1.
- */
-public val Long.Companion.MAX_VALUE: Long get() = java.lang.Long.MAX_VALUE
-
-/**
- * A constant holding the minimum value a `Short` can have, -2^15.
- */
-public val Short.Companion.MIN_VALUE: Short get() = java.lang.Short.MIN_VALUE
-/**
- * A constant holding the maximum value a `Short` can have, 2^15-1.
- */
-public val Short.Companion.MAX_VALUE: Short get() = java.lang.Short.MAX_VALUE
-
-/**
- * A constant holding the minimum value a `Byte` can have, -128.
- */
-public val Byte.Companion.MIN_VALUE: Byte get() = java.lang.Byte.MIN_VALUE
-/**
- * A constant holding the maximum value a `Byte` can have, 127.
- */
-public val Byte.Companion.MAX_VALUE: Byte get() = java.lang.Byte.MAX_VALUE

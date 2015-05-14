@@ -65,6 +65,9 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
                 out.print(" : FloatingPointConstants<$className>")
             }
+            if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
+                out.print(" : IntegerConstants<$className>")
+            }
             out.println(" {}\n")
 
             generateCompareTo(kind)

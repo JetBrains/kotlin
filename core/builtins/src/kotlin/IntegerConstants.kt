@@ -17,21 +17,16 @@
 package kotlin
 
 /**
- * An interface implemented by companion objects of floating-point types.
+ * An interface implemented by companion objects of integral types.
  */
-public interface FloatingPointConstants<T> {
+public interface IntegerConstants<T> {
     /**
-     * A constant holding the positive infinity value.
+     * A constant holding the minimum value an instance of [T] can have.
      */
-    public val POSITIVE_INFINITY: T
+    public val MIN_VALUE: T
 
     /**
-     * A constant holding the negative infinity value.
+     * A constant holding the maximum value an instance of [T] can have.
      */
-    public val NEGATIVE_INFINITY: T
-
-    /**
-     * A constant holding the "not a number" value.
-     */
-    public val NaN: T
+    public val MAX_VALUE: T
 }

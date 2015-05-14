@@ -109,8 +109,12 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
 
-    public companion object Companion {
+    public companion object Companion : kotlin.IntegerConstants<kotlin.Byte> {
         /*primary*/ private constructor Companion()
+        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Byte
+            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Byte
+        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Byte
+            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Byte
     }
 }
 
@@ -916,8 +920,12 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Int
     public final fun xor(/*0*/ other: kotlin.Int): kotlin.Int
 
-    public companion object Companion {
+    public companion object Companion : kotlin.IntegerConstants<kotlin.Int> {
         /*primary*/ private constructor Companion()
+        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Int
+            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Int
+        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Int
+            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Int
     }
 }
 
@@ -983,6 +991,13 @@ public final class IntRange : kotlin.Range<kotlin.Int>, kotlin.Progression<kotli
         public final val EMPTY: kotlin.IntRange
             public final fun <get-EMPTY>(): kotlin.IntRange
     }
+}
+
+public interface IntegerConstants</*0*/ T> {
+    public abstract val MAX_VALUE: T
+        public abstract fun <get-MAX_VALUE>(): T
+    public abstract val MIN_VALUE: T
+        public abstract fun <get-MIN_VALUE>(): T
 }
 
 public interface Iterable</*0*/ out T> {
@@ -1087,8 +1102,12 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final fun ushr(/*0*/ bits: kotlin.Int): kotlin.Long
     public final fun xor(/*0*/ other: kotlin.Long): kotlin.Long
 
-    public companion object Companion {
+    public companion object Companion : kotlin.IntegerConstants<kotlin.Long> {
         /*primary*/ private constructor Companion()
+        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Long
+            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Long
+        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Long
+            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Long
     }
 }
 
@@ -1383,8 +1402,12 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public open override /*1*/ fun toLong(): kotlin.Long
     public open override /*1*/ fun toShort(): kotlin.Short
 
-    public companion object Companion {
+    public companion object Companion : kotlin.IntegerConstants<kotlin.Short> {
         /*primary*/ private constructor Companion()
+        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Short
+            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Short
+        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Short
+            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Short
     }
 }
 
