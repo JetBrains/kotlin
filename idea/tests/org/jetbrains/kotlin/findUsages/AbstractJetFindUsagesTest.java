@@ -21,6 +21,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Ordering;
+import com.intellij.codeInsight.JavaTargetElementEvaluator;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.find.FindManager;
@@ -330,8 +331,8 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         PsiElement caretElement =
                 InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
                 ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(),
-                                                          TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED |
-                                                          TargetElementUtil.NEW_AS_CONSTRUCTOR)
+                                                          TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED | 
+                                                          JavaTargetElementEvaluator.NEW_AS_CONSTRUCTOR)
                 : myFixture.getElementAtCaret();
         assertNotNull(caretElement);
         assertInstanceOf(caretElement, caretElementClass);
