@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.File
@@ -43,8 +44,14 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
 
     fun afterKotlinCompile(outputDirFile: File) {
         val extraProperties = task.getExtensions().getExtraProperties()
-        [suppress("UNCHECKED_CAST")]
-        val javaTask = (extraProperties.get("javaTask") as? WeakReference<JavaCompile>)?.get()
+
+        val javaTask = try {
+            [suppress("UNCHECKED_CAST")]
+            (extraProperties.get("javaTask") as? WeakReference<JavaCompile>)?.get()
+        }
+        catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
+            null
+        }
 
         val aptFiles = task.aptFiles
         val aptOutputDir = task.kotlinAptOutputDir
