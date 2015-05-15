@@ -50,7 +50,6 @@ import com.intellij.util.ui.table.JBTableRow;
 import com.intellij.util.ui.table.JBTableRowEditor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.idea.JetFileType;
@@ -462,7 +461,6 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     @Override
     @NotNull
     protected BaseRefactoringProcessor createRefactoringProcessor() {
-        String commandName1 = commandName != null ? commandName : getTitle();
         JetChangeInfo changeInfo = evaluateChangeInfo(
                 myParametersTableModel,
                 myReturnTypeCodeFragment,
@@ -471,11 +469,11 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                 getMethodName(),
                 myDefaultValueContext
         );
-        return new JetChangeSignatureProcessor(myProject, changeInfo, commandName1);
+        return new JetChangeSignatureProcessor(myProject, changeInfo, commandName != null ? commandName : getTitle());
     }
 
-    @TestOnly
-    public static BaseRefactoringProcessor createRefactoringProcessor(
+    @NotNull
+    public static BaseRefactoringProcessor createRefactoringProcessorForSilentChangeSignature(
             @NotNull Project project,
             @NotNull String commandName,
             @NotNull JetMethodDescriptor method,
@@ -500,36 +498,34 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
     }
 
     private static JetChangeInfo evaluateChangeInfo(
-            @NotNull JetCallableParameterTableModel myParametersTableModel,
-            @Nullable PsiCodeFragment myReturnTypeCodeFragment,
-            @NotNull JetMethodDescriptor myMethod,
+            @NotNull JetCallableParameterTableModel parametersModel,
+            @Nullable PsiCodeFragment returnTypeCodeFragment,
+            @NotNull JetMethodDescriptor methodDescriptor,
             @Nullable Visibility visibility,
             @NotNull String methodName,
-            @NotNull PsiElement myDefaultValueContext
+            @NotNull PsiElement defaultValueContext
     ) {
-        List<JetParameterInfo> parameters = new ArrayList<JetParameterInfo>(myParametersTableModel.getRowCount());
+        List<JetParameterInfo> parameters = new ArrayList<JetParameterInfo>(parametersModel.getRowCount());
 
-        for (int i = 0; i < myParametersTableModel.getItems().size(); i++) {
-            JetParameterInfo parameter = myParametersTableModel.getItems().get(i).parameter;
-            parameter.setCurrentTypeText(myParametersTableModel.getItems().get(i).typeCodeFragment.getText().trim());
+        for (ParameterTableModelItemBase<JetParameterInfo> parameter : parametersModel.getItems()) {
+            parameter.parameter.setCurrentTypeText(parameter.typeCodeFragment.getText().trim());
 
-            parameters.add(parameter);
+            parameters.add(parameter.parameter);
 
-            JetExpressionCodeFragment codeFragment =
-                    (JetExpressionCodeFragment) myParametersTableModel.getItems().get(i).defaultValueCodeFragment;
-            JetExpression oldDefaultValue = parameter.getDefaultValueForCall();
+            JetExpressionCodeFragment codeFragment = (JetExpressionCodeFragment) parameter.defaultValueCodeFragment;
+            JetExpression oldDefaultValue = parameter.parameter.getDefaultValueForCall();
             if (!codeFragment.getText().equals(oldDefaultValue != null ? oldDefaultValue.getText() : "")) {
-                parameter.setDefaultValueForCall(codeFragment.getContentElement());
+                parameter.parameter.setDefaultValueForCall(codeFragment.getContentElement());
             }
         }
 
-        String returnTypeText = myReturnTypeCodeFragment != null ? myReturnTypeCodeFragment.getText().trim() : "";
-        JetMethodDescriptor descriptor = myMethod instanceof JetMutableMethodDescriptor
-                                         ? ((JetMutableMethodDescriptor) myMethod).getOriginal()
-                                         : myMethod;
-        JetType returnType = getType((JetTypeCodeFragment) myReturnTypeCodeFragment);
+        String returnTypeText = returnTypeCodeFragment != null ? returnTypeCodeFragment.getText().trim() : "";
+        JetMethodDescriptor descriptor = methodDescriptor instanceof JetMutableMethodDescriptor
+                                         ? ((JetMutableMethodDescriptor) methodDescriptor).getOriginal()
+                                         : methodDescriptor;
+        JetType returnType = getType((JetTypeCodeFragment) returnTypeCodeFragment);
         return new JetChangeInfo(descriptor, methodName, returnType, returnTypeText,
-                                 visibility, parameters, myParametersTableModel.getReceiver(), myDefaultValueContext);
+                                 visibility, parameters, parametersModel.getReceiver(), defaultValueContext);
     }
 
     @Override

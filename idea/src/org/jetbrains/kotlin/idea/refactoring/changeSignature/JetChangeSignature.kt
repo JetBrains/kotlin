@@ -78,12 +78,11 @@ public class JetChangeSignature(project: Project,
 
         if (configuration.performSilently(affectedFunctions)
             || ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            JetChangeSignatureDialog.createRefactoringProcessor(
+            JetChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(
                     project,
                     commandName ?: ChangeSignatureHandler.REFACTORING_NAME,
                     adjustedDescriptor,
                     defaultValueContext
-
             ).run()
         }
         else {
@@ -131,6 +130,6 @@ TestOnly public fun createChangeInfo(project: Project,
 
     val adjustedDescriptor = jetChangeSignature.adjustDescriptor(declarations) ?: return null
 
-    val processor = JetChangeSignatureDialog.createRefactoringProcessor(project, "", adjustedDescriptor, defaultValueContext) as JetChangeSignatureProcessor
+    val processor = JetChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(project,  ChangeSignatureHandler.REFACTORING_NAME, adjustedDescriptor, defaultValueContext) as JetChangeSignatureProcessor
     return processor.getChangeInfo()
 }
