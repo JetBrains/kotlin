@@ -1,5 +1,3 @@
 // "Add function body" "true"
-package a {
-    fun foo() {
-    }
+fun foo() {
 }
