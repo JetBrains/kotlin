@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -240,7 +241,16 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
             arguments.verbose = true;
         }
 
-        List<String> sources = getSources();
+        List<String> sources = new ArrayList<String>();
+        for (String source : getSources()) {
+            if (new File(source).exists()) {
+                sources.add(source);
+            }
+            else {
+                LOG.warn("Source root doesn't exist: " + source);
+            }
+        }
+
         if (sources == null || sources.isEmpty()) {
             throw new MojoExecutionException("No source roots to compile");
         }
@@ -248,7 +258,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         arguments.suppressWarnings = nowarn;
 
         arguments.freeArgs.addAll(sources);
-        LOG.info("Compiling Kotlin sources from " + sources );
+        LOG.info("Compiling Kotlin sources from " + sources);
 
         configureSpecificCompilerArguments(arguments);
 
