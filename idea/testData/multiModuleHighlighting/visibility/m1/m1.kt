@@ -15,7 +15,7 @@ fun testVisibility() {
     <error descr="[UNRESOLVED_REFERENCE] Unresolved reference: ClassInM2">ClassInM2</error>()
 }
 
-public open class A internal () {
+public open class A internal constructor() {
     private fun pri() {
     }
     fun int() {

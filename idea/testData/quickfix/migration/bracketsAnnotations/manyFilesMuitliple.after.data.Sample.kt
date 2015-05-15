@@ -1,3 +1,3 @@
-[file: Ann]
+@file:Ann
 
-@Ann class B [Ann(1)]()
+@Ann class B @Ann(1) constructor()

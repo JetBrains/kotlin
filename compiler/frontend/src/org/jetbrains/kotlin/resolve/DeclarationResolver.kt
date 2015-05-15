@@ -53,6 +53,7 @@ public class DeclarationResolver {
     public fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
         val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileScope(it) }
         for ((file, fileScope) in filesToScope) {
+            AnnotationResolver.reportDeprecatedAnnotationSyntax(file.getAnnotations(), _trace)
             _annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), _trace)
             _annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), _trace)
         }

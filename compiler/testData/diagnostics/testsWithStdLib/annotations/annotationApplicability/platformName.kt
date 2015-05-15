@@ -32,7 +32,7 @@ var vardef: Int = 1
     set
 
 <!INAPPLICABLE_ANNOTATION!>@platformName("C")<!>
-class C [<!INAPPLICABLE_ANNOTATION!>platformName("primary")<!>] constructor() {
+class C <!INAPPLICABLE_ANNOTATION!>platformName("primary")<!> constructor() {
     <!INAPPLICABLE_ANNOTATION!>platformName("ctr")<!> constructor(x: Int): this() {}
     <!INAPPLICABLE_ANNOTATION!>@platformName("a")<!>
     fun foo() {}

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
@@ -40,13 +41,15 @@ public class JetAnnotation extends JetElementImplStub<KotlinPlaceHolderStub<JetA
     }
 
     public boolean isDeprecated() {
-        PsiElement parent = getParentByStub();
-        if (parent instanceof JetFileAnnotationList) return false;
-        if (!(parent instanceof JetModifierList)) return true;
-        return !(((JetModifierList) parent).getOwner() instanceof JetPrimaryConstructor);
+        if (getStub() != null) return false;
+        return findChildByType(JetTokens.AT) == null;
     }
 
     public List<JetAnnotationEntry> getEntries() {
         return getStubOrPsiChildrenAsList(JetStubElementTypes.ANNOTATION_ENTRY);
+    }
+
+    public boolean hasFileKeyword() {
+        return findChildByType(JetTokens.FILE_KEYWORD) != null;
     }
 }

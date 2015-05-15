@@ -22,10 +22,12 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.addConstructorKeyword
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.psi.JetAnnotation
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.JetPrimaryConstructor
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public class DeprecatedAnnotationSyntaxFix(element: JetAnnotation) : JetIntentionAction<JetAnnotation>(element) {
@@ -51,11 +53,15 @@ public class DeprecatedAnnotationSyntaxFix(element: JetAnnotation) : JetIntentio
         private fun replaceWithAtAnnotationEntries(annotation: JetAnnotation) {
             val psiFactory = JetPsiFactory(annotation)
 
+            val hasFileKeyword = annotation.hasFileKeyword()
+
             val parent = annotation.getParent()
+            val owner = parent.getParent()
             var prevElement: PsiElement = annotation
 
             for (entry in annotation.getEntries()) {
-                val newEntry = psiFactory.createAnnotationEntry("@" + entry.getText())
+                val newEntry = if (hasFileKeyword) createFileAnnotationEntry(psiFactory, entry.getText())
+                               else psiFactory.createAnnotationEntry("@" + entry.getText())
                 val added = parent.addAfter(newEntry, prevElement)
 
                 if (prevElement != annotation) {
@@ -65,7 +71,14 @@ public class DeprecatedAnnotationSyntaxFix(element: JetAnnotation) : JetIntentio
                 prevElement = added
             }
 
+            if (owner is JetPrimaryConstructor) {
+                owner.addConstructorKeyword()
+            }
+
             annotation.delete()
         }
+
+        private fun createFileAnnotationEntry(psiFactory: JetPsiFactory, text: String) =
+                psiFactory.createFile("@file:$text").getAnnotationEntries().first()
     }
 }
