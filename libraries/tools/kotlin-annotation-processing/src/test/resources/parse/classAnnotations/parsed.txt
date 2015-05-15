@@ -1,0 +1,2 @@
+javax.inject.Named org.test.SomeClass
+javax.inject.Named org.test.SomeObject

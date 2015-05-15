@@ -1,0 +1,2 @@
+javax.inject.Inject org.test.SomeClass annotatedFunction
+javax.inject.Named org.test.SomeClass$annotatedFunction$1 invoke

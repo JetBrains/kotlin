@@ -1,0 +1,3 @@
+a javax.inject.Inject 0
+p org.test 0
+m 0 0/SomeClass annotatedFunction

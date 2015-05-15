@@ -1,0 +1,10 @@
+a javax.inject.Named 0
+p org.test 0
+c 0 0/SomeClass$Companion
+a org.jetbrains.annotations.NotNull 1
+m 1 0/SomeClass$Companion access$init$0
+c 0 0/SomeClass$SomeInnerObject
+c 0 0/SomeClass$InnerClass
+c 0 0/SomeClass$NestedClass
+a java.lang.Deprecated 2
+f 2 0/SomeClass OBJECT$

@@ -1,0 +1,5 @@
+javax.inject.Inject org.test.SomeClass$someFunction$LocalClass annotatedFunction
+javax.inject.Inject org.test.SomeClass$someFunction$LocalClass annotatedProperty
+javax.inject.Named org.test.SomeClass$someFunction$LocalClass
+org.jetbrains.annotations.Nullable org.test.SomeClass$someFunction$LocalClass annotatedProperty
+org.jetbrains.annotations.Nullable org.test.SomeClass$someFunction$LocalClass getAnnotatedProperty

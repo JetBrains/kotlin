@@ -1,0 +1,4 @@
+javax.inject.Inject org.test.SomeClass annotatedVal
+javax.inject.Inject org.test.SomeClass annotatedVar
+org.jetbrains.annotations.Nullable org.test.SomeClass annotatedVal
+org.jetbrains.annotations.Nullable org.test.SomeClass getAnnotatedVal

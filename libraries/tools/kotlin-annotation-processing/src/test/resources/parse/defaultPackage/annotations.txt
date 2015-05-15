@@ -1,0 +1,8 @@
+a javax.inject.Named 0
+c 0 SomeClass
+a javax.inject.Inject 1
+f 1 SomeClass annotatedProperty
+a org.jetbrains.annotations.Nullable 2
+f 2 SomeClass annotatedProperty
+m 2 SomeClass getAnnotatedProperty
+m 1 SomeClass annotatedFunction

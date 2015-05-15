@@ -1,0 +1,5 @@
+javax.inject.Inject SomeClass annotatedFunction
+javax.inject.Inject SomeClass annotatedProperty
+javax.inject.Named SomeClass
+org.jetbrains.annotations.Nullable SomeClass annotatedProperty
+org.jetbrains.annotations.Nullable SomeClass getAnnotatedProperty

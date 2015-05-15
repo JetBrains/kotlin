@@ -1,0 +1,6 @@
+java.lang.Deprecated org.test.SomeClass OBJECT$
+javax.inject.Named org.test.SomeClass$Companion
+javax.inject.Named org.test.SomeClass$InnerClass
+javax.inject.Named org.test.SomeClass$NestedClass
+javax.inject.Named org.test.SomeClass$SomeInnerObject
+org.jetbrains.annotations.NotNull org.test.SomeClass$Companion access$init$0
