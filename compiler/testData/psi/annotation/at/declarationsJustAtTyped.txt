@@ -5,7 +5,7 @@ JetFile: declarationsJustAtTyped.kt
     MODIFIER_LIST
       PsiElement(private)('private')
       PsiWhiteSpace(' ')
-      PsiErrorElement:Expected modifier or annotation after '@'
+      PsiErrorElement:Expected annotation identifier after '@'
         PsiElement(AT)('@')
       PsiWhiteSpace(' ')
       ANNOTATION
@@ -49,7 +49,7 @@ JetFile: declarationsJustAtTyped.kt
         PsiWhiteSpace('\n        ')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiErrorElement:Expected modifier or annotation after '@'
+            PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(private)('private')
@@ -67,7 +67,7 @@ JetFile: declarationsJustAtTyped.kt
         PsiWhiteSpace('\n        ')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiErrorElement:Expected modifier or annotation after '@'
+            PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(private)('private')
@@ -85,7 +85,7 @@ JetFile: declarationsJustAtTyped.kt
         PsiWhiteSpace('\n        ')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiErrorElement:Expected modifier or annotation after '@'
+            PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(open)('open')
@@ -105,7 +105,7 @@ JetFile: declarationsJustAtTyped.kt
       PsiWhiteSpace('\n    ')
       FUN
         MODIFIER_LIST
-          PsiErrorElement:Expected modifier or annotation after '@'
+          PsiErrorElement:Expected annotation identifier after '@'
             PsiElement(AT)('@')
         PsiWhiteSpace(' ')
         PsiElement(fun)('fun')
@@ -120,7 +120,7 @@ JetFile: declarationsJustAtTyped.kt
           PsiWhiteSpace('\n        ')
           CLASS
             MODIFIER_LIST
-              PsiErrorElement:Expected modifier or annotation after '@'
+              PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(class)('class')
@@ -139,7 +139,7 @@ JetFile: declarationsJustAtTyped.kt
           PsiWhiteSpace('\n\n        ')
           FUN
             MODIFIER_LIST
-              PsiErrorElement:Expected modifier or annotation after '@'
+              PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
               PsiWhiteSpace('\n\n        ')
               ANNOTATION
@@ -179,7 +179,7 @@ JetFile: declarationsJustAtTyped.kt
               PsiWhiteSpace('\n        ')
               PsiElement(private)('private')
               PsiWhiteSpace('\n        ')
-              PsiErrorElement:Expected modifier or annotation after '@'
+              PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
               PsiWhiteSpace('\n        ')
               ANNOTATION_ENTRY
@@ -211,7 +211,7 @@ JetFile: declarationsJustAtTyped.kt
                     PsiElement(LPAR)('(')
                     VALUE_PARAMETER
                       MODIFIER_LIST
-                        PsiErrorElement:Expected modifier or annotation after '@'
+                        PsiErrorElement:Expected annotation identifier after '@'
                           PsiElement(AT)('@')
                         PsiWhiteSpace(' ')
                         ANNOTATION_ENTRY
@@ -248,7 +248,7 @@ JetFile: declarationsJustAtTyped.kt
             PsiElement(LPAR)('(')
             VALUE_PARAMETER
               MODIFIER_LIST
-                PsiErrorElement:Expected modifier or annotation after '@'
+                PsiErrorElement:Expected annotation identifier after '@'
                   PsiElement(AT)('@')
               PsiWhiteSpace(' ')
               PsiElement(IDENTIFIER)('x')
@@ -285,12 +285,12 @@ JetFile: declarationsJustAtTyped.kt
         PsiWhiteSpace('\n        ')
         PROPERTY_ACCESSOR
           MODIFIER_LIST
-            PsiErrorElement:Expected modifier or annotation after '@'
+            PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
-            PsiErrorElement:Expected modifier or annotation after '@'
+            PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(open)('open')

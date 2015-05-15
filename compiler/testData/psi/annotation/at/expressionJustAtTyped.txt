@@ -103,7 +103,7 @@ JetFile: expressionJustAtTyped.kt
             VALUE_ARGUMENT
               FUN
                 MODIFIER_LIST
-                  PsiErrorElement:Expected modifier or annotation after '@'
+                  PsiErrorElement:Expected annotation identifier after '@'
                     PsiElement(AT)('@')
                 PsiWhiteSpace(' ')
                 PsiElement(fun)('fun')

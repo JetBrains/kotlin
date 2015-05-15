@@ -93,7 +93,7 @@ JetFile: primaryConstructor.kt
         PsiWhiteSpace(' ')
         PsiElement(private)('private')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Expected modifier or annotation after '@'
+        PsiErrorElement:Expected annotation identifier after '@'
           PsiElement(AT)('@')
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
@@ -126,7 +126,7 @@ JetFile: primaryConstructor.kt
         PsiWhiteSpace(' ')
         PsiElement(private)('@private')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Expected modifier or annotation after '@'
+        PsiErrorElement:Expected annotation identifier after '@'
           PsiElement(AT)('@')
       VALUE_PARAMETER_LIST
         PsiElement(LPAR)('(')
@@ -201,7 +201,7 @@ JetFile: primaryConstructor.kt
         PsiWhiteSpace(' ')
         PsiElement(private)('@private')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Expected modifier or annotation after '@'
+        PsiErrorElement:Expected annotation identifier after '@'
           PsiElement(AT)('@')
         PsiWhiteSpace(' ')
         ANNOTATION

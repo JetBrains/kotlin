@@ -442,14 +442,8 @@ public class JetParsing extends AbstractJetParsing {
             if (annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST && atSet(CONSTRUCTOR_KEYWORD, WHERE_KEYWORD)) break;
 
             if (at(AT)) {
-                IElementType strictlyNextToken = myBuilder.rawLookup(1);
-                if (strictlyNextToken == IDENTIFIER || MODIFIER_KEYWORDS.contains(strictlyNextToken)) {
-                    if (!tryParseModifier(tokenConsumer)) {
-                        parseAnnotationEntry();
-                    }
-                }
-                else {
-                    errorAndAdvance("Expected modifier or annotation after '@'"); // AT
+                if (!tryParseModifier(tokenConsumer)) {
+                    parseAnnotation(annotationParsingMode);
                 }
             }
             else if (tryParseModifier(tokenConsumer)) {
@@ -475,7 +469,7 @@ public class JetParsing extends AbstractJetParsing {
     private boolean tryParseModifier(@Nullable Consumer<IElementType> tokenConsumer) {
         PsiBuilder.Marker marker = mark();
 
-        if (at(AT)) {
+        if (at(AT) && !WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1))) {
             advance(); // AT
         }
 

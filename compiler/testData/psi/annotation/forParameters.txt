@@ -71,7 +71,7 @@ JetFile: forParameters.kt
         PsiElement(LPAR)('(')
         VALUE_PARAMETER
           MODIFIER_LIST
-            PsiErrorElement:Expected modifier or annotation after '@'
+            PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             PsiElement(in)('in')
