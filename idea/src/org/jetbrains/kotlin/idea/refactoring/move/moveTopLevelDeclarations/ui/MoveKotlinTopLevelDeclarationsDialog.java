@@ -355,7 +355,13 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             final String targetFileName = tfFileNameInPackage.getText();
 
             PsiDirectory directory = moveDestination.getTargetIfExists(sourceFile);
-            if (directory != null && directory.findFile(targetFileName) != null) {
+            PsiFile targetFile = directory != null ? directory.findFile(targetFileName) : null;
+            if (targetFile != null) {
+                if (targetFile == sourceFile) {
+                    setErrorText("Can't move to the original file");
+                    return null;
+                }
+
                 String question = "File '" +
                                   directory.getVirtualFile().getPath() +
                                   "/" +
@@ -380,7 +386,14 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         final File targetFile = new File(getTargetFilePath());
         JetFile jetFile = (JetFile) RefactoringPackage.toPsiFile(targetFile, myProject);
-        if (jetFile != null) return new JetFileKotlinMoveTarget(jetFile);
+        if (jetFile != null) {
+            if (jetFile == sourceFile) {
+                setErrorText("Can't move to the original file");
+                return null;
+            }
+
+            return new JetFileKotlinMoveTarget(jetFile);
+        }
 
         int ret = Messages.showYesNoDialog(
                 myProject,
