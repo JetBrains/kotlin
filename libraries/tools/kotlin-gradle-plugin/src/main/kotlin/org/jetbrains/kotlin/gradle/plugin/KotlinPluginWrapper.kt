@@ -25,7 +25,7 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
             return
         }
 
-        val kotlinPluginVersion = loadKotlinVersionFromResource()
+        val kotlinPluginVersion = loadKotlinVersionFromResource(log)
         project.getExtensions().getExtraProperties()?.set("kotlin.gradle.plugin.version", kotlinPluginVersion)
 
         val pluginClassLoader = createPluginIsolatedClassLoader(kotlinPluginVersion, sourceBuildScript)
@@ -54,23 +54,6 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         log.debug("Class loader created")
 
         return kotlinPluginClassloader
-    }
-
-    private fun loadKotlinVersionFromResource(): String {
-        log.debug("Loading version information")
-        val props = Properties()
-        val propFileName = "project.properties"
-        val inputStream = this.javaClass.getClassLoader()!!.getResourceAsStream(propFileName)
-
-        if (inputStream == null) {
-            throw FileNotFoundException("property file '" + propFileName + "' not found in the classpath")
-        }
-
-        props.load(inputStream)
-
-        val projectVersion = props["project.version"] as String
-        log.debug("Found project version [$projectVersion]")
-        return projectVersion
     }
 
     private fun findSourceBuildScript(project: Project): ScriptHandler? {

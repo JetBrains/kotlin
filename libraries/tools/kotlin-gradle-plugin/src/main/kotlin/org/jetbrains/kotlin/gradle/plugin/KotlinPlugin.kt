@@ -280,6 +280,9 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
         val aptConfigurations = hashMapOf<String, Configuration>()
 
+        val projectVersion = loadKotlinVersionFromResource(log)
+        val kotlinAnnotationProcessingDep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
+
         ext.getSourceSets().all(Action<AndroidSourceSet> { sourceSet ->
             if (sourceSet is HasConvention) {
                 val sourceSetName = sourceSet.getName()
@@ -292,7 +295,9 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                     "kotlinApt${sourceSet.getName().capitalize()}"
                 } else "kotlinApt"
 
-                aptConfigurations.put(sourceSet.getName(), project.getConfigurations().create(aptConfigurationName))
+                val aptConfiguration = project.getConfigurations().create(aptConfigurationName)
+                aptConfiguration.getDependencies().add(project.getDependencies().create(kotlinAnnotationProcessingDep))
+                aptConfigurations.put(sourceSet.getName(), aptConfiguration)
 
                 /*TODO: before 0.11 gradle android plugin there was:
                   sourceSet.getAllJava().source(kotlinDirSet)
@@ -313,10 +318,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 val plugin = (project.getPlugins().findPlugin("android")
                                 ?: project.getPlugins().findPlugin("android-library")) as BasePlugin
 
-                val aptConfigurationDependencyFiles = aptConfigurations.mapValues { it.getValue().resolve() }
-
                 processVariantData(plugin.getVariantManager().getVariantDataList(), project,
-                        ext, plugin, aptConfigurationDependencyFiles)
+                        ext, plugin, aptConfigurations)
             }
         }
 
@@ -329,7 +332,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             project: Project,
             androidExt: BaseExtension,
             androidPlugin: BasePlugin,
-            aptConfigurations: Map<String, Set<File>>
+            aptConfigurations: Map<String, Configuration>
     ) {
         val logger = project.getLogger()
         val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
@@ -386,7 +389,12 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 kotlinTask.source(kotlinSourceDirectorySet)
 
                 kotlinSourceDirectorySet.addSourceDirectories(javaSrcDirs)
-                aptFiles.addAll(aptConfigurations[(provider as AndroidSourceSet).getName()])
+
+                val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).getName()]
+                // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
+                if (aptConfiguration != null && aptConfiguration.getDependencies().size() > 1) {
+                    aptFiles.addAll(aptConfiguration.resolve())
+                }
             }
 
             subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
@@ -423,6 +431,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
         val result = (obj as HasConvention).getConvention().getPlugins()[extensionName]
         return result as T
     }
+
+
 }
 
 private fun loadSubplugins(project: Project, logger: Logger): SubpluginEnvironment {
