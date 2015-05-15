@@ -1320,8 +1320,12 @@ public class JetParsing extends AbstractJetParsing {
             setterParameter.done(VALUE_PARAMETER);
             parameterList.done(VALUE_PARAMETER_LIST);
         }
-        if (!at(RPAR)) errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, RBRACE, EQ, EOL_OR_SEMICOLON));
-        expect(RPAR, "Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, EQ));
+        if (!at(RPAR)) {
+            errorUntil("Expecting ')'", TokenSet.create(RPAR, COLON, LBRACE, RBRACE, EQ, EOL_OR_SEMICOLON));
+        }
+        if (at(RPAR)) {
+            advance();
+        }
         myBuilder.restoreNewlinesState();
 
         if (at(COLON)) {
