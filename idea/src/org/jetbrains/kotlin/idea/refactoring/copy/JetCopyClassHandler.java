@@ -38,7 +38,7 @@ public class JetCopyClassHandler extends CopyHandlerDelegateBase {
 
     private static PsiElement replaceElement(PsiElement element) {
         if (element instanceof JetClassOrObject &&
-            KotlinMoveFilesOrDirectoriesHandler.isMovableClass((JetClassOrObject) element)) {
+            KotlinMoveFilesOrDirectoriesHandler.Companion.isMovableClass((JetClassOrObject) element)) {
             return element.getContainingFile();
         }
         else {
