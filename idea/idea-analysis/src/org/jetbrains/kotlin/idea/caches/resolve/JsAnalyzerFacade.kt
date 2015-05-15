@@ -21,6 +21,7 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.kotlin.idea.framework.JsHeaderLibraryDetectionUtil
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
@@ -42,10 +43,10 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
 
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
+            moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: PlatformAnalysisParameters,
-            resolverForProject: ResolverForProject<M, JsResolverForModule>
+            platformParameters: PlatformAnalysisParameters, resolverForProject: ResolverForProject<M, JsResolverForModule>
     ): JsResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -58,7 +59,6 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
         val resolveSession = injector.getResolveSession()!!
         var packageFragmentProvider = resolveSession.getPackageFragmentProvider()
 
-        val moduleDescriptor = moduleContext.module
         if (moduleInfo is LibraryInfo) {
             val files = moduleInfo.library.getFiles(OrderRootType.CLASSES)
             if (!JsHeaderLibraryDetectionUtil.isJsHeaderLibraryWithSources(files.toList())) {

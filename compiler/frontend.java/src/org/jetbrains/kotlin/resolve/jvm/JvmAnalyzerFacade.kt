@@ -21,6 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
@@ -46,10 +47,10 @@ public class JvmPlatformParameters(
 public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatformParameters> {
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
+            moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: JvmPlatformParameters,
-            resolverForProject: ResolverForProject<M, JvmResolverForModule>
+            platformParameters: JvmPlatformParameters, resolverForProject: ResolverForProject<M, JvmResolverForModule>
     ): JvmResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -74,7 +75,7 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
         val resolveSession = injector.getResolveSession()!!
         val javaDescriptorResolver = injector.getJavaDescriptorResolver()!!
         val providersForModule = listOf(resolveSession.getPackageFragmentProvider(), javaDescriptorResolver.packageFragmentProvider)
-        moduleContext.module.initialize(CompositePackageFragmentProvider(providersForModule))
+        moduleDescriptor.initialize(CompositePackageFragmentProvider(providersForModule))
         return JvmResolverForModule(resolveSession, javaDescriptorResolver)
     }
 

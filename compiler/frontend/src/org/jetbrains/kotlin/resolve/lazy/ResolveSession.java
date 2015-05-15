@@ -126,7 +126,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     public ResolveSession(
             @NotNull Project project,
             @NotNull GlobalContext globalContext,
-            @NotNull ModuleDescriptorImpl rootDescriptor,
+            @NotNull ModuleDescriptor rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
             @NotNull BindingTrace delegationTrace
     ) {

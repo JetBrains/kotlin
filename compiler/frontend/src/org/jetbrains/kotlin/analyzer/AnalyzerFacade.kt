@@ -173,7 +173,8 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
                 module ->
                 val descriptor = resolverForProject.descriptorForModule(module)
                 val resolverForModule = createResolverForModule(
-                        module, projectContext.withModule(descriptor), modulesContent(module), platformParameters, resolverForProject
+                        module, descriptor, projectContext.withModule(descriptor),
+                        modulesContent(module), platformParameters, resolverForProject
                 )
                 assert(descriptor.isInitialized, "ModuleDescriptorImpl#initialize() should be called in createResolverForModule")
                 resolverForProject.resolverByModuleDescriptor[descriptor] = resolverForModule
@@ -186,10 +187,10 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
 
     protected fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
+            moduleDescriptor: ModuleDescriptorImpl,
             moduleContext: ModuleContext,
             moduleContent: ModuleContent,
-            platformParameters: P,
-            resolverForProject: ResolverForProject<M, A>
+            platformParameters: P, resolverForProject: ResolverForProject<M, A>
     ): A
 
     public val defaultImports: List<ImportPath>

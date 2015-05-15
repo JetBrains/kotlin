@@ -63,7 +63,7 @@ public class LocalClassifierAnalyzer(
             dynamicTypesSettings: DynamicTypesSettings
     ) {
         val module = DescriptorUtils.getContainingModule(containingDeclaration)
-        val moduleContext = globalContext.withProject(classOrObject.getProject()).withModule(module as ModuleDescriptorImpl)
+        val moduleContext = globalContext.withProject(classOrObject.getProject()).withModule(module)
         val injector = InjectorForLazyLocalClassifierAnalyzer(
                 moduleContext,
                 context.trace,

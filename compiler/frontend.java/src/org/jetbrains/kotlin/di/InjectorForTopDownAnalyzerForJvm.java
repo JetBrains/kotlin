@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.di;
 
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -98,7 +98,7 @@ public class InjectorForTopDownAnalyzerForJvm {
 
     private final ModuleContext moduleContext;
     private final KotlinBuiltIns kotlinBuiltIns;
-    private final ModuleDescriptorImpl moduleDescriptor;
+    private final ModuleDescriptor moduleDescriptor;
     private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
     private final StorageManager storageManager;

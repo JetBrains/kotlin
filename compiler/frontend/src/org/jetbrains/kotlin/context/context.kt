@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.context
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -34,7 +34,7 @@ public trait ProjectContext : GlobalContext {
 }
 
 public trait ModuleContext : ProjectContext {
-    public val module: ModuleDescriptorImpl
+    public val module: ModuleDescriptor
 
     public val platformToKotlinClassMap: PlatformToKotlinClassMap
         get() = module.platformToKotlinClassMap
@@ -61,7 +61,7 @@ public class ProjectContextImpl(
 ) : ProjectContext, GlobalContext by globalContext
 
 public class ModuleContextImpl(
-        override val module: ModuleDescriptorImpl,
+        override val module: ModuleDescriptor,
         projectContext: ProjectContext
 ) : ModuleContext, ProjectContext by projectContext
 
@@ -71,11 +71,11 @@ public fun GlobalContext(): GlobalContextImpl {
 }
 
 public fun ProjectContext(project: Project): ProjectContext = ProjectContextImpl(project, GlobalContext())
-public fun ModuleContext(module: ModuleDescriptorImpl, project: Project): ModuleContext =
+public fun ModuleContext(module: ModuleDescriptor, project: Project): ModuleContext =
         ModuleContextImpl(module, ProjectContext(project))
 
 public fun GlobalContext.withProject(project: Project): ProjectContext = ProjectContextImpl(project, this)
-public fun ProjectContext.withModule(module: ModuleDescriptorImpl): ModuleContext = ModuleContextImpl(module, this)
+public fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = ModuleContextImpl(module, this)
 
 deprecated("Used temporarily while we are in transition from to lazy resolve")
 public open class TypeLazinessToken {
