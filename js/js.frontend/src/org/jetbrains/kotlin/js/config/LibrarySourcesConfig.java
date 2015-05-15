@@ -71,9 +71,9 @@ public class LibrarySourcesConfig extends Config {
             boolean sourceMap,
             boolean inlineEnabled,
             boolean isUnitTestConfig,
-            @Nullable String metaFileOutputPath
+            boolean metaInfo
     ) {
-        super(project, moduleId, ecmaVersion, sourceMap, inlineEnabled, metaFileOutputPath);
+        super(project, moduleId, ecmaVersion, sourceMap, inlineEnabled, metaInfo);
         this.files = files;
         this.isUnitTestConfig = isUnitTestConfig;
     }
@@ -186,7 +186,7 @@ public class LibrarySourcesConfig extends Config {
         boolean sourceMap = false;
         boolean inlineEnabled = true;
         boolean isUnitTestConfig = false;
-        String metaFileOutputPath;
+        boolean metaInfo = false;
 
         public Builder(@NotNull Project project, @NotNull String moduleId, @NotNull List<String> files) {
             this.project = project;
@@ -214,13 +214,13 @@ public class LibrarySourcesConfig extends Config {
             return this;
         }
 
-        public Builder metaFileOutputPath(@Nullable String metaFileOutputPath) {
-            this.metaFileOutputPath = metaFileOutputPath;
+        public Builder metaInfo(boolean metaInfo) {
+            this.metaInfo = metaInfo;
             return this;
         }
 
         public Config build() {
-            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaFileOutputPath);
+            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaInfo);
         }
     }
 

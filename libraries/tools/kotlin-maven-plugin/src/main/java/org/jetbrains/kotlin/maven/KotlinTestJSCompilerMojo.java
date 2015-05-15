@@ -77,10 +77,10 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
     private String outputFile;
 
     /**
-     * The output metafile name
+     * Flag enables or disables metafile generation
      */
-    @Parameter(defaultValue = "${project.build.directory}/test-js/${project.artifactId}-tests.meta.js")
-    private String metaFile;
+    @Parameter(defaultValue = "true")
+    private boolean metaInfo;
 
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
@@ -90,7 +90,7 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
         super.configureSpecificCompilerArguments(arguments);
 
         arguments.outputFile = outputFile;
-        arguments.metaInfo = metaFile;
+        arguments.metaInfo = metaInfo;
     }
 
     @Override

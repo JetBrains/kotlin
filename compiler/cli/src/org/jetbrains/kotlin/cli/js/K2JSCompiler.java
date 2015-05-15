@@ -244,7 +244,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 .ecmaVersion(ecmaVersion)
                 .sourceMap(arguments.sourceMap)
                 .inlineEnabled(inlineEnabled)
-                .metaFileOutputPath(arguments.metaInfo)
+                .metaInfo(arguments.metaInfo)
                 .build();
     }
 

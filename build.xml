@@ -259,7 +259,6 @@
 
     <macrodef name="new-kotlin2js">
         <attribute name="output"/>
-        <attribute name="meta-info"/>
         <element name="src"/>
 
         <sequential>
@@ -287,7 +286,6 @@
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
                 <arg value="-meta-info"/>
-                <arg value="@{meta-info}"/>
                 <arg line="-main noCall"/>
             </java>
         </sequential>
@@ -300,13 +298,13 @@
         <property name="compiled.stdlib.meta.js" value="stdlib.meta.js"/>
         <property name="stdlib.js.dir" value="${basedir}/js/js.translator/testData"/>
 
-        <new-kotlin2js output="${output}/${compiled.builtins.js}" meta-info="${output}/${compiled.builtins.meta.js}">
+        <new-kotlin2js output="${output}/${compiled.builtins.js}">
             <src>
                 <fileset refid="kotlin.builtin.files"/>
             </src>
         </new-kotlin2js>
 
-        <new-kotlin2js output="${output}/${compiled.stdlib.js}" meta-info="${output}/${compiled.stdlib.meta.js}">
+        <new-kotlin2js output="${output}/${compiled.stdlib.js}">
             <src>
                 <resources refid="js.lib.files"/>
             </src>

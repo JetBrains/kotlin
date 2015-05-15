@@ -72,11 +72,10 @@ public class KotlinCompilerRunner {
             @NotNull OutputItemsCollector collector,
             @NotNull Collection<File> sourceFiles,
             @NotNull List<String> libraryFiles,
-            @NotNull File outputFile,
-            @Nullable File metaInfoFile
+            @NotNull File outputFile
     ) {
         K2JSCompilerArguments arguments = mergeBeans(commonArguments, k2jsArguments);
-        setupK2JsArguments(outputFile, metaInfoFile, sourceFiles, libraryFiles, arguments);
+        setupK2JsArguments(outputFile, sourceFiles, libraryFiles, arguments);
 
         runCompiler(K2JS_COMPILER, arguments, compilerSettings.getAdditionalArguments(), messageCollector, collector, environment);
     }
@@ -191,7 +190,6 @@ public class KotlinCompilerRunner {
 
     private static void setupK2JsArguments(
             @NotNull File outputFile,
-            @Nullable File metaInfoFile,
             @NotNull Collection<File> sourceFiles,
             @NotNull List<String> libraryFiles,
             @NotNull K2JSCompilerArguments settings
@@ -204,11 +202,7 @@ public class KotlinCompilerRunner {
             }
         });
         settings.outputFile = outputFile.getPath();
-
-        if (metaInfoFile != null) {
-            settings.metaInfo = metaInfoFile.getPath();
-        }
-
+        settings.metaInfo = true;
         settings.libraryFiles = ArrayUtil.toStringArray(libraryFiles);
     }
 }

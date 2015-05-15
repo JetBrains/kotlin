@@ -27,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.utils.LibraryUtils;
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
+import org.jetbrains.kotlin.js.JavaScript;
+import kotlin.KotlinPackage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -54,10 +57,10 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     private String outputFile;
 
     /**
-     * The output metafile name
+     * Flag enables or disables metafile generation
      */
-    @Parameter(defaultValue = "${project.build.directory}/js/${project.artifactId}.meta.js")
-    private String metaFile;
+    @Parameter(defaultValue = "true")
+    private boolean metaInfo;
 
     /**
      * Flags enables or disable source map generation
@@ -69,7 +72,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments) throws MojoExecutionException {
         arguments.outputFile = outputFile;
         arguments.noStdlib = true;
-        arguments.metaInfo = metaFile;
+        arguments.metaInfo = metaInfo;
 
         List<String> libraries = getKotlinJavascriptLibraryFiles();
         LOG.debug("libraryFiles: " + libraries);
@@ -82,7 +85,8 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         if (outputFile != null) {
             collector.add(new File(outputFile).getParent());
         }
-        if (metaFile != null) {
+        if (metaInfo) {
+            String metaFile = KotlinPackage.substringBeforeLast(outputFile, JavaScript.DOT_EXTENSION, outputFile) + KotlinJavascriptMetadataUtils.META_JS_SUFFIX;
             collector.add(new File(metaFile).getParent());
         }
     }

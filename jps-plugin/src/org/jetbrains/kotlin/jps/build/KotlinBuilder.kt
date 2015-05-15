@@ -400,12 +400,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val moduleName = representativeTarget.getModule().getName()
         val outputFile = JpsJsModuleUtils.getOutputFile(outputDir, moduleName)
-        val metaInfoFile = JpsJsModuleUtils.getOutputMetaFile(outputDir, moduleName)
         val libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
         val k2JsArguments = JpsKotlinCompilerSettings.getK2JsCompilerArguments(project)
 
-        runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile, metaInfoFile)
+        runK2JsCompiler(commonArguments, k2JsArguments, compilerSettings, messageCollector, environment, outputItemCollector, sourceFiles, libraryFiles, outputFile)
         return outputItemCollector
     }
 

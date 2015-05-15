@@ -38,9 +38,8 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "source-map", description = "Generate source map")
     public boolean sourceMap;
 
-    @Argument(value = "meta-info", description = "Generate meta information and save to the given file")
-    @ValueDescription("<path>")
-    public String metaInfo;
+    @Argument(value = "meta-info", description = "Generate metadata")
+    public boolean metaInfo;
 
     @Argument(value = "target", description = "Generate JS files for specific ECMA version (only ECMA 5 is supported)")
     @ValueDescription("<version>")
