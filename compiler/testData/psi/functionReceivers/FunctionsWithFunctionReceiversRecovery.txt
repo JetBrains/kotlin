@@ -534,7 +534,7 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n')
-  FUN
+  CLASS
     MODIFIER_LIST
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
@@ -552,30 +552,21 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
                           PsiElement(IDENTIFIER)('t')
                   PsiElement(GT)('>')
               PsiElement(DOT)('.')
-              PsiWhiteSpace('\n\n')
-              PsiComment(EOL_COMMENT)('//-----------')
-              PsiWhiteSpace('\n')
               PsiErrorElement:Expecting type name
-                PsiElement(class)('class')
-      PsiWhiteSpace(' ')
-      ANNOTATION_ENTRY
-        CONSTRUCTOR_CALLEE
-          TYPE_REFERENCE
-            USER_TYPE
-              REFERENCE_EXPRESSION
-                PsiElement(IDENTIFIER)('A')
-              TYPE_ARGUMENT_LIST
-                PsiElement(LT)('<')
-                TYPE_PROJECTION
-                  TYPE_REFERENCE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('X')
-                PsiElement(GT)('>')
-    PsiErrorElement:Expecting a top level declaration
-      <empty list>
+                <empty list>
+    PsiWhiteSpace('\n\n')
+    PsiComment(EOL_COMMENT)('//-----------')
+    PsiWhiteSpace('\n')
+    PsiElement(class)('class')
     PsiWhiteSpace(' ')
-    BLOCK
+    PsiElement(IDENTIFIER)('A')
+    TYPE_PARAMETER_LIST
+      PsiElement(LT)('<')
+      TYPE_PARAMETER
+        PsiElement(IDENTIFIER)('X')
+      PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
       FUN
