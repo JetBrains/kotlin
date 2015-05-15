@@ -67,13 +67,15 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
         val javaHackClFile = File(javaHackPackageDir, "Cl.java")
         javaHackClFile.writeText(
                 "package __gen.annotation;" +
-                "class Cl { @javax.inject.Inject boolean v; }")
+                "class Cl { @__gen.KotlinAptAnnotation boolean v; }")
 
         javaTask.source(javaAptSourceDir)
     }
 
     private fun generateAnnotationProcessorStubs(aptDir: File, javaTask: JavaCompile, apFqNames: Set<String>) {
         val stubOutputDir = File(aptDir, "wrappers")
+
+        generateKotlinAptAnnotation(stubOutputDir)
 
         val stubOutputPackageDir = File(stubOutputDir, "__gen")
         stubOutputPackageDir.mkdirs()
@@ -109,6 +111,24 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
         }
 
         javaTask.getOptions().setCompilerArgs(compilerArgs)
+    }
+
+    private fun generateKotlinAptAnnotation(outputDirectory: File) {
+        val packageName = "__gen"
+        val className = "KotlinAptAnnotation"
+        val classFqName = "$packageName/$className"
+
+        val bytes = with (ClassWriter(0)) {
+            visit(49, ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE + ACC_ANNOTATION, classFqName,
+                    null, null, arrayOf("java/lang/annotation/Annotation"))
+            visitSource(null, null)
+            visitEnd()
+            toByteArray()
+        }
+
+        val injectPackage = File(outputDirectory, packageName)
+        injectPackage.mkdirs()
+        File(injectPackage, "$className.class").writeBytes(bytes)
     }
 
     private fun generateAnnotationProcessorWrapper(processorFqName: String, packageName: String, outputDirectory: File) {
