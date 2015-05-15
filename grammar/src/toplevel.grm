@@ -24,7 +24,7 @@ fileAnnotations
   ;
 
 fileAnnotation
-  : "[" "file" ":" annotationEntry+ "]"
+  : "@" "file" ":" ("[" annotationEntry+ "]" | annotationEntry)
   ;
 
 packageHeader

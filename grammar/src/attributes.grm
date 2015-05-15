@@ -7,10 +7,10 @@ annotations
   ;
 
 annotation
-  : "[" annotationEntry+ "]"
-  : annotationEntry
+  : "@"? "[" annotationEntry+ "]"
+  : "@"? annotationEntry
   ;
 
 annotationEntry
-  : "@"? ++ SimpleName{"."} typeArguments? valueArguments?
+  : SimpleName{"."} typeArguments? valueArguments?
   ;

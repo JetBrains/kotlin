@@ -49,9 +49,8 @@ JetFile: nonFIleAnnotationBeforePackage.kt
     PsiWhiteSpace('\n')
     ANNOTATION
       PsiElement(LBRACKET)('[')
-      PsiErrorElement:Expecting "file:" prefix for file annotations
-        <empty list>
-      PsiElement(COLON)(':')
+      PsiErrorElement:Expected 'file' keyword before ':'
+        PsiElement(COLON)(':')
       ANNOTATION_ENTRY
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
@@ -74,9 +73,8 @@ JetFile: nonFIleAnnotationBeforePackage.kt
     PsiWhiteSpace('\n')
     ANNOTATION
       PsiElement(LBRACKET)('[')
-      PsiErrorElement:Expecting "file:" prefix for file annotations
-        <empty list>
-      PsiElement(COLON)(':')
+      PsiErrorElement:Expected 'file' keyword before ':'
+        PsiElement(COLON)(':')
       PsiErrorElement:Expecting a list of annotations
         <empty list>
       PsiElement(RBRACKET)(']')

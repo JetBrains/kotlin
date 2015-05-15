@@ -531,18 +531,44 @@ public class JetParsing extends AbstractJetParsing {
      */
     private boolean parseAnnotation(AnnotationParsingMode mode) {
         if (at(LBRACKET)) {
-            return parseAnnotationList(mode);
+            return parseAnnotationList(mode, false);
         }
         else if (mode.allowShortAnnotations && at(IDENTIFIER)) {
-            parseAnnotationEntry();
-            return true;
+            return parseAnnotationEntry(mode);
         }
         else if (at(AT)) {
-            if (myBuilder.rawLookup(1) == IDENTIFIER) {
-                parseAnnotationEntry();
+            IElementType nextRawToken = myBuilder.rawLookup(1);
+            IElementType tokenToMatch = nextRawToken;
+            boolean isTargetedAnnotation = false;
+
+            if ((nextRawToken == IDENTIFIER || nextRawToken == FILE_KEYWORD) && lookahead(2) == COLON) {
+                tokenToMatch = lookahead(3);
+                isTargetedAnnotation = true;
+            }
+            else if (lookahead(1) == COLON) {
+                // recovery for "@:ann"
+                isTargetedAnnotation = true;
+                tokenToMatch = lookahead(2);
+            }
+
+            if (tokenToMatch == IDENTIFIER) {
+                return parseAnnotationEntry(mode);
+            }
+            else if (tokenToMatch == LBRACKET) {
+                return parseAnnotationList(mode, true);
             }
             else {
-                errorAndAdvance("Expected annotation identifier after '@'", 1); // AT
+                if (isTargetedAnnotation) {
+                    if (lookahead(1) == COLON) {
+                        errorAndAdvance("Expected annotation identifier after ':'", 2); // AT, COLON
+                    }
+                    else {
+                        errorAndAdvance("Expected annotation identifier after '@file:'", 3); // AT, FILE_KEYWORD, COLON
+                    }
+                }
+                else {
+                    errorAndAdvance("Expected annotation identifier after '@'", 1); // AT
+                }
             }
             return true;
         }
@@ -550,11 +576,14 @@ public class JetParsing extends AbstractJetParsing {
         return false;
     }
 
-    private boolean parseAnnotationList(AnnotationParsingMode mode) {
+    private boolean parseAnnotationList(AnnotationParsingMode mode, boolean expectAtSymbol) {
+        assert !expectAtSymbol || _at(AT);
+        assert expectAtSymbol || _at(LBRACKET);
         PsiBuilder.Marker annotation = mark();
 
         myBuilder.disableNewlines();
-        advance(); // LBRACKET
+
+        advance(); // AT or LBRACKET
 
         if (!parseAnnotationTargetIfNeeded(mode)) {
             annotation.rollbackTo();
@@ -562,17 +591,22 @@ public class JetParsing extends AbstractJetParsing {
             return false;
         }
 
-        if (!at(IDENTIFIER)) {
+        if (expectAtSymbol) {
+            assert _at(LBRACKET);
+            advance(); // LBRACKET
+        }
+
+        if (!at(IDENTIFIER) && !at(AT)) {
             error("Expecting a list of annotations");
         }
         else {
-            parseAnnotationEntry();
-            while (at(COMMA)) {
-                errorAndAdvance("No commas needed to separate annotations");
-            }
+            while (at(IDENTIFIER) || at(AT)) {
+                if (at(AT)) {
+                    errorAndAdvance("No '@' needed in annotation list"); // AT
+                    continue;
+                }
 
-            while (at(IDENTIFIER)) {
-                parseAnnotationEntry();
+                parseAnnotationEntry(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
                 while (at(COMMA)) {
                     errorAndAdvance("No commas needed to separate annotations");
                 }
@@ -589,13 +623,26 @@ public class JetParsing extends AbstractJetParsing {
     // Returns true if we should continue parse annotation
     private boolean parseAnnotationTargetIfNeeded(AnnotationParsingMode mode) {
         if (mode.isFileAnnotationParsingMode) {
+            if (at(COLON)) {
+                // recovery for "@:ann"
+                errorAndAdvance("Expected 'file' keyword before ':'"); // COLON
+                return true;
+            }
+
+            if (lookahead(1) == COLON && !at(FILE_KEYWORD) && at(IDENTIFIER)) {
+                // recovery for "@fil:ann"
+                errorAndAdvance("Expected 'file' keyword as target"); // IDENTIFIER
+                advance(); // COLON
+                return true;
+            }
+
             if (mode == FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED && !(at(FILE_KEYWORD) && lookahead(1) == COLON)) {
                 return false;
             }
 
             String message = "Expecting \"" + FILE_KEYWORD.getValue() + COLON.getValue() + "\" prefix for file annotations";
             expect(FILE_KEYWORD, message);
-            expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET));
+            expect(COLON, message, TokenSet.create(IDENTIFIER, RBRACKET, LBRACKET));
         }
         else if (at(FILE_KEYWORD) && lookahead(1) == COLON) {
             errorAndAdvance("File annotations are only allowed before package declaration", 2);
@@ -609,13 +656,19 @@ public class JetParsing extends AbstractJetParsing {
      *   : SimpleName{"."} typeArguments? valueArguments?
      *   ;
      */
-    private void parseAnnotationEntry() {
-        assert _at(IDENTIFIER) || (_at(AT) && myBuilder.rawLookup(1) == IDENTIFIER);
+    private boolean parseAnnotationEntry(AnnotationParsingMode mode) {
+        assert _at(IDENTIFIER) ||
+               (_at(AT) && !WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1)));
 
         PsiBuilder.Marker annotation = mark();
 
         if (at(AT)) {
             advance(); // AT
+        }
+
+        if (!parseAnnotationTargetIfNeeded(mode)) {
+            annotation.rollbackTo();
+            return false;
         }
 
         PsiBuilder.Marker reference = mark();
@@ -630,6 +683,8 @@ public class JetParsing extends AbstractJetParsing {
             myExpressionParsing.parseValueArgumentList();
         }
         annotation.done(ANNOTATION_ENTRY);
+
+        return true;
     }
 
     public enum NameParsingMode {

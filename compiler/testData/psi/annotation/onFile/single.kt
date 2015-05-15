@@ -1,0 +1,2 @@
+@file:foo
+package bar
