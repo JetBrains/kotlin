@@ -31,33 +31,25 @@ public class TopDownAnalysisParameters extends TypeLazinessToken {
 
     @NotNull
     public static TopDownAnalysisParameters create(
-            boolean analyzingBootstrapLibrary,
             boolean declaredLocally
     ) {
-        return new TopDownAnalysisParameters(analyzingBootstrapLibrary, declaredLocally, true);
+        return new TopDownAnalysisParameters(declaredLocally, true);
     }
 
     @NotNull
     public static TopDownAnalysisParameters createForLocalDeclarations() {
-        return new TopDownAnalysisParameters(false, true, false);
+        return new TopDownAnalysisParameters(true, false);
     }
 
-    private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
     private final boolean lazyTopDownAnalysis;
 
     private TopDownAnalysisParameters(
-            boolean analyzingBootstrapLibrary,
             boolean declaredLocally,
             boolean lazyTopDownAnalysis
     ) {
-        this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
         this.declaredLocally = declaredLocally;
         this.lazyTopDownAnalysis = lazyTopDownAnalysis;
-    }
-
-    public boolean isAnalyzingBootstrapLibrary() {
-        return analyzingBootstrapLibrary;
     }
 
     public boolean isDeclaredLocally() {

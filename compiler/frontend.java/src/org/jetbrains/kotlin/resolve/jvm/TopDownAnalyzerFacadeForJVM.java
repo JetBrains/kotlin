@@ -92,7 +92,6 @@ public enum TopDownAnalyzerFacadeForJVM {
             @Nullable IncrementalCacheProvider incrementalCacheProvider
     ) {
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
-                false,
                 false
         );
 

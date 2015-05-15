@@ -79,7 +79,7 @@ public final class TopDownAnalyzerFacadeForJS {
 
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
-                false, false);
+                false);
 
         Collection<JetFile> allFiles = Config.withJsLibAdded(files, config);
 

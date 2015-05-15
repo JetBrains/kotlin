@@ -112,10 +112,7 @@ public class ReplInterpreter {
 
         GlobalContextImpl context = ContextPackage.GlobalContext();
 
-        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
-                false,
-                true
-        );
+        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(true);
 
         scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
 

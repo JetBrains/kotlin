@@ -151,7 +151,6 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
         TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
-                false,
                 false
         );
 

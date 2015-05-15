@@ -257,13 +257,11 @@ public class OverrideResolver {
 
     private void checkOverrides(@NotNull TopDownAnalysisContext c) {
         for (Map.Entry<JetClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
-            checkOverridesInAClass(c, entry.getValue(), entry.getKey());
+            checkOverridesInAClass(entry.getValue(), entry.getKey());
         }
     }
 
-    private void checkOverridesInAClass(@NotNull TopDownAnalysisContext c, @NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull JetClassOrObject klass) {
-        if (c.getTopDownAnalysisParameters().isAnalyzingBootstrapLibrary()) return;
-
+    private void checkOverridesInAClass(@NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull JetClassOrObject klass) {
         // Check overrides for internal consistency
         for (CallableMemberDescriptor member : classDescriptor.getDeclaredCallableMembers()) {
             checkOverrideForMember(member);
