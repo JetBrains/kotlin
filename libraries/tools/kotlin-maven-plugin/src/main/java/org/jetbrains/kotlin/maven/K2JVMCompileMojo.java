@@ -185,7 +185,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         Set<Artifact> artifacts = project.getArtifacts();
         for (Artifact artifact : artifacts) {
             File file = artifact.getFile();
-            if (containsAnnotations(file, log)) {
+            if (file.isFile() && containsAnnotations(file, log)) {
                 log.info("Discovered kotlin annotations in: " + file);
                 try {
                     annotations.add(file.getCanonicalPath());
