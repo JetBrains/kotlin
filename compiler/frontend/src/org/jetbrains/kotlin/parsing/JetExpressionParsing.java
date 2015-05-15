@@ -137,7 +137,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     TokenSet.create(EOL_OR_SEMICOLON));
 
     /*package*/ static final TokenSet EXPRESSION_FOLLOW = TokenSet.create(
-            SEMICOLON, ARROW, COMMA, LBRACE, RBRACE, RPAR, RBRACKET
+            SEMICOLON, ARROW, COMMA, RBRACE, RPAR, RBRACKET
     );
 
     @SuppressWarnings({"UnusedDeclaration"})
@@ -887,8 +887,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
             advance(); // ELSE_KEYWORD
 
             if (!at(ARROW)) {
-                errorUntil("Expecting '->'", TokenSet.create(ARROW, LBRACE,
-                                                             RBRACE, EOL_OR_SEMICOLON));
+                errorUntil("Expecting '->'", TokenSet.create(ARROW, LBRACE, RBRACE, EOL_OR_SEMICOLON));
             }
 
             if (at(ARROW)) {
@@ -901,7 +900,10 @@ public class JetExpressionParsing extends AbstractJetParsing {
                     parseExpressionPreferringBlocks();
                 }
             }
-            else if (!atSet(WHEN_CONDITION_RECOVERY_SET) && !at(LBRACE)) {
+            else if (at(LBRACE)) { // no arrow, probably it's simply missing
+                parseExpressionPreferringBlocks();
+            }
+            else if (!atSet(WHEN_CONDITION_RECOVERY_SET)) {
                 errorAndAdvance("Expecting '->'");
             }
         }

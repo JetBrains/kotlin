@@ -43,24 +43,18 @@ JetFile: IncompleteWhenElse.kt
               PsiElement(else)('else')
               PsiErrorElement:Expecting '->'
                 <empty list>
-            PsiWhiteSpace(' ')
-            WHEN_ENTRY
-              WHEN_CONDITION_WITH_EXPRESSION
-                FUNCTION_LITERAL_EXPRESSION
-                  FUNCTION_LITERAL
-                    PsiElement(LBRACE)('{')
-                    PsiWhiteSpace(' ')
-                    BLOCK
-                      CALL_EXPRESSION
-                        REFERENCE_EXPRESSION
-                          PsiElement(IDENTIFIER)('doIt')
-                        VALUE_ARGUMENT_LIST
-                          PsiElement(LPAR)('(')
-                          PsiElement(RPAR)(')')
-                    PsiWhiteSpace(' ')
-                    PsiElement(RBRACE)('}')
-              PsiErrorElement:Expecting '->'
-                <empty list>
+              PsiWhiteSpace(' ')
+              BLOCK
+                PsiElement(LBRACE)('{')
+                PsiWhiteSpace(' ')
+                CALL_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('doIt')
+                  VALUE_ARGUMENT_LIST
+                    PsiElement(LPAR)('(')
+                    PsiElement(RPAR)(')')
+                PsiWhiteSpace(' ')
+                PsiElement(RBRACE)('}')
             PsiWhiteSpace('\n    ')
             PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n\n    ')
