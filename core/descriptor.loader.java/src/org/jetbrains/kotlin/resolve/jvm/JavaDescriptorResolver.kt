@@ -30,30 +30,3 @@ public class JavaDescriptorResolver(public val packageFragmentProvider: LazyJava
         return packageFragmentProvider.getClass(javaClass)
     }
 }
-
-public fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {
-    return getContainingScope(method)?.getFunctions(method.getName())?.findByJavaElement(method)
-}
-
-public fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
-    return resolveClass(constructor.getContainingClass())?.getConstructors()?.findByJavaElement(constructor)
-}
-
-public fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
-    return getContainingScope(field)?.getProperties(field.getName())?.findByJavaElement(field) as? PropertyDescriptor
-}
-
-private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): JetScope? {
-    val containingClass = resolveClass(member.getContainingClass())
-    return if (member.isStatic())
-        containingClass?.getStaticScope()
-    else
-        containingClass?.getDefaultType()?.getMemberScope()
-}
-
-private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElement(javaElement: JavaElement): T? {
-    return firstOrNull {
-        member ->
-        (member.getSource() as? JavaSourceElement)?.javaElement == javaElement
-    }
-}

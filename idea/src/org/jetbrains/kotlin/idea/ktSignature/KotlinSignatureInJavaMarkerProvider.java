@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.JetIcons;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.idea.util.attachment.AttachmentPackage;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
@@ -49,7 +50,6 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
-import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -148,14 +148,14 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
         if (member instanceof PsiMethod) {
             PsiMethod method = (PsiMethod) member;
             if (method.isConstructor()) {
-                return JvmPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(method));
+                return ResolvePackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(method));
             }
             else {
-                return JvmPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(method));
+                return ResolvePackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(method));
             }
         }
         else if (member instanceof PsiField) {
-            return JvmPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) member));
+            return ResolvePackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) member));
         }
         return null;
     }

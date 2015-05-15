@@ -18,26 +18,19 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import org.jetbrains.kotlin.idea.project.TargetPlatform
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.BindingContext
 import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import org.jetbrains.kotlin.resolve.jvm.resolveMethod
-import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl
-import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl
-import org.jetbrains.kotlin.resolve.jvm.resolveConstructor
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import com.intellij.psi.PsiField
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.resolve.jvm.resolveField
-import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl
 import com.intellij.psi.PsiMember
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.*
+import org.jetbrains.kotlin.resolve.jvm.*
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDescriptorResolver, BindingContext>> {
     override val platform: TargetPlatform = TargetPlatform.JVM
@@ -89,5 +82,32 @@ fun PsiMember.getJavaMemberDescriptor(): DeclarationDescriptor? {
         is PsiMethod -> getJavaMethodDescriptor()
         is PsiField -> getJavaFieldDescriptor()
         else -> null
+    }
+}
+
+public fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDescriptor? {
+    return getContainingScope(method)?.getFunctions(method.getName())?.findByJavaElement(method)
+}
+
+public fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
+    return resolveClass(constructor.getContainingClass())?.getConstructors()?.findByJavaElement(constructor)
+}
+
+public fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
+    return getContainingScope(field)?.getProperties(field.getName())?.findByJavaElement(field) as? PropertyDescriptor
+}
+
+private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): JetScope? {
+    val containingClass = resolveClass(member.getContainingClass())
+    return if (member.isStatic())
+        containingClass?.getStaticScope()
+    else
+        containingClass?.getDefaultType()?.getMemberScope()
+}
+
+private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElement(javaElement: JavaElement): T? {
+    return firstOrNull {
+        member ->
+        (member.getSource() as? JavaSourceElement)?.javaElement == javaElement
     }
 }

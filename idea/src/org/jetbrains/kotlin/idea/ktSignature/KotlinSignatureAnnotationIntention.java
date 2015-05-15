@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.JetIcons;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
-import org.jetbrains.kotlin.resolve.jvm.JvmPackage;
 
 import javax.swing.*;
 
@@ -155,12 +155,12 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
             PsiMethod psiMethod = (PsiMethod) analyzableAnnotationOwner;
             if (psiMethod.isConstructor()) {
                 ConstructorDescriptor constructorDescriptor =
-                        JvmPackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(psiMethod));
+                        ResolvePackage.resolveConstructor(javaDescriptorResolver, new JavaConstructorImpl(psiMethod));
                 assert constructorDescriptor != null: "Couldn't find constructor descriptor for " + renderMember(psiMethod);
                 return getDefaultConstructorAnnotation(constructorDescriptor);
             }
             else {
-                FunctionDescriptor functionDescriptor = JvmPackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(psiMethod));
+                FunctionDescriptor functionDescriptor = ResolvePackage.resolveMethod(javaDescriptorResolver, new JavaMethodImpl(psiMethod));
                 assert functionDescriptor != null: "Couldn't find function descriptor for " + renderMember(psiMethod);
                 return RENDERER.render(functionDescriptor);
             }
@@ -168,7 +168,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
 
         if (analyzableAnnotationOwner instanceof PsiField) {
             VariableDescriptor variableDescriptor =
-                    JvmPackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) analyzableAnnotationOwner));
+                    ResolvePackage.resolveField(javaDescriptorResolver, new JavaFieldImpl((PsiField) analyzableAnnotationOwner));
             assert variableDescriptor != null : "Couldn't find variable descriptor for field " + renderMember(analyzableAnnotationOwner);
             return RENDERER.render(variableDescriptor);
         }
