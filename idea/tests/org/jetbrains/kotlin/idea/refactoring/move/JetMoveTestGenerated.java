@@ -209,6 +209,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/changePackage/addExtensionImport/addExtensionImport.test")
+    public void testKotlin_changePackage_addExtensionImport_AddExtensionImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/changePackage/addExtensionImport/addExtensionImport.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/changePackage/changeToDefaultPackage/changeToDefaultPackage.test")
     public void testKotlin_changePackage_changeToDefaultPackage_ChangeToDefaultPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/changePackage/changeToDefaultPackage/changeToDefaultPackage.test");
@@ -218,6 +224,12 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
     @TestMetadata("kotlin/changePackage/changeToNonDefaultPackage/changeToNonDefaultPackage.test")
     public void testKotlin_changePackage_changeToNonDefaultPackage_ChangeToNonDefaultPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/changePackage/changeToNonDefaultPackage/changeToNonDefaultPackage.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveFile/addExtensionImport/addExtensionImport.test")
+    public void testKotlin_moveFile_addExtensionImport_AddExtensionImport() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveFile/addExtensionImport/addExtensionImport.test");
         doTest(fileName);
     }
 

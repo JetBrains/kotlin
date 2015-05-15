@@ -94,8 +94,9 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
         if (file !is JetFile) return
         val packageNameInfo = packageNameInfo ?: return
 
-        postProcessMoveUsages(file.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo))
+        val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo)
         file.getPackageDirective()?.setFqName(packageNameInfo.newPackageName)
+        postProcessMoveUsages(internalUsages)
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>?) {

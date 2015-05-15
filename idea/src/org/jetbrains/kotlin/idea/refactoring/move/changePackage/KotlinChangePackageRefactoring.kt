@@ -61,8 +61,8 @@ public class KotlinChangePackageRefactoring(val file: JetFile) {
         val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(PackageNameInfo(currentFqName, newFqName))
 
         project.executeWriteCommand("Change file's package to '${newFqName.asString()}'") {
-            postProcessMoveUsages(internalUsages)
             packageDirective.setFqName(newFqName)
+            postProcessMoveUsages(internalUsages)
             project.runWithElementsToShortenIsEmptyIgnored { declarationProcessor.execute(declarationUsages) }
         }
     }
