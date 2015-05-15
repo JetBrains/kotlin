@@ -16,17 +16,18 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetBinaryExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.idea.util.JetPsiPrecedences
 import org.jetbrains.kotlin.lexer.JetTokens.*
+import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.copied
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Flip binary expression") {
+public class SwapBinaryExpressionIntention : JetSelfTargetingIntention<JetBinaryExpression>(javaClass(), "Flip binary expression"), LowPriorityAction {
     companion object {
         private val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
 
