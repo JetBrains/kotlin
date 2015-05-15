@@ -16,27 +16,20 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.ide.IdeBundle
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import java.util.*
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
+import com.intellij.refactoring.changeSignature.ChangeSignatureHandler
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import com.intellij.CommonBundle
-import com.intellij.refactoring.RefactoringBundle
-import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public trait JetChangeSignatureConfiguration {
     fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor
@@ -75,24 +68,32 @@ public class JetChangeSignature(project: Project,
             "Function descriptors expected: " + descriptorsForChange.joinToString(separator = "\n")
         }
 
-        [suppress("UNCHECKED_CAST")]
-        val dialog = createChangeSignatureDialog(descriptorsForChange as Collection<FunctionDescriptor>)
-        if (dialog == null) return
+        @suppress("UNCHECKED_CAST")
+        val adjustedDescriptor = adjustDescriptor(descriptorsForChange as Collection<FunctionDescriptor>)
+        if (adjustedDescriptor == null) return
 
-        val affectedFunctions = dialog.getMethodDescriptor().affectedFunctions.map { it.getElement() }.filterNotNull()
+        val affectedFunctions = adjustedDescriptor.affectedFunctions.map { it.getElement() }.filterNotNull()
 
         if (affectedFunctions.any { !checkModifiable(it) }) return
 
         if (configuration.performSilently(affectedFunctions)
             || ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            performRefactoringSilently(dialog)
+            JetChangeSignatureDialog.createRefactoringProcessor(
+                    project,
+                    commandName ?: ChangeSignatureHandler.REFACTORING_NAME,
+                    adjustedDescriptor,
+                    defaultValueContext
+
+            ).run()
         }
         else {
+            val dialog = JetChangeSignatureDialog(project, adjustedDescriptor, defaultValueContext, commandName)
+
             dialog.show()
         }
     }
 
-    fun createChangeSignatureDialog(descriptorsForSignatureChange: Collection<FunctionDescriptor>): JetChangeSignatureDialog? {
+    fun adjustDescriptor(descriptorsForSignatureChange: Collection<FunctionDescriptor>): JetMethodDescriptor? {
         val baseDescriptor = preferContainedInClass(descriptorsForSignatureChange)
         val functionDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, baseDescriptor)
         if (functionDeclaration == null) {
@@ -105,15 +106,7 @@ public class JetChangeSignature(project: Project,
         }
 
         val originalDescriptor = JetChangeSignatureData(baseDescriptor, functionDeclaration, descriptorsForSignatureChange)
-        val adjustedDescriptor = configuration.configure(originalDescriptor, bindingContext)
-        return JetChangeSignatureDialog(project, adjustedDescriptor, defaultValueContext, commandName)
-    }
-
-    private fun performRefactoringSilently(dialog: JetChangeSignatureDialog) {
-        runWriteAction {
-            dialog.createRefactoringProcessor().run()
-            Disposer.dispose(dialog.getDisposable())
-        }
+        return configuration.configure(originalDescriptor, bindingContext)
     }
 
     private fun preferContainedInClass(descriptorsForSignatureChange: Collection<FunctionDescriptor>): FunctionDescriptor {
@@ -128,11 +121,16 @@ public class JetChangeSignature(project: Project,
     }
 }
 
-TestOnly public fun getChangeSignatureDialog(project: Project,
+TestOnly public fun createChangeInfo(project: Project,
                                              functionDescriptor: FunctionDescriptor,
                                              configuration: JetChangeSignatureConfiguration,
                                              bindingContext: BindingContext,
-                                             defaultValueContext: PsiElement): JetChangeSignatureDialog? {
+                                             defaultValueContext: PsiElement): JetChangeInfo? {
     val jetChangeSignature = JetChangeSignature(project, functionDescriptor, configuration, bindingContext, defaultValueContext, null)
-    return jetChangeSignature.createChangeSignatureDialog(OverrideResolver.getDeepestSuperDeclarations(functionDescriptor))
+    val declarations = OverrideResolver.getDeepestSuperDeclarations(functionDescriptor)
+
+    val adjustedDescriptor = jetChangeSignature.adjustDescriptor(declarations) ?: return null
+
+    val processor = JetChangeSignatureDialog.createRefactoringProcessor(project, "", adjustedDescriptor, defaultValueContext) as JetChangeSignatureProcessor
+    return processor.getChangeInfo()
 }

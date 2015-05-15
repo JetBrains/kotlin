@@ -20,7 +20,6 @@ import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -36,10 +35,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
-import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -48,8 +47,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 
 import java.io.File;
 import java.util.*;
-
-import static org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage.getChangeSignatureDialog;
 
 public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     public void testBadSelection() throws Exception {
@@ -955,13 +952,8 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         FunctionDescriptor functionDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext);
         assertNotNull(functionDescriptor);
 
-        JetChangeSignatureDialog dialog = getChangeSignatureDialog(
+        return ChangeSignaturePackage.createChangeInfo(
                 project, functionDescriptor, JetChangeSignatureHandler.getConfiguration(), bindingContext, context);
-        assertNotNull(dialog);
-
-        dialog.canRun();
-        Disposer.register(getTestRootDisposable(), dialog.getDisposable());
-        return dialog.evaluateChangeInfo();
     }
 
     private class JavaRefactoringProvider {
