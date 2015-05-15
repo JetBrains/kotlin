@@ -130,6 +130,10 @@ class Kotlin2JvmSourceSetProcessor(
         compilerClass = tasksProvider.kotlinJVMCompileTaskClass
 ) {
 
+    private companion object {
+        private var cachedKotlinAnnotationProcessingDep: String? = null
+    }
+
     override fun doTargetSpecificProcessing() {
         // store kotlin classes in separate directory. They will serve as class-path to java compiler
         val kotlinDestinationDir = File(project.getBuildDir(), "kotlin-classes/${sourceSetName}")
@@ -138,16 +142,33 @@ class Kotlin2JvmSourceSetProcessor(
         val javaTask = project.getTasks().findByName(sourceSet.getCompileJavaTaskName()) as AbstractCompile?
 
         if (javaTask != null) {
+            kotlinTask.getExtensions().getExtraProperties().set("javaTask", WeakReference(javaTask))
             javaTask.dependsOn(kotlinTaskName)
             val javacClassPath = javaTask.getClasspath() + project.files(kotlinDestinationDir);
             javaTask.setClasspath(javacClassPath)
         }
+
+        val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
+            val projectVersion = loadKotlinVersionFromResource(project.getLogger())
+            val dep = "org.jetbrains.kotlin:kotlin-annotation-processing:$projectVersion"
+            cachedKotlinAnnotationProcessingDep = dep
+            dep
+        }
+
+        val aptConfiguration = project.createAptConfiguration(sourceSet.getName(), kotlinAnnotationProcessingDep)
 
         project afterEvaluate { project ->
             if (project != null) {
                 for (dir in sourceSet.getJava().getSrcDirs()) {
                     kotlinDirSet?.srcDir(dir)
                 }
+
+                if (aptConfiguration.getDependencies().size() > 1) {
+                    kotlinTask.setProperty("aptFiles", aptConfiguration.resolve())
+                }
+
+                val aptOutputDir = project.setAptOutputDirForSourceSet(kotlinTask, sourceSet.getName())
+                sourceSet.getJava().add(project.files(aptOutputDir))
             }
         }
 
@@ -291,13 +312,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 val kotlinDirSet = kotlinSourceSet.getKotlin()
                 kotlinDirSet.srcDir(project.file("src/${sourceSetName}/kotlin"))
 
-                val aptConfigurationName = if (sourceSet.getName() != "main") {
-                    "kotlinApt${sourceSet.getName().capitalize()}"
-                } else "kotlinApt"
-
-                val aptConfiguration = project.getConfigurations().create(aptConfigurationName)
-                aptConfiguration.getDependencies().add(project.getDependencies().create(kotlinAnnotationProcessingDep))
-                aptConfigurations.put(sourceSet.getName(), aptConfiguration)
+                aptConfigurations.put(sourceSet.getName(),
+                        project.createAptConfiguration(sourceSet.getName(), kotlinAnnotationProcessingDep))
 
                 /*TODO: before 0.11 gradle android plugin there was:
                   sourceSet.getAllJava().source(kotlinDirSet)
@@ -401,10 +417,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             kotlinTask.setProperty("aptFiles", aptFiles)
 
-            val aptOutputDir = project.file(File(project.getBuildDir(), "generated/source/kotlinApt"))
-            val aptOutputDirForVariant = File(aptOutputDir, variantDataName)
-            kotlinTask.setProperty("kotlinAptOutputDir", aptOutputDirForVariant)
-            variantData.addJavaSourceFoldersToModel(aptOutputDirForVariant)
+            val aptOutputDir = project.setAptOutputDirForSourceSet(kotlinTask, variantDataName)
+            variantData.addJavaSourceFoldersToModel(aptOutputDir)
 
             kotlinTask doFirst {
                 val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
@@ -512,6 +526,22 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
     public fun resolveKotlinPluginDependency(artifact: String): Collection<File> =
             resolveDependencies(kotlinPluginArtifactCoordinates(artifact))
     public fun resolveJsLibrary(): File = resolveDependencies(kotlinJsLibraryCoordinates()).first()
+}
+
+private fun Project.setAptOutputDirForSourceSet(kotlinTask: AbstractCompile, sourceSetName: String): File {
+    val aptOutputDir = file(File(getBuildDir(), "generated/source/kotlinApt"))
+    val aptOutputDirForVariant = File(aptOutputDir, sourceSetName)
+    kotlinTask.setProperty("kotlinAptOutputDir", aptOutputDirForVariant)
+    return aptOutputDirForVariant
+}
+
+private fun Project.createAptConfiguration(sourceSetName: String, kotlinAnnotationProcessingDep: String): Configuration {
+    val aptConfigurationName = if (sourceSetName != "main") "kapt${sourceSetName.capitalize()}" else "kapt"
+
+    val aptConfiguration = getConfigurations().create(aptConfigurationName)
+    aptConfiguration.getDependencies().add(getDependencies().create(kotlinAnnotationProcessingDep))
+
+    return aptConfiguration
 }
 
 //copied from BasePlugin.getLocalVersion
