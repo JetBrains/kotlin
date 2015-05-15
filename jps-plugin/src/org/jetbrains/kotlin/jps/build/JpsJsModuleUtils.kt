@@ -41,7 +41,11 @@ object JpsJsModuleUtils {
         val libraries = JpsUtils.getAllDependencies(target).getLibraries()
         for (library in libraries) {
             for (root in library.getRoots(JpsOrderRootType.COMPILED)) {
-                result.add(JpsPathUtil.urlToPath(root.getUrl()))
+                val path = JpsPathUtil.urlToPath(root.getUrl())
+                // ignore files, added only for IDE support (stubs and indexes)
+                if (!path.startsWith(KotlinJavascriptMetadataUtils.VFS_PROTOCOL + "://")) {
+                    result.add(path)
+                }
             }
         }
     }
