@@ -80,6 +80,7 @@ trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetN
 }
 
 public class MoveKotlinTopLevelDeclarationsOptions(
+        val sourceFile: JetFile,
         val elementsToMove: Collection<JetNamedDeclaration>,
         val moveTarget: KotlinMoveTarget,
         val searchInCommentsAndStrings: Boolean = true,
@@ -216,6 +217,9 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                 }
             }
         }
+
+        // No need to find and process usages if package is not changed
+        if (options.sourceFile.getPackageFqName().asString() == newPackageName) return UsageInfo.EMPTY_ARRAY
 
         val usages = collectUsages()
         collectConflictsInUsages(usages)
