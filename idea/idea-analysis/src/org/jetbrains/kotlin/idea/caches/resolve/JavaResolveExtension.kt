@@ -16,20 +16,16 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.idea.project.TargetPlatform
-import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.resolve.BindingContext
-import com.intellij.psi.PsiMethod
-import org.jetbrains.kotlin.asJava.KotlinLightMethod
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMember
+import com.intellij.psi.*
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.*
-import org.jetbrains.kotlin.resolve.jvm.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModule
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDescriptorResolver, BindingContext>> {
@@ -106,8 +102,15 @@ private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): JetSc
 }
 
 private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElement(javaElement: JavaElement): T? {
-    return firstOrNull {
-        member ->
-        (member.getSource() as? JavaSourceElement)?.javaElement == javaElement
+    return firstOrNull { member ->
+        val memberJavaElement = (member.getSource() as? JavaSourceElement)?.javaElement
+        when {
+            memberJavaElement == javaElement ->
+                true
+            memberJavaElement is JavaElementImpl<*> && javaElement is JavaElementImpl<*> ->
+                memberJavaElement.getPsi().isEquivalentTo(javaElement.getPsi())
+            else ->
+                false
+        }
     }
 }
