@@ -183,11 +183,6 @@ public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectSt
     }
 
     @Override
-    public void delete() throws IncorrectOperationException {
-        JetPsiUtil.deleteClass(this);
-    }
-
-    @Override
     public ItemPresentation getPresentation() {
         return ItemPresentationProviders.getItemPresentation(this);
     }

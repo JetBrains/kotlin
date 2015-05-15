@@ -174,11 +174,6 @@ public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> imp
     }
 
     @Override
-    public void delete() throws IncorrectOperationException {
-        JetPsiUtil.deleteClass(this);
-    }
-
-    @Override
     public boolean isEquivalentTo(PsiElement another) {
         if (super.isEquivalentTo(another)) {
             return true;

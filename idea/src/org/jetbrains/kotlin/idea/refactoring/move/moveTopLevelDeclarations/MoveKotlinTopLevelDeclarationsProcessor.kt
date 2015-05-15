@@ -86,6 +86,7 @@ public class MoveKotlinTopLevelDeclarationsOptions(
         val searchInCommentsAndStrings: Boolean = true,
         val searchInNonCode: Boolean = true,
         val updateInternalReferences: Boolean = true,
+        val deleteSourceFile: Boolean = false,
         val moveCallback: MoveCallback? = null
 )
 
@@ -280,6 +281,10 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                 for ((oldElement, newElement) in oldLightElements.asSequence() zip newDeclaration.toLightElements().asSequence()) {
                     oldToNewElementsMapping[oldElement] = newElement
                 }
+            }
+
+            if (options.deleteSourceFile) {
+                options.sourceFile.delete()
             }
 
             nonCodeUsages = postProcessMoveUsages(usageList, oldToNewElementsMapping).toTypedArray()

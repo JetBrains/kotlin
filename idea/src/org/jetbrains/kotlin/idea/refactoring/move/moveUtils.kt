@@ -156,8 +156,10 @@ fun createMoveUsageInfoIfPossible(
 }
 
 public fun guessNewFileName(sourceFile: JetFile, declarationsToMove: Collection<JetNamedDeclaration>): String? {
+    assert(sourceFile.getDeclarations().containsAll(declarationsToMove))
+
     if (declarationsToMove.isEmpty()) return null
-    if (sourceFile.getDeclarations() == declarationsToMove) return sourceFile.getName()
+    if (sourceFile.getDeclarations().size() == declarationsToMove.size()) return sourceFile.getName()
 
     val representative = declarationsToMove.firstOrNull { it is JetClassOrObject } ?: declarationsToMove.first()
     return "${representative.getName()}.${JetFileType.EXTENSION}"

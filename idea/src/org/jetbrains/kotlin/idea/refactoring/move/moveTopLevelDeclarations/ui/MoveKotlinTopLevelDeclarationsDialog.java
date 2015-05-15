@@ -505,67 +505,80 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         try {
-            if (isMoveToPackage() && elementsToMove.equals(sourceFile.getDeclarations())) {
-                final MoveDestination moveDestination = selectPackageBasedMoveDestination();
-                //noinspection ConstantConditions
-                PsiDirectory targetDir = moveDestination.getTargetIfExists(sourceFile);
-                final String targetFileName = tfFileNameInPackage.getText();
-                if (targetDir == null || targetDir.findFile(targetFileName) == null) {
+            boolean deleteSourceFile = false;
+            
+            if (elementsToMove.size() == sourceFile.getDeclarations().size()) {
+                if (isMoveToPackage()) {
+                    final MoveDestination moveDestination = selectPackageBasedMoveDestination();
                     //noinspection ConstantConditions
-                    final String temporaryName = UniqueNameGenerator.generateUniqueName(
-                            "temp",
-                            "",
-                            ".kt",
-                            KotlinPackage.map(
-                                    sourceFile.getContainingDirectory().getFiles(),
-                                    new Function1<PsiFile, String>() {
-                                        @Override
-                                        public String invoke(PsiFile file) {
-                                            return file.getName();
-                                        }
-                                    }
-                            )
-                    );
-                    PsiDirectory targetDirectory = ApplicationPackage.runWriteAction(
-                            new Function0<PsiDirectory>() {
-                                @Override
-                                public PsiDirectory invoke() {
-                                    sourceFile.setName(temporaryName);
-                                    return moveDestination.getTargetDirectory(sourceFile);
-                                }
-                            }
-                    );
-                    invokeRefactoring(
-                            new MoveFilesOrDirectoriesProcessor(
-                                    myProject,
-                                    new PsiElement[] {sourceFile},
-                                    targetDirectory,
-                                    RefactoringSettings.getInstance().MOVE_SEARCH_FOR_REFERENCES_FOR_FILE,
-                                    isSearchInComments(),
-                                    isSearchInNonJavaFiles(),
-                                    new MoveCallback() {
-                                        @Override
-                                        public void refactoringCompleted() {
-                                            try {
-                                                sourceFile.setName(targetFileName);
+                    PsiDirectory targetDir = moveDestination.getTargetIfExists(sourceFile);
+                    final String targetFileName = tfFileNameInPackage.getText();
+                    if (targetDir == null || targetDir.findFile(targetFileName) == null) {
+                        //noinspection ConstantConditions
+                        final String temporaryName = UniqueNameGenerator.generateUniqueName(
+                                "temp",
+                                "",
+                                ".kt",
+                                KotlinPackage.map(
+                                        sourceFile.getContainingDirectory().getFiles(),
+                                        new Function1<PsiFile, String>() {
+                                            @Override
+                                            public String invoke(PsiFile file) {
+                                                return file.getName();
                                             }
-                                            finally {
-                                                if (moveCallback != null) {
-                                                    moveCallback.refactoringCompleted();
+                                        }
+                                )
+                        );
+                        PsiDirectory targetDirectory = ApplicationPackage.runWriteAction(
+                                new Function0<PsiDirectory>() {
+                                    @Override
+                                    public PsiDirectory invoke() {
+                                        sourceFile.setName(temporaryName);
+                                        return moveDestination.getTargetDirectory(sourceFile);
+                                    }
+                                }
+                        );
+                        invokeRefactoring(
+                                new MoveFilesOrDirectoriesProcessor(
+                                        myProject,
+                                        new PsiElement[] {sourceFile},
+                                        targetDirectory,
+                                        RefactoringSettings.getInstance().MOVE_SEARCH_FOR_REFERENCES_FOR_FILE,
+                                        isSearchInComments(),
+                                        isSearchInNonJavaFiles(),
+                                        new MoveCallback() {
+                                            @Override
+                                            public void refactoringCompleted() {
+                                                try {
+                                                    sourceFile.setName(targetFileName);
+                                                }
+                                                finally {
+                                                    if (moveCallback != null) {
+                                                        moveCallback.refactoringCompleted();
+                                                    }
                                                 }
                                             }
-                                        }
-                                    },
-                                    EmptyRunnable.INSTANCE
-                            )
+                                        },
+                                        EmptyRunnable.INSTANCE
+                                )
+                        );
+    
+                        return;
+                    }
+    
+                    int ret = Messages.showYesNoCancelDialog(
+                            myProject,
+                            "You are going to move all declarations out of '" + sourceFile.getVirtualFile().getPath() + "'. Do you want to delete this file?",
+                            RefactoringBundle.message("move.title"),
+                            Messages.getQuestionIcon()
                     );
-
-                    return;
+                    if (ret == Messages.CANCEL) return;
+                    deleteSourceFile = ret == Messages.YES;
                 }
             }
 
             MoveKotlinTopLevelDeclarationsOptions options = new MoveKotlinTopLevelDeclarationsOptions(
-                    sourceFile, elementsToMove, target, isSearchInComments(), isSearchInNonJavaFiles(), true, moveCallback
+                    sourceFile, elementsToMove, target, isSearchInComments(), isSearchInNonJavaFiles(), true, deleteSourceFile, moveCallback
             );
             invokeRefactoring(new MoveKotlinTopLevelDeclarationsProcessor(myProject, options, Mover.Default.INSTANCE$));
         }

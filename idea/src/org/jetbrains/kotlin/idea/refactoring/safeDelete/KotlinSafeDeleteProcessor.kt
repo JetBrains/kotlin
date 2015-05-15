@@ -24,30 +24,29 @@ import com.intellij.openapi.util.Conditions
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
-import com.intellij.psi.PsiReference
-import com.intellij.psi.impl.search.ConstructorReferencesSearchHelper
-import com.intellij.psi.search.SearchRequestCollector
-import com.intellij.psi.search.SearchSession
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.safeDelete.JavaSafeDeleteProcessor
 import com.intellij.refactoring.safeDelete.NonCodeUsageSearchInfo
-import com.intellij.refactoring.safeDelete.usageInfo.*
+import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverrideAnnotation
+import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteOverridingMethodUsageInfo
+import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceJavaDeleteUsageInfo
+import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
 import com.intellij.usageView.UsageInfo
-import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.idea.references.JetReference
-import java.util.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.deleteElementAndCleanParent
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.deleteElementAndCleanParent
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.ArrayList
+import java.util.Collections
 
 public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun handlesElement(element: PsiElement): Boolean = element.canDeleteElement()
@@ -326,5 +325,19 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
             else -> super.getElementsToSearch(element, module, allElementsToDelete)
         }
+    }
+
+    override fun getAdditionalElementsToDelete(
+            element: PsiElement,
+            allElementsToDelete: MutableCollection<PsiElement>,
+            askUser: Boolean
+    ): Collection<PsiElement> {
+        val filesToDelete = allElementsToDelete
+                .filter { it is JetNamedDeclaration && it.getContainingJetFile() == it.getParent() }
+                .groupBy { (it as JetNamedDeclaration).getContainingJetFile() }
+                .filter { it.getKey().getDeclarations().size() == it.getValue().size() }
+                .keySet()
+        return super.getAdditionalElementsToDelete(element, allElementsToDelete, askUser)?.let { it + filesToDelete }
+               ?: filesToDelete
     }
 }
