@@ -305,7 +305,7 @@ public abstract class ElementResolver protected(
     private fun propertyAdditionalResolve(resolveSession: ResolveSession, jetProperty: JetProperty, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
         val propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty)
 
-        val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisParameters.createForLocalDeclarations(), object : Function<JetDeclaration, JetScope> {
+        val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, object : Function<JetDeclaration, JetScope> {
             override fun apply(declaration: JetDeclaration?): JetScope? {
                 assert(declaration!!.getParent() == jetProperty) { "Must be called only for property accessors, but called for " + declaration }
                 return resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration)
@@ -379,7 +379,7 @@ public abstract class ElementResolver protected(
     }
 
     private fun createEmptyContext(): BodyResolveContextForLazy {
-        return BodyResolveContextForLazy(TopDownAnalysisParameters.createForLocalDeclarations(), Functions.constant<JetScope>(null))
+        return BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, Functions.constant<JetScope>(null))
     }
 
     private fun getExpressionResolutionScope(resolveSession: ResolveSession, expression: JetExpression): JetScope {
@@ -451,7 +451,7 @@ public abstract class ElementResolver protected(
     protected abstract fun getAdditionalCheckerProvider(jetFile: JetFile): AdditionalCheckerProvider
 
     private class BodyResolveContextForLazy(
-            private val topDownAnalysisParameters: TopDownAnalysisParameters,
+            private val topDownAnalysisMode: TopDownAnalysisMode,
             private val declaringScopes: Function<in JetDeclaration, JetScope>
     ) : BodiesResolveContext {
 
@@ -473,6 +473,6 @@ public abstract class ElementResolver protected(
 
         override fun getOuterDataFlowInfo() = DataFlowInfo.EMPTY
 
-        override fun getTopDownAnalysisParameters() = topDownAnalysisParameters
+        override fun getTopDownAnalysisMode() = topDownAnalysisMode
     }
 }

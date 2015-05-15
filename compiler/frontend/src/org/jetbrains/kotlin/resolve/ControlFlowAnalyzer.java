@@ -74,7 +74,7 @@ public class ControlFlowAnalyzer {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((JetElement) declarationContainer, trace);
-        if (c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+        if (c.getTopDownAnalysisMode().getIsLocalDeclarations()) {
             flowInformationProvider.checkForLocalClassOrObjectMode();
             return;
         }
@@ -95,7 +95,7 @@ public class ControlFlowAnalyzer {
     private void checkFunction(@NotNull BodiesResolveContext c, @NotNull JetDeclarationWithBody function, @Nullable JetType expectedReturnType) {
         if (!function.hasBody()) return;
         JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
-        if (c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+        if (c.getTopDownAnalysisMode().getIsLocalDeclarations()) {
             flowInformationProvider.checkForLocalClassOrObjectMode();
             return;
         }

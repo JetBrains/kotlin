@@ -118,11 +118,11 @@ public class LazyTopDownAnalyzer {
 
     @NotNull
     public TopDownAnalysisContext analyzeDeclarations(
-            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+            @NotNull TopDownAnalysisMode topDownAnalysisMode,
             @NotNull Collection<? extends PsiElement> declarations,
             @NotNull DataFlowInfo outerDataFlowInfo
     ) {
-        final TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisParameters, outerDataFlowInfo);
+        final TopDownAnalysisContext c = new TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo);
 
         final Multimap<FqName, JetElement> topLevelFqNames = HashMultimap.create();
 

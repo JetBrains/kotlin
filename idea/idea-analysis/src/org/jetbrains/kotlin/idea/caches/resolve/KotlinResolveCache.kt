@@ -233,7 +233,7 @@ private object KotlinResolveDataProvider {
             ).getLazyTopDownAnalyzerForTopLevel()!!
 
             lazyTopDownAnalyzer.analyzeDeclarations(
-                    TopDownAnalysisParameters.create(false),
+                    TopDownAnalysisMode.TopLevelDeclarations,
                     listOf(analyzableElement)
             )
             return AnalysisResult.success(

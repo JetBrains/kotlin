@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters;
+import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
@@ -150,16 +150,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         BindingTrace trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
-        TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
-                false
-        );
-
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 environment.getProject(),
                 ContextPackage.GlobalContext(),
                 environment.getSourceFiles(),
                 trace,
-                parameters,
+                TopDownAnalysisMode.TopLevelDeclarations,
                 module);
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);

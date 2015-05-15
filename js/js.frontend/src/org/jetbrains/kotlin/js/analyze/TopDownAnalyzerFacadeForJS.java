@@ -78,8 +78,6 @@ public final class TopDownAnalyzerFacadeForJS {
         Project project = config.getProject();
 
         GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
-                false);
 
         Collection<JetFile> allFiles = Config.withJsLibAdded(files, config);
 
@@ -87,7 +85,7 @@ public final class TopDownAnalyzerFacadeForJS {
                 project, globalContext, trace, module,
                 new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(), allFiles));
         try {
-            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisParameters, files,
+            injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files,
                                                            Collections.<PackageFragmentProvider>emptyList());
             return JsAnalysisResult.success(trace, module);
         }

@@ -134,7 +134,7 @@ public class BodyResolver {
         // SCRIPT: resolve script bodies
         scriptBodyResolverResolver.resolveScriptBodies(c);
 
-        if (!c.getTopDownAnalysisParameters().isDeclaredLocally()) {
+        if (!c.getTopDownAnalysisMode().getIsLocalDeclarations()) {
             computeDeferredTypes();
         }
     }

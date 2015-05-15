@@ -112,8 +112,6 @@ public class ReplInterpreter {
 
         GlobalContextImpl context = ContextPackage.GlobalContext();
 
-        TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(true);
-
         scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
 
         ScopeProvider.AdditionalFileScopeProvider scopeProvider = new ScopeProvider.AdditionalFileScopeProvider() {
@@ -134,7 +132,7 @@ public class ReplInterpreter {
                 scopeProvider
         );
 
-        this.topDownAnalysisContext = new TopDownAnalysisContext(topDownAnalysisParameters, DataFlowInfo.EMPTY);
+        this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfo.EMPTY);
         this.topDownAnalyzer = injector.getLazyTopDownAnalyzerForTopLevel();
         this.resolveSession = injector.getResolveSession();
 
@@ -353,7 +351,7 @@ public class ReplInterpreter {
                 new FileBasedDeclarationProviderFactory(resolveSession.getStorageManager(), Collections.singletonList(psiFile)));
 
         TopDownAnalysisContext context = topDownAnalyzer.analyzeDeclarations(
-                topDownAnalysisContext.getTopDownAnalysisParameters(),
+                topDownAnalysisContext.getTopDownAnalysisMode(),
                 Collections.singletonList(psiFile)
         );
 

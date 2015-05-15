@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.storage.ExceptionTracker;
-import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.io.PrintStream;
 import java.util.Collection;
@@ -52,19 +50,19 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     private final Map<JetScript, ScriptDescriptor> scripts = Maps.newLinkedHashMap();
 
-    private final TopDownAnalysisParameters topDownAnalysisParameters;
+    private final TopDownAnalysisMode topDownAnalysisMode;
 
     private StringBuilder debugOutput;
 
-    public TopDownAnalysisContext(@NotNull TopDownAnalysisParameters topDownAnalysisParameters, @NotNull DataFlowInfo outerDataFlowInfo) {
-        this.topDownAnalysisParameters = topDownAnalysisParameters;
+    public TopDownAnalysisContext(@NotNull TopDownAnalysisMode topDownAnalysisMode, @NotNull DataFlowInfo outerDataFlowInfo) {
+        this.topDownAnalysisMode = topDownAnalysisMode;
         this.outerDataFlowInfo = outerDataFlowInfo;
     }
 
     @Override
     @NotNull
-    public TopDownAnalysisParameters getTopDownAnalysisParameters() {
-        return topDownAnalysisParameters;
+    public TopDownAnalysisMode getTopDownAnalysisMode() {
+        return topDownAnalysisMode;
     }
 
     public void debug(Object message) {

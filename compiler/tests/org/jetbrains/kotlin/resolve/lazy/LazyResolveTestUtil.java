@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters;
+import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 
 import java.util.Collections;
@@ -55,8 +55,9 @@ public class LazyResolveTestUtil {
     public static ModuleDescriptor resolve(@NotNull Project project, @NotNull BindingTrace trace, @NotNull List<JetFile> sourceFiles) {
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
-        TopDownAnalysisParameters params = TopDownAnalysisParameters.create(false);
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(project, ContextPackage.GlobalContext(), sourceFiles, trace, params, module);
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
+                project, ContextPackage.GlobalContext(), sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations, module
+        );
 
         return module;
     }

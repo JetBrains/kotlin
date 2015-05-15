@@ -20,7 +20,6 @@ import com.google.common.base.Function;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -51,5 +50,5 @@ public interface BodiesResolveContext {
     DataFlowInfo getOuterDataFlowInfo();
 
     @NotNull
-    TopDownAnalysisParameters getTopDownAnalysisParameters();
+    TopDownAnalysisMode getTopDownAnalysisMode();
 }

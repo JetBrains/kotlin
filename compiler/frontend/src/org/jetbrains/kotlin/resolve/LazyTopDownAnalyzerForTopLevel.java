@@ -50,7 +50,7 @@ public class LazyTopDownAnalyzerForTopLevel {
 
     @NotNull
     public TopDownAnalysisContext analyzeFiles(
-            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+            @NotNull TopDownAnalysisMode topDownAnalysisMode,
             @NotNull Collection<JetFile> files,
             @NotNull List<? extends PackageFragmentProvider> additionalProviders
     ) {
@@ -66,15 +66,15 @@ public class LazyTopDownAnalyzerForTopLevel {
 
         ((ModuleDescriptorImpl) resolveSession.getModuleDescriptor()).initialize(provider);
 
-        return analyzeDeclarations(topDownAnalysisParameters, files);
+        return analyzeDeclarations(topDownAnalysisMode, files);
     }
 
     @NotNull
     public TopDownAnalysisContext analyzeDeclarations(
-            @NotNull TopDownAnalysisParameters topDownAnalysisParameters,
+            @NotNull TopDownAnalysisMode topDownAnalysisMode,
             @NotNull Collection<? extends PsiElement> elements
     ) {
-        TopDownAnalysisContext c = lazyTopDownAnalyzer.analyzeDeclarations(topDownAnalysisParameters, elements, DataFlowInfo.EMPTY);
+        TopDownAnalysisContext c = lazyTopDownAnalyzer.analyzeDeclarations(topDownAnalysisMode, elements, DataFlowInfo.EMPTY);
 
         resolveImportsInAllFiles(c, resolveSession);
 
