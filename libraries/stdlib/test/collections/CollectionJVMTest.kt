@@ -151,6 +151,7 @@ class CollectionJVMTest {
 
     test fun emptySetIsSerializable() = testSingletonSerialization(emptySet<Any>())
 
+    test fun emptyMapIsSerializable() = testSingletonSerialization(emptyMap<Any, Any>())
 
     private fun testSingletonSerialization(value: Any) {
         val outputStream = ByteArrayOutputStream()
@@ -167,4 +168,9 @@ class CollectionJVMTest {
         assertEquals(value, result)
         assertTrue(value === result)
     }
+}
+
+
+public fun assertTypeEquals(expected: Any?, actual: Any?) {
+    assertEquals(expected?.javaClass, actual?.javaClass)
 }
