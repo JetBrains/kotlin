@@ -2858,6 +2858,165 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DeprecatedSymbolUsage extends AbstractQuickFixTest {
+        @TestMetadata("addImportRuntime.kt")
+        public void testAddImportRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/addImportRuntime.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInDeprecatedSymbolUsage() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage"), Pattern.compile("^(\\w+)\\.kt$"), true);
+        }
+
+        @TestMetadata("callWithError.kt")
+        public void testCallWithError() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/callWithError.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeThis1.kt")
+        public void testChangeThis1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThis1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeThis2.kt")
+        public void testChangeThis2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThis2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeThisSafeCall.kt")
+        public void testChangeThisSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThisSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeThisSafeCallWithValueRuntime.kt")
+        public void testChangeThisSafeCallWithValueRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThisSafeCallWithValueRuntime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeThisToOuterThis.kt")
+        public void testChangeThisToOuterThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThisToOuterThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doNotShortenUserReferences.kt")
+        public void testDoNotShortenUserReferences() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/doNotShortenUserReferences.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("doNotShortenUsersExplicitThis.kt")
+        public void testDoNotShortenUsersExplicitThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/doNotShortenUsersExplicitThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dropReceiver.kt")
+        public void testDropReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/dropReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dropReceiverSafeCall.kt")
+        public void testDropReceiverSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/dropReceiverSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionForGenericClass.kt")
+        public void testExtensionForGenericClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/extensionForGenericClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incorrectReplacement.kt")
+        public void testIncorrectReplacement() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/incorrectReplacement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberFunction.kt")
+        public void testMemberFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/memberFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberFunctionImplicitReceiver.kt")
+        public void testMemberFunctionImplicitReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/memberFunctionImplicitReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("memberFunctionInGenericClass.kt")
+        public void testMemberFunctionInGenericClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/memberFunctionInGenericClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("methodToProperty.kt")
+        public void testMethodToProperty() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/methodToProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noReplacement.kt")
+        public void testNoReplacement() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/noReplacement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("parameters.kt")
+        public void testParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/parameters.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyToMethod.kt")
+        public void testPropertyToMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/propertyToMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("safeCall.kt")
+        public void testSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/safeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("shortenReferences.kt")
+        public void testShortenReferences() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/shortenReferences.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("toOuterClassMethod.kt")
+        public void testToOuterClassMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/toOuterClassMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("twoValuesCombined.kt")
+        public void testTwoValuesCombined() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/twoValuesCombined.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/expressions")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -16,31 +16,35 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveElementVisitor
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.analyzeInContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
-import java.util.LinkedHashSet
-import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import java.util.ArrayList
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
-import org.jetbrains.kotlin.idea.imports.*
-import org.jetbrains.kotlin.resolve.*
-import com.intellij.psi.*
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 public class ShortenReferences(val options: (JetElement) -> Options = { Options.DEFAULT }) {
     public data class Options(
@@ -66,12 +70,9 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         }
     }
 
-    public fun process(element: JetElement) {
-        process(listOf(element))
-    }
-
-    public fun process(elements: Iterable<JetElement>) {
-        process(elements, { FilterResult.PROCESS })
+    @overloads
+    public fun process(element: JetElement, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): JetElement {
+        return process(listOf(element), elementFilter).single()
     }
 
     public fun process(file: JetFile, startOffset: Int, endOffset: Int) {
@@ -120,23 +121,23 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         }
     }
 
-    private enum class FilterResult {
+    public enum class FilterResult {
         SKIP,
         GO_INSIDE,
         PROCESS
     }
 
-    private fun process(elements: Iterable<JetElement>, elementFilter: (PsiElement) -> FilterResult) {
-        for ((file, fileElements) in elements.groupBy { element -> element.getContainingJetFile() }) {
-            shortenReferencesInFile(file, fileElements, elementFilter)
-        }
+    @overloads
+    public fun process(elements: Iterable<JetElement>, elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }): Collection<JetElement> {
+        return elements.groupBy { element -> element.getContainingJetFile() }
+                .flatMap { shortenReferencesInFile(it.key, it.value, elementFilter) }
     }
 
     private fun shortenReferencesInFile(
             file: JetFile,
             elements: List<JetElement>,
             elementFilter: (PsiElement) -> FilterResult
-    ) {
+    ): Collection<JetElement> {
         //TODO: that's not correct since we have options!
         val elementsToUse = dropNestedElements(elements)
 
@@ -174,6 +175,8 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             }
             if (!anyChange) break
         }
+
+        return elementsToUse
     }
 
     private fun dropNestedElements(elements: List<JetElement>): LinkedHashSet<JetElement> {
@@ -323,8 +326,8 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
             val bindingContext = resolutionFacade.analyze(qualifiedExpression)
 
             val receiver = qualifiedExpression.getReceiverExpression()
-            when {
-                receiver is JetThisExpression -> {
+            when (receiver) {
+                is JetThisExpression -> {
                     if (!options.removeThis) return false
                 }
                 else -> {

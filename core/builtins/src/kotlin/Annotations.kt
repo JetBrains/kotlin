@@ -28,7 +28,10 @@ public annotation class data
  * Marks the annotated class, function or property as deprecated.
  * @property value the message explaining the deprecation and recommending an alternative API to use.
  */
-public annotation class deprecated(val value: String)
+public annotation class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
+
+//TODO: doc-comment
+public annotation class ReplaceWith(val expression: String, vararg val imports: String)
 
 /**
  * Signifies that the annotated functional type represents an extension function.

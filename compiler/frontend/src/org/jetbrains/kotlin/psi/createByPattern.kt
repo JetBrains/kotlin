@@ -168,9 +168,11 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
         }
     }.toString()
 
-    val max = ranges.keySet().max()!!
-    for (i in 0..max) {
-        check(ranges.contains(i), "no '$$i' placeholder")
+    if (!ranges.isEmpty()) {
+        val max = ranges.keySet().max()!!
+        for (i in 0..max) {
+            check(ranges.contains(i), "no '$$i' placeholder")
+        }
     }
 
     if (args.size() != ranges.size()) {

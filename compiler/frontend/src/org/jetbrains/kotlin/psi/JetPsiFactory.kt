@@ -36,7 +36,7 @@ import java.io.PrintWriter
 import java.io.StringWriter
 
 public fun JetPsiFactory(project: Project?): JetPsiFactory = JetPsiFactory(project!!)
-public fun JetPsiFactory(contextElement: JetElement): JetPsiFactory = JetPsiFactory(contextElement.getProject())
+public fun JetPsiFactory(elementForProject: JetElement): JetPsiFactory = JetPsiFactory(elementForProject.getProject())
 
 public var JetFile.doNotAnalyze: String? by UserDataProperty(Key.create("DO_NOT_ANALYZE"))
 public var JetFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS_CONTEXT"))

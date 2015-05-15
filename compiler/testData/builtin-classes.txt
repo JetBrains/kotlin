@@ -1162,6 +1162,14 @@ public interface Range</*0*/ T : kotlin.Comparable<T>> {
     public open fun isEmpty(): kotlin.Boolean
 }
 
+public final annotation class ReplaceWith : kotlin.Annotation {
+    /*primary*/ public constructor ReplaceWith(/*0*/ expression: kotlin.String, /*1*/ vararg imports: kotlin.String /*kotlin.Array<out kotlin.String>*/)
+    internal final val expression: kotlin.String
+        internal final fun <get-expression>(): kotlin.String
+    internal final val imports: kotlin.Array<out kotlin.String>
+        internal final fun <get-imports>(): kotlin.Array<out kotlin.String>
+}
+
 public interface Set</*0*/ out E> : kotlin.Collection<E> {
     public abstract override /*1*/ fun contains(/*0*/ o: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.Any?>): kotlin.Boolean
@@ -1336,7 +1344,9 @@ public final annotation class data : kotlin.Annotation {
 }
 
 public final annotation class deprecated : kotlin.Annotation {
-    /*primary*/ public constructor deprecated(/*0*/ value: kotlin.String)
+    /*primary*/ public constructor deprecated(/*0*/ value: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ...)
+    internal final val replaceWith: kotlin.ReplaceWith
+        internal final fun <get-replaceWith>(): kotlin.ReplaceWith
     internal final val value: kotlin.String
         internal final fun <get-value>(): kotlin.String
 }
