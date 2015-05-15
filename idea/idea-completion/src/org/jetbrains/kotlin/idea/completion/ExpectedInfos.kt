@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.di.InjectorForMacros
@@ -185,7 +186,7 @@ class ExpectedInfos(
                 if (isFunctionLiteralArgument) continue
 
                 if (argumentName == null) {
-                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.fromPlural(), null, descriptor, argumentPosition))
+                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), null, descriptor, argumentPosition))
 
                     if (argumentIndex == parameters.indexOf(parameter)) {
                         val tail = if (parameter == parameters.last()) Tail.RPARENTH else null
@@ -194,7 +195,7 @@ class ExpectedInfos(
                 }
                 else {
                     val tail = namedArgumentTail(argumentToParameter, argumentName, descriptor)
-                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.fromPlural(), tail, descriptor, argumentPosition))
+                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), tail, descriptor, argumentPosition))
                     expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentPosition, ItemOptions.STAR_PREFIX))
                 }
             }
@@ -379,11 +380,11 @@ class ExpectedInfos(
             is JetSimpleNameExpression -> expression.getReferencedName()
             is JetQualifiedExpression -> expectedNameFromExpression(expression.getSelectorExpression())
             is JetCallExpression -> expectedNameFromExpression(expression.getCalleeExpression())
-            is JetArrayAccessExpression -> expectedNameFromExpression(expression.getArrayExpression())?.fromPlural()
+            is JetArrayAccessExpression -> expectedNameFromExpression(expression.getArrayExpression())?.unpluralize()
             else -> null
         }
     }
 
-    private fun String.fromPlural()
-            = if (endsWith("s")) substring(0, length() - 1) else this
+    private fun String.unpluralize()
+            = StringUtil.unpluralize(this)
 }

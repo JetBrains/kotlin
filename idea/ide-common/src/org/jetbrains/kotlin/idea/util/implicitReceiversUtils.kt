@@ -33,7 +33,7 @@ public fun JetScope.getImplicitReceiversWithInstance(): List<ReceiverParameterDe
     var current: DeclarationDescriptor? = getContainingDeclaration()
     while (current != null) {
         if (current is PropertyAccessorDescriptor) {
-            current =  (current as PropertyAccessorDescriptor).getCorrespondingProperty()
+            current =  current.getCorrespondingProperty()
         }
         withInstance.add(current)
 
