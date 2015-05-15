@@ -1,0 +1,9 @@
+import kotlin.platform.platformStatic
+
+class A {
+    companion object {
+        platformStatic<caret>
+    }
+}
+
+// ELEMENT: platformStatic

@@ -273,18 +273,16 @@ public abstract class ElementResolver protected(
     private fun getAnnotationsByDeclaration(resolveSession: ResolveSession, modifierList: JetModifierList, declaration: JetDeclaration): Annotations {
         var descriptor = resolveSession.resolveToDescriptor(declaration)
         if (declaration is JetClass) {
-            val jetClass = declaration
-            val classDescriptor = descriptor as ClassDescriptor
-            if (modifierList == jetClass.getPrimaryConstructorModifierList()) {
-                descriptor = classDescriptor.getUnsubstitutedPrimaryConstructor()
+            if (modifierList == declaration.getPrimaryConstructorModifierList()) {
+                descriptor = (descriptor as ClassDescriptor).getUnsubstitutedPrimaryConstructor()
                              ?: error("No constructor found: ${declaration.getText()}")
             }
-            else if (modifierList.getParent() == jetClass.getBody()) {
-                if (classDescriptor is LazyClassDescriptor) {
-                    return classDescriptor.getDanglingAnnotations()
-                }
-            }
         }
+
+        if (declaration is JetClassOrObject && modifierList.getParent() == declaration.getBody() && descriptor is LazyClassDescriptor) {
+            return descriptor.getDanglingAnnotations()
+        }
+
         return descriptor.getAnnotations()
     }
 

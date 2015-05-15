@@ -107,6 +107,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("PlatformStaticInClass.kt")
+    public void testPlatformStaticInClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PlatformStaticInClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("PlatformStaticInCompanionObject.kt")
+    public void testPlatformStaticInCompanionObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/PlatformStaticInCompanionObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReplaceFunctionCallByProperty.kt")
     public void testReplaceFunctionCallByProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ReplaceFunctionCallByProperty.kt");
