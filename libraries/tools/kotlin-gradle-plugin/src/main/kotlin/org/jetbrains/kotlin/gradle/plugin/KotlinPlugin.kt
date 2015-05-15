@@ -278,6 +278,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             }
         }
 
+        val aptConfigurations = hashMapOf<String, Configuration>()
+
         ext.getSourceSets().all(Action<AndroidSourceSet> { sourceSet ->
             if (sourceSet is HasConvention) {
                 val sourceSetName = sourceSet.getName()
@@ -286,6 +288,11 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 val kotlinDirSet = kotlinSourceSet.getKotlin()
                 kotlinDirSet.srcDir(project.file("src/${sourceSetName}/kotlin"))
 
+                val aptConfigurationName = if (sourceSet.getName() != "main") {
+                    "kotlinApt${sourceSet.getName().capitalize()}"
+                } else "kotlinApt"
+
+                aptConfigurations.put(sourceSet.getName(), project.getConfigurations().create(aptConfigurationName))
 
                 /*TODO: before 0.11 gradle android plugin there was:
                   sourceSet.getAllJava().source(kotlinDirSet)
@@ -301,18 +308,6 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
         (ext as ExtensionAware).getExtensions().add("kotlinOptions", tasksProvider.kotlinJVMOptionsClass)
 
-        fun addConfiguration(name: String): Configuration =
-                project.getConfigurations().create(name)
-
-        val kotlinAptConfiguration = addConfiguration("kotlinApt")
-        val kotlinAptAndroidTestConfiguration = addConfiguration("kotlinAptAndroidTest")
-        val kotlinAptTestConfiguration = addConfiguration("kotlinAptTest")
-
-        val aptConfigurations = mapOf(
-                "base" to kotlinAptConfiguration,
-                "androidTest" to kotlinAptAndroidTestConfiguration,
-                "unitTest" to kotlinAptTestConfiguration)
-
         project afterEvaluate { project ->
             if (project != null) {
                 val plugin = (project.getPlugins().findPlugin("android")
@@ -320,7 +315,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
                 val aptConfigurationDependencyFiles = aptConfigurations.mapValues { it.getValue().resolve() }
 
-                processVariantData(plugin.getVariantManager().getVariantDataList(), project, ext, plugin, aptConfigurationDependencyFiles)
+                processVariantData(plugin.getVariantManager().getVariantDataList(), project,
+                        ext, plugin, aptConfigurationDependencyFiles)
             }
         }
 
@@ -379,6 +375,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             configureDefaultSourceSet()
 
+            val aptFiles = arrayListOf<File>()
+
             // getSortedSourceProviders should return only actual java sources, generated sources should be collected earlier
             val providers = variantData.getVariantConfiguration().getSortedSourceProviders()
             for (provider in providers) {
@@ -388,19 +386,10 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 kotlinTask.source(kotlinSourceDirectorySet)
 
                 kotlinSourceDirectorySet.addSourceDirectories(javaSrcDirs)
+                aptFiles.addAll(aptConfigurations[(provider as AndroidSourceSet).getName()])
             }
 
             subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
-
-            fun filesForConfigurations(configurationIds: Array<String>): Set<File> {
-                return configurationIds.flatMap { aptConfigurations[it]?.toList() ?: listOf() }.distinct()
-            }
-
-            val aptFiles = filesForConfigurations(when (variantData.getType()) {
-                VariantType.UNIT_TEST -> arrayOf("base", "unitTest")
-                VariantType.ANDROID_TEST -> arrayOf("base", "androidTest")
-                else -> arrayOf("base")
-            })
 
             kotlinTask.setProperty("aptFiles", aptFiles)
 
