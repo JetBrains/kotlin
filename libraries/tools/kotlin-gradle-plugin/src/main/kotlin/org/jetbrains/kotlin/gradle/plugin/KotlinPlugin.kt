@@ -404,6 +404,11 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             kotlinTask.setProperty("aptFiles", aptFiles)
 
+            val aptOutputDir = project.file(File(project.getBuildDir(), "generated/source/kotlinApt"))
+            val aptOutputDirForVariant = File(aptOutputDir, variantDataName)
+            kotlinTask.setProperty("kotlinAptOutputDir", aptOutputDirForVariant)
+            variantData.addJavaSourceFoldersToModel(aptOutputDirForVariant)
+
             kotlinTask doFirst {
                 val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
                 val fullClasspath = (javaTask.getClasspath() + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))

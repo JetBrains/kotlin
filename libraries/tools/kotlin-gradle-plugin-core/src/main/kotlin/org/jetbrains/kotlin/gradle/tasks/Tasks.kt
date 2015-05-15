@@ -106,6 +106,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
     public var aptFiles: Set<File> = emptySet()
+    public var kotlinAptOutputDir: File? = null
 
     val srcDirsSources = HashSet<SourceDirectorySet>()
 

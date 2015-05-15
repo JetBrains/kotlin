@@ -42,10 +42,14 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
     }
 
     fun afterKotlinCompile(outputDirFile: File) {
+        val extraProperties = task.getExtensions().getExtraProperties()
         [suppress("UNCHECKED_CAST")]
-        val javaTask = (task.getExtensions().getExtraProperties().get("javaTask") as? WeakReference<JavaCompile>)?.get()
+        val javaTask = (extraProperties.get("javaTask") as? WeakReference<JavaCompile>)?.get()
+
         val aptFiles = task.aptFiles
-        if (javaTask == null || aptFiles.isEmpty()) return
+        val aptOutputDir = task.kotlinAptOutputDir
+
+        if (javaTask == null || aptFiles.isEmpty() || aptOutputDir == null) return
 
         val aptDir = File(outputDirFile, "0apt")
         val annotationDeclarationsFile = File(aptDir, ANNOTATIONS_FILENAME)
@@ -56,6 +60,8 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
 
         val annotationProcessorFqNames = lookupAnnotationProcessors(aptFiles)
         generateAnnotationProcessorStubs(aptDir, javaTask, annotationProcessorFqNames)
+        
+        addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
     }
 
     private fun generateJavaHackFile(aptDir: File, javaTask: JavaCompile) {
@@ -98,16 +104,34 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
 
     private fun addWrappersToCompilerArgs(javaTask: JavaCompile, wrapperFqNames: String) {
         val compilerArgs = javaTask.getOptions().getCompilerArgs()
-        val processorArgIndex = compilerArgs.indexOfFirst { "-processor" == it }
+        val argIndex = compilerArgs.indexOfFirst { "-processor" == it }
 
         // Already has a "-processor" argument (and it is not the last one)
-        if (processorArgIndex >= 0 && compilerArgs.size() > (processorArgIndex + 1)) {
-            compilerArgs[processorArgIndex + 1] =
-                    compilerArgs[processorArgIndex + 1] + "," + wrapperFqNames
+        if (argIndex >= 0 && compilerArgs.size() > (argIndex + 1)) {
+            compilerArgs[argIndex + 1] =
+                    compilerArgs[argIndex + 1] + "," + wrapperFqNames
         }
         else {
             compilerArgs.add("-processor")
             compilerArgs.add(wrapperFqNames)
+        }
+
+        javaTask.getOptions().setCompilerArgs(compilerArgs)
+    }
+
+    private fun addGeneratedSourcesOutputToCompilerArgs(javaTask: JavaCompile, outputDir: File) {
+        outputDir.mkdirs()
+
+        val compilerArgs = javaTask.getOptions().getCompilerArgs().toArrayList()
+
+        val argIndex = compilerArgs.indexOfFirst { "-s" == it }
+
+        if (argIndex >= 0 && compilerArgs.size() > (argIndex + 1)) {
+            compilerArgs[argIndex + 1] = outputDir.getAbsolutePath()
+        }
+        else {
+            compilerArgs.add("-s")
+            compilerArgs.add(outputDir.getAbsolutePath())
         }
 
         javaTask.getOptions().setCompilerArgs(compilerArgs)
