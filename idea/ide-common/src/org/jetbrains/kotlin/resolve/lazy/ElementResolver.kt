@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve.lazy
 import com.google.common.base.Function
 import com.google.common.base.Functions
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.analyzer.computeTypeInContext
 import org.jetbrains.kotlin.cfg.JetFlowInformationProvider
+import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.di.InjectorForBodyResolve
 import org.jetbrains.kotlin.name.FqName
@@ -32,18 +32,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.storage.ExceptionTracker
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
-import java.util.Collections
-
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public abstract class ElementResolver protected(
@@ -298,7 +294,7 @@ public abstract class ElementResolver protected(
         ForceResolveUtil.forceResolveAllContents(descriptor.getTypeConstructor().getSupertypes())
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, StatementFilter.NONE)
-        bodyResolver.resolveDelegationSpecifierList(createEmptyContext(resolveSession),
+        bodyResolver.resolveDelegationSpecifierList(createEmptyContext(),
                                                     classOrObject,
                                                     descriptor,
                                                     descriptor.getUnsubstitutedPrimaryConstructor(),
@@ -309,7 +305,7 @@ public abstract class ElementResolver protected(
     private fun propertyAdditionalResolve(resolveSession: ResolveSession, jetProperty: JetProperty, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
         val propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty)
 
-        val bodyResolveContext = BodyResolveContextForLazy(createParameters(resolveSession), object : Function<JetDeclaration, JetScope> {
+        val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisParameters.createForLocalDeclarations(), object : Function<JetDeclaration, JetScope> {
             override fun apply(declaration: JetDeclaration?): JetScope? {
                 assert(declaration!!.getParent() == jetProperty) { "Must be called only for property accessors, but called for " + declaration }
                 return resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration)
@@ -342,7 +338,7 @@ public abstract class ElementResolver protected(
         ForceResolveUtil.forceResolveAllContents(functionDescriptor)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
-        bodyResolver.resolveFunctionBody(createEmptyContext(resolveSession), trace, namedFunction, functionDescriptor, scope)
+        bodyResolver.resolveFunctionBody(createEmptyContext(), trace, namedFunction, functionDescriptor, scope)
     }
 
     private fun secondaryConstructorAdditionalResolve(resolveSession: ResolveSession, constructor: JetSecondaryConstructor, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
@@ -351,7 +347,7 @@ public abstract class ElementResolver protected(
         ForceResolveUtil.forceResolveAllContents(constructorDescriptor)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
-        bodyResolver.resolveSecondaryConstructorBody(createEmptyContext(resolveSession), trace, constructor, constructorDescriptor, scope)
+        bodyResolver.resolveSecondaryConstructorBody(createEmptyContext(), trace, constructor, constructorDescriptor, scope)
     }
 
     private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: JetClass, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
@@ -362,7 +358,7 @@ public abstract class ElementResolver protected(
                                     ?: error("Can't get primary constructor for descriptor '$classDescriptor' in from class '${klass.getElementTextWithContext()}'")
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
-        bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(createEmptyContext(resolveSession), trace, klass, constructorDescriptor, scope)
+        bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(createEmptyContext(), trace, klass, constructorDescriptor, scope)
     }
 
     private fun initializerAdditionalResolve(resolveSession: ResolveSession, classInitializer: JetClassInitializer, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
@@ -370,21 +366,20 @@ public abstract class ElementResolver protected(
         val classOrObjectDescriptor = resolveSession.resolveToDescriptor(classOrObject) as LazyClassDescriptor
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
-        bodyResolver.resolveAnonymousInitializer(createEmptyContext(resolveSession), classInitializer, classOrObjectDescriptor)
+        bodyResolver.resolveAnonymousInitializer(createEmptyContext(), classInitializer, classOrObjectDescriptor)
     }
 
     private fun createBodyResolver(resolveSession: ResolveSession, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter): BodyResolver {
-        val bodyResolve = InjectorForBodyResolve(file.getProject(), createParameters(resolveSession), trace,
-                                                 resolveSession.getModuleDescriptor(), getAdditionalCheckerProvider(file), statementFilter)
+        val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
+        val bodyResolve = InjectorForBodyResolve(
+                file.getProject(), globalContext,
+                trace, resolveSession.getModuleDescriptor(), getAdditionalCheckerProvider(file), statementFilter
+        )
         return bodyResolve.getBodyResolver()
     }
 
-    private fun createParameters(resolveSession: ResolveSession): TopDownAnalysisParameters {
-        return TopDownAnalysisParameters.createForLocalDeclarations(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
-    }
-
-    private fun createEmptyContext(resolveSession: ResolveSession): BodyResolveContextForLazy {
-        return BodyResolveContextForLazy(createParameters(resolveSession), Functions.constant<JetScope>(null))
+    private fun createEmptyContext(): BodyResolveContextForLazy {
+        return BodyResolveContextForLazy(TopDownAnalysisParameters.createForLocalDeclarations(), Functions.constant<JetScope>(null))
     }
 
     private fun getExpressionResolutionScope(resolveSession: ResolveSession, expression: JetExpression): JetScope {
@@ -459,12 +454,6 @@ public abstract class ElementResolver protected(
             private val topDownAnalysisParameters: TopDownAnalysisParameters,
             private val declaringScopes: Function<in JetDeclaration, JetScope>
     ) : BodiesResolveContext {
-
-        override val storageManager: StorageManager
-            get() = topDownAnalysisParameters.getStorageManager()
-
-        override val exceptionTracker: ExceptionTracker
-            get() = topDownAnalysisParameters.getExceptionTracker()
 
         override fun getFiles(): Collection<JetFile> = setOf()
 

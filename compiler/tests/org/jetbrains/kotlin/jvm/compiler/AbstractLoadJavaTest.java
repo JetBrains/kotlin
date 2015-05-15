@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
@@ -37,8 +38,6 @@ import org.jetbrains.kotlin.resolve.TopDownAnalysisParameters;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
-import org.jetbrains.kotlin.storage.ExceptionTracker;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -152,14 +151,13 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
         TopDownAnalysisParameters parameters = TopDownAnalysisParameters.create(
-                new LockBasedStorageManager(),
-                new ExceptionTracker(), // dummy
                 false,
                 false
         );
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
                 environment.getProject(),
+                ContextPackage.GlobalContext(),
                 environment.getSourceFiles(),
                 trace,
                 parameters,

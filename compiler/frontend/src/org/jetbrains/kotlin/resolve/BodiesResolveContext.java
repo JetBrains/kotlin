@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import java.util.Collection;
 import java.util.Map;
 
-public interface BodiesResolveContext extends GlobalContext {
+public interface BodiesResolveContext {
     @ReadOnly
     Collection<JetFile> getFiles();
 

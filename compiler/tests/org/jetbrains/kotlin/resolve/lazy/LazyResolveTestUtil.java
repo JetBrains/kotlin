@@ -56,14 +56,8 @@ public class LazyResolveTestUtil {
     public static ModuleDescriptor resolve(@NotNull Project project, @NotNull BindingTrace trace, @NotNull List<JetFile> sourceFiles) {
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
-        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        TopDownAnalysisParameters params = TopDownAnalysisParameters.create(
-                globalContext.getStorageManager(),
-                globalContext.getExceptionTracker(),
-                false, false
-        );
-
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(project, sourceFiles, trace, params, module);
+        TopDownAnalysisParameters params = TopDownAnalysisParameters.create(false, false);
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(project, ContextPackage.GlobalContext(), sourceFiles, trace, params, module);
 
         return module;
     }

@@ -101,18 +101,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         return secondaryConstructors;
     }
 
-    @NotNull
-    @Override
-    public StorageManager getStorageManager() {
-        return topDownAnalysisParameters.getStorageManager();
-    }
-
-    @NotNull
-    @Override
-    public ExceptionTracker getExceptionTracker() {
-        return topDownAnalysisParameters.getExceptionTracker();
-    }
-
     @Override
     public Collection<JetFile> getFiles() {
         return files;

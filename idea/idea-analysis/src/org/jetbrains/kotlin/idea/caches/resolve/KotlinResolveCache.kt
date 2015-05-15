@@ -233,7 +233,7 @@ private object KotlinResolveDataProvider {
             ).getLazyTopDownAnalyzerForTopLevel()!!
 
             lazyTopDownAnalyzer.analyzeDeclarations(
-                    TopDownAnalysisParameters.create(resolveSession.getStorageManager(), resolveSession.getExceptionTracker(), false, false),
+                    TopDownAnalysisParameters.create(false, false),
                     listOf(analyzableElement)
             )
             return AnalysisResult.success(

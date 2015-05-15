@@ -27,57 +27,33 @@ import org.jetbrains.kotlin.storage.StorageManager;
 /**
  * Various junk that cannot be placed into context (yet).
  */
-public class TopDownAnalysisParameters extends TypeLazinessToken implements GlobalContext {
+public class TopDownAnalysisParameters extends TypeLazinessToken {
 
     @NotNull
     public static TopDownAnalysisParameters create(
-            @NotNull StorageManager storageManager,
-            @NotNull ExceptionTracker exceptionTracker,
             boolean analyzingBootstrapLibrary,
             boolean declaredLocally
     ) {
-        return new TopDownAnalysisParameters(storageManager, exceptionTracker, analyzingBootstrapLibrary,
-                                             declaredLocally, true);
+        return new TopDownAnalysisParameters(analyzingBootstrapLibrary, declaredLocally, true);
     }
 
     @NotNull
-    public static TopDownAnalysisParameters createForLocalDeclarations(
-            @NotNull StorageManager storageManager,
-            @NotNull ExceptionTracker exceptionTracker
-    ) {
-        return new TopDownAnalysisParameters(storageManager, exceptionTracker, false, true, false);
+    public static TopDownAnalysisParameters createForLocalDeclarations() {
+        return new TopDownAnalysisParameters(false, true, false);
     }
 
-    @NotNull private final StorageManager storageManager;
-    @NotNull private final ExceptionTracker exceptionTracker;
     private final boolean analyzingBootstrapLibrary;
     private final boolean declaredLocally;
     private final boolean lazyTopDownAnalysis;
 
     private TopDownAnalysisParameters(
-            @NotNull StorageManager storageManager,
-            @NotNull ExceptionTracker exceptionTracker,
             boolean analyzingBootstrapLibrary,
             boolean declaredLocally,
             boolean lazyTopDownAnalysis
     ) {
-        this.storageManager = storageManager;
-        this.exceptionTracker = exceptionTracker;
         this.analyzingBootstrapLibrary = analyzingBootstrapLibrary;
         this.declaredLocally = declaredLocally;
         this.lazyTopDownAnalysis = lazyTopDownAnalysis;
-    }
-
-    @Override
-    @NotNull
-    public StorageManager getStorageManager() {
-        return storageManager;
-    }
-
-    @Override
-    @NotNull
-    public ExceptionTracker getExceptionTracker() {
-        return exceptionTracker;
     }
 
     public boolean isAnalyzingBootstrapLibrary() {

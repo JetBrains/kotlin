@@ -113,8 +113,6 @@ public class ReplInterpreter {
         GlobalContextImpl context = ContextPackage.GlobalContext();
 
         TopDownAnalysisParameters topDownAnalysisParameters = TopDownAnalysisParameters.create(
-                context.getStorageManager(),
-                context.getExceptionTracker(),
                 false,
                 true
         );
@@ -131,7 +129,7 @@ public class ReplInterpreter {
 
         InjectorForReplWithJava injector = new InjectorForReplWithJava(
                 project,
-                topDownAnalysisParameters,
+                context,
                 trace,
                 module,
                 scriptDeclarationFactory,
@@ -355,7 +353,7 @@ public class ReplInterpreter {
     @Nullable
     private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull MessageCollector messageCollector) {
         scriptDeclarationFactory.setDelegateFactory(
-                new FileBasedDeclarationProviderFactory(topDownAnalysisContext.getStorageManager(), Collections.singletonList(psiFile)));
+                new FileBasedDeclarationProviderFactory(resolveSession.getStorageManager(), Collections.singletonList(psiFile)));
 
         TopDownAnalysisContext context = topDownAnalyzer.analyzeDeclarations(
                 topDownAnalysisContext.getTopDownAnalysisParameters(),
