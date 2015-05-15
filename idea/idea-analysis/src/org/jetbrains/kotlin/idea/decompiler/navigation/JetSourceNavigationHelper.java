@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.context.ContextPackage;
-import org.jetbrains.kotlin.context.GlobalContextImpl;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -233,24 +233,22 @@ public class JetSourceNavigationHelper {
             @NotNull Collection<JetNamedDeclaration> candidates,
             @NotNull Project project
     ) {
-        GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
-                globalContext.getStorageManager(),
-                getContainingFiles(candidates)
-        );
 
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
                                                                          TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS,
                                                                          PlatformToKotlinClassMap.EMPTY);
+        ModuleContext moduleContext = ContextPackage.ModuleContext(moduleDescriptor, project);
+        FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
+                moduleContext.getStorageManager(),
+                getContainingFiles(candidates)
+        );
 
         moduleDescriptor.addDependencyOnModule(moduleDescriptor);
         moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
         moduleDescriptor.seal();
 
         ResolveSession resolveSession = new InjectorForLazyResolve(
-                project,
-                globalContext,
-                moduleDescriptor,
+                moduleContext,
                 providerFactory,
                 new BindingTraceContext(),
                 AdditionalCheckerProvider.DefaultProvider.INSTANCE$,

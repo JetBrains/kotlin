@@ -21,10 +21,12 @@ import com.google.common.base.Functions
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.computeTypeInContext
 import org.jetbrains.kotlin.cfg.JetFlowInformationProvider
-import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.SimpleGlobalContext
+import org.jetbrains.kotlin.context.withModule
+import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForBodyResolve
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -38,7 +40,6 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -372,8 +373,8 @@ public abstract class ElementResolver protected(
     private fun createBodyResolver(resolveSession: ResolveSession, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter): BodyResolver {
         val globalContext = SimpleGlobalContext(resolveSession.getStorageManager(), resolveSession.getExceptionTracker())
         val bodyResolve = InjectorForBodyResolve(
-                file.getProject(), globalContext,
-                trace, resolveSession.getModuleDescriptor(), getAdditionalCheckerProvider(file), statementFilter
+                globalContext.withProject(file.getProject()).withModule(resolveSession.getModuleDescriptor() as ModuleDescriptorImpl),
+                trace, getAdditionalCheckerProvider(file), statementFilter
         )
         return bodyResolve.getBodyResolver()
     }

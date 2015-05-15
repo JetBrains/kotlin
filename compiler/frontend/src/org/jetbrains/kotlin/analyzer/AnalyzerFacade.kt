@@ -16,19 +16,20 @@
 
 package org.jetbrains.kotlin.analyzer
 
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import java.util.HashMap
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.context.GlobalContext
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import java.util.ArrayList
-import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.context.withModule
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import java.util.ArrayList
+import java.util.HashMap
 import kotlin.properties.Delegates
 
 public trait ResolverForModule {
@@ -118,8 +119,7 @@ public trait ModuleInfo {
 //TODO: (module refactoring) extract project context
 public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParameters> {
     public fun <M : ModuleInfo> setupResolverForProject(
-            globalContext: GlobalContext,
-            project: Project,
+            projectContext: ProjectContext,
             modules: Collection<M>,
             modulesContent: (M) -> ModuleContent,
             platformParameters: P,
@@ -173,7 +173,7 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
                 module ->
                 val descriptor = resolverForProject.descriptorForModule(module)
                 val resolverForModule = createResolverForModule(
-                        module, project, globalContext, descriptor, modulesContent(module), platformParameters, resolverForProject
+                        module, projectContext.withModule(descriptor), modulesContent(module), platformParameters, resolverForProject
                 )
                 assert(descriptor.isInitialized, "ModuleDescriptorImpl#initialize() should be called in createResolverForModule")
                 resolverForProject.resolverByModuleDescriptor[descriptor] = resolverForModule
@@ -186,9 +186,7 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
 
     protected fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
-            project: Project,
-            globalContext: GlobalContext,
-            moduleDescriptor: ModuleDescriptorImpl,
+            moduleContext: ModuleContext,
             moduleContent: ModuleContent,
             platformParameters: P,
             resolverForProject: ResolverForProject<M, A>

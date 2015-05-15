@@ -20,8 +20,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.LazyResolveToken
+import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.generators.di.*
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
@@ -82,10 +82,8 @@ public fun createInjectorGenerators(): List<DependencyInjectorGenerator> =
 
 private fun generatorForLazyLocalClassifierAnalyzer() =
         generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyLocalClassifierAnalyzer") {
-            parameter<Project>()
-            parameter<GlobalContext>(useAsContext = true)
+            parameter<ModuleContext>(useAsContext = true)
             parameter<BindingTrace>()
-            parameter<ModuleDescriptor>(name = "module", useAsContext = true)
             parameter<AdditionalCheckerProvider>(useAsContext = true)
             parameter<DynamicTypesSettings>()
             parameter<LocalClassDescriptorHolder>()
@@ -100,14 +98,12 @@ private fun generatorForLazyLocalClassifierAnalyzer() =
 
 private fun generatorForLazyBodyResolve() =
         generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyBodyResolve") {
-            parameter<Project>()
-            parameter<GlobalContext>(useAsContext = true)
-            parameter<KotlinCodeAnalyzer>(name = "analyzer", useAsContext = true)
+            parameter<ModuleContext>(useAsContext = true)
+            parameter<KotlinCodeAnalyzer>(name = "analyzer")
+            parameter<FileScopeProvider>()
             parameter<BindingTrace>()
             parameter<AdditionalCheckerProvider>(useAsContext = true)
             parameter<DynamicTypesSettings>()
-
-            field<ModuleDescriptor>(init = GivenExpression("analyzer.getModuleDescriptor()"), useAsContext = true)
 
             publicField<LazyTopDownAnalyzerForTopLevel>()
         }
@@ -222,10 +218,8 @@ private fun generatorForTests() =
 
 private fun generatorForBodyResolve() =
         generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForBodyResolve") {
-            parameter<Project>()
-            parameter<GlobalContext>(useAsContext = true)
+            parameter<ModuleContext>(useAsContext = true)
             parameter<BindingTrace>()
-            parameter<ModuleDescriptor>(useAsContext = true)
             parameter<AdditionalCheckerProvider>(useAsContext = true)
             parameter<StatementFilter>()
 
@@ -234,9 +228,7 @@ private fun generatorForBodyResolve() =
 
 private fun generatorForLazyResolve() =
         generator("compiler/frontend/src", DI_DEFAULT_PACKAGE, "InjectorForLazyResolve") {
-            parameter<Project>()
-            parameter<GlobalContext>(useAsContext = true)
-            parameter<ModuleDescriptorImpl>(useAsContext = true)
+            parameter<ModuleContext>(useAsContext = true)
             parameter<DeclarationProviderFactory>()
             parameter<BindingTrace>()
             parameter<AdditionalCheckerProvider>(useAsContext = true)
@@ -249,10 +241,8 @@ private fun generatorForLazyResolve() =
         }
 
 private fun DependencyInjectorGenerator.commonForResolveSessionBased() {
-    parameter<Project>()
-    parameter<GlobalContext>(useAsContext = true)
+    publicParameter<ModuleContext>(useAsContext = true)
     parameter<BindingTrace>()
-    publicParameter<ModuleDescriptorImpl>(name = "module", useAsContext = true)
     parameter<DeclarationProviderFactory>()
 
     publicField<ResolveSession>()

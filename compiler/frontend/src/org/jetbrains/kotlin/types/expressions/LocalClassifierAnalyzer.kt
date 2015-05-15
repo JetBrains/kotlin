@@ -19,9 +19,12 @@ package org.jetbrains.kotlin.types.expressions
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.context.withModule
+import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForLazyLocalClassifierAnalyzer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
@@ -59,12 +62,11 @@ public class LocalClassifierAnalyzer(
             additionalCheckerProvider: AdditionalCheckerProvider,
             dynamicTypesSettings: DynamicTypesSettings
     ) {
-        val moduleDescriptor = DescriptorUtils.getContainingModule(containingDeclaration)
+        val module = DescriptorUtils.getContainingModule(containingDeclaration)
+        val moduleContext = globalContext.withProject(classOrObject.getProject()).withModule(module as ModuleDescriptorImpl)
         val injector = InjectorForLazyLocalClassifierAnalyzer(
-                classOrObject.getProject(),
-                globalContext,
+                moduleContext,
                 context.trace,
-                moduleDescriptor,
                 additionalCheckerProvider,
                 dynamicTypesSettings,
                 LocalClassDescriptorHolder(
@@ -73,7 +75,7 @@ public class LocalClassifierAnalyzer(
                         containingDeclaration,
                         globalContext.storageManager,
                         context,
-                        moduleDescriptor,
+                        module,
                         descriptorResolver,
                         funcionDescriptorResolver,
                         typeResolver,

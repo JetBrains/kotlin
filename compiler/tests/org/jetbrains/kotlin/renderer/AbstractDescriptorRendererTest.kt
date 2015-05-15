@@ -16,28 +16,28 @@
 
 package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import com.intellij.openapi.editor.impl.DocumentImpl
-import org.jetbrains.kotlin.test.JetTestUtils
-import java.util.ArrayList
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.test.ConfigurationKind
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
-import java.io.File
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.context.GlobalContext
-import org.jetbrains.kotlin.di.InjectorForLazyResolve
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.di.InjectorForLazyResolve
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment
-import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.JetTestUtils
 import org.jetbrains.kotlin.types.DynamicTypesSettings
+import java.io.File
+import java.util.ArrayList
 
 public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
     protected open fun getDescriptor(declaration: JetDeclaration, resolveSession: ResolveSession): DeclarationDescriptor {
@@ -49,11 +49,11 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
         val psiFile = JetPsiFactory(getProject()).createFile(fileText)
 
         val lazyModule = TopDownAnalyzerFacadeForJVM.createSealedJavaModule()
-        val globalContext = GlobalContext()
+        val moduleContext = ModuleContext(lazyModule, getProject())
 
         val resolveSession = InjectorForLazyResolve(
-                getProject(), globalContext, lazyModule,
-                FileBasedDeclarationProviderFactory(globalContext.storageManager, listOf(psiFile)),
+                moduleContext,
+                FileBasedDeclarationProviderFactory(moduleContext.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                 KotlinJvmCheckerProvider, DynamicTypesSettings()).getResolveSession()
 

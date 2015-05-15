@@ -56,7 +56,7 @@ public class LazyResolveTestUtil {
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
-                project, ContextPackage.GlobalContext(), sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations, module
+                ContextPackage.ModuleContext(module, project), sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations
         );
 
         return module;

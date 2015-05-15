@@ -151,12 +151,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
-                environment.getProject(),
-                ContextPackage.GlobalContext(),
+                ContextPackage.ModuleContext(module, environment.getProject()),
                 environment.getSourceFiles(),
                 trace,
-                TopDownAnalysisMode.TopLevelDeclarations,
-                module);
+                TopDownAnalysisMode.TopLevelDeclarations
+        );
 
         PackageViewDescriptor packageView = module.getPackage(TEST_PACKAGE_FQNAME);
         assert packageView != null : "Test package not found";

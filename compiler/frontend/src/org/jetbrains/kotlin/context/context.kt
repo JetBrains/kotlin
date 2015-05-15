@@ -16,13 +16,31 @@
 
 package org.jetbrains.kotlin.context
 
-import org.jetbrains.kotlin.storage.StorageManager
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 
 public trait GlobalContext {
     public val storageManager: StorageManager
     public val exceptionTracker: ExceptionTracker
+}
+
+public trait ProjectContext : GlobalContext {
+    public val project: Project
+}
+
+public trait ModuleContext : ProjectContext {
+    public val module: ModuleDescriptorImpl
+
+    public val platformToKotlinClassMap: PlatformToKotlinClassMap
+        get() = module.platformToKotlinClassMap
+
+    public val builtIns: KotlinBuiltIns
+        get() = module.builtIns
 }
 
 public open class SimpleGlobalContext(
@@ -37,10 +55,27 @@ public open class GlobalContextImpl(
     override val storageManager: LockBasedStorageManager = super.storageManager as LockBasedStorageManager
 }
 
+public class ProjectContextImpl(
+        override val project: Project,
+        private val globalContext: GlobalContext
+) : ProjectContext, GlobalContext by globalContext
+
+public class ModuleContextImpl(
+        override val module: ModuleDescriptorImpl,
+        projectContext: ProjectContext
+) : ModuleContext, ProjectContext by projectContext
+
 public fun GlobalContext(): GlobalContextImpl {
     val tracker = ExceptionTracker()
     return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
 }
+
+public fun ProjectContext(project: Project): ProjectContext = ProjectContextImpl(project, GlobalContext())
+public fun ModuleContext(module: ModuleDescriptorImpl, project: Project): ModuleContext =
+        ModuleContextImpl(module, ProjectContext(project))
+
+public fun GlobalContext.withProject(project: Project): ProjectContext = ProjectContextImpl(project, this)
+public fun ProjectContext.withModule(module: ModuleDescriptorImpl): ModuleContext = ModuleContextImpl(module, this)
 
 deprecated("Used temporarily while we are in transition from to lazy resolve")
 public open class TypeLazinessToken {

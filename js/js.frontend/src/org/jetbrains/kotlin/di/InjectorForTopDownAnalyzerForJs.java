@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.di;
 
+import org.jetbrains.kotlin.context.ModuleContext;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.kotlin.context.GlobalContext;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
@@ -76,13 +76,13 @@ import javax.annotation.PreDestroy;
 @SuppressWarnings("all")
 public class InjectorForTopDownAnalyzerForJs {
 
+    private final ModuleContext moduleContext;
+    private final KotlinBuiltIns kotlinBuiltIns;
+    private final ModuleDescriptorImpl moduleDescriptor;
+    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final Project project;
-    private final GlobalContext globalContext;
     private final StorageManager storageManager;
     private final BindingTrace bindingTrace;
-    private final ModuleDescriptorImpl module;
-    private final KotlinBuiltIns kotlinBuiltIns;
-    private final PlatformToKotlinClassMap platformToKotlinClassMap;
     private final DeclarationProviderFactory declarationProviderFactory;
     private final ResolveSession resolveSession;
     private final ScopeProvider scopeProvider;
@@ -131,21 +131,19 @@ public class InjectorForTopDownAnalyzerForJs {
     private final VarianceChecker varianceChecker;
 
     public InjectorForTopDownAnalyzerForJs(
-        @NotNull Project project,
-        @NotNull GlobalContext globalContext,
+        @NotNull ModuleContext moduleContext,
         @NotNull BindingTrace bindingTrace,
-        @NotNull ModuleDescriptorImpl module,
         @NotNull DeclarationProviderFactory declarationProviderFactory
     ) {
-        this.project = project;
-        this.globalContext = globalContext;
-        this.storageManager = globalContext.getStorageManager();
+        this.moduleContext = moduleContext;
+        this.kotlinBuiltIns = moduleContext.getBuiltIns();
+        this.moduleDescriptor = moduleContext.getModule();
+        this.platformToKotlinClassMap = moduleContext.getPlatformToKotlinClassMap();
+        this.project = moduleContext.getProject();
+        this.storageManager = moduleContext.getStorageManager();
         this.bindingTrace = bindingTrace;
-        this.module = module;
-        this.kotlinBuiltIns = module.getBuiltIns();
-        this.platformToKotlinClassMap = module.getPlatformToKotlinClassMap();
         this.declarationProviderFactory = declarationProviderFactory;
-        this.resolveSession = new ResolveSession(project, globalContext, getModule(), declarationProviderFactory, bindingTrace);
+        this.resolveSession = new ResolveSession(project, getModuleContext(), moduleDescriptor, declarationProviderFactory, bindingTrace);
         this.scopeProvider = new ScopeProvider(getResolveSession());
         this.lazyTopDownAnalyzerForTopLevel = new LazyTopDownAnalyzerForTopLevel();
         this.kotlinJsCheckerProvider = KotlinJsCheckerProvider.INSTANCE$;
@@ -163,20 +161,20 @@ public class InjectorForTopDownAnalyzerForJs {
         this.qualifiedExpressionResolver = new QualifiedExpressionResolver();
         this.flexibleTypeCapabilitiesProvider = new FlexibleTypeCapabilitiesProvider();
         this.typeLazinessToken = new TypeLazinessToken();
-        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, getModule(), flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesAllowed);
+        this.typeResolver = new TypeResolver(annotationResolver, qualifiedExpressionResolver, moduleDescriptor, flexibleTypeCapabilitiesProvider, storageManager, typeLazinessToken, dynamicTypesAllowed);
         this.forLoopConventionsChecker = new ForLoopConventionsChecker();
         this.fakeCallResolver = new FakeCallResolver(project, callResolver);
         this.functionDescriptorResolver = new FunctionDescriptorResolver(typeResolver, descriptorResolver, annotationResolver, storageManager, expressionTypingServices, kotlinBuiltIns);
         this.localClassifierAnalyzer = new LocalClassifierAnalyzer(descriptorResolver, functionDescriptorResolver, typeResolver, annotationResolver);
         this.multiDeclarationResolver = new MultiDeclarationResolver(fakeCallResolver, descriptorResolver, typeResolver, symbolUsageValidator);
-        this.reflectionTypes = new ReflectionTypes(getModule());
+        this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.valueParameterResolver = new ValueParameterResolver(kotlinJsCheckerProvider, expressionTypingServices);
         this.statementFilter = new StatementFilter();
         this.candidateResolver = new CandidateResolver();
         this.callCompleter = new CallCompleter(argumentTypeResolver, candidateResolver);
         this.taskPrioritizer = new TaskPrioritizer(storageManager);
         this.jetImportsFactory = new JetImportsFactory();
-        this.lazyDeclarationResolver = new LazyDeclarationResolver(globalContext, bindingTrace);
+        this.lazyDeclarationResolver = new LazyDeclarationResolver(getModuleContext(), bindingTrace);
         this.declarationScopeProvider = new DeclarationScopeProviderImpl(lazyDeclarationResolver);
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
@@ -236,7 +234,7 @@ public class InjectorForTopDownAnalyzerForJs {
         expressionTypingComponents.setExpressionTypingServices(expressionTypingServices);
         expressionTypingComponents.setForLoopConventionsChecker(forLoopConventionsChecker);
         expressionTypingComponents.setFunctionDescriptorResolver(functionDescriptorResolver);
-        expressionTypingComponents.setGlobalContext(globalContext);
+        expressionTypingComponents.setGlobalContext(moduleContext);
         expressionTypingComponents.setLocalClassifierAnalyzer(localClassifierAnalyzer);
         expressionTypingComponents.setMultiDeclarationResolver(multiDeclarationResolver);
         expressionTypingComponents.setPlatformToKotlinClassMap(platformToKotlinClassMap);
@@ -282,7 +280,7 @@ public class InjectorForTopDownAnalyzerForJs {
         lazyTopDownAnalyzer.setDeclarationScopeProvider(declarationScopeProvider);
         lazyTopDownAnalyzer.setFileScopeProvider(scopeProvider);
         lazyTopDownAnalyzer.setLazyDeclarationResolver(lazyDeclarationResolver);
-        lazyTopDownAnalyzer.setModuleDescriptor(module);
+        lazyTopDownAnalyzer.setModuleDescriptor(moduleDescriptor);
         lazyTopDownAnalyzer.setOverloadResolver(overloadResolver);
         lazyTopDownAnalyzer.setOverrideResolver(overrideResolver);
         lazyTopDownAnalyzer.setTopLevelDescriptorProvider(resolveSession);
@@ -322,8 +320,8 @@ public class InjectorForTopDownAnalyzerForJs {
     public void destroy() {
     }
 
-    public ModuleDescriptorImpl getModule() {
-        return this.module;
+    public ModuleContext getModuleContext() {
+        return this.moduleContext;
     }
 
     public ResolveSession getResolveSession() {

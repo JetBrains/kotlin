@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -65,7 +65,7 @@ class ProjectBasedResolverForDecompiler(project: Project) : ResolverForDecompile
         module.addDependencyOnModule(module)
         module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
         module.seal()
-        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(project, GlobalContext(), listOf(), BindingTraceContext(), module, null, null).moduleDescriptor
+        TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(ModuleContext(module, project), listOf(), BindingTraceContext(), null, null).moduleDescriptor
     }
 
     override fun resolveTopLevelClass(classId: ClassId): ClassDescriptor? {

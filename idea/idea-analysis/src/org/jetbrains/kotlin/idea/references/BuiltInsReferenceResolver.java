@@ -38,7 +38,7 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ContextPackage;
-import org.jetbrains.kotlin.context.GlobalContextImpl;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForLazyResolve;
@@ -95,19 +95,19 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         final Runnable initializeRunnable = new Runnable() {
             @Override
             public void run() {
-                GlobalContextImpl globalContext = ContextPackage.GlobalContext();
-
                 ModuleDescriptorImpl module = new ModuleDescriptorImpl(
                         Name.special("<built-ins resolver module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
                 );
                 module.addDependencyOnModule(module);
                 module.seal();
 
+                ModuleContext moduleContext = ContextPackage.ModuleContext(module, myProject);
+
                 FileBasedDeclarationProviderFactory declarationFactory =
-                        new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(), jetBuiltInsFiles);
+                        new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), jetBuiltInsFiles);
 
                 InjectorForLazyResolve injectorForLazyResolve =
-                        new InjectorForLazyResolve(myProject, globalContext, module, declarationFactory, new BindingTraceContext(),
+                        new InjectorForLazyResolve(moduleContext, declarationFactory, new BindingTraceContext(),
                                                    AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
                                                    new DynamicTypesSettings());
 

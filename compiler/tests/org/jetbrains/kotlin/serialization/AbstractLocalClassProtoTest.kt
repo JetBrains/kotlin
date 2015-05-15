@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -54,11 +54,11 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
         val module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule()
-        val globalContext = GlobalContext()
-        val providerFactory = FileBasedDeclarationProviderFactory(globalContext.storageManager, emptyList())
+        val moduleContext = ModuleContext(module, environment.project)
+        val providerFactory = FileBasedDeclarationProviderFactory(moduleContext.storageManager, emptyList())
 
         val injector = InjectorForTopDownAnalyzerForJvm(
-                environment.project, globalContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), module,
+                moduleContext, CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                 providerFactory, GlobalSearchScope.allScope(environment.project)
         )
         module.initialize(injector.getJavaDescriptorResolver().packageFragmentProvider)

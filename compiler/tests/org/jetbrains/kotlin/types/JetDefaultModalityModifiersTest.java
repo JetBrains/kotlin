@@ -20,17 +20,13 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.context.ContextPackage;
-import org.jetbrains.kotlin.context.GlobalContextImpl;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForLazyResolve;
 import org.jetbrains.kotlin.di.InjectorForTests;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.resolve.DescriptorResolver;
-import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
@@ -102,12 +98,10 @@ public class JetDefaultModalityModifiersTest extends JetLiteFixture {
         }
 
         private ClassDescriptorWithResolutionScopes createClassDescriptor(ClassKind kind, JetClass aClass) {
-            GlobalContextImpl globalContext = ContextPackage.GlobalContext();
+            ModuleContext moduleContext = ContextPackage.ModuleContext(root, getProject());
             ResolveSession resolveSession = new InjectorForLazyResolve(
-                    getProject(),
-                    globalContext,
-                    root,
-                    new FileBasedDeclarationProviderFactory(globalContext.getStorageManager(),
+                    moduleContext,
+                    new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(),
                                                             Collections.singleton(aClass.getContainingJetFile())),
                     new BindingTraceContext(),
                     AdditionalCheckerProvider.DefaultProvider.INSTANCE$,

@@ -78,6 +78,6 @@ public class JvmResolveUtil {
         BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
 
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                project, ContextPackage.GlobalContext(), files, trace, module, null, null);
+                ContextPackage.ModuleContext(module, project), files, trace, null, null);
     }
 }

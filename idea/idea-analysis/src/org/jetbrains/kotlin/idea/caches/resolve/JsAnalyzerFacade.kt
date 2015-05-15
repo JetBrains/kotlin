@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
-import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.kotlin.idea.framework.JsHeaderLibraryDetectionUtil
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
@@ -44,29 +42,29 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
 
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
-            project: Project,
-            globalContext: GlobalContext,
-            moduleDescriptor: ModuleDescriptorImpl,
+            moduleContext: ModuleContext,
             moduleContent: ModuleContent,
             platformParameters: PlatformAnalysisParameters,
             resolverForProject: ResolverForProject<M, JsResolverForModule>
     ): JsResolverForModule {
         val (syntheticFiles, moduleContentScope) = moduleContent
+        val project = moduleContext.project
         val declarationProviderFactory = DeclarationProviderFactoryService.createDeclarationProviderFactory(
-                project, globalContext.storageManager, syntheticFiles, moduleContentScope
+                project, moduleContext.storageManager, syntheticFiles, moduleContentScope
         )
 
-        val injector = InjectorForLazyResolve(project, globalContext, moduleDescriptor, declarationProviderFactory, BindingTraceContext(),
+        val injector = InjectorForLazyResolve(moduleContext, declarationProviderFactory, BindingTraceContext(),
                                               KotlinJsCheckerProvider, DynamicTypesAllowed())
         val resolveSession = injector.getResolveSession()!!
         var packageFragmentProvider = resolveSession.getPackageFragmentProvider()
 
+        val moduleDescriptor = moduleContext.module
         if (moduleInfo is LibraryInfo) {
             val files = moduleInfo.library.getFiles(OrderRootType.CLASSES)
             if (!JsHeaderLibraryDetectionUtil.isJsHeaderLibraryWithSources(files.toList())) {
                 val providers = moduleInfo.library.getFiles(OrderRootType.CLASSES)
                         .flatMap { KotlinJavascriptMetadataUtils.loadMetadata(PathUtil.getLocalPath(it)!!) }
-                        .map { KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, it.body, globalContext.storageManager) }
+                        .map { KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, it.body, moduleContext.storageManager) }
                         .filterNotNull()
 
                 if (providers.isNotEmpty()) {

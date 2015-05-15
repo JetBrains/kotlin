@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.context.GlobalContext;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.SimpleGlobalContext;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
@@ -59,6 +60,8 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 import java.io.File;
 import java.util.*;
 
+import static org.jetbrains.kotlin.context.ContextPackage.withModule;
+import static org.jetbrains.kotlin.context.ContextPackage.withProject;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE;
 import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL;
@@ -144,7 +147,8 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
         StringBuilder actualText = new StringBuilder();
         for (TestFile testFile : testFiles) {
-            ok &= testFile.getActualText(moduleBindings.get(testFile.getModule()), actualText, shouldSkipJvmSignatureDiagnostics(groupedByModule));
+            ok &= testFile.getActualText(moduleBindings.get(testFile.getModule()), actualText,
+                                         shouldSkipJvmSignatureDiagnostics(groupedByModule));
         }
 
         Throwable exceptionFromDynamicCallDescriptorsValidation = null;
@@ -223,14 +227,14 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             ModuleDescriptorImpl module,
             BindingTrace moduleTrace
     ) {
+        ModuleContext moduleContext = withModule(withProject(context, getProject()), module);
+
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                getProject(),
-                context,
+                moduleContext,
                 jetFiles,
                 moduleTrace,
-                module,
                 null,
                 null
         );
@@ -378,7 +382,6 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             if (diagnosticsStoringResolvedCalls1.contains(factory)) {
                 assertResolvedCallsAreCompleted(
                         diagnostic, DiagnosticFactory.cast(diagnostic, diagnosticsStoringResolvedCalls1).getA());
-
             }
             //noinspection SuspiciousMethodCalls
             if (diagnosticsStoringResolvedCalls2.contains(factory)) {

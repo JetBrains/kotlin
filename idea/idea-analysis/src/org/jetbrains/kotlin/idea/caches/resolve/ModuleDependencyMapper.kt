@@ -16,24 +16,21 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.module.ModuleManager
-import org.jetbrains.kotlin.utils.keysToMap
-import com.intellij.openapi.roots.LibraryOrderEntry
-import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
-import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.JdkOrderEntry
-import org.jetbrains.kotlin.analyzer.AnalyzerFacade
-import org.jetbrains.kotlin.analyzer.ResolverForModule
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.storage.ExceptionTracker
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.analyzer.ResolverForProject
-import org.jetbrains.kotlin.analyzer.ModuleContent
-import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.GlobalContextImpl
+import org.jetbrains.kotlin.context.withProject
+import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
+import org.jetbrains.kotlin.storage.ExceptionTracker
+import org.jetbrains.kotlin.utils.keysToMap
 
 fun createModuleResolverProvider(
         project: Project,
@@ -64,7 +61,8 @@ fun createModuleResolverProvider(
         }
 
         val resolverForProject = analyzerFacade.setupResolverForProject(
-                globalContext, project, modulesToCreateResolversFor, modulesContent, jvmPlatformParameters, delegateProvider.resolverForProject
+                globalContext.withProject(project), modulesToCreateResolversFor, modulesContent,
+                jvmPlatformParameters, delegateProvider.resolverForProject
         )
         return resolverForProject
     }

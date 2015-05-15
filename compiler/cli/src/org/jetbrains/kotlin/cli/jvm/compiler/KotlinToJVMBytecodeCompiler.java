@@ -320,11 +320,9 @@ public class KotlinToJVMBytecodeCompiler {
                         ModuleDescriptorImpl analyzeModule = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
 
                         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                                environment.getProject(),
-                                ContextPackage.GlobalContext(),
+                                ContextPackage.ModuleContext(analyzeModule, environment.getProject()),
                                 environment.getSourceFiles(),
                                 sharedTrace,
-                                analyzeModule,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),
                                 environment.getConfiguration().get(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER)
                         );
