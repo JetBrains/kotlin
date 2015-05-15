@@ -65,7 +65,7 @@ import java.util.HashSet
 
 trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetNamedDeclaration {
     object Default: Mover {
-        [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
+        @suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
         override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration {
             val newElement = targetFile.add(originalElement) as JetNamedDeclaration
             originalElement.delete()
@@ -74,7 +74,7 @@ trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetN
     }
 
     object Idle: Mover {
-        [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
+        @suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
         override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile) = originalElement
     }
 }
@@ -93,8 +93,6 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
         val options: MoveKotlinTopLevelDeclarationsOptions,
         val mover: Mover = Mover.Default) : BaseRefactoringProcessor(project) {
     companion object {
-        private val LOG: Logger = Logger.getInstance(javaClass<MoveKotlinTopLevelDeclarationsProcessor>())
-
         private val REFACTORING_NAME: String = JetRefactoringBundle.message("refactoring.move.top.level.declarations")
     }
 
@@ -105,7 +103,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
 
     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>?): UsageViewDescriptor {
         return MoveMultipleElementsViewDescriptor(
-                elementsToMove.copyToArray(),
+                elementsToMove.toTypedArray(),
                 MoveClassesOrPackagesUtil.getPackageName(options.moveTarget.packageWrapper)
         )
     }
@@ -222,7 +220,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
         val usages = collectUsages()
         collectConflictsInUsages(usages)
         collectConflictsInDeclarations()
-        return UsageViewUtil.removeDuplicatedUsages(usages.copyToArray())
+        return UsageViewUtil.removeDuplicatedUsages(usages.toTypedArray())
     }
 
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
@@ -275,12 +273,12 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                 oldToNewElementsMapping[oldFile] = newDeclaration.getContainingJetFile()
 
                 getTransaction()!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
-                for ((oldElement, newElement) in oldLightElements.stream() zip newDeclaration.toLightElements().stream()) {
+                for ((oldElement, newElement) in oldLightElements.asSequence() zip newDeclaration.toLightElements().asSequence()) {
                     oldToNewElementsMapping[oldElement] = newElement
                 }
             }
 
-            nonCodeUsages = postProcessMoveUsages(usageList, oldToNewElementsMapping).copyToArray()
+            nonCodeUsages = postProcessMoveUsages(usageList, oldToNewElementsMapping).toTypedArray()
         }
         catch (e: IncorrectOperationException) {
             nonCodeUsages = null
@@ -294,7 +292,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
     }
 
     fun execute(usages: List<UsageInfo>) {
-        execute(usages.copyToArray())
+        execute(usages.toTypedArray())
     }
 
     override fun getCommandName(): String = REFACTORING_NAME

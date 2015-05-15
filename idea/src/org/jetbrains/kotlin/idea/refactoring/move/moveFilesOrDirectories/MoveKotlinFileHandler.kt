@@ -62,8 +62,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
 
         if (psiFile !is JetFile || !psiFile.packageMatchesDirectory()) return null
 
-        val newPackage = newParent.getPackage()
-        if (newPackage == null) return null
+        val newPackage = newParent.getPackage() ?: return null
 
         val packageNameInfo = PackageNameInfo(psiFile.getPackageFqName(), FqName(newPackage.getQualifiedName()))
         val project = psiFile.getProject()

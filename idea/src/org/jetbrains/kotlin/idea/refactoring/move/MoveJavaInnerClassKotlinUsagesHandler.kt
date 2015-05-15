@@ -30,8 +30,7 @@ import com.intellij.psi.PsiWhiteSpace
 
 public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler {
     override fun correctInnerClassUsage(usage: UsageInfo, outerClass: PsiClass) {
-        val innerCall = usage.getElement()?.getParent() as? JetCallExpression
-        if (innerCall == null) return
+        val innerCall = usage.getElement()?.getParent() as? JetCallExpression ?: return
 
         val receiver = (innerCall.getParent() as? JetQualifiedExpression)?.getReceiverExpression()
         val outerClassRef = when (receiver) {
@@ -41,8 +40,7 @@ public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler 
         } as? JetSimpleNameExpression
         if (outerClassRef?.getReference()?.resolve() != outerClass) return
 
-        val outerCall = outerClassRef!!.getParent() as? JetCallExpression
-        if (outerCall == null) return
+        val outerCall = outerClassRef!!.getParent() as? JetCallExpression ?: return
 
         val psiFactory = JetPsiFactory(usage.getProject())
 

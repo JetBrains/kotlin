@@ -44,7 +44,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     ): Boolean {
         if (!CommonRefactoringUtil.checkReadOnlyStatusRecursively(project, elements.toList(), true)) return false
 
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         val elementsToSearch = elements.toSet() as Set<JetNamedDeclaration>
 
         val sourceFiles = elementsToSearch.mapTo(LinkedHashSet<JetFile>()) { it.getContainingJetFile() }
@@ -104,7 +104,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     override fun tryToMove(
             element: PsiElement, project: Project, dataContext: DataContext?, reference: PsiReference?, editor: Editor?
     ): Boolean {
-        val elementsToMove = array(element)
+        val elementsToMove = arrayOf(element)
         val targetContainer = dataContext?.let { dataContext -> LangDataKeys.TARGET_PSI_ELEMENT.getData(dataContext) }
 
         return canMove(elementsToMove, targetContainer) && doMoveWithCheck(project, elementsToMove, targetContainer, null)

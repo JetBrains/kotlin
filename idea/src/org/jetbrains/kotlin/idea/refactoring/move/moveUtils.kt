@@ -52,12 +52,11 @@ import java.util.Comparator
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqName)
 
 public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo: PackageNameInfo): List<UsageInfo> {
-    val file = getContainingFile() as? JetFile
-    if (file == null) return Collections.emptyList()
+    val file = getContainingFile() as? JetFile ?: return listOf()
 
     val importPaths = file.getImportDirectives().map { it.getImportPath() }.filterNotNull()
 
-    [tailRecursive] fun isImported(descriptor: DeclarationDescriptor): Boolean {
+    @tailRecursive fun isImported(descriptor: DeclarationDescriptor): Boolean {
         val fqName = DescriptorUtils.getFqName(descriptor).let { if (it.isSafe()) it.toSafe() else return@isImported false }
         if (importPaths.any { fqName.isImported(it, false) }) return true
 
@@ -180,7 +179,7 @@ private fun updateJavaReference(reference: PsiReferenceExpression, oldElement: P
 
         val newClass = newElement.getContainingClass()
         if (newClass != null && reference.getQualifierExpression() != null) {
-            val mockMoveMembersOptions = MockMoveMembersOptions(newClass.getQualifiedName(), array(newElement))
+            val mockMoveMembersOptions = MockMoveMembersOptions(newClass.getQualifiedName(), arrayOf(newElement))
             val moveMembersUsageInfo = MoveMembersProcessor.MoveMembersUsageInfo(
                     newElement, reference.getElement(), newClass, reference.getQualifierExpression(), reference)
             val moveMemberHandler = MoveMemberHandler.EP_NAME.forLanguage(reference.getElement().getLanguage())
