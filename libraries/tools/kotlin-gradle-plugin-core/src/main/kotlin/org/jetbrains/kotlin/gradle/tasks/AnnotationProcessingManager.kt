@@ -160,7 +160,7 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
         val classFqName = "$packageName/$className"
 
         val bytes = with (ClassWriter(0)) {
-            val superClass = "org/kotlin/annotations/AnnotationProcessorWrapper"
+            val superClass = "org/jetbrains/kotlin/annotation/AnnotationProcessorWrapper"
 
             visit(49, ACC_PUBLIC + ACC_SUPER, classFqName, null,
                     superClass, null)
