@@ -58,8 +58,8 @@ class KotlinJavascriptAnnotationAndConstantLoader(
     }
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {
-        // TODO: support type annotations for js descriptors
-        return listOf()
+        val annotations = proto.getExtension(JsProtoBuf.typeAnnotation).orEmpty()
+        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
     }
 
     override fun loadPropertyConstant(

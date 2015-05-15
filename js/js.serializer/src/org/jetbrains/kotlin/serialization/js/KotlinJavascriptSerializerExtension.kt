@@ -16,11 +16,17 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.serialization.*
+import org.jetbrains.kotlin.serialization.AnnotationSerializer
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.SerializerExtension
+import org.jetbrains.kotlin.serialization.StringTable
+import org.jetbrains.kotlin.types.JetType
 
 public object KotlinJavascriptSerializerExtension : SerializerExtension() {
     override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder, stringTable: StringTable) {
@@ -52,6 +58,12 @@ public object KotlinJavascriptSerializerExtension : SerializerExtension() {
     ) {
         for (annotation in descriptor.getAnnotations()) {
             proto.addExtension(JsProtoBuf.parameterAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
+        }
+    }
+
+    override fun serializeType(type: JetType, proto: ProtoBuf.Type.Builder, stringTable: StringTable) {
+        for (annotation in type.getAnnotations()) {
+            proto.addExtension(JsProtoBuf.typeAnnotation, AnnotationSerializer.serializeAnnotation(annotation, stringTable))
         }
     }
 }

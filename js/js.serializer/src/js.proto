@@ -34,6 +34,10 @@ extend Callable.ValueParameter {
   repeated Annotation parameter_annotation = 130;
 }
 
+extend Type {
+  repeated Annotation type_annotation = 130;
+}
+
 message Classes {
   // id in StringTable
   repeated int32 class_name = 1 [packed = true];
