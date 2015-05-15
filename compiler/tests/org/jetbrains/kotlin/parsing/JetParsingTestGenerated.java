@@ -1620,6 +1620,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("BrokenFunctionSuperType.kt")
+            public void testBrokenFunctionSuperType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/BrokenFunctionSuperType.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("CatchKeywordRBrace.kt")
             public void testCatchKeywordRBrace() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/recovery/CatchKeywordRBrace.kt");
