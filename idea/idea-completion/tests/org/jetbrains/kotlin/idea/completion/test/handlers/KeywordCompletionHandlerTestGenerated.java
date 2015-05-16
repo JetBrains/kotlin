@@ -107,6 +107,12 @@ public class KeywordCompletionHandlerTestGenerated extends AbstractKeywordComple
         doTest(fileName);
     }
 
+    @TestMetadata("ReturnNull.kt")
+    public void testReturnNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/ReturnNull.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SpaceAfterImport.kt")
     public void testSpaceAfterImport() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/keywords/SpaceAfterImport.kt");

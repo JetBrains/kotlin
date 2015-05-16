@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.util.FuzzyType
-import org.jetbrains.kotlin.idea.util.findLabelAndCall
-import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -41,6 +39,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
@@ -223,11 +222,12 @@ fun returnExpressionItems(bindingContext: BindingContext, position: JetElement):
     val result = ArrayList<LookupElement>()
     for (parent in position.parentsWithSelf) {
         if (parent is JetDeclarationWithBody) {
-            val returnsUnit = returnsUnit(parent, bindingContext)
+            val returnType = parent.returnType(bindingContext)
+            val isUnit = returnType == null || KotlinBuiltIns.isUnit(returnType)
             if (parent is JetFunctionLiteral) {
                 val (label, call) = parent.findLabelAndCall()
                 if (label != null) {
-                    result.add(createKeywordWithLabelElement("return", label, addSpace = !returnsUnit))
+                    result.add(createKeywordWithLabelElement("return", label, addSpace = !isUnit))
                 }
 
                 // check if the current function literal is inlined and stop processing outer declarations if it's not
@@ -236,7 +236,15 @@ fun returnExpressionItems(bindingContext: BindingContext, position: JetElement):
             }
             else {
                 if (parent.hasBlockBody()) {
-                    result.add(createKeywordWithLabelElement("return", null, addSpace = !returnsUnit))
+                    result.add(createKeywordWithLabelElement("return", null, addSpace = !isUnit))
+
+                    if (returnType != null && returnType.nullability() == TypeNullability.NULLABLE) {
+                        result.add(createKeywordWithLabelElement("return null", null, addSpace = false))
+                    }
+                    if (returnType != null && KotlinBuiltIns.isBoolean(returnType.makeNotNullable())) {
+                        result.add(createKeywordWithLabelElement("return true", null, addSpace = false))
+                        result.add(createKeywordWithLabelElement("return false", null, addSpace = false))
+                    }
                 }
                 break
             }
@@ -245,10 +253,9 @@ fun returnExpressionItems(bindingContext: BindingContext, position: JetElement):
     return result
 }
 
-private fun returnsUnit(declaration: JetDeclarationWithBody, bindingContext: BindingContext): Boolean {
-    val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor ?: return true
-    val returnType = callable.getReturnType() ?: return true
-    return KotlinBuiltIns.isUnit(returnType)
+private fun JetDeclarationWithBody.returnType(bindingContext: BindingContext): JetType? {
+    val callable = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? CallableDescriptor ?: return null
+    return callable.getReturnType()
 }
 
 private fun createKeywordWithLabelElement(keyword: String, label: Name?, addSpace: Boolean): LookupElement {

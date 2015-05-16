@@ -401,9 +401,33 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("ReturnBoolean.kt")
+    public void testReturnBoolean() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnBoolean.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReturnKeywordName.kt")
     public void testReturnKeywordName() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnKeywordName.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReturnNotNull.kt")
+    public void testReturnNotNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnNotNull.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReturnNull.kt")
+    public void testReturnNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnNull.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ReturnNullableBoolean.kt")
+    public void testReturnNullableBoolean() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnNullableBoolean.kt");
         doTest(fileName);
     }
 
