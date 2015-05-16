@@ -32,6 +32,7 @@ import java.util.Map;
 import static org.jetbrains.kotlin.JetNodeTypes.*;
 import static org.jetbrains.kotlin.lexer.JetTokens.*;
 import static org.jetbrains.kotlin.parsing.JetParsing.AnnotationParsingMode.*;
+import static org.jetbrains.kotlin.parsing.JetParsing.DeclarationParsingMode.*;
 
 public class JetParsing extends AbstractJetParsing {
     private static final Logger LOG = Logger.getInstance(JetParsing.class);
@@ -387,7 +388,7 @@ public class JetParsing extends AbstractJetParsing {
 //        }
 //        else
         if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            declType = parseClass(detector.isEnumDetected());
+            declType = parseClass(detector.isEnumDetected(), TOP_LEVEL);
         }
         else if (keywordToken == FUN_KEYWORD) {
             declType = parseFunction();
@@ -399,7 +400,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(NameParsingMode.REQUIRED, true);
+            parseObject(NameParsingMode.REQUIRED, true, TOP_LEVEL);
             declType = OBJECT_DECLARATION;
         }
         else if (at(LBRACE)) {
@@ -439,7 +440,8 @@ public class JetParsing extends AbstractJetParsing {
         boolean empty = true;
         while (!eof()) {
             if (annotationParsingMode.atMemberStart && atSet(SOFT_KEYWORDS_AT_MEMBER_START)) break;
-            if (annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST && atSet(CONSTRUCTOR_KEYWORD, WHERE_KEYWORD)) break;
+            if ((annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST || annotationParsingMode == PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL) &&
+                atSet(CONSTRUCTOR_KEYWORD, WHERE_KEYWORD)) break;
 
             if (at(AT)) {
                 if (!tryParseModifier(tokenConsumer)) {
@@ -693,6 +695,12 @@ public class JetParsing extends AbstractJetParsing {
         PROHIBITED
     }
 
+    public enum DeclarationParsingMode {
+        TOP_LEVEL,
+        CLASS_MEMBER,
+        LOCAL
+    }
+
     /*
      * class
      *   : modifiers ("class" | "interface") SimpleName
@@ -707,7 +715,13 @@ public class JetParsing extends AbstractJetParsing {
      *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody?
      *   ;
      */
-    IElementType parseClassOrObject(boolean object, NameParsingMode nameParsingMode, boolean optionalBody, boolean enumClass) {
+    IElementType parseClassOrObject(
+            boolean object,
+            NameParsingMode nameParsingMode,
+            boolean optionalBody,
+            boolean enumClass,
+            DeclarationParsingMode declarationParsingMode
+    ) {
         if (object) {
             assert _at(OBJECT_KEYWORD);
         }
@@ -743,7 +757,9 @@ public class JetParsing extends AbstractJetParsing {
         OptionalMarker constructorModifiersMarker = new OptionalMarker(object);
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
-        boolean hasConstructorModifiers = parseModifierList(PRIMARY_CONSTRUCTOR_MODIFIER_LIST);
+        boolean hasConstructorModifiers = parseModifierList(
+                declarationParsingMode != LOCAL ? PRIMARY_CONSTRUCTOR_MODIFIER_LIST : PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL
+        );
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if ((object && at(CONSTRUCTOR_KEYWORD)) || (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD))) {
@@ -808,12 +824,12 @@ public class JetParsing extends AbstractJetParsing {
         return object ? OBJECT_DECLARATION : CLASS;
     }
 
-    IElementType parseClass(boolean enumClass) {
-        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass);
+    IElementType parseClass(boolean enumClass, DeclarationParsingMode declarationParsingMode) {
+        return parseClassOrObject(false, NameParsingMode.REQUIRED, true, enumClass, declarationParsingMode);
     }
 
-    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody) {
-        parseClassOrObject(true, nameParsingMode, optionalBody, false);
+    void parseObject(NameParsingMode nameParsingMode, boolean optionalBody, DeclarationParsingMode declarationParsingMode) {
+        parseClassOrObject(true, nameParsingMode, optionalBody, false, declarationParsingMode);
     }
 
     /*
@@ -1023,7 +1039,7 @@ public class JetParsing extends AbstractJetParsing {
         IElementType keywordToken = tt();
         IElementType declType = null;
         if (keywordToken == CLASS_KEYWORD || keywordToken == TRAIT_KEYWORD || keywordToken == INTERFACE_KEYWORD) {
-            declType = parseClass(isEnum);
+            declType = parseClass(isEnum, CLASS_MEMBER);
         }
         else if (keywordToken == FUN_KEYWORD) {
                 declType = parseFunction();
@@ -1035,7 +1051,7 @@ public class JetParsing extends AbstractJetParsing {
             declType = parseTypeAlias();
         }
         else if (keywordToken == OBJECT_KEYWORD) {
-            parseObject(isDefault ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED, true);
+            parseObject(isDefault ? NameParsingMode.ALLOWED : NameParsingMode.REQUIRED, true, CLASS_MEMBER);
             declType = OBJECT_DECLARATION;
         }
         else if (at(INIT_KEYWORD)) {
@@ -2313,7 +2329,8 @@ public class JetParsing extends AbstractJetParsing {
         ONLY_ESCAPED_REGULAR_ANNOTATIONS(false, false, false),
         ALLOW_UNESCAPED_REGULAR_ANNOTATIONS(true, false, false),
         ALLOW_UNESCAPED_REGULAR_ANNOTATIONS_AT_MEMBER_MODIFIER_LIST(true, false, true),
-        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(true, false, false);
+        PRIMARY_CONSTRUCTOR_MODIFIER_LIST(true, false, false),
+        PRIMARY_CONSTRUCTOR_MODIFIER_LIST_LOCAL(false, false, false);
 
         boolean allowShortAnnotations;
         boolean isFileAnnotationParsingMode;
