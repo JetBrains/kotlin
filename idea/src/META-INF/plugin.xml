@@ -916,6 +916,18 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.DeprecatedCallableAddReplaceWithInspection"
+                     displayName="Add 'replaceWith' argument to 'deprecated' annotation"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     level="INFO"
+        />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection"
                      displayName="Explicit 'get'"
                      groupName="Kotlin"

@@ -357,7 +357,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractQuickFixTest>()) {
-            model("quickfix", pattern = "^(\\w+)\\.kt$")
+            model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
         testClass(javaClass<AbstractGotoSuperTest>()) {
@@ -413,7 +413,7 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractIntentionTest>()) {
-            model("intentions")
+            model("intentions", pattern = "^([\\w\\-_]+)\\.kt$")
         }
 
         testClass(javaClass<AbstractJetInspectionTest>()) {

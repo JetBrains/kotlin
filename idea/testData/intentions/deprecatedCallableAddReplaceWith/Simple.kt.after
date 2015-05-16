@@ -1,0 +1,6 @@
+@deprecated("", <caret>ReplaceWith("bar()"))
+fun foo() {
+    bar()
+}
+
+fun bar(){}
