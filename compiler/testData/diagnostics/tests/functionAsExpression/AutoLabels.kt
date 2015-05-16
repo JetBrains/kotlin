@@ -6,10 +6,6 @@ fun autolabel(l: List<Int>) = l.map (fun (i: Int): Int {
     return@map 4
 })
 
-fun unresolvedMapLabel(l: List<Int>) = l.map (fun test(i: Int): Int {
+fun unresolvedMapLabel(l: List<Int>) = l.map (l@ fun(i: Int): Int {
     return<!UNRESOLVED_REFERENCE!>@map<!> 4
-})
-
-fun labelToFunName(l: List<Int>) = l.map (fun test(i: Int): Int {
-    return@test 4
 })

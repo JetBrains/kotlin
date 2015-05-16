@@ -4785,6 +4785,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NameDeprecation.kt")
+            public void testNameDeprecation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/NameDeprecation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoOverloadError.kt")
             public void testNoOverloadError() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/functionAsExpression/NoOverloadError.kt");

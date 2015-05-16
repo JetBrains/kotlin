@@ -59,6 +59,11 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             if (!function.getTypeParameters().isEmpty()) {
                 context.trace.report(TYPE_PARAMETERS_NOT_ALLOWED.on(function))
             }
+
+            if (function.getName() != null) {
+                context.trace.report(FUNCTION_EXPRESSION_WITH_NAME.on(function.getNameIdentifier()))
+            }
+
             for (parameter in function.getValueParameters()) {
                 if (parameter.hasDefaultValue()) {
                     context.trace.report(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter))

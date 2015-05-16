@@ -6,8 +6,6 @@ val ok = "OK"
 
 class A
 
-val withName = fun name() {}
-val extensionWithName = fun A.name() {}
 val withoutName = fun () {}
 val extensionWithoutName = fun A.() {}
 

@@ -1,13 +1,11 @@
 package
 
-internal val extensionWithName: A.() -> kotlin.Unit
 internal val extensionWithoutName: A.() -> kotlin.Unit
 internal val funfun: () -> () -> kotlin.Int
 internal val ok: kotlin.String = "OK"
 internal val parentesized: () -> kotlin.Unit
 internal val parentesizedWithType: () -> kotlin.Unit
 internal val withExpression: () -> kotlin.Int
-internal val withName: () -> kotlin.Unit
 internal val withReturn: () -> kotlin.Int
 internal val withType: () -> kotlin.Unit
 internal val withoutName: () -> kotlin.Unit

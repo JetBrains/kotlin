@@ -350,6 +350,7 @@ public interface Errors {
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetFunction> FUNCTION_DECLARATION_WITH_NO_NAME = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<PsiElement>  FUNCTION_EXPRESSION_WITH_NAME     = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<JetParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 

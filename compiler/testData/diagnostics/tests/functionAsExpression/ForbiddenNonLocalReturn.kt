@@ -19,9 +19,4 @@ fun foo() {
         }
         return@bag
     }
-    val bag = fun name() {
-        val bar = fun () {
-            <!RETURN_NOT_ALLOWED!>return@name<!>
-        }
-    }
 }

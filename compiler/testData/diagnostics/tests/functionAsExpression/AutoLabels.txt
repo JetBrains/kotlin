@@ -1,6 +1,5 @@
 package
 
 internal fun autolabel(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
-internal fun labelToFunName(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
 internal fun unresolvedMapLabel(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
 internal fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>

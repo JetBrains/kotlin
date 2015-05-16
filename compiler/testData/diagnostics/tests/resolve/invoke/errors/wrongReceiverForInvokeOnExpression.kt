@@ -1,6 +1,6 @@
 fun test1() {
     <!TYPE_MISMATCH!>1<!>. (fun String.(i: Int) = i )(1)
-    <!TYPE_MISMATCH!>1<!>.(fun String.label(i: Int) = i )(1)
+    <!TYPE_MISMATCH!>1<!>.(label@ fun String.(i: Int) = i )(1)
 }
 
 fun test2(f: String.(Int) -> Unit) {
