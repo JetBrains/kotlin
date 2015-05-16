@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
     }
     val <!UNUSED_VARIABLE!>h<!>: () -> String = {
        var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>x<!> = 1
-       <!EXPECTED_TYPE_MISMATCH!>x = <!UNUSED_VALUE!>2<!><!>  //the same
+       <!EXPECTED_TYPE_MISMATCH!><!UNUSED_VALUE!>x =<!> 2<!>  //the same
     }
     val array1 = MyArray1()
     val <!UNUSED_VARIABLE!>i<!>: () -> String = {

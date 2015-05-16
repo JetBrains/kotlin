@@ -6,5 +6,5 @@ fun foo() {
     var <!UNUSED_VARIABLE!>j<!> = 9  //'unused variable' error
 
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = 1  //should be an error 'variable i is assigned but never accessed'
-    i = <!UNUSED_VALUE!>2<!>
+    <!UNUSED_VALUE!>i =<!> 2
 }

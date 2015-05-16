@@ -95,13 +95,13 @@ fun testImplicitCoercion() {
 
     var <!UNUSED_VARIABLE!>u<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>when(d) {
         3 -> {
-            z = <!UNUSED_VALUE!>34<!>
+            <!UNUSED_VALUE!>z =<!> 34
         }
         else -> <!UNUSED_CHANGED_VALUE!>z--<!>
     }<!>
 
     var <!UNUSED_VARIABLE!>iff<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) {
-        z = <!UNUSED_VALUE!>34<!>
+        <!UNUSED_VALUE!>z =<!> 34
     }<!>
     val <!UNUSED_VARIABLE!>g<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (true) 4<!>
     val <!UNUSED_VARIABLE!>h<!> = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!>if (false) 4 else {}<!>
@@ -110,7 +110,7 @@ fun testImplicitCoercion() {
         <!CONSTANT_EXPECTED_TYPE_MISMATCH!>4<!>
     }
     else {
-        z = <!UNUSED_VALUE!>342<!>
+        <!UNUSED_VALUE!>z =<!> 342
     })
 }
 
@@ -118,9 +118,9 @@ fun bar(<!UNUSED_PARAMETER!>a<!>: Unit) {}
 
 fun testStatementInExpressionContext() {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>z<!> = 34
-    val <!UNUSED_VARIABLE!>a1<!>: Unit = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = <!UNUSED_VALUE!>334<!><!>
+    val <!UNUSED_VARIABLE!>a1<!>: Unit = <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!><!UNUSED_VALUE!>z =<!> 334<!>
     val <!UNUSED_VARIABLE!>f<!> = <!EXPRESSION_EXPECTED!>for (i in 1..10) {}<!>
-    if (true) return <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>z = <!UNUSED_VALUE!>34<!><!>
+    if (true) return <!ASSIGNMENT_IN_EXPRESSION_CONTEXT!><!UNUSED_VALUE!>z =<!> 34<!>
     return <!EXPRESSION_EXPECTED!>while (true) {}<!>
 }
 

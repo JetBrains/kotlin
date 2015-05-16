@@ -54,7 +54,7 @@ fun t2() {
 class A() {}
 
 fun t4(a: A) {
-    <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>A()<!>
+    <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>a<!> =<!> A()
 }
 
 // ------------------------------------------------
@@ -62,10 +62,10 @@ fun t4(a: A) {
 
 fun t1() {
     val <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>a<!> : Int = 1
-    <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>2<!>
+    <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>a<!> =<!> 2
 
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!> : Int = 1
-    b = <!UNUSED_VALUE!>3<!>
+    <!UNUSED_VALUE!>b =<!> 3
 }
 
 enum class ProtocolState {
@@ -83,7 +83,7 @@ enum class ProtocolState {
 fun t3() {
    val x: ProtocolState = ProtocolState.WAITING
    <!VAL_REASSIGNMENT!>x<!> = x.signal()
-   x = <!UNUSED_VALUE!>x.signal()<!> //repeat for x
+   <!UNUSED_VALUE!>x =<!> x.signal() //repeat for x
 }
 
 fun t4() {
@@ -189,7 +189,7 @@ class AnonymousInitializers(var a: String, val b: String) {
 }
 
 fun reassignFunParams(a: Int) {
-    <!VAL_REASSIGNMENT!>a<!> = <!UNUSED_VALUE!>1<!>
+    <!UNUSED_VALUE!><!VAL_REASSIGNMENT!>a<!> =<!> 1
 }
 
 open class Open(<!UNUSED_PARAMETER!>a<!>: Int, <!UNUSED_PARAMETER!>w<!>: Int) {}

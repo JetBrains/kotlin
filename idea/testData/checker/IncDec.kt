@@ -12,7 +12,7 @@ fun testIncDec() {
   x = <warning>x++</warning>
   x = <warning>x--</warning>
   x = ++x
-  x = <warning>--x</warning>
+  <warning>x =</warning> --x
 }
 
 class WrongIncDec() {
@@ -42,5 +42,5 @@ fun testUnitIncDec() {
   x = <warning>x<error>++</error></warning>
   x = <warning>x<error>--</error></warning>
   x = <error>++</error>x
-  x = <warning><error>--</error>x</warning>
+  <warning>x =</warning> <error>--</error>x
 }

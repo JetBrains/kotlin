@@ -169,7 +169,7 @@ fun declarations(a: Any?) {
 fun vars(a: Any?) {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!>: Int = 0
     if (a is Int) {
-        b = <!UNUSED_VALUE, DEBUG_INFO_SMARTCAST!>a<!>
+        <!UNUSED_VALUE!>b =<!> <!DEBUG_INFO_SMARTCAST!>a<!>
     }
 }
 fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {

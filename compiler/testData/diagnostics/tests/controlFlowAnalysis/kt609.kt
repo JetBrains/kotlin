@@ -4,7 +4,7 @@ package kt609
 
 fun test(a: Int) {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>aa<!> = a
-    aa = <!UNUSED_VALUE!>324<!> //should be an 'unused value' warning here
+    <!UNUSED_VALUE!>aa =<!> 324 //should be an 'unused value' warning here
 }
 
 class C() {

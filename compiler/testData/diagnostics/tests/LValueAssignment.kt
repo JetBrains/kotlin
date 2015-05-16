@@ -53,16 +53,16 @@ fun cannotBe() {
 
 fun canBe(i0: Int, j: Int) {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>i<!> = i0
-    (label@ i) = <!UNUSED_VALUE!>34<!>
+    <!UNUSED_VALUE!>(label@ i) =<!> 34
 
-    (label@ <!VAL_REASSIGNMENT!>j<!>) = <!UNUSED_VALUE!>34<!> //repeat for j
+    <!UNUSED_VALUE!>(label@ <!VAL_REASSIGNMENT!>j<!>) =<!> 34 //repeat for j
 
     val a = A()
     (l@ a.a) = 3894
 }
 
 fun canBe2(j: Int) {
-    (label@ <!VAL_REASSIGNMENT!>j<!>) = <!UNUSED_VALUE!>34<!>
+    <!UNUSED_VALUE!>(label@ <!VAL_REASSIGNMENT!>j<!>) =<!> 34
 }
 
 class A() {

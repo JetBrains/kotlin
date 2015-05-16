@@ -6,7 +6,7 @@ fun foo() : Int {
     var z = 0
     when(d) {
         5, 3 -> <!UNUSED_CHANGED_VALUE!>z++<!>
-        <!ELSE_MISPLACED_IN_WHEN!>else<!> -> { z = <!UNUSED_VALUE!>-1000<!> }
+        <!ELSE_MISPLACED_IN_WHEN!>else<!> -> { <!UNUSED_VALUE!>z =<!> -1000 }
         <!UNREACHABLE_CODE!>return z -> 34<!>
     }
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

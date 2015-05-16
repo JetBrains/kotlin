@@ -632,7 +632,7 @@ public class JetFlowInformationProvider {
                                     ((JetBinaryExpression) element).getOperationToken() == JetTokens.EQ) {
                                     JetExpression right = ((JetBinaryExpression) element).getRight();
                                     if (right != null) {
-                                        report(Errors.UNUSED_VALUE.on(right, right, variableDescriptor), ctxt);
+                                        report(Errors.UNUSED_VALUE.on((JetBinaryExpression) element, right, variableDescriptor), ctxt);
                                     }
                                 }
                                 else if (element instanceof JetPostfixExpression) {

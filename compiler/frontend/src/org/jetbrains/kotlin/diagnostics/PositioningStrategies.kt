@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getCalleeHighlightingRange
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.sure
 import kotlin.platform.platformStatic
 
@@ -433,6 +434,12 @@ public object PositioningStrategies {
         override fun mark(element: JetEnumEntry): List<TextRange> {
             val specifiers = element.getDelegationSpecifiers()
             return markElement(if (specifiers.isEmpty()) element else specifiers[0])
+        }
+    }
+
+    public val UNUSED_VALUE: PositioningStrategy<JetBinaryExpression> = object: PositioningStrategy<JetBinaryExpression>() {
+        override fun mark(element: JetBinaryExpression): List<TextRange> {
+            return listOf(TextRange(element.getLeft()!!.startOffset, element.getOperationReference().endOffset))
         }
     }
 }

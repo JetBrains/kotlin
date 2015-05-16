@@ -165,7 +165,7 @@ fun declarations(a: Any?) {
 fun vars(a: Any?) {
     var <warning>b</warning>: Int = 0
     if (a is Int) {
-        b = <warning><info descr="Smart cast to kotlin.Int">a</info></warning>
+        <warning>b =</warning> <info descr="Smart cast to kotlin.Int">a</info>
     }
 }
 fun returnFunctionLiteralBlock(<info>a</info>: Any?): Function0<Int> {

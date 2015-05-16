@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.psi.JetCodeFragment
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetReferenceExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import kotlin.platform.platformStatic
@@ -93,7 +95,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
             assert(diagnostic.getPsiElement() == element)
 
-            val textRanges = diagnostic.getTextRanges()
+            var textRanges = diagnostic.getTextRanges()
             val factory = diagnostic.getFactory()
             when (diagnostic.getSeverity()) {
                 Severity.ERROR -> {
@@ -147,6 +149,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                     if (factory == Errors.UNUSED_PARAMETER && shouldSuppressUnusedParameter(diagnostic.getPsiElement() as JetParameter)) {
                         return
                     }
+
                     for (textRange in textRanges) {
                         val annotation = holder.createWarningAnnotation(textRange, getDefaultMessage(diagnostic))
 
