@@ -47,53 +47,21 @@ public class JetParameterList extends JetElementImplStub<KotlinPlaceHolderStub<J
 
     @NotNull
     public JetParameter addParameter(@NotNull JetParameter parameter) {
-        return addParameterBefore(parameter, null);
+        return EditCommaSeparatedListHelper.INSTANCE$.addItem(this, getParameters(), parameter);
     }
 
     @NotNull
     public JetParameter addParameterAfter(@NotNull JetParameter parameter, @Nullable JetParameter anchor) {
-        assert anchor == null || anchor.getParent() == this;
-        List<JetParameter> parameters = getParameters();
-        if (parameters.isEmpty()) {
-            if (getFirstChild().getNode().getElementType() == JetTokens.LPAR) {
-                return (JetParameter) addAfter(parameter, getFirstChild());
-            }
-            else {
-                return (JetParameter) add(parameter);
-            }
-        }
-        else {
-            PsiElement comma = new JetPsiFactory(getProject()).createComma();
-            if (anchor != null) {
-                comma = addAfter(comma, anchor);
-                return (JetParameter) addAfter(parameter, comma);
-            }
-            else {
-                comma = addBefore(comma, parameters.get(0));
-                return (JetParameter) addBefore(parameter, comma);
-            }
-        }
+        return EditCommaSeparatedListHelper.INSTANCE$.addItemAfter(this, getParameters(), parameter, anchor);
     }
 
     @NotNull
     public JetParameter addParameterBefore(@NotNull JetParameter parameter, @Nullable JetParameter anchor) {
-        List<JetParameter> parameters = getParameters();
-        JetParameter anchorAfter;
-        if (parameters.isEmpty()) {
-            assert anchor == null;
-            anchorAfter = null;
-        }
-        else {
-            if (anchor != null) {
-                int index = parameters.indexOf(anchor);
-                assert index >= 0;
-                anchorAfter = index > 0 ? parameters.get(index - 1) : null;
-            }
-            else {
-                anchorAfter = parameters.get(parameters.size() - 1);
-            }
-        }
-        return addParameterAfter(parameter, anchorAfter);
+        return EditCommaSeparatedListHelper.INSTANCE$.addItemBefore(this, getParameters(), parameter, anchor);
+    }
+
+    public void removeParameter(@NotNull JetParameter parameter) {
+        EditCommaSeparatedListHelper.INSTANCE$.removeItem(parameter);
     }
 
     // this method needed only for migrate lambda syntax

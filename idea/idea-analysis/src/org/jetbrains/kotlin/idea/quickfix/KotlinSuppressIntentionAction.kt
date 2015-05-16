@@ -122,10 +122,7 @@ public class KotlinSuppressIntentionAction(
             args.replace(newArgList)
         }
         else {
-            val rightParen = args.getRightParenthesis()
-            args.addBefore(psiFactory.createComma(), rightParen)
-            args.addBefore(psiFactory.createWhiteSpace(), rightParen)
-            args.addBefore(newArgList.getArguments()[0], rightParen)
+            args.addArgument(newArgList.getArguments()[0])
         }
     }
 

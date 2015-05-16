@@ -24,8 +24,6 @@ import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.CheckUtil;
-import com.intellij.psi.impl.source.codeStyle.CodeEditUtil;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.codeInsight.CommentUtilCore;
@@ -36,7 +34,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
-import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.lexer.JetToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.FqName;
@@ -713,35 +710,6 @@ public class JetPsiUtil {
             return e;
         }
         return null;
-    }
-
-    // Delete given element and all the elements separating it from the neighboring elements of the same class
-    public static void deleteElementWithDelimiters(@NotNull PsiElement element) {
-        PsiElement paramBefore = PsiTreeUtil.getPrevSiblingOfType(element, element.getClass());
-
-        PsiElement from;
-        PsiElement to;
-        if (paramBefore != null) {
-            from = paramBefore.getNextSibling();
-            to = element;
-        }
-        else {
-            PsiElement paramAfter = PsiTreeUtil.getNextSiblingOfType(element, element.getClass());
-
-            from = element;
-            to = paramAfter != null ? paramAfter.getPrevSibling() : element;
-        }
-
-        PsiElement parent = element.getParent();
-
-        parent.deleteChildRange(from, to);
-    }
-
-    // Delete element if it doesn't contain children of a given type
-    public static <T extends PsiElement> void deleteChildlessElement(PsiElement element, Class<T> childClass) {
-        if (PsiTreeUtil.getChildrenOfType(element, childClass) == null) {
-            element.delete();
-        }
     }
 
     public static PsiElement ascendIfPropertyAccessor(PsiElement element) {

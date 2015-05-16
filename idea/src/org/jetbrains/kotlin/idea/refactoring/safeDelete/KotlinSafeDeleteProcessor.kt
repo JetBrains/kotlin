@@ -298,7 +298,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
                 element.deleteElementAndCleanParent()
 
             is JetParameter ->
-                JetPsiUtil.deleteElementWithDelimiters(element)
+                (element.getParent() as JetParameterList).removeParameter(element)
         }
     }
 

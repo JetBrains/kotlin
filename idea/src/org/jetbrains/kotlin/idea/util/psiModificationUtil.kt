@@ -57,12 +57,7 @@ fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
     val functionLiteralArgument = newCallExpression.getFunctionLiteralArguments().head!!
     val valueArgumentList = newCallExpression.getValueArgumentList() ?: psiFactory.createCallArguments("()")
 
-    val closingParenthesis = valueArgumentList.getLastChild()
-    if (valueArgumentList.getArguments().isNotEmpty()) {
-        valueArgumentList.addBefore(psiFactory.createComma(), closingParenthesis)
-        valueArgumentList.addBefore(psiFactory.createWhiteSpace(), closingParenthesis)
-    }
-    valueArgumentList.addBefore(argument, closingParenthesis)
+    valueArgumentList.addArgument(argument)
 
     (functionLiteralArgument.getPrevSibling() as? PsiWhiteSpace)?.delete()
     if (newCallExpression.getValueArgumentList() != null) {

@@ -49,4 +49,23 @@ public class JetValueArgumentList extends JetElementImpl {
     public PsiElement getLeftParenthesis() {
         return findChildByType(JetTokens.LPAR);
     }
+
+    @NotNull
+    public JetValueArgument addArgument(@NotNull JetValueArgument argument) {
+        return EditCommaSeparatedListHelper.INSTANCE$.addItem(this, getArguments(), argument);
+    }
+
+    @NotNull
+    public JetValueArgument addArgumentAfter(@NotNull JetValueArgument argument, @Nullable JetValueArgument anchor) {
+        return EditCommaSeparatedListHelper.INSTANCE$.addItemAfter(this, getArguments(), argument, anchor);
+    }
+
+    @NotNull
+    public JetValueArgument addArgumentBefore(@NotNull JetValueArgument argument, @Nullable JetValueArgument anchor) {
+        return EditCommaSeparatedListHelper.INSTANCE$.addItemBefore(this, getArguments(), argument, anchor);
+    }
+
+    public void removeArgument(@NotNull JetValueArgument argument) {
+        EditCommaSeparatedListHelper.INSTANCE$.removeItem(argument);
+    }
 }

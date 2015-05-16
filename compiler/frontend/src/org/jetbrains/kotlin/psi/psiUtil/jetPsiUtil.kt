@@ -238,13 +238,43 @@ public fun PsiElement.isExtensionDeclaration(): Boolean {
 
 public fun PsiElement.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()
 
+//TODO: git rid of this method
 public fun PsiElement.deleteElementAndCleanParent() {
     val parent = getParent()
 
-    JetPsiUtil.deleteElementWithDelimiters(this)
-    @suppress("UNCHECKED_CAST")
-    JetPsiUtil.deleteChildlessElement(parent, this.javaClass)
+    deleteElementWithDelimiters(this)
+    deleteChildlessElement(parent, this.javaClass)
 }
+
+// Delete element if it doesn't contain children of a given type
+private fun <T : PsiElement> deleteChildlessElement(element: PsiElement, childClass: Class<T>) {
+    if (PsiTreeUtil.getChildrenOfType<T>(element, childClass) == null) {
+        element.delete()
+    }
+}
+
+// Delete given element and all the elements separating it from the neighboring elements of the same class
+private fun deleteElementWithDelimiters(element: PsiElement) {
+    val paramBefore = PsiTreeUtil.getPrevSiblingOfType<PsiElement>(element, element.javaClass)
+
+    val from: PsiElement
+    val to: PsiElement
+    if (paramBefore != null) {
+        from = paramBefore.getNextSibling()
+        to = element
+    }
+    else {
+        val paramAfter = PsiTreeUtil.getNextSiblingOfType<PsiElement>(element, element.javaClass)
+
+        from = element
+        to = if (paramAfter != null) paramAfter.getPrevSibling() else element
+    }
+
+    val parent = element.getParent()
+
+    parent.deleteChildRange(from, to)
+}
+
 
 public fun PsiElement.parameterIndex(): Int {
     val parent = getParent()

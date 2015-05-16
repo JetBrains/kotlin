@@ -18,13 +18,20 @@ package org.jetbrains.kotlin.idea.refactoring.safeDelete
 
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDeleteUsageInfo
-import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetValueArgument
+import org.jetbrains.kotlin.psi.JetValueArgumentList
 
 public class SafeDeleteValueArgumentListUsageInfo(
         valueArgument: JetValueArgument, parameter: PsiElement
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(valueArgument, parameter, true) {
     public override fun deleteElement() {
-        getElement()?.let { element -> JetPsiUtil.deleteElementWithDelimiters(element) }
+        val element = getElement() as? JetValueArgument ?: return
+        val parent = element.getParent()
+        if (parent is JetValueArgumentList) {
+            parent.removeArgument(element)
+        }
+        else {
+            element.delete()
+        }
     }
 }

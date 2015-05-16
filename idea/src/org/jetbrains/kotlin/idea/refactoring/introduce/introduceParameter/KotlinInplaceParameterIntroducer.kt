@@ -31,29 +31,20 @@ import com.intellij.openapi.editor.markup.MarkupModel
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.refactoring.rename.inplace.InplaceRefactoring
 import com.intellij.ui.DottedBorder
 import com.intellij.ui.JBColor
 import com.intellij.ui.NonFocusableCheckBox
 import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.supertypes
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
 import java.awt.BorderLayout
 import java.awt.Color
@@ -64,7 +55,6 @@ import javax.swing.BorderFactory
 import javax.swing.JPanel
 import javax.swing.border.EmptyBorder
 import javax.swing.border.LineBorder
-import kotlin.properties.Delegates
 
 public class KotlinInplaceParameterIntroducer(
         val originalDescriptor: IntroduceParameterDescriptor,
@@ -285,7 +275,7 @@ public class KotlinInplaceParameterIntroducer(
     }
 
     private fun removeAddedParameter() {
-        runWriteAction { JetPsiUtil.deleteElementWithDelimiters(addedParameter) }
+        runWriteAction { (addedParameter.getParent() as JetParameterList).removeParameter(addedParameter) }
     }
 
     override fun performRefactoring(): Boolean {

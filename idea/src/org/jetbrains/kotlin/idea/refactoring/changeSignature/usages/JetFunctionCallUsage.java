@@ -375,10 +375,10 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             // TODO: process default arguments in the middle
             else if (parameterInfo.getDefaultValueForCall() == null) {
                 if (parameterInfo.getDefaultValueForParameter() != null) {
-                    JetPsiUtil.deleteElementWithDelimiters(newArgument);
+                    newArgumentList.removeArgument(newArgument);
                 }
                 else {
-                    newArgument.delete();
+                    newArgument.delete(); // keep space between commas
                 }
             }
             else {
