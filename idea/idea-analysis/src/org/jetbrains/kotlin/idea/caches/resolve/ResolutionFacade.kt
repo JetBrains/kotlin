@@ -16,14 +16,15 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 public trait ResolutionFacade {
@@ -35,6 +36,9 @@ public trait ResolutionFacade {
     public fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor
 
     public fun getFileTopLevelScope(file: JetFile): JetScope
+
+    //TODO: better pass ModuleDescriptor here
+    public fun resolveImportReference(file: JetFile, fqName: FqName): Collection<DeclarationDescriptor>
 
     public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
 

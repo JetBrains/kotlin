@@ -49,14 +49,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.JetModuleUtil
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -316,14 +310,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             = this == KotlinReferenceData.Kind.EXTENSION_FUNCTION || this == KotlinReferenceData.Kind.EXTENSION_PROPERTY
 
     private fun findImportableDescriptors(fqName: FqName, file: JetFile): Collection<DeclarationDescriptor> {
-        val importDirective = JetPsiFactory(file.getProject()).createImportDirective(ImportPath(fqName, false))
-        val moduleDescriptor = file.getResolutionFacade().findModuleDescriptor(file)
-        val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
-        val qualifiedExpressionResolver = QualifiedExpressionResolver()
-        qualifiedExpressionResolver.setSymbolUsageValidator(SymbolUsageValidator.Empty)
-        return qualifiedExpressionResolver
-                .processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING)
-                .getAllDescriptors()
+        return file.getResolutionFacade().resolveImportReference(file, fqName)
     }
 
     private fun findCallableToImport(fqName: FqName, file: JetFile): CallableDescriptor?

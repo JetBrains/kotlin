@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
@@ -137,5 +138,10 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer {
     @Override
     public PackageFragmentProvider getPackageFragmentProvider() {
         return resolveSession.getPackageFragmentProvider();
+    }
+
+    @NotNull
+    public QualifiedExpressionResolver getQualifiedExpressionResolver() {
+        return resolveSession.getQualifiedExpressionResolver();
     }
 }

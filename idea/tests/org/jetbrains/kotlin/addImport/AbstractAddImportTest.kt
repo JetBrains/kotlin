@@ -16,22 +16,16 @@
 
 package org.jetbrains.kotlin.addImport
 
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.AbstractImportsTest
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
-import org.jetbrains.kotlin.resolve.JetModuleUtil
-import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import com.intellij.psi.PsiDocumentManager
-import org.jetbrains.kotlin.di.InjectorForTests
-import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 public abstract class AbstractAddImportTest : AbstractImportsTest() {
     override fun doTest(file: JetFile) {
@@ -44,13 +38,7 @@ public abstract class AbstractAddImportTest : AbstractImportsTest() {
             descriptorName = descriptorName.substring("class:".length()).trim()
         }
 
-        val importDirective = JetPsiFactory(getProject()).createImportDirective(descriptorName)
-        val moduleDescriptor = file.getResolutionFacade().findModuleDescriptor(file)
-        val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
-        val descriptors = InjectorForTests(getProject(), moduleDescriptor).getQualifiedExpressionResolver()
-                .processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING)
-                .getAllDescriptors()
-                .filter(filter)
+        val descriptors = file.getResolutionFacade().resolveImportReference(file, FqName(descriptorName)).filter(filter)
 
         when {
             descriptors.isEmpty() ->
