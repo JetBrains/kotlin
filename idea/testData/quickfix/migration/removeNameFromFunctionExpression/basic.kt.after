@@ -1,0 +1,7 @@
+// "Remove identifier from function expression" "true"
+
+fun foo() {
+    (bar@ fun() {
+        return@bar
+    })
+}

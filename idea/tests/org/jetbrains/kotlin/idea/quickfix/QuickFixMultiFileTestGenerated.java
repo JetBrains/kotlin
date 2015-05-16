@@ -918,6 +918,21 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/removeNameFromFunctionExpression")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class RemoveNameFromFunctionExpression extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInRemoveNameFromFunctionExpression() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/removeNameFromFunctionExpression"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("manyFilesMuitliple.before.Main.kt")
+            public void testManyFilesMuitliple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/removeNameFromFunctionExpression/manyFilesMuitliple.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/replaceJavaClassAsAnnotationParameter")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

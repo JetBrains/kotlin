@@ -337,5 +337,8 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(MISSING_CONSTRUCTOR_KEYWORD, MissingConstructorKeywordFix.Companion);
         QuickFixes.factories.put(MISSING_CONSTRUCTOR_KEYWORD, MissingConstructorKeywordFix.Companion.createWholeProjectFixFactory());
+
+        QuickFixes.factories.put(FUNCTION_EXPRESSION_WITH_NAME, RemoveNameFromFunctionExpressionFix.Companion);
+        QuickFixes.factories.put(FUNCTION_EXPRESSION_WITH_NAME, RemoveNameFromFunctionExpressionFix.Companion.createWholeProjectFixFactory());
     }
 }

@@ -1,0 +1,3 @@
+fun main() {
+    (fun foo() {})
+}
