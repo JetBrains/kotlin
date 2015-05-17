@@ -3,7 +3,7 @@
 
 import java.util.*
 
-private val <T> Foo<T>.t: T?
+private val <T> Foo<T>.t: T
     get() = map[""]
 
 // SIBLING:
