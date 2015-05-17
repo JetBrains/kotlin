@@ -1,4 +1,4 @@
-trait A {
+interface A {
     fun visit(a:Int, b:String="") : String = b + a
 }
 
