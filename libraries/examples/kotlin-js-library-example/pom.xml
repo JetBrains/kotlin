@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-
     <parent>
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-project</artifactId>
@@ -26,12 +25,6 @@
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
         <testSourceDirectory>src/test/kotlin</testSourceDirectory>
-
-        <resources>
-            <resource>
-                <directory>src/main/kotlin</directory>
-            </resource>
-        </resources>
 
         <plugins>
             <plugin>
@@ -59,8 +52,6 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>js</id>
-                        <phase>compile</phase>
                         <goals>
                             <goal>js</goal>
                         </goals>
@@ -72,18 +63,12 @@
             </plugin>
 
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <forceCreation>true</forceCreation>
-                    <classesDirectory>${project.build.outputDirectory}</classesDirectory>
                     <includes>
-                        <include>${project.artifactId}.js</include>
-                        <include>**/*.kt</include>
+                        <include>*.js</include>
                     </includes>
                     <archive>
                         <forced/>
@@ -98,8 +83,13 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
 
             <plugin>
+                <!-- This is just to avoid deployment this module as it is example project -->
                 <artifactId>maven-deploy-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
