@@ -83,12 +83,12 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                 assert mainFileDir != null;
 
                 final String mainFileName = mainFile.getName();
-                final String extraFileNamePrefix = mainFileName.replace(".Main.kt", ".data.Sample.");
+                final String extraFileNamePrefix = mainFileName.replace(".Main.kt", ".");
                 File[] extraFiles = mainFileDir.listFiles(
                         new FilenameFilter() {
                             @Override
                             public boolean accept(@NotNull File dir, @NotNull String name) {
-                                return name.startsWith(extraFileNamePrefix);
+                                return name.startsWith(extraFileNamePrefix) && !name.equals(mainFileName);
                             }
                         }
                 );
