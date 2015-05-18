@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
 import com.google.common.collect.Maps;
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
 import java.io.PrintStream;
@@ -42,7 +42,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private final Set<JetFile> files = new LinkedHashSet<JetFile>();
     private final Map<JetSecondaryConstructor, ConstructorDescriptor> secondaryConstructors = Maps.newLinkedHashMap();
 
-    private final Map<JetDeclaration, JetScope> declaringScopes = Maps.newHashMap();
     private final Map<JetNamedFunction, SimpleFunctionDescriptor> functions = Maps.newLinkedHashMap();
     private final Map<JetProperty, PropertyDescriptor> properties = Maps.newLinkedHashMap();
     private final Map<JetParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
@@ -51,12 +50,18 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private final Map<JetScript, ScriptDescriptor> scripts = Maps.newLinkedHashMap();
 
     private final TopDownAnalysisMode topDownAnalysisMode;
+    private final DeclarationScopeProvider declarationScopeProvider;
 
     private StringBuilder debugOutput;
 
-    public TopDownAnalysisContext(@NotNull TopDownAnalysisMode topDownAnalysisMode, @NotNull DataFlowInfo outerDataFlowInfo) {
+    public TopDownAnalysisContext(
+            @NotNull TopDownAnalysisMode topDownAnalysisMode,
+            @NotNull DataFlowInfo outerDataFlowInfo,
+            @NotNull DeclarationScopeProvider declarationScopeProvider
+    ) {
         this.topDownAnalysisMode = topDownAnalysisMode;
         this.outerDataFlowInfo = outerDataFlowInfo;
+        this.declarationScopeProvider = declarationScopeProvider;
     }
 
     @Override
@@ -123,13 +128,10 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
         return properties;
     }
 
+    @Nullable
     @Override
-    public Function<JetDeclaration, JetScope> getDeclaringScopes() {
-        return Functions.forMap(declaringScopes);
-    }
-
-    public void registerDeclaringScope(@NotNull JetDeclaration declaration, @NotNull JetScope scope) {
-        declaringScopes.put(declaration, scope);
+    public JetScope getDeclaringScope(@NotNull JetDeclaration declaration) {
+        return declarationScopeProvider.getResolutionScopeForDeclaration(declaration);
     }
 
     @Override

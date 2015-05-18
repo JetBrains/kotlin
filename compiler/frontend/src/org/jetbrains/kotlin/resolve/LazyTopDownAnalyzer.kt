@@ -103,7 +103,7 @@ public class LazyTopDownAnalyzer {
     }
 
     public fun analyzeDeclarations(topDownAnalysisMode: TopDownAnalysisMode, declarations: Collection<PsiElement>, outerDataFlowInfo: DataFlowInfo): TopDownAnalysisContext {
-        val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo)
+        val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider!!)
 
         val topLevelFqNames = HashMultimap.create<FqName, JetElement>()
 
@@ -199,7 +199,6 @@ public class LazyTopDownAnalyzer {
 
                 override fun visitSecondaryConstructor(constructor: JetSecondaryConstructor) {
                     c.getSecondaryConstructors().put(constructor, lazyDeclarationResolver!!.resolveToDescriptor(constructor) as ConstructorDescriptor)
-                    registerScope(c, constructor)
                 }
 
                 override fun visitEnumEntry(enumEntry: JetEnumEntry) {
@@ -211,7 +210,6 @@ public class LazyTopDownAnalyzer {
                 }
 
                 override fun visitAnonymousInitializer(initializer: JetClassInitializer) {
-                    registerScope(c, initializer)
                     val classOrObject = PsiTreeUtil.getParentOfType<JetClassOrObject>(initializer, javaClass<JetClassOrObject>())
                     c.getAnonymousInitializers().put(initializer, lazyDeclarationResolver!!.resolveToDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes)
                 }
@@ -269,10 +267,6 @@ public class LazyTopDownAnalyzer {
             c.getProperties().put(property, descriptor)
             ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())
             registerTopLevelFqName(topLevelFqNames, property, descriptor)
-
-            registerScope(c, property)
-            registerScope(c, property.getGetter())
-            registerScope(c, property.getSetter())
         }
     }
 
@@ -284,13 +278,7 @@ public class LazyTopDownAnalyzer {
             for (parameterDescriptor in simpleFunctionDescriptor.getValueParameters()) {
                 ForceResolveUtil.forceResolveAllContents(parameterDescriptor.getAnnotations())
             }
-            registerScope(c, function)
         }
-    }
-
-    private fun registerScope(c: TopDownAnalysisContext, declaration: JetDeclaration?) {
-        if (declaration == null) return
-        c.registerDeclaringScope(declaration, declarationScopeProvider!!.getResolutionScopeForDeclaration(declaration))
     }
 
     private fun registerTopLevelFqName(topLevelFqNames: Multimap<FqName, JetElement>, declaration: JetNamedDeclaration, descriptor: DeclarationDescriptor) {

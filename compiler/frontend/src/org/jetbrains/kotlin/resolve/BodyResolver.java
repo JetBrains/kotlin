@@ -144,7 +144,7 @@ public class BodyResolver {
 
     private void resolveSecondaryConstructors(@NotNull BodiesResolveContext c) {
         for (Map.Entry<JetSecondaryConstructor, ConstructorDescriptor> entry : c.getSecondaryConstructors().entrySet()) {
-            JetScope declaringScope = c.getDeclaringScopes().apply(entry.getKey());
+            JetScope declaringScope = c.getDeclaringScope(entry.getKey());
             assert declaringScope != null : "Declaring scope should be registered before body resolve";
             resolveSecondaryConstructorBody(c.getOuterDataFlowInfo(), trace, entry.getKey(), entry.getValue(), declaringScope);
         }
@@ -633,7 +633,7 @@ public class BodyResolver {
     }
 
     private JetScope makeScopeForPropertyAccessor(@NotNull BodiesResolveContext c, @NotNull JetPropertyAccessor accessor, @NotNull PropertyDescriptor descriptor) {
-        JetScope accessorDeclaringScope = c.getDeclaringScopes().apply(accessor);
+        JetScope accessorDeclaringScope = c.getDeclaringScope(accessor);
         assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
         return JetScopeUtils.makeScopeForPropertyAccessor(descriptor, accessorDeclaringScope, trace);
     }
@@ -737,7 +737,7 @@ public class BodyResolver {
 
     @NotNull
     private static JetScope getScopeForProperty(@NotNull BodiesResolveContext c, @NotNull JetProperty property) {
-        JetScope scope = c.getDeclaringScopes().apply(property);
+        JetScope scope = c.getDeclaringScope(property);
         assert scope != null : "Scope for property " + property.getText() + " should exists";
         return scope;
     }
@@ -749,7 +749,7 @@ public class BodyResolver {
 
             computeDeferredType(descriptor.getReturnType());
 
-            JetScope declaringScope = c.getDeclaringScopes().apply(declaration);
+            JetScope declaringScope = c.getDeclaringScope(declaration);
             assert declaringScope != null;
 
             resolveFunctionBody(c.getOuterDataFlowInfo(), trace, declaration, descriptor, declaringScope);

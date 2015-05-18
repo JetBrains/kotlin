@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.base.Function;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
@@ -46,7 +46,8 @@ public interface BodiesResolveContext {
     @Mutable
     Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();
 
-    Function<JetDeclaration, JetScope> getDeclaringScopes();
+    @Nullable
+    JetScope getDeclaringScope(@NotNull JetDeclaration declaration);
 
     @NotNull
     DataFlowInfo getOuterDataFlowInfo();

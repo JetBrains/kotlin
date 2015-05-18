@@ -127,7 +127,8 @@ public class ReplInterpreter {
                 scopeProvider
         );
 
-        this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfo.EMPTY);
+        this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfo.EMPTY,
+                                                                 container.getResolveSession().getScopeProvider());
         this.topDownAnalyzer = container.getLazyTopDownAnalyzerForTopLevel();
         this.resolveSession = container.getResolveSession();
 
