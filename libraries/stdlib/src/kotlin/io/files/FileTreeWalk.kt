@@ -8,12 +8,6 @@ import java.util.NoSuchElementException
 import java.util.Stack
 
 /**
- * Created by Mikhail Glukhikh on 13/03/2015.
- *
- * An implementation of file walker
- */
-
-/**
  * An enumeration to describe possible walk directions.
  * There are two of them: beginning from parents, ending with children,
  * and beginning from children, ending with parents. Both use depth-first search.
