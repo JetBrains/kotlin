@@ -54,6 +54,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForScriptDescriptor;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
@@ -242,8 +243,12 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
 
     private void writeInnerClass(@NotNull ClassDescriptor innerClass) {
         DeclarationDescriptor containing = innerClass.getContainingDeclaration();
-        String outerClassInternalName =
-                containing instanceof ClassDescriptor ? typeMapper.mapClass((ClassDescriptor) containing).getInternalName() : null;
+        String outerClassInternalName = null;
+        if (containing instanceof ClassDescriptor) {
+            outerClassInternalName = typeMapper.mapClass((ClassDescriptor) containing).getInternalName();
+        } else if (containing instanceof ScriptDescriptor) {
+            outerClassInternalName = asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) containing).getInternalName();
+        }
 
         String innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
 
@@ -280,6 +285,8 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
         else if (outermost instanceof PackageContext && !(outermost instanceof PackageFacadeContext)) {
             return PackagePartClassUtils.getPackagePartType(element.getContainingJetFile());
+        } else if (outermost instanceof ScriptContext) {
+            return asmTypeForScriptDescriptor(bindingContext, ((ScriptContext) outermost).getScriptDescriptor());
         }
         return null;
     }

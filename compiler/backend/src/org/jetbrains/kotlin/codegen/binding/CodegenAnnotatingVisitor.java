@@ -371,7 +371,7 @@ class CodegenAnnotatingVisitor extends JetVisitorVoid {
 
         String peek = peekFromStack(nameStack);
         String name = safeIdentifier(descriptor.getName()).asString();
-        if (containingDeclaration instanceof ClassDescriptor) {
+        if (containingDeclaration instanceof ClassDescriptor || containingDeclaration instanceof ScriptDescriptor) {
             return peek + '$' + name;
         }
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {

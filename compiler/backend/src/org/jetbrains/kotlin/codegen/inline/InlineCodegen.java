@@ -58,6 +58,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
@@ -573,6 +574,14 @@ public class InlineCodegen extends CallGenerator {
         if (descriptor instanceof ClassDescriptor) {
             OwnerKind kind = DescriptorUtils.isTrait(descriptor) ? OwnerKind.TRAIT_IMPL : OwnerKind.IMPLEMENTATION;
             return parent.intoClass((ClassDescriptor) descriptor, kind, state);
+        }
+        else if (descriptor instanceof ScriptDescriptor) {
+            ClassDescriptor classDescriptorForScript = state.getBindingContext().get(CLASS_FOR_SCRIPT, (ScriptDescriptor) descriptor);
+            assert classDescriptorForScript != null : "Can't find class for script: " + descriptor;
+            List<ScriptDescriptor> earlierScripts = state.getEarlierScriptsForReplInterpreter();
+            return parent.intoScript((ScriptDescriptor) descriptor,
+                                     earlierScripts == null ? Collections.emptyList() : earlierScripts,
+                                     classDescriptorForScript);
         }
         else if (descriptor instanceof FunctionDescriptor) {
             return parent.intoFunction((FunctionDescriptor) descriptor);

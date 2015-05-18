@@ -47,6 +47,18 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         doTest(fileName);
     }
 
+    @TestMetadata("inline.kts")
+    public void testInline() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/inline.kts");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outerCapture.kts")
+    public void testOuterCapture() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/outerCapture.kts");
+        doTest(fileName);
+    }
+
     @TestMetadata("parameter.kts")
     public void testParameter() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/script/parameter.kts");
