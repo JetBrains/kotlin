@@ -411,7 +411,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         }
 
         private enum class Kind {
-            INT FLOAT LONG DOUBLE STRING
+            INT, FLOAT, LONG, DOUBLE, STRING
         }
     }
 
@@ -588,10 +588,10 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     }
 
     enum class RecompilationDecision {
-        DO_NOTHING
-        RECOMPILE_OTHER_KOTLIN_IN_CHUNK
-        RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
-        RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
+        DO_NOTHING,
+        RECOMPILE_OTHER_KOTLIN_IN_CHUNK,
+        RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS,
+        RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS;
 
         fun merge(other: RecompilationDecision): RecompilationDecision {
             return if (other.ordinal() > this.ordinal()) other else this
