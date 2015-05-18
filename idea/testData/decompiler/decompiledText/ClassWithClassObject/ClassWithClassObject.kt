@@ -22,7 +22,7 @@ class ClassWithClassObject {
             get() = this + 2
 
         fun <T, K, G> complexFun(a: T, b: K, c: G): G {
-            throw AssertionError()
+            throw RuntimeException()
         }
     }
 }

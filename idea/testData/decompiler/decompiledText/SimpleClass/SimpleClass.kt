@@ -7,7 +7,7 @@ abstract class SimpleClass: D<Tr, Int>(), Tr, List<String> {
     }
 
     fun g(d: D<String, Tr>): List<D<A, Int>> {
-        throw AssertionError()
+        throw RuntimeException()
     }
 
     fun Int.f() {
@@ -24,6 +24,6 @@ abstract class SimpleClass: D<Tr, Int>(), Tr, List<String> {
         get() = this + 2
 
     fun <T, K, G> complexFun(a: T, b: K, c: G): G {
-        throw AssertionError()
+        throw RuntimeException()
     }
 }
