@@ -3051,6 +3051,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("precedingAnnotation.kt")
+            public void testPrecedingAnnotation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/precedingAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("precedingComment.kt")
+            public void testPrecedingComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/precedingComment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("precedingDocComment.kt")
+            public void testPrecedingDocComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/precedingDocComment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("precedingMultilineComment.kt")
+            public void testPrecedingMultilineComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/precedingMultilineComment.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("singleEntry.kt")
             public void testSingleEntry() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumConstructor/singleEntry.kt");

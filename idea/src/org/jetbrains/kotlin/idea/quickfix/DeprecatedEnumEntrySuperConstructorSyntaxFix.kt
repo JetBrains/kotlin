@@ -19,7 +19,11 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
@@ -28,6 +32,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.resolve.DeclarationsChecker
 
@@ -37,6 +42,9 @@ class DeprecatedEnumEntrySuperConstructorSyntaxFix(element: JetEnumEntry): JetIn
     override fun getText(): String = "Change to short enum entry super constructor"
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) = changeConstructorToShort(element)
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
+            = super.isAvailable(project, editor, file) && DeclarationsChecker.enumEntryUsesDeprecatedSuperConstructor(element)
 
     companion object: JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction?  =
@@ -61,8 +69,9 @@ class DeprecatedEnumEntrySuperConstructorSyntaxFix(element: JetEnumEntry): JetIn
         private fun changeConstructorToShort(entry: JetEnumEntry) {
             val list = entry.getInitializerList()!!
             transformInitializerList(list)
-            // Delete everything between name and initializer (colon with whitespaces)
-            entry.deleteChildRange(entry.getFirstChild().getNextSibling(), list.getPrevSibling())
+            // Delete everything between name identifier and initializer (colon with whitespaces)
+            val name = entry.getNameAsDeclaration()
+            entry.deleteChildRange(name.getNextSibling()!!, list.getPrevSibling()!!)
         }
     }
 }
