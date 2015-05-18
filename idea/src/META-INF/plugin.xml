@@ -470,7 +470,7 @@
     <stubIndex implementation="org.jetbrains.kotlin.idea.stubindex.JetProbablyNothingPropertyShortNameIndex"/>
 
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.JetClassFileDecompiler"/>
-    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.KotlinJavascriptMetaFileDecompiler"/>
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.KotlinJavaScriptMetaFileDecompiler"/>
     
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.versions.KotlinAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex"/>

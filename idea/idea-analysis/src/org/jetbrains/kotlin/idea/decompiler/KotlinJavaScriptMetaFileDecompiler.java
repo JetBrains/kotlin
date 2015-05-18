@@ -22,11 +22,11 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.compiled.ClassFileDecompilers;
 import com.intellij.psi.compiled.ClsStubBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.KotlinJavascriptStubBuilder;
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.KotlinJavaScriptStubBuilder;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 
-public class KotlinJavascriptMetaFileDecompiler extends ClassFileDecompilers.Full {
-    private final ClsStubBuilder stubBuilder = new KotlinJavascriptStubBuilder();
+public class KotlinJavaScriptMetaFileDecompiler extends ClassFileDecompilers.Full {
+    private final ClsStubBuilder stubBuilder = new KotlinJavaScriptStubBuilder();
 
     @Override
     public boolean accepts(@NotNull VirtualFile file) {
