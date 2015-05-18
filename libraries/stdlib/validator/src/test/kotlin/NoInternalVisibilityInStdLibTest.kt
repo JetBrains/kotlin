@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
-import org.jetbrains.kotlin.context.GlobalContext
+import org.jetbrains.kotlin.context.ModuleContext
 
 private val ANALYZE_PACKAGE_ROOTS_FOR_JVM = listOf("kotlin")
 private val ANALYZE_PACKAGE_ROOTS_FOR_JS = listOf("kotlin", "jquery", "html5")
@@ -129,11 +129,9 @@ class NoInternalVisibilityInStdLibTest {
             module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
 
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    environment.project,
-                    GlobalContext(),
+                    ModuleContext(module, environment.project),
                     environment.getSourceFiles(),
                     CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                    module,
                     null,
                     null
             ).moduleDescriptor
