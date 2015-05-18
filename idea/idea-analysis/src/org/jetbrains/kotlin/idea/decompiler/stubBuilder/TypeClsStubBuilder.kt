@@ -21,6 +21,7 @@ import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -43,7 +44,10 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(parent: StubElement<out PsiElement>, typeProto: Type) {
         val typeReference = KotlinPlaceHolderStubImpl<JetTypeReference>(parent, JetStubElementTypes.TYPE_REFERENCE)
 
-        val typeAnnotations = c.components.annotationLoader.loadTypeAnnotations(typeProto, c.nameResolver)
+        val typeAnnotations = c.components.annotationLoader.loadTypeAnnotations(typeProto, c.nameResolver).filterNot {
+            val isTopLevelClass = !it.isNestedClass()
+            isTopLevelClass && it.asSingleFqName() in JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES
+        }
         if (typeAnnotations.isNotEmpty()) {
             createAnnotationStubs(typeAnnotations, typeReference, needWrappingAnnotationEntries = true)
         }

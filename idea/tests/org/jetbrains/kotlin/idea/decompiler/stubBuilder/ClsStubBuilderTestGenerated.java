@@ -35,6 +35,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/stubBuilder"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("AnnotatedFlexibleTypes")
+    public void testAnnotatedFlexibleTypes() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotatedFlexibleTypes/");
+        doTest(fileName);
+    }
+
     @TestMetadata("AnnotationClass")
     public void testAnnotationClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/decompiler/stubBuilder/AnnotationClass/");
