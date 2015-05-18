@@ -154,6 +154,14 @@ class MapTest {
         assertEquals("ccc", map.get(3))
     }
 
+    test fun createWithSelectorForKeyAndValue() {
+        val map = listOf("a", "bb", "ccc").toMap({ it.length() }, { it.toUpperCase() })
+        assertEquals(3, map.size())
+        assertEquals("A", map.get(1))
+        assertEquals("BB", map.get(2))
+        assertEquals("CCC", map.get(3))
+    }
+
     test fun createUsingTo() {
         val map = mapOf("a" to 1, "b" to 2)
         assertEquals(2, map.size())
