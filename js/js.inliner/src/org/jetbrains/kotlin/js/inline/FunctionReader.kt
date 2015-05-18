@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.inline
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -32,9 +33,11 @@ import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getExternalModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
+import kotlin.platform.platformStatic
 
 // TODO: add hash checksum to defineModule?
 /**
@@ -65,17 +68,16 @@ public class FunctionReader(private val context: TranslationContext) {
     init {
         val config = context.getConfig() as LibrarySourcesConfig
         val libs = config.getLibraries().map { File(it) }
-        val files = LibraryUtils.readJsFiles(libs.map { it.getPath() }.toList())
 
-        for (file in files) {
-            val matcher = DEFINE_MODULE_PATTERN.matcher(file)
+        LibraryUtils.traverseJsLibraries(libs) { fileContent, path ->
+            val matcher = DEFINE_MODULE_PATTERN.toPattern().matcher(fileContent)
 
             while (matcher.find()) {
                 val moduleName = matcher.group(3)
                 val moduleVariable = matcher.group(4)
                 val kotlinVariable = matcher.group(1)
                 assert(moduleName !in moduleJsDefinition) { "Module is defined in more, than one file" }
-                moduleJsDefinition[moduleName] = file
+                moduleJsDefinition[moduleName] = fileContent
                 moduleRootVariable[moduleName] = moduleVariable
                 moduleKotlinVariable[moduleName] = kotlinVariable
             }

@@ -20,6 +20,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Processor
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.*
 import java.util.Properties
 import java.util.jar.Attributes
@@ -112,37 +113,38 @@ public object LibraryUtils {
     }
 
     platformStatic
-    public fun readJsFiles(libraries: List<String>): List<String> {
-        val files = arrayListOf<String>()
-        val libs = libraries.map { File(it) }.filter { it.exists() }
+    public fun traverseJsLibraries(libs: List<File>, action: (content: String, path: String)->Unit) {
+        libs.forEach { traverseJsLibrary(it, action) }
+    }
 
-        for (lib in libs) {
-            when {
-                lib.isDirectory() ->
-                    traverseDirectory(lib) { file, path ->
-                        files.add(FileUtil.loadFile(file))
-                    }
-                FileUtil.isJarOrZip(lib) ->
-                    traverseArchive(lib) { content, path ->
-                        files.add(content)
-                    }
-                lib.getName().endsWith(KotlinJavascriptMetadataUtils.JS_EXT) ->
-                    files.add(FileUtil.loadFile(lib))
-                else ->
-                    throw IllegalArgumentException("Unknown library format (directory, zip or js file expected): $lib")
+    platformStatic
+    public fun traverseJsLibrary(lib: File, action: (content: String, path: String)->Unit) {
+        when {
+            lib.isDirectory() -> traverseDirectory(lib, action)
+            FileUtil.isJarOrZip(lib) -> traverseArchive(lib, action)
+            lib.getName().endsWith(KotlinJavascriptMetadataUtils.JS_EXT) -> {
+                lib.runIfFileExists(action)
+                val jsFile = lib.withReplacedExtensionOrNull(KotlinJavascriptMetadataUtils.META_JS_SUFFIX, KotlinJavascriptMetadataUtils.JS_EXT)
+                jsFile?.runIfFileExists(action)
             }
+            else ->
+                throw IllegalArgumentException("Unknown library format (directory, zip or js file expected): $lib")
         }
+    }
 
-        return files
+    private fun File.runIfFileExists(action: (content: String, path: String)->Unit) {
+        if (isFile()) {
+            action(FileUtil.loadFile(this), "")
+        }
     }
 
     private fun copyJsFilesFromDirectory(dir: File, outputLibraryJsPath: String) {
         traverseDirectory(dir) {
-            file, relativePath -> FileUtil.copy(file, File(outputLibraryJsPath, relativePath))
+            content, relativePath -> FileUtil.writeToFile(File(outputLibraryJsPath, relativePath), content)
         }
     }
 
-    private fun processDirectory(dir: File, action: (File, relativePath: String) -> Unit) {
+    private fun processDirectory(dir: File, action: (content: String, relativePath: String) -> Unit) {
         FileUtil.processFilesRecursively(dir, object : Processor<File> {
             override fun process(file: File): Boolean {
                 val relativePath = FileUtil.getRelativePath(dir, file) ?: throw IllegalArgumentException("relativePath should not be null " + dir + " " + file)
@@ -150,14 +152,14 @@ public object LibraryUtils {
                     val suggestedRelativePath = getSuggestedPath(relativePath)
                     if (suggestedRelativePath == null) return true
 
-                    action(file, suggestedRelativePath)
+                    action(FileUtil.loadFile(file), suggestedRelativePath)
                 }
                 return true
             }
         })
     }
 
-    fun traverseDirectory(dir: File, action: (File, relativePath: String) -> Unit) {
+    fun traverseDirectory(dir: File, action: (content: String, relativePath: String) -> Unit) {
         try {
             processDirectory(dir, action)
         }
