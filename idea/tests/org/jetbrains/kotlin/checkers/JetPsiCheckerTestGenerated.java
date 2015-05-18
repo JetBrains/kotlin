@@ -283,6 +283,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ReturnTypeMismatchOnOverride.kt")
+        public void testReturnTypeMismatchOnOverride() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ReturnTypeMismatchOnOverride.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Shadowing.kt")
         public void testShadowing() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/Shadowing.kt");
