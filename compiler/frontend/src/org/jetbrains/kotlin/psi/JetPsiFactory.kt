@@ -374,18 +374,18 @@ public class JetPsiFactory(private val project: Project) {
 
     public class CallableBuilder(private val target: Target) {
         public enum class Target {
-            FUNCTION
+            FUNCTION,
             READ_ONLY_PROPERTY
         }
 
         enum class State {
-            MODIFIERS
-            NAME
-            RECEIVER
-            FIRST_PARAM
-            REST_PARAMS
-            TYPE_CONSTRAINTS
-            BODY
+            MODIFIERS,
+            NAME,
+            RECEIVER,
+            FIRST_PARAM,
+            REST_PARAMS,
+            TYPE_CONSTRAINTS,
+            BODY,
             DONE
         }
 

@@ -25,8 +25,8 @@ class Parameter(val identifier: Identifier,
                 val modifiers: Modifiers,
                 val defaultValue: DeferredElement<Expression>? = null) : Element() {
     public enum class VarValModifier {
-        None
-        Val
+        None,
+        Val,
         Var
     }
 

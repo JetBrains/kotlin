@@ -121,8 +121,8 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
     }
 
     private enum class FilterResult {
-        SKIP
-        GO_INSIDE
+        SKIP,
+        GO_INSIDE,
         PROCESS
     }
 

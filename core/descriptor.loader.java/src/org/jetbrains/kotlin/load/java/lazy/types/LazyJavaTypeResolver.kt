@@ -357,8 +357,8 @@ trait JavaTypeAttributes {
 }
 
 enum class JavaTypeFlexibility {
-    INFLEXIBLE
-    FLEXIBLE_UPPER_BOUND
+    INFLEXIBLE,
+    FLEXIBLE_UPPER_BOUND,
     FLEXIBLE_LOWER_BOUND
 }
 

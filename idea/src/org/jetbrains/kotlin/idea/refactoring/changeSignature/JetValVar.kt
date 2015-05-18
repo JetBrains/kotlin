@@ -20,9 +20,9 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.lexer.JetTokens
 
 public enum class JetValVar(val name: String) {
-    None: JetValVar("none")
-    Val: JetValVar("val")
-    Var: JetValVar("var")
+    None("none"),
+    Val("val"),
+    Var("var");
 
     override fun toString(): String = name
 }

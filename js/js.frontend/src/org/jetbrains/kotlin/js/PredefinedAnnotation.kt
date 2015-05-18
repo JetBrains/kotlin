@@ -20,11 +20,11 @@ import kotlin.properties.Delegates
 import org.jetbrains.kotlin.name.FqName
 
 public enum class PredefinedAnnotation(fqName: String) {
-    LIBRARY : PredefinedAnnotation("kotlin.js.library")
-    NATIVE : PredefinedAnnotation("kotlin.js.native")
-    NATIVE_INVOKE : PredefinedAnnotation("kotlin.js.nativeInvoke")
-    NATIVE_GETTER : PredefinedAnnotation("kotlin.js.nativeGetter")
-    NATIVE_SETTER : PredefinedAnnotation("kotlin.js.nativeSetter")
+    LIBRARY("kotlin.js.library"),
+    NATIVE("kotlin.js.native"),
+    NATIVE_INVOKE("kotlin.js.nativeInvoke"),
+    NATIVE_GETTER("kotlin.js.nativeGetter"),
+    NATIVE_SETTER("kotlin.js.nativeSetter");
 
     public val fqName: FqName = FqName(fqName)
 

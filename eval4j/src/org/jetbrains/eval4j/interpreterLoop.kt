@@ -32,8 +32,8 @@ public class ExceptionThrown(public val exception: ObjectValue, public val kind:
     override fun toString(): String = "Thrown $exception: $kind"
 
     public enum class ExceptionKind {
-        FROM_EVALUATED_CODE
-        FROM_EVALUATOR
+        FROM_EVALUATED_CODE,
+        FROM_EVALUATOR,
         BROKEN_CODE
     }
 }

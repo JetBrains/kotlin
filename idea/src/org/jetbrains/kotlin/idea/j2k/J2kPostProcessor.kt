@@ -76,8 +76,8 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     }
 
     private enum class RangeFilterResult {
-        SKIP
-        GO_INSIDE
+        SKIP,
+        GO_INSIDE,
         PROCESS
     }
 

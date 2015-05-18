@@ -102,12 +102,12 @@ public trait ModuleInfo {
             override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
                 //do nothing
             }
-        }
+        },
         LAST {
             override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
                 dependencies.add(builtinsModule)
             }
-        }
+        };
 
         override fun adjustDependencies(builtinsModule: ModuleDescriptorImpl, dependencies: MutableList<ModuleDescriptorImpl>) {
             //TODO: KT-5457

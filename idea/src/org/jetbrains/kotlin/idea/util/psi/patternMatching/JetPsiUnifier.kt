@@ -94,11 +94,11 @@ public trait UnificationResult {
     public enum class Status {
         MATCHED {
             override fun and(other: Status): Status = other
-        }
+        },
 
         UNMATCHED {
             override fun and(other: Status): Status = this
-        }
+        };
 
         public abstract fun and(other: Status): Status
     }

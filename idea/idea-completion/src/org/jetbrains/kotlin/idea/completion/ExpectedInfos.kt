@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.HashSet
 
 enum class Tail {
-    COMMA
-    RPARENTH
+    COMMA,
+    RPARENTH,
     ELSE
 }
 

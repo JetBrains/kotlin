@@ -37,8 +37,8 @@ public abstract class ImportInsertHelper {
     public abstract val importSortComparator: Comparator<ImportPath>
 
     public enum class ImportDescriptorResult {
-        FAIL
-        IMPORT_ADDED
+        FAIL,
+        IMPORT_ADDED,
         ALREADY_IMPORTED
     }
 

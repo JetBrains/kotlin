@@ -43,13 +43,13 @@ val GenerateAttribute.signature: String
 fun GenerateAttribute.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<String> = standardTypes()) = copy(type = type.dynamicIfUnknownType(allTypes, standardTypes))
 
 enum class NativeGetterOrSetter {
-    NONE
-    GETTER
+    NONE,
+    GETTER,
     SETTER
 }
 
 enum class GenerateDefinitionKind {
-    TRAIT
+    TRAIT,
     CLASS
 }
 

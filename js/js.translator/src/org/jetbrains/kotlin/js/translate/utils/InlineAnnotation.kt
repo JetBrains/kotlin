@@ -17,6 +17,6 @@
 package org.jetbrains.kotlin.js.translate.utils
 
 enum class InlineAnnotation(val fqName: String) {
-    INLINE : InlineAnnotation("kotlin.inline")
-    NO_INLINE : InlineAnnotation("kotlin.noinline")
+    INLINE("kotlin.inline"),
+    NO_INLINE("kotlin.noinline")
 }

@@ -82,7 +82,7 @@ class ModuleTypeCacheManager private (project: Project) {
 }
 
 enum class ModuleType {
-    GRADLE
+    GRADLE,
     OTHER
 }
 

@@ -91,8 +91,8 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
     }
 
     private enum class UsageKind {
-        SIMPLE_PROPERTY_USAGE
-        GETTER_USAGE
+        SIMPLE_PROPERTY_USAGE,
+        GETTER_USAGE,
         SETTER_USAGE
     }
 

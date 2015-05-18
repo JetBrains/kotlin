@@ -35,8 +35,8 @@ public trait TypeBounds {
     public fun getValues(): Collection<JetType>
 
     public enum class BoundKind {
-        LOWER_BOUND
-        UPPER_BOUND
+        LOWER_BOUND,
+        UPPER_BOUND,
         EXACT_BOUND
     }
 

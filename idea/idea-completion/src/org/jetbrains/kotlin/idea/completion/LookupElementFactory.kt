@@ -92,8 +92,8 @@ public class LookupElementFactory(
     }
 
     private enum class Style {
-        NORMAL
-        BOLD
+        NORMAL,
+        BOLD,
         GRAYED
     }
 

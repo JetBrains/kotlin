@@ -26,18 +26,18 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 public enum class CallType {
-    NORMAL
-    SAFE
+    NORMAL,
+    SAFE,
 
     INFIX {
         override fun canCall(descriptor: DeclarationDescriptor)
                 = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 1
-    }
+    },
 
     UNARY {
         override fun canCall(descriptor: DeclarationDescriptor)
                 = descriptor is SimpleFunctionDescriptor && descriptor.getValueParameters().size() == 0
-    }
+    };
 
     public open fun canCall(descriptor: DeclarationDescriptor): Boolean = true
 }

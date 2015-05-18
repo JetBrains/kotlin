@@ -531,9 +531,9 @@ class PartialBodyResolveFilter(
     }
 
     private enum class MarkLevel {
-        SKIP
-        TAKE
-        NEED_REFERENCE_RESOLVE
+        SKIP,
+        TAKE,
+        NEED_REFERENCE_RESOLVE,
         NEED_COMPLETION
     }
 

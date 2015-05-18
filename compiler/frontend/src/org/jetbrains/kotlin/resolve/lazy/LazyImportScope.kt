@@ -226,8 +226,8 @@ class LazyImportScope(
 ) : JetScope {
 
     enum class FilteringKind {
-        ALL
-        VISIBLE_CLASSES
+        ALL,
+        VISIBLE_CLASSES,
         INVISIBLE_CLASSES
     }
 

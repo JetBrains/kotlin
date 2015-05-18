@@ -69,10 +69,10 @@ private object SmartCompletionPriorityWeigher : LookupElementWeigher("kotlin.sma
 
 private object KindWeigher : LookupElementWeigher("kotlin.kind") {
     private enum class Weight {
-        variable // variable or property
-        function
-        keyword
-        `default`
+        variable, // variable or property
+        function,
+        keyword,
+        `default`,
         packages
     }
 
@@ -124,13 +124,13 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
     private val importCache = ImportCache()
 
     private enum class Weight {
-        thisFile
-        kotlinDefaultImport
-        preciseImport
-        allUnderImport
-        `default`
-        hasImportFromSamePackage
-        notImported
+        thisFile,
+        kotlinDefaultImport,
+        preciseImport,
+        allUnderImport,
+        `default`,
+        hasImportFromSamePackage,
+        notImported,
         notToBeUsedInKotlin
     }
 

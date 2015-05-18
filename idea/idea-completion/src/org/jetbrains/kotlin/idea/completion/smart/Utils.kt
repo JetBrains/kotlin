@@ -281,19 +281,19 @@ fun <T : Any> T?.toList(): List<T> = if (this != null) listOf(this) else listOf(
 fun <T : Any> T?.toSet(): Set<T> = if (this != null) setOf(this) else setOf()
 
 enum class SmartCompletionItemPriority {
-    IT
-    TRUE
-    FALSE
-    THIS
-    DEFAULT
-    NULLABLE
-    INSTANTIATION
-    STATIC_MEMBER
-    ANONYMOUS_OBJECT
-    LAMBDA_NO_PARAMS
-    LAMBDA
-    FUNCTION_REFERENCE
-    NULL
+    IT,
+    TRUE,
+    FALSE,
+    THIS,
+    DEFAULT,
+    NULLABLE,
+    INSTANTIATION,
+    STATIC_MEMBER,
+    ANONYMOUS_OBJECT,
+    LAMBDA_NO_PARAMS,
+    LAMBDA,
+    FUNCTION_REFERENCE,
+    NULL,
     INHERITOR_INSTANTIATION
 }
 

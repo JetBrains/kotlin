@@ -190,7 +190,7 @@ public fun traverseFollowingInstructions(
 }
 
 public enum class TraversalOrder {
-    FORWARD
+    FORWARD,
     BACKWARD
 }
 

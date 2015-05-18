@@ -9,152 +9,152 @@ public enum class CharCategory(public val value: Int, public val code: String) {
     /**
      * General category "Cn" in the Unicode specification.
      */
-    UNASSIGNED: CharCategory(Character.UNASSIGNED.toInt(), "Cn")
+    UNASSIGNED(Character.UNASSIGNED.toInt(), "Cn"),
 
     /**
      * General category "Lu" in the Unicode specification.
      */
-    UPPERCASE_LETTER: CharCategory(Character.UPPERCASE_LETTER.toInt(), "Lu")
+    UPPERCASE_LETTER(Character.UPPERCASE_LETTER.toInt(), "Lu"),
 
     /**
      * General category "Ll" in the Unicode specification.
      */
-    LOWERCASE_LETTER: CharCategory(Character.LOWERCASE_LETTER.toInt(), "Ll")
+    LOWERCASE_LETTER(Character.LOWERCASE_LETTER.toInt(), "Ll"),
 
     /**
      * General category "Lt" in the Unicode specification.
      */
-    TITLECASE_LETTER: CharCategory(Character.TITLECASE_LETTER.toInt(), "Lt")
+    TITLECASE_LETTER(Character.TITLECASE_LETTER.toInt(), "Lt"),
 
     /**
      * General category "Lm" in the Unicode specification.
      */
-    MODIFIER_LETTER: CharCategory(Character.MODIFIER_LETTER.toInt(), "Lm")
+    MODIFIER_LETTER(Character.MODIFIER_LETTER.toInt(), "Lm"),
 
     /**
      * General category "Lo" in the Unicode specification.
      */
-    OTHER_LETTER: CharCategory(Character.OTHER_LETTER.toInt(), "Lo")
+    OTHER_LETTER(Character.OTHER_LETTER.toInt(), "Lo"),
 
     /**
      * General category "Mn" in the Unicode specification.
      */
-    NON_SPACING_MARK: CharCategory(Character.NON_SPACING_MARK.toInt(), "Mn")
+    NON_SPACING_MARK(Character.NON_SPACING_MARK.toInt(), "Mn"),
 
     /**
      * General category "Me" in the Unicode specification.
      */
-    ENCLOSING_MARK: CharCategory(Character.ENCLOSING_MARK.toInt(), "Me")
+    ENCLOSING_MARK(Character.ENCLOSING_MARK.toInt(), "Me"),
 
     /**
      * General category "Mc" in the Unicode specification.
      */
-    COMBINING_SPACING_MARK: CharCategory(Character.COMBINING_SPACING_MARK.toInt(), "Mc")
+    COMBINING_SPACING_MARK(Character.COMBINING_SPACING_MARK.toInt(), "Mc"),
 
     /**
      * General category "Nd" in the Unicode specification.
      */
-    DECIMAL_DIGIT_NUMBER: CharCategory(Character.DECIMAL_DIGIT_NUMBER.toInt(), "Nd")
+    DECIMAL_DIGIT_NUMBER(Character.DECIMAL_DIGIT_NUMBER.toInt(), "Nd"),
 
     /**
      * General category "Nl" in the Unicode specification.
      */
-    LETTER_NUMBER: CharCategory(Character.LETTER_NUMBER.toInt(), "Nl")
+    LETTER_NUMBER(Character.LETTER_NUMBER.toInt(), "Nl"),
 
     /**
      * General category "No" in the Unicode specification.
      */
-    OTHER_NUMBER: CharCategory(Character.OTHER_NUMBER.toInt(), "No")
+    OTHER_NUMBER(Character.OTHER_NUMBER.toInt(), "No"),
 
     /**
      * General category "Zs" in the Unicode specification.
      */
-    SPACE_SEPARATOR: CharCategory(Character.SPACE_SEPARATOR.toInt(), "Zs")
+    SPACE_SEPARATOR(Character.SPACE_SEPARATOR.toInt(), "Zs"),
 
     /**
      * General category "Zl" in the Unicode specification.
      */
-    LINE_SEPARATOR: CharCategory(Character.LINE_SEPARATOR.toInt(), "Zl")
+    LINE_SEPARATOR(Character.LINE_SEPARATOR.toInt(), "Zl"),
 
     /**
      * General category "Zp" in the Unicode specification.
      */
-    PARAGRAPH_SEPARATOR: CharCategory(Character.PARAGRAPH_SEPARATOR.toInt(), "Zp")
+    PARAGRAPH_SEPARATOR(Character.PARAGRAPH_SEPARATOR.toInt(), "Zp"),
 
     /**
      * General category "Cc" in the Unicode specification.
      */
-    CONTROL: CharCategory(Character.CONTROL.toInt(), "Cc")
+    CONTROL(Character.CONTROL.toInt(), "Cc"),
 
     /**
      * General category "Cf" in the Unicode specification.
      */
-    FORMAT: CharCategory(Character.FORMAT.toInt(), "Cf")
+    FORMAT(Character.FORMAT.toInt(), "Cf"),
 
     /**
      * General category "Co" in the Unicode specification.
      */
-    PRIVATE_USE: CharCategory(Character.PRIVATE_USE.toInt(), "Co")
+    PRIVATE_USE(Character.PRIVATE_USE.toInt(), "Co"),
 
     /**
      * General category "Cs" in the Unicode specification.
      */
-    SURROGATE: CharCategory(Character.SURROGATE.toInt(), "Cs")
+    SURROGATE(Character.SURROGATE.toInt(), "Cs"),
 
     /**
      * General category "Pd" in the Unicode specification.
      */
-    DASH_PUNCTUATION: CharCategory(Character.DASH_PUNCTUATION.toInt(), "Pd")
+    DASH_PUNCTUATION(Character.DASH_PUNCTUATION.toInt(), "Pd"),
 
     /**
      * General category "Ps" in the Unicode specification.
      */
-    START_PUNCTUATION: CharCategory(Character.START_PUNCTUATION.toInt(), "Ps")
+    START_PUNCTUATION(Character.START_PUNCTUATION.toInt(), "Ps"),
 
     /**
      * General category "Pe" in the Unicode specification.
      */
-    END_PUNCTUATION: CharCategory(Character.END_PUNCTUATION.toInt(), "Pe")
+    END_PUNCTUATION(Character.END_PUNCTUATION.toInt(), "Pe"),
 
     /**
      * General category "Pc" in the Unicode specification.
      */
-    CONNECTOR_PUNCTUATION: CharCategory(Character.CONNECTOR_PUNCTUATION.toInt(), "Pc")
+    CONNECTOR_PUNCTUATION(Character.CONNECTOR_PUNCTUATION.toInt(), "Pc"),
 
     /**
      * General category "Po" in the Unicode specification.
      */
-    OTHER_PUNCTUATION: CharCategory(Character.OTHER_PUNCTUATION.toInt(), "Po")
+    OTHER_PUNCTUATION(Character.OTHER_PUNCTUATION.toInt(), "Po"),
 
     /**
      * General category "Sm" in the Unicode specification.
      */
-    MATH_SYMBOL: CharCategory(Character.MATH_SYMBOL.toInt(), "Sm")
+    MATH_SYMBOL(Character.MATH_SYMBOL.toInt(), "Sm"),
 
     /**
      * General category "Sc" in the Unicode specification.
      */
-    CURRENCY_SYMBOL: CharCategory(Character.CURRENCY_SYMBOL.toInt(), "Sc")
+    CURRENCY_SYMBOL(Character.CURRENCY_SYMBOL.toInt(), "Sc"),
 
     /**
      * General category "Sk" in the Unicode specification.
      */
-    MODIFIER_SYMBOL: CharCategory(Character.MODIFIER_SYMBOL.toInt(), "Sk")
+    MODIFIER_SYMBOL(Character.MODIFIER_SYMBOL.toInt(), "Sk"),
 
     /**
      * General category "So" in the Unicode specification.
      */
-    OTHER_SYMBOL: CharCategory(Character.OTHER_SYMBOL.toInt(), "So")
+    OTHER_SYMBOL(Character.OTHER_SYMBOL.toInt(), "So"),
 
     /**
      * General category "Pi" in the Unicode specification.
      */
-    INITIAL_QUOTE_PUNCTUATION: CharCategory(Character.INITIAL_QUOTE_PUNCTUATION.toInt(), "Pi")
+    INITIAL_QUOTE_PUNCTUATION(Character.INITIAL_QUOTE_PUNCTUATION.toInt(), "Pi"),
 
     /**
      * General category "Pf" in the Unicode specification.
      */
-    FINAL_QUOTE_PUNCTUATION: CharCategory(Character.FINAL_QUOTE_PUNCTUATION.toInt(), "Pf")
+    FINAL_QUOTE_PUNCTUATION(Character.FINAL_QUOTE_PUNCTUATION.toInt(), "Pf");
 
 
     public companion object {

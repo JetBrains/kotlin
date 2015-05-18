@@ -235,7 +235,7 @@ public fun File.copyTo(dst: File, overwrite: Boolean = false, bufferSize: Int = 
  */
 public enum class OnErrorAction {
     /** Skip this file and go to the next. */
-    SKIP
+    SKIP,
 
     /** Terminate the evaluation of the function. */
     TERMINATE

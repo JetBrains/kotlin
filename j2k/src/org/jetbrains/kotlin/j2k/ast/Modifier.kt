@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.j2k.*
 import java.util.HashSet
 
 enum class Modifier(val name: String) {
-    PUBLIC: Modifier("public")
-    PROTECTED: Modifier("protected")
-    PRIVATE: Modifier("private")
-    ABSTRACT: Modifier("abstract")
-    OPEN: Modifier("open")
-    OVERRIDE: Modifier("override")
-    INNER: Modifier("inner")
+    PUBLIC("public"),
+    PROTECTED("protected"),
+    PRIVATE("private"),
+    ABSTRACT("abstract"),
+    OPEN("open"),
+    OVERRIDE("override"),
+    INNER("inner");
 
     public fun toKotlin(): String = name
 }

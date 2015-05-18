@@ -7,31 +7,31 @@ import java.util.*
 import kotlin.properties.Delegates
 
 enum class Family {
-    Sequences
-    Iterables
-    Collections
-    Lists
-    Maps
-    ArraysOfObjects
-    ArraysOfPrimitives
-    Strings
-    RangesOfPrimitives
-    ProgressionsOfPrimitives
-    Primitives
-    Generic
+    Sequences,
+    Iterables,
+    Collections,
+    Lists,
+    Maps,
+    ArraysOfObjects,
+    ArraysOfPrimitives,
+    Strings,
+    RangesOfPrimitives,
+    ProgressionsOfPrimitives,
+    Primitives,
+    Generic;
 
     val isPrimitiveSpecialization: Boolean by Delegates.lazy { this in listOf(ArraysOfPrimitives, RangesOfPrimitives, ProgressionsOfPrimitives, Primitives) }
 }
 
 enum class PrimitiveType(val name: String) {
-    Boolean : PrimitiveType("Boolean")
-    Byte : PrimitiveType("Byte")
-    Char : PrimitiveType("Char")
-    Short : PrimitiveType("Short")
-    Int : PrimitiveType("Int")
-    Long : PrimitiveType("Long")
-    Float : PrimitiveType("Float")
-    Double : PrimitiveType("Double")
+    Boolean("Boolean"),
+    Byte("Byte"),
+    Char("Char"),
+    Short("Short"),
+    Int("Int"),
+    Long("Long"),
+    Float("Float"),
+    Double("Double")
 }
 
 

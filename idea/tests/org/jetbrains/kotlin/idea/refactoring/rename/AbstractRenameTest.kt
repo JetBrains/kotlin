@@ -51,11 +51,11 @@ import org.junit.Assert
 import java.io.File
 
 private enum class RenameType {
-    JAVA_CLASS
-    JAVA_METHOD
-    KOTLIN_CLASS
-    KOTLIN_FUNCTION
-    KOTLIN_PROPERTY
+    JAVA_CLASS,
+    JAVA_METHOD,
+    KOTLIN_CLASS,
+    KOTLIN_FUNCTION,
+    KOTLIN_PROPERTY,
     KOTLIN_PACKAGE
 }
 

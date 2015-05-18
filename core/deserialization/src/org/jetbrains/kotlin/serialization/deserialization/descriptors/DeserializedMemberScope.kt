@@ -34,7 +34,7 @@ public abstract class DeserializedMemberScope protected(
 ) : JetScope {
 
     private data class ProtoKey(val name: Name, val kind: Kind, val isExtension: Boolean)
-    private enum class Kind { FUNCTION PROPERTY }
+    private enum class Kind { FUNCTION, PROPERTY }
 
     private fun CallableKind.toKind(): Kind {
         return when (this) {

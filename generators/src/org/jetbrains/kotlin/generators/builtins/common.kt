@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
 import kotlin.properties.Delegates
 
 enum class PrimitiveType {
-    BYTE
-    CHAR
-    SHORT
-    INT
-    LONG
-    FLOAT
-    DOUBLE
-    BOOLEAN
+    BYTE,
+    CHAR,
+    SHORT,
+    INT,
+    LONG,
+    FLOAT,
+    DOUBLE,
+    BOOLEAN;
 
     val capitalized: String get() = name().toLowerCase().capitalize()
     companion object {
@@ -36,13 +36,13 @@ enum class PrimitiveType {
 }
 
 enum class ProgressionKind {
-    BYTE
-    CHAR
-    SHORT
-    INT
-    LONG
-    FLOAT
-    DOUBLE
+    BYTE,
+    CHAR,
+    SHORT,
+    INT,
+    LONG,
+    FLOAT,
+    DOUBLE;
 
     val capitalized: String get() = name().toLowerCase().capitalize()
 }

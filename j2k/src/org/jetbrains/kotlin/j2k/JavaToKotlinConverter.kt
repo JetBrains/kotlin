@@ -73,7 +73,7 @@ public trait PostProcessor {
 }
 
 public enum class ParseContext {
-    TOP_LEVEL
+    TOP_LEVEL,
     CODE_BLOCK
 }
 

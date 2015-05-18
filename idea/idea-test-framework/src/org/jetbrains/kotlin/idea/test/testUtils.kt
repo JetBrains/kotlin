@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.psi.JetFile
 
 public enum class ModuleKind {
-    KOTLIN_JVM_WITH_STDLIB_SOURCES
+    KOTLIN_JVM_WITH_STDLIB_SOURCES,
     KOTLIN_JAVASCRIPT
 }
 

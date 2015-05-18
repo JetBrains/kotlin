@@ -21,8 +21,8 @@ import org.jetbrains.org.objectweb.asm.tree.LabelNode
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.*
 
 enum class TryCatchPosition {
-    START
-    END
+    START,
+    END,
     INNER
 }
 

@@ -93,7 +93,7 @@ object DocCommentConverter {
             getValueElement() ?: getDataElements().firstOrNull { it !is PsiWhiteSpace }
 
     private class HtmlToMarkdownConverter() : XmlRecursiveElementVisitor() {
-        private enum class ListType { Ordered Unordered; }
+        private enum class ListType { Ordered, Unordered; }
         data class MarkdownSpan(val prefix: String, val suffix: String) {
             companion object {
                 val Empty = MarkdownSpan("", "")

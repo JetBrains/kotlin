@@ -35,13 +35,13 @@ public enum class RegexOption(override val value: Int, override val mask: Int = 
     // common
 
     /** Enables case-insensitive matching. Case comparison is Unicode-aware. */
-    IGNORE_CASE : RegexOption(Pattern.CASE_INSENSITIVE)
+    IGNORE_CASE(Pattern.CASE_INSENSITIVE),
 
     /** Enables multiline mode.
      *
      * In multiline mode the expressions `^` and `$` match just after or just before,
      * respectively, a line terminator or the end of the input sequence. */
-    MULTILINE : RegexOption(Pattern.MULTILINE)
+    MULTILINE(Pattern.MULTILINE),
 
     //jvm-specific
 
@@ -49,27 +49,27 @@ public enum class RegexOption(override val value: Int, override val mask: Int = 
      *
      * Metacharacters or escape sequences in the input sequence will be given no special meaning.
      */
-    LITERAL : RegexOption(Pattern.LITERAL)
+    LITERAL(Pattern.LITERAL),
 
 //    // Unicode case is enabled by default with the IGNORE_CASE
 //    /** Enables Unicode-aware case folding. */
-//    UNICODE_CASE: RegexOption(Pattern.UNICODE_CASE)
+//    UNICODE_CASE(Pattern.UNICODE_CASE)
 
     /** Enables Unix lines mode.
      * In this mode, only the `'\n'` is recognized as a line terminator.
      */
-    UNIX_LINES: RegexOption(Pattern.UNIX_LINES) // TODO: Remove this
+    UNIX_LINES(Pattern.UNIX_LINES), // TODO: Remove this
 
     /** Permits whitespace and comments in pattern. */
-    COMMENTS: RegexOption(Pattern.COMMENTS)
+    COMMENTS(Pattern.COMMENTS),
 
     /** Enables the mode, when the expression `.` matches any character,
      * including a line terminator.
      */
-    DOT_MATCHES_ALL: RegexOption(Pattern.DOTALL)
+    DOT_MATCHES_ALL(Pattern.DOTALL),
 
     /** Enables equivalence by canonical decomposition. */
-    CANON_EQ: RegexOption(Pattern.CANON_EQ)
+    CANON_EQ(Pattern.CANON_EQ)
 }
 
 

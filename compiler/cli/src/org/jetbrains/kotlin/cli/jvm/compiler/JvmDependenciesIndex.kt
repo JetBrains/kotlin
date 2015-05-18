@@ -27,7 +27,7 @@ import kotlin.properties.Delegates
 
 public data class JavaRoot(public val file: VirtualFile, public val type: JavaRoot.RootType) {
     public enum class RootType {
-        SOURCE
+        SOURCE,
         BINARY
     }
 

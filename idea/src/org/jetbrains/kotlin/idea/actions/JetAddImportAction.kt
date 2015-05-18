@@ -59,8 +59,8 @@ public class JetAddImportAction(
     private val module = ModuleUtilCore.findModuleForPsiElement(element)
 
     private enum class Priority {
-        MODULE
-        PROJECT
+        MODULE,
+        PROJECT,
         OTHER
     }
 

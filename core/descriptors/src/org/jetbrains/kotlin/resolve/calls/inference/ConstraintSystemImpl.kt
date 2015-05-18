@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.TypeSubstitution
 public class ConstraintSystemImpl : ConstraintSystem {
 
     public enum class ConstraintKind {
-        SUB_TYPE
+        SUB_TYPE,
         EQUAL
     }
 

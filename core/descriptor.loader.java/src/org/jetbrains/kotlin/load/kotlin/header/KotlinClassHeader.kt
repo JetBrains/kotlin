@@ -44,8 +44,8 @@ public class KotlinClassHeader(
     }
 
     public enum class Kind {
-        CLASS
-        PACKAGE_FACADE
+        CLASS,
+        PACKAGE_FACADE,
         SYNTHETIC_CLASS
     }
 

@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.resolve.calls.inference.constraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 
 public enum class ConstraintPositionKind {
-    RECEIVER_POSITION
-    EXPECTED_TYPE_POSITION
-    VALUE_PARAMETER_POSITION
-    TYPE_BOUND_POSITION
-    COMPOUND_CONSTRAINT_POSITION
-    FROM_COMPLETER
-    SPECIAL
+    RECEIVER_POSITION,
+    EXPECTED_TYPE_POSITION,
+    VALUE_PARAMETER_POSITION,
+    TYPE_BOUND_POSITION,
+    COMPOUND_CONSTRAINT_POSITION,
+    FROM_COMPLETER,
+    SPECIAL;
 
     public fun position(): ConstraintPosition {
         assert(this in setOf(RECEIVER_POSITION, EXPECTED_TYPE_POSITION, FROM_COMPLETER, SPECIAL))

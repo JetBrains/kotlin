@@ -45,12 +45,12 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 private enum class AndroidClassType(val internalClassName: String, val supportsCache: Boolean = false) {
-    ACTIVITY : AndroidClassType(AndroidConst.ACTIVITY_FQNAME.innerName, true)
-    FRAGMENT : AndroidClassType(AndroidConst.FRAGMENT_FQNAME.innerName, true)
-    SUPPORT_FRAGMENT_ACTIVITY : AndroidClassType(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME.innerName, true)
-    SUPPORT_FRAGMENT : AndroidClassType(AndroidConst.SUPPORT_FRAGMENT_FQNAME.innerName, true)
-    VIEW : AndroidClassType(AndroidConst.VIEW_FQNAME.innerName)
-    UNKNOWN : AndroidClassType("")
+    ACTIVITY(AndroidConst.ACTIVITY_FQNAME.innerName, true),
+    FRAGMENT(AndroidConst.FRAGMENT_FQNAME.innerName, true),
+    SUPPORT_FRAGMENT_ACTIVITY(AndroidConst.SUPPORT_FRAGMENT_ACTIVITY_FQNAME.innerName, true),
+    SUPPORT_FRAGMENT(AndroidConst.SUPPORT_FRAGMENT_FQNAME.innerName, true),
+    VIEW(AndroidConst.VIEW_FQNAME.innerName),
+    UNKNOWN("")
 }
 
 private val String.innerName: String

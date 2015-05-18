@@ -28,12 +28,12 @@ enum class FunctionKind(
         val hasReceiverParameter: Boolean,
         private val superClassNamePrefix: String?
 ) {
-    FUNCTION : FunctionKind("Function", "A function", false, null)
-    EXTENSION_FUNCTION : FunctionKind("ExtensionFunction", "An extension function", true, null)
+    FUNCTION("Function", "A function", false, null),
+    EXTENSION_FUNCTION("ExtensionFunction", "An extension function", true, null),
 
-    K_FUNCTION : FunctionKind("KFunction", "A function with introspection capabilities", false, "Function")
-    K_MEMBER_FUNCTION : FunctionKind("KMemberFunction", "A member function with introspection capabilities", true, "ExtensionFunction")
-    K_EXTENSION_FUNCTION : FunctionKind("KExtensionFunction", "An extension function with introspection capabilities", true, "ExtensionFunction")
+    K_FUNCTION("KFunction", "A function with introspection capabilities", false, "Function"),
+    K_MEMBER_FUNCTION("KMemberFunction", "A member function with introspection capabilities", true, "ExtensionFunction"),
+    K_EXTENSION_FUNCTION("KExtensionFunction", "An extension function with introspection capabilities", true, "ExtensionFunction");
 
     fun getFileName() = (if (isReflection()) "reflect/" else "") + classNamePrefix + "s.kt"
     fun getClassName(i: Int) = classNamePrefix + i

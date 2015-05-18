@@ -134,8 +134,8 @@ public class JetSimpleNameReference(
     }
 
     public enum class ShorteningMode {
-        NO_SHORTENING
-        DELAYED_SHORTENING
+        NO_SHORTENING,
+        DELAYED_SHORTENING,
         FORCED_SHORTENING
     }
 

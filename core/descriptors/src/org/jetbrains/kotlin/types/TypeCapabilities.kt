@@ -23,8 +23,8 @@ public trait TypeCapability
 public trait Specificity : TypeCapability {
 
     public enum class Relation {
-        LESS_SPECIFIC
-        MORE_SPECIFIC
+        LESS_SPECIFIC,
+        MORE_SPECIFIC,
         DONT_KNOW
     }
 

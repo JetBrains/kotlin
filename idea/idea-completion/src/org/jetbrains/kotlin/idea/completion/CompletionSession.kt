@@ -241,11 +241,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
     public enum class CompletionKind {
-        KEYWORDS_ONLY
-        NAMED_PARAMETERS_ONLY
-        ALL
-        TYPES
-        ANNOTATION_TYPES
+        KEYWORDS_ONLY,
+        NAMED_PARAMETERS_ONLY,
+        ALL,
+        TYPES,
+        ANNOTATION_TYPES,
         ANNOTATION_TYPES_OR_PARAMETER_NAME
     }
 

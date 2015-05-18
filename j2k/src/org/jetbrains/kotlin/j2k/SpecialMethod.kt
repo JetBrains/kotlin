@@ -24,7 +24,7 @@ import com.intellij.psi.PsiSuperExpression
 import org.jetbrains.kotlin.j2k.ast.*
 
 enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String, val parameterCount: Int?) {
-    OBJECT_EQUALS: SpecialMethod(null, "equals", 1) {
+    OBJECT_EQUALS(null, "equals", 1) {
         override fun matches(method: PsiMethod)
                 = super.matches(method) && method.getParameterList().getParameters().single().getType().getCanonicalText() == JAVA_LANG_OBJECT
 
@@ -32,54 +32,54 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
             if (qualifier == null || qualifier is PsiSuperExpression) return null
             return BinaryExpression(codeConverter.convertExpression(qualifier), codeConverter.convertExpression(arguments.single()), "==")
         }
-    }
+    },
 
-    OBJECT_GET_CLASS: SpecialMethod("java.lang.Object", "getClass", 0) {
+    OBJECT_GET_CLASS("java.lang.Object", "getClass", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression {
             val identifier = Identifier("javaClass", false).assignNoPrototype()
             return if (qualifier != null) QualifiedExpression(codeConverter.convertExpression(qualifier), identifier) else identifier
         }
-    }
+    },
 
-    OBJECTS_EQUALS: SpecialMethod("java.util.Objects", "equals", 2) {
+    OBJECTS_EQUALS("java.util.Objects", "equals", 2) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = BinaryExpression(codeConverter.convertExpression(arguments[0]), codeConverter.convertExpression(arguments[1]), "==")
-    }
+    },
 
-    COLLECTIONS_EMPTY_LIST: SpecialMethod("java.util.Collections", "emptyList", 0) {
+    COLLECTIONS_EMPTY_LIST("java.util.Collections", "emptyList", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(null, "emptyList", listOf(), typeArgumentsConverted, false)
-    }
+    },
 
-    COLLECTIONS_EMPTY_SET: SpecialMethod("java.util.Collections", "emptySet", 0) {
+    COLLECTIONS_EMPTY_SET("java.util.Collections", "emptySet", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(null, "emptySet", listOf(), typeArgumentsConverted, false)
-    }
+    },
 
-    COLLECTIONS_EMPTY_MAP: SpecialMethod("java.util.Collections", "emptyMap", 0) {
+    COLLECTIONS_EMPTY_MAP("java.util.Collections", "emptyMap", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(null, "emptyMap", listOf(), typeArgumentsConverted, false)
-    }
+    },
 
-    COLLECTIONS_SINGLETON_LIST: SpecialMethod("java.util.Collections", "singletonList", 1) {
+    COLLECTIONS_SINGLETON_LIST("java.util.Collections", "singletonList", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(null, "listOf", listOf(codeConverter.convertExpression(arguments.single())), typeArgumentsConverted, false)
-    }
+    },
 
-    COLLECTIONS_SINGLETON: SpecialMethod("java.util.Collections", "singleton", 1) {
+    COLLECTIONS_SINGLETON("java.util.Collections", "singleton", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = MethodCallExpression.build(null, "setOf", listOf(codeConverter.convertExpression(arguments.single())), typeArgumentsConverted, false)
-    }
+    },
 
-    SYSTEM_OUT_PRINTLN: SpecialMethod("java.io.PrintStream", "println", null) {
+    SYSTEM_OUT_PRINTLN("java.io.PrintStream", "println", null) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = convertSystemOutMethodCall(methodName, qualifier, arguments, typeArgumentsConverted, codeConverter)
-    }
+    },
 
-    SYSTEM_OUT_PRINT: SpecialMethod("java.io.PrintStream", "print", null) {
+    SYSTEM_OUT_PRINT("java.io.PrintStream", "print", null) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = convertSystemOutMethodCall(methodName, qualifier, arguments, typeArgumentsConverted, codeConverter)
-    }
+    };
 
     open fun matches(method: PsiMethod): Boolean {
         if (method.getName() != methodName) return false

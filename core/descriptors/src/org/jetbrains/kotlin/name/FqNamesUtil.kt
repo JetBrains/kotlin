@@ -48,8 +48,8 @@ public fun FqName.tail(prefix: FqName): FqName {
 }
 
 private enum class State {
-    BEGINNING
-    MIDDLE
+    BEGINNING,
+    MIDDLE,
     AFTER_DOT
 }
 

@@ -118,7 +118,7 @@ enum class FlagsToModifiers {
                 else -> throw IllegalStateException("Unexpected modality: $modality")
             }
         }
-    }
+    },
 
     VISIBILITY {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
@@ -131,13 +131,13 @@ enum class FlagsToModifiers {
                 else -> throw IllegalStateException("Unexpected visibility: $visibility")
             }
         }
-    }
+    },
 
     INNER {
         override fun getModifiers(flags: Int): JetModifierKeywordToken? {
             return if (Flags.INNER.get(flags)) JetTokens.INNER_KEYWORD else null
         }
-    }
+    };
 
     abstract fun getModifiers(flags: Int): JetModifierKeywordToken?
 }

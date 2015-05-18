@@ -27,18 +27,18 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public enum class MemberKind { FIELD METHOD }
+public enum class MemberKind { FIELD, METHOD }
 
 public data class RawSignature(public val name: String, public val desc: String, public val kind: MemberKind)
 
 public enum class JvmDeclarationOriginKind {
-    OTHER
-    PACKAGE_FACADE
-    PACKAGE_PART
-    TRAIT_IMPL
-    DELEGATION_TO_TRAIT_IMPL
-    DELEGATION
-    BRIDGE
+    OTHER,
+    PACKAGE_FACADE,
+    PACKAGE_PART,
+    TRAIT_IMPL,
+    DELEGATION_TO_TRAIT_IMPL,
+    DELEGATION,
+    BRIDGE,
     SYNTHETIC // this means that there's no proper descriptor for this jvm declaration
 }
 

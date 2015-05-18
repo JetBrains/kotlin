@@ -136,7 +136,7 @@ enum class MoveAction {
 
             MoveMembersProcessor(elementAtCaret.getProject(), options).run()
         }
-    }
+    },
 
     MOVE_TOP_LEVEL_CLASSES {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
@@ -152,7 +152,7 @@ enum class MoveAction {
                     /* moveCallback = */ null
             ).run()
         }
-    }
+    },
 
     MOVE_PACKAGES {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
@@ -169,7 +169,7 @@ enum class MoveAction {
                     /* moveCallback = */ null
             ).run()
         }
-    }
+    },
 
     MOVE_TOP_LEVEL_CLASSES_TO_INNER {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
@@ -187,7 +187,7 @@ enum class MoveAction {
                     /* moveCallback = */ null
             ).run()
         }
-    }
+    },
 
     MOVE_INNER_CLASS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
@@ -207,7 +207,7 @@ enum class MoveAction {
                     JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0]
             ).run()
         }
-    }
+    },
 
     MOVE_FILES {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
@@ -238,7 +238,7 @@ enum class MoveAction {
                 )
             }
         }
-    }
+    },
 
     MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
@@ -254,13 +254,13 @@ enum class MoveAction {
             val options = MoveKotlinTopLevelDeclarationsOptions(listOf(elementToMove), moveTarget)
             MoveKotlinTopLevelDeclarationsProcessor(mainFile.getProject(), options).run()
         }
-    }
+    },
 
     CHANGE_PACKAGE_DIRECTIVE {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
             KotlinChangePackageRefactoring(mainFile as JetFile).run(FqName(config.getString("newPackageName")))
         }
-    }
+    };
 
     abstract fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject)
 }

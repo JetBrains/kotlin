@@ -61,11 +61,11 @@ public class KotlinReferenceData(
 ) : Cloneable, Serializable {
 
     public enum class Kind {
-        CLASS
-        PACKAGE
-        NON_EXTENSION_CALLABLE
-        EXTENSION_FUNCTION
-        EXTENSION_PROPERTY
+        CLASS,
+        PACKAGE,
+        NON_EXTENSION_CALLABLE,
+        EXTENSION_FUNCTION,
+        EXTENSION_PROPERTY;
 
         companion object {
             public fun fromDescriptor(descriptor: DeclarationDescriptor): KotlinReferenceData.Kind? {

@@ -132,23 +132,23 @@ public class MagicInstruction(
 
 public enum class MagicKind(val sideEffectFree: Boolean = false) {
     // builtin operations
-    STRING_TEMPLATE: MagicKind(true)
-    AND: MagicKind(true)
-    OR: MagicKind(true)
-    NOT_NULL_ASSERTION: MagicKind()
-    EQUALS_IN_WHEN_CONDITION: MagicKind()
-    IS: MagicKind()
-    CAST: MagicKind()
-    CALLABLE_REFERENCE: MagicKind(true)
+    STRING_TEMPLATE(true),
+    AND(true),
+    OR(true),
+    NOT_NULL_ASSERTION(),
+    EQUALS_IN_WHEN_CONDITION(),
+    IS(),
+    CAST(),
+    CALLABLE_REFERENCE(true),
     // implicit operations
-    LOOP_RANGE_ITERATION: MagicKind()
-    IMPLICIT_RECEIVER: MagicKind()
-    VALUE_CONSUMER: MagicKind()
+    LOOP_RANGE_ITERATION(),
+    IMPLICIT_RECEIVER(),
+    VALUE_CONSUMER(),
     // unrecognized operations
-    UNRESOLVED_CALL: MagicKind()
-    UNSUPPORTED_ELEMENT: MagicKind()
-    UNRECOGNIZED_WRITE_RHS: MagicKind()
-    FAKE_INITIALIZER: MagicKind()
+    UNRESOLVED_CALL(),
+    UNSUPPORTED_ELEMENT(),
+    UNRECOGNIZED_WRITE_RHS(),
+    FAKE_INITIALIZER()
 }
 
 // Merges values produced by alternative control-flow paths (such as 'if' branches)

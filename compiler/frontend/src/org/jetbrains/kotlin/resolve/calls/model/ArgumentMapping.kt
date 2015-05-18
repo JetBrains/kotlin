@@ -27,13 +27,13 @@ public object ArgumentUnmapped: ArgumentMapping {
 }
 
 public enum class ArgumentMatchStatus(val isError: Boolean = true) {
-    SUCCESS : ArgumentMatchStatus(false)
-    TYPE_MISMATCH : ArgumentMatchStatus()
-    ARGUMENT_HAS_NO_TYPE : ArgumentMatchStatus()
+    SUCCESS(false),
+    TYPE_MISMATCH(),
+    ARGUMENT_HAS_NO_TYPE(),
 
     // The case when there is no type mismatch, but parameter has uninferred types:
     // fun <T> foo(l: List<T>) {}; val l = foo(emptyList())
-    MATCH_MODULO_UNINFERRED_TYPES : ArgumentMatchStatus()
+    MATCH_MODULO_UNINFERRED_TYPES()
 }
 
 public trait ArgumentMatch : ArgumentMapping {

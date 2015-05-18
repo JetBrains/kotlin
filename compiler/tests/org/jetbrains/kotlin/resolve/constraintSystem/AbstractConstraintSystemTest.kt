@@ -118,7 +118,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
 
     class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String, val isWeak: Boolean)
     enum class MyConstraintKind {
-        SUBTYPE SUPERTYPE
+        SUBTYPE, SUPERTYPE
     }
 
     private fun parseVariables(text: String): List<String> {

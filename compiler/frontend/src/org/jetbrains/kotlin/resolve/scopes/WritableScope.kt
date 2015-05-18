@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.name.Name
 
 public trait WritableScope : JetScope {
     public enum class LockLevel {
-        WRITING
-        BOTH
+        WRITING,
+        BOTH,
         READING
     }
 

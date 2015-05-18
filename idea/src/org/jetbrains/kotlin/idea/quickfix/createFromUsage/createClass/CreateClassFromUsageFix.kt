@@ -40,12 +40,12 @@ import java.util.Collections
 import java.util.HashMap
 
 enum class ClassKind(val keyword: String, val description: String) {
-    PLAIN_CLASS: ClassKind("class", "class")
-    ENUM_CLASS: ClassKind("enum class", "enum")
-    ENUM_ENTRY: ClassKind("", "enum constant")
-    ANNOTATION_CLASS: ClassKind("annotation class", "annotation")
-    TRAIT: ClassKind("interface", "interface")
-    OBJECT: ClassKind("object", "object")
+    PLAIN_CLASS("class", "class"),
+    ENUM_CLASS("enum class", "enum"),
+    ENUM_ENTRY("", "enum constant"),
+    ANNOTATION_CLASS("annotation class", "annotation"),
+    TRAIT("interface", "interface"),
+    OBJECT("object", "object")
 }
 
 public class ClassInfo(

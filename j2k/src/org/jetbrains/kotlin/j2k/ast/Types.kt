@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.j2k.*
 fun Type.isUnit(): Boolean = this is UnitType
 
 enum class Nullability {
-    Nullable
-    NotNull
+    Nullable,
+    NotNull,
     Default
 }
 
@@ -33,8 +33,8 @@ fun Nullability.isNullable(settings: ConverterSettings) = when(this) {
 }
 
 enum class Mutability {
-    Mutable
-    NonMutable
+    Mutable,
+    NonMutable,
     Default
 }
 

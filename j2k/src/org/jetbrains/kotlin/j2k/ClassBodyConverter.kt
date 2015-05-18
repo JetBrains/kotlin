@@ -35,7 +35,7 @@ class FieldCorrectionInfo(val name: String, val access: Modifier?, val setterAcc
 }
 
 enum class AccessorKind {
-    GETTER
+    GETTER,
     SETTER
 }
 

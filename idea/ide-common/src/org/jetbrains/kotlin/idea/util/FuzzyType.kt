@@ -81,7 +81,7 @@ class FuzzyType(
             = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
 
     private enum class MatchKind {
-        IS_SUBTYPE
+        IS_SUBTYPE,
         IS_SUPERTYPE
     }
 

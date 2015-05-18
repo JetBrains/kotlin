@@ -121,8 +121,8 @@ class ForConverter(
     ) : Statement() {
 
         public enum class Kind {
-            SIMPLE
-            WITH_BLOCK
+            SIMPLE,
+            WITH_BLOCK,
             WITH_RUN_BLOCK
         }
 

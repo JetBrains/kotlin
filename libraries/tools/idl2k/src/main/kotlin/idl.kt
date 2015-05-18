@@ -35,10 +35,10 @@ data class Constant(val name: String, val type: String, val value: String?)
 fun Attribute.formatFunctionTypePart() = if (vararg) "vararg $type" else type
 
 enum class DefinitionKind {
-    INTERFACE
-    TYPEDEF
-    EXTENSION_INTERFACE
-    ENUM
+    INTERFACE,
+    TYPEDEF,
+    EXTENSION_INTERFACE,
+    ENUM,
     DICTIONARY
 }
 

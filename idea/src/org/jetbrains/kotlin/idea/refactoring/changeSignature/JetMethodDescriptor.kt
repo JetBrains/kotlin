@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 
 public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility> {
     enum class Kind(val isConstructor: Boolean) {
-        FUNCTION: Kind(false)
-        PRIMARY_CONSTRUCTOR: Kind(true)
-        SECONDARY_CONSTRUCTOR: Kind(true)
+        FUNCTION(false),
+        PRIMARY_CONSTRUCTOR(true),
+        SECONDARY_CONSTRUCTOR(true)
     }
 
     val kind: Kind get() {

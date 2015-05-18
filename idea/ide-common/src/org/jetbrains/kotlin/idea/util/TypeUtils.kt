@@ -80,8 +80,8 @@ private fun JetType.hasAnnotationMaybeExternal(fqName: FqName) = with (getAnnota
 } != null
 
 public enum class TypeNullability {
-    NOT_NULL
-    NULLABLE
+    NOT_NULL,
+    NULLABLE,
     FLEXIBLE
 }
 

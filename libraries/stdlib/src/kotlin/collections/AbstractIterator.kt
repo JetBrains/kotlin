@@ -6,9 +6,9 @@ import java.util.NoSuchElementException
 import java.lang.UnsupportedOperationException
 
 private enum class State {
-    Ready
-    NotReady
-    Done
+    Ready,
+    NotReady,
+    Done,
     Failed
 }
 

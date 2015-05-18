@@ -310,17 +310,17 @@ data class ExtractableCodeDescriptor(
 }
 
 enum class ExtractionTarget(val name: String) {
-    FUNCTION : ExtractionTarget("function") {
+    FUNCTION("function") {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true
-    }
+    },
 
-    FAKE_LAMBDALIKE_FUNCTION : ExtractionTarget("lambda parameter") {
+    FAKE_LAMBDALIKE_FUNCTION("lambda parameter") {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSimpleControlFlow(descriptor) || descriptor.controlFlow.outputValues.isEmpty()
         }
-    }
+    },
 
-    PROPERTY_WITH_INITIALIZER : ExtractionTarget("property with initializer") {
+    PROPERTY_WITH_INITIALIZER("property with initializer") {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
                    && checkSimpleControlFlow(descriptor)
@@ -328,22 +328,22 @@ enum class ExtractionTarget(val name: String) {
                    && checkNotTrait(descriptor)
                    && descriptor.receiverParameter == null
         }
-    }
+    },
 
-    PROPERTY_WITH_GETTER : ExtractionTarget("property with getter") {
+    PROPERTY_WITH_GETTER("property with getter") {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
         }
-    }
+    },
 
-    LAZY_PROPERTY : ExtractionTarget("lazy property") {
+    LAZY_PROPERTY("lazy property") {
         override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
             return checkSignatureAndParent(descriptor)
                    && checkSimpleControlFlow(descriptor)
                    && checkNotTrait(descriptor)
                    && descriptor.receiverParameter == null
         }
-    }
+    };
 
     abstract fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean
 
@@ -407,22 +407,22 @@ class AnalysisResult (
         val messages: List<ErrorMessage>
 ) {
     enum class Status {
-        SUCCESS
-        NON_CRITICAL_ERROR
+        SUCCESS,
+        NON_CRITICAL_ERROR,
         CRITICAL_ERROR
     }
 
     enum class ErrorMessage {
-        NO_EXPRESSION
-        NO_CONTAINER
-        SUPER_CALL
-        DENOTABLE_TYPES
-        ERROR_TYPES
-        MULTIPLE_OUTPUT
-        OUTPUT_AND_EXIT_POINT
-        MULTIPLE_EXIT_POINTS
-        DECLARATIONS_ARE_USED_OUTSIDE
-        DECLARATIONS_OUT_OF_SCOPE
+        NO_EXPRESSION,
+        NO_CONTAINER,
+        SUPER_CALL,
+        DENOTABLE_TYPES,
+        ERROR_TYPES,
+        MULTIPLE_OUTPUT,
+        OUTPUT_AND_EXIT_POINT,
+        MULTIPLE_EXIT_POINTS,
+        DECLARATIONS_ARE_USED_OUTSIDE,
+        DECLARATIONS_OUT_OF_SCOPE;
 
         var additionalInfo: List<String>? = null
 

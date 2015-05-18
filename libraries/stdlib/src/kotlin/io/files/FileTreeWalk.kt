@@ -20,7 +20,7 @@ import java.util.Stack
  */
 public enum class FileWalkDirection {
     /** Depth-first search, directory is visited BEFORE its files */
-    TOP_DOWN
+    TOP_DOWN,
     /** Depth-first search, directory is visited AFTER its files */
     BOTTOM_UP
     // Do we want also breadth-first search?

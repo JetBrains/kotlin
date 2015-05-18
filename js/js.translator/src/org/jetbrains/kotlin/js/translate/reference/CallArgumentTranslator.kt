@@ -55,7 +55,7 @@ public class CallArgumentTranslator private (
     }
 
     private enum class ArgumentsKind {
-        HAS_EMPTY_EXPRESSION_ARGUMENT
+        HAS_EMPTY_EXPRESSION_ARGUMENT,
         HAS_NOT_EMPTY_EXPRESSION_ARGUMENT
     }
 

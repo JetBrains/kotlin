@@ -44,9 +44,9 @@ import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 import java.util.ArrayList
 
 enum class ItemPriority {
-    MULTIPLE_ARGUMENTS_ITEM
-    DEFAULT
-    BACKING_FIELD
+    MULTIPLE_ARGUMENTS_ITEM,
+    DEFAULT,
+    BACKING_FIELD,
     NAMED_PARAMETER
 }
 
@@ -125,12 +125,12 @@ fun LookupElementPresentation.prependTailText(text: String, grayed: Boolean) {
 }
 
 enum class CallableWeight {
-    local // local non-extension
-    thisClassMember
-    baseClassMember
-    thisTypeExtension
-    baseTypeExtension
-    global // global non-extension
+    local, // local non-extension
+    thisClassMember,
+    baseClassMember,
+    thisTypeExtension,
+    baseTypeExtension,
+    global, // global non-extension
     notApplicableReceiverNullable
 }
 
