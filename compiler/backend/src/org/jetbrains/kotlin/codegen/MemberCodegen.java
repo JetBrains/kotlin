@@ -246,9 +246,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         String outerClassInternalName = null;
         if (containing instanceof ClassDescriptor) {
             outerClassInternalName = typeMapper.mapClass((ClassDescriptor) containing).getInternalName();
-        } else if (containing instanceof ScriptDescriptor) {
+        } /* disabled cause of KT-7775
+        else if (containing instanceof ScriptDescriptor) {
             outerClassInternalName = asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) containing).getInternalName();
-        }
+        }*/
 
         String innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
 
@@ -285,9 +286,10 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
         else if (outermost instanceof PackageContext && !(outermost instanceof PackageFacadeContext)) {
             return PackagePartClassUtils.getPackagePartType(element.getContainingJetFile());
-        } else if (outermost instanceof ScriptContext) {
+        }/*disabled cause of KT-7775
+        else if (outermost instanceof ScriptContext) {
             return asmTypeForScriptDescriptor(bindingContext, ((ScriptContext) outermost).getScriptDescriptor());
-        }
+        }*/
         return null;
     }
 
