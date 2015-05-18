@@ -3144,6 +3144,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noCommaWithBracketComment.kt")
+            public void testNoCommaWithBracketComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noCommaWithBracketComment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noCommaWithComment.kt")
+            public void testNoCommaWithComment() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noCommaWithComment.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noCommaWithTwoComments.kt")
+            public void testNoCommaWithTwoComments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noCommaWithTwoComments.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noDelimiter.kt")
             public void testNoDelimiter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/enumDelimiter/noDelimiter.kt");

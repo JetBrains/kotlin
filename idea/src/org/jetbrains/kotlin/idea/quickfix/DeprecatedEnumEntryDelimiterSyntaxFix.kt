@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
@@ -40,6 +39,9 @@ class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntention
     override fun getText(): String = "Insert lacking comma(s) / semicolon(s)"
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) = insertLackingCommaSemicolon(element)
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
+            = super.isAvailable(project, editor, file) && DeclarationsChecker.enumEntryUsesDeprecatedOrNoDelimiter(element)
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? =
@@ -62,6 +64,7 @@ class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntention
             for ((entryIndex, entry) in entries.withIndex()) {
                 var next = entry.getNextSiblingIgnoringWhitespaceAndComments()
                 var nextType = next?.getNode()?.getElementType()
+                var added = false
                 if (entryIndex < entries.size() - 1) {
                     if (next is PsiErrorElement && next.getFirstChild()?.getNode()?.getElementType() == JetTokens.SEMICOLON) {
                         // Fix for syntax error like ENUM_ENTRY1; ENUM_ENTRY2; ENUM_ENTRY3
@@ -70,6 +73,7 @@ class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntention
                     else if (nextType != JetTokens.COMMA) {
                         // Classic case like ENUM_ENTRY1 ENUM_ENTRY2
                         body.addAfter(psiFactory.createComma(), entry)
+                        added = true
                     }
                 }
                 else {
@@ -80,6 +84,21 @@ class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntention
                     else if (nextType != JetTokens.SEMICOLON && nextType != JetTokens.RBRACE) {
                         // ENUM_ENTRY_LAST fun foo()
                         body.addAfter(psiFactory.createSemicolon(), entry)
+                        added = true
+                    }
+                }
+                // Specific situation: ENTRY // comment ==> ENTRY, // comment, not ENTRY // comment,
+                if (added) {
+                    val last = entry.getLastChild()
+                    var curr = last
+                    while (curr is PsiComment || curr is PsiWhiteSpace) {
+                        // After comma / semicolon
+                        val prev = curr.getPrevSibling()
+                        body.addAfter(curr, entry.getNextSibling())
+                        curr = prev
+                    }
+                    if (curr !== last) {
+                        entry.deleteChildRange(curr.getNextSibling()!!, last)
                     }
                 }
             }
