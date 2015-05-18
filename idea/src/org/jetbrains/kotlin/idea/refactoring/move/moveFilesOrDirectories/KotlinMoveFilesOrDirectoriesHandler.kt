@@ -18,9 +18,12 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
+import com.intellij.psi.PsiDirectoryContainer
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
+import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
 
@@ -36,8 +39,16 @@ public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler
         return super.canMove(adjustedElements.toTypedArray(), targetContainer)
     }
 
-    override fun adjustForMove(project: Project, sourceElements: Array<PsiElement>, targetElement: PsiElement?): Array<PsiElement> {
+    override fun adjustForMove(project: Project, sourceElements: Array<out PsiElement>, targetElement: PsiElement?): Array<PsiElement> {
         return sourceElements.map { if (it is JetClassOrObject) it.getContainingFile() else it }.toTypedArray()
+    }
+
+    override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {
+        if (!(targetContainer == null || targetContainer is PsiDirectory || targetContainer is PsiDirectoryContainer)) return
+
+        moveFilesOrDirectories(project, adjustForMove(project, elements, targetContainer), targetContainer) {
+            callback?.refactoringCompleted()
+        }
     }
 
     companion object {

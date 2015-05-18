@@ -32,6 +32,7 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackages
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getPackage
@@ -51,11 +52,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         val sourceFile = sourceFiles.singleOrNull()
         if (sourceFile == null) {
             if (sourceFiles.all { it.getDeclarations().size() == 1 }) {
-                MoveFilesOrDirectoriesUtil.doMove(project,
-                                                  sourceFiles.toTypedArray(),
-                                                  arrayOf(targetContainer),
-                                                  null)
-
+                moveFilesOrDirectories(project, sourceFiles.toTypedArray(), targetContainer)
                 return true
             }
 
