@@ -3,12 +3,12 @@
 
 package testData.libraries
 
-[[public final class WithInnerAndObject public () {
+[[public final class WithInnerAndObject public constructor() {
     [[public companion object {
         [internal final fun foo(): kotlin.Unit { /* compiled code */ }]
     }]]
 
-    [[internal final class MyInner public () {
+    [[internal final class MyInner public constructor() {
         [internal interface MyInnerInner {
             [internal abstract fun innerInnerMethod(): kotlin.Unit]
         }]

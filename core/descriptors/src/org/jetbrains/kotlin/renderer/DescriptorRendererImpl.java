@@ -559,7 +559,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
             // remove last whitespace
             annotationsBuilder.setLength(annotationsBuilder.length() - 1);
 
-            builder.append("[");
+            builder.append("@[");
             builder.append(annotationsBuilder);
             builder.append("] ");
         }
@@ -1013,6 +1013,7 @@ public class DescriptorRendererImpl implements DescriptorRenderer {
                 builder.append(" ");
                 renderAnnotations(primaryConstructor, builder, true);
                 renderVisibility(primaryConstructor.getVisibility(), builder);
+                builder.append("constructor");
                 renderValueParameters(primaryConstructor, builder);
             }
         }

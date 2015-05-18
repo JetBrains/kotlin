@@ -3,7 +3,7 @@
 
 package test
 
-internal final enum class Enum private () : kotlin.Enum<test.Enum> {
+internal final enum class Enum private constructor() : kotlin.Enum<test.Enum> {
     A
 
     B

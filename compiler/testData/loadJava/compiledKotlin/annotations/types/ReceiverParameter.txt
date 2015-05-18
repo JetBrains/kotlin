@@ -1,6 +1,6 @@
 package test
 
-internal fun [test.A()] kotlin.String.foo(): kotlin.Unit
+internal fun @[test.A()] kotlin.String.foo(): kotlin.Unit
 
 internal final annotation class A : kotlin.Annotation {
     /*primary*/ public constructor A()

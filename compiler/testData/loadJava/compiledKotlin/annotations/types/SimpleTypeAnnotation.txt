@@ -6,5 +6,5 @@ internal final annotation class A : kotlin.Annotation {
 
 internal final class SimpleTypeAnnotation {
     /*primary*/ public constructor SimpleTypeAnnotation()
-    internal final fun foo(/*0*/ x: [test.A()] kotlin.IntRange): [test.A()] kotlin.Int
+    internal final fun foo(/*0*/ x: @[test.A()] kotlin.IntRange): @[test.A()] kotlin.Int
 }

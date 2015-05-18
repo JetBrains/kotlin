@@ -3,5 +3,5 @@
 
 package testData.libraries
 
-[[public abstract class AbstractClass public () {
+[[public abstract class AbstractClass public constructor() {
 }]]

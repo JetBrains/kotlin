@@ -3,7 +3,7 @@
 
 package test
 
-internal abstract class SimpleClass public () : dependency.D<dependency.Tr, kotlin.Int>, dependency.Tr, kotlin.List<kotlin.String> {
+internal abstract class SimpleClass public constructor() : dependency.D<dependency.Tr, kotlin.Int>, dependency.Tr, kotlin.List<kotlin.String> {
     internal final val a: dependency.A /* compiled code */
 
     public final var b: dependency.B /* compiled code */

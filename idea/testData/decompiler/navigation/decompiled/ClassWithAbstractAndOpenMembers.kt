@@ -3,7 +3,7 @@
 
 package testData.libraries
 
-[[public abstract class ClassWithAbstractAndOpenMembers public () {
+[[public abstract class ClassWithAbstractAndOpenMembers public constructor() {
     [public abstract val abstractVal: kotlin.String]
 
     [public abstract var abstractVar: kotlin.String]

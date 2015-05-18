@@ -2,4 +2,4 @@ package test
 
 annotation class A
 
-fun ([A] String).foo() {}
+fun (@A String).foo() {}

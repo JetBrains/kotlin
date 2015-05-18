@@ -3,7 +3,7 @@
 
 package testData.libraries
 
-[[public final class WithTraitClassObject public () {
+[[public final class WithTraitClassObject public constructor() {
     [[public companion object : testData.libraries.SimpleTrait {
     }]]
 }]]
