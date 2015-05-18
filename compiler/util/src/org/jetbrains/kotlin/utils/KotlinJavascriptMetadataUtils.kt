@@ -50,18 +50,18 @@ public object KotlinJavascriptMetadataUtils {
     platformStatic
     public fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
         assert(file.exists()) { "Library " + file + " not found" }
+        val metadataList = arrayListOf<KotlinJavascriptMetadata>()
+        LibraryUtils.traverseJsLibrary(file) { content, relativePath ->
+            var path = file.getPath()
 
-        var result: MutableList<KotlinJavascriptMetadata> = arrayListOf()
-        if (file.isDirectory()) {
-            loadMetadataFromDirectory(file, result)
+            if (relativePath.isNotBlank()) {
+                path += "/$relativePath"
+            }
+
+            parseMetadata(content, path, metadataList)
         }
-        else if (file.getName().endsWith(JS_EXT)) {
-            loadMetadataFromFile(file, result)
-        }
-        else {
-            loadMetadataFromZip(file, result)
-        }
-        return result
+
+        return metadataList
     }
 
     platformStatic
@@ -79,28 +79,6 @@ public object KotlinJavascriptMetadataUtils {
             var moduleName = matcher.group(3)
             val data = matcher.group(5)
             metadataList.add(KotlinJavascriptMetadata(moduleName, parseBase64Binary(data)))
-        }
-    }
-
-    private fun loadMetadataFromFile(file: File, metadataList: MutableList<KotlinJavascriptMetadata>) {
-        try {
-            val content = FileUtil.loadFile(file)
-            parseMetadata(content, file.getPath(), metadataList)
-        }
-        catch (ex: IOException) {
-            LOG.error("Could not read ${file.getAbsolutePath()}: ${ex.getMessage()}")
-        }
-    }
-
-    private fun loadMetadataFromDirectory(dir: File, metadataList: MutableList<KotlinJavascriptMetadata>) {
-        LibraryUtils.traverseDirectory(dir) {
-            file, relativePath -> parseMetadata(FileUtil.loadFile(file), file.getPath(), metadataList)
-        }
-    }
-
-    private fun loadMetadataFromZip(file: File, metadataList: MutableList<KotlinJavascriptMetadata>) {
-        LibraryUtils.traverseArchive(file) { content, relativePath ->
-            parseMetadata(content, "${file.getPath()}/$relativePath", metadataList)
         }
     }
 }
