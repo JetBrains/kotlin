@@ -25,9 +25,6 @@ fun main(args: Array<String>) {
     val jsCoreDir = File(args[0], "js/js.libraries/src/core")
     require(jsCoreDir.exists(), "${jsCoreDir.getPath()} doesn't exist!")
 
-    generateDomAPI(File(jsCoreDir, "dom.kt"))
-    generateDomEventsAPI(File(jsCoreDir, "domEvents.kt"))
-
     generateCollectionsAPI(outDir)
     generateCollectionsJsAPI(jsCoreDir)
 
