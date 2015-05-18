@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.psi.buildExpression
 
 public class ExplicitGetInspection : IntentionBasedInspection<JetDotQualifiedExpression>(ReplaceGetIntention())
 
-public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator") {
+public class ReplaceGetIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'get' call with index operator"), HighPriorityAction {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
         if (element.calleeName != "get") return null
         val call = element.callExpression ?: return null

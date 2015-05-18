@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.*
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator") {
+public class ReplaceContainsIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace 'contains' call with 'in' operator"), HighPriorityAction {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
         if (element.calleeName != OperatorConventions.CONTAINS.asString()) return null
 

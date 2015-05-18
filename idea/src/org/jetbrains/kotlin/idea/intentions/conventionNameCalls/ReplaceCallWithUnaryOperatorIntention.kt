@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.conventionNameCalls
 
+import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator") {
+public class ReplaceCallWithUnaryOperatorIntention : JetSelfTargetingRangeIntention<JetDotQualifiedExpression>(javaClass(), "Replace call with unary operator"), HighPriorityAction {
     override fun applicabilityRange(element: JetDotQualifiedExpression): TextRange? {
         val operation = operation(element.calleeName) ?: return null
 
