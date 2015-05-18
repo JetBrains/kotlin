@@ -15,4 +15,4 @@ val prop: Int
 // EXIST: try
 // EXIST: when
 // EXIST: while
-// NOTHING_ELSE: true
+// NOTHING_ELSE

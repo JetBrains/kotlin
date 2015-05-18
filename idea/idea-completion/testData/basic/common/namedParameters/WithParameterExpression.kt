@@ -9,4 +9,4 @@ fun test() = small(param<caret>First = 12)
 // EXIST: paramSecond
 // EXIST: paramTest
 
-// NOTHING_ELSE: true
+// NOTHING_ELSE

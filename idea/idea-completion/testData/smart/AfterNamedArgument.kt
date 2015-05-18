@@ -7,4 +7,4 @@ fun bar(pInt: Int, pString: String) {
 // EXIST: { lookupString: "param1", itemText: "param1 =" }
 // EXIST: { lookupString: "param3", itemText: "param3 =" }
 // ABSENT: param2
-// NOTHING_ELSE: true
+// NOTHING_ELSE

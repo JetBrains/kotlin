@@ -6,4 +6,4 @@ fun foo() {
 }
 
 // EXIST: pair
-// NOTHING_ELSE: true
+// NOTHING_ELSE

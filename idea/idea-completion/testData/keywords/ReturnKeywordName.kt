@@ -11,4 +11,4 @@ inline fun `val`(handler: () -> Unit){}
 // EXIST: { lookupString: "return", itemText: "return", tailText: null, attributes: "bold" }
 // EXIST: { lookupString: "return@`fun`", itemText: "return", tailText: "@`fun`", attributes: "bold" }
 // EXIST: { lookupString: "return@`val`", itemText: "return", tailText: "@`val`", attributes: "bold" }
-// NOTHING_ELSE: true
+// NOTHING_ELSE

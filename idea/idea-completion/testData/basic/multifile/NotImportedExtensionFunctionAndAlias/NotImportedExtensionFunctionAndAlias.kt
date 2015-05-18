@@ -6,4 +6,4 @@ fun firstFun(x: third.Dependency) {
 
 // EXIST: helloFun
 // EXIST: helloFunGeneric
-// NOTHING_ELSE: true
+// NOTHING_ELSE

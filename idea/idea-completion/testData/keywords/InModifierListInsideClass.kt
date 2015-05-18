@@ -4,4 +4,4 @@ open class Foo {
 }
 
 // EXIST: private, public, protected
-// NOTHING_ELSE: true
+// NOTHING_ELSE

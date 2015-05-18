@@ -7,4 +7,4 @@ class Test {
 }
 
 // EXIST: util
-// NOTHING_ELSE: true
+// NOTHING_ELSE

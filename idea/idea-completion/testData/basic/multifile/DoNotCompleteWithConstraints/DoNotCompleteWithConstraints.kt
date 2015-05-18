@@ -12,4 +12,4 @@ fun firstFun() {
 // EXIST: testingExpectedFunction
 // ABSENT: testingUnexpectedFunction
 
-// NOTHING_ELSE: true
+// NOTHING_ELSE

@@ -38,4 +38,4 @@ class A {
 // EXIST:  init
 /*why?*/
 // EXIST:  companion object
-// NOTHING_ELSE: true
+// NOTHING_ELSE

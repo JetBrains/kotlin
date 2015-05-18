@@ -15,4 +15,4 @@ fun g(a: A) {
 
 // EXIST: foo
 // EXIST: foo1
-// NOTHING_ELSE: true
+// NOTHING_ELSE

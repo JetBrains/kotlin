@@ -8,4 +8,4 @@ fun bar(o: Any) {
 
 // EXIST: String
 // EXIST: Int
-// NOTHING_ELSE: true
+// NOTHING_ELSE

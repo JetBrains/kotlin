@@ -6,4 +6,4 @@ p<caret>
 // EXIST:  private
 // EXIST:  protected
 // EXIST:  public
-// NOTHING_ELSE: true
+// NOTHING_ELSE

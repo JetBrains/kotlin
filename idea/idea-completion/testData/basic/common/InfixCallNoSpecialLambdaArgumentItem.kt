@@ -8,4 +8,4 @@ fun foo() {
 
 // EXIST: ext1
 // EXIST: ext2
-// NOTHING_ELSE: true
+// NOTHING_ELSE

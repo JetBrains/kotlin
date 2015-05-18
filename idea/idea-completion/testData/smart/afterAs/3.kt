@@ -9,4 +9,4 @@ fun bar(o: Any) {
 
 // EXIST: { lookupString:"List", itemText:"List<String>" }
 // EXIST: { lookupString:"String", itemText:"String" }
-// NOTHING_ELSE: true
+// NOTHING_ELSE

@@ -9,4 +9,4 @@ fun firstFun(p: () -> Unit) {
 // EXIST: helloAny
 // ABSENT: helloFun3
 // ABSENT: helloFun4
-// NOTHING_ELSE: true
+// NOTHING_ELSE

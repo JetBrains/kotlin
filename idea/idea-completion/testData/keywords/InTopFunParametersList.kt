@@ -7,4 +7,4 @@ fun test(<caret>) {
 // EXIST: var
 // EXIST: in
 // EXIST: out
-// NOTHING_ELSE: true
+// NOTHING_ELSE

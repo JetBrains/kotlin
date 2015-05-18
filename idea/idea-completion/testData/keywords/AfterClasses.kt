@@ -39,4 +39,4 @@ class B {
 /*why?*/
 // EXIST:  companion object
 /*TODO*/
-// NOTHING_ELSE: true
+// NOTHING_ELSE

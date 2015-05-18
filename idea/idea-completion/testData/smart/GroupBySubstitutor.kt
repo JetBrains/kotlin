@@ -9,4 +9,4 @@ fun f(){
 
 // EXIST: { lookupString: "emptyList", typeText: "List<String>" }
 // EXIST: { lookupString: "emptyList", typeText: "List<Int>" }
-// NOTHING_ELSE: true
+// NOTHING_ELSE

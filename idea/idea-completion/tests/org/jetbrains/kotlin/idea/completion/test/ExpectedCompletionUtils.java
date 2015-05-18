@@ -123,7 +123,7 @@ public class ExpectedCompletionUtils {
     private static final String NUMBER_JS_LINE_PREFIX = "NUMBER_JS:";
     private static final String NUMBER_JAVA_LINE_PREFIX = "NUMBER_JAVA:";
 
-    private static final String NOTHING_ELSE_PREFIX = "NOTHING_ELSE:";
+    private static final String NOTHING_ELSE_PREFIX = "NOTHING_ELSE";
 
     private static final String INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:";
     private static final String WITH_ORDER_PREFIX = "WITH_ORDER:";
@@ -218,7 +218,7 @@ public class ExpectedCompletionUtils {
     }
 
     public static boolean isNothingElseExpected(String fileText) {
-        return Boolean.TRUE.equals(InTextDirectivesUtils.getPrefixedBoolean(fileText, NOTHING_ELSE_PREFIX));
+        return !InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, NOTHING_ELSE_PREFIX).isEmpty();
     }
 
     @Nullable

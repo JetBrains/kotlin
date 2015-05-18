@@ -8,4 +8,4 @@ fun bar(o: Any) {
 
 // EXIST: { lookupString:"List", itemText:"List<String>" }
 // EXIST: { lookupString:"Map", itemText:"Map<String, Int>" }
-// NOTHING_ELSE: true
+// NOTHING_ELSE

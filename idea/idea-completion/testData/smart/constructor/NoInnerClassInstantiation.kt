@@ -8,4 +8,4 @@ fun foo() : C.Inner {
 
 // ABSENT: Inner
 // EXIST: foo
-// NOTHING_ELSE: true
+// NOTHING_ELSE

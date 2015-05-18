@@ -6,4 +6,4 @@ fun f() {
 
 // EXIST: extFun1
 // EXIST: extFun2
-// NOTHING_ELSE: true
+// NOTHING_ELSE

@@ -4,4 +4,4 @@ fun testing() {}
 
 // EXIST: in
 // EXIST: out
-// NOTHING_ELSE: true
+// NOTHING_ELSE

@@ -18,7 +18,7 @@ class Derived: Base() {
 
 // INVOCATION_COUNT: 1
 // EXIST: funInBase, funWithOverride, funWithoutOverride, funInDerived
-// NOTHING_ELSE: true
+// NOTHING_ELSE
 
 
 // RUNTIME_TYPE: Derived

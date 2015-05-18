@@ -34,4 +34,4 @@ class Some {
 // EXIST:  constructor
 // EXIST:  init
 // EXIST:  companion object
-// NOTHING_ELSE: true
+// NOTHING_ELSE

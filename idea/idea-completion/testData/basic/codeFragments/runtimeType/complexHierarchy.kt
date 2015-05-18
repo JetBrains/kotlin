@@ -20,6 +20,6 @@ class C: B() {
 
 // INVOCATION_COUNT: 2
 // EXIST: funA, funAp, funB, funBp, funC, funCp
-// NOTHING_ELSE: true
+// NOTHING_ELSE
 
 // RUNTIME_TYPE: C
