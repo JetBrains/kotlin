@@ -31,7 +31,8 @@ public class JavaConstructorImpl extends JavaMemberImpl<PsiMethod> implements Ja
     public JavaConstructorImpl(@NotNull PsiMethod psiMethod) {
         super(psiMethod);
         assert psiMethod.isConstructor() :
-                "PsiMethod which is not a constructor should not be wrapped in JavaConstructorImpl: " + psiMethod.getName();
+                "PsiMethod which is not a constructor should not be wrapped in JavaConstructorImpl: " +
+                psiMethod.getName() + " " + psiMethod.getClass().getName();
     }
 
     @NotNull
