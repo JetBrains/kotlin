@@ -97,8 +97,7 @@ public class KotlinTestJSCompilerMojo extends K2JSCompilerMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("Test compilation is skipped");
-        }
-        else {
+        } else {
             super.execute();
         }
     }

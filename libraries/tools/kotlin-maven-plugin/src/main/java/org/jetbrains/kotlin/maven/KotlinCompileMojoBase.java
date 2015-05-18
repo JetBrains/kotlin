@@ -22,6 +22,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
@@ -47,17 +48,14 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     /**
      * The default source directories containing the sources to be compiled.
-     *
-     * @parameter default-value="${project.compileSourceRoots}"
-     * @required
      */
+    @Parameter(defaultValue = "${project.compileSourceRoots}", required = true)
     private List<String> defaultSourceDirs;
 
     /**
      * The source directories containing the sources to be compiled.
-     *
-     * @parameter
      */
+    @Parameter
     private List<String> sourceDirs;
 
     public List<String> getSources() {
@@ -67,58 +65,41 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     /**
      * Suppress all warnings.
-     *
-     * @parameter default-value="false"
      */
+    @Parameter(defaultValue = "false")
     public boolean nowarn;
 
-    // TODO not sure why this doesn't work :(
-    // * @parameter default-value="$(project.basedir}/src/main/resources"
-
-    /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
-     */
+    @Parameter(defaultValue = "${project}", required = true, readonly = true)
     public MavenProject project;
 
     /**
      * The directory for compiled classes.
-     *
-     * @parameter default-value="${project.build.outputDirectory}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.build.outputDirectory}", required = true, readonly = true)
     public String output;
 
     /**
      * The directory for compiled tests classes.
-     *
-     * @parameter default-value="${project.build.testOutputDirectory}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.build.testOutputDirectory}", required = true, readonly = true)
     public String testOutput;
 
     /**
      * Kotlin compilation module, as alternative to source files or folders.
-     *
-     * @parameter
      */
+    @Parameter
     public String module;
 
     /**
      * Kotlin compilation module, as alternative to source files or folders (for tests).
-     *
-     * @parameter
      */
+    @Parameter
     public String testModule;
 
     /**
      * Additional command line arguments for Kotlin compiler.
-     *
-     * @parameter
      */
+    @Parameter
     public List<String> args;
 
     protected final Log LOG = getLog();

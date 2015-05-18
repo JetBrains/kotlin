@@ -18,6 +18,10 @@ package org.jetbrains.kotlin.maven;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -27,18 +31,17 @@ import java.util.List;
 /**
  * Compiles Kotlin test sources
  *
- * @goal test-compile
- * @phase test-compile
- * @requiresDependencyResolution test
  * @noinspection UnusedDeclaration
  */
+@Mojo(name = "test-compile",
+        defaultPhase = LifecyclePhase.TEST_COMPILE,
+        requiresDependencyResolution = ResolutionScope.TEST
+)
 public class KotlinTestCompileMojo extends K2JVMCompileMojo {
     /**
      * Flag to allow test compilation to be skipped.
-     *
-     * @parameter expression="${maven.test.skip}" default-value="false"
-     * @noinspection UnusedDeclaration
      */
+    @Parameter(property = "maven.test.skip", defaultValue = "false")
     private boolean skip;
 
     // TODO it would be nice to avoid using 2 injected fields for sources
@@ -48,17 +51,14 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
 
     /**
      * The default source directories containing the sources to be compiled.
-     *
-     * @parameter default-value="${project.testCompileSourceRoots}"
-     * @required
      */
+    @Parameter(defaultValue = "${project.testCompileSourceRoots}", required = true)
     private List<String> defaultSourceDirs;
 
     /**
      * The source directories containing the sources to be compiled.
-     *
-     * @parameter
      */
+    @Parameter
     private List<String> sourceDirs;
 
     @Override
@@ -69,19 +69,15 @@ public class KotlinTestCompileMojo extends K2JVMCompileMojo {
 
     /**
      * The source directories containing the sources to be compiled for tests.
-     *
-     * @parameter default-value="${project.testCompileSourceRoots}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.testCompileSourceRoots}", required = true, readonly = true)
     private List<String> defaultSourceDir;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (skip) {
             getLog().info("Test compilation is skipped");
-        }
-        else {
+        } else {
             super.execute();
         }
     }

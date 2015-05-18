@@ -22,6 +22,10 @@ import com.sampullara.cli.Args;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
@@ -42,40 +46,29 @@ import static com.intellij.openapi.util.text.StringUtil.join;
 /**
  * Compiles kotlin sources
  *
- * @goal compile
- * @phase compile
- * @requiresDependencyResolution compile
  * @noinspection UnusedDeclaration
  */
+@Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArguments> {
     /**
      * The directories used to scan for annotation.xml files for Kotlin annotations
-     *
-     * @parameter
      */
+    @Parameter
     public List<String> annotationPaths;
 
-    /**
-     * @parameter default-value="true"
-     */
+    @Parameter(defaultValue = "true")
     public boolean scanForAnnotations;
 
     /**
      * Project classpath.
-     *
-     * @parameter default-value="${project.compileClasspathElements}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.compileClasspathElements}", required = true, readonly = true)
     public List<String> classpath;
 
     /**
      * Project test classpath.
-     *
-     * @parameter default-value="${project.testClasspathElements}"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.testClasspathElements}", required = true, readonly = true)
     protected List<String> testClasspath;
 
     @NotNull
