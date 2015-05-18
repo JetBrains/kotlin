@@ -22,25 +22,19 @@ import org.jetbrains.kotlin.serialization.PackageData
 import kotlin.platform.platformStatic
 
 public object JvmProtoBufUtil {
-
-    public fun getExtensionRegistry(): ExtensionRegistryLite {
+    public val EXTENSION_REGISTRY: ExtensionRegistryLite = run {
         val registry = ExtensionRegistryLite.newInstance()
         JvmProtoBuf.registerAllExtensions(registry)
-        return registry
+        registry
     }
 
     platformStatic
-    public fun readClassDataFrom(encodedData: Array<String>): ClassData {
-        return ClassData.read(BitEncoding.decodeBytes(encodedData), getExtensionRegistry())
-    }
+    public fun readClassDataFrom(encodedData: Array<String>): ClassData =
+            ClassData.read(BitEncoding.decodeBytes(encodedData), EXTENSION_REGISTRY)
 
     platformStatic
-    public fun readPackageDataFrom(encodedData: Array<String>): PackageData {
-        return readPackageDataFrom(BitEncoding.decodeBytes(encodedData))
-    }
+    public fun readPackageDataFrom(encodedData: Array<String>): PackageData = readPackageDataFrom(BitEncoding.decodeBytes(encodedData))
 
     platformStatic
-    public fun readPackageDataFrom(data: ByteArray): PackageData {
-        return PackageData.read(data, getExtensionRegistry())
-    }
+    public fun readPackageDataFrom(data: ByteArray): PackageData = PackageData.read(data, EXTENSION_REGISTRY)
 }
