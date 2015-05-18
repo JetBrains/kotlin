@@ -21,6 +21,7 @@ import com.intellij.openapi.util.Ref;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.cfg.WhenChecker;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -128,6 +129,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
         if (commonDataFlowInfo == null) {
             commonDataFlowInfo = context.dataFlowInfo;
+        }
+        // Check for conditionally-exhaustive platform enums, see KT-6399
+        if (expression.getElseExpression() == null
+            && WhenChecker.isExhaustiveWhenOnPlatformNullableEnum(expression, context.trace)) {
+            context.trace.report(WHEN_ENUM_CAN_BE_NULL_IN_JAVA.on(expression.getSubjectExpression()));
         }
 
         return TypeInfoFactoryPackage.createTypeInfo(expressionTypes.isEmpty() ? null : DataFlowUtils.checkImplicitCast(

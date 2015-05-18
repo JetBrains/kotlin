@@ -1,0 +1,38 @@
+package
+
+internal fun foo(): kotlin.Int
+
+public final enum class J : kotlin.Enum<J!> {
+    public enum entry A : J {
+        private constructor A()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: J!): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public enum entry B : J {
+        private constructor B()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: J!): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public constructor J()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: J!): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun create(): J!
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): J
+    public final /*synthesized*/ fun values(): kotlin.Array<J>
+}

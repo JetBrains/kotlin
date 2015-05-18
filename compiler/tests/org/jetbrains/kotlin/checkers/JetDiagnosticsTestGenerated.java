@@ -13026,6 +13026,36 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExhaustivePlatformEnum.kt")
+            public void testExhaustivePlatformEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnum.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustivePlatformEnumAnnotated.kt")
+            public void testExhaustivePlatformEnumAnnotated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumAnnotated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustivePlatformEnumElse.kt")
+            public void testExhaustivePlatformEnumElse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumElse.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustivePlatformEnumNull.kt")
+            public void testExhaustivePlatformEnumNull() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustivePlatformEnumStatement.kt")
+            public void testExhaustivePlatformEnumStatement() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustivePlatformEnumStatement.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExhaustiveReturn.kt")
             public void testExhaustiveReturn() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveReturn.kt");
@@ -13083,6 +13113,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("NonExhaustiveBooleanNullable.kt")
             public void testNonExhaustiveBooleanNullable() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveBooleanNullable.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NonExhaustivePlatformEnum.kt")
+            public void testNonExhaustivePlatformEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustivePlatformEnum.kt");
                 doTest(fileName);
             }
 

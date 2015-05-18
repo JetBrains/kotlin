@@ -385,6 +385,8 @@ public class DefaultErrorMessages {
         MAP.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a when-expression");
 
         MAP.put(NO_ELSE_IN_WHEN, "'when' expression must contain 'else' branch");
+        MAP.put(WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument ''{0}'' can be null in Java, but exhaustive when contains no null branch");
+
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");
         MAP.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type");
 

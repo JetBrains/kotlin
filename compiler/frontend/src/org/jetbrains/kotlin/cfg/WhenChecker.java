@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.cfg;
 
+import com.intellij.codeInsight.AnnotationUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -46,6 +46,23 @@ public final class WhenChecker {
         return !isUnit && !isStatement && !isWhenExhaustive(expression, trace);
     }
 
+    private static final FqName notNullAnnotationName = new FqName(AnnotationUtil.NOT_NULL);
+
+    public static boolean isExhaustiveWhenOnPlatformNullableEnum(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
+        JetType type = whenSubjectType(expression, trace.getBindingContext());
+        if (type == null) return false;
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
+        return (isPlatformEnum(type, classDescriptor)
+                && isWhenOnEnumExhaustive(expression, trace, classDescriptor)
+                // nullable from Kotlin side
+                && TypeUtils.isNullableType(type)
+                // and from Java side too
+                && type.getAnnotations().findAnnotation(notNullAnnotationName) == null
+                && type.getAnnotations().findExternalAnnotation(notNullAnnotationName) == null
+                // but no null case
+                && !containsNullCase(expression, trace));
+    }
+
     public static boolean isWhenByEnum(@NotNull JetWhenExpression expression, @NotNull BindingContext context) {
         return getClassDescriptorOfTypeIfEnum(whenSubjectType(expression, context)) != null;
     }
@@ -53,9 +70,8 @@ public final class WhenChecker {
     @Nullable
     private static ClassDescriptor getClassDescriptorOfTypeIfEnum(@Nullable JetType type) {
         if (type == null) return null;
-        DeclarationDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
-        if (!(declarationDescriptor instanceof ClassDescriptor)) return null;
-        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
+        if (classDescriptor == null) return null;
         if (classDescriptor.getKind() != ClassKind.ENUM_CLASS || classDescriptor.getModality().isOverridable()) return null;
 
         return classDescriptor;
@@ -98,6 +114,12 @@ public final class WhenChecker {
         return notEmpty;
     }
 
+    private static boolean isPlatformEnum(@NotNull JetType type, @Nullable ClassDescriptor classDescriptor) {
+        // instanceof JetClass are Kotlin types, as well as nullable types
+        return classDescriptor != null && classDescriptor.getKind() == ClassKind.ENUM_CLASS
+               && !(type instanceof JetClass) && !type.isMarkedNullable();
+    }
+    
     public static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
         JetType type = whenSubjectType(expression, trace.getBindingContext());
         if (type == null) return false;
@@ -116,7 +138,7 @@ public final class WhenChecker {
         else {
             exhaustive = isWhenOnEnumExhaustive(expression, trace, classDescriptor);
         }
-        if (exhaustive && (!TypeUtils.isNullableType(type) || containsNullCase(expression, trace))) {
+        if (exhaustive && (!TypeUtils.isNullableType(type) || containsNullCase(expression, trace) || isPlatformEnum(type, classDescriptor))) {
             trace.record(BindingContext.EXHAUSTIVE_WHEN, expression);
             return true;
         }
