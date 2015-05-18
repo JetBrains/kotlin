@@ -14,36 +14,33 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.jvm;
+package org.jetbrains.kotlin.serialization.jvm
 
-import com.google.protobuf.ExtensionRegistryLite;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.serialization.ClassData;
-import org.jetbrains.kotlin.serialization.PackageData;
+import com.google.protobuf.ExtensionRegistryLite
+import org.jetbrains.kotlin.serialization.ClassData
+import org.jetbrains.kotlin.serialization.PackageData
+import kotlin.platform.platformStatic
 
-public class JvmProtoBufUtil {
-    private JvmProtoBufUtil() {
+public object JvmProtoBufUtil {
+
+    public fun getExtensionRegistry(): ExtensionRegistryLite {
+        val registry = ExtensionRegistryLite.newInstance()
+        JvmProtoBuf.registerAllExtensions(registry)
+        return registry
     }
 
-    @NotNull
-    public static ExtensionRegistryLite getExtensionRegistry() {
-        ExtensionRegistryLite registry = ExtensionRegistryLite.newInstance();
-        JvmProtoBuf.registerAllExtensions(registry);
-        return registry;
+    platformStatic
+    public fun readClassDataFrom(encodedData: Array<String>): ClassData {
+        return ClassData.read(BitEncoding.decodeBytes(encodedData), getExtensionRegistry())
     }
 
-    @NotNull
-    public static ClassData readClassDataFrom(@NotNull String[] encodedData) {
-        return ClassData.read(BitEncoding.decodeBytes(encodedData), getExtensionRegistry());
+    platformStatic
+    public fun readPackageDataFrom(encodedData: Array<String>): PackageData {
+        return readPackageDataFrom(BitEncoding.decodeBytes(encodedData))
     }
 
-    @NotNull
-    public static PackageData readPackageDataFrom(@NotNull String[] encodedData) {
-        return readPackageDataFrom(BitEncoding.decodeBytes(encodedData));
-    }
-
-    @NotNull
-    public static PackageData readPackageDataFrom(@NotNull byte[] data) {
-        return PackageData.read(data, getExtensionRegistry());
+    platformStatic
+    public fun readPackageDataFrom(data: ByteArray): PackageData {
+        return PackageData.read(data, getExtensionRegistry())
     }
 }
