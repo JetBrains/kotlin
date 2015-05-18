@@ -3295,6 +3295,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/migration/obsoleteLabelSyntax")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ObsoleteLabelSyntax extends AbstractQuickFixTest {
+            public void testAllFilesPresentInObsoleteLabelSyntax() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/obsoleteLabelSyntax"), Pattern.compile("^(\\w+)\\.kt$"), true);
+            }
+
+            @TestMetadata("lambda.kt")
+            public void testLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/obsoleteLabelSyntax/lambda.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("loop.kt")
+            public void testLoop() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/obsoleteLabelSyntax/loop.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/migration/removeNameFromFunctionExpression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

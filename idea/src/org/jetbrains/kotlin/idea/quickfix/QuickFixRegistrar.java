@@ -340,5 +340,8 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(FUNCTION_EXPRESSION_WITH_NAME, RemoveNameFromFunctionExpressionFix.Companion);
         QuickFixes.factories.put(FUNCTION_EXPRESSION_WITH_NAME, RemoveNameFromFunctionExpressionFix.Companion.createWholeProjectFixFactory());
+
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE, ReplaceObsoleteLabelSyntaxFix.Companion);
+        QuickFixes.factories.put(UNRESOLVED_REFERENCE, ReplaceObsoleteLabelSyntaxFix.Companion.createWholeProjectFixFactory());
     }
 }

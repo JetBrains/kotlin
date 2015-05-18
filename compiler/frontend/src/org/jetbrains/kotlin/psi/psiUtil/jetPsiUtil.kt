@@ -536,6 +536,16 @@ inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(
 inline fun <reified T : JetElement> PsiElement.forEachDescendantsOfType(noinline block: (T) -> Unit) =
         accept(forEachDescendantOfTypeVisitor(block))
 
+inline fun <reified T : JetElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean): Boolean {
+    var result = false
+    accept(forEachDescendantOfTypeVisitor<T> {
+        if (!result && predicate(it)) {
+            result = true
+        }
+    })
+    return result
+}
+
 public fun PsiFile.getFqNameByDirectory(): FqName {
     val qualifiedNameByDirectory = getParent()?.getPackage()?.getQualifiedName()
     return qualifiedNameByDirectory?.let { FqName(it) } ?: FqName.ROOT
