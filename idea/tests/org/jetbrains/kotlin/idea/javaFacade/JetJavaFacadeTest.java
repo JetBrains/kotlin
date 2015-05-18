@@ -119,6 +119,10 @@ public class JetJavaFacadeTest extends JetLightCodeInsightFixtureTestCase {
         doTestWrapClass();
     }
 
+    public void testEa68569() {
+        doTestWrapClass();
+    }
+
     public void testWrapTopLevelFunWithDefaultParams() {
         doTestWrapMethod(true);
     }
