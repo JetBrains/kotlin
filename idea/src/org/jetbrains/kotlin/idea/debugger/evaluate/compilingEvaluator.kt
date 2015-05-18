@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator
 
-import kotlin.properties.Delegates
-import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.DebugProcess
-import com.sun.jdi.ClassLoaderReference
-import com.intellij.openapi.projectRoots.JdkVersionUtil
-import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContext
+import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
+import com.intellij.openapi.projectRoots.JdkVersionUtil
 import com.intellij.openapi.util.SystemInfo
+import com.sun.jdi.ClassLoaderReference
 import org.jetbrains.kotlin.idea.debugger.evaluate.CompilingEvaluatorUtils
+import kotlin.properties.Delegates
 
 public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<Pair<String, ByteArray>>) {
     val process = evaluationContext.getDebugProcess()
@@ -60,27 +60,30 @@ private fun defineClasses(
         process: DebugProcess,
         classLoader: ClassLoaderReference
 ) {
-    CompilingEvaluatorUtils.defineClass(FunctionImplBytes.name, FunctionImplBytes.bytes, context, process, classLoader)
-
-    for ((className, bytes) in classes) {
+    val lambdaSuperclasses = LAMBDA_SUPERCLASSES.map { it.name to it.bytes }
+    for ((className, bytes) in lambdaSuperclasses + classes) {
         CompilingEvaluatorUtils.defineClass(className, bytes, context, process, classLoader)
     }
 }
 
-private object FunctionImplBytes {
+// The order is relevant here: if we load Lambda first instead, during the definition of Lambda the class loader will look for
+// its superclasses and will try to load FunctionImpl itself. It will succeed, probably with the help of some parent class loader,
+// and the subsequent attempt to define the patched version of FunctionImpl will fail with LinkageError (cannot redefine class)
+private val LAMBDA_SUPERCLASSES = listOf(
+        ClassBytes("kotlin.jvm.internal.FunctionImpl"),
+        ClassBytes("kotlin.jvm.internal.Lambda")
+)
+
+private class ClassBytes(val name: String) {
     val bytes: ByteArray by Delegates.lazy {
-        val inputStream = this.javaClass.getClassLoader().getResourceAsStream("kotlin/jvm/internal/FunctionImpl.class")
-        if (inputStream != null) {
-            try {
-                return@lazy inputStream.readBytes()
-            }
-            finally {
-                inputStream.close()
-            }
+        val inputStream = this.javaClass.getClassLoader().getResourceAsStream(name.replace('.', '/') + ".class")
+                          ?: throw EvaluateException("Couldn't find $name class in current class loader")
+
+        try {
+            inputStream.readBytes()
         }
-
-        throw EvaluateException("Couldn't find kotlin.jvm.internal.FunctionImpl class in current classloader")
+        finally {
+            inputStream.close()
+        }
     }
-
-    val name = "kotlin.jvm.internal.FunctionImpl"
 }

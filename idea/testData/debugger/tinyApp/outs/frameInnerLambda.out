@@ -33,10 +33,12 @@ fun foo(f: () -> Unit) {
 // EXPRESSION: val1 + val2
 // RESULT: 2: I
  frame    = invoke():9, FrameInnerLambdaPackage$@packagePartHASH$main$1$1 {frameInnerLambda}
-   this     = this = {frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = this$0: frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1 = {frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1@uniqueID}kotlin.Function0<kotlin.Unit> (sp = null)
+   this     = this = {frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
+     field    = this$0: frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1 = {frameInnerLambda.FrameInnerLambdaPackage$@packagePartHASH$main$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit> (sp = null)
        field    = $val1: int = 1 (sp = null)
+       field    = arity: int = 0 (sp = Lambda.!EXT!)
      field    = $val2: int = 1 (sp = null)
+     field    = arity: int = 0 (sp = Lambda.!EXT!)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

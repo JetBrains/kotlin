@@ -50,12 +50,14 @@ fun foo(f: () -> Unit) {
 // EXPRESSION: myFun()
 // RESULT: 1: I
  frame    = invoke():17, A$test$1$1 {frameThis0This0}
-   this     = this = {frameThis0This0.A$test$1$1@uniqueID}kotlin.Function0<kotlin.Unit>
-     field    = this$0: frameThis0This0.A$test$1 = {frameThis0This0.A$test$1@uniqueID}kotlin.Function0<kotlin.Unit> (sp = null)
+   this     = this = {frameThis0This0.A$test$1$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
+     field    = this$0: frameThis0This0.A$test$1 = {frameThis0This0.A$test$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit> (sp = null)
        field    = this$0: frameThis0This0.A = {frameThis0This0.A@uniqueID} (sp = null)
          field    = prop1: int = 1 (sp = frameThis0This0.kt, 8)
        field    = $val1: int = 1 (sp = null)
+       field    = arity: int = 0 (sp = Lambda.!EXT!)
      field    = $val2: int = 1 (sp = null)
+     field    = arity: int = 0 (sp = Lambda.!EXT!)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
