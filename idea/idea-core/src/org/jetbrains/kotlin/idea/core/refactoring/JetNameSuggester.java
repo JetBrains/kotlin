@@ -45,11 +45,10 @@ public class JetNameSuggester {
     }
 
     private static void addName(ArrayList<String> result, @Nullable String name, JetNameValidator validator) {
+        if (name == null) return;
         if ("class".equals(name)) name = "clazz";
         if (!isIdentifier(name)) return;
-        String newName = validator.validateName(name);
-        if (newName == null) return;
-        result.add(newName);
+        result.add(validator.validateName(name));
     }
 
     /**
@@ -93,8 +92,13 @@ public class JetNameSuggester {
     }
 
     public static @NotNull String[] suggestNamesForExpression(@NotNull JetExpression expression, @NotNull JetNameValidator validator) {
+        return suggestNamesForExpression(expression, validator, null);
+    }
+
+    public static @NotNull String[] suggestNamesForExpression(@NotNull JetExpression expression, @NotNull JetNameValidator validator, @Nullable String defaultName) {
         ArrayList<String> result = new ArrayList<String>();
         addNamesForExpression(result, expression, validator);
+        if (result.isEmpty()) addName(result, defaultName, validator);
         return ArrayUtil.toStringArray(result);
     }
 

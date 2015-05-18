@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -97,9 +99,9 @@ public class DeprecatedSymbolUsageFix(
         val bindingContext = element.analyze()
         val resolvedCall = element.getResolvedCall(bindingContext)!!
         val descriptor = resolvedCall.getResultingDescriptor()
-        val callElement = resolvedCall.getCall().getCallElement() as JetExpression
-        val qualifiedExpression = callElement.getParent() as? JetQualifiedExpression
-        val expressionToReplace = qualifiedExpression ?: callElement
+        val callExpression = resolvedCall.getCall().getCallElement() as JetExpression
+        val qualifiedExpression = callExpression.getParent() as? JetQualifiedExpression
+        val expressionToReplace = qualifiedExpression ?: callExpression
 
         val USER_CODE_KEY = Key<Unit>("USER_CODE")
 
@@ -125,8 +127,19 @@ public class DeprecatedSymbolUsageFix(
                 }
 
                 if (expressionToReplace.isUsedAsExpression(bindingContext)) {
-                    expression = psiFactory.createExpressionByPattern("$0?.let { $1 }", explicitReceiver!!, expression)
-                    thisReplacement = psiFactory.createExpression("it")
+                    if (!isNameUsed("it", callExpression, expression)) {
+                        expression = psiFactory.createExpressionByPattern("$0?.let { $1 }", explicitReceiver!!, expression)
+                        thisReplacement = psiFactory.createExpression("it")
+                    }
+                    else {
+                        val nameValidator = object : JetNameValidator() {
+                            override fun validateInner(name: String) = !isNameUsed(name, callExpression, expression)
+                        }
+                        val name = JetNameSuggester.suggestNamesForExpression(explicitReceiver!!, nameValidator, "t").first()
+                        val nameInCode = IdeDescriptorRenderers.SOURCE_CODE.renderName(Name.identifier(name))
+                        expression = psiFactory.createExpressionByPattern("$0?.let { $nameInCode -> $1 }", explicitReceiver, expression)
+                        thisReplacement = psiFactory.createExpression(nameInCode)
+                    }
                 }
                 else {
                     expression = psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", explicitReceiver!!, expression)
@@ -299,6 +312,24 @@ public class DeprecatedSymbolUsageFix(
 
             else -> throw IllegalArgumentException("Cannot find resolution scope for $descriptor")
         }
+    }
+
+    private fun isNameUsed(name: String, vararg inExpressions: JetExpression): Boolean {
+        var result = false
+        inExpressions.forEach {
+            it.accept(object : JetVisitorVoid(){
+                override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                    if (expression.getReferencedName() == name) {
+                        result = true
+                    }
+                }
+
+                override fun visitJetElement(element: JetElement) {
+                    element.acceptChildren(this)
+                }
+            })
+        }
+        return result
     }
 
     companion object : JetSingleIntentionActionFactory() {

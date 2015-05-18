@@ -2896,6 +2896,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("changeThisSafeCallWithValue1Runtime.kt")
+        public void testChangeThisSafeCallWithValue1Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThisSafeCallWithValue1Runtime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeThisSafeCallWithValue2Runtime.kt")
+        public void testChangeThisSafeCallWithValue2Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThisSafeCallWithValue2Runtime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeThisSafeCallWithValue3Runtime.kt")
+        public void testChangeThisSafeCallWithValue3Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThisSafeCallWithValue3Runtime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeThisSafeCallWithValue4Runtime.kt")
+        public void testChangeThisSafeCallWithValue4Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThisSafeCallWithValue4Runtime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("changeThisSafeCallWithValueRuntime.kt")
         public void testChangeThisSafeCallWithValueRuntime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/changeThisSafeCallWithValueRuntime.kt");
