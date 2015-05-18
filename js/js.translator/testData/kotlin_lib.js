@@ -278,19 +278,37 @@
      */
     lazyInitClasses.ListIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.Iterator];
+            return [Kotlin.modules['builtins'].kotlin.ListIterator];  // TODO: MutableListIterator
         },
         /** @constructs */
-        function (list) {
+        function (list, index) {
             this.list = list;
             this.size = list.size();
-            this.index = 0;
+            this.index = (index === undefined) ? 0 : index;
         }, {
             hasNext: function () {
                 return this.index < this.size;
             },
+            nextIndex: function () {
+                return this.index;
+            },
             next: function () {
-                return this.list.get_za3lpa$(this.index++);
+                var index = this.index;
+                var result = this.list.get_za3lpa$(index);
+                this.index = index + 1;
+                return result;
+            },
+            hasPrevious: function() {
+                return this.index > 0;
+            },
+            previousIndex: function () {
+                return this.index - 1;
+            },
+            previous: function () {
+                var index = this.index - 1;
+                var result = this.list.get_za3lpa$(index);
+                this.index = index;
+                return result;
             }
     });
 
@@ -362,6 +380,10 @@
             }
             return modified
         },
+        clear: function () {
+            // TODO: implement with mutable iterator
+            throw new Kotlin.UnsupportedOperationException("Not implemented yet, see KT-7809");
+        },
         containsAll_4fm7v2$: function (c) {
             var it = c.iterator();
             while (it.hasNext()) {
@@ -373,6 +395,7 @@
             return this.size() === 0;
         },
         iterator: function () {
+            // TODO: Do not implement mutable iterator() this way, make abstract
             return new Kotlin.ArrayIterator(this.toArray());
         },
         equals_za3rmp$: function (o) {
@@ -422,6 +445,23 @@
         iterator: function () {
             return new Kotlin.ListIterator(this);
         },
+        listIterator: function() {
+            return new Kotlin.ListIterator(this);
+        },
+        listIterator_za3lpa$: function(index) {
+            if (index < 0 || index > this.size()) {
+                throw new Kotlin.IndexOutOfBoundsException("Index: " + index + ", size: " + this.size());
+            }
+            return new Kotlin.ListIterator(this, index);
+        },
+        add_za3rmp$: function (element) {
+            this.add_vux3hl$(this.size(), element);
+            return true;
+        },
+        addAll_9cca64$: function (index, collection) {
+            // TODO: implement
+            throw new Kotlin.UnsupportedOperationException("Not implemented yet, see KT-7809");
+        },
         remove_za3rmp$: function (o) {
             var index = this.indexOf_za3rmp$(o);
             if (index !== -1) {
@@ -430,10 +470,84 @@
             }
             return false;
         },
+        clear: function () {
+            // TODO: implement with remove range
+            throw new Kotlin.UnsupportedOperationException("Not implemented yet, see KT-7809");
+        },
         contains_za3rmp$: function (o) {
             return this.indexOf_za3rmp$(o) !== -1;
+        },
+        indexOf_za3rmp$: function (o) {
+            var i = this.listIterator();
+            while (i.hasNext())
+                if (Kotlin.equals(i.next(), o))
+                    return i.previousIndex();
+            return -1;
+        },
+        lastIndexOf_za3rmp$: function (o) {
+            var i = this.listIterator_za3lpa$(this.size());
+            while (i.hasPrevious())
+                if (Kotlin.equals(i.previous(), o))
+                    return i.nextIndex();
+            return -1;
+        },
+        subList_vux9f0$: function(fromIndex, toIndex) {
+            if (fromIndex < 0 || toIndex > this.size())
+                throw new Kotlin.IndexOutOfBoundsException();
+            if (fromIndex > toIndex)
+                throw new Kotlin.IllegalArgumentException();
+            return new Kotlin.SubList(this, fromIndex, toIndex);
+        },
+        hashCode: function() {
+            var result = 1;
+            var i = this.iterator();
+            while (i.hasNext()) {
+                var obj = i.next();
+                result = (31*result + Kotlin.hashCode(obj)) | 0;
+            }
+            return result;
         }
     });
+
+    lazyInitClasses.SubList = Kotlin.createClass(
+        function () {
+            return [Kotlin.AbstractList];
+        },
+        function (list, fromIndex, toIndex) {
+            this.list = list;
+            this.offset = fromIndex;
+            this._size = toIndex - fromIndex;
+        }, {
+            get_za3lpa$: function (index) {
+                this.checkRange(index);
+                return this.list.get_za3lpa$(index + this.offset);
+            },
+            set_vux3hl$: function (index, value) {
+                this.checkRange(index);
+                this.list.set_vux3hl$(index + this.offset, value);
+            },
+            size: function () {
+                return this._size;
+            },
+            add_vux3hl$: function (index, element) {
+                if (index < 0 || index > this.size()) {
+                    throw new Kotlin.IndexOutOfBoundsException();
+                }
+                this.list.add_vux3hl$(index + this.offset, element);
+            },
+            remove_za3lpa$: function (index) {
+                this.checkRange(index);
+                var result = this.list.remove_za3lpa$(index + this.offset);
+                this._size--;
+                return result;
+
+            },
+            checkRange: function (index) {
+                if (index < 0 || index >= this._size) {
+                    throw new Kotlin.IndexOutOfBoundsException();
+                }
+            }
+        });
 
     //TODO: should be JS Array-like (https://developer.mozilla.org/en-US/docs/JavaScript/Guide/Predefined_Core_Objects#Working_with_Array-like_objects)
     lazyInitClasses.ArrayList = Kotlin.createClass(
