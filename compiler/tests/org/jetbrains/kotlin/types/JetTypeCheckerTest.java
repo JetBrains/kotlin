@@ -149,11 +149,11 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     public void testWhen() throws Exception {
-        assertType("when (1) { is 1 -> 2; } ", "Int");
-        assertType("when (1) { is 1 -> 2; is 1 -> '2'} ", "Comparable<out Any?>");
-        assertType("when (1) { is 1 -> 2; is 1 -> '2'; is 1 -> null} ", "Comparable<out Any?>?");
-        assertType("when (1) { is 1 -> 2; is 1 -> '2'; else -> null} ", "Comparable<out Any?>?");
-        assertType("when (1) { is 1 -> 2; is 1 -> '2'; is 1 -> when(2) {is 1 -> null}} ", "Comparable<out Any?>?");
+        assertType("when (1) { is 1 -> 2; }", "Int");
+        assertType("when (1) { is 1 -> 2; is 1 -> '2'}", "Comparable<out Any?>");
+        assertType("when (1) { is 1 -> 2; is 1 -> '2'; is 1 -> null}", "Comparable<out Any?>?");
+        assertType("when (1) { is 1 -> 2; is 1 -> '2'; else -> null}", "Comparable<out Any?>?");
+        assertType("when (1) { is 1 -> 2; is 1 -> '2'; is 1 -> when(2) {is 1 -> null}}", "Comparable<out Any?>?");
     }
 
     public void testTry() throws Exception {

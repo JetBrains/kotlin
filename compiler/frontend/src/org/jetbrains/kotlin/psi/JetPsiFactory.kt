@@ -64,7 +64,11 @@ public class JetPsiFactory(private val project: Project) {
 
     public fun createExpression(text: String): JetExpression {
         //TODO: '\n' below if important - some strange code indenting problems appear without it
-        return createProperty("val x =\n$text").getInitializer() ?: error("Failed to create expression from text: '$text'")
+        val expression = createProperty("val x =\n$text").getInitializer() ?: error("Failed to create expression from text: '$text'")
+        assert(expression.getText() == text) {
+            "Failed to create expression from text: '$text', resulting expression's text was: '${expression.getText()}'"
+        }
+        return expression
     }
 
     public fun createClassLiteral(className: String): JetClassLiteralExpression =

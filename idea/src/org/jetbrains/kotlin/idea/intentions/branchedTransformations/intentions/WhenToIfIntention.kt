@@ -34,14 +34,14 @@ public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpressio
     override fun applyTo(element: JetWhenExpression, editor: Editor) {
         val factory = JetPsiFactory(element)
         val ifExpression = factory.buildExpression {
-            for ((i, entry) in element.getEntries().withIndex()) {
+            val entries = element.getEntries()
+            for ((i, entry) in entries.withIndex()) {
                 if (i > 0) {
                     appendFixedText("else ")
                 }
                 val branch = entry.getExpression()
                 if (entry.isElse()) {
                     appendExpression(branch)
-                    appendFixedText("\n")
                 }
                 else {
                     val condition = factory.combineWhenConditions(entry.getConditions(), element.getSubjectExpression())
@@ -49,6 +49,8 @@ public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpressio
                     appendExpression(condition)
                     appendFixedText(")")
                     appendExpression(branch)
+                }
+                if (i != entries.lastIndex) {
                     appendFixedText("\n")
                 }
             }

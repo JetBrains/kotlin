@@ -54,7 +54,7 @@ public class MoveDeclarationsOutHelper {
 
         // Dummy element to add new declarations at the beginning
         JetPsiFactory psiFactory = JetPsiFactory(project);
-        PsiElement dummyFirstStatement = container.addBefore(psiFactory.createExpression("dummyStatement "), statements[0]);
+        PsiElement dummyFirstStatement = container.addBefore(psiFactory.createExpression("dummyStatement"), statements[0]);
 
         try {
             SearchScope scope = new LocalSearchScope(container);

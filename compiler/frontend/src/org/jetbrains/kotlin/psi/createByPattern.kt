@@ -33,7 +33,7 @@ import java.util.LinkedHashMap
 public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): JetExpression {
     val (processedText, allPlaceholders) = processPattern(pattern, args)
 
-    var expression = createExpression(processedText)
+    var expression = createExpression(processedText.trim())
     val project = expression.getProject()
 
     val start = expression.startOffset

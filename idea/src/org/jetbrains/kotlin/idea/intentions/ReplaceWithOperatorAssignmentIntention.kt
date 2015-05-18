@@ -77,17 +77,20 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
         element.replace(JetPsiFactory(element).createExpression(replacement))
     }
 
-    [tailRecursive]
+    @tailRecursive
     private fun buildOperatorAssignmentText(variableExpression: JetSimpleNameExpression, expression: JetBinaryExpression, tail: String): String {
         val operationText = expression.getOperationReference().getText()
         val variableName = variableExpression.getText()
-        return when {
-            variableExpression.matches(expression.getLeft()) -> "$variableName $operationText= ${expression.getRight()!!.getText()} $tail"
 
-            variableExpression.matches(expression.getRight()) -> "$variableName $operationText= ${expression.getLeft()!!.getText()} $tail"
+        fun String.appendTail() = if (tail.isEmpty()) this else "$this $tail"
+
+        return when {
+            variableExpression.matches(expression.getLeft()) -> "$variableName $operationText= ${expression.getRight()!!.getText()}".appendTail()
+
+            variableExpression.matches(expression.getRight()) -> "$variableName $operationText= ${expression.getLeft()!!.getText()}".appendTail()
 
             expression.getLeft() is JetBinaryExpression ->
-                buildOperatorAssignmentText(variableExpression, expression.getLeft() as JetBinaryExpression, "$operationText ${expression.getRight()!!.getText()} $tail")
+                buildOperatorAssignmentText(variableExpression, expression.getLeft() as JetBinaryExpression, "$operationText ${expression.getRight()!!.getText()}".appendTail())
 
             else -> tail
         }
