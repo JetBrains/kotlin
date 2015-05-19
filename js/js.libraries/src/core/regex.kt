@@ -24,12 +24,12 @@ import java.util.ArrayList
  */
 public enum class RegexOption(val value: String) {
     /** Enables case-insensitive matching. */
-    IGNORE_CASE : RegexOption("i")
+    IGNORE_CASE("i"),
     /** Enables multiline mode.
      *
      * In multiline mode the expressions `^` and `$` match just after or just before,
      * respectively, a line terminator or the end of the input sequence. */
-    MULTILINE : RegexOption("m")
+    MULTILINE("m")
 }
 
 

@@ -43,7 +43,7 @@ public enum class InlineStrategy {
      * Specifies that the body of the inline function together with the bodies of the lambdas passed to it
      * is generated as a separate method invoked from the calling function.
      */
-    AS_FUNCTION
+    AS_FUNCTION,
 
     /**
      * Specifies that the body of the inline function together with the bodies of the lambdas passed to it
@@ -71,7 +71,7 @@ public enum class InlineOption {
     /**
      * This option hasn't been implemented yet.
      */
-    LOCAL_CONTINUE_AND_BREAK
+    LOCAL_CONTINUE_AND_BREAK,
 
     /**
      * If this option is specified, lambdas may not use non-local return statements (statements which return from
