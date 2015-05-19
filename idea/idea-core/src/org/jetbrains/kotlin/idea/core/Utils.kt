@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.idea.core
 
+import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.psi.FunctionLiteralArgument
-import org.jetbrains.kotlin.psi.ValueArgument
+import org.jetbrains.kotlin.psi.*
+import java.util.ArrayList
 import java.util.HashMap
 
 public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
@@ -62,4 +64,22 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
     }
 
     return map
+}
+
+// TODO: it can be default value for parameter but it's not supported yet by the compiler
+public inline fun <reified TElement> PsiElement.collectElementsOfType(): Collection<TElement> {
+    return collectElementsOfType { true }
+}
+
+public inline fun <reified TElement> PsiElement.collectElementsOfType(@inlineOptions(InlineOption.ONLY_LOCAL_RETURN) predicate: (TElement) -> Boolean): Collection<TElement> {
+    val result = ArrayList<TElement>()
+    this.accept(object : PsiRecursiveElementVisitor(){
+        override fun visitElement(element: PsiElement) {
+            if (element is TElement && predicate(element)) {
+                result.add(element)
+            }
+            super.visitElement(element)
+        }
+    })
+    return result
 }

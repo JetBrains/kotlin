@@ -24,24 +24,21 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.analyzer.analyzeInContext
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.collectElementsOfType
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
-import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
-import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
@@ -49,33 +46,22 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
-import java.util.LinkedHashSet
 
 //TODO: replacement of class usages
 //TODO: different replacements for property accessors
 //TODO: replace all in project quickfixes on usage and on deprecated annotation
 public class DeprecatedSymbolUsageFix(
         element: JetSimpleNameExpression/*TODO?*/,
-        val replaceWith: DeprecatedSymbolUsageFix.ReplaceWith
+        val replaceWith: ReplaceWith
 ) : JetIntentionAction<JetSimpleNameExpression>(element) {
-
-    //TODO: use ReplaceWith from package kotlin
-    private data class ReplaceWith(val expression: String, vararg val imports: String)
 
     override fun getFamilyName() = "Replace deprecated symbol usage"
 
@@ -116,11 +102,12 @@ public class DeprecatedSymbolUsageFix(
         explicitReceiver?.putCopyableUserData(FROM_THIS_KEY, Unit)
         //TODO: infix and operator calls
 
-        var (expression, imports, parameterUsages) = replaceWith.toExpression(descriptor.getOriginal(), element.getResolutionFacade(), file, project)
+        var (expression, imports, parameterUsages) = ReplaceWithAnnotationAnalyzer.analyze(
+                replaceWith, descriptor.getOriginal(), element.getResolutionFacade(), file, project)
 
         //TODO: implicit receiver is not always "this"
         //TODO: this@
-        for (thisExpression in expression.collectThisExpressions()) {
+        for (thisExpression in expression.collectElementsOfType<JetThisExpression>()) {
             if (explicitReceiver != null) {
                 thisExpression.replace(explicitReceiver)
             }
@@ -165,7 +152,7 @@ public class DeprecatedSymbolUsageFix(
                 }
 
                 if (expressionToReplace.isUsedAsExpression(bindingContext)) {
-                    val thisReplaced = expression.collectExpressionsWithData(FROM_THIS_KEY, Unit)
+                    val thisReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
                     expression = expression.introduceValue(explicitReceiver!!, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
                 }
                 else {
@@ -176,14 +163,14 @@ public class DeprecatedSymbolUsageFix(
         }
 
         if (explicitReceiver != null && explicitReceiver.shouldIntroduceVariableIfUsedTwice()) {
-            val thisReplaced = expression.collectExpressionsWithData(FROM_THIS_KEY, Unit)
+            val thisReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
             if (thisReplaced.size() > 1) {
                 expression = expression.introduceValue(explicitReceiver, expressionToReplace, bindingContext, thisReplaced)
             }
         }
 
         for ((parameter, value) in introduceValuesForParameters) {
-            val usagesReplaced = expression.collectExpressionsWithData(FROM_PARAMETER_KEY, parameter)
+            val usagesReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_PARAMETER_KEY) == parameter }
             assert(usagesReplaced.size() > 1)
             expression = expression.introduceValue(value, expressionToReplace, bindingContext, usagesReplaced, nameSuggestion = parameter.getName().asString())
         }
@@ -223,128 +210,6 @@ public class DeprecatedSymbolUsageFix(
 
         val offset = ((result as? JetQualifiedExpression)?.getSelectorExpression() ?: result).getTextOffset()
         editor?.moveCaret(offset)
-    }
-
-    private data class ReplacementExpression(
-            val expression: JetExpression,
-            val imports: Collection<FqName>,
-            val parameterUsages: Map<ValueParameterDescriptor, Collection<JetExpression>>
-    )
-
-    private fun ReplaceWith.toExpression(
-            symbolDescriptor: CallableDescriptor,
-            resolutionFacade: ResolutionFacade,
-            file: JetFile/*TODO: drop it*/,
-            project: Project
-    ): ReplacementExpression {
-        val psiFactory = JetPsiFactory(project)
-        var expression = psiFactory.createExpression(expression)
-
-        val importFqNames = imports
-                .filter { FqNameUnsafe.isValid(it) }
-                .map { FqNameUnsafe(it) }
-                .filter { it.isSafe() }
-                .mapTo(LinkedHashSet<FqName>()) { it.toSafe() }
-
-        val symbolScope = getResolutionScope(symbolDescriptor)
-        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(file, it) }
-        val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)
-
-        val bindingContext = expression.analyzeInContext(scope)
-
-        val thisType = symbolDescriptor.getExtensionReceiverParameter()?.getType()
-                       ?: (symbolDescriptor.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
-
-        val receiversToAdd = ArrayList<Pair<JetExpression, String>>()
-
-        val parameterUsageKey = Key<ValueParameterDescriptor>("parameterUsageKey")
-
-        expression.accept(object : JetVisitorVoid(){
-            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return
-
-                if (target.canBeReferencedViaImport()) {
-                    if (target.isExtension || expression.getReceiverExpression() == null) {
-                        importFqNames.addIfNotNull(target.importableFqName)
-                    }
-                }
-
-                if (expression.getReceiverExpression() == null) {
-                    if (target is ValueParameterDescriptor && target.getContainingDeclaration() == symbolDescriptor) {
-                        expression.putCopyableUserData(parameterUsageKey, target)
-                    }
-
-                    val resolvedCall = expression.getResolvedCall(bindingContext)
-                    if (resolvedCall != null && resolvedCall.getStatus().isSuccess()) {
-                        val receiver = if (resolvedCall.getResultingDescriptor().isExtension)
-                            resolvedCall.getExtensionReceiver()
-                        else
-                            resolvedCall.getDispatchReceiver()
-                        if (receiver is ThisReceiver) {
-                            if (receiver.getType() == thisType) {
-                                receiversToAdd.add(expression to "this")
-                            }
-                            else {
-                                val descriptor = receiver.getDeclarationDescriptor()
-                                if (descriptor is ClassDescriptor && descriptor.isCompanionObject()) {
-                                    receiversToAdd.add(expression to IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor))
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun visitJetElement(element: JetElement) {
-                element.acceptChildren(this)
-            }
-        })
-
-        for ((expr, receiverText) in receiversToAdd) {
-            val expressionToReplace = expr.getParent() as? JetCallExpression ?: expr
-            val newExpr = expressionToReplace.replaced(psiFactory.createExpressionByPattern("$receiverText.$0", expressionToReplace))
-            if (expressionToReplace == expression) {
-                expression = newExpr
-            }
-        }
-
-        val parameterUsages = symbolDescriptor.getValueParameters()
-                .map { it to expression.collectExpressionsWithData(parameterUsageKey, it) }
-                .toMap()
-
-        expression.accept(object : PsiRecursiveElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                element.putCopyableUserData(parameterUsageKey, null)
-            }
-        })
-
-        return ReplacementExpression(expression, importFqNames, parameterUsages)
-    }
-
-    private fun getResolutionScope(descriptor: DeclarationDescriptor): JetScope {
-        when (descriptor) {
-            is PackageFragmentDescriptor -> {
-                val moduleDescriptor = descriptor.getContainingDeclaration()
-                return getResolutionScope(moduleDescriptor.getPackage(descriptor.fqName)!!)
-            }
-
-            is PackageViewDescriptor ->
-                return descriptor.getMemberScope()
-
-            is ClassDescriptorWithResolutionScopes ->
-                return descriptor.getScopeForMemberDeclarationResolution()
-
-            is FunctionDescriptor ->
-                return FunctionDescriptorUtil.getFunctionInnerScope(getResolutionScope(descriptor.getContainingDeclaration()),
-                                                                    descriptor, RedeclarationHandler.DO_NOTHING)
-
-            is PropertyDescriptor ->
-                return JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
-                                                                      getResolutionScope(descriptor.getContainingDeclaration()!!),
-                                                                      RedeclarationHandler.DO_NOTHING)
-
-            else -> throw IllegalArgumentException("Cannot find resolution scope for $descriptor")
-        }
     }
 
     private fun JetExpression.introduceValue(
@@ -429,56 +294,8 @@ public class DeprecatedSymbolUsageFix(
         }
     }
 
-    private fun <T> JetExpression.collectExpressionsWithData(key: Key<T>, value: T): Collection<JetExpression> {
-        val result = ArrayList<JetExpression>()
-        this.accept(object : JetVisitorVoid(){
-            override fun visitExpression(expression: JetExpression) {
-                if (expression.getCopyableUserData(key) == value) {
-                    result.add(expression)
-                }
-                else {
-                    super.visitExpression(expression)
-                }
-            }
-
-            override fun visitJetElement(element: JetElement) {
-                element.acceptChildren(this)
-            }
-        })
-        return result
-    }
-
-    private fun JetExpression.collectThisExpressions(): Collection<JetThisExpression> {
-        val result = ArrayList<JetThisExpression>()
-        this.accept(object : JetVisitorVoid(){
-            override fun visitThisExpression(expression: JetThisExpression) {
-                if (expression.getLabelName() == null) {
-                    result.add(expression)
-                }
-            }
-
-            override fun visitJetElement(element: JetElement) {
-                element.acceptChildren(this)
-            }
-        })
-        return result
-    }
-
-    private fun collectNameUsages(scope: JetExpression, name: String): ArrayList<JetSimpleNameExpression> {
-        val result = ArrayList<JetSimpleNameExpression>()
-        scope.accept(object : JetVisitorVoid(){
-            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                if (expression.getReceiverExpression() == null && expression.getReferencedName() == name) {
-                    result.add(expression)
-                }
-            }
-
-            override fun visitJetElement(element: JetElement) {
-                element.acceptChildren(this)
-            }
-        })
-        return result
-    }
+    private fun collectNameUsages(scope: JetExpression, name: String)
+            = scope.collectElementsOfType<JetSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
 
     private fun JetExpression?.shouldIntroduceVariableIfUsedTwice(): Boolean {
         return when (this) {
@@ -514,34 +331,6 @@ public class DeprecatedSymbolUsageFix(
             val argument = replaceWithValue.getAllValueArguments().entrySet().singleOrNull { it.key.getName().asString() == "imports"/*TODO*/ }?.value
             val imports = (argument?.getValue() as? List<CompileTimeConstant<String>>)?.map { it.getValue() } ?: emptyList()
             return ReplaceWith(pattern, *imports.toTypedArray())
-        }
-    }
-
-    private class ExplicitImportsScope(val descriptors: Collection<DeclarationDescriptor>) : JetScope {
-        override fun getClassifier(name: Name) = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
-
-        override fun getPackage(name: Name)= descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
-
-        override fun getProperties(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
-
-        override fun getLocalVariable(name: Name): VariableDescriptor? = null
-
-        override fun getFunctions(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
-
-        override fun getContainingDeclaration(): DeclarationDescriptor {
-            throw UnsupportedOperationException()
-        }
-
-        override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = emptyList()
-
-        override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = descriptors
-
-        override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> = emptyList()
-
-        override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = emptyList()
-
-        override fun printScopeStructure(p: Printer) {
-            p.println(javaClass.getName())
         }
     }
 }
