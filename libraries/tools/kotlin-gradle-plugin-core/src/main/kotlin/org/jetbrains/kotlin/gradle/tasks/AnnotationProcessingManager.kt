@@ -33,16 +33,17 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
 
     private companion object {
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
+        val WRAPPERS_DIRECTORY = "wrappers"
         val ANNOTATIONS_FILENAME = "annotations.txt"
     }
 
-    fun getAnnotationFile(outputDirFile: String): File {
-        val aptDir = File(outputDirFile, "0apt")
-        aptDir.mkdirs()
-        return File(aptDir, ANNOTATIONS_FILENAME)
+    fun getAnnotationFile(): File {
+        val aptWorkingDir = task.kotlinAptWorkingDir!!
+        aptWorkingDir.mkdirs()
+        return File(aptWorkingDir, "$WRAPPERS_DIRECTORY/$ANNOTATIONS_FILENAME")
     }
 
-    fun afterKotlinCompile(outputDirFile: File) {
+    fun afterKotlinCompile() {
         val extraProperties = task.getExtensions().getExtraProperties()
 
         val javaTask = try {
@@ -54,20 +55,20 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
         }
 
         val aptFiles = task.aptFiles
+        val aptWorkingDir = task.kotlinAptWorkingDir
         val aptOutputDir = task.kotlinAptOutputDir
 
-        if (javaTask == null || aptFiles.isEmpty() || aptOutputDir == null) return
+        if (javaTask == null || aptFiles.isEmpty() || aptWorkingDir == null || aptOutputDir == null) return
 
-        val aptDir = File(outputDirFile, "0apt")
-        val annotationDeclarationsFile = File(aptDir, ANNOTATIONS_FILENAME)
+        val annotationDeclarationsFile = File(aptWorkingDir, ANNOTATIONS_FILENAME)
 
-        generateJavaHackFile(aptDir, javaTask)
+        generateJavaHackFile(aptWorkingDir, javaTask)
 
         javaTask.appendClasspath(aptFiles)
 
         val annotationProcessorFqNames = lookupAnnotationProcessors(aptFiles)
-        generateAnnotationProcessorStubs(aptDir, javaTask, annotationProcessorFqNames)
-        
+        generateAnnotationProcessorStubs(aptWorkingDir, javaTask, annotationProcessorFqNames)
+
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
     }
 
@@ -86,7 +87,7 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
     }
 
     private fun generateAnnotationProcessorStubs(aptDir: File, javaTask: JavaCompile, apFqNames: Set<String>) {
-        val stubOutputDir = File(aptDir, "wrappers")
+        val stubOutputDir = File(aptDir, "$WRAPPERS_DIRECTORY")
 
         generateKotlinAptAnnotation(stubOutputDir)
 

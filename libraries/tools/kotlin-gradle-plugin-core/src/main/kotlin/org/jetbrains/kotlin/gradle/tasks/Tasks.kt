@@ -107,6 +107,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
     public var aptFiles: Set<File> = emptySet()
     public var kotlinAptOutputDir: File? = null
+    public var kotlinAptWorkingDir: File? = null
 
     val srcDirsSources = HashSet<SourceDirectorySet>()
 
@@ -133,7 +134,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         val pluginOptions = arrayListOf(*basePluginOptions)
 
         if (aptFiles.isNotEmpty()) {
-            val annotationDeclarationsFile = annotationProcessingManager.getAnnotationFile(args.destination)
+            val annotationDeclarationsFile = annotationProcessingManager.getAnnotationFile()
             if (annotationDeclarationsFile.exists()) annotationDeclarationsFile.delete()
             pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + annotationDeclarationsFile)
         }
@@ -173,7 +174,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             FileUtils.copyDirectory(outputDirFile, getDestinationDir())
         }
 
-        annotationProcessingManager.afterKotlinCompile(outputDirFile)
+        annotationProcessingManager.afterKotlinCompile()
     }
 
     // override setSource to track source directory sets

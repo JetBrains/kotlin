@@ -167,8 +167,7 @@ class Kotlin2JvmSourceSetProcessor(
                     kotlinTask.setProperty("aptFiles", aptConfiguration.resolve())
                 }
 
-                val aptOutputDir = project.setAptOutputDirForSourceSet(kotlinTask, sourceSet.getName())
-                sourceSet.getJava().add(project.files(aptOutputDir))
+                project.setAptDirsForSourceSet(kotlinTask, sourceSet.getName())
             }
         }
 
@@ -417,7 +416,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             kotlinTask.setProperty("aptFiles", aptFiles)
 
-            val aptOutputDir = project.setAptOutputDirForSourceSet(kotlinTask, variantDataName)
+            val aptOutputDir = project.setAptDirsForSourceSet(kotlinTask, variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
 
             kotlinTask doFirst {
@@ -528,10 +527,15 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
     public fun resolveJsLibrary(): File = resolveDependencies(kotlinJsLibraryCoordinates()).first()
 }
 
-private fun Project.setAptOutputDirForSourceSet(kotlinTask: AbstractCompile, sourceSetName: String): File {
-    val aptOutputDir = file(File(getBuildDir(), "generated/source/kotlinApt"))
+private fun Project.setAptDirsForSourceSet(kotlinTask: AbstractCompile, sourceSetName: String): File {
+    val aptOutputDir = File(getBuildDir(), "generated/source/kotlinApt")
     val aptOutputDirForVariant = File(aptOutputDir, sourceSetName)
     kotlinTask.setProperty("kotlinAptOutputDir", aptOutputDirForVariant)
+
+    val aptWorkingDir = File(getBuildDir(), "tmp/kotlinApt")
+    val aptWorkingDirForVariant = File(aptWorkingDir, sourceSetName)
+    kotlinTask.setProperty("kotlinAptWorkingDir", aptWorkingDirForVariant)
+
     return aptOutputDirForVariant
 }
 
