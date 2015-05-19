@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.Renderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
@@ -95,12 +96,11 @@ public object Renderers {
     }
 
     public val AMBIGUOUS_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
-        argument: Collection<ResolvedCall<*>> ->
-        val stringBuilder = StringBuilder("\n")
-        for (call in argument) {
-            stringBuilder.append(DescriptorRenderer.FQ_NAMES_IN_TYPES.render(call.getResultingDescriptor())).append("\n")
-        }
-        stringBuilder.toString()
+        calls: Collection<ResolvedCall<*>> ->
+            calls
+                .map { it.getResultingDescriptor() }
+                .sortBy(MemberComparator.INSTANCE)
+                .joinToString(separator = "\n", prefix = "\n") { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }
     }
 
     platformStatic

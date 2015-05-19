@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.idea.highlighter.renderersUtil.renderResolvedCall
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.Renderer
+import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
@@ -29,13 +30,10 @@ import org.jetbrains.kotlin.types.JetType
 public object IdeRenderers {
     public val HTML_AMBIGUOUS_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
         calls: Collection<ResolvedCall<*>> ->
-        StringBuilder {
-            for (call in calls) {
-                append("<li>")
-                append(DescriptorRenderer.HTML.render(call.getResultingDescriptor()))
-                append("</li>")
-            }
-        }.toString()
+            calls
+                .map { it.getResultingDescriptor() }
+                .sortBy(MemberComparator.INSTANCE)
+                .joinToString("") { "<li>" + DescriptorRenderer.HTML.render(it) + "</li>" }
     }
 
     public val HTML_RENDER_TYPE: Renderer<JetType> = Renderer {
@@ -44,13 +42,11 @@ public object IdeRenderers {
 
     public val HTML_NONE_APPLICABLE_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
         calls: Collection<ResolvedCall<*>> ->
-        StringBuilder {
-            for (resolvedCall in calls) {
-                append("<li>")
-                append(renderResolvedCall(resolvedCall))
-                append("</li>")
-            }
-        }.toString()
+            // TODO: compareBy(comparator, selector) in stdlib
+            val comparator = comparator<ResolvedCall<*>> { c1, c2 -> MemberComparator.INSTANCE.compare(c1.getResultingDescriptor(), c2.getResultingDescriptor()) }
+            calls
+                .sortBy(comparator)
+                .joinToString("") { "<li>" + renderResolvedCall(it) + "</li>" }
     }
 
     public val HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER: Renderer<InferenceErrorData> = Renderer {
@@ -76,19 +72,14 @@ public object IdeRenderers {
 
     public val HTML_CONFLICTING_JVM_DECLARATIONS_DATA: Renderer<ConflictingJvmDeclarationsData> = Renderer<ConflictingJvmDeclarationsData> {
         data: ConflictingJvmDeclarationsData ->
-        val sb = StringBuilder {
-            append("<ul>")
-            for (origin in data.signatureOrigins) {
-                val descriptor = origin.descriptor
-                if (descriptor != null) {
-                    append("<li>")
-                    append(DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS.render(descriptor))
-                    append("</li>\n")
-                }
-            }
-            append("</ul>")
-        }
-        ("The following declarations have the same JVM signature (<code>" + data.signature.name + data.signature.desc + "</code>):<br/>\n" + sb).trim()
+
+        val conflicts = data.signatureOrigins
+            .map { it.descriptor }
+            .filterNotNull()
+            .sortBy(MemberComparator.INSTANCE)
+            .joinToString("") { "<li>" + DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS.render(it) + "</li>\n" }
+
+        "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature.desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
     }
 
     public val HTML_THROWABLE: Renderer<Throwable> = Renderer {

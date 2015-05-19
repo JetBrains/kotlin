@@ -1,5 +1,5 @@
 // "Import" "true"
-// ERROR: <html>Unresolved reference. <br/> None of the following candidates is applicable because of receiver type mismatch: <ul><li><b>internal</b> <b>fun</b> kotlin.String.minus(str: kotlin.String): kotlin.String <i>defined in</i> h</li><li><b>internal</b> <b>fun</b> kotlin.String.minus(i: java.lang.Integer): kotlin.String <i>defined in</i> h</li></ul></html>
+// ERROR: <html>Unresolved reference. <br/> None of the following candidates is applicable because of receiver type mismatch: <ul><li><b>internal</b> <b>fun</b> kotlin.String.minus(i: java.lang.Integer): kotlin.String <i>defined in</i> h</li><li><b>internal</b> <b>fun</b> kotlin.String.minus(str: kotlin.String): kotlin.String <i>defined in</i> h</li></ul></html>
 
 package h
 

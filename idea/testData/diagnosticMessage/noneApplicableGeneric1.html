@@ -2,14 +2,14 @@
 <html>
 None of the following functions can be called with the arguments supplied.
 <ul>
-  <li>foo(Int, Any, List<`Int><font color=red><b>)</b></font><br/>
-  <i>where</i> T = Int<i> for </i><br/>
-  <b>fun</b> <`T> foo(t: T, a: Any, l: List<`T>): Int <i>defined in</i> p</li>
-  <li>foo(Int, <font color=red><b>R</b></font>, MutableList<`Int>, MutableList<`<font color=red><b>R</b></font>>)<br/>
-  <i>where</i> <font color=red><b>R</b></font><i> cannot be inferred</i>; T = Int<i> for </i><br/>
-  <b>fun</b> <`T, R> foo(t: T, r: R, lt: MutableList<`T>, lr: MutableList<`R>): Int <i>defined in</i> p</li>
   <li>foo(<font color=red><b>T</b></font>, Any, MutableList<`<font color=red><b>T</b></font>>, MutableList<`<font color=red><b>T</b></font>>)<br/>
   <i>where</i> <font color=red><b>T</b></font><i> cannot be inferred</i><i> for </i><br/>
   <b>fun</b> <`T> foo(t: T, a: Any, lt: MutableList<`T>, lr: MutableList<`T>): Int <i>defined in</i> p</li>
+  <li>foo(Int, <font color=red><b>R</b></font>, MutableList<`Int>, MutableList<`<font color=red><b>R</b></font>>)<br/>
+  <i>where</i> <font color=red><b>R</b></font><i> cannot be inferred</i>; T = Int<i> for </i><br/>
+  <b>fun</b> <`T, R> foo(t: T, r: R, lt: MutableList<`T>, lr: MutableList<`R>): Int <i>defined in</i> p</li>
+  <li>foo(Int, Any, List<`Int><font color=red><b>)</b></font><br/>
+  <i>where</i> T = Int<i> for </i><br/>
+  <b>fun</b> <`T> foo(t: T, a: Any, l: List<`T>): Int <i>defined in</i> p</li>
 </ul>
 </html>
