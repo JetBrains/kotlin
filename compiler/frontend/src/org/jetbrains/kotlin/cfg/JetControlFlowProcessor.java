@@ -137,7 +137,7 @@ public class JetControlFlowProcessor {
                 if (!generateCall(condition.getOperationReference())) {
                     JetExpression rangeExpression = condition.getRangeExpression();
                     generateInstructions(rangeExpression);
-                    createNonSyntheticValue(condition, MagicKind.UNRESOLVED_CALL, rangeExpression);
+                    createUnresolvedCall(condition, rangeExpression);
                 }
             }
 
@@ -218,6 +218,26 @@ public class JetControlFlowProcessor {
         @NotNull
         private PseudoValue createNonSyntheticValue(@NotNull JetElement to, @NotNull MagicKind kind, JetElement... from) {
             return createNonSyntheticValue(to, Arrays.asList(from), kind);
+        }
+
+        @NotNull
+        private PseudoValue createUnresolvedCallByValues(@NotNull JetElement to, @Nullable JetElement valueElement, List<PseudoValue> arguments) {
+            return builder.magic(to, valueElement, arguments, defaultTypeMap(arguments), MagicKind.UNRESOLVED_CALL).getOutputValue();
+        }
+
+        @NotNull
+        private PseudoValue createUnresolvedCallByValues(@NotNull JetElement to, List<PseudoValue> arguments) {
+            return createUnresolvedCallByValues(to, to, arguments);
+        }
+
+        @NotNull
+        private PseudoValue createUnresolvedCall(@NotNull JetElement to, List<? extends JetElement> from) {
+            return createUnresolvedCallByValues(to, elementsToValues(from));
+        }
+
+        @NotNull
+        private PseudoValue createUnresolvedCall(@NotNull JetElement to, JetElement... from) {
+            return createUnresolvedCall(to, Arrays.asList(from));
         }
 
         @NotNull
@@ -306,7 +326,7 @@ public class JetControlFlowProcessor {
         public void visitThisExpression(@NotNull JetThisExpression expression) {
             ResolvedCall<?> resolvedCall = getResolvedCall(expression, trace.getBindingContext());
             if (resolvedCall == null) {
-                createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL);
+                createUnresolvedCall(expression);
                 return;
             }
 
@@ -332,7 +352,7 @@ public class JetControlFlowProcessor {
                 generateCall(variableAsFunctionResolvedCall.getVariableCall());
             }
             else if (!generateCall(expression) && !(expression.getParent() instanceof JetCallExpression)) {
-                createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, generateAndGetReceiverIfAny(expression));
+                createUnresolvedCall(expression, generateAndGetReceiverIfAny(expression));
             }
         }
 
@@ -445,7 +465,7 @@ public class JetControlFlowProcessor {
                 generateInstructions(right);
             }
             mark(expression);
-            createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, left, right);
+            createUnresolvedCall(expression, left, right);
         }
 
         private void visitAssignment(
@@ -493,7 +513,7 @@ public class JetControlFlowProcessor {
                 List<PseudoValue> arguments = KotlinPackage.filterNotNull(
                         Arrays.asList(getBoundOrUnreachableValue(lhs), rhsDeferredValue.invoke())
                 );
-                builder.magic(parentExpression, parentExpression, arguments, defaultTypeMap(arguments), MagicKind.UNRESOLVED_CALL);
+                createUnresolvedCallByValues(parentExpression, arguments);
 
                 return;
             }
@@ -582,7 +602,7 @@ public class JetControlFlowProcessor {
         }
 
         private void generateArrayAccessWithoutCall(JetArrayAccessExpression arrayAccessExpression) {
-            createNonSyntheticValue(arrayAccessExpression, generateArrayAccessArguments(arrayAccessExpression), MagicKind.UNRESOLVED_CALL);
+            createUnresolvedCall(arrayAccessExpression, generateArrayAccessArguments(arrayAccessExpression));
         }
 
         private List<JetExpression> generateArrayAccessArguments(JetArrayAccessExpression arrayAccessExpression) {
@@ -621,7 +641,7 @@ public class JetControlFlowProcessor {
             }
             else {
                 generateInstructions(baseExpression);
-                rhsValue = createNonSyntheticValue(expression, MagicKind.UNRESOLVED_CALL, baseExpression);
+                rhsValue = createUnresolvedCall(expression, baseExpression);
             }
 
             if (incrementOrDecrement) {
@@ -1152,7 +1172,7 @@ public class JetControlFlowProcessor {
                 inputExpressions.add(generateAndGetReceiverIfAny(expression));
 
                 mark(expression);
-                createNonSyntheticValue(expression, inputExpressions, MagicKind.UNRESOLVED_CALL);
+                createUnresolvedCall(expression, inputExpressions);
             }
         }
 
@@ -1246,7 +1266,8 @@ public class JetControlFlowProcessor {
                     ).getOutputValue();
                 }
                 else {
-                    writtenValue = createSyntheticValue(entry, MagicKind.UNRESOLVED_CALL, initializer);
+                    List<PseudoValue> arguments = ContainerUtil.createMaybeSingletonList(getBoundOrUnreachableValue(initializer));
+                    writtenValue = createUnresolvedCallByValues(entry, null, arguments);
                 }
 
                 if (generateWriteForEntries) {
@@ -1492,7 +1513,7 @@ public class JetControlFlowProcessor {
                 for (JetExpression argument : arguments) {
                     generateInstructions(argument);
                 }
-                createNonSyntheticValue(call, arguments, MagicKind.UNRESOLVED_CALL);
+                createUnresolvedCall(call, arguments);
             }
         }
 
