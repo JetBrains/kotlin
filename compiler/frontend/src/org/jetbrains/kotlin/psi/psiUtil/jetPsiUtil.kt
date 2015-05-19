@@ -636,3 +636,21 @@ public fun JetExpression.getAnnotationEntries(): List<JetAnnotationEntry> {
         else -> emptyList<JetAnnotationEntry>()
     }
 }
+
+// TODO: it can be default value for parameter but it's not supported yet by the compiler
+public inline fun <reified TElement> PsiElement.collectElementsOfType(): Collection<TElement> {
+    return collectElementsOfType { true }
+}
+
+public inline fun <reified TElement> PsiElement.collectElementsOfType(@inlineOptions(InlineOption.ONLY_LOCAL_RETURN) predicate: (TElement) -> Boolean): Collection<TElement> {
+    val result = ArrayList<TElement>()
+    this.accept(object : PsiRecursiveElementVisitor(){
+        override fun visitElement(element: PsiElement) {
+            if (element is TElement && predicate(element)) {
+                result.add(element)
+            }
+            super.visitElement(element)
+        }
+    })
+    return result
+}

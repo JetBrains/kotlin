@@ -16,18 +16,12 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
-import java.util.ArrayList
 import java.util.HashMap
 
 public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
@@ -69,24 +63,6 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
     }
 
     return map
-}
-
-// TODO: it can be default value for parameter but it's not supported yet by the compiler
-public inline fun <reified TElement> PsiElement.collectElementsOfType(): Collection<TElement> {
-    return collectElementsOfType { true }
-}
-
-public inline fun <reified TElement> PsiElement.collectElementsOfType(@inlineOptions(InlineOption.ONLY_LOCAL_RETURN) predicate: (TElement) -> Boolean): Collection<TElement> {
-    val result = ArrayList<TElement>()
-    this.accept(object : PsiRecursiveElementVisitor(){
-        override fun visitElement(element: PsiElement) {
-            if (element is TElement && predicate(element)) {
-                result.add(element)
-            }
-            super.visitElement(element)
-        }
-    })
-    return result
 }
 
 public fun ThisReceiver.asExpression(resolutionScope: JetScope, psiFactory: JetPsiFactory): JetExpression? {
