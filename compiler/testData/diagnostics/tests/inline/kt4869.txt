@@ -1,0 +1,3 @@
+package
+
+kotlin.inline() internal fun foo(/*0*/ f: () -> kotlin.Unit): kotlin.Unit
