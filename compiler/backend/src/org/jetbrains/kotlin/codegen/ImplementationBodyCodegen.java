@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.serialization.*;
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
@@ -75,6 +76,7 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getSecondaryConstructors;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -1281,12 +1283,15 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expr) {
                 DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expr);
 
-                DeclarationDescriptor toLookup;
                 if (isLocalFunction(descriptor)) {
-                    toLookup = descriptor;
+                    lookupInContext(descriptor);
                 }
                 else if (descriptor instanceof CallableMemberDescriptor) {
-                    toLookup = descriptor.getContainingDeclaration();
+                    ResolvedCall<? extends CallableDescriptor> call = getResolvedCall(expr, bindingContext);
+                    if (call != null) {
+                        lookupReceiver(call.getDispatchReceiver());
+                        lookupReceiver(call.getExtensionReceiver());
+                    }
                 }
                 else if (descriptor instanceof VariableDescriptor) {
                     if (descriptor.getContainingDeclaration() instanceof ConstructorDescriptor) {
@@ -1294,10 +1299,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                 (ClassDescriptor) descriptor.getContainingDeclaration().getContainingDeclaration();
                         if (classDescriptor == ImplementationBodyCodegen.this.descriptor) return;
                     }
-                    toLookup = descriptor;
+                    lookupInContext(descriptor);
                 }
-                else return;
+            }
 
+            private void lookupReceiver(@NotNull ReceiverValue value) {
+                if (value instanceof ThisReceiver) {
+                    if (value instanceof ExtensionReceiver) {
+                        ReceiverParameterDescriptor parameter =
+                                ((ExtensionReceiver) value).getDeclarationDescriptor().getExtensionReceiverParameter();
+                        assert parameter != null : "Extension receiver should exist: " + ((ExtensionReceiver) value).getDeclarationDescriptor();
+                        lookupInContext(parameter);
+                    }
+                    else {
+                        lookupInContext(((ThisReceiver) value).getDeclarationDescriptor());
+                    }
+                }
+            }
+
+
+            private void lookupInContext(@NotNull DeclarationDescriptor toLookup) {
                 context.lookupInContext(toLookup, StackValue.LOCAL_0, state, true);
             }
 
@@ -1307,13 +1328,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 assert descriptor instanceof CallableDescriptor ||
                        descriptor instanceof ClassDescriptor : "'This' reference target should be class or callable descriptor but was " + descriptor;
                 if (descriptor instanceof ClassDescriptor) {
-                    context.lookupInContext(descriptor, StackValue.LOCAL_0, state, true);
+                    lookupInContext(descriptor);
                 }
 
                 if (descriptor instanceof CallableDescriptor) {
                     ReceiverParameterDescriptor parameter = ((CallableDescriptor) descriptor).getExtensionReceiverParameter();
                     if (parameter != null) {
-                        context.lookupInContext(parameter, StackValue.LOCAL_0, state, true);
+                        lookupInContext(parameter);
                     }
                 }
             }
