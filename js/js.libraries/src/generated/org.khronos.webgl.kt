@@ -30,31 +30,31 @@ native public open class WebGLContextAttributes {
     var failIfMajorPerformanceCaveat: Boolean = false
 }
 
-native public trait WebGLObject {
+native public interface WebGLObject {
 }
 
-native public trait WebGLBuffer : WebGLObject {
+native public interface WebGLBuffer : WebGLObject {
 }
 
-native public trait WebGLFramebuffer : WebGLObject {
+native public interface WebGLFramebuffer : WebGLObject {
 }
 
-native public trait WebGLProgram : WebGLObject {
+native public interface WebGLProgram : WebGLObject {
 }
 
-native public trait WebGLRenderbuffer : WebGLObject {
+native public interface WebGLRenderbuffer : WebGLObject {
 }
 
-native public trait WebGLShader : WebGLObject {
+native public interface WebGLShader : WebGLObject {
 }
 
-native public trait WebGLTexture : WebGLObject {
+native public interface WebGLTexture : WebGLObject {
 }
 
-native public trait WebGLUniformLocation {
+native public interface WebGLUniformLocation {
 }
 
-native public trait WebGLActiveInfo {
+native public interface WebGLActiveInfo {
     var size: Int
         get() = noImpl
         set(value) = noImpl
@@ -66,7 +66,7 @@ native public trait WebGLActiveInfo {
         set(value) = noImpl
 }
 
-native public trait WebGLShaderPrecisionFormat {
+native public interface WebGLShaderPrecisionFormat {
     var rangeMin: Int
         get() = noImpl
         set(value) = noImpl
@@ -78,7 +78,7 @@ native public trait WebGLShaderPrecisionFormat {
         set(value) = noImpl
 }
 
-native public trait WebGLRenderingContext : RenderingContext {
+native public interface WebGLRenderingContext : RenderingContext {
     var canvas: HTMLCanvasElement
         get() = noImpl
         set(value) = noImpl

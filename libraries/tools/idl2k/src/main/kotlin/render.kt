@@ -87,7 +87,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     }
     when (iface.kind) {
         GenerateDefinitionKind.CLASS -> append("open class ")
-        GenerateDefinitionKind.TRAIT -> append("trait ")
+        GenerateDefinitionKind.TRAIT -> append("interface ")
     }
 
     append(iface.name)

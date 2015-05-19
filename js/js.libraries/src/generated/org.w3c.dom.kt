@@ -19,24 +19,24 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public trait HTMLAllCollection : HTMLCollection {
+native public interface HTMLAllCollection : HTMLCollection {
     fun item(name: String): UnionElementOrHTMLCollection? = noImpl
 //    override fun namedItem(name: String): UnionElementOrHTMLCollection? = noImpl
 //    nativeGetter override fun get(name: String): UnionElementOrHTMLCollection? = noImpl
 }
 
-native public trait HTMLFormControlsCollection : HTMLCollection {
+native public interface HTMLFormControlsCollection : HTMLCollection {
 //    override fun namedItem(name: String): UnionElementOrRadioNodeList? = noImpl
 //    nativeGetter override fun get(name: String): UnionElementOrRadioNodeList? = noImpl
 }
 
-native public trait RadioNodeList : NodeList, UnionElementOrRadioNodeList {
+native public interface RadioNodeList : NodeList, UnionElementOrRadioNodeList {
     var value: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLOptionsCollection : HTMLCollection {
+native public interface HTMLOptionsCollection : HTMLCollection {
     var selectedIndex: Int
         get() = noImpl
         set(value) = noImpl
@@ -45,7 +45,7 @@ native public trait HTMLOptionsCollection : HTMLCollection {
     fun remove(index: Int): Unit = noImpl
 }
 
-native public trait HTMLPropertiesCollection : HTMLCollection {
+native public interface HTMLPropertiesCollection : HTMLCollection {
     var names: Array<String>
         get() = noImpl
         set(value) = noImpl
@@ -53,16 +53,16 @@ native public trait HTMLPropertiesCollection : HTMLCollection {
 //    nativeGetter override fun get(name: String): PropertyNodeList? = noImpl
 }
 
-native public trait PropertyNodeList : NodeList {
+native public interface PropertyNodeList : NodeList {
     fun getValues(): Array<Any?> = noImpl
 }
 
-native public trait DOMStringMap {
+native public interface DOMStringMap {
     nativeGetter fun get(name: String): String? = noImpl
     nativeSetter fun set(name: String, value: String): Unit = noImpl
 }
 
-native public trait DOMElementMap {
+native public interface DOMElementMap {
     nativeGetter fun get(name: String): Element? = noImpl
     nativeSetter fun set(name: String, value: Element): Unit = noImpl
 }
@@ -472,7 +472,7 @@ native public open class XMLDocument : Document() {
     fun load(url: String): Boolean = noImpl
 }
 
-native public trait HTMLElement : Element {
+native public interface HTMLElement : Element {
     var title: String
         get() = noImpl
         set(value) = noImpl
@@ -755,25 +755,25 @@ native public trait HTMLElement : Element {
     fun forceSpellCheck(): Unit = noImpl
 }
 
-native public trait HTMLUnknownElement : HTMLElement {
+native public interface HTMLUnknownElement : HTMLElement {
 }
 
-native public trait HTMLHtmlElement : HTMLElement {
+native public interface HTMLHtmlElement : HTMLElement {
     var version: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLHeadElement : HTMLElement {
+native public interface HTMLHeadElement : HTMLElement {
 }
 
-native public trait HTMLTitleElement : HTMLElement {
+native public interface HTMLTitleElement : HTMLElement {
     var text: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLBaseElement : HTMLElement {
+native public interface HTMLBaseElement : HTMLElement {
     var href: String
         get() = noImpl
         set(value) = noImpl
@@ -782,7 +782,7 @@ native public trait HTMLBaseElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLLinkElement : HTMLElement {
+native public interface HTMLLinkElement : HTMLElement {
     var href: String
         get() = noImpl
         set(value) = noImpl
@@ -821,7 +821,7 @@ native public trait HTMLLinkElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLMetaElement : HTMLElement {
+native public interface HTMLMetaElement : HTMLElement {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -836,7 +836,7 @@ native public trait HTMLMetaElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLStyleElement : HTMLElement {
+native public interface HTMLStyleElement : HTMLElement {
     var media: String
         get() = noImpl
         set(value) = noImpl
@@ -851,7 +851,7 @@ native public trait HTMLStyleElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLBodyElement : HTMLElement {
+native public interface HTMLBodyElement : HTMLElement {
     var text: String
         get() = noImpl
         set(value) = noImpl
@@ -911,19 +911,19 @@ native public trait HTMLBodyElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLHeadingElement : HTMLElement {
+native public interface HTMLHeadingElement : HTMLElement {
     var align: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLParagraphElement : HTMLElement {
+native public interface HTMLParagraphElement : HTMLElement {
     var align: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLHRElement : HTMLElement {
+native public interface HTMLHRElement : HTMLElement {
     var align: String
         get() = noImpl
         set(value) = noImpl
@@ -941,19 +941,19 @@ native public trait HTMLHRElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLPreElement : HTMLElement {
+native public interface HTMLPreElement : HTMLElement {
     var width: Int
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLQuoteElement : HTMLElement {
+native public interface HTMLQuoteElement : HTMLElement {
     var cite: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLOListElement : HTMLElement {
+native public interface HTMLOListElement : HTMLElement {
     var reversed: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -968,7 +968,7 @@ native public trait HTMLOListElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLUListElement : HTMLElement {
+native public interface HTMLUListElement : HTMLElement {
     var compact: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -977,7 +977,7 @@ native public trait HTMLUListElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLLIElement : HTMLElement {
+native public interface HTMLLIElement : HTMLElement {
     var value: Int
         get() = noImpl
         set(value) = noImpl
@@ -986,19 +986,19 @@ native public trait HTMLLIElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLDListElement : HTMLElement {
+native public interface HTMLDListElement : HTMLElement {
     var compact: Boolean
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLDivElement : HTMLElement {
+native public interface HTMLDivElement : HTMLElement {
     var align: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLAnchorElement : HTMLElement {
+native public interface HTMLAnchorElement : HTMLElement {
     var target: String
         get() = noImpl
         set(value) = noImpl
@@ -1040,28 +1040,28 @@ native public trait HTMLAnchorElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLDataElement : HTMLElement {
+native public interface HTMLDataElement : HTMLElement {
     var value: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLTimeElement : HTMLElement {
+native public interface HTMLTimeElement : HTMLElement {
     var dateTime: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLSpanElement : HTMLElement {
+native public interface HTMLSpanElement : HTMLElement {
 }
 
-native public trait HTMLBRElement : HTMLElement {
+native public interface HTMLBRElement : HTMLElement {
     var clear: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLModElement : HTMLElement {
+native public interface HTMLModElement : HTMLElement {
     var cite: String
         get() = noImpl
         set(value) = noImpl
@@ -1070,7 +1070,7 @@ native public trait HTMLModElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLIFrameElement : HTMLElement {
+native public interface HTMLIFrameElement : HTMLElement {
     var src: String
         get() = noImpl
         set(value) = noImpl
@@ -1122,7 +1122,7 @@ native public trait HTMLIFrameElement : HTMLElement {
     fun getSVGDocument(): Document? = noImpl
 }
 
-native public trait HTMLEmbedElement : HTMLElement {
+native public interface HTMLEmbedElement : HTMLElement {
     var src: String
         get() = noImpl
         set(value) = noImpl
@@ -1144,7 +1144,7 @@ native public trait HTMLEmbedElement : HTMLElement {
     fun getSVGDocument(): Document? = noImpl
 }
 
-native public trait HTMLObjectElement : HTMLElement {
+native public interface HTMLObjectElement : HTMLElement {
     var data: String
         get() = noImpl
         set(value) = noImpl
@@ -1220,7 +1220,7 @@ native public trait HTMLObjectElement : HTMLElement {
     fun setCustomValidity(error: String): Unit = noImpl
 }
 
-native public trait HTMLParamElement : HTMLElement {
+native public interface HTMLParamElement : HTMLElement {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -1235,7 +1235,7 @@ native public trait HTMLParamElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLVideoElement : HTMLMediaElement, CanvasImageSource, ImageBitmapSource {
+native public interface HTMLVideoElement : HTMLMediaElement, CanvasImageSource, ImageBitmapSource {
     var width: Int
         get() = noImpl
         set(value) = noImpl
@@ -1253,10 +1253,10 @@ native public trait HTMLVideoElement : HTMLMediaElement, CanvasImageSource, Imag
         set(value) = noImpl
 }
 
-native public trait HTMLAudioElement : HTMLMediaElement {
+native public interface HTMLAudioElement : HTMLMediaElement {
 }
 
-native public trait HTMLSourceElement : HTMLElement {
+native public interface HTMLSourceElement : HTMLElement {
     var src: String
         get() = noImpl
         set(value) = noImpl
@@ -1274,7 +1274,7 @@ native public trait HTMLSourceElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLTrackElement : HTMLElement {
+native public interface HTMLTrackElement : HTMLElement {
     var kind: String
         get() = noImpl
         set(value) = noImpl
@@ -1305,7 +1305,7 @@ native public trait HTMLTrackElement : HTMLElement {
     }
 }
 
-native public trait HTMLMediaElement : HTMLElement {
+native public interface HTMLMediaElement : HTMLElement {
     var error: MediaError?
         get() = noImpl
         set(value) = noImpl
@@ -1414,7 +1414,7 @@ native public trait HTMLMediaElement : HTMLElement {
     }
 }
 
-native public trait MediaError {
+native public interface MediaError {
     var code: Short
         get() = noImpl
         set(value) = noImpl
@@ -1427,7 +1427,7 @@ native public trait MediaError {
     }
 }
 
-native public trait AudioTrackList : EventTarget {
+native public interface AudioTrackList : EventTarget {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -1444,7 +1444,7 @@ native public trait AudioTrackList : EventTarget {
     fun getTrackById(id: String): AudioTrack? = noImpl
 }
 
-native public trait AudioTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
+native public interface AudioTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
     var id: String
         get() = noImpl
         set(value) = noImpl
@@ -1462,7 +1462,7 @@ native public trait AudioTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
         set(value) = noImpl
 }
 
-native public trait VideoTrackList : EventTarget {
+native public interface VideoTrackList : EventTarget {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -1482,7 +1482,7 @@ native public trait VideoTrackList : EventTarget {
     fun getTrackById(id: String): VideoTrack? = noImpl
 }
 
-native public trait VideoTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
+native public interface VideoTrack : UnionAudioTrackOrTextTrackOrVideoTrack {
     var id: String
         get() = noImpl
         set(value) = noImpl
@@ -1584,7 +1584,7 @@ native public open class MediaController : EventTarget {
     fun play(): Unit = noImpl
 }
 
-native public trait TextTrackList : EventTarget {
+native public interface TextTrackList : EventTarget {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -1601,7 +1601,7 @@ native public trait TextTrackList : EventTarget {
     fun getTrackById(id: String): TextTrack? = noImpl
 }
 
-native public trait TextTrack : EventTarget, UnionAudioTrackOrTextTrackOrVideoTrack {
+native public interface TextTrack : EventTarget, UnionAudioTrackOrTextTrackOrVideoTrack {
     var kind: String
         get() = noImpl
         set(value) = noImpl
@@ -1633,7 +1633,7 @@ native public trait TextTrack : EventTarget, UnionAudioTrackOrTextTrackOrVideoTr
     fun removeCue(cue: TextTrackCue): Unit = noImpl
 }
 
-native public trait TextTrackCueList {
+native public interface TextTrackCueList {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -1641,7 +1641,7 @@ native public trait TextTrackCueList {
     fun getCueById(id: String): TextTrackCue? = noImpl
 }
 
-native public trait TextTrackCue : EventTarget {
+native public interface TextTrackCue : EventTarget {
     var track: TextTrack?
         get() = noImpl
         set(value) = noImpl
@@ -1665,7 +1665,7 @@ native public trait TextTrackCue : EventTarget {
         set(value) = noImpl
 }
 
-native public trait TimeRanges {
+native public interface TimeRanges {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -1683,7 +1683,7 @@ native public open class TrackEventInit : EventInit() {
     var track: UnionAudioTrackOrTextTrackOrVideoTrack?
 }
 
-native public trait HTMLMapElement : HTMLElement {
+native public interface HTMLMapElement : HTMLElement {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -1695,7 +1695,7 @@ native public trait HTMLMapElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLAreaElement : HTMLElement {
+native public interface HTMLAreaElement : HTMLElement {
     var alt: String
         get() = noImpl
         set(value) = noImpl
@@ -1731,7 +1731,7 @@ native public trait HTMLAreaElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLTableElement : HTMLElement {
+native public interface HTMLTableElement : HTMLElement {
     var caption: HTMLTableCaptionElement?
         get() = noImpl
         set(value) = noImpl
@@ -1789,13 +1789,13 @@ native public trait HTMLTableElement : HTMLElement {
     fun stopSorting(): Unit = noImpl
 }
 
-native public trait HTMLTableCaptionElement : HTMLElement {
+native public interface HTMLTableCaptionElement : HTMLElement {
     var align: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLTableColElement : HTMLElement {
+native public interface HTMLTableColElement : HTMLElement {
     var span: Int
         get() = noImpl
         set(value) = noImpl
@@ -1816,7 +1816,7 @@ native public trait HTMLTableColElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLTableSectionElement : HTMLElement {
+native public interface HTMLTableSectionElement : HTMLElement {
     var rows: HTMLCollection
         get() = noImpl
         set(value) = noImpl
@@ -1836,7 +1836,7 @@ native public trait HTMLTableSectionElement : HTMLElement {
     fun deleteRow(index: Int): Unit = noImpl
 }
 
-native public trait HTMLTableRowElement : HTMLElement {
+native public interface HTMLTableRowElement : HTMLElement {
     var rowIndex: Int
         get() = noImpl
         set(value) = noImpl
@@ -1865,13 +1865,13 @@ native public trait HTMLTableRowElement : HTMLElement {
     fun deleteCell(index: Int): Unit = noImpl
 }
 
-native public trait HTMLTableDataCellElement : HTMLTableCellElement {
+native public interface HTMLTableDataCellElement : HTMLTableCellElement {
     var abbr: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLTableHeaderCellElement : HTMLTableCellElement {
+native public interface HTMLTableHeaderCellElement : HTMLTableCellElement {
     var scope: String
         get() = noImpl
         set(value) = noImpl
@@ -1884,7 +1884,7 @@ native public trait HTMLTableHeaderCellElement : HTMLTableCellElement {
     fun sort(): Unit = noImpl
 }
 
-native public trait HTMLTableCellElement : HTMLElement {
+native public interface HTMLTableCellElement : HTMLElement {
     var colSpan: Int
         get() = noImpl
         set(value) = noImpl
@@ -1926,7 +1926,7 @@ native public trait HTMLTableCellElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLFormElement : HTMLElement {
+native public interface HTMLFormElement : HTMLElement {
     var acceptCharset: String
         get() = noImpl
         set(value) = noImpl
@@ -1969,7 +1969,7 @@ native public trait HTMLFormElement : HTMLElement {
     fun requestAutocomplete(): Unit = noImpl
 }
 
-native public trait HTMLLabelElement : HTMLElement {
+native public interface HTMLLabelElement : HTMLElement {
     var form: HTMLFormElement?
         get() = noImpl
         set(value) = noImpl
@@ -1981,7 +1981,7 @@ native public trait HTMLLabelElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLInputElement : HTMLElement {
+native public interface HTMLInputElement : HTMLElement {
     var accept: String
         get() = noImpl
         set(value) = noImpl
@@ -2140,7 +2140,7 @@ native public trait HTMLInputElement : HTMLElement {
     fun setSelectionRange(start: Int, end: Int, direction: String = noImpl): Unit = noImpl
 }
 
-native public trait HTMLButtonElement : HTMLElement {
+native public interface HTMLButtonElement : HTMLElement {
     var autofocus: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -2194,7 +2194,7 @@ native public trait HTMLButtonElement : HTMLElement {
     fun setCustomValidity(error: String): Unit = noImpl
 }
 
-native public trait HTMLSelectElement : HTMLElement {
+native public interface HTMLSelectElement : HTMLElement {
     var autocomplete: String
         get() = noImpl
         set(value) = noImpl
@@ -2260,13 +2260,13 @@ native public trait HTMLSelectElement : HTMLElement {
     fun setCustomValidity(error: String): Unit = noImpl
 }
 
-native public trait HTMLDataListElement : HTMLElement {
+native public interface HTMLDataListElement : HTMLElement {
     var options: HTMLCollection
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLOptGroupElement : HTMLElement, UnionHTMLOptGroupElementOrHTMLOptionElement {
+native public interface HTMLOptGroupElement : HTMLElement, UnionHTMLOptGroupElementOrHTMLOptionElement {
     var disabled: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -2275,7 +2275,7 @@ native public trait HTMLOptGroupElement : HTMLElement, UnionHTMLOptGroupElementO
         set(value) = noImpl
 }
 
-native public trait HTMLOptionElement : HTMLElement, UnionHTMLOptGroupElementOrHTMLOptionElement {
+native public interface HTMLOptionElement : HTMLElement, UnionHTMLOptGroupElementOrHTMLOptionElement {
     var disabled: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -2302,7 +2302,7 @@ native public trait HTMLOptionElement : HTMLElement, UnionHTMLOptGroupElementOrH
         set(value) = noImpl
 }
 
-native public trait HTMLTextAreaElement : HTMLElement {
+native public interface HTMLTextAreaElement : HTMLElement {
     var autocomplete: String
         get() = noImpl
         set(value) = noImpl
@@ -2390,7 +2390,7 @@ native public trait HTMLTextAreaElement : HTMLElement {
     fun setSelectionRange(start: Int, end: Int, direction: String = noImpl): Unit = noImpl
 }
 
-native public trait HTMLKeygenElement : HTMLElement {
+native public interface HTMLKeygenElement : HTMLElement {
     var autofocus: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -2429,7 +2429,7 @@ native public trait HTMLKeygenElement : HTMLElement {
     fun setCustomValidity(error: String): Unit = noImpl
 }
 
-native public trait HTMLOutputElement : HTMLElement {
+native public interface HTMLOutputElement : HTMLElement {
     var htmlFor: DOMSettableTokenList
         get() = noImpl
         set(value) = noImpl
@@ -2465,7 +2465,7 @@ native public trait HTMLOutputElement : HTMLElement {
     fun setCustomValidity(error: String): Unit = noImpl
 }
 
-native public trait HTMLProgressElement : HTMLElement {
+native public interface HTMLProgressElement : HTMLElement {
     var value: Double
         get() = noImpl
         set(value) = noImpl
@@ -2480,7 +2480,7 @@ native public trait HTMLProgressElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLMeterElement : HTMLElement {
+native public interface HTMLMeterElement : HTMLElement {
     var value: Double
         get() = noImpl
         set(value) = noImpl
@@ -2504,7 +2504,7 @@ native public trait HTMLMeterElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLFieldSetElement : HTMLElement {
+native public interface HTMLFieldSetElement : HTMLElement {
     var disabled: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -2534,7 +2534,7 @@ native public trait HTMLFieldSetElement : HTMLElement {
     fun setCustomValidity(error: String): Unit = noImpl
 }
 
-native public trait HTMLLegendElement : HTMLElement {
+native public interface HTMLLegendElement : HTMLElement {
     var form: HTMLFormElement?
         get() = noImpl
         set(value) = noImpl
@@ -2553,7 +2553,7 @@ native public open class AutocompleteErrorEventInit : EventInit() {
     var reason: String
 }
 
-native public trait ValidityState {
+native public interface ValidityState {
     var valueMissing: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -2589,13 +2589,13 @@ native public trait ValidityState {
         set(value) = noImpl
 }
 
-native public trait HTMLDetailsElement : HTMLElement {
+native public interface HTMLDetailsElement : HTMLElement {
     var open: Boolean
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLMenuElement : HTMLElement {
+native public interface HTMLMenuElement : HTMLElement {
     var type: String
         get() = noImpl
         set(value) = noImpl
@@ -2607,7 +2607,7 @@ native public trait HTMLMenuElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLMenuItemElement : HTMLElement {
+native public interface HTMLMenuItemElement : HTMLElement {
     var type: String
         get() = noImpl
         set(value) = noImpl
@@ -2644,7 +2644,7 @@ native public open class RelatedEventInit : EventInit() {
     var relatedTarget: EventTarget?
 }
 
-native public trait HTMLDialogElement : HTMLElement {
+native public interface HTMLDialogElement : HTMLElement {
     var open: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -2656,7 +2656,7 @@ native public trait HTMLDialogElement : HTMLElement {
     fun close(returnValue: String = noImpl): Unit = noImpl
 }
 
-native public trait HTMLScriptElement : HTMLElement {
+native public interface HTMLScriptElement : HTMLElement {
     var src: String
         get() = noImpl
         set(value) = noImpl
@@ -2686,13 +2686,13 @@ native public trait HTMLScriptElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLTemplateElement : HTMLElement {
+native public interface HTMLTemplateElement : HTMLElement {
     var content: DocumentFragment
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLCanvasElement : HTMLElement, CanvasImageSource, ImageBitmapSource {
+native public interface HTMLCanvasElement : HTMLElement, CanvasImageSource, ImageBitmapSource {
     var width: Int
         get() = noImpl
         set(value) = noImpl
@@ -2707,7 +2707,7 @@ native public trait HTMLCanvasElement : HTMLElement, CanvasImageSource, ImageBit
     fun toBlob(_callback: ((File) -> Unit)?, type: String = noImpl, vararg arguments: Any?): Unit = noImpl
 }
 
-native public trait CanvasProxy : Transferable {
+native public interface CanvasProxy : Transferable {
     fun setContext(context: RenderingContext): Unit = noImpl
 }
 
@@ -2841,15 +2841,15 @@ native public open class CanvasRenderingContext2D : RenderingContext, CanvasImag
     fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false): Unit = noImpl
 }
 
-native public trait CanvasGradient {
+native public interface CanvasGradient {
     fun addColorStop(offset: Double, color: String): Unit = noImpl
 }
 
-native public trait CanvasPattern {
+native public interface CanvasPattern {
     fun setTransform(transform: SVGMatrix): Unit = noImpl
 }
 
-native public trait TextMetrics {
+native public interface TextMetrics {
     var width: Double
         get() = noImpl
         set(value) = noImpl
@@ -2962,13 +2962,13 @@ native public open class Path2D {
     fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false): Unit = noImpl
 }
 
-native public trait Touch {
+native public interface Touch {
     var region: String?
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait DataTransfer {
+native public interface DataTransfer {
     var dropEffect: String
         get() = noImpl
         set(value) = noImpl
@@ -2990,7 +2990,7 @@ native public trait DataTransfer {
     fun clearData(format: String = noImpl): Unit = noImpl
 }
 
-native public trait DataTransferItemList {
+native public interface DataTransferItemList {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -3001,7 +3001,7 @@ native public trait DataTransferItemList {
     fun clear(): Unit = noImpl
 }
 
-native public trait DataTransferItem {
+native public interface DataTransferItem {
     var kind: String
         get() = noImpl
         set(value) = noImpl
@@ -3022,7 +3022,7 @@ native public open class DragEventInit : MouseEventInit() {
     var dataTransfer: DataTransfer?
 }
 
-native public trait Window : EventTarget, UnionMessagePortOrWindow {
+native public interface Window : EventTarget, UnionMessagePortOrWindow {
     var caches: CacheStorage
         get() = noImpl
         set(value) = noImpl
@@ -3365,13 +3365,13 @@ native public trait Window : EventTarget, UnionMessagePortOrWindow {
     fun fetch(input: dynamic, init: RequestInit = noImpl): dynamic = noImpl
 }
 
-native public trait BarProp {
+native public interface BarProp {
     var visible: Boolean
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait History {
+native public interface History {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -3385,7 +3385,7 @@ native public trait History {
     fun replaceState(data: Any?, title: String, url: String? = null): Unit = noImpl
 }
 
-native public trait Location {
+native public interface Location {
     var ancestorOrigins: Array<String>
         get() = noImpl
         set(value) = noImpl
@@ -3434,7 +3434,7 @@ native public open class BeforeUnloadEvent : Event(noImpl, noImpl) {
         set(value) = noImpl
 }
 
-native public trait ApplicationCache : EventTarget {
+native public interface ApplicationCache : EventTarget {
     var status: Short
         get() = noImpl
         set(value) = noImpl
@@ -3502,7 +3502,7 @@ native public open class ErrorEventInit : EventInit() {
     var error: Any?
 }
 
-native public trait Navigator {
+native public interface Navigator {
     var serviceWorker: ServiceWorkerContainer
         get() = noImpl
         set(value) = noImpl
@@ -3559,7 +3559,7 @@ native public trait Navigator {
     fun yieldForStorageUpdates(): Unit = noImpl
 }
 
-native public trait PluginArray {
+native public interface PluginArray {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -3570,7 +3570,7 @@ native public trait PluginArray {
     nativeGetter fun get(name: String): Plugin? = noImpl
 }
 
-native public trait MimeTypeArray {
+native public interface MimeTypeArray {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -3580,7 +3580,7 @@ native public trait MimeTypeArray {
     nativeGetter fun get(name: String): MimeType? = noImpl
 }
 
-native public trait Plugin {
+native public interface Plugin {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -3599,7 +3599,7 @@ native public trait Plugin {
     nativeGetter fun get(name: String): MimeType? = noImpl
 }
 
-native public trait MimeType {
+native public interface MimeType {
     var type: String
         get() = noImpl
         set(value) = noImpl
@@ -3614,12 +3614,12 @@ native public trait MimeType {
         set(value) = noImpl
 }
 
-native public trait External {
+native public interface External {
     fun AddSearchProvider(engineURL: String): Unit = noImpl
     fun IsSearchProviderInstalled(engineURL: String): Int = noImpl
 }
 
-native public trait ImageBitmap : CanvasImageSource, ImageBitmapSource {
+native public interface ImageBitmap : CanvasImageSource, ImageBitmapSource {
     var width: Int
         get() = noImpl
         set(value) = noImpl
@@ -3759,7 +3759,7 @@ native public open class MessageChannel {
         set(value) = noImpl
 }
 
-native public trait MessagePort : EventTarget, UnionMessagePortOrWindow, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker, Transferable {
+native public interface MessagePort : EventTarget, UnionMessagePortOrWindow, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker, Transferable {
     var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -3786,7 +3786,7 @@ native public open class BroadcastChannel(channel: String) : EventTarget {
     fun close(): Unit = noImpl
 }
 
-native public trait WorkerGlobalScope : EventTarget {
+native public interface WorkerGlobalScope : EventTarget {
     var caches: CacheStorage
         get() = noImpl
         set(value) = noImpl
@@ -3826,14 +3826,14 @@ native public trait WorkerGlobalScope : EventTarget {
     fun fetch(input: dynamic, init: RequestInit = noImpl): dynamic = noImpl
 }
 
-native public trait DedicatedWorkerGlobalScope : WorkerGlobalScope {
+native public interface DedicatedWorkerGlobalScope : WorkerGlobalScope {
     var onmessage: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
-native public trait SharedWorkerGlobalScope : WorkerGlobalScope {
+native public interface SharedWorkerGlobalScope : WorkerGlobalScope {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -3865,7 +3865,7 @@ native public open class SharedWorker(scriptURL: String, name: String = noImpl) 
         set(value) = noImpl
 }
 
-native public trait WorkerNavigator {
+native public interface WorkerNavigator {
     var serviceWorker: ServiceWorkerContainer
         get() = noImpl
         set(value) = noImpl
@@ -3902,10 +3902,10 @@ native public trait WorkerNavigator {
     fun taintEnabled(): Boolean = noImpl
 }
 
-native public trait WorkerLocation {
+native public interface WorkerLocation {
 }
 
-native public trait Storage {
+native public interface Storage {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -3944,7 +3944,7 @@ native public open class StorageEventInit : EventInit() {
     var storageArea: Storage?
 }
 
-native public trait HTMLAppletElement : HTMLElement {
+native public interface HTMLAppletElement : HTMLElement {
     var align: String
         get() = noImpl
         set(value) = noImpl
@@ -3980,7 +3980,7 @@ native public trait HTMLAppletElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLMarqueeElement : HTMLElement {
+native public interface HTMLMarqueeElement : HTMLElement {
     var behavior: String
         get() = noImpl
         set(value) = noImpl
@@ -4027,7 +4027,7 @@ native public trait HTMLMarqueeElement : HTMLElement {
     fun stop(): Unit = noImpl
 }
 
-native public trait HTMLFrameSetElement : HTMLElement {
+native public interface HTMLFrameSetElement : HTMLElement {
     var cols: String
         get() = noImpl
         set(value) = noImpl
@@ -4075,7 +4075,7 @@ native public trait HTMLFrameSetElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLFrameElement : HTMLElement {
+native public interface HTMLFrameElement : HTMLElement {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -4108,13 +4108,13 @@ native public trait HTMLFrameElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLDirectoryElement : HTMLElement {
+native public interface HTMLDirectoryElement : HTMLElement {
     var compact: Boolean
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait HTMLFontElement : HTMLElement {
+native public interface HTMLFontElement : HTMLElement {
     var color: String
         get() = noImpl
         set(value) = noImpl
@@ -4126,7 +4126,7 @@ native public trait HTMLFontElement : HTMLElement {
         set(value) = noImpl
 }
 
-native public trait HTMLImageElement : HTMLElement, CanvasImageSource, ImageBitmapSource {
+native public interface HTMLImageElement : HTMLElement, CanvasImageSource, ImageBitmapSource {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -4189,7 +4189,7 @@ native public trait HTMLImageElement : HTMLElement, CanvasImageSource, ImageBitm
         set(value) = noImpl
 }
 
-native public trait HTMLPictureElement : HTMLElement {
+native public interface HTMLPictureElement : HTMLElement {
 }
 
 native public open class EventInit {
@@ -4208,7 +4208,7 @@ native public open class CustomEventInit : EventInit() {
     var detail: Any? = null
 }
 
-native public trait NodeList {
+native public interface NodeList {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -4216,7 +4216,7 @@ native public trait NodeList {
     nativeGetter fun get(index: Int): Node? = noImpl
 }
 
-native public trait HTMLCollection : UnionElementOrHTMLCollection {
+native public interface HTMLCollection : UnionElementOrHTMLCollection {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -4242,7 +4242,7 @@ native public open class MutationObserverInit {
     var attributeFilter: Array<String>
 }
 
-native public trait MutationRecord {
+native public interface MutationRecord {
     var type: String
         get() = noImpl
         set(value) = noImpl
@@ -4272,7 +4272,7 @@ native public trait MutationRecord {
         set(value) = noImpl
 }
 
-native public trait Node : EventTarget {
+native public interface Node : EventTarget {
     var nodeType: Short
         get() = noImpl
         set(value) = noImpl
@@ -4348,7 +4348,7 @@ native public trait Node : EventTarget {
     }
 }
 
-native public trait DOMImplementation {
+native public interface DOMImplementation {
     fun createDocumentType(qualifiedName: String, publicId: String, systemId: String): DocumentType = noImpl
     fun createDocument(namespace: String?, qualifiedName: String, doctype: DocumentType? = null): XMLDocument = noImpl
     fun createHTMLDocument(title: String = noImpl): Document = noImpl
@@ -4377,7 +4377,7 @@ native public open class DocumentFragment : Node {
     fun querySelectorAll(selectors: String): NodeList = noImpl
 }
 
-native public trait DocumentType : Node {
+native public interface DocumentType : Node {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -4393,7 +4393,7 @@ native public trait DocumentType : Node {
     fun remove(): Unit = noImpl
 }
 
-native public trait Element : Node, UnionElementOrHTMLCollection, UnionElementOrRadioNodeList, UnionElementOrMouseEvent, UnionElementOrProcessingInstruction {
+native public interface Element : Node, UnionElementOrHTMLCollection, UnionElementOrRadioNodeList, UnionElementOrMouseEvent, UnionElementOrProcessingInstruction {
     var innerHTML: String
         get() = noImpl
         set(value) = noImpl
@@ -4488,7 +4488,7 @@ native public trait Element : Node, UnionElementOrHTMLCollection, UnionElementOr
     fun remove(): Unit = noImpl
 }
 
-native public trait NamedNodeMap {
+native public interface NamedNodeMap {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -4503,7 +4503,7 @@ native public trait NamedNodeMap {
     fun removeNamedItemNS(namespace: String?, localName: String): Attr = noImpl
 }
 
-native public trait Attr {
+native public interface Attr {
     var namespaceURI: String?
         get() = noImpl
         set(value) = noImpl
@@ -4533,7 +4533,7 @@ native public trait Attr {
         set(value) = noImpl
 }
 
-native public trait CharacterData : Node {
+native public interface CharacterData : Node {
     var data: String
         get() = noImpl
         set(value) = noImpl
@@ -4564,7 +4564,7 @@ native public open class Text(data: String = "") : CharacterData {
     fun splitText(offset: Int): Text = noImpl
 }
 
-native public trait ProcessingInstruction : CharacterData, UnionElementOrProcessingInstruction {
+native public interface ProcessingInstruction : CharacterData, UnionElementOrProcessingInstruction {
     var target: String
         get() = noImpl
         set(value) = noImpl
@@ -4625,7 +4625,7 @@ native public open class Range {
     }
 }
 
-native public trait NodeIterator {
+native public interface NodeIterator {
     var root: Node
         get() = noImpl
         set(value) = noImpl
@@ -4646,7 +4646,7 @@ native public trait NodeIterator {
     fun detach(): Unit = noImpl
 }
 
-native public trait TreeWalker {
+native public interface TreeWalker {
     var root: Node
         get() = noImpl
         set(value) = noImpl
@@ -4668,7 +4668,7 @@ native public trait TreeWalker {
     fun nextNode(): Node? = noImpl
 }
 
-native public trait NodeFilter {
+native public interface NodeFilter {
     fun acceptNode(node: Node): Short = noImpl
 
     companion object {
@@ -4691,7 +4691,7 @@ native public trait NodeFilter {
     }
 }
 
-native public trait DOMTokenList {
+native public interface DOMTokenList {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -4703,13 +4703,13 @@ native public trait DOMTokenList {
     fun toggle(token: String, force: Boolean = noImpl): Boolean = noImpl
 }
 
-native public trait DOMSettableTokenList : DOMTokenList {
+native public interface DOMSettableTokenList : DOMTokenList {
     var value: String
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait Selection {
+native public interface Selection {
     var anchorNode: Node?
         get() = noImpl
         set(value) = noImpl
@@ -4768,39 +4768,39 @@ native public open class EditingInputEventInit : EventInit() {
     var value: String
 }
 
-native public marker trait UnionElementOrHTMLCollection {
+native public marker interface UnionElementOrHTMLCollection {
 }
 
-native public marker trait UnionElementOrRadioNodeList {
+native public marker interface UnionElementOrRadioNodeList {
 }
 
-native public marker trait UnionHTMLOptGroupElementOrHTMLOptionElement {
+native public marker interface UnionHTMLOptGroupElementOrHTMLOptionElement {
 }
 
-native public marker trait UnionAudioTrackOrTextTrackOrVideoTrack {
+native public marker interface UnionAudioTrackOrTextTrackOrVideoTrack {
 }
 
-native public marker trait UnionElementOrMouseEvent {
+native public marker interface UnionElementOrMouseEvent {
 }
 
-native public marker trait UnionMessagePortOrWindow {
+native public marker interface UnionMessagePortOrWindow {
 }
 
-native public marker trait UnionElementOrProcessingInstruction {
+native public marker interface UnionElementOrProcessingInstruction {
 }
 
-native public marker trait ArrayBufferView {
+native public marker interface ArrayBufferView {
 }
 
-native public marker trait Transferable {
+native public marker interface Transferable {
 }
 
-native public marker trait RenderingContext {
+native public marker interface RenderingContext {
 }
 
-native public marker trait CanvasImageSource {
+native public marker interface CanvasImageSource {
 }
 
-native public marker trait ImageBitmapSource {
+native public marker interface ImageBitmapSource {
 }
 

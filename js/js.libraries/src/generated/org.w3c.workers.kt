@@ -19,7 +19,7 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.xhr.*
 
-native public trait ServiceWorkerRegistration : EventTarget {
+native public interface ServiceWorkerRegistration : EventTarget {
     var installing: ServiceWorker?
         get() = noImpl
         set(value) = noImpl
@@ -45,7 +45,7 @@ native public trait ServiceWorkerRegistration : EventTarget {
     fun getNotifications(filter: GetNotificationOptions = noImpl): dynamic = noImpl
 }
 
-native public trait ServiceWorkerGlobalScope : WorkerGlobalScope {
+native public interface ServiceWorkerGlobalScope : WorkerGlobalScope {
     var clients: Clients
         get() = noImpl
         set(value) = noImpl
@@ -73,7 +73,7 @@ native public trait ServiceWorkerGlobalScope : WorkerGlobalScope {
     fun skipWaiting(): dynamic = noImpl
 }
 
-native public trait ServiceWorker : EventTarget, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
+native public interface ServiceWorker : EventTarget, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
     var scriptURL: String
         get() = noImpl
         set(value) = noImpl
@@ -92,7 +92,7 @@ native public trait ServiceWorker : EventTarget, UnionMessagePortOrServiceWorker
     fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
-native public trait ServiceWorkerContainer : EventTarget {
+native public interface ServiceWorkerContainer : EventTarget {
     var controller: ServiceWorker?
         get() = noImpl
         set(value) = noImpl
@@ -144,7 +144,7 @@ native public open class ServiceWorkerMessageEventInit : EventInit() {
     var ports: Array<MessagePort>
 }
 
-native public trait Client : UnionClientOrMessagePortOrServiceWorker {
+native public interface Client : UnionClientOrMessagePortOrServiceWorker {
     var url: String
         get() = noImpl
         set(value) = noImpl
@@ -157,7 +157,7 @@ native public trait Client : UnionClientOrMessagePortOrServiceWorker {
     fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
-native public trait WindowClient : Client {
+native public interface WindowClient : Client {
     var visibilityState: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -167,7 +167,7 @@ native public trait WindowClient : Client {
     fun focus(): dynamic = noImpl
 }
 
-native public trait Clients {
+native public interface Clients {
     fun matchAll(options: ClientQueryOptions = noImpl): dynamic = noImpl
     fun openWindow(url: String): dynamic = noImpl
     fun claim(): dynamic = noImpl
@@ -231,7 +231,7 @@ native public open class ExtendableMessageEventInit : ExtendableEventInit() {
     var ports: Array<MessagePort>
 }
 
-native public trait Cache {
+native public interface Cache {
     fun match(request: dynamic, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun matchAll(request: dynamic = noImpl, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun add(request: dynamic): dynamic = noImpl
@@ -255,7 +255,7 @@ native public open class CacheBatchOperation {
     var options: CacheQueryOptions
 }
 
-native public trait CacheStorage {
+native public interface CacheStorage {
     fun match(request: dynamic, options: CacheQueryOptions = noImpl): dynamic = noImpl
     fun has(cacheName: String): dynamic = noImpl
     fun open(cacheName: String): dynamic = noImpl
@@ -266,9 +266,9 @@ native public trait CacheStorage {
 native public open class FunctionalEvent : ExtendableEvent(noImpl, noImpl) {
 }
 
-native public marker trait UnionMessagePortOrServiceWorker {
+native public marker interface UnionMessagePortOrServiceWorker {
 }
 
-native public marker trait UnionClientOrMessagePortOrServiceWorker {
+native public marker interface UnionClientOrMessagePortOrServiceWorker {
 }
 

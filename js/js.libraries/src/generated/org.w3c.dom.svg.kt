@@ -25,7 +25,7 @@ native public open class SVGDocument : Document() {
         set(value) = noImpl
 }
 
-native public trait SVGSVGElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGLocatable, SVGFitToViewBox, SVGZoomAndPan {
+native public interface SVGSVGElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGLocatable, SVGFitToViewBox, SVGZoomAndPan {
     var x: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -96,22 +96,22 @@ native public trait SVGSVGElement : SVGElement, SVGTests, SVGLangSpace, SVGExter
     fun getElementById(elementId: String): Element = noImpl
 }
 
-native public trait SVGGElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGGElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
 }
 
-native public trait SVGDefsElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGDefsElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
 }
 
-native public trait SVGDescElement : SVGElement, SVGLangSpace, SVGStylable {
+native public interface SVGDescElement : SVGElement, SVGLangSpace, SVGStylable {
 }
 
-native public trait SVGTitleElement : SVGElement, SVGLangSpace, SVGStylable {
+native public interface SVGTitleElement : SVGElement, SVGLangSpace, SVGStylable {
 }
 
-native public trait SVGSymbolElement : SVGElement, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGFitToViewBox {
+native public interface SVGSymbolElement : SVGElement, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGFitToViewBox {
 }
 
-native public trait SVGUseElement : SVGElement, SVGURIReference, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGUseElement : SVGElement, SVGURIReference, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
     var x: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -132,7 +132,7 @@ native public trait SVGUseElement : SVGElement, SVGURIReference, SVGTests, SVGLa
         set(value) = noImpl
 }
 
-native public trait SVGElementInstance : EventTarget {
+native public interface SVGElementInstance : EventTarget {
     var correspondingElement: SVGElement
         get() = noImpl
         set(value) = noImpl
@@ -159,14 +159,14 @@ native public trait SVGElementInstance : EventTarget {
         set(value) = noImpl
 }
 
-native public trait SVGElementInstanceList {
+native public interface SVGElementInstanceList {
     var length: Int
         get() = noImpl
         set(value) = noImpl
     fun item(index: Int): SVGElementInstance = noImpl
 }
 
-native public trait SVGImageElement : SVGElement, SVGURIReference, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGImageElement : SVGElement, SVGURIReference, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
     var x: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -184,14 +184,14 @@ native public trait SVGImageElement : SVGElement, SVGURIReference, SVGTests, SVG
         set(value) = noImpl
 }
 
-native public trait SVGSwitchElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGSwitchElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
 }
 
-native public trait GetSVGDocument {
+native public interface GetSVGDocument {
     fun getSVGDocument(): SVGDocument = noImpl
 }
 
-native public trait SVGElement : Element {
+native public interface SVGElement : Element {
 //    var id: dynamic
 //        get() = noImpl
 //        set(value) = noImpl
@@ -209,7 +209,7 @@ native public trait SVGElement : Element {
         set(value) = noImpl
 }
 
-native public trait SVGAnimatedBoolean {
+native public interface SVGAnimatedBoolean {
     var baseVal: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -218,7 +218,7 @@ native public trait SVGAnimatedBoolean {
         set(value) = noImpl
 }
 
-native public trait SVGAnimatedString {
+native public interface SVGAnimatedString {
     var baseVal: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -227,7 +227,7 @@ native public trait SVGAnimatedString {
         set(value) = noImpl
 }
 
-native public trait SVGStringList {
+native public interface SVGStringList {
     var numberOfItems: Int
         get() = noImpl
         set(value) = noImpl
@@ -240,7 +240,7 @@ native public trait SVGStringList {
     fun appendItem(newItem: String): String = noImpl
 }
 
-native public trait SVGAnimatedEnumeration {
+native public interface SVGAnimatedEnumeration {
     var baseVal: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -249,7 +249,7 @@ native public trait SVGAnimatedEnumeration {
         set(value) = noImpl
 }
 
-native public trait SVGAnimatedInteger {
+native public interface SVGAnimatedInteger {
     var baseVal: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -258,13 +258,13 @@ native public trait SVGAnimatedInteger {
         set(value) = noImpl
 }
 
-native public trait SVGNumber {
+native public interface SVGNumber {
     var value: dynamic
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGAnimatedNumber {
+native public interface SVGAnimatedNumber {
     var baseVal: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -273,7 +273,7 @@ native public trait SVGAnimatedNumber {
         set(value) = noImpl
 }
 
-native public trait SVGNumberList {
+native public interface SVGNumberList {
     var numberOfItems: Int
         get() = noImpl
         set(value) = noImpl
@@ -286,7 +286,7 @@ native public trait SVGNumberList {
     fun appendItem(newItem: SVGNumber): SVGNumber = noImpl
 }
 
-native public trait SVGAnimatedNumberList {
+native public interface SVGAnimatedNumberList {
     var baseVal: SVGNumberList
         get() = noImpl
         set(value) = noImpl
@@ -295,7 +295,7 @@ native public trait SVGAnimatedNumberList {
         set(value) = noImpl
 }
 
-native public trait SVGLength {
+native public interface SVGLength {
     var unitType: Short
         get() = noImpl
         set(value) = noImpl
@@ -326,7 +326,7 @@ native public trait SVGLength {
     }
 }
 
-native public trait SVGAnimatedLength {
+native public interface SVGAnimatedLength {
     var baseVal: SVGLength
         get() = noImpl
         set(value) = noImpl
@@ -335,7 +335,7 @@ native public trait SVGAnimatedLength {
         set(value) = noImpl
 }
 
-native public trait SVGLengthList {
+native public interface SVGLengthList {
     var numberOfItems: Int
         get() = noImpl
         set(value) = noImpl
@@ -348,7 +348,7 @@ native public trait SVGLengthList {
     fun appendItem(newItem: SVGLength): SVGLength = noImpl
 }
 
-native public trait SVGAnimatedLengthList {
+native public interface SVGAnimatedLengthList {
     var baseVal: SVGLengthList
         get() = noImpl
         set(value) = noImpl
@@ -357,7 +357,7 @@ native public trait SVGAnimatedLengthList {
         set(value) = noImpl
 }
 
-native public trait SVGAngle {
+native public interface SVGAngle {
     var unitType: Short
         get() = noImpl
         set(value) = noImpl
@@ -382,7 +382,7 @@ native public trait SVGAngle {
     }
 }
 
-native public trait SVGAnimatedAngle {
+native public interface SVGAnimatedAngle {
     var baseVal: SVGAngle
         get() = noImpl
         set(value) = noImpl
@@ -391,7 +391,7 @@ native public trait SVGAnimatedAngle {
         set(value) = noImpl
 }
 
-native public trait SVGColor {
+native public interface SVGColor {
     var colorType: Short
         get() = noImpl
         set(value) = noImpl
@@ -413,7 +413,7 @@ native public trait SVGColor {
     }
 }
 
-native public trait SVGICCColor {
+native public interface SVGICCColor {
     var colorProfile: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -422,7 +422,7 @@ native public trait SVGICCColor {
         set(value) = noImpl
 }
 
-native public trait SVGRect {
+native public interface SVGRect {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -437,7 +437,7 @@ native public trait SVGRect {
         set(value) = noImpl
 }
 
-native public trait SVGAnimatedRect {
+native public interface SVGAnimatedRect {
     var baseVal: SVGRect
         get() = noImpl
         set(value) = noImpl
@@ -446,7 +446,7 @@ native public trait SVGAnimatedRect {
         set(value) = noImpl
 }
 
-native public trait SVGUnitTypes {
+native public interface SVGUnitTypes {
 
     companion object {
         val SVG_UNIT_TYPE_UNKNOWN: Short = 0
@@ -455,11 +455,11 @@ native public trait SVGUnitTypes {
     }
 }
 
-native public trait SVGStylable {
+native public interface SVGStylable {
     fun getPresentationAttribute(name: String): dynamic = noImpl
 }
 
-native public trait SVGLocatable {
+native public interface SVGLocatable {
     var nearestViewportElement: SVGElement
         get() = noImpl
         set(value) = noImpl
@@ -472,13 +472,13 @@ native public trait SVGLocatable {
     fun getTransformToElement(element: SVGElement): SVGMatrix = noImpl
 }
 
-native public trait SVGTransformable : SVGLocatable {
+native public interface SVGTransformable : SVGLocatable {
     var transform: SVGAnimatedTransformList
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGTests {
+native public interface SVGTests {
     var requiredFeatures: SVGStringList
         get() = noImpl
         set(value) = noImpl
@@ -491,7 +491,7 @@ native public trait SVGTests {
     fun hasExtension(extension: String): Boolean = noImpl
 }
 
-native public trait SVGLangSpace {
+native public interface SVGLangSpace {
     var xmllang: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -500,13 +500,13 @@ native public trait SVGLangSpace {
         set(value) = noImpl
 }
 
-native public trait SVGExternalResourcesRequired {
+native public interface SVGExternalResourcesRequired {
     var externalResourcesRequired: SVGAnimatedBoolean
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGFitToViewBox {
+native public interface SVGFitToViewBox {
     var viewBox: SVGAnimatedRect
         get() = noImpl
         set(value) = noImpl
@@ -515,7 +515,7 @@ native public trait SVGFitToViewBox {
         set(value) = noImpl
 }
 
-native public trait SVGZoomAndPan {
+native public interface SVGZoomAndPan {
     var zoomAndPan: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -527,7 +527,7 @@ native public trait SVGZoomAndPan {
     }
 }
 
-native public trait SVGViewSpec : SVGZoomAndPan, SVGFitToViewBox {
+native public interface SVGViewSpec : SVGZoomAndPan, SVGFitToViewBox {
     var transform: SVGTransformList
         get() = noImpl
         set(value) = noImpl
@@ -548,20 +548,20 @@ native public trait SVGViewSpec : SVGZoomAndPan, SVGFitToViewBox {
         set(value) = noImpl
 }
 
-native public trait SVGURIReference {
+native public interface SVGURIReference {
     var href: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGCSSRule : CSSRule {
+native public interface SVGCSSRule : CSSRule {
 
     companion object {
         val COLOR_PROFILE_RULE: Short = 7
     }
 }
 
-native public trait SVGRenderingIntent {
+native public interface SVGRenderingIntent {
 
     companion object {
         val RENDERING_INTENT_UNKNOWN: Short = 0
@@ -573,7 +573,7 @@ native public trait SVGRenderingIntent {
     }
 }
 
-native public trait SVGStyleElement : SVGElement, SVGLangSpace {
+native public interface SVGStyleElement : SVGElement, SVGLangSpace {
     var type: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -585,7 +585,7 @@ native public trait SVGStyleElement : SVGElement, SVGLangSpace {
         set(value) = noImpl
 }
 
-native public trait SVGPoint {
+native public interface SVGPoint {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -595,7 +595,7 @@ native public trait SVGPoint {
     fun matrixTransform(matrix: SVGMatrix): SVGPoint = noImpl
 }
 
-native public trait SVGPointList {
+native public interface SVGPointList {
     var numberOfItems: Int
         get() = noImpl
         set(value) = noImpl
@@ -608,7 +608,7 @@ native public trait SVGPointList {
     fun appendItem(newItem: SVGPoint): SVGPoint = noImpl
 }
 
-native public trait SVGMatrix {
+native public interface SVGMatrix {
     var a: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -640,7 +640,7 @@ native public trait SVGMatrix {
     fun skewY(angle: Float): SVGMatrix = noImpl
 }
 
-native public trait SVGTransform {
+native public interface SVGTransform {
     var type: Short
         get() = noImpl
         set(value) = noImpl
@@ -668,7 +668,7 @@ native public trait SVGTransform {
     }
 }
 
-native public trait SVGTransformList {
+native public interface SVGTransformList {
     var numberOfItems: Int
         get() = noImpl
         set(value) = noImpl
@@ -683,7 +683,7 @@ native public trait SVGTransformList {
     fun consolidate(): SVGTransform = noImpl
 }
 
-native public trait SVGAnimatedTransformList {
+native public interface SVGAnimatedTransformList {
     var baseVal: SVGTransformList
         get() = noImpl
         set(value) = noImpl
@@ -692,7 +692,7 @@ native public trait SVGAnimatedTransformList {
         set(value) = noImpl
 }
 
-native public trait SVGPreserveAspectRatio {
+native public interface SVGPreserveAspectRatio {
     var align: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -718,7 +718,7 @@ native public trait SVGPreserveAspectRatio {
     }
 }
 
-native public trait SVGAnimatedPreserveAspectRatio {
+native public interface SVGAnimatedPreserveAspectRatio {
     var baseVal: SVGPreserveAspectRatio
         get() = noImpl
         set(value) = noImpl
@@ -727,7 +727,7 @@ native public trait SVGAnimatedPreserveAspectRatio {
         set(value) = noImpl
 }
 
-native public trait SVGPathSeg {
+native public interface SVGPathSeg {
     var pathSegType: Short
         get() = noImpl
         set(value) = noImpl
@@ -759,10 +759,10 @@ native public trait SVGPathSeg {
     }
 }
 
-native public trait SVGPathSegClosePath : SVGPathSeg {
+native public interface SVGPathSegClosePath : SVGPathSeg {
 }
 
-native public trait SVGPathSegMovetoAbs : SVGPathSeg {
+native public interface SVGPathSegMovetoAbs : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -771,7 +771,7 @@ native public trait SVGPathSegMovetoAbs : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegMovetoRel : SVGPathSeg {
+native public interface SVGPathSegMovetoRel : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -780,7 +780,7 @@ native public trait SVGPathSegMovetoRel : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegLinetoAbs : SVGPathSeg {
+native public interface SVGPathSegLinetoAbs : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -789,7 +789,7 @@ native public trait SVGPathSegLinetoAbs : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegLinetoRel : SVGPathSeg {
+native public interface SVGPathSegLinetoRel : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -798,28 +798,7 @@ native public trait SVGPathSegLinetoRel : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegCurvetoCubicAbs : SVGPathSeg {
-    var x: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var y: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var x1: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var y1: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var x2: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var y2: dynamic
-        get() = noImpl
-        set(value) = noImpl
-}
-
-native public trait SVGPathSegCurvetoCubicRel : SVGPathSeg {
+native public interface SVGPathSegCurvetoCubicAbs : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -840,7 +819,28 @@ native public trait SVGPathSegCurvetoCubicRel : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegCurvetoQuadraticAbs : SVGPathSeg {
+native public interface SVGPathSegCurvetoCubicRel : SVGPathSeg {
+    var x: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var y: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var x1: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var y1: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var x2: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var y2: dynamic
+        get() = noImpl
+        set(value) = noImpl
+}
+
+native public interface SVGPathSegCurvetoQuadraticAbs : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -855,7 +855,7 @@ native public trait SVGPathSegCurvetoQuadraticAbs : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegCurvetoQuadraticRel : SVGPathSeg {
+native public interface SVGPathSegCurvetoQuadraticRel : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -870,7 +870,7 @@ native public trait SVGPathSegCurvetoQuadraticRel : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegArcAbs : SVGPathSeg {
+native public interface SVGPathSegArcAbs : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -894,7 +894,7 @@ native public trait SVGPathSegArcAbs : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegArcRel : SVGPathSeg {
+native public interface SVGPathSegArcRel : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -918,46 +918,31 @@ native public trait SVGPathSegArcRel : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegLinetoHorizontalAbs : SVGPathSeg {
+native public interface SVGPathSegLinetoHorizontalAbs : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGPathSegLinetoHorizontalRel : SVGPathSeg {
+native public interface SVGPathSegLinetoHorizontalRel : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGPathSegLinetoVerticalAbs : SVGPathSeg {
+native public interface SVGPathSegLinetoVerticalAbs : SVGPathSeg {
     var y: dynamic
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGPathSegLinetoVerticalRel : SVGPathSeg {
+native public interface SVGPathSegLinetoVerticalRel : SVGPathSeg {
     var y: dynamic
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGPathSegCurvetoCubicSmoothAbs : SVGPathSeg {
-    var x: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var y: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var x2: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var y2: dynamic
-        get() = noImpl
-        set(value) = noImpl
-}
-
-native public trait SVGPathSegCurvetoCubicSmoothRel : SVGPathSeg {
+native public interface SVGPathSegCurvetoCubicSmoothAbs : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -972,7 +957,22 @@ native public trait SVGPathSegCurvetoCubicSmoothRel : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg {
+native public interface SVGPathSegCurvetoCubicSmoothRel : SVGPathSeg {
+    var x: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var y: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var x2: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var y2: dynamic
+        get() = noImpl
+        set(value) = noImpl
+}
+
+native public interface SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -981,7 +981,7 @@ native public trait SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg {
+native public interface SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg {
     var x: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -990,7 +990,7 @@ native public trait SVGPathSegCurvetoQuadraticSmoothRel : SVGPathSeg {
         set(value) = noImpl
 }
 
-native public trait SVGPathSegList {
+native public interface SVGPathSegList {
     var numberOfItems: Int
         get() = noImpl
         set(value) = noImpl
@@ -1003,7 +1003,7 @@ native public trait SVGPathSegList {
     fun appendItem(newItem: SVGPathSeg): SVGPathSeg = noImpl
 }
 
-native public trait SVGAnimatedPathData {
+native public interface SVGAnimatedPathData {
     var pathSegList: SVGPathSegList
         get() = noImpl
         set(value) = noImpl
@@ -1018,7 +1018,7 @@ native public trait SVGAnimatedPathData {
         set(value) = noImpl
 }
 
-native public trait SVGPathElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable, SVGAnimatedPathData {
+native public interface SVGPathElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable, SVGAnimatedPathData {
     var pathLength: SVGAnimatedNumber
         get() = noImpl
         set(value) = noImpl
@@ -1046,7 +1046,7 @@ native public trait SVGPathElement : SVGElement, SVGTests, SVGLangSpace, SVGExte
     fun createSVGPathSegCurvetoQuadraticSmoothRel(x: Float, y: Float): SVGPathSegCurvetoQuadraticSmoothRel = noImpl
 }
 
-native public trait SVGRectElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGRectElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
     var x: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1067,7 +1067,7 @@ native public trait SVGRectElement : SVGElement, SVGTests, SVGLangSpace, SVGExte
         set(value) = noImpl
 }
 
-native public trait SVGCircleElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGCircleElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
     var cx: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1079,7 +1079,7 @@ native public trait SVGCircleElement : SVGElement, SVGTests, SVGLangSpace, SVGEx
         set(value) = noImpl
 }
 
-native public trait SVGEllipseElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGEllipseElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
     var cx: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1094,7 +1094,7 @@ native public trait SVGEllipseElement : SVGElement, SVGTests, SVGLangSpace, SVGE
         set(value) = noImpl
 }
 
-native public trait SVGLineElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGLineElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
     var x1: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1109,7 +1109,7 @@ native public trait SVGLineElement : SVGElement, SVGTests, SVGLangSpace, SVGExte
         set(value) = noImpl
 }
 
-native public trait SVGAnimatedPoints {
+native public interface SVGAnimatedPoints {
     var points: SVGPointList
         get() = noImpl
         set(value) = noImpl
@@ -1118,13 +1118,13 @@ native public trait SVGAnimatedPoints {
         set(value) = noImpl
 }
 
-native public trait SVGPolylineElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable, SVGAnimatedPoints {
+native public interface SVGPolylineElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable, SVGAnimatedPoints {
 }
 
-native public trait SVGPolygonElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable, SVGAnimatedPoints {
+native public interface SVGPolygonElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable, SVGAnimatedPoints {
 }
 
-native public trait SVGTextContentElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable {
+native public interface SVGTextContentElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable {
     var textLength: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1148,7 +1148,7 @@ native public trait SVGTextContentElement : SVGElement, SVGTests, SVGLangSpace, 
     }
 }
 
-native public trait SVGTextPositioningElement : SVGTextContentElement {
+native public interface SVGTextPositioningElement : SVGTextContentElement {
     var x: SVGAnimatedLengthList
         get() = noImpl
         set(value) = noImpl
@@ -1166,16 +1166,16 @@ native public trait SVGTextPositioningElement : SVGTextContentElement {
         set(value) = noImpl
 }
 
-native public trait SVGTextElement : SVGTextPositioningElement, SVGTransformable {
+native public interface SVGTextElement : SVGTextPositioningElement, SVGTransformable {
 }
 
-native public trait SVGTSpanElement : SVGTextPositioningElement {
+native public interface SVGTSpanElement : SVGTextPositioningElement {
 }
 
-native public trait SVGTRefElement : SVGTextPositioningElement, SVGURIReference {
+native public interface SVGTRefElement : SVGTextPositioningElement, SVGURIReference {
 }
 
-native public trait SVGTextPathElement : SVGTextContentElement, SVGURIReference {
+native public interface SVGTextPathElement : SVGTextContentElement, SVGURIReference {
     var startOffset: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1196,7 +1196,7 @@ native public trait SVGTextPathElement : SVGTextContentElement, SVGURIReference 
     }
 }
 
-native public trait SVGAltGlyphElement : SVGTextPositioningElement, SVGURIReference {
+native public interface SVGAltGlyphElement : SVGTextPositioningElement, SVGURIReference {
     var glyphRef: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -1205,13 +1205,13 @@ native public trait SVGAltGlyphElement : SVGTextPositioningElement, SVGURIRefere
         set(value) = noImpl
 }
 
-native public trait SVGAltGlyphDefElement : SVGElement {
+native public interface SVGAltGlyphDefElement : SVGElement {
 }
 
-native public trait SVGAltGlyphItemElement : SVGElement {
+native public interface SVGAltGlyphItemElement : SVGElement {
 }
 
-native public trait SVGGlyphRefElement : SVGElement, SVGURIReference, SVGStylable {
+native public interface SVGGlyphRefElement : SVGElement, SVGURIReference, SVGStylable {
     var glyphRef: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -1232,7 +1232,7 @@ native public trait SVGGlyphRefElement : SVGElement, SVGURIReference, SVGStylabl
         set(value) = noImpl
 }
 
-native public trait SVGPaint : SVGColor {
+native public interface SVGPaint : SVGColor {
     var paintType: Short
         get() = noImpl
         set(value) = noImpl
@@ -1256,7 +1256,7 @@ native public trait SVGPaint : SVGColor {
     }
 }
 
-native public trait SVGMarkerElement : SVGElement, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGFitToViewBox {
+native public interface SVGMarkerElement : SVGElement, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGFitToViewBox {
     var refX: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1291,7 +1291,7 @@ native public trait SVGMarkerElement : SVGElement, SVGLangSpace, SVGExternalReso
     }
 }
 
-native public trait SVGColorProfileElement : SVGElement, SVGURIReference, SVGRenderingIntent {
+native public interface SVGColorProfileElement : SVGElement, SVGURIReference, SVGRenderingIntent {
     var local: String
         get() = noImpl
         set(value) = noImpl
@@ -1303,7 +1303,7 @@ native public trait SVGColorProfileElement : SVGElement, SVGURIReference, SVGRen
         set(value) = noImpl
 }
 
-native public trait SVGColorProfileRule : SVGCSSRule, SVGRenderingIntent {
+native public interface SVGColorProfileRule : SVGCSSRule, SVGRenderingIntent {
     var src: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -1315,7 +1315,7 @@ native public trait SVGColorProfileRule : SVGCSSRule, SVGRenderingIntent {
         set(value) = noImpl
 }
 
-native public trait SVGGradientElement : SVGElement, SVGURIReference, SVGExternalResourcesRequired, SVGStylable, SVGUnitTypes {
+native public interface SVGGradientElement : SVGElement, SVGURIReference, SVGExternalResourcesRequired, SVGStylable, SVGUnitTypes {
     var gradientUnits: SVGAnimatedEnumeration
         get() = noImpl
         set(value) = noImpl
@@ -1334,7 +1334,7 @@ native public trait SVGGradientElement : SVGElement, SVGURIReference, SVGExterna
     }
 }
 
-native public trait SVGLinearGradientElement : SVGGradientElement {
+native public interface SVGLinearGradientElement : SVGGradientElement {
     var x1: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1349,7 +1349,7 @@ native public trait SVGLinearGradientElement : SVGGradientElement {
         set(value) = noImpl
 }
 
-native public trait SVGRadialGradientElement : SVGGradientElement {
+native public interface SVGRadialGradientElement : SVGGradientElement {
     var cx: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1367,13 +1367,13 @@ native public trait SVGRadialGradientElement : SVGGradientElement {
         set(value) = noImpl
 }
 
-native public trait SVGStopElement : SVGElement, SVGStylable {
+native public interface SVGStopElement : SVGElement, SVGStylable {
     var offset: SVGAnimatedNumber
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGPatternElement : SVGElement, SVGURIReference, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGFitToViewBox, SVGUnitTypes {
+native public interface SVGPatternElement : SVGElement, SVGURIReference, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGFitToViewBox, SVGUnitTypes {
     var patternUnits: SVGAnimatedEnumeration
         get() = noImpl
         set(value) = noImpl
@@ -1397,13 +1397,13 @@ native public trait SVGPatternElement : SVGElement, SVGURIReference, SVGTests, S
         set(value) = noImpl
 }
 
-native public trait SVGClipPathElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable, SVGUnitTypes {
+native public interface SVGClipPathElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable, SVGUnitTypes {
     var clipPathUnits: SVGAnimatedEnumeration
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGMaskElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGUnitTypes {
+native public interface SVGMaskElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGUnitTypes {
     var maskUnits: SVGAnimatedEnumeration
         get() = noImpl
         set(value) = noImpl
@@ -1424,7 +1424,7 @@ native public trait SVGMaskElement : SVGElement, SVGTests, SVGLangSpace, SVGExte
         set(value) = noImpl
 }
 
-native public trait SVGFilterElement : SVGElement, SVGURIReference, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGUnitTypes {
+native public interface SVGFilterElement : SVGElement, SVGURIReference, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGUnitTypes {
     var filterUnits: SVGAnimatedEnumeration
         get() = noImpl
         set(value) = noImpl
@@ -1452,7 +1452,7 @@ native public trait SVGFilterElement : SVGElement, SVGURIReference, SVGLangSpace
     fun setFilterRes(filterResX: Int, filterResY: Int): Unit = noImpl
 }
 
-native public trait SVGFilterPrimitiveStandardAttributes : SVGStylable {
+native public interface SVGFilterPrimitiveStandardAttributes : SVGStylable {
     var x: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1470,7 +1470,7 @@ native public trait SVGFilterPrimitiveStandardAttributes : SVGStylable {
         set(value) = noImpl
 }
 
-native public trait SVGFEBlendElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEBlendElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1491,7 +1491,7 @@ native public trait SVGFEBlendElement : SVGElement, SVGFilterPrimitiveStandardAt
     }
 }
 
-native public trait SVGFEColorMatrixElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEColorMatrixElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1511,13 +1511,13 @@ native public trait SVGFEColorMatrixElement : SVGElement, SVGFilterPrimitiveStan
     }
 }
 
-native public trait SVGFEComponentTransferElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEComponentTransferElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGComponentTransferFunctionElement : SVGElement {
+native public interface SVGComponentTransferFunctionElement : SVGElement {
     var type: SVGAnimatedEnumeration
         get() = noImpl
         set(value) = noImpl
@@ -1550,19 +1550,19 @@ native public trait SVGComponentTransferFunctionElement : SVGElement {
     }
 }
 
-native public trait SVGFEFuncRElement : SVGComponentTransferFunctionElement {
+native public interface SVGFEFuncRElement : SVGComponentTransferFunctionElement {
 }
 
-native public trait SVGFEFuncGElement : SVGComponentTransferFunctionElement {
+native public interface SVGFEFuncGElement : SVGComponentTransferFunctionElement {
 }
 
-native public trait SVGFEFuncBElement : SVGComponentTransferFunctionElement {
+native public interface SVGFEFuncBElement : SVGComponentTransferFunctionElement {
 }
 
-native public trait SVGFEFuncAElement : SVGComponentTransferFunctionElement {
+native public interface SVGFEFuncAElement : SVGComponentTransferFunctionElement {
 }
 
-native public trait SVGFECompositeElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFECompositeElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1596,7 +1596,7 @@ native public trait SVGFECompositeElement : SVGElement, SVGFilterPrimitiveStanda
     }
 }
 
-native public trait SVGFEConvolveMatrixElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEConvolveMatrixElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1642,7 +1642,7 @@ native public trait SVGFEConvolveMatrixElement : SVGElement, SVGFilterPrimitiveS
     }
 }
 
-native public trait SVGFEDiffuseLightingElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEDiffuseLightingElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1660,7 +1660,7 @@ native public trait SVGFEDiffuseLightingElement : SVGElement, SVGFilterPrimitive
         set(value) = noImpl
 }
 
-native public trait SVGFEDistantLightElement : SVGElement {
+native public interface SVGFEDistantLightElement : SVGElement {
     var azimuth: SVGAnimatedNumber
         get() = noImpl
         set(value) = noImpl
@@ -1669,7 +1669,7 @@ native public trait SVGFEDistantLightElement : SVGElement {
         set(value) = noImpl
 }
 
-native public trait SVGFEPointLightElement : SVGElement {
+native public interface SVGFEPointLightElement : SVGElement {
     var x: SVGAnimatedNumber
         get() = noImpl
         set(value) = noImpl
@@ -1681,7 +1681,7 @@ native public trait SVGFEPointLightElement : SVGElement {
         set(value) = noImpl
 }
 
-native public trait SVGFESpotLightElement : SVGElement {
+native public interface SVGFESpotLightElement : SVGElement {
     var x: SVGAnimatedNumber
         get() = noImpl
         set(value) = noImpl
@@ -1708,7 +1708,7 @@ native public trait SVGFESpotLightElement : SVGElement {
         set(value) = noImpl
 }
 
-native public trait SVGFEDisplacementMapElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEDisplacementMapElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1734,10 +1734,10 @@ native public trait SVGFEDisplacementMapElement : SVGElement, SVGFilterPrimitive
     }
 }
 
-native public trait SVGFEFloodElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEFloodElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
 }
 
-native public trait SVGFEGaussianBlurElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEGaussianBlurElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1750,22 +1750,22 @@ native public trait SVGFEGaussianBlurElement : SVGElement, SVGFilterPrimitiveSta
     fun setStdDeviation(stdDeviationX: Float, stdDeviationY: Float): Unit = noImpl
 }
 
-native public trait SVGFEImageElement : SVGElement, SVGURIReference, SVGLangSpace, SVGExternalResourcesRequired, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEImageElement : SVGElement, SVGURIReference, SVGLangSpace, SVGExternalResourcesRequired, SVGFilterPrimitiveStandardAttributes {
     var preserveAspectRatio: SVGAnimatedPreserveAspectRatio
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGFEMergeElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEMergeElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
 }
 
-native public trait SVGFEMergeNodeElement : SVGElement {
+native public interface SVGFEMergeNodeElement : SVGElement {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGFEMorphologyElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEMorphologyElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1786,7 +1786,7 @@ native public trait SVGFEMorphologyElement : SVGElement, SVGFilterPrimitiveStand
     }
 }
 
-native public trait SVGFEOffsetElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFEOffsetElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1798,7 +1798,7 @@ native public trait SVGFEOffsetElement : SVGElement, SVGFilterPrimitiveStandardA
         set(value) = noImpl
 }
 
-native public trait SVGFESpecularLightingElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFESpecularLightingElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
@@ -1819,13 +1819,13 @@ native public trait SVGFESpecularLightingElement : SVGElement, SVGFilterPrimitiv
         set(value) = noImpl
 }
 
-native public trait SVGFETileElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFETileElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var in1: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGFETurbulenceElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
+native public interface SVGFETurbulenceElement : SVGElement, SVGFilterPrimitiveStandardAttributes {
     var baseFrequencyX: SVGAnimatedNumber
         get() = noImpl
         set(value) = noImpl
@@ -1855,7 +1855,7 @@ native public trait SVGFETurbulenceElement : SVGElement, SVGFilterPrimitiveStand
     }
 }
 
-native public trait SVGCursorElement : SVGElement, SVGURIReference, SVGTests, SVGExternalResourcesRequired {
+native public interface SVGCursorElement : SVGElement, SVGURIReference, SVGTests, SVGExternalResourcesRequired {
     var x: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl
@@ -1864,19 +1864,19 @@ native public trait SVGCursorElement : SVGElement, SVGURIReference, SVGTests, SV
         set(value) = noImpl
 }
 
-native public trait SVGAElement : SVGElement, SVGURIReference, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGAElement : SVGElement, SVGURIReference, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
     var target: SVGAnimatedString
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGViewElement : SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGZoomAndPan {
+native public interface SVGViewElement : SVGElement, SVGExternalResourcesRequired, SVGFitToViewBox, SVGZoomAndPan {
     var viewTarget: SVGStringList
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait SVGScriptElement : SVGElement, SVGURIReference, SVGExternalResourcesRequired {
+native public interface SVGScriptElement : SVGElement, SVGURIReference, SVGExternalResourcesRequired {
     var type: dynamic
         get() = noImpl
         set(value) = noImpl
@@ -1900,7 +1900,7 @@ native public open class SVGZoomEvent : UIEvent(noImpl, noImpl) {
         set(value) = noImpl
 }
 
-native public trait ElementTimeControl {
+native public interface ElementTimeControl {
     fun beginElement(): Unit = noImpl
     fun beginElementAt(offset: Float): Unit = noImpl
     fun endElement(): Unit = noImpl
@@ -1917,7 +1917,7 @@ native public open class TimeEvent : Event(noImpl, noImpl) {
     fun initTimeEvent(typeArg: String, viewArg: dynamic, detailArg: Int): Unit = noImpl
 }
 
-native public trait SVGAnimationElement : SVGElement, SVGTests, SVGExternalResourcesRequired, ElementTimeControl {
+native public interface SVGAnimationElement : SVGElement, SVGTests, SVGExternalResourcesRequired, ElementTimeControl {
     var targetElement: SVGElement
         get() = noImpl
         set(value) = noImpl
@@ -1926,58 +1926,58 @@ native public trait SVGAnimationElement : SVGElement, SVGTests, SVGExternalResou
     fun getSimpleDuration(): Float = noImpl
 }
 
-native public trait SVGAnimateElement : SVGAnimationElement, SVGStylable {
+native public interface SVGAnimateElement : SVGAnimationElement, SVGStylable {
 }
 
-native public trait SVGSetElement : SVGAnimationElement {
+native public interface SVGSetElement : SVGAnimationElement {
 }
 
-native public trait SVGAnimateMotionElement : SVGAnimationElement {
+native public interface SVGAnimateMotionElement : SVGAnimationElement {
 }
 
-native public trait SVGMPathElement : SVGElement, SVGURIReference, SVGExternalResourcesRequired {
+native public interface SVGMPathElement : SVGElement, SVGURIReference, SVGExternalResourcesRequired {
 }
 
-native public trait SVGAnimateColorElement : SVGAnimationElement, SVGStylable {
+native public interface SVGAnimateColorElement : SVGAnimationElement, SVGStylable {
 }
 
-native public trait SVGAnimateTransformElement : SVGAnimationElement {
+native public interface SVGAnimateTransformElement : SVGAnimationElement {
 }
 
-native public trait SVGFontElement : SVGElement, SVGExternalResourcesRequired, SVGStylable {
+native public interface SVGFontElement : SVGElement, SVGExternalResourcesRequired, SVGStylable {
 }
 
-native public trait SVGGlyphElement : SVGElement, SVGStylable {
+native public interface SVGGlyphElement : SVGElement, SVGStylable {
 }
 
-native public trait SVGMissingGlyphElement : SVGElement, SVGStylable {
+native public interface SVGMissingGlyphElement : SVGElement, SVGStylable {
 }
 
-native public trait SVGHKernElement : SVGElement {
+native public interface SVGHKernElement : SVGElement {
 }
 
-native public trait SVGVKernElement : SVGElement {
+native public interface SVGVKernElement : SVGElement {
 }
 
-native public trait SVGFontFaceElement : SVGElement {
+native public interface SVGFontFaceElement : SVGElement {
 }
 
-native public trait SVGFontFaceSrcElement : SVGElement {
+native public interface SVGFontFaceSrcElement : SVGElement {
 }
 
-native public trait SVGFontFaceUriElement : SVGElement {
+native public interface SVGFontFaceUriElement : SVGElement {
 }
 
-native public trait SVGFontFaceFormatElement : SVGElement {
+native public interface SVGFontFaceFormatElement : SVGElement {
 }
 
-native public trait SVGFontFaceNameElement : SVGElement {
+native public interface SVGFontFaceNameElement : SVGElement {
 }
 
-native public trait SVGMetadataElement : SVGElement {
+native public interface SVGMetadataElement : SVGElement {
 }
 
-native public trait SVGForeignObjectElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
+native public interface SVGForeignObjectElement : SVGElement, SVGTests, SVGLangSpace, SVGExternalResourcesRequired, SVGStylable, SVGTransformable {
     var x: SVGAnimatedLength
         get() = noImpl
         set(value) = noImpl

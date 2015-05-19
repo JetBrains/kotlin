@@ -19,7 +19,7 @@ import org.w3c.notifications.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public trait Performance {
+native public interface Performance {
     var timing: PerformanceTiming
         get() = noImpl
         set(value) = noImpl
@@ -29,7 +29,7 @@ native public trait Performance {
     fun now(): Double = noImpl
 }
 
-native public trait PerformanceTiming {
+native public interface PerformanceTiming {
     var navigationStart: Long
         get() = noImpl
         set(value) = noImpl
@@ -95,7 +95,7 @@ native public trait PerformanceTiming {
         set(value) = noImpl
 }
 
-native public trait PerformanceNavigation {
+native public interface PerformanceNavigation {
     var type: Short
         get() = noImpl
         set(value) = noImpl

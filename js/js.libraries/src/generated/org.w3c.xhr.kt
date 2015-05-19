@@ -19,7 +19,7 @@ import org.w3c.notifications.*
 import org.w3c.performance.*
 import org.w3c.workers.*
 
-native public trait XMLHttpRequestEventTarget : EventTarget {
+native public interface XMLHttpRequestEventTarget : EventTarget {
     var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -43,7 +43,7 @@ native public trait XMLHttpRequestEventTarget : EventTarget {
         set(value) = noImpl
 }
 
-native public trait XMLHttpRequestUpload : XMLHttpRequestEventTarget {
+native public interface XMLHttpRequestUpload : XMLHttpRequestEventTarget {
 }
 
 native public open class XMLHttpRequest : XMLHttpRequestEventTarget {

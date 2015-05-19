@@ -101,7 +101,7 @@ native public open class Event(type: String, eventInitDict: EventInit = noImpl) 
     }
 }
 
-native public trait EventTarget {
+native public interface EventTarget {
     fun addEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
     fun addEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
     fun removeEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
@@ -109,7 +109,7 @@ native public trait EventTarget {
     fun dispatchEvent(event: Event): Boolean = noImpl
 }
 
-native public trait EventListener {
+native public interface EventListener {
     fun handleEvent(event: Event): Unit = noImpl
 }
 

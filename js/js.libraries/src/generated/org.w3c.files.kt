@@ -51,7 +51,7 @@ native public open class FilePropertyBag {
     var lastModified: Long
 }
 
-native public trait FileList {
+native public interface FileList {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -105,6 +105,6 @@ native public open class FileReaderSync {
     fun readAsDataURL(blob: Blob): String = noImpl
 }
 
-native public trait URL {
+native public interface URL {
 }
 

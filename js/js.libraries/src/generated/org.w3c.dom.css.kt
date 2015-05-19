@@ -19,7 +19,7 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public trait MediaList {
+native public interface MediaList {
     var mediaText: String
         get() = noImpl
         set(value) = noImpl
@@ -32,7 +32,7 @@ native public trait MediaList {
     fun deleteMedium(medium: String): Unit = noImpl
 }
 
-native public trait StyleSheet {
+native public interface StyleSheet {
     var type: String
         get() = noImpl
         set(value) = noImpl
@@ -56,7 +56,7 @@ native public trait StyleSheet {
         set(value) = noImpl
 }
 
-native public trait CSSStyleSheet : StyleSheet {
+native public interface CSSStyleSheet : StyleSheet {
     var ownerRule: CSSRule?
         get() = noImpl
         set(value) = noImpl
@@ -67,7 +67,7 @@ native public trait CSSStyleSheet : StyleSheet {
     fun deleteRule(index: Int): Unit = noImpl
 }
 
-native public trait StyleSheetList {
+native public interface StyleSheetList {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -75,7 +75,7 @@ native public trait StyleSheetList {
     nativeGetter fun get(index: Int): StyleSheet? = noImpl
 }
 
-native public trait CSSRuleList {
+native public interface CSSRuleList {
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -83,7 +83,7 @@ native public trait CSSRuleList {
     nativeGetter fun get(index: Int): CSSRule? = noImpl
 }
 
-native public trait CSSRule {
+native public interface CSSRule {
     var type: Short
         get() = noImpl
         set(value) = noImpl
@@ -109,7 +109,7 @@ native public trait CSSRule {
     }
 }
 
-native public trait CSSStyleRule : CSSRule {
+native public interface CSSStyleRule : CSSRule {
     var selectorText: String
         get() = noImpl
         set(value) = noImpl
@@ -118,7 +118,7 @@ native public trait CSSStyleRule : CSSRule {
         set(value) = noImpl
 }
 
-native public trait CSSImportRule : CSSRule {
+native public interface CSSImportRule : CSSRule {
     var href: String
         get() = noImpl
         set(value) = noImpl
@@ -130,7 +130,7 @@ native public trait CSSImportRule : CSSRule {
         set(value) = noImpl
 }
 
-native public trait CSSGroupingRule : CSSRule {
+native public interface CSSGroupingRule : CSSRule {
     var cssRules: CSSRuleList
         get() = noImpl
         set(value) = noImpl
@@ -138,13 +138,13 @@ native public trait CSSGroupingRule : CSSRule {
     fun deleteRule(index: Int): Unit = noImpl
 }
 
-native public trait CSSMediaRule : CSSGroupingRule {
+native public interface CSSMediaRule : CSSGroupingRule {
     var media: MediaList
         get() = noImpl
         set(value) = noImpl
 }
 
-native public trait CSSPageRule : CSSGroupingRule {
+native public interface CSSPageRule : CSSGroupingRule {
     var selectorText: String
         get() = noImpl
         set(value) = noImpl
@@ -153,7 +153,7 @@ native public trait CSSPageRule : CSSGroupingRule {
         set(value) = noImpl
 }
 
-native public trait CSSMarginRule : CSSRule {
+native public interface CSSMarginRule : CSSRule {
     var name: String
         get() = noImpl
         set(value) = noImpl
@@ -162,7 +162,7 @@ native public trait CSSMarginRule : CSSRule {
         set(value) = noImpl
 }
 
-native public trait CSSNamespaceRule : CSSRule {
+native public interface CSSNamespaceRule : CSSRule {
     var namespaceURI: String
         get() = noImpl
         set(value) = noImpl
@@ -171,7 +171,7 @@ native public trait CSSNamespaceRule : CSSRule {
         set(value) = noImpl
 }
 
-native public trait CSSStyleDeclaration {
+native public interface CSSStyleDeclaration {
     var alignContent: String
         get() = noImpl
         set(value) = noImpl
@@ -869,7 +869,7 @@ native public trait CSSStyleDeclaration {
     fun removeProperty(property: String): String = noImpl
 }
 
-native public trait PseudoElement {
+native public interface PseudoElement {
     var cascadedStyle: CSSStyleDeclaration
         get() = noImpl
         set(value) = noImpl
@@ -884,6 +884,6 @@ native public trait PseudoElement {
         set(value) = noImpl
 }
 
-native public trait CSS {
+native public interface CSS {
 }
 
