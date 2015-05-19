@@ -97,18 +97,18 @@
     </action>
 
     <action id="ExtractFunction" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionAction"
-            text="Extract _Function..." use-shortcut-of="ExtractMethod">
+            text="_Function..." use-shortcut-of="ExtractMethod">
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractMethod"/>
     </action>
 
     <action id="IntroduceProperty" class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.IntroducePropertyAction"
-            text="Introduce _Property..." use-shortcut-of="IntroduceField">
+            text="P_roperty..." use-shortcut-of="IntroduceField">
         <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceField"/>
     </action>
 
     <action id="IntroduceLambdaParameter"
             class="org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.IntroduceLambdaParameterAction"
-            text="Introduce Lambda Parameter...">
+            text="La_mbda Parameter...">
         <keyboard-shortcut keymap="$default" first-keystroke="control shift P"/>
         <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="IntroduceParameter"/>
     </action>
@@ -138,7 +138,7 @@
     </action>
 
     <action id="ExtractFunctionToScope" class="org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ExtractFunctionToScopeAction"
-            text="Extract Function to _Scope...">
+            text="Function to _Scope...">
       <keyboard-shortcut keymap="$default" first-keystroke="control alt shift M"/>
       <add-to-group group-id="IntroduceActionsGroup" anchor="after" relative-to-action="ExtractFunction"/>
     </action>
