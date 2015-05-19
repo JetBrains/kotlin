@@ -114,10 +114,6 @@ public abstract class ElementResolver protected constructor(
     }
 
     protected fun performElementAdditionalResolve(resolveElement: JetElement, contextElement: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
-        // All additional resolve should be done to separate trace
-        val trace = resolveSession.getStorageManager().createSafeTrace(
-                DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", resolveElement))
-
         val file = resolveElement.getContainingJetFile()
 
         val statementFilter = if (bodyResolveMode != BodyResolveMode.FULL && resolveElement is JetDeclaration)
@@ -125,37 +121,38 @@ public abstract class ElementResolver protected constructor(
         else
             StatementFilter.NONE
 
-        when (resolveElement) {
-            is JetNamedFunction -> functionAdditionalResolve(resolveSession, resolveElement, trace, file, statementFilter)
+        val trace : BindingTrace = when (resolveElement) {
+            is JetNamedFunction -> functionAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
 
-            is JetClassInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, trace, file, statementFilter)
+            is JetClassInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
 
-            is JetSecondaryConstructor -> secondaryConstructorAdditionalResolve(resolveSession, resolveElement, trace, file, statementFilter)
+            is JetSecondaryConstructor -> secondaryConstructorAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
 
-            is JetProperty -> propertyAdditionalResolve(resolveSession, resolveElement, trace, file, statementFilter)
+            is JetProperty -> propertyAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
 
-            is JetDelegationSpecifierList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement.getParent() as JetClassOrObject, trace, file)
+            is JetDelegationSpecifierList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as JetClassOrObject, file)
 
-            is JetInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement.getParent() as JetEnumEntry, trace, file)
+            is JetInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as JetEnumEntry, file)
 
             is JetImportDirective -> {
                 val scope = resolveSession.getScopeProvider().getFileScope(resolveElement.getContainingJetFile())
                 scope.forceResolveAllImports()
+                resolveSession.getTrace()
             }
 
             is JetAnnotationEntry -> annotationAdditionalResolve(resolveSession, resolveElement)
 
-            is JetClass -> constructorAdditionalResolve(resolveSession, resolveElement, trace, file, statementFilter)
+            is JetClass -> constructorAdditionalResolve(resolveSession, resolveElement, file, statementFilter)
 
             is JetTypeParameter -> typeParameterAdditionalResolve(resolveSession, resolveElement)
 
             is JetTypeConstraint -> typeConstraintAdditionalResolve(resolveSession, resolveElement)
 
-            is JetCodeFragment -> codeFragmentAdditionalResolve(resolveSession, resolveElement, trace, bodyResolveMode)
+            is JetCodeFragment -> codeFragmentAdditionalResolve(resolveSession, resolveElement, bodyResolveMode)
 
             else -> {
                 if (resolveElement.getParentOfType<JetPackageDirective>(true) != null) {
-                    packageRefAdditionalResolve(resolveSession, trace, resolveElement)
+                    packageRefAdditionalResolve(resolveSession, resolveElement)
                 }
                 else {
                     error("Invalid type of the topmost parent: $resolveElement\n${resolveElement.getElementTextWithContext()}")
@@ -168,7 +165,9 @@ public abstract class ElementResolver protected constructor(
         return trace.getBindingContext()
     }
 
-    private fun packageRefAdditionalResolve(resolveSession: ResolveSession, trace: BindingTrace, jetElement: JetElement) {
+    private fun packageRefAdditionalResolve(resolveSession: ResolveSession, jetElement: JetElement): BindingTrace {
+        val trace = createDelegatingTrace(jetElement)
+
         if (jetElement is JetSimpleNameExpression) {
             val header = jetElement.getParentOfType<JetPackageDirective>(true)!!
 
@@ -187,19 +186,25 @@ public abstract class ElementResolver protected constructor(
                 }
             }
         }
+
+        return trace
     }
 
-    private fun typeConstraintAdditionalResolve(analyzer: KotlinCodeAnalyzer, jetTypeConstraint: JetTypeConstraint) {
+    private fun typeConstraintAdditionalResolve(analyzer: KotlinCodeAnalyzer, jetTypeConstraint: JetTypeConstraint): BindingTrace {
         val declaration = jetTypeConstraint.getParentOfType<JetDeclaration>(true)!!
         val descriptor = analyzer.resolveToDescriptor(declaration) as ClassDescriptor
 
         for (parameterDescriptor in descriptor.getTypeConstructor().getParameters()) {
             ForceResolveUtil.forceResolveAllContents<TypeParameterDescriptor>(parameterDescriptor)
         }
+
+        return resolveSession.getTrace()
     }
 
-    private fun codeFragmentAdditionalResolve(resolveSession: ResolveSession, codeFragment: JetCodeFragment, trace: BindingTrace, bodyResolveMode: BodyResolveMode) {
-        val codeFragmentExpression = codeFragment.getContentElement() as? JetExpression ?: return
+    private fun codeFragmentAdditionalResolve(resolveSession: ResolveSession, codeFragment: JetCodeFragment, bodyResolveMode: BodyResolveMode): BindingTrace {
+        val trace = createDelegatingTrace(codeFragment)
+
+        val codeFragmentExpression = codeFragment.getContentElement() as? JetExpression ?: return trace
         val contextElement = codeFragment.correctedContext
 
         val scopeForContextElement: JetScope?
@@ -222,10 +227,10 @@ public abstract class ElementResolver protected constructor(
                 dataFlowInfoForContextElement = contextForElement.getDataFlowInfo(contextElement)
             }
 
-            else -> return
+            else -> return trace
         }
 
-        if (scopeForContextElement == null) return
+        if (scopeForContextElement == null) return trace
 
         val codeFragmentScope = resolveSession.getScopeProvider().getFileScope(codeFragment)
         val chainedScope = ChainedScope(scopeForContextElement.getContainingDeclaration(),
@@ -233,6 +238,8 @@ public abstract class ElementResolver protected constructor(
 
         codeFragmentExpression.computeTypeInContext(chainedScope, trace, dataFlowInfoForContextElement,
                                                     TypeUtils.NO_EXPECTED_TYPE, resolveSession.getModuleDescriptor())
+
+        return trace
     }
 
     //TODO: this code should be moved into debugger which should set correct context for its code fragment
@@ -245,7 +252,7 @@ public abstract class ElementResolver protected constructor(
             return context
         }
 
-    private fun annotationAdditionalResolve(resolveSession: ResolveSession, jetAnnotationEntry: JetAnnotationEntry) {
+    private fun annotationAdditionalResolve(resolveSession: ResolveSession, jetAnnotationEntry: JetAnnotationEntry): BindingTrace {
         val modifierList = jetAnnotationEntry.getParentOfType<JetModifierList>(true)
         val declaration = modifierList?.getParentOfType<JetDeclaration>(true)
         if (declaration != null) {
@@ -260,6 +267,8 @@ public abstract class ElementResolver protected constructor(
                 doResolveAnnotations(resolveSession.getDanglingAnnotations(modifierList.getContainingJetFile()))
             }
         }
+
+        return resolveSession.getTrace()
     }
 
     private fun doResolveAnnotations(annotations: Annotations) {
@@ -282,12 +291,15 @@ public abstract class ElementResolver protected constructor(
         return descriptor.getAnnotations()
     }
 
-    private fun typeParameterAdditionalResolve(analyzer: KotlinCodeAnalyzer, typeParameter: JetTypeParameter) {
+    private fun typeParameterAdditionalResolve(analyzer: KotlinCodeAnalyzer, typeParameter: JetTypeParameter): BindingTrace {
         val descriptor = analyzer.resolveToDescriptor(typeParameter)
         ForceResolveUtil.forceResolveAllContents(descriptor)
+
+        return resolveSession.getTrace()
     }
 
-    private fun delegationSpecifierAdditionalResolve(resolveSession: ResolveSession, classOrObject: JetClassOrObject, trace: BindingTrace, file: JetFile) {
+    private fun delegationSpecifierAdditionalResolve(resolveSession: ResolveSession, jetElement: JetElement, classOrObject: JetClassOrObject, file: JetFile): BindingTrace {
+        val trace = createDelegatingTrace(jetElement)
         val descriptor = resolveSession.resolveToDescriptor(classOrObject) as LazyClassDescriptor
 
         // Activate resolving of supertypes
@@ -300,9 +312,12 @@ public abstract class ElementResolver protected constructor(
                                                     descriptor.getUnsubstitutedPrimaryConstructor(),
                                                     descriptor.getScopeForClassHeaderResolution(),
                                                     descriptor.getScopeForMemberDeclarationResolution())
+
+        return trace
     }
 
-    private fun propertyAdditionalResolve(resolveSession: ResolveSession, jetProperty: JetProperty, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
+    private fun propertyAdditionalResolve(resolveSession: ResolveSession, jetProperty: JetProperty, file: JetFile, statementFilter: StatementFilter): BindingTrace {
+        val trace = createDelegatingTrace(jetProperty)
         val propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
@@ -329,27 +344,38 @@ public abstract class ElementResolver protected constructor(
         for (accessor in jetProperty.getAccessors()) {
             JetFlowInformationProvider(accessor, trace).checkDeclaration()
         }
+
+        return trace
     }
 
-    private fun functionAdditionalResolve(resolveSession: ResolveSession, namedFunction: JetNamedFunction, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
+    private fun functionAdditionalResolve(resolveSession: ResolveSession, namedFunction: JetNamedFunction, file: JetFile, statementFilter: StatementFilter): BindingTrace {
+        val trace = createDelegatingTrace(namedFunction)
+
         val scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(namedFunction)
         val functionDescriptor = resolveSession.resolveToDescriptor(namedFunction) as FunctionDescriptor
         ForceResolveUtil.forceResolveAllContents(functionDescriptor)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveFunctionBody(DataFlowInfo.EMPTY, trace, namedFunction, functionDescriptor, scope)
+
+        return trace
     }
 
-    private fun secondaryConstructorAdditionalResolve(resolveSession: ResolveSession, constructor: JetSecondaryConstructor, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
+    private fun secondaryConstructorAdditionalResolve(resolveSession: ResolveSession, constructor: JetSecondaryConstructor, file: JetFile, statementFilter: StatementFilter): BindingTrace {
+        val trace = createDelegatingTrace(constructor)
+
         val scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(constructor)
         val constructorDescriptor = resolveSession.resolveToDescriptor(constructor) as ConstructorDescriptor
         ForceResolveUtil.forceResolveAllContents(constructorDescriptor)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveSecondaryConstructorBody(DataFlowInfo.EMPTY, trace, constructor, constructorDescriptor, scope)
+
+        return trace
     }
 
-    private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: JetClass, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
+    private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: JetClass, file: JetFile, statementFilter: StatementFilter): BindingTrace {
+        val trace = createDelegatingTrace(klass)
         val scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(klass)
 
         val classDescriptor = resolveSession.resolveToDescriptor(klass) as ClassDescriptor
@@ -358,14 +384,20 @@ public abstract class ElementResolver protected constructor(
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveConstructorParameterDefaultValuesAndAnnotations(DataFlowInfo.EMPTY, trace, klass, constructorDescriptor, scope)
+
+        return trace
     }
 
-    private fun initializerAdditionalResolve(resolveSession: ResolveSession, classInitializer: JetClassInitializer, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter) {
+    private fun initializerAdditionalResolve(resolveSession: ResolveSession, classInitializer: JetClassInitializer, file: JetFile, statementFilter: StatementFilter): BindingTrace {
+        val trace = createDelegatingTrace(classInitializer)
+
         val classOrObject = classInitializer.getParentOfType<JetClassOrObject>(true)!!
         val classOrObjectDescriptor = resolveSession.resolveToDescriptor(classOrObject) as LazyClassDescriptor
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, classInitializer, classOrObjectDescriptor)
+    
+        return trace
     }
 
     private fun createBodyResolver(resolveSession: ResolveSession, trace: BindingTrace, file: JetFile, statementFilter: StatementFilter): BodyResolver {
@@ -374,6 +406,12 @@ public abstract class ElementResolver protected constructor(
                 globalContext.withProject(file.getProject()).withModule(resolveSession.getModuleDescriptor()),
                 trace, getAdditionalCheckerProvider(file), statementFilter
         ).get<BodyResolver>()
+    }
+
+    // All additional resolve should be done to separate trace
+    private fun createDelegatingTrace(resolveElement: JetElement): BindingTrace {
+        return resolveSession.getStorageManager().createSafeTrace(
+                DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve element", resolveElement))
     }
 
     private fun getExpressionResolutionScope(resolveSession: ResolveSession, expression: JetExpression): JetScope {
@@ -386,8 +424,7 @@ public abstract class ElementResolver protected constructor(
     }
 
     private fun getExpressionMemberScope(resolveSession: ResolveSession, expression: JetExpression): JetScope? {
-        val trace = resolveSession.getStorageManager().createSafeTrace(
-                DelegatingBindingTrace(resolveSession.getBindingContext(), "trace to resolve a member scope of expression", expression))
+        val trace = createDelegatingTrace(expression)
 
         if (BindingContextUtils.isExpressionWithValidReference(expression, resolveSession.getBindingContext())) {
             val qualifiedExpressionResolver = resolveSession.getQualifiedExpressionResolver()
