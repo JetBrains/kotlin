@@ -2932,6 +2932,36 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("complexExpressionUsedTwice.kt")
+        public void testComplexExpressionUsedTwice() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionUsedTwice.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionUsedTwice2.kt")
+        public void testComplexExpressionUsedTwice2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionUsedTwice2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionUsedTwice3Runtime.kt")
+        public void testComplexExpressionUsedTwice3Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionUsedTwice3Runtime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionUsedTwice4.kt")
+        public void testComplexExpressionUsedTwice4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionUsedTwice4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionUsedTwice5Runtime.kt")
+        public void testComplexExpressionUsedTwice5Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionUsedTwice5Runtime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("doNotShortenUserReferences.kt")
         public void testDoNotShortenUserReferences() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/doNotShortenUserReferences.kt");
@@ -3025,6 +3055,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleExpressionUsedTwice.kt")
+        public void testSimpleExpressionUsedTwice() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/simpleExpressionUsedTwice.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stringLiteralUsedTwice.kt")
+        public void testStringLiteralUsedTwice() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/stringLiteralUsedTwice.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stringTemplateUsedTwice.kt")
+        public void testStringTemplateUsedTwice() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/stringTemplateUsedTwice.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("stringTemplateUsedTwice2.kt")
+        public void testStringTemplateUsedTwice2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/stringTemplateUsedTwice2.kt");
             doTest(fileName);
         }
 

@@ -23,7 +23,6 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
-import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -36,9 +35,11 @@ import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -46,10 +47,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.replaced
-import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
@@ -57,6 +58,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -132,13 +135,20 @@ public class DeprecatedSymbolUsageFix(
             return arguments.getArguments().firstOrNull()?.getArgumentExpression() //TODO: what if multiple?
         }
 
-        //TODO: check if complex expressions are used twice
-        //TODO: check for dropping complex expressions
+        val introduceValuesForParameters = ArrayList<Pair<ValueParameterDescriptor, JetExpression>>()
+
+        //TODO: check for dropping expressions with potential side effects
         for (parameter in descriptor.getValueParameters()) {
             val argument = argumentForParameter(parameter) ?: continue
             argument.putCopyableUserData(FROM_PARAMETER_KEY, parameter)
             argument.putCopyableUserData(USER_CODE_KEY, Unit)
-            parameterUsages[parameter.getOriginal()]!!.forEach { it.replace(argument) }
+
+            val usages = parameterUsages[parameter.getOriginal()]!!
+            usages.forEach { it.replace(argument) }
+
+            if (usages.size() > 1 && argument.shouldIntroduceVariableIfUsedTwice()) {
+                introduceValuesForParameters.add(parameter to argument)
+            }
         }
 
         if (qualifiedExpression is JetSafeQualifiedExpression) {
@@ -156,13 +166,26 @@ public class DeprecatedSymbolUsageFix(
 
                 if (expressionToReplace.isUsedAsExpression(bindingContext)) {
                     val thisReplaced = expression.collectExpressionsWithData(FROM_THIS_KEY, Unit)
-                    expression = expression.introduceValue(explicitReceiver!!, thisReplaced, safeCall = true)
+                    expression = expression.introduceValue(explicitReceiver!!, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
                 }
                 else {
                     expression = psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", explicitReceiver!!, expression)
                 }
             }
             processSafeCall()
+        }
+
+        if (explicitReceiver != null && explicitReceiver.shouldIntroduceVariableIfUsedTwice()) {
+            val thisReplaced = expression.collectExpressionsWithData(FROM_THIS_KEY, Unit)
+            if (thisReplaced.size() > 1) {
+                expression = expression.introduceValue(explicitReceiver, expressionToReplace, bindingContext, thisReplaced)
+            }
+        }
+
+        for ((parameter, value) in introduceValuesForParameters) {
+            val usagesReplaced = expression.collectExpressionsWithData(FROM_PARAMETER_KEY, parameter)
+            assert(usagesReplaced.size() > 1)
+            expression = expression.introduceValue(value, expressionToReplace, bindingContext, usagesReplaced, nameSuggestion = parameter.getName().asString())
         }
 
         var result = expressionToReplace.replaced(expression)
@@ -175,12 +198,12 @@ public class DeprecatedSymbolUsageFix(
             ImportInsertHelper.getInstance(project).importDescriptor(file, descriptorToImport)
         }
 
-        val shortenFilter = { it: PsiElement ->
-            if (it.getCopyableUserData(USER_CODE_KEY) != null) {
+        val shortenFilter = { element: PsiElement ->
+            if (element.getCopyableUserData(USER_CODE_KEY) != null) {
                 ShortenReferences.FilterResult.SKIP
             }
             else {
-                val thisReceiver = (it as? JetQualifiedExpression)?.getReceiverExpression() as? JetThisExpression
+                val thisReceiver = (element as? JetQualifiedExpression)?.getReceiverExpression() as? JetThisExpression
                 if (thisReceiver != null && thisReceiver.getCopyableUserData(USER_CODE_KEY) != null) // don't remove explicit 'this' coming from user's code
                     ShortenReferences.FilterResult.GO_INSIDE
                 else
@@ -324,7 +347,14 @@ public class DeprecatedSymbolUsageFix(
         }
     }
 
-    private fun JetExpression.introduceValue(value: JetExpression, usages: Collection<JetExpression>, safeCall: Boolean): JetExpression {
+    private fun JetExpression.introduceValue(
+            value: JetExpression,
+            insertDeclarationsBefore: JetExpression,
+            bindingContext: BindingContext,
+            usages: Collection<JetExpression>,
+            nameSuggestion: String? = null,
+            safeCall: Boolean = false
+    ): JetExpression {
         assert(usages.all { isAncestor(it, strict = true) })
 
         val psiFactory = JetPsiFactory(this)
@@ -338,19 +368,62 @@ public class DeprecatedSymbolUsageFix(
             }
         }
 
-        val dot = if (safeCall) "?." else "."
+        fun suggestName(validator: JetNameValidator): String {
+            return if (nameSuggestion != null)
+                validator.validateName(nameSuggestion)
+            else
+                JetNameSuggester.suggestNamesForExpression(value, validator, "t").first()
+        }
 
-        fun isNameUsed(name: String) = collectNameUsages(name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
+        // checks that name is used (without receiver) inside this expression but not inside usages that will be replaced
+        fun isNameUsed(name: String) = collectNameUsages(this, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
+
+        if (!safeCall) {
+            val block = insertDeclarationsBefore.getParent() as? JetBlockExpression
+            if (block != null) {
+                val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, insertDeclarationsBefore]
+
+                val valueType = bindingContext.getType(value)
+                var explicitType: JetType? = null
+                if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
+                    val valueTypeWithoutExpectedType = value.analyzeInContext(
+                            resolutionScope,
+                            dataFlowInfo = bindingContext.getDataFlowInfo(insertDeclarationsBefore)
+                    ).getType(value)
+                    if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
+                        explicitType = valueType
+                    }
+                }
+
+                val name = suggestName(object : JetNameValidator() {
+                    override fun validateInner(name: String): Boolean {
+                        return resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
+                    }
+                })
+
+                var declaration = psiFactory.createDeclaration<JetVariableDeclaration>("val ${nameInCode(name)} = " + value.getText())
+                declaration = block.addBefore(declaration, insertDeclarationsBefore) as JetVariableDeclaration
+                block.addBefore(psiFactory.createNewLine(), insertDeclarationsBefore)
+
+                if (explicitType != null) {
+                    declaration.setType(explicitType)
+                }
+
+                replaceUsages(name)
+                return this
+            }
+        }
+
+        val dot = if (safeCall) "?." else "."
 
         if (!isNameUsed("it")) {
             replaceUsages("it")
             return psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, this)
         }
         else {
-            val nameValidator = object : JetNameValidator() {
+            val name = suggestName(object : JetNameValidator() {
                 override fun validateInner(name: String) = !isNameUsed(name)
-            }
-            val name = JetNameSuggester.suggestNamesForExpression(value, nameValidator, "t").first()
+            })
             replaceUsages(name)
             return psiFactory.createExpressionByPattern("$0${dot}let { ${nameInCode(name)} -> $1 }", value, this)
         }
@@ -391,9 +464,9 @@ public class DeprecatedSymbolUsageFix(
         return result
     }
 
-    private fun JetExpression.collectNameUsages(name: String): ArrayList<JetSimpleNameExpression> {
+    private fun collectNameUsages(scope: JetExpression, name: String): ArrayList<JetSimpleNameExpression> {
         val result = ArrayList<JetSimpleNameExpression>()
-        this.accept(object : JetVisitorVoid(){
+        scope.accept(object : JetVisitorVoid(){
             override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
                 if (expression.getReceiverExpression() == null && expression.getReferencedName() == name) {
                     result.add(expression)
@@ -405,6 +478,19 @@ public class DeprecatedSymbolUsageFix(
             }
         })
         return result
+    }
+
+    private fun JetExpression?.shouldIntroduceVariableIfUsedTwice(): Boolean {
+        return when (this) {
+            is JetSimpleNameExpression -> false
+            is JetQualifiedExpression -> getReceiverExpression().shouldIntroduceVariableIfUsedTwice() || getSelectorExpression().shouldIntroduceVariableIfUsedTwice()
+            is JetUnaryExpression -> getOperationToken() in setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) || getBaseExpression().shouldIntroduceVariableIfUsedTwice()
+            is JetStringTemplateExpression -> getEntries().any { it is JetStringTemplateEntryWithExpression }
+            is JetThisExpression, is JetSuperExpression -> false
+            is JetParenthesizedExpression -> getExpression().shouldIntroduceVariableIfUsedTwice()
+            is JetBinaryExpression, is JetIfExpression -> true // TODO: discuss it
+            else -> true // what else it can be?
+        }
     }
 
     companion object : JetSingleIntentionActionFactory() {
