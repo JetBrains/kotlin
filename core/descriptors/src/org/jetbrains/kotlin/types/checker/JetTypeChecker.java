@@ -28,6 +28,13 @@ public class JetTypeChecker {
 
     public static final JetTypeChecker DEFAULT = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()));
 
+    public static final JetTypeChecker ERROR_TYPES_ARE_EQUAL_TO_ANYTHING = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl() {
+        @Override
+        public boolean assertEqualTypes(@NotNull JetType a, @NotNull JetType b, @NotNull TypeCheckingProcedure typeCheckingProcedure) {
+            return a.isError() || b.isError() || super.assertEqualTypes(a, b, typeCheckingProcedure);
+        }
+    }));
+
     public static final JetTypeChecker FLEXIBLE_UNEQUAL_TO_INFLEXIBLE = new JetTypeChecker(new TypeCheckingProcedure(new TypeCheckerProcedureCallbacksImpl()) {
         @Override
         protected boolean heterogeneousEquivalence(JetType inflexibleType, JetType flexibleType) {

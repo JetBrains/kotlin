@@ -79,7 +79,9 @@ fun Collection<JetType>.singleBestRepresentative(): JetType? {
         candidate ->
         this.all {
             other ->
-            candidate == other || JetTypeChecker.DEFAULT.equalTypes(candidate, other)
+            // We consider error types equal to anything here, so that intersections like
+            // {Array<String>, Array<[ERROR]>} work correctly
+            candidate == other || JetTypeChecker.ERROR_TYPES_ARE_EQUAL_TO_ANYTHING.equalTypes(candidate, other)
         }
     }
 }

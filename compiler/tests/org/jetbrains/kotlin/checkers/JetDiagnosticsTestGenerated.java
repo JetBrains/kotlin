@@ -9372,6 +9372,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/recovery"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("emptyTypeArgs.kt")
+            public void testEmptyTypeArgs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/recovery/emptyTypeArgs.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("namelessInJava.kt")
             public void testNamelessInJava() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/recovery/namelessInJava.kt");
