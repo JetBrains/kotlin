@@ -1,6 +1,6 @@
 class Test {
-    [ClassObjectAnnotation]
-    [NestedAnnotation]
+    @ClassObjectAnnotation
+    @NestedAnnotation
     companion object {
         annotation class ClassObjectAnnotation
     }

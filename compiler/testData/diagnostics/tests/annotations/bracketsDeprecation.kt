@@ -23,9 +23,19 @@ fun bar2(): Array<Q> = null!!
 
     fun x(): <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> String {
         <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> val x: <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> String = ""
+
+        val localVal = <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> object {}
+
         return ""
     }
+
+    <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> object O1 {}
+    <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> companion object O2 {
+
+    }
 }
+
+<!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> object O3 {}
 
 val y: Array<[<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>] String?> = arrayOfNulls(1)
 val block: ([<!DEBUG_INFO_MISSING_UNRESOLVED!>Ann<!>] x: <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> String) -> <!DEPRECATED_ANNOTATION_SYNTAX!>[Ann]<!> String = { "" }
