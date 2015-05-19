@@ -854,6 +854,10 @@ fun main(args: Array<String>) {
             model("inlineEvaluationOrder/cases")
         }
 
+        testClass(javaClass<AbstractInlineMultiModuleTest>()) {
+            model("inlineMultiModule/cases", extension = null, recursive=false)
+        }
+
         testClass(javaClass<AbstractLabelTest>()) {
             model("labels/cases")
         }

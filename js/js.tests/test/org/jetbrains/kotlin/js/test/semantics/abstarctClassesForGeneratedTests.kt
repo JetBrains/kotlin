@@ -46,4 +46,6 @@ public abstract class AbstractLabelTest : AbstractSingleFileTranslationWithDirec
 
 public abstract class AbstractMultiModuleTest : MultipleModulesTranslationTest("multiModule/")
 
+public abstract class AbstractInlineMultiModuleTest : MultipleModulesTranslationTest("inlineMultiModule/")
+
 public abstract class AbstractReservedWordTest : SingleFileTranslationTest("reservedWords/")
