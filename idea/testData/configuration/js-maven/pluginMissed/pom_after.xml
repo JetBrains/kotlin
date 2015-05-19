@@ -26,6 +26,16 @@
                             </sourceDirs>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>js-test</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-js</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs></sourceDirs>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
