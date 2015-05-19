@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.idea.maven.dom.MavenDomUtil;
 import org.jetbrains.idea.maven.dom.model.*;
 import org.jetbrains.idea.maven.project.MavenProjectsManager;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.idea.JetPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
@@ -188,7 +189,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
         for (ContentEntry contentEntry : ModuleRootManager.getInstance(module).getContentEntries()) {
             SourceFolder[] folders = contentEntry.getSourceFolders();
             for (SourceFolder sourceFolder : folders) {
-                if (isTest && sourceFolder.isTestSource() || !isTest && !sourceFolder.isTestSource()) {
+                if (isRelatedSourceRoot(isTest, sourceFolder)) {
                     VirtualFile sourceFolderFile = sourceFolder.getFile();
                     if (sourceFolderFile != null) {
                         String relativePath = VfsUtilCore.getRelativePath(sourceFolderFile, virtualFile.getParent(), '/');
@@ -198,6 +199,11 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
                 }
             }
         }
+    }
+
+    private static boolean isRelatedSourceRoot(boolean isTest, SourceFolder folder) {
+        return isTest && folder.getRootType() == JavaSourceRootType.TEST_SOURCE ||
+               (!isTest && folder.getRootType() == JavaSourceRootType.SOURCE);
     }
 
     @Nullable
