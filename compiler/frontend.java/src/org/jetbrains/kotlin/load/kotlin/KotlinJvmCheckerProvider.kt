@@ -25,7 +25,10 @@ import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider
+import org.jetbrains.kotlin.resolve.DeclarationChecker
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
@@ -95,11 +98,11 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
         val container = descriptor.getContainingDeclaration()
         val insideObject = container != null && DescriptorUtils.isNonCompanionObject(container)
         val insideCompanionObjectInClass =
-                container != null && DescriptorUtils.isCompanionObject(container) && DescriptorUtils.isClass(container.getContainingDeclaration())
-                container != null && DescriptorUtils.isCompanionObject(container) && DescriptorUtils.isClass(container.getContainingDeclaration())
+                container != null && DescriptorUtils.isCompanionObject(container) &&
+                container.getContainingDeclaration().let { DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) }
 
         if (!insideObject && !insideCompanionObjectInClass) {
-            diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(declaration));
+            diagnosticHolder.report(ErrorsJvm.PLATFORM_STATIC_NOT_IN_OBJECT.on(declaration))
         }
 
         val checkDeclaration = when(declaration) {
@@ -108,7 +111,7 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
         }
 
         if (insideObject && checkDeclaration.getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) == true) {
-            diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration));
+            diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration))
         }
     }
 }

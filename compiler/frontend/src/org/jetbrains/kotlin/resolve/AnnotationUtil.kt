@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.annotations
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public fun DeclarationDescriptor.hasInlineAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.inline")) != null
@@ -36,7 +35,7 @@ public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {
 }
 
 public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
-        isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClass(it) }
+        isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) }
 
 public fun CallableDescriptor.isPlatformStaticInCompanionObject(): Boolean =
         isPlatformStaticIn { DescriptorUtils.isCompanionObject(it) }
