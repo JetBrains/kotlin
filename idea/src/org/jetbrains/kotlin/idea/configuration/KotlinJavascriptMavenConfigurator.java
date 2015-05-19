@@ -27,6 +27,7 @@ public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     private static final String NAME = "js maven";
     private static final String STD_LIB_ID = "kotlin-js-library";
     private static final String JS_GOAL = "js";
+    private static final String JS_TEST_GOAL = "test-js";
     private static final String JS_EXECUTION_ID = "js";
     private static final String PRESENTABLE_TEXT = "JavaScript Maven";
 
@@ -42,18 +43,19 @@ public class KotlinJavascriptMavenConfigurator extends KotlinMavenConfigurator {
     @Override
     protected void createExecutions(VirtualFile virtualFile, MavenDomPlugin kotlinPlugin, Module module) {
         createExecution(virtualFile, kotlinPlugin, module, false);
+        createExecution(virtualFile, kotlinPlugin, module, true);
     }
 
     @NotNull
     @Override
     protected String getExecutionId(boolean isTest) {
-        return JS_EXECUTION_ID;
+        return JS_EXECUTION_ID + (isTest ? "-test" : "");
     }
 
     @NotNull
     @Override
     protected String getGoal(boolean isTest) {
-        return JS_GOAL;
+        return isTest ? JS_TEST_GOAL : JS_GOAL;
     }
 
     @NotNull
