@@ -3010,6 +3010,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("infixCall.kt")
+        public void testInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/infixCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("keepInfixCall.kt")
+        public void testKeepInfixCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepInfixCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("memberFunction.kt")
         public void testMemberFunction() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/memberFunction.kt");
@@ -3037,6 +3049,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("noReplacement.kt")
         public void testNoReplacement() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/noReplacement.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("operatorCall.kt")
+        public void testOperatorCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/operatorCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("operatorCall2.kt")
+        public void testOperatorCall2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/operatorCall2.kt");
             doTest(fileName);
         }
 

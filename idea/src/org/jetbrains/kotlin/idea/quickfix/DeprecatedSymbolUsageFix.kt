@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -97,13 +98,8 @@ public class DeprecatedSymbolUsageFix(
         val qualifiedExpression = callExpression.getParent() as? JetQualifiedExpression
         val expressionToReplace = qualifiedExpression ?: callExpression
 
-        val USER_CODE_KEY = Key<Unit>("USER_CODE")
-        val FROM_PARAMETER_KEY = Key<ValueParameterDescriptor>("FROM_PARAMETER")
-        val FROM_THIS_KEY = Key<Unit>("FROM_THIS")
-
-        var receiver = qualifiedExpression?.getReceiverExpression()
+        var receiver = element.getReceiverExpression()
         receiver?.putCopyableUserData(USER_CODE_KEY, Unit)
-        //TODO: infix and operator calls
 
         if (receiver == null) {
             val receiverValue = if (descriptor.isExtension) resolvedCall.getExtensionReceiver() else resolvedCall.getDispatchReceiver()
@@ -156,33 +152,16 @@ public class DeprecatedSymbolUsageFix(
         }
 
         if (qualifiedExpression is JetSafeQualifiedExpression) {
-            fun processSafeCall() {
-                val qualified = expression as? JetQualifiedExpression
-                if (qualified != null) {
-                    if (qualified.getReceiverExpression().getCopyableUserData(FROM_THIS_KEY) != null) {
-                        val selector = qualified.getSelectorExpression()
-                        if (selector != null) {
-                            expression = psiFactory.createExpressionByPattern("$0?.$1", receiver!!, selector)
-                            return
-                        }
-                    }
-                }
-
-                if (expressionToReplace.isUsedAsExpression(bindingContext)) {
-                    val thisReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
-                    expression = expression.introduceValue(receiver!!, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
-                }
-                else {
-                    expression = psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", receiver!!, expression)
-                }
-            }
-            processSafeCall()
+            expression = expression.wrapExpressionForSafeCall(expressionToReplace, receiver!!, bindingContext)
+        }
+        else if (callExpression is JetBinaryExpression && callExpression.getOperationToken() == JetTokens.IDENTIFIER) {
+            expression = expression.keepInfixFormIfPossible()
         }
 
         if (receiver != null && receiver.shouldIntroduceVariableIfUsedTwice()) {
             val thisReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
             if (thisReplaced.size() > 1) {
-                expression = expression.introduceValue(receiver!!, expressionToReplace, bindingContext, thisReplaced)
+                expression = expression.introduceValue(receiver, expressionToReplace, bindingContext, thisReplaced)
             }
         }
 
@@ -225,8 +204,46 @@ public class DeprecatedSymbolUsageFix(
             }
         })
 
-        val offset = ((result as? JetQualifiedExpression)?.getSelectorExpression() ?: result).getTextOffset()
+        val offset = (result.getCalleeExpressionIfAny() ?: result).getTextOffset()
         editor?.moveCaret(offset)
+    }
+
+    private fun JetExpression.wrapExpressionForSafeCall(
+            expressionToReplace: JetExpression,
+            receiver: JetExpression,
+            bindingContext: BindingContext
+    ): JetExpression {
+        val psiFactory = JetPsiFactory(this)
+        val qualified = this as? JetQualifiedExpression
+        if (qualified != null) {
+            if (qualified.getReceiverExpression().getCopyableUserData(FROM_THIS_KEY) != null) {
+                if (qualified is JetSafeQualifiedExpression) return this // already safe
+                val selector = qualified.getSelectorExpression()
+                if (selector != null) {
+                    return psiFactory.createExpressionByPattern("$0?.$1", receiver, selector)
+                }
+            }
+        }
+
+        if (expressionToReplace.isUsedAsExpression(bindingContext)) {
+            val thisReplaced = this.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
+            return this.introduceValue(receiver, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
+        }
+        else {
+            return psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", receiver, this)
+        }
+    }
+
+    private fun JetExpression.keepInfixFormIfPossible(): JetExpression {
+        if (this !is JetDotQualifiedExpression) return this
+        val receiver = getReceiverExpression()
+        if (receiver.getCopyableUserData(FROM_THIS_KEY) == null) return this
+        val call = getSelectorExpression() as? JetCallExpression ?: return this
+        val nameExpression = call.getCalleeExpression() as? JetSimpleNameExpression ?: return this
+        val argument = call.getValueArguments().singleOrNull() ?: return this
+        if (argument.getArgumentName() != null) return this
+        val argumentExpression = argument.getArgumentExpression() ?: return this
+        return JetPsiFactory(this).createExpressionByPattern("$0 ${nameExpression.getText()} $1", receiver, argumentExpression)
     }
 
     private fun JetExpression.introduceValue(
@@ -349,5 +366,9 @@ public class DeprecatedSymbolUsageFix(
             val imports = (argument?.getValue() as? List<CompileTimeConstant<String>>)?.map { it.getValue() } ?: emptyList()
             return ReplaceWith(pattern, *imports.toTypedArray())
         }
+
+        private val USER_CODE_KEY = Key<Unit>("USER_CODE")
+        private val FROM_PARAMETER_KEY = Key<ValueParameterDescriptor>("FROM_PARAMETER")
+        private val FROM_THIS_KEY = Key<Unit>("FROM_THIS")
     }
 }
