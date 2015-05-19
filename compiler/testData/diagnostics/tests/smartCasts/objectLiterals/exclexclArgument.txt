@@ -1,0 +1,12 @@
+package
+
+internal fun foo(): kotlin.Int
+
+internal abstract class Runnable {
+    public constructor Runnable(/*0*/ arg: kotlin.Int)
+    internal final val arg: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    internal abstract fun run(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

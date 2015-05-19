@@ -609,8 +609,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @Override
     public JetTypeInfo visitObjectLiteralExpression(@NotNull final JetObjectLiteralExpression expression, final ExpressionTypingContext context) {
         final JetType[] result = new JetType[1];
-        final TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace,
-                                                                                  "trace to resolve object literal expression", expression);
+        TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(context.trace,
+                                                                            "trace to resolve object literal expression", expression);
         ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor> handler = new ObservableBindingTrace.RecordHandler<PsiElement, ClassDescriptor>() {
 
             @Override
@@ -625,11 +625,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                                                      }
                                                                                  });
                     result[0] = defaultType;
-                    // noinspection ConstantConditions
-                    if (!context.trace.get(PROCESSED, expression)) {
-                        temporaryTrace.recordType(expression, defaultType);
-                        temporaryTrace.record(PROCESSED, expression);
-                    }
                 }
             }
         };
@@ -643,7 +638,25 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                                 components.additionalCheckerProvider,
                                                                 components.dynamicTypesSettings);
         temporaryTrace.commit();
-        return TypeInfoFactoryPackage.createCheckedTypeInfo(result[0], context, expression);
+        DataFlowInfo resultFlowInfo = context.dataFlowInfo;
+        for (JetDelegationSpecifier specifier: expression.getObjectDeclaration().getDelegationSpecifiers()) {
+            if (specifier instanceof JetDelegatorToSuperCall) {
+                JetDelegatorToSuperCall delegator = (JetDelegatorToSuperCall)specifier;
+                JetTypeInfo delegatorTypeInfo = context.trace.get(EXPRESSION_TYPE_INFO, delegator.getCalleeExpression());
+                if (delegatorTypeInfo != null) {
+                    resultFlowInfo = resultFlowInfo.and(delegatorTypeInfo.getDataFlowInfo());
+                }
+            }
+        }
+        // Breaks are not possible inside constructor arguments, so jumpPossible or jumpFlowInfo are not necessary here
+        JetTypeInfo resultTypeInfo = DataFlowUtils.checkType(TypeInfoFactoryPackage.createTypeInfo(result[0], resultFlowInfo),
+                                                             expression,
+                                                             context);
+        // We have to record it here,
+        // otherwise ExpressionTypingVisitorDispatcher records wrong information
+        context.trace.record(EXPRESSION_TYPE_INFO, expression, resultTypeInfo);
+        context.trace.record(PROCESSED, expression);
+        return resultTypeInfo;
     }
 
     @Nullable

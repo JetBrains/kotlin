@@ -11655,6 +11655,63 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ObjectLiterals extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInObjectLiterals() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/objectLiterals"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("assignment.kt")
+                public void testAssignment() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals/assignment.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("base.kt")
+                public void testBase() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals/base.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("captured.kt")
+                public void testCaptured() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals/captured.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("exclexcl.kt")
+                public void testExclexcl() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals/exclexcl.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("exclexclArgument.kt")
+                public void testExclexclArgument() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals/exclexclArgument.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("exclexclTwoArgument.kt")
+                public void testExclexclTwoArgument() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals/exclexclTwoArgument.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7110.kt")
+                public void testKt7110() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals/kt7110.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("receiver.kt")
+                public void testReceiver() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/objectLiterals/receiver.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/publicVals")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

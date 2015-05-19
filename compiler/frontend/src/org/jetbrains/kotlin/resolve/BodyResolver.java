@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
+import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 import org.jetbrains.kotlin.util.Box;
 import org.jetbrains.kotlin.util.ReenteringLazyValueComputationException;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -48,8 +49,7 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.CONSTRUCTOR_RESOLVED_DELEGATION_CALL;
-import static org.jetbrains.kotlin.resolve.BindingContext.DEFERRED_TYPE;
+import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
@@ -350,6 +350,10 @@ public class BodyResolver {
                             primaryConstructorDelegationCall[0] = null;
                         }
                     }
+                    // Recording type info for callee to use later in JetObjectLiteralExpression
+                    trace.record(PROCESSED, call.getCalleeExpression(), true);
+                    trace.record(EXPRESSION_TYPE_INFO, call.getCalleeExpression(),
+                                 TypeInfoFactoryPackage.noTypeInfo(results.getResultingCall().getDataFlowInfoForArguments().getResultInfo()));
                 }
                 else {
                     recordSupertype(typeReference, trace.getBindingContext().get(BindingContext.TYPE, typeReference));
