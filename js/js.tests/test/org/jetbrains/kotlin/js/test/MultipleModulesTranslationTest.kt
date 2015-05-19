@@ -82,8 +82,8 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
     }
 
     private fun readModuleDependencies(testDataDir: String): Map<String, List<String>> {
-        val dependenciesTxt = File(testDataDir, "dependencies.txt")
-        assert(dependenciesTxt.exists(), "moduleDependencies should not be null")
+        val dependenciesTxt = upsearchFile(testDataDir, "dependencies.txt")
+        assert(dependenciesTxt.isFile(), "moduleDependencies should not be null")
 
         val result = LinkedHashMap<String, List<String>>()
         for (line in dependenciesTxt.readLines()) {
@@ -96,5 +96,17 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         }
 
         return result
+    }
+
+    private fun upsearchFile(startingDir: String, name: String): File {
+        var dir: File? = File(startingDir)
+        var file = File(dir, name)
+
+        while (dir != null && dir.isDirectory() && !file.isFile()) {
+            dir = dir.parent
+            file = File(dir, name)
+        }
+
+        return file
     }
 }
