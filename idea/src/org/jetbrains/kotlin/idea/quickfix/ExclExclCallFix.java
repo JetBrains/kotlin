@@ -168,7 +168,7 @@ public class ExclExclCallFix implements IntentionAction {
             PsiElement parent = exclExclElement.getParent();
             if (parent != null) {
                 PsiElement operationParent = parent.getParent();
-                if (operationParent instanceof JetPostfixExpression) {
+                if (operationParent instanceof JetPostfixExpression && ((JetPostfixExpression) operationParent).getBaseExpression() != null) {
                     return (JetPostfixExpression) operationParent;
                 }
             }

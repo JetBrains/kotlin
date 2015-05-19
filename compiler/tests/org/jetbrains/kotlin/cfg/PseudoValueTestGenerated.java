@@ -146,6 +146,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/bugs/jumpToOuterScope.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("kt7761.kt")
+            public void testKt7761() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/bugs/kt7761.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/cfg/controlStructures")

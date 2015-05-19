@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class JetPostfixExpression extends JetUnaryExpression {
     public JetPostfixExpression(@NotNull ASTNode node) {
@@ -25,11 +27,9 @@ public class JetPostfixExpression extends JetUnaryExpression {
     }
 
     @Override
-    @NotNull
+    @Nullable @IfNotParsed
     public JetExpression getBaseExpression() {
-        JetExpression answer = findChildByClass(JetExpression.class);
-        assert answer != null;
-        return answer;
+        return PsiTreeUtil.getPrevSiblingOfType(getOperationReference(), JetExpression.class);
     }
 
     @Override

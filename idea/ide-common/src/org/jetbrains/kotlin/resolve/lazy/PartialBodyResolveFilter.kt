@@ -174,7 +174,7 @@ class PartialBodyResolveFilter(
                 expression.acceptChildren(this)
 
                 if (expression.getOperationToken() == JetTokens.EXCLEXCL) {
-                    addIfCanBeSmartCast(expression.getBaseExpression())
+                    addIfCanBeSmartCast(expression.getBaseExpression() ?: return)
                 }
             }
 

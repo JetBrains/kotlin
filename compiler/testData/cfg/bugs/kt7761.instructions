@@ -1,0 +1,81 @@
+== UnitIncDec ==
+class UnitIncDec() {
+    fun inc() : Unit {}
+    fun dec() : Unit {}
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== inc ==
+fun inc() : Unit {}
+---------------------
+L0:
+  1 <START>
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================
+== dec ==
+fun dec() : Unit {}
+---------------------
+L0:
+  1 <START>
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================
+== testUnitIncDec ==
+fun testUnitIncDec() {
+    var x = UnitIncDec()
+    x = <warning>x<error>++</error></warning>
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ var x = UnitIncDec() x = <warning>x<error>++</error></warning> })
+    v(var x = UnitIncDec())
+    mark(UnitIncDec())
+    call(UnitIncDec(), <init>) -> <v0>
+    w(x|<v0>)
+    mark(<warning>)
+    magic[UNRESOLVED_CALL](<warning>) -> <v1>
+    mark(<warning>x<)
+    call(<warning>x<, <ERROR FUNCTION>|<v1>) -> <v2>
+    magic[VALUE_CONSUMER](>++|!<v3>) -> <v4>
+    mark(<warning>x<error>++)
+    call(<warning>x<error>++, <ERROR FUNCTION>|<v2>) -> <v5>
+    mark(/error>)
+    magic[UNRESOLVED_CALL](/error>) -> <v6>
+    magic[VALUE_CONSUMER](/error>|<v6>) -> <v7>
+    mark(<warning>x<error>++</error>)
+    call(<warning>x<error>++</error>, <ERROR FUNCTION>|<v5>) -> <v8>
+    mark(/warning>)
+    magic[UNRESOLVED_CALL](/warning>) -> <v9>
+    magic[VALUE_CONSUMER](/warning>|<v9>) -> <v10>
+    mark(<warning>x<error>++</error></warning>)
+    call(<warning>x<error>++</error></warning>, <ERROR FUNCTION>|<v8>) -> <v11>
+    w(x|<v11>)
+L1:
+  1 <END>                                                                          NEXT:[<SINK>]
+error:
+    <ERROR>                                                                        PREV:[]
+sink:
+    <SINK>                                                                         PREV:[<ERROR>, <END>]
+=====================

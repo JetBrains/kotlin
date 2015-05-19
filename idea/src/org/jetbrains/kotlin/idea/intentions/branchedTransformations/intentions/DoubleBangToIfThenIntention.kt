@@ -37,11 +37,14 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
 public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression") {
     override fun applicabilityRange(element: JetPostfixExpression): TextRange? {
-        return if (element.getOperationToken() == JetTokens.EXCLEXCL)  element.getOperationReference().getTextRange() else null
+        return if (element.getOperationToken() == JetTokens.EXCLEXCL && element.getBaseExpression() != null)
+            element.getOperationReference().getTextRange()
+        else
+            null
     }
 
     override fun applyTo(element: JetPostfixExpression, editor: Editor) {
-        val base = JetPsiUtil.safeDeparenthesize(element.getBaseExpression())
+        val base = JetPsiUtil.safeDeparenthesize(element.getBaseExpression()!!)
         val expressionText = formatForUseInExceptionArgument(base.getText()!!)
 
         val defaultException = JetPsiFactory(element).createExpression("throw NullPointerException()")

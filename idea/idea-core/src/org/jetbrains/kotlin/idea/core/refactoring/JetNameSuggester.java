@@ -224,7 +224,12 @@ public class JetNameSuggester {
         return matcher.replaceAll("");
     }
     
-    private static void addNamesForExpression(final ArrayList<String> result, JetExpression expression, final JetNameValidator validator) {
+    private static void addNamesForExpression(
+            final ArrayList<String> result,
+            @Nullable JetExpression expression,
+            final JetNameValidator validator) {
+        if (expression == null) return;
+
         expression.accept(new JetVisitorVoid() {
             @Override
             public void visitQualifiedExpression(@NotNull JetQualifiedExpression expression) {

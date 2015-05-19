@@ -223,7 +223,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         when (expression) {
             is JetPostfixExpression ->
                     if (expression.getOperationToken() == JetTokens.EXCLEXCL) {
-                        val baseExpression = expression.getBaseExpression()
+                        val baseExpression = expression.getBaseExpression() ?: return
                         val baseExpressionType = c.trace.getType(baseExpression) ?: return
                         doIfNotNull(
                                 DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),

@@ -40,6 +40,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
         private fun isApplicablePostfix(element: JetPostfixExpression, caretOffset: Int): Boolean {
             val opRef = element.getOperationReference()
             if (!opRef.getTextRange().containsOffset(caretOffset)) return false
+            if (element.getBaseExpression() == null) return false
             return when (opRef.getReferencedNameElementType()) {
                 JetTokens.PLUSPLUS, JetTokens.MINUSMINUS -> true
                 else -> false
@@ -98,7 +99,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
 
         private fun convertPostFix(element: JetPostfixExpression): JetExpression {
             val op = element.getOperationReference().getReferencedNameElementType()
-            val base = element.getBaseExpression().getText()
+            val base = element.getBaseExpression()!!.getText()
 
             val call = when (op) {
                 JetTokens.PLUSPLUS -> "inc()"

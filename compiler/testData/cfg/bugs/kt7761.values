@@ -1,0 +1,36 @@
+== UnitIncDec ==
+class UnitIncDec() {
+    fun inc() : Unit {}
+    fun dec() : Unit {}
+}
+---------------------
+=====================
+== inc ==
+fun inc() : Unit {}
+---------------------
+=====================
+== dec ==
+fun dec() : Unit {}
+---------------------
+=====================
+== testUnitIncDec ==
+fun testUnitIncDec() {
+    var x = UnitIncDec()
+    x = <warning>x<error>++</error></warning>
+}
+---------------------
+                                                                     <v10>: *            NEW: magic[VALUE_CONSUMER](/warning>|<v9>) -> <v10>
+                                                                     <v4>: *             NEW: magic[VALUE_CONSUMER](>++|!<v3>) -> <v4>
+                                                                     <v7>: *             NEW: magic[VALUE_CONSUMER](/error>|<v6>) -> <v7>
+UnitIncDec()                                                         <v0>: UnitIncDec    NEW: call(UnitIncDec(), <init>) -> <v0>
+<warning>                                                            <v1>: *             NEW: magic[UNRESOLVED_CALL](<warning>) -> <v1>
+<warning>x<                                                          <v2>: *             NEW: call(<warning>x<, <ERROR FUNCTION>|<v1>) -> <v2>
+>++                                                                  !<v3>: *
+<warning>x<error>++                                                  <v5>: *             NEW: call(<warning>x<error>++, <ERROR FUNCTION>|<v2>) -> <v5>
+/error>                                                              <v6>: *             NEW: magic[UNRESOLVED_CALL](/error>) -> <v6>
+<warning>x<error>++</error>                                          <v8>: *             NEW: call(<warning>x<error>++</error>, <ERROR FUNCTION>|<v5>) -> <v8>
+/warning>                                                            <v9>: *             NEW: magic[UNRESOLVED_CALL](/warning>) -> <v9>
+<warning>x<error>++</error></warning>                                <v11>: UnitIncDec   NEW: call(<warning>x<error>++</error></warning>, <ERROR FUNCTION>|<v8>) -> <v11>
+x = <warning>x<error>++</error></warning>                            !<v12>: *
+{ var x = UnitIncDec() x = <warning>x<error>++</error></warning> }   !<v12>: *           COPY
+=====================
