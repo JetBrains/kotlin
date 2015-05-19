@@ -21,5 +21,6 @@ import org.jetbrains.kotlin.psi.JetPackageDirective
 
 public class PackageDirectoryMismatchInspection: IntentionBasedInspection<JetPackageDirective>(
         listOf(MoveFileToPackageMatchingDirectoryIntention(), ChangePackageToMatchDirectoryIntention()),
+        "Package directive doesn't match file location",
         javaClass()
 )

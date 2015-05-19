@@ -21,48 +21,61 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.JetElement
 
-public abstract class IntentionBasedInspection<T: JetElement>(
+public abstract class IntentionBasedInspection<T : JetElement>(
         protected val intentions: List<JetSelfTargetingRangeIntention<T>>,
+        protected val problemText: String?,
         protected val elementType: Class<T>
 ) : AbstractKotlinInspection() {
-    constructor(intention: JetSelfTargetingRangeIntention<T>): this(listOf(intention), intention.elementType)
+    constructor(intention: JetSelfTargetingRangeIntention<T>) : this(listOf(intention), null, intention.elementType)
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        return object: PsiElementVisitor() {
+        class IntentionBasedQuickFix(
+                val intention: JetSelfTargetingRangeIntention<T>,
+                val targetElement: T
+        ): LocalQuickFix {
+            private val text = intention.getText()
+
+            override fun getFamilyName() = getName()
+
+            override fun getName() = text
+
+            override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+                targetElement.getOrCreateEditor()?.let { editor ->
+                    editor.getCaretModel().moveToOffset(targetElement.getTextOffset())
+                    intention.applyTo(targetElement, editor)
+                }
+            }
+        }
+
+        return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 if (!elementType.isInstance(element) || element.getTextLength() == 0) return
 
-                [suppress("UNCHECKED_CAST")]
+                @suppress("UNCHECKED_CAST")
                 val targetElement = element as T
 
-                for (intention in intentions) {
-                    val range = intention.applicabilityRange(targetElement) ?: continue
-                    val elementRange = targetElement.getTextRange()
-                    assert(range in elementRange, "Wrong applicabilityRange() result for $intention - should be within element's range")
-                    val rangeInElement = range.shiftRight(-elementRange.getStartOffset())
-
-                    val fix = object: LocalQuickFix {
-                        private val text = intention.getText()
-
-                        override fun getFamilyName() = getName()
-
-                        override fun getName() = text
-
-                        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-                            targetElement.getOrCreateEditor()?.let { editor ->
-                                editor.getCaretModel().moveToOffset(targetElement.getTextOffset())
-                                intention.applyTo(targetElement, editor)
+                val ranges = intentions
+                        .map {
+                            val range = it.applicabilityRange(targetElement)
+                            if (range != null) {
+                                val elementRange = targetElement.getTextRange()
+                                assert(range in elementRange, "Wrong applicabilityRange() result for $it - should be within element's range")
+                                range.shiftRight(-elementRange.getStartOffset())
                             }
+                            else null
                         }
-                    }
+                        .filterNotNull()
+                if (ranges.isEmpty()) return
 
-                    holder.registerProblem(targetElement, intention.getText(), problemHighlightType, rangeInElement, fix)
-                }
+                val fixes = intentions.map { IntentionBasedQuickFix(it, targetElement) }.toTypedArray()
+                val rangeInElement = ranges.fold(TextRange.EMPTY_RANGE) { a, b -> a union b }
+                holder.registerProblem(targetElement, problemText ?: fixes.first().getName(), problemHighlightType, rangeInElement, *fixes)
             }
         }
     }
