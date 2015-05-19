@@ -2932,6 +2932,48 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("complexExpressionNotUsed1.kt")
+        public void testComplexExpressionNotUsed1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionNotUsed1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionNotUsed2.kt")
+        public void testComplexExpressionNotUsed2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionNotUsed2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionNotUsed3Runtime.kt")
+        public void testComplexExpressionNotUsed3Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionNotUsed3Runtime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionNotUsed4Runtime.kt")
+        public void testComplexExpressionNotUsed4Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionNotUsed4Runtime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionNotUsed5Runtime.kt")
+        public void testComplexExpressionNotUsed5Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionNotUsed5Runtime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionNotUsedSafeCall.kt")
+        public void testComplexExpressionNotUsedSafeCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionNotUsedSafeCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionNotUsedSafeCall2Runtime.kt")
+        public void testComplexExpressionNotUsedSafeCall2Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionNotUsedSafeCall2Runtime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("complexExpressionUsedTwice.kt")
         public void testComplexExpressionUsedTwice() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionUsedTwice.kt");
@@ -2959,6 +3001,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("complexExpressionUsedTwice5Runtime.kt")
         public void testComplexExpressionUsedTwice5Runtime() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionUsedTwice5Runtime.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("complexExpressionUsedTwice6Runtime.kt")
+        public void testComplexExpressionUsedTwice6Runtime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/complexExpressionUsedTwice6Runtime.kt");
             doTest(fileName);
         }
 
@@ -3091,6 +3139,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleExpressionNotUsed.kt")
+        public void testSimpleExpressionNotUsed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/simpleExpressionNotUsed.kt");
             doTest(fileName);
         }
 

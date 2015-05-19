@@ -1,0 +1,18 @@
+// "Replace with 'newFun()'" "true"
+
+class C {
+    @deprecated("", ReplaceWith("newFun()"))
+    fun oldFun() {
+        newFun()
+    }
+}
+
+fun newFun(){}
+
+fun foo() {
+    <caret>if (getC() != null) {
+        newFun()
+    }
+}
+
+fun getC(): C? = null

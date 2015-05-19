@@ -1,0 +1,12 @@
+// "Replace with 'newFun()'" "true"
+
+@deprecated("", ReplaceWith("newFun()"))
+fun oldFun(p: Int?): Int {
+    return newFun()
+}
+
+fun newFun(): Int = 0
+
+fun foo(): Int = bar().<caret>let { newFun() }
+
+fun bar(): Int? = 0

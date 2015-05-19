@@ -137,7 +137,6 @@ public class DeprecatedSymbolUsageFix(
 
         val introduceValuesForParameters = ArrayList<Pair<ValueParameterDescriptor, JetExpression>>()
 
-        //TODO: check for dropping expressions with potential side effects
         for (parameter in descriptor.getValueParameters()) {
             val argument = argumentForParameter(parameter) ?: continue
             argument.putCopyableUserData(FROM_PARAMETER_KEY, parameter)
@@ -146,7 +145,7 @@ public class DeprecatedSymbolUsageFix(
             val usages = parameterUsages[parameter.getOriginal()]!!
             usages.forEach { it.replace(argument) }
 
-            if (usages.size() > 1 && argument.shouldIntroduceVariableIfUsedTwice()) {
+            if (argument.shouldKeepValue(usages.size())) {
                 introduceValuesForParameters.add(parameter to argument)
             }
         }
@@ -158,16 +157,15 @@ public class DeprecatedSymbolUsageFix(
             expression = expression.keepInfixFormIfPossible()
         }
 
-        if (receiver != null && receiver.shouldIntroduceVariableIfUsedTwice()) {
+        if (receiver != null) {
             val thisReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
-            if (thisReplaced.size() > 1) {
+            if (receiver.shouldKeepValue(thisReplaced.size())) {
                 expression = expression.introduceValue(receiver, expressionToReplace, bindingContext, thisReplaced)
             }
         }
 
         for ((parameter, value) in introduceValuesForParameters) {
             val usagesReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_PARAMETER_KEY) == parameter }
-            assert(usagesReplaced.size() > 1)
             expression = expression.introduceValue(value, expressionToReplace, bindingContext, usagesReplaced, nameSuggestion = parameter.getName().asString())
         }
 
@@ -282,33 +280,39 @@ public class DeprecatedSymbolUsageFix(
             if (block != null) {
                 val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, insertDeclarationsBefore]
 
-                val valueType = bindingContext.getType(value)
-                var explicitType: JetType? = null
-                if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
-                    val valueTypeWithoutExpectedType = value.analyzeInContext(
-                            resolutionScope,
-                            dataFlowInfo = bindingContext.getDataFlowInfo(insertDeclarationsBefore)
-                    ).getType(value)
-                    if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
-                        explicitType = valueType
+                if (usages.isNotEmpty()) {
+                    val valueType = bindingContext.getType(value)
+                    var explicitType: JetType? = null
+                    if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
+                        val valueTypeWithoutExpectedType = value.analyzeInContext(
+                                resolutionScope,
+                                dataFlowInfo = bindingContext.getDataFlowInfo(insertDeclarationsBefore)
+                        ).getType(value)
+                        if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
+                            explicitType = valueType
+                        }
                     }
-                }
 
-                val name = suggestName(object : JetNameValidator() {
-                    override fun validateInner(name: String): Boolean {
-                        return resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
+                    val name = suggestName(object : JetNameValidator() {
+                        override fun validateInner(name: String): Boolean {
+                            return resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
+                        }
+                    })
+
+                    var declaration = psiFactory.createDeclaration<JetVariableDeclaration>("val ${nameInCode(name)} = " + value.getText())
+                    declaration = block.addBefore(declaration, insertDeclarationsBefore) as JetVariableDeclaration
+                    block.addBefore(psiFactory.createNewLine(), insertDeclarationsBefore)
+
+                    if (explicitType != null) {
+                        declaration.setType(explicitType)
                     }
-                })
 
-                var declaration = psiFactory.createDeclaration<JetVariableDeclaration>("val ${nameInCode(name)} = " + value.getText())
-                declaration = block.addBefore(declaration, insertDeclarationsBefore) as JetVariableDeclaration
-                block.addBefore(psiFactory.createNewLine(), insertDeclarationsBefore)
-
-                if (explicitType != null) {
-                    declaration.setType(explicitType)
+                    replaceUsages(name)
                 }
-
-                replaceUsages(name)
+                else {
+                    block.addBefore(value, insertDeclarationsBefore)
+                    block.addBefore(psiFactory.createNewLine(), insertDeclarationsBefore)
+                }
                 return this
             }
         }
@@ -331,15 +335,23 @@ public class DeprecatedSymbolUsageFix(
     private fun collectNameUsages(scope: JetExpression, name: String)
             = scope.collectElementsOfType<JetSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
 
-    private fun JetExpression?.shouldIntroduceVariableIfUsedTwice(): Boolean {
+    private fun JetExpression?.shouldKeepValue(usageCount: Int): Boolean {
+        if (usageCount == 1) return false
+        val sideEffectOnly = usageCount == 0
+
         return when (this) {
             is JetSimpleNameExpression -> false
-            is JetQualifiedExpression -> getReceiverExpression().shouldIntroduceVariableIfUsedTwice() || getSelectorExpression().shouldIntroduceVariableIfUsedTwice()
-            is JetUnaryExpression -> getOperationToken() in setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) || getBaseExpression().shouldIntroduceVariableIfUsedTwice()
-            is JetStringTemplateExpression -> getEntries().any { it is JetStringTemplateEntryWithExpression }
-            is JetThisExpression, is JetSuperExpression -> false
-            is JetParenthesizedExpression -> getExpression().shouldIntroduceVariableIfUsedTwice()
-            is JetBinaryExpression, is JetIfExpression -> true // TODO: discuss it
+            is JetQualifiedExpression -> getReceiverExpression().shouldKeepValue(usageCount) || getSelectorExpression().shouldKeepValue(usageCount)
+            is JetUnaryExpression -> getOperationToken() in setOf(JetTokens.PLUSPLUS, JetTokens.MINUSMINUS) || getBaseExpression().shouldKeepValue(usageCount)
+            is JetStringTemplateExpression -> getEntries().any { if (sideEffectOnly) it.getExpression().shouldKeepValue(usageCount) else it is JetStringTemplateEntryWithExpression }
+            is JetThisExpression, is JetSuperExpression, is JetConstantExpression -> false
+            is JetParenthesizedExpression -> getExpression().shouldKeepValue(usageCount)
+
+            // TODO: discuss it
+            is JetBinaryExpression -> if (sideEffectOnly) getLeft().shouldKeepValue(usageCount) || getRight().shouldKeepValue(usageCount) else true
+            is JetIfExpression -> if (sideEffectOnly) getCondition().shouldKeepValue(usageCount) || getThen().shouldKeepValue(usageCount) || getElse().shouldKeepValue(usageCount) else true
+            is JetBinaryExpressionWithTypeRHS -> true
+
             else -> true // what else it can be?
         }
     }
