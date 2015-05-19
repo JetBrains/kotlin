@@ -13,6 +13,6 @@ fun myApp() {
         val y = pairMul(p)
         val z = IntHolder(100).value
         val u = Date().extFun()
-        element.appendChild(document.createTextNode("x=$x y=$y z=$z u=$u")!!)
+        element.appendChild(document.createTextNode("x=$x y=$y z=$z u=$u"))
     }
 }

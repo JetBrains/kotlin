@@ -77,8 +77,6 @@
 
                             <Implementation-Vendor>${manifest.impl.vendor}</Implementation-Vendor>
                             <Implementation-Version>${build.number}</Implementation-Version>
-                            <Specification-Title>${manifest.spec.title.kotlin.javascript.lib}</Specification-Title>
-                            <Kotlin-JS-Module-Name>${project.artifactId}</Kotlin-JS-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>
