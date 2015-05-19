@@ -1,10 +1,11 @@
 package org.test
 
-import javax.inject.*
+public annotation class SomeAnnotation
 
+SomeAnnotation
 public class SomeClass {
 
-    Inject
+    SomeAnnotation
     public fun annotatedFunction() {
 
     }

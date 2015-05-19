@@ -17,6 +17,11 @@ public class SomeClass {
     Named("InnerClass")
     inner class InnerClass {
 
+        Named("InnerClassInInnerClass")
+        inner class InnerClassInInnerClass {
+
+        }
+
     }
 
     Named("NestedClass")
