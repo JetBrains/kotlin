@@ -1,0 +1,41 @@
+== Bar ==
+class Bar {
+    fun invoke(x: Int): Int = x
+    fun invoke(x: Int, y: Int) {}
+}
+---------------------
+=====================
+== invoke ==
+fun invoke(x: Int): Int = x
+---------------------
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>
+x   <v1>: Int   NEW: r(x) -> <v1>
+=====================
+== invoke ==
+fun invoke(x: Int, y: Int) {}
+---------------------
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](x: Int) -> <v0>
+    <v1>: Int   NEW: magic[FAKE_INITIALIZER](y: Int) -> <v1>
+=====================
+== Foo ==
+class Foo {
+    val get: Bar = Bar()
+    val set: Bar = Bar()
+}
+---------------------
+Bar()   <v0>: Bar   NEW: call(Bar(), <init>) -> <v0>
+Bar()   <v1>: Bar   NEW: call(Bar(), <init>) -> <v1>
+=====================
+== test ==
+fun test(foo: Foo) {
+    foo[1] += 2
+}
+---------------------
+                  <v0>: Foo   NEW: magic[FAKE_INITIALIZER](foo: Foo) -> <v0>
+foo               <v7>: Foo   NEW: r(foo) -> <v7>
+1                 <v9>: Int   NEW: r(1) -> <v9>
+foo[1]            <v8>: Bar   NEW: r(foo[1]|<v7>) -> <v8>
+2                 <v5>: Int   NEW: r(2) -> <v5>
+foo[1] += 2       <v10>: *    NEW: call(foo[1] += 2, invoke|<v8>, <v9>, <v6>) -> <v10>
+{ foo[1] += 2 }   <v10>: *    COPY
+=====================

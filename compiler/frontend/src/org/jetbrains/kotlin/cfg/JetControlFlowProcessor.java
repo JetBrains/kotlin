@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
 import org.jetbrains.kotlin.resolve.calls.model.*;
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -505,8 +506,7 @@ public class JetControlFlowProcessor {
             generateInstructions(lhs.getArrayExpression());
 
             Map<PseudoValue, ReceiverValue> receiverValues = getReceiverValues(setResolvedCall);
-            SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues =
-                    getArraySetterArguments(rhsDeferredValue, setResolvedCall);
+            SmartFMap<PseudoValue, ValueParameterDescriptor> argumentValues = getArraySetterArguments(rhsDeferredValue, setResolvedCall);
 
             builder.call(parentExpression, setResolvedCall, receiverValues, argumentValues);
         }
@@ -1552,13 +1552,8 @@ public class JetControlFlowProcessor {
         private InstructionWithValue generateCall(@NotNull ResolvedCall<?> resolvedCall) {
             JetElement callElement = resolvedCall.getCall().getCallElement();
 
-            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
-                VariableAsFunctionResolvedCall variableAsFunctionResolvedCall = (VariableAsFunctionResolvedCall) resolvedCall;
-                return generateCall(variableAsFunctionResolvedCall.getFunctionCall());
-            }
-
-            CallableDescriptor resultingDescriptor = resolvedCall.getResultingDescriptor();
             Map<PseudoValue, ReceiverValue> receivers = getReceiverValues(resolvedCall);
+
             SmartFMap<PseudoValue, ValueParameterDescriptor> parameterValues = SmartFMap.emptyMap();
             for (ValueArgument argument : resolvedCall.getCall().getValueArguments()) {
                 ArgumentMapping argumentMapping = resolvedCall.getArgumentMapping(argument);
@@ -1572,7 +1567,7 @@ public class JetControlFlowProcessor {
                 }
             }
 
-            if (resultingDescriptor instanceof VariableDescriptor) {
+            if (resolvedCall.getResultingDescriptor() instanceof VariableDescriptor) {
                 // If a callee of the call is just a variable (without 'invoke'), 'read variable' is generated.
                 // todo : process arguments for such a case (KT-5387)
                 JetExpression callExpression = callElement instanceof JetExpression ? (JetExpression) callElement : null;
@@ -1582,13 +1577,35 @@ public class JetControlFlowProcessor {
                         : "Variable-based call with non-empty argument list: " + callElement.getText();
                 return builder.readVariable(callExpression, resolvedCall, receivers);
             }
+
             mark(resolvedCall.getCall().getCallElement());
             return builder.call(callElement, resolvedCall, receivers, parameterValues);
         }
 
         @NotNull
         private Map<PseudoValue, ReceiverValue> getReceiverValues(ResolvedCall<?> resolvedCall) {
+            PseudoValue varCallResult = null;
+            ReceiverValue explicitReceiver = ReceiverValue.NO_RECEIVER;
+            if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
+                varCallResult = generateCall(((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall()).getOutputValue();
+
+                ExplicitReceiverKind kind = resolvedCall.getExplicitReceiverKind();
+                //noinspection EnumSwitchStatementWhichMissesCases
+                switch (kind) {
+                    case DISPATCH_RECEIVER:
+                        explicitReceiver = resolvedCall.getDispatchReceiver();
+                        break;
+                    case EXTENSION_RECEIVER:
+                    case BOTH_RECEIVERS:
+                        explicitReceiver = resolvedCall.getExtensionReceiver();
+                        break;
+                }
+            }
+
             SmartFMap<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
+            if (explicitReceiver.exists() && varCallResult != null) {
+                receiverValues = receiverValues.plus(varCallResult, explicitReceiver);
+            }
             JetElement callElement = resolvedCall.getCall().getCallElement();
             receiverValues = getReceiverValues(callElement, resolvedCall.getDispatchReceiver(), receiverValues);
             receiverValues = getReceiverValues(callElement, resolvedCall.getExtensionReceiver(), receiverValues);
@@ -1601,7 +1618,7 @@ public class JetControlFlowProcessor {
                 ReceiverValue receiver,
                 SmartFMap<PseudoValue, ReceiverValue> receiverValues
         ) {
-            if (!receiver.exists()) return receiverValues;
+            if (!receiver.exists() || receiverValues.containsValue(receiver)) return receiverValues;
 
             if (receiver instanceof ThisReceiver) {
                 receiverValues = receiverValues.plus(createSyntheticValue(callElement, MagicKind.IMPLICIT_RECEIVER), receiver);

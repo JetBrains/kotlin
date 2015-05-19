@@ -249,9 +249,27 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("complexAssignmentWithGetSetViaVar.kt")
+            public void testComplexAssignmentWithGetSetViaVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/complexAssignmentWithGetSetViaVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("complexAssignmentWithSetViaVar.kt")
+            public void testComplexAssignmentWithSetViaVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/complexAssignmentWithSetViaVar.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("equals.kt")
             public void testEquals() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/equals.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("getViaVar.kt")
+            public void testGetViaVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/getViaVar.kt");
                 doTest(fileName);
             }
 
@@ -270,6 +288,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
             @TestMetadata("notEqual.kt")
             public void testNotEqual() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/notEqual.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("setViaVar.kt")
+            public void testSetViaVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/cfg/conventions/setViaVar.kt");
                 doTest(fileName);
             }
         }

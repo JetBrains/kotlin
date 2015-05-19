@@ -1,0 +1,99 @@
+== Bar ==
+class Bar {
+    fun invoke(x: Int, y: Int) {}
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== invoke ==
+fun invoke(x: Int, y: Int) {}
+---------------------
+L0:
+  1 <START>
+    v(x: Int)
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>
+    w(x|<v0>)
+    v(y: Int)
+    magic[FAKE_INITIALIZER](y: Int) -> <v1>
+    w(y|<v1>)
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== Foo ==
+class Foo {
+    val set: Bar = Bar()
+}
+---------------------
+L0:
+  1 <START>
+    v(val set: Bar = Bar())
+    mark(Bar())
+    call(Bar(), <init>) -> <v0>
+    w(set|<v0>)
+L1:
+    <END>                          NEXT:[<SINK>]
+error:
+    <ERROR>                        PREV:[]
+sink:
+    <SINK>                         PREV:[<ERROR>, <END>]
+=====================
+== get ==
+fun Foo.get(x: Int): Int = x
+---------------------
+L0:
+  1 <START>
+    v(x: Int)
+    magic[FAKE_INITIALIZER](x: Int) -> <v0>
+    w(x|<v0>)
+    r(x) -> <v1>
+    ret(*|<v1>) L1
+L1:
+    <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== test ==
+fun test(foo: Foo) {
+    foo[1] += 2
+}
+---------------------
+L0:
+  1 <START>
+    v(foo: Foo)
+    magic[FAKE_INITIALIZER](foo: Foo) -> <v0>
+    w(foo|<v0>)
+  2 mark({ foo[1] += 2 })
+    mark(foo[1])
+    r(foo) -> <v1>
+    r(1) -> <v2>
+    mark(foo[1])
+    call(foo[1], get|<v1>, <v2>) -> <v3>
+    r(2) -> <v4>
+    mark(foo[1] += 2)
+    call(foo[1] += 2, plus|<v3>, <v4>) -> <v5>
+    r(foo) -> <v6>
+    r(foo[1]|<v6>) -> <v7>
+    r(1) -> <v8>
+    call(foo[1] += 2, invoke|<v7>, <v8>, <v5>) -> <v9>
+L1:
+  1 <END>                                                 NEXT:[<SINK>]
+error:
+    <ERROR>                                               PREV:[]
+sink:
+    <SINK>                                                PREV:[<ERROR>, <END>]
+=====================
