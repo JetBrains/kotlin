@@ -3093,6 +3093,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/twoValuesCombined.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("usageInDerivedClass.kt")
+        public void testUsageInDerivedClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/usageInDerivedClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("usageInDerivedClassGeneric.kt")
+        public void testUsageInDerivedClassGeneric() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/usageInDerivedClassGeneric.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/expressions")

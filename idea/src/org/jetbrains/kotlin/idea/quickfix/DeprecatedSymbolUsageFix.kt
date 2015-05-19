@@ -24,6 +24,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -102,8 +103,13 @@ public class DeprecatedSymbolUsageFix(
         explicitReceiver?.putCopyableUserData(FROM_THIS_KEY, Unit)
         //TODO: infix and operator calls
 
+        val originalDescriptor = (if (descriptor is CallableMemberDescriptor)
+            DescriptorUtils.unwrapFakeOverride(descriptor)
+        else
+            descriptor).getOriginal()
+
         var (expression, imports, parameterUsages) = ReplaceWithAnnotationAnalyzer.analyze(
-                replaceWith, descriptor.getOriginal(), element.getResolutionFacade(), file, project)
+                replaceWith, originalDescriptor, element.getResolutionFacade(), file, project)
 
         //TODO: implicit receiver is not always "this"
         //TODO: this@
