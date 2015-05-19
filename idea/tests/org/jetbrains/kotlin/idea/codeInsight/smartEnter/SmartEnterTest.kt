@@ -871,7 +871,7 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             """
             ,
             """
-            fun (p: Int, s: String) {
+            fun(p: Int, s: String) {
                 <caret>
             }
             """
@@ -886,7 +886,7 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             ,
             """
             trait Some {
-                fun (p: Int)
+                fun(p: Int)
                 <caret>
             }
             """
@@ -901,7 +901,7 @@ class SmartEnterTest : JetLightCodeInsightFixtureTestCase() {
             ,
             """
             class Some {
-                abstract fun (p: Int)
+                abstract fun(p: Int)
                 <caret>
             }
             """

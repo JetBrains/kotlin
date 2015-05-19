@@ -139,6 +139,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             betweenInside(FUN_KEYWORD, IDENTIFIER, FUN).spaces(1)
             betweenInside(FUN_KEYWORD, TYPE_REFERENCE, FUN).spaces(1)
+            betweenInside(FUN_KEYWORD, VALUE_PARAMETER_LIST, FUN).spacing(0, 0, 0, false, 0)
             betweenInside(TYPE_REFERENCE, DOT, FUN).spacing(0, 0, 0, false, 0)
             betweenInside(DOT, IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)
             afterInside(IDENTIFIER, FUN).spacing(0, 0, 0, false, 0)

@@ -1,4 +1,4 @@
-val a = fun () {
+val a = fun() {
 }
 val b = fun test() {
 }
@@ -17,6 +17,8 @@ val c = fun() = 4
 fun test() = fun test() = 4
 
 fun test() {
+    test(fun() {
+    })
     test(fun test() {
     })
     test(fun test() = 5)

@@ -6,5 +6,5 @@ fun foo(a: Any) {}
 
 val a = foo  a@ {
 
-    val a = fun (): Int = 1
+    val a = fun(): Int = 1
 }
