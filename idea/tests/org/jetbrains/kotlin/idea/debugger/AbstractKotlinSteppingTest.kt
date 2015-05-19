@@ -46,6 +46,21 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         finish()
     }
 
+    protected fun doStepOutTest(path: String) {
+        val fileText = FileUtil.loadFile(File(path))
+
+        configureSettings(fileText)
+
+        createDebugProcess(path)
+        val count = findStringWithPrefixes(fileText, "// STEP_OUT: ")?.toInt() ?: 1
+
+        for (i in 1..count) {
+            onBreakpoint { stepOut() }
+        }
+
+        finish()
+    }
+
     protected fun doSmartStepIntoTest(path: String) {
         createDebugProcess(path)
         onBreakpoint { smartStepInto() }

@@ -610,6 +610,7 @@ fun main(args: Array<String>) {
             model("debugger/tinyApp/src/stepInto/stepIntoAndSmartStepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
             model("debugger/tinyApp/src/stepInto/stepIntoAndSmartStepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
             model("debugger/tinyApp/src/stepInto/stepInto", testMethod = "doStepIntoTest", testClassName = "StepIntoOnly")
+            model("debugger/tinyApp/src/stepOut", testMethod = "doStepOutTest")
             model("debugger/tinyApp/src/filters", testMethod = "doStepIntoTest")
         }
 

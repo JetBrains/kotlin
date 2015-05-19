@@ -115,6 +115,10 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
     }
 
+    protected fun SuspendContextImpl.stepOut() {
+        dp.getManagerThread()!!.schedule(dp.createStepOutCommand(this))
+    }
+
     protected fun SuspendContextImpl.printContext() {
         runReadAction {
             if (this.getFrameProxy() == null) {
