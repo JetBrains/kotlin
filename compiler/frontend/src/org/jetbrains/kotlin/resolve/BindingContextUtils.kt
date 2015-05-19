@@ -16,18 +16,16 @@
 
 package org.jetbrains.kotlin.resolve.bindingContextUtil
 
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.psi.JetReturnExpression
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -73,3 +71,7 @@ public fun BindingContext.getDataFlowInfo(expression: JetExpression?): DataFlowI
 
 public fun JetExpression.isUnreachableCode(context: BindingContext): Boolean = context[BindingContext.UNREACHABLE_CODE, this]!!
 
+public fun JetExpression.getReferenceTargets(context: BindingContext): Collection<DeclarationDescriptor> {
+    val targetDescriptor = if (this is JetReferenceExpression) context[BindingContext.REFERENCE_TARGET, this] else null
+    return targetDescriptor?.let { listOf(it) } ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
+}

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.Collections
@@ -116,13 +117,7 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
 }
 
 public abstract class JetSimpleReference<T : JetReferenceExpression>(expression: T) : AbstractJetReference<T>(expression) {
-    override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val targetDescriptor = context[BindingContext.REFERENCE_TARGET, expression]
-        if (targetDescriptor != null) {
-            return listOf(targetDescriptor)
-        }
-        return context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression].orEmpty()
-    }
+    override fun getTargetDescriptors(context: BindingContext) = expression.getReferenceTargets(context)
 }
 
 public abstract class JetMultiReference<T : JetElement>(expression: T) : AbstractJetReference<T>(expression)

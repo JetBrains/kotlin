@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -294,14 +295,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
 
         val nameRef = nameToken.getParent() as? JetNameReferenceExpression ?: return null
         val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
-        val target = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]
-        val targets = if (target != null) {
-            listOf(target)
-        }
-        else {
-            bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, nameRef] ?: return null
-        }
-        if (targets.all { it is FunctionDescriptor || it is ClassDescriptor && it.getKind() == ClassKind.CLASS }) {
+        val targets = nameRef.getReferenceTargets(bindingContext)
+        if (targets.isNotEmpty() && targets.all { it is FunctionDescriptor || it is ClassDescriptor && it.getKind() == ClassKind.CLASS }) {
             return CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED + ">".repeat(balance) + "$"
         }
         else {
