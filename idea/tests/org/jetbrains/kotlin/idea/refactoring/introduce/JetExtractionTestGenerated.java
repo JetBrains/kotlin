@@ -378,6 +378,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("lineWithSemicolon.kt")
+            public void testLineWithSemicolon() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/lineWithSemicolon.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("localClassExtraction.kt")
             public void testLocalClassExtraction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/localClassExtraction.kt");

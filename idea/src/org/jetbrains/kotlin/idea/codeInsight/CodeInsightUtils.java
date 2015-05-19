@@ -27,6 +27,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -100,7 +101,10 @@ public class CodeInsightUtils {
         }
 
         for (PsiElement element : array) {
-            if (!(element instanceof JetExpression || element instanceof PsiWhiteSpace || element instanceof PsiComment)) {
+            if (!(element instanceof JetExpression
+                  || element.getNode().getElementType() == JetTokens.SEMICOLON
+                  || element instanceof PsiWhiteSpace
+                  || element instanceof PsiComment)) {
                 return PsiElement.EMPTY_ARRAY;
             }
         }
