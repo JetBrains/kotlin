@@ -18,20 +18,20 @@ package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.storage.StorageManager
 import java.util.ArrayList
 import java.util.LinkedHashSet
 import kotlin.properties.Delegates
 
 public class ModuleDescriptorImpl(
         moduleName: Name,
-        override val defaultImports: List<ImportPath>,
-        override val platformToKotlinClassMap: PlatformToKotlinClassMap
-) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
+        private val storageManager: StorageManager,
+        private val moduleParameters: ModuleParameters
+) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor, ModuleParameters by moduleParameters {
     init {
         if (!moduleName.isSpecial()) {
             throw IllegalArgumentException("Module name must be special: $moduleName")

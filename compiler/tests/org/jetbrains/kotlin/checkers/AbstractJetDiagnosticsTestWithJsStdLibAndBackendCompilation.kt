@@ -16,27 +16,21 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.context.GlobalContext
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
-import org.jetbrains.kotlin.js.facade.exceptions.TranslationException
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
-
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 
 public abstract class AbstractJetDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractJetDiagnosticsTestWithJsStdLib() {
     override fun analyzeModuleContents(
-            context: GlobalContext,
-            jetFiles: List<JetFile>,
-            module: ModuleDescriptorImpl,
+            moduleContext: ModuleContext,
+            jetFiles: MutableList<JetFile>,
             moduleTrace: BindingTrace
     ) {
-        val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, module, getConfig())
+        val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, moduleContext, getConfig())
         val diagnostics = analysisResult.bindingTrace.getBindingContext().getDiagnostics()
 
         if (!hasError(diagnostics)) {

@@ -43,8 +43,7 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.context.ContextPackage;
-import org.jetbrains.kotlin.context.ModuleContext;
+import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -108,9 +107,8 @@ public class ReplInterpreter {
         Project project = environment.getProject();
         this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         this.trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-        this.module = TopDownAnalyzerFacadeForJVM.createJavaModule("<repl>");
-
-        ModuleContext context = ContextPackage.ModuleContext(module, project);
+        MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project);
+        this.module = moduleContext.getModule();
 
         scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
 
@@ -123,7 +121,7 @@ public class ReplInterpreter {
         };
 
         InjectorForReplWithJava injector = new InjectorForReplWithJava(
-                context,
+                moduleContext,
                 trace,
                 scriptDeclarationFactory,
                 ProjectScope.getAllScope(project),
@@ -134,15 +132,12 @@ public class ReplInterpreter {
         this.topDownAnalyzer = injector.getLazyTopDownAnalyzerForTopLevel();
         this.resolveSession = injector.getResolveSession();
 
-        module.initialize(new CompositePackageFragmentProvider(
+        moduleContext.initializeModuleContents(new CompositePackageFragmentProvider(
                 Arrays.asList(
                         injector.getResolveSession().getPackageFragmentProvider(),
                         injector.getJavaDescriptorResolver().getPackageFragmentProvider()
                 )
         ));
-        module.addDependencyOnModule(module);
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        module.seal();
 
         List<URL> classpath = Lists.newArrayList();
         for (File file : getJvmClasspathRoots(configuration)) {

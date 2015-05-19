@@ -16,14 +16,14 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.impl.PackageViewDescriptorImpl
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.descriptors.impl.PackageViewDescriptorImpl
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 
-public trait ModuleDescriptor : DeclarationDescriptor {
+public trait ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
 
     public fun getPackageFragmentProvider(): PackageFragmentProvider
@@ -32,10 +32,6 @@ public trait ModuleDescriptor : DeclarationDescriptor {
         val fragments = getPackageFragmentProvider().getPackageFragments(fqName)
         return if (!fragments.isEmpty()) PackageViewDescriptorImpl(this, fqName, fragments) else null
     }
-
-    public val defaultImports: List<ImportPath>
-
-    public val platformToKotlinClassMap: PlatformToKotlinClassMap
 
     public val builtIns: KotlinBuiltIns
 
@@ -49,3 +45,19 @@ public trait ModuleDescriptor : DeclarationDescriptor {
         return visitor.visitModuleDeclaration(this, data)
     }
 }
+
+trait ModuleParameters {
+    public val defaultImports: List<ImportPath>
+    public val platformToKotlinClassMap: PlatformToKotlinClassMap
+
+    object Empty: ModuleParameters {
+        override val defaultImports: List<ImportPath> = emptyList()
+        override val platformToKotlinClassMap: PlatformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY
+    }
+}
+
+public fun ModuleParameters(defaultImports: List<ImportPath>, platformToKotlinClassMap: PlatformToKotlinClassMap): ModuleParameters =
+        object : ModuleParameters {
+            override val defaultImports: List<ImportPath> = defaultImports
+            override val platformToKotlinClassMap: PlatformToKotlinClassMap = platformToKotlinClassMap
+        }

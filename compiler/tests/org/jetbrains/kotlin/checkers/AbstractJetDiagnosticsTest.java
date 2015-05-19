@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.util.DescriptorValidator;
@@ -88,10 +89,18 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
                 }
         );
 
-        Map<TestModule, ModuleDescriptorImpl> modules = createModules(groupedByModule);
-        Map<TestModule, BindingContext> moduleBindings = new HashMap<TestModule, BindingContext>();
-
         LazyOperationsLog lazyOperationsLog = new LazyOperationsLog(HASH_SANITIZER);
+        ExceptionTracker tracker = new ExceptionTracker();
+        GlobalContext context = new SimpleGlobalContext(
+                new LoggingStorageManager(
+                        LockBasedStorageManager.createWithExceptionHandling(tracker),
+                        lazyOperationsLog.getAddRecordFunction()
+                ),
+                tracker
+        );
+
+        Map<TestModule, ModuleDescriptorImpl> modules = createModules(groupedByModule, context.getStorageManager());
+        Map<TestModule, BindingContext> moduleBindings = new HashMap<TestModule, BindingContext>();
 
         for (Map.Entry<TestModule, List<TestFile>> entry : groupedByModule.entrySet()) {
             TestModule testModule = entry.getKey();
@@ -104,15 +113,9 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
 
             moduleBindings.put(testModule, moduleTrace.getBindingContext());
 
-            ExceptionTracker tracker = new ExceptionTracker();
-            GlobalContext context = new SimpleGlobalContext(
-                    new LoggingStorageManager(
-                            LockBasedStorageManager.createWithExceptionHandling(tracker),
-                            lazyOperationsLog.getAddRecordFunction()
-                    ),
-                    tracker
-            );
-            analyzeModuleContents(context, jetFiles, module, moduleTrace);
+
+            ModuleContext moduleContext = withModule(withProject(context, getProject()), module);
+            analyzeModuleContents(moduleContext, jetFiles, moduleTrace);
 
             checkAllResolvedCallsAreCompleted(jetFiles, moduleTrace.getBindingContext());
         }
@@ -222,13 +225,10 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
     }
 
     protected void analyzeModuleContents(
-            GlobalContext context,
-            List<JetFile> jetFiles,
-            ModuleDescriptorImpl module,
-            BindingTrace moduleTrace
+            @NotNull ModuleContext moduleContext,
+            @NotNull List<JetFile> jetFiles,
+            @NotNull BindingTrace moduleTrace
     ) {
-        ModuleContext moduleContext = withModule(withProject(context, getProject()), module);
-
         // New JavaDescriptorResolver is created for each module, which is good because it emulates different Java libraries for each module,
         // albeit with same class names
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
@@ -308,14 +308,17 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         return RECURSIVE.filterRecursion(stepIntoFilter).withValidationStrategy(DescriptorValidator.ValidationVisitor.errorTypesAllowed());
     }
 
-    private Map<TestModule, ModuleDescriptorImpl> createModules(Map<TestModule, List<TestFile>> groupedByModule) {
+    private Map<TestModule, ModuleDescriptorImpl> createModules(
+            @NotNull Map<TestModule, List<TestFile>> groupedByModule,
+            @NotNull StorageManager storageManager
+    ) {
         Map<TestModule, ModuleDescriptorImpl> modules = new HashMap<TestModule, ModuleDescriptorImpl>();
 
         for (TestModule testModule : groupedByModule.keySet()) {
             ModuleDescriptorImpl module =
                     testModule == null ?
-                    createSealedModule() :
-                    createModule("<" + testModule.getName() + ">");
+                    createSealedModule(storageManager) :
+                    createModule("<" + testModule.getName() + ">", storageManager);
 
             modules.put(testModule, module);
         }
@@ -336,13 +339,20 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
         return modules;
     }
 
-    protected ModuleDescriptorImpl createModule(String moduleName) {
-        return TopDownAnalyzerFacadeForJVM.createJavaModule(moduleName);
+    @NotNull
+    protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
+        return new ModuleDescriptorImpl(Name.special(moduleName),
+                                        storageManager,
+                                        TopDownAnalyzerFacadeForJVM.JVM_MODULE_PARAMETERS);
     }
 
     @NotNull
-    protected ModuleDescriptorImpl createSealedModule() {
-        return TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
+    protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
+        ModuleDescriptorImpl moduleDescriptor = createModule("<test-module>", storageManager);
+        moduleDescriptor.addDependencyOnModule(moduleDescriptor);
+        moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        moduleDescriptor.seal();
+        return moduleDescriptor;
     }
 
     private static void checkAllResolvedCallsAreCompleted(@NotNull List<JetFile> jetFiles, @NotNull BindingContext bindingContext) {

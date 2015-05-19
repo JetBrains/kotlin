@@ -21,9 +21,8 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.context.ContextPackage;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -53,13 +52,13 @@ public class LazyResolveTestUtil {
 
     @NotNull
     public static ModuleDescriptor resolve(@NotNull Project project, @NotNull BindingTrace trace, @NotNull List<JetFile> sourceFiles) {
-        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project);
 
         TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationNoIncremental(
-                ContextPackage.ModuleContext(module, project), sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations
+                moduleContext, sourceFiles, trace, TopDownAnalysisMode.TopLevelDeclarations
         );
 
-        return module;
+        return moduleContext.getModule();
     }
 
     @NotNull

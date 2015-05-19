@@ -40,8 +40,7 @@ import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.context.ContextPackage;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;
@@ -317,10 +316,10 @@ public class KotlinToJVMBytecodeCompiler {
                     @Override
                     public AnalysisResult invoke() {
                         BindingTrace sharedTrace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
-                        ModuleDescriptorImpl analyzeModule = TopDownAnalyzerFacadeForJVM.createSealedJavaModule();
+                        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.getProject());
 
                         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                                ContextPackage.ModuleContext(analyzeModule, environment.getProject()),
+                                moduleContext,
                                 environment.getSourceFiles(),
                                 sharedTrace,
                                 environment.getConfiguration().get(JVMConfigurationKeys.MODULE_IDS),

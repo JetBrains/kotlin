@@ -22,11 +22,10 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import java.util.ArrayList
 import java.util.HashMap
@@ -116,7 +115,6 @@ public trait ModuleInfo {
     }
 }
 
-//TODO: (module refactoring) extract project context
 public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParameters> {
     public fun <M : ModuleInfo> setupResolverForProject(
             projectContext: ProjectContext,
@@ -130,7 +128,7 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
             val descriptorByModule = HashMap<M, ModuleDescriptorImpl>()
             modules.forEach {
                 module ->
-                descriptorByModule[module] = ModuleDescriptorImpl(module.name, defaultImports, platformToKotlinClassMap)
+                descriptorByModule[module] = ModuleDescriptorImpl(module.name, projectContext.storageManager, moduleParameters)
             }
             return ResolverForProjectImpl(descriptorByModule, delegateResolver)
         }
@@ -193,7 +191,6 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
             platformParameters: P, resolverForProject: ResolverForProject<M, A>
     ): A
 
-    public val defaultImports: List<ImportPath>
-    public val platformToKotlinClassMap: PlatformToKotlinClassMap
+    public val moduleParameters: ModuleParameters
 }
 

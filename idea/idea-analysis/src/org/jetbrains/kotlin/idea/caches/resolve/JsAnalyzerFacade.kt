@@ -20,13 +20,13 @@ import com.intellij.openapi.roots.OrderRootType
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
 import org.jetbrains.kotlin.idea.framework.JsHeaderLibraryDetectionUtil
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
@@ -77,7 +77,6 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
         return JsResolverForModule(resolveSession)
     }
 
-    override val defaultImports = TopDownAnalyzerFacadeForJS.DEFAULT_IMPORTS
-    override val platformToKotlinClassMap = PlatformToKotlinClassMap.EMPTY
-
+    override val moduleParameters: ModuleParameters
+        get() = TopDownAnalyzerFacadeForJS.JS_MODULE_PARAMETERS
 }

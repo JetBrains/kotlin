@@ -19,6 +19,10 @@ package org.jetbrains.kotlin.context
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -43,6 +47,25 @@ public trait ModuleContext : ProjectContext {
         get() = module.builtIns
 }
 
+public trait MutableModuleContext: ModuleContext {
+    override val module: ModuleDescriptorImpl
+
+    public fun setDependencies(vararg dependencies: ModuleDescriptorImpl) {
+        setDependencies(dependencies.toList())
+    }
+
+    public fun setDependencies(dependencies: List<ModuleDescriptorImpl>) {
+        for (dependency in dependencies) {
+            module.addDependencyOnModule(dependency)
+        }
+        module.seal()
+    }
+
+    public fun initializeModuleContents(packageFragmentProvider: PackageFragmentProvider) {
+        module.initialize(packageFragmentProvider)
+    }
+}
+
 public open class SimpleGlobalContext(
         override val storageManager: StorageManager,
         override val exceptionTracker: ExceptionTracker
@@ -65,6 +88,11 @@ public class ModuleContextImpl(
         projectContext: ProjectContext
 ) : ModuleContext, ProjectContext by projectContext
 
+public class MutableModuleContextImpl(
+        override val module: ModuleDescriptorImpl,
+        projectContext: ProjectContext
+) : MutableModuleContext, ProjectContext by projectContext
+
 public fun GlobalContext(): GlobalContextImpl {
     val tracker = ExceptionTracker()
     return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
@@ -76,6 +104,16 @@ public fun ModuleContext(module: ModuleDescriptor, project: Project): ModuleCont
 
 public fun GlobalContext.withProject(project: Project): ProjectContext = ProjectContextImpl(project, this)
 public fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = ModuleContextImpl(module, this)
+
+public fun ContextForNewModule(
+        project: Project,
+        moduleName: Name,
+        parameters: ModuleParameters
+): MutableModuleContext {
+    val projectContext = ProjectContext(project)
+    val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, parameters)
+    return MutableModuleContextImpl(module, projectContext)
+}
 
 deprecated("Used temporarily while we are in transition from to lazy resolve")
 public open class TypeLazinessToken {

@@ -40,10 +40,9 @@ import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.binding.PsiCodegenPredictor;
 import org.jetbrains.kotlin.context.ContextPackage;
-import org.jetbrains.kotlin.context.ModuleContext;
+import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForLazyResolve;
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
@@ -71,6 +70,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.jetbrains.kotlin.descriptors.DescriptorsPackage.ModuleParameters;
 import static org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*;
 
 public class JetSourceNavigationHelper {
@@ -234,27 +234,29 @@ public class JetSourceNavigationHelper {
             @NotNull Project project
     ) {
 
-        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(Name.special("<library module>"),
-                                                                         TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS,
-                                                                         PlatformToKotlinClassMap.EMPTY);
-        ModuleContext moduleContext = ContextPackage.ModuleContext(moduleDescriptor, project);
+        MutableModuleContext newModuleContext = ContextPackage.ContextForNewModule(
+                project, Name.special("<library module>"),
+                ModuleParameters(
+                        TopDownAnalyzerFacadeForJVM.DEFAULT_IMPORTS,
+                        PlatformToKotlinClassMap.EMPTY
+                )
+        );
+
+        newModuleContext.setDependencies(newModuleContext.getModule(), KotlinBuiltIns.getInstance().getBuiltInsModule());
+
         FileBasedDeclarationProviderFactory providerFactory = new FileBasedDeclarationProviderFactory(
-                moduleContext.getStorageManager(),
+                newModuleContext.getStorageManager(),
                 getContainingFiles(candidates)
         );
 
-        moduleDescriptor.addDependencyOnModule(moduleDescriptor);
-        moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        moduleDescriptor.seal();
-
         ResolveSession resolveSession = new InjectorForLazyResolve(
-                moduleContext,
+                newModuleContext,
                 providerFactory,
                 new BindingTraceContext(),
                 AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
                 new DynamicTypesSettings()).getResolveSession();
 
-        moduleDescriptor.initialize(resolveSession.getPackageFragmentProvider());
+        newModuleContext.initializeModuleContents(resolveSession.getPackageFragmentProvider());
         return resolveSession;
     }
 

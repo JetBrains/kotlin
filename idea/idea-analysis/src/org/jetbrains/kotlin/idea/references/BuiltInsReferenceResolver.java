@@ -38,15 +38,18 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ContextPackage;
-import org.jetbrains.kotlin.context.ModuleContext;
+import org.jetbrains.kotlin.context.MutableModuleContext;
+import org.jetbrains.kotlin.context.ProjectContext;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForLazyResolve;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.AdditionalCheckerProvider;
+import org.jetbrains.kotlin.resolve.BindingTraceContext;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.DynamicTypesSettings;
@@ -55,7 +58,10 @@ import org.jetbrains.kotlin.utils.UtilsPackage;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassId;
 import static org.jetbrains.kotlin.serialization.deserialization.DeserializationPackage.findClassAcrossModuleDependencies;
@@ -95,23 +101,22 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
         final Runnable initializeRunnable = new Runnable() {
             @Override
             public void run() {
-                ModuleDescriptorImpl module = new ModuleDescriptorImpl(
-                        Name.special("<built-ins resolver module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
-                );
-                module.addDependencyOnModule(module);
-                module.seal();
-
-                ModuleContext moduleContext = ContextPackage.ModuleContext(module, myProject);
+                MutableModuleContext newModuleContext = ContextPackage
+                        .ContextForNewModule(myProject, Name.special("<built-ins resolver module>"), ModuleParameters.Empty.INSTANCE$);
+                newModuleContext.setDependencies(newModuleContext.getModule());
 
                 FileBasedDeclarationProviderFactory declarationFactory =
-                        new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), jetBuiltInsFiles);
+                        new FileBasedDeclarationProviderFactory(newModuleContext.getStorageManager(), jetBuiltInsFiles);
 
                 InjectorForLazyResolve injectorForLazyResolve =
-                        new InjectorForLazyResolve(moduleContext, declarationFactory, new BindingTraceContext(),
-                                                   AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
-                                                   new DynamicTypesSettings());
+                        new InjectorForLazyResolve(
+                                newModuleContext,
+                                declarationFactory, new BindingTraceContext(),
+                                AdditionalCheckerProvider.DefaultProvider.INSTANCE$,
+                                new DynamicTypesSettings()
+                        );
 
-                module.initialize(injectorForLazyResolve.getResolveSession().getPackageFragmentProvider());
+                newModuleContext.initializeModuleContents(injectorForLazyResolve.getResolveSession().getPackageFragmentProvider());
 
                 if (!ApplicationManager.getApplication().isUnitTestMode()) {
                     // Use lazy initialization in tests
@@ -119,9 +124,9 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 }
 
                 List<PackageFragmentDescriptor> fragments =
-                        module.getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
+                        newModuleContext.getModule().getPackageFragmentProvider().getPackageFragments(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME);
 
-                moduleDescriptor = module;
+                BuiltInsReferenceResolver.this.moduleDescriptor = newModuleContext.getModule();
                 builtinsPackageFragment = KotlinPackage.single(fragments);
                 builtInsSources = Sets.newHashSet(jetBuiltInsFiles);
             }
@@ -138,7 +143,6 @@ public class BuiltInsReferenceResolver extends AbstractProjectComponent {
                 }
             });
         }
-
     }
 
     @NotNull

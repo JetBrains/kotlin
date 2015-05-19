@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForRuntimeDescriptorLoader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 public class RuntimeModuleData private(private val injector: InjectorForRuntimeDescriptorLoader) {
     public val module: ModuleDescriptor get() = injector.getModuleDescriptor()
@@ -31,10 +33,13 @@ public class RuntimeModuleData private(private val injector: InjectorForRuntimeD
 
     companion object {
         public fun create(classLoader: ClassLoader): RuntimeModuleData {
-            val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), listOf(), JavaToKotlinClassMap.INSTANCE)
+            val storageManager = LockBasedStorageManager()
+            val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager,
+                                              ModuleParameters(listOf(), JavaToKotlinClassMap.INSTANCE))
             module.addDependencyOnModule(module)
             module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
-            val injector = InjectorForRuntimeDescriptorLoader(classLoader, module)
+            module.seal()
+            val injector = InjectorForRuntimeDescriptorLoader(classLoader, module, storageManager)
             module.initialize(injector.getJavaDescriptorResolver().packageFragmentProvider)
             return RuntimeModuleData(injector)
         }

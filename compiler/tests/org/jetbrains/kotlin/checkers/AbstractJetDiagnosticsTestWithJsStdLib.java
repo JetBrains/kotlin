@@ -22,14 +22,15 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.context.GlobalContext;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.config.Config;
-import org.jetbrains.kotlin.js.config.EcmaVersion;
 import org.jetbrains.kotlin.js.config.LibrarySourcesConfig;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.storage.StorageManager;
 
 import java.util.List;
 import java.util.Map;
@@ -57,12 +58,11 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
 
     @Override
     protected void analyzeModuleContents(
-            GlobalContext context,
-            List<JetFile> jetFiles,
-            ModuleDescriptorImpl module,
-            BindingTrace moduleTrace
+            @NotNull ModuleContext moduleContext,
+            @NotNull List<JetFile> jetFiles,
+            @NotNull BindingTrace moduleTrace
     ) {
-        TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, module, config);
+        TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, moduleContext, config);
     }
 
     @Override
@@ -70,24 +70,24 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
         return true;
     }
 
+    @NotNull
     @Override
-    protected ModuleDescriptorImpl createModule(String moduleName) {
-        return TopDownAnalyzerFacadeForJS.createJsModule(moduleName);
+    protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
+        return new ModuleDescriptorImpl(Name.special(moduleName), storageManager, TopDownAnalyzerFacadeForJS.JS_MODULE_PARAMETERS);
     }
 
     @NotNull
     @Override
-    protected ModuleDescriptorImpl createSealedModule() {
-        //It's JVM specific thing, so for JS we just create and setup module.
-
-        ModuleDescriptorImpl module = createModule("<kotlin-js-test-module>");
+    protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
+        ModuleDescriptorImpl module = createModule("<kotlin-js-test-module>", storageManager);
 
         module.addDependencyOnModule(module);
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
 
         for(ModuleDescriptorImpl moduleDescriptor : config.getModuleDescriptors()) {
             module.addDependencyOnModule(moduleDescriptor);
         }
+
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
 
         module.seal();
 

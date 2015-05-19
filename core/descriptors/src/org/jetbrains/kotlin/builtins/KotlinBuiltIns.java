@@ -28,9 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.ImportPath;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -109,12 +107,13 @@ public class KotlinBuiltIns {
     public static final FqNames FQ_NAMES = new FqNames();
 
     private KotlinBuiltIns() {
+        LockBasedStorageManager storageManager = new LockBasedStorageManager();
         builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins module>"), Collections.<ImportPath>emptyList(), PlatformToKotlinClassMap.EMPTY
+                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$
         );
 
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
-                new LockBasedStorageManager(), builtInsModule, Collections.singleton(BUILT_INS_PACKAGE_FQ_NAME),
+                storageManager, builtInsModule, Collections.singleton(BUILT_INS_PACKAGE_FQ_NAME),
                 FlexibleTypeCapabilitiesDeserializer.ThrowException.INSTANCE$, new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {

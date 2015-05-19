@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.di;
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava;
 import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver;
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.load.java.components.SamConversionResolver;
 import org.jetbrains.kotlin.load.java.components.RuntimeErrorReporter;
 import org.jetbrains.kotlin.load.java.components.RuntimeSourceElementFactory;
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver;
-import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.load.java.reflect.ReflectJavaClassFinder;
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClassFinder;
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider;
@@ -46,6 +46,7 @@ public class InjectorForRuntimeDescriptorLoader {
 
     private final ClassLoader classLoader;
     private final ModuleDescriptor moduleDescriptor;
+    private final StorageManager storageManager;
     private final JavaDescriptorResolver javaDescriptorResolver;
     private final DeserializationComponentsForJava deserializationComponentsForJava;
     private final ExternalSignatureResolver externalSignatureResolver;
@@ -57,7 +58,6 @@ public class InjectorForRuntimeDescriptorLoader {
     private final RuntimeErrorReporter runtimeErrorReporter;
     private final RuntimeSourceElementFactory runtimeSourceElementFactory;
     private final SingleModuleClassResolver singleModuleClassResolver;
-    private final LockBasedStorageManager lockBasedStorageManager;
     private final ReflectJavaClassFinder reflectJavaClassFinder;
     private final ReflectKotlinClassFinder reflectKotlinClassFinder;
     private final LazyJavaPackageFragmentProvider lazyJavaPackageFragmentProvider;
@@ -69,11 +69,12 @@ public class InjectorForRuntimeDescriptorLoader {
 
     public InjectorForRuntimeDescriptorLoader(
         @NotNull ClassLoader classLoader,
-        @NotNull ModuleDescriptor moduleDescriptor
+        @NotNull ModuleDescriptor moduleDescriptor,
+        @NotNull StorageManager storageManager
     ) {
         this.classLoader = classLoader;
         this.moduleDescriptor = moduleDescriptor;
-        this.lockBasedStorageManager = new LockBasedStorageManager();
+        this.storageManager = storageManager;
         this.reflectJavaClassFinder = new ReflectJavaClassFinder(classLoader);
         this.reflectKotlinClassFinder = new ReflectKotlinClassFinder(classLoader);
         this.runtimeErrorReporter = RuntimeErrorReporter.INSTANCE$;
@@ -86,13 +87,13 @@ public class InjectorForRuntimeDescriptorLoader {
         this.samConversionResolver = SamConversionResolver.EMPTY;
         this.runtimeSourceElementFactory = RuntimeSourceElementFactory.INSTANCE$;
         this.singleModuleClassResolver = new SingleModuleClassResolver();
-        this.globalJavaResolverContext = new GlobalJavaResolverContext(lockBasedStorageManager, reflectJavaClassFinder, reflectKotlinClassFinder, deserializedDescriptorResolver, externalAnnotationResolver, externalSignatureResolver, runtimeErrorReporter, methodSignatureChecker, javaResolverCache, javaPropertyInitializerEvaluator, samConversionResolver, runtimeSourceElementFactory, singleModuleClassResolver);
+        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, reflectJavaClassFinder, reflectKotlinClassFinder, deserializedDescriptorResolver, externalAnnotationResolver, externalSignatureResolver, runtimeErrorReporter, methodSignatureChecker, javaResolverCache, javaPropertyInitializerEvaluator, samConversionResolver, runtimeSourceElementFactory, singleModuleClassResolver);
         this.reflectionTypes = new ReflectionTypes(getModuleDescriptor());
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, getModuleDescriptor(), reflectionTypes);
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, getModuleDescriptor());
         this.javaClassDataFinder = new JavaClassDataFinder(reflectKotlinClassFinder, deserializedDescriptorResolver);
-        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(getModuleDescriptor(), lockBasedStorageManager, reflectKotlinClassFinder, runtimeErrorReporter);
-        this.deserializationComponentsForJava = new DeserializationComponentsForJava(lockBasedStorageManager, getModuleDescriptor(), javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
+        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(getModuleDescriptor(), storageManager, reflectKotlinClassFinder, runtimeErrorReporter);
+        this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, getModuleDescriptor(), javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
 
         singleModuleClassResolver.setResolver(javaDescriptorResolver);
 

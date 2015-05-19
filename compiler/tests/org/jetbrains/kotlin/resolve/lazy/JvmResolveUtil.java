@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.resolve.lazy;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
-import org.jetbrains.kotlin.context.ContextPackage;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -45,8 +43,7 @@ public class JvmResolveUtil {
 
     @NotNull
     public static AnalysisResult analyzeOneFileWithJavaIntegration(@NotNull JetFile file) {
-        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file)
-        );
+        return analyzeFilesWithJavaIntegration(file.getProject(), Collections.singleton(file));
     }
 
     @NotNull
@@ -70,14 +67,10 @@ public class JvmResolveUtil {
             @NotNull Project project,
             @NotNull Collection<JetFile> files
     ) {
-        ModuleDescriptorImpl module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module>");
-        module.addDependencyOnModule(module);
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        module.seal();
+        ModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project);
 
         BindingTrace trace = new CliLightClassGenerationSupport.CliBindingTrace();
 
-        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                ContextPackage.ModuleContext(module, project), files, trace, null, null);
+        return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(moduleContext, files, trace, null, null);
     }
 }

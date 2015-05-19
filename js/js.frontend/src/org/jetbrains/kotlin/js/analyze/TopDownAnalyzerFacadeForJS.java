@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ContextPackage;
 import org.jetbrains.kotlin.context.ModuleContext;
+import org.jetbrains.kotlin.context.MutableModuleContext;
+import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJs;
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -43,10 +46,23 @@ public final class TopDownAnalyzerFacadeForJS {
             new ImportPath("kotlin.js.*")
     );
 
+    public static ModuleParameters JS_MODULE_PARAMETERS = new ModuleParameters() {
+        @NotNull
+        @Override
+        public List<ImportPath> getDefaultImports() {
+            return DEFAULT_IMPORTS;
+        }
+
+        @NotNull
+        @Override
+        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+            return PlatformToKotlinClassMap.EMPTY;
+        }
+    };
+
     private TopDownAnalyzerFacadeForJS() {
     }
 
-    //TODO: refactor
     @NotNull
     public static JsAnalysisResult analyzeFiles(
             @NotNull Collection<JetFile> files,
@@ -54,36 +70,38 @@ public final class TopDownAnalyzerFacadeForJS {
     ) {
         BindingTrace trace = new BindingTraceContext();
 
-        ModuleDescriptorImpl module = createJsModule("<" + config.getModuleId() + ">");
-        module.addDependencyOnModule(module);
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        MutableModuleContext newModuleContext = ContextPackage.ContextForNewModule(
+                config.getProject(), Name.special("<" + config.getModuleId() + ">"), JS_MODULE_PARAMETERS
+        );
+        newModuleContext.setDependencies(computeDependencies(newModuleContext.getModule(), config));
+        return analyzeFilesWithGivenTrace(files, trace, newModuleContext, config);
+    }
 
-        for(ModuleDescriptorImpl moduleDescriptor : config.getModuleDescriptors()) {
-            module.addDependencyOnModule(moduleDescriptor);
-        }
-
-        module.seal();
-
-        return analyzeFilesWithGivenTrace(files, trace, module, config);
+    @NotNull
+    private static List<ModuleDescriptorImpl> computeDependencies(ModuleDescriptorImpl module, @NotNull Config config) {
+        List<ModuleDescriptorImpl> allDependencies = new ArrayList<ModuleDescriptorImpl>();
+        allDependencies.add(module);
+        allDependencies.addAll(config.getModuleDescriptors());
+        allDependencies.add(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        return allDependencies;
     }
 
     @NotNull
     public static JsAnalysisResult analyzeFilesWithGivenTrace(
             @NotNull Collection<JetFile> files,
             @NotNull BindingTrace trace,
-            @NotNull ModuleDescriptorImpl module,
+            @NotNull ModuleContext moduleContext,
             @NotNull Config config
     ) {
-        ModuleContext context = ContextPackage.ModuleContext(module, config.getProject());
         Collection<JetFile> allFiles = Config.withJsLibAdded(files, config);
 
         InjectorForTopDownAnalyzerForJs injector = new InjectorForTopDownAnalyzerForJs(
-                context, trace, new FileBasedDeclarationProviderFactory(context.getStorageManager(), allFiles)
+                moduleContext, trace, new FileBasedDeclarationProviderFactory(moduleContext.getStorageManager(), allFiles)
         );
         try {
             injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(TopDownAnalysisMode.TopLevelDeclarations, files,
-                                                           Collections.<PackageFragmentProvider>emptyList());
-            return JsAnalysisResult.success(trace, module);
+                                                                      Collections.<PackageFragmentProvider>emptyList());
+            return JsAnalysisResult.success(trace, moduleContext.getModule());
         }
         finally {
             injector.destroy();
@@ -95,10 +113,5 @@ public final class TopDownAnalyzerFacadeForJS {
         for (JetFile file : allFiles) {
             AnalyzingUtils.checkForSyntacticErrors(file);
         }
-    }
-
-    @NotNull
-    public static ModuleDescriptorImpl createJsModule(@NotNull String name) {
-        return new ModuleDescriptorImpl(Name.special(name), DEFAULT_IMPORTS, PlatformToKotlinClassMap.EMPTY);
     }
 }

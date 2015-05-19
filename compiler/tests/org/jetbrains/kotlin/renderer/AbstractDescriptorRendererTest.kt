@@ -21,7 +21,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -48,16 +47,15 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
         val fileText = FileUtil.loadFile(File(path), true)
         val psiFile = JetPsiFactory(getProject()).createFile(fileText)
 
-        val lazyModule = TopDownAnalyzerFacadeForJVM.createSealedJavaModule()
-        val moduleContext = ModuleContext(lazyModule, getProject())
+        val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(getProject())
 
         val resolveSession = InjectorForLazyResolve(
-                moduleContext,
-                FileBasedDeclarationProviderFactory(moduleContext.storageManager, listOf(psiFile)),
+                context,
+                FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
                 CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
                 KotlinJvmCheckerProvider, DynamicTypesSettings()).getResolveSession()
 
-        lazyModule.initialize(resolveSession.getPackageFragmentProvider())
+        context.initializeModuleContents(resolveSession.getPackageFragmentProvider())
 
         val descriptors = ArrayList<DeclarationDescriptor>()
 
@@ -65,7 +63,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
             override fun visitJetFile(file: JetFile) {
                 val fqName = file.getPackageFqName()
                 if (!fqName.isRoot()) {
-                    val packageDescriptor = lazyModule.getPackage(fqName)
+                    val packageDescriptor = context.module.getPackage(fqName)
                     descriptors.add(packageDescriptor)
                 }
                 file.acceptChildren(this)

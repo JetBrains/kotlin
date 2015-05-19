@@ -23,9 +23,10 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ModuleContext;
+import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
-import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm;
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvid
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
+import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -43,6 +45,8 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import static org.jetbrains.kotlin.context.ContextPackage.ContextForNewModule;
 
 public enum TopDownAnalyzerFacadeForJVM {
 
@@ -65,6 +69,20 @@ public enum TopDownAnalyzerFacadeForJVM {
         }
         return list;
     }
+
+    public static ModuleParameters JVM_MODULE_PARAMETERS = new ModuleParameters() {
+        @NotNull
+        @Override
+        public List<ImportPath> getDefaultImports() {
+            return DEFAULT_IMPORTS;
+        }
+
+        @NotNull
+        @Override
+        public PlatformToKotlinClassMap getPlatformToKotlinClassMap() {
+            return JavaToKotlinClassMap.INSTANCE;
+        }
+    };
 
     @NotNull
     public static AnalysisResult analyzeFilesWithJavaIntegrationNoIncremental(
@@ -138,18 +156,11 @@ public enum TopDownAnalyzerFacadeForJVM {
     }
 
     @NotNull
-    public static ModuleDescriptorImpl createJavaModule(@NotNull String name) {
-        return new ModuleDescriptorImpl(Name.special(name),
-                                        DEFAULT_IMPORTS,
-                                        JavaToKotlinClassMap.INSTANCE);
-    }
-
-    @NotNull
-    public static ModuleDescriptorImpl createSealedJavaModule() {
-        ModuleDescriptorImpl module = createJavaModule("<shared-module>");
-        module.addDependencyOnModule(module);
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        module.seal();
-        return module;
+    public static MutableModuleContext createContextWithSealedModule(@NotNull Project project) {
+        MutableModuleContext context = ContextForNewModule(
+                project, Name.special("<shared-module>"), JVM_MODULE_PARAMETERS
+        );
+        context.setDependencies(context.getModule(), KotlinBuiltIns.getInstance().getBuiltInsModule());
+        return context;
     }
 }

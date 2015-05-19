@@ -20,11 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
@@ -34,7 +37,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
-import static org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM.createJavaModule;
 
 public class JvmRuntimeTypes {
     private final ReflectionTypes reflectionTypes;
@@ -46,10 +48,10 @@ public class JvmRuntimeTypes {
     public JvmRuntimeTypes(@NotNull ReflectionTypes reflectionTypes) {
         this.reflectionTypes = reflectionTypes;
 
-        PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(
-                createJavaModule("<jvm functions impl>"),
-                new FqName("kotlin.jvm.internal")
-        );
+        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<jvm functions impl>"),
+                                                               LockBasedStorageManager.NO_LOCKS,
+                                                               TopDownAnalyzerFacadeForJVM.JVM_MODULE_PARAMETERS);
+        PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.jvm.internal"));
 
         this.functionImpl = createClass(kotlinJvmInternal, "FunctionImpl", "out R");
         this.memberFunctionImpl = createClass(kotlinJvmInternal, "MemberFunctionImpl", "in T", "out R");

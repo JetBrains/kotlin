@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import org.jetbrains.kotlin.types.expressions.*
@@ -127,6 +127,7 @@ private fun generatorForRuntimeDescriptorLoader() =
         generator("core/descriptors.runtime/src", DI_DEFAULT_PACKAGE, "InjectorForRuntimeDescriptorLoader") {
             parameter<ClassLoader>()
             publicParameter<ModuleDescriptor>()
+            parameter<StorageManager>()
 
             publicField<JavaDescriptorResolver>()
             publicField<DeserializationComponentsForJava>()
@@ -142,7 +143,6 @@ private fun generatorForRuntimeDescriptorLoader() =
             field<RuntimeSourceElementFactory>()
             field<SingleModuleClassResolver>()
 
-            field<LockBasedStorageManager>()
             field<ReflectJavaClassFinder>()
             field<ReflectKotlinClassFinder>()
         }

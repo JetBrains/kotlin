@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
@@ -40,9 +41,10 @@ import java.util.List;
  */
 public abstract class Config {
     private final boolean inlineEnabled;
-
     @NotNull
     private final Project project;
+    @NotNull
+    private final LockBasedStorageManager storageManager = new LockBasedStorageManager();
     @NotNull
     private final List<JetFile> sourceFilesFromLibraries = new SmartList<JetFile>();
     @NotNull
@@ -122,7 +124,6 @@ public abstract class Config {
         }
         for (ModuleDescriptorImpl module : moduleDescriptors) {
             setDependencies(module, moduleDescriptors);
-            module.seal();
         }
 
         return moduleDescriptors;
@@ -146,14 +147,16 @@ public abstract class Config {
         initialized = true;
     }
 
-    private static ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
-        ModuleDescriptorImpl moduleDescriptor = TopDownAnalyzerFacadeForJS.createJsModule("<" + metadata.getModuleName() + ">");
+    private ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
+        ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
+                Name.special("<" + metadata.getModuleName() + ">"), storageManager,
+                TopDownAnalyzerFacadeForJS.JS_MODULE_PARAMETERS
+        );
 
         PackageFragmentProvider provider =
-                KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, metadata.getBody(), new LockBasedStorageManager());
+                KotlinJavascriptSerializationUtil.createPackageFragmentProvider(moduleDescriptor, metadata.getBody(), storageManager);
 
         moduleDescriptor.initialize(provider != null ? provider : PackageFragmentProvider.Empty.INSTANCE$);
-        moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
 
         return moduleDescriptor;
     }
@@ -162,6 +165,8 @@ public abstract class Config {
         for (ModuleDescriptorImpl moduleItem : modules) {
             module.addDependencyOnModule(moduleItem);
         }
+        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        module.seal();
     }
 
     @NotNull
