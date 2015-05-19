@@ -20,22 +20,33 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetFunctionLiteral
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import java.util.HashSet
+import java.util.LinkedHashMap
 import java.util.LinkedHashSet
 
-public fun JetScope.getImplicitReceiversWithInstance(): List<ReceiverParameterDescriptor> {
+public fun JetScope.getImplicitReceiversWithInstance(): Collection<ReceiverParameterDescriptor>
+        = getImplicitReceiversWithInstanceToExpression().keySet()
+
+public interface ReceiverExpressionFactory {
+    public fun createExpression(psiFactory: JetPsiFactory, shortThis: Boolean = true): JetExpression
+}
+
+public fun JetScope.getImplicitReceiversWithInstanceToExpression(): Map<ReceiverParameterDescriptor, ReceiverExpressionFactory?> {
     // we use a set to workaround a bug with receiver for companion object present twice in the result of getImplicitReceiversHierarchy()
     val receivers = LinkedHashSet(getImplicitReceiversHierarchy())
 
-    val withInstance = HashSet<DeclarationDescriptor>()
+    val outerDeclarationsWithInstance = LinkedHashSet<DeclarationDescriptor>()
     var current: DeclarationDescriptor? = getContainingDeclaration()
     while (current != null) {
         if (current is PropertyAccessorDescriptor) {
             current =  current.getCorrespondingProperty()
         }
-        withInstance.add(current)
+        outerDeclarationsWithInstance.add(current)
 
         val classDescriptor = current as? ClassDescriptor
         if (classDescriptor != null && !classDescriptor.isInner() && !DescriptorUtils.isLocal(classDescriptor)) break
@@ -43,8 +54,42 @@ public fun JetScope.getImplicitReceiversWithInstance(): List<ReceiverParameterDe
         current = current!!.getContainingDeclaration()
     }
 
-    return receivers.filter {
-        val owner = it.getContainingDeclaration()
-        owner is ClassDescriptor && owner.getKind().isSingleton() || owner in withInstance
+    val result = LinkedHashMap<ReceiverParameterDescriptor, ReceiverExpressionFactory?>()
+    for ((index, receiver) in receivers.withIndex()) {
+        val owner = receiver.getContainingDeclaration()
+        val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
+            val thisWithLabel = thisQualifierName(receiver)?.let { "this@$it" }
+            if (index == 0)
+                (thisWithLabel ?: "this") to true
+            else
+                thisWithLabel to false
+        }
+        else if (owner is ClassDescriptor && owner.getKind().isSingleton()) {
+            IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(owner) to false
+        }
+        else {
+            continue
+        }
+        val factory = if (expressionText != null)
+            object : ReceiverExpressionFactory {
+                override fun createExpression(psiFactory: JetPsiFactory, shortThis: Boolean): JetExpression {
+                    return psiFactory.createExpression(if (shortThis && isImmediateThis) "this" else expressionText)
+                }
+            }
+        else
+            null
+        result.put(receiver, factory)
     }
+    return result
+}
+
+private fun thisQualifierName(receiver: ReceiverParameterDescriptor): String? {
+    val descriptor = receiver.getContainingDeclaration()
+    val name = descriptor.getName()
+    if (!name.isSpecial()) {
+        return name.asString()
+    }
+
+    val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetFunctionLiteral
+    return functionLiteral?.findLabelAndCall()?.first
 }

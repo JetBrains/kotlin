@@ -2992,6 +2992,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("implicitCompanionObjectThis.kt")
+        public void testImplicitCompanionObjectThis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/implicitCompanionObjectThis.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implicitQualifiedThisRuntime.kt")
+        public void testImplicitQualifiedThisRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/implicitQualifiedThisRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("incorrectReplacement.kt")
         public void testIncorrectReplacement() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/incorrectReplacement.kt");

@@ -11,5 +11,5 @@ class Outer {
 }
 
 fun foo(inner: Outer.Inner) {
-    <caret>newFun(inner)
+    inner.newFun(inner)
 }

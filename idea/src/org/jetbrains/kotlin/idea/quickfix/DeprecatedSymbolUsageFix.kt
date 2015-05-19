@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.collectElementsOfType
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
@@ -52,6 +53,8 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import java.util.ArrayList
@@ -98,10 +101,19 @@ public class DeprecatedSymbolUsageFix(
         val FROM_PARAMETER_KEY = Key<ValueParameterDescriptor>("FROM_PARAMETER")
         val FROM_THIS_KEY = Key<Unit>("FROM_THIS")
 
-        val explicitReceiver = qualifiedExpression?.getReceiverExpression()
-        explicitReceiver?.putCopyableUserData(USER_CODE_KEY, Unit)
-        explicitReceiver?.putCopyableUserData(FROM_THIS_KEY, Unit)
+        var receiver = qualifiedExpression?.getReceiverExpression()
+        receiver?.putCopyableUserData(USER_CODE_KEY, Unit)
         //TODO: infix and operator calls
+
+        if (receiver == null) {
+            val receiverValue = if (descriptor.isExtension) resolvedCall.getExtensionReceiver() else resolvedCall.getDispatchReceiver()
+            val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expressionToReplace]
+            if (receiverValue is ThisReceiver && resolutionScope != null) {
+                receiver = receiverValue.asExpression(resolutionScope, psiFactory)
+            }
+        }
+
+        receiver?.putCopyableUserData(FROM_THIS_KEY, Unit)
 
         val originalDescriptor = (if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
@@ -111,11 +123,10 @@ public class DeprecatedSymbolUsageFix(
         var (expression, imports, parameterUsages) = ReplaceWithAnnotationAnalyzer.analyze(
                 replaceWith, originalDescriptor, element.getResolutionFacade(), file, project)
 
-        //TODO: implicit receiver is not always "this"
         //TODO: this@
         for (thisExpression in expression.collectElementsOfType<JetThisExpression>()) {
-            if (explicitReceiver != null) {
-                thisExpression.replace(explicitReceiver)
+            if (receiver != null) {
+                thisExpression.replace(receiver)
             }
             else {
                 thisExpression.putCopyableUserData(FROM_THIS_KEY, Unit)
@@ -151,7 +162,7 @@ public class DeprecatedSymbolUsageFix(
                     if (qualified.getReceiverExpression().getCopyableUserData(FROM_THIS_KEY) != null) {
                         val selector = qualified.getSelectorExpression()
                         if (selector != null) {
-                            expression = psiFactory.createExpressionByPattern("$0?.$1", explicitReceiver!!, selector)
+                            expression = psiFactory.createExpressionByPattern("$0?.$1", receiver!!, selector)
                             return
                         }
                     }
@@ -159,19 +170,19 @@ public class DeprecatedSymbolUsageFix(
 
                 if (expressionToReplace.isUsedAsExpression(bindingContext)) {
                     val thisReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
-                    expression = expression.introduceValue(explicitReceiver!!, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
+                    expression = expression.introduceValue(receiver!!, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
                 }
                 else {
-                    expression = psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", explicitReceiver!!, expression)
+                    expression = psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", receiver!!, expression)
                 }
             }
             processSafeCall()
         }
 
-        if (explicitReceiver != null && explicitReceiver.shouldIntroduceVariableIfUsedTwice()) {
+        if (receiver != null && receiver.shouldIntroduceVariableIfUsedTwice()) {
             val thisReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
             if (thisReplaced.size() > 1) {
-                expression = expression.introduceValue(explicitReceiver, expressionToReplace, bindingContext, thisReplaced)
+                expression = expression.introduceValue(receiver!!, expressionToReplace, bindingContext, thisReplaced)
             }
         }
 

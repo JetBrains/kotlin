@@ -23,6 +23,7 @@ import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.collectElementsOfType
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -76,10 +77,7 @@ object ReplaceWithAnnotationAnalyzer {
 
         val bindingContext = expression.analyzeInContext(scope)
 
-        val thisType = symbolDescriptor.getExtensionReceiverParameter()?.getType()
-                       ?: (symbolDescriptor.getContainingDeclaration() as? ClassifierDescriptor)?.getDefaultType()
-
-        val receiversToAdd = ArrayList<Pair<JetExpression, String>>()
+        val receiversToAdd = ArrayList<Pair<JetExpression, JetExpression>>()
 
         val parameterUsageKey = Key<ValueParameterDescriptor>("parameterUsageKey")
 
@@ -105,14 +103,9 @@ object ReplaceWithAnnotationAnalyzer {
                         else
                             resolvedCall.getDispatchReceiver()
                         if (receiver is ThisReceiver) {
-                            if (receiver.getType() == thisType) {
-                                receiversToAdd.add(expression to "this")
-                            }
-                            else {
-                                val descriptor = receiver.getDeclarationDescriptor()
-                                if (descriptor is ClassDescriptor && descriptor.isCompanionObject()) {
-                                    receiversToAdd.add(expression to IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor))
-                                }
+                            val receiverExpression = receiver.asExpression(symbolScope, psiFactory)
+                            if (receiverExpression != null) {
+                                receiversToAdd.add(expression to receiverExpression)
                             }
                         }
                     }
@@ -124,9 +117,9 @@ object ReplaceWithAnnotationAnalyzer {
             }
         })
 
-        for ((expr, receiverText) in receiversToAdd) {
+        for ((expr, receiverExpression) in receiversToAdd) {
             val expressionToReplace = expr.getParent() as? JetCallExpression ?: expr
-            val newExpr = expressionToReplace.replaced(psiFactory.createExpressionByPattern("$receiverText.$0", expressionToReplace))
+            val newExpr = expressionToReplace.replaced(psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
             if (expressionToReplace == expression) {
                 expression = newExpr
             }

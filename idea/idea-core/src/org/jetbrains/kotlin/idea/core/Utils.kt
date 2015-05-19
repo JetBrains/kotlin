@@ -16,12 +16,17 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import java.util.ArrayList
 import java.util.HashMap
 
@@ -82,4 +87,12 @@ public inline fun <reified TElement> PsiElement.collectElementsOfType(@inlineOpt
         }
     })
     return result
+}
+
+public fun ThisReceiver.asExpression(resolutionScope: JetScope, psiFactory: JetPsiFactory): JetExpression? {
+    val expressionFactory = resolutionScope.getImplicitReceiversWithInstanceToExpression()
+                                    .entrySet()
+                                    .firstOrNull { it.key.getContainingDeclaration() == this.getDeclarationDescriptor() }
+                                    ?.value ?: return null
+    return expressionFactory.createExpression(psiFactory)
 }

@@ -10,7 +10,7 @@ open class Base {
 class Derived : Base() {
     inner class InnerDerived : Base.Inner() {
         fun foo() {
-            <caret>"a".newFun(this@Derived)
+            "a".<caret>newFun(this@Derived)
         }
     }
 }

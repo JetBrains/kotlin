@@ -281,6 +281,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("NoCompanionThis.kt")
+    public void testNoCompanionThis() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/NoCompanionThis.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoCompletionForCapitalPrefix.kt")
     public void testNoCompletionForCapitalPrefix() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/NoCompletionForCapitalPrefix.kt");
