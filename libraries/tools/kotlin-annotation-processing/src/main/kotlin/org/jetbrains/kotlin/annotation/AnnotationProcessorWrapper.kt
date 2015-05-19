@@ -71,7 +71,7 @@ public abstract class AnnotationProcessorWrapper(private val processorFqName: St
             return
         }
 
-        val annotationsTxt = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "0apt/annotations.txt")
+        val annotationsTxt = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "annotations.kotlin.txt")
         kotlinAnnotationsProvider = FileObjectKotlinAnnotationProvider(annotationsTxt)
 
         processor.init(processingEnv)

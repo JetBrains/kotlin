@@ -34,7 +34,7 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
     private companion object {
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
         val WRAPPERS_DIRECTORY = "wrappers"
-        val ANNOTATIONS_FILENAME = "annotations.txt"
+        val ANNOTATIONS_FILENAME = "annotations.kotlin.txt"
     }
 
     fun getAnnotationFile(): File {
