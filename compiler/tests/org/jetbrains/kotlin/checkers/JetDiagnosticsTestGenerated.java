@@ -4185,6 +4185,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ConstructorCallFromOutside.kt")
+            public void testConstructorCallFromOutside() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/ConstructorCallFromOutside.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dontCreatePackageTypeForEnumEntry.kt")
             public void testDontCreatePackageTypeForEnumEntry() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/dontCreatePackageTypeForEnumEntry.kt");
@@ -4329,6 +4335,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExplicitConstructorCall.kt")
+            public void testExplicitConstructorCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/ExplicitConstructorCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("extensionNamedAsEnumEntry.kt")
             public void testExtensionNamedAsEnumEntry() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/extensionNamedAsEnumEntry.kt");
@@ -4350,6 +4362,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("inheritanceFromEnum.kt")
             public void testInheritanceFromEnum() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/inheritanceFromEnum.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InsideEntryConstructorCall.kt")
+            public void testInsideEntryConstructorCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/InsideEntryConstructorCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InsideSecondaryConstructorCall.kt")
+            public void testInsideSecondaryConstructorCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/InsideSecondaryConstructorCall.kt");
                 doTest(fileName);
             }
 
@@ -4407,6 +4431,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("OldSyntaxConstructorCall.kt")
+            public void testOldSyntaxConstructorCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/OldSyntaxConstructorCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("openMemberInEnum.kt")
             public void testOpenMemberInEnum() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/openMemberInEnum.kt");
@@ -4416,6 +4446,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("overrideFinalEnumMethods.kt")
             public void testOverrideFinalEnumMethods() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/overrideFinalEnumMethods.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SecondaryConstructorCall.kt")
+            public void testSecondaryConstructorCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/SecondaryConstructorCall.kt");
                 doTest(fileName);
             }
 

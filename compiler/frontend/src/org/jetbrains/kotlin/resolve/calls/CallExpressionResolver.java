@@ -210,10 +210,13 @@ public class CallExpressionResolver {
             if (functionDescriptor == null) {
                 return TypeInfoFactoryPackage.noTypeInfo(context);
             }
-            if (functionDescriptor instanceof ConstructorDescriptor &&
-                DescriptorUtils.isAnnotationClass(functionDescriptor.getContainingDeclaration())) {
-                if (!canInstantiateAnnotationClass(callExpression)) {
+            if (functionDescriptor instanceof ConstructorDescriptor) {
+                if (DescriptorUtils.isAnnotationClass(functionDescriptor.getContainingDeclaration())
+                    && !canInstantiateAnnotationClass(callExpression)) {
                     context.trace.report(ANNOTATION_CLASS_CONSTRUCTOR_CALL.on(callExpression));
+                }
+                if (DescriptorUtils.isEnumClass(functionDescriptor.getContainingDeclaration())) {
+                    context.trace.report(ENUM_CLASS_CONSTRUCTOR_CALL.on(callExpression));
                 }
             }
 
