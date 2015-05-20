@@ -24,11 +24,13 @@ import com.intellij.psi.impl.cache.impl.OccurrenceConsumer
 import com.intellij.psi.impl.cache.impl.id.LexerBasedIdIndexer
 import com.intellij.psi.impl.cache.impl.todo.LexerBasedTodoIndexer
 import com.intellij.psi.search.UsageSearchContext
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.idea.search.usagesSearch.ALL_SEARCHABLE_OPERATIONS
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.JetLexer
 import org.jetbrains.kotlin.lexer.JetTokens
+import java.util.*
 
 class KotlinFilterLexer(table: OccurrenceConsumer): BaseFilterLexer(JetLexer(), table) {
     private val codeTokens = TokenSet.orSet(
@@ -43,17 +45,33 @@ class KotlinFilterLexer(table: OccurrenceConsumer): BaseFilterLexer(JetLexer(), 
             JetTokens.RBRACKET, JetTokens.SEMICOLON, JetTokens.COMMA, JetTokens.DOT
     )
 
+    private var previousTokens = LinkedList<IElementType>()
+
     override fun advance() {
+        fun isMultiDeclarationPosition(): Boolean {
+            return previousTokens[0] == JetTokens.VAL_KEYWORD || previousTokens[0] == JetTokens.VAR_KEYWORD
+                   || previousTokens[0] == JetTokens.LPAR && previousTokens[1] == JetTokens.FOR_KEYWORD
+        }
+
         val tokenType = myDelegate.getTokenType()
 
-        when(tokenType) {
+        when (tokenType) {
             in codeTokens -> addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
+            JetTokens.LPAR -> if (isMultiDeclarationPosition()) addOccurrenceInToken(UsageSearchContext.IN_CODE.toInt())
             in JetTokens.STRINGS -> scanWordsInToken(UsageSearchContext.IN_STRINGS + UsageSearchContext.IN_FOREIGN_LANGUAGES, false, true)
             in commentTokens -> {
                 scanWordsInToken(UsageSearchContext.IN_COMMENTS.toInt(), false, false)
                 advanceTodoItemCountsInToken()
             }
             !in skipTokens -> scanWordsInToken(UsageSearchContext.IN_PLAIN_TEXT.toInt(), false, false)
+        }
+
+        if (tokenType != TokenType.WHITE_SPACE) {
+            previousTokens.addFirst(tokenType)
+
+            if (previousTokens.size() > 2) {
+                previousTokens.removeLast()
+            }
         }
 
         myDelegate.advance()

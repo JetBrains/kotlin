@@ -35,7 +35,6 @@ public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<JetToken> = ImmutableSet
         .addAll(IDENTITY_EQUALS_OPERATIONS)
         .addAll(IN_OPERATIONS)
         .add(JetTokens.LBRACKET)
-        .add(JetTokens.LPAR)
         .add(JetTokens.BY_KEYWORD)
         .build()
 

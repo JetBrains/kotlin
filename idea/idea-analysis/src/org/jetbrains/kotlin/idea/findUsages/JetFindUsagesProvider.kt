@@ -26,8 +26,7 @@ public class JetFindUsagesProvider : FindUsagesProvider {
     public override fun canFindUsagesFor(psiElement: PsiElement): Boolean =
             psiElement is JetNamedDeclaration
 
-    public override fun getWordsScanner(): WordsScanner =
-            KotlinWordsScanner()
+    public override fun getWordsScanner() = null
 
     public override fun getHelpId(psiElement: PsiElement): String? = null
 
