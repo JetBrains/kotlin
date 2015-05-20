@@ -54,9 +54,7 @@ class DeprecatedEnumEntrySuperConstructorSyntaxFix(element: JetEnumEntry): JetIn
             JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetEnumEntry>(
                     predicate = { DeclarationsChecker.enumEntryUsesDeprecatedSuperConstructor(it) },
                     taskProcessor = { changeConstructorToShort(it) },
-                    modalTitle = "Replacing deprecated enum constructor syntax",
-                    name = "Change to short enum entry super constructor in the whole project",
-                    familyName = "Change to short enum entry super constructor in the whole project"
+                    name = "Change to short enum entry super constructor in the whole project"
             )
         }
 

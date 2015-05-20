@@ -42,9 +42,7 @@ public class MissingConstructorKeywordFix(element: JetPrimaryConstructor) : JetI
             JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetPrimaryConstructor>(
                     predicate = { it.getModifierList() != null && !it.hasConstructorKeyword() },
                     taskProcessor = { it.addConstructorKeyword() },
-                    modalTitle = "Adding missing 'constructor' keyword",
-                    name = "Add missing 'constructor' keyword in whole project",
-                    familyName = "Add missing 'constructor' keyword in whole project"
+                    name = "Add missing 'constructor' keyword in whole project"
             )
         }
     }

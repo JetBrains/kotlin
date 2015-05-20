@@ -45,9 +45,7 @@ public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : Je
             JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetNamedFunction>(
                     predicate = { isFunctionExpression(it) },
                     taskProcessor = { removeNameFromFunction(it) },
-                    modalTitle = "Removing identifier from function expressions",
-                    name = "Remove identifier from function expressions in the whole project",
-                    familyName = "Remove identifier from function expressions in the whole project"
+                    name = "Remove identifier from function expressions in the whole project"
             )
         }
 

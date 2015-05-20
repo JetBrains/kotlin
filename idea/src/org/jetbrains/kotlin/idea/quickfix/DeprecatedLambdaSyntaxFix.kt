@@ -51,9 +51,7 @@ public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : 
             JetWholeProjectForEachElementOfTypeFix.createByTaskFactory(
                     taskFactory = fun (it: JetFunctionLiteralExpression) = fixTaskFactory(it),
                     taskProcessor = { it.runFix() },
-                    modalTitle = JetBundle.message("migrate.lambda.syntax.in.whole.project.modal.title"),
-                    name = JetBundle.message("migrate.lambda.syntax.in.whole.project"),
-                    familyName = JetBundle.message("migrate.lambda.syntax.in.whole.project.family")
+                    name = "Migrate lambda syntax in whole project"
             )
         }
 

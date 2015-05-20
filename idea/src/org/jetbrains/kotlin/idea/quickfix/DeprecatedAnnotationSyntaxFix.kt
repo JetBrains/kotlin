@@ -44,9 +44,7 @@ public class DeprecatedAnnotationSyntaxFix(element: JetAnnotation) : JetIntentio
             JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetAnnotation>(
                     predicate = { it.isDeprecated() },
                     taskProcessor = { replaceWithAtAnnotationEntries(it) },
-                    modalTitle = "Replacing deprecated annotations syntax",
-                    name = "Replace with '@' annotations in whole project",
-                    familyName = "Replace with '@' annotations in whole project"
+                    name = "Replace with '@' annotations in whole project"
             )
         }
 

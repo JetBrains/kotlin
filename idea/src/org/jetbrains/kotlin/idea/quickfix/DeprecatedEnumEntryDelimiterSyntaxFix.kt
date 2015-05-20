@@ -51,9 +51,7 @@ class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntention
             JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetEnumEntry>(
                     predicate = { DeclarationsChecker.enumEntryUsesDeprecatedOrNoDelimiter(it) },
                     taskProcessor = { insertLackingCommaSemicolon(it) },
-                    modalTitle = "Replacing deprecated enum entry delimiter syntax",
-                    name = "Insert lacking comma(s) / semicolon(s) in the whole project",
-                    familyName = "Insert lacking comma(s) / semicolon(s) in the whole project"
+                    name = "Insert lacking comma(s) / semicolon(s) in the whole project"
             )
         }
 

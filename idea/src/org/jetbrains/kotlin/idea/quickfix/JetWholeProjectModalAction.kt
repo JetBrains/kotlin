@@ -115,14 +115,13 @@ public abstract class JetWholeProjectModalByCollectionAction<T : Any>(modalTitle
 }
 
 class JetWholeProjectForEachElementOfTypeFix<T> private (
-        val collectingVisitorFactory: (MutableCollection<T>) -> JetVisitorVoid,
-        val tasksProcessor: (Collection<T>) -> Unit,
-        modalTitle: String,
-        val name: String,
-        val familyNameText: String
-) : JetWholeProjectModalByCollectionAction<T>(modalTitle) {
+        private val collectingVisitorFactory: (MutableCollection<T>) -> JetVisitorVoid,
+        private val tasksProcessor: (Collection<T>) -> Unit,
+        private val name: String,
+        private val familyName: String = name
+) : JetWholeProjectModalByCollectionAction<T>("Applying '$name'") {
 
-    override fun getFamilyName() = familyNameText
+    override fun getFamilyName() = familyName
     override fun getText() = name
 
     override fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<T>) {
@@ -134,13 +133,11 @@ class JetWholeProjectForEachElementOfTypeFix<T> private (
         inline fun <reified E : JetElement> createByPredicate(
                 noinline predicate: (E) -> Boolean,
                 noinline taskProcessor: (E) -> Unit,
-                modalTitle: String,
                 name: String,
-                familyName: String
+                familyName: String = name
         ) = createByTaskFactory<E, E>(
                 taskFactory = { if (predicate(it)) it else null },
                 taskProcessor = taskProcessor,
-                modalTitle = modalTitle,
                 name = name,
                 familyName = familyName
         )
@@ -148,13 +145,11 @@ class JetWholeProjectForEachElementOfTypeFix<T> private (
         inline fun <reified E : JetElement, D : Any> createByTaskFactory(
                 noinline taskFactory: (E) -> D?,
                 noinline taskProcessor: (D) -> Unit,
-                modalTitle: String,
                 name: String,
-                familyName: String
+                familyName: String = name
         ) = createForMultiTask<E, D>(
                 tasksFactory = { taskFactory(it).singletonOrEmptyList() },
                 tasksProcessor = { it.forEach(taskProcessor) },
-                modalTitle = modalTitle,
                 name = name,
                 familyName = familyName
         )
@@ -162,15 +157,13 @@ class JetWholeProjectForEachElementOfTypeFix<T> private (
         inline fun <reified E : JetElement, D> createForMultiTask(
                 noinline tasksFactory: (E) -> Collection<D>,
                 noinline tasksProcessor: (Collection<D>) -> Unit,
-                modalTitle: String,
                 name: String,
-                familyName: String
+                familyName: String = name
         ) = JetWholeProjectForEachElementOfTypeFix(
                 collectingVisitorFactory = { accumulator -> flatMapDescendantsOfTypeVisitor(accumulator, tasksFactory) },
                 tasksProcessor = tasksProcessor,
-                modalTitle = modalTitle,
                 name = name,
-                familyNameText = familyName
+                familyName = familyName
         )
     }
 }

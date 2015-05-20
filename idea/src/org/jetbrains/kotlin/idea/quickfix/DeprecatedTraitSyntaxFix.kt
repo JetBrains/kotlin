@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public class DeprecatedTraitSyntaxFix(element: PsiElement): JetIntentionAction<PsiElement>(element), CleanupFix {
-    override fun getFamilyName() = "Replace with 'interface'"
+    override fun getFamilyName() = "Replace 'trait' with 'interface'"
     override fun getText() = getFamilyName()
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile?)
@@ -48,9 +48,7 @@ public class DeprecatedTraitSyntaxFix(element: PsiElement): JetIntentionAction<P
             JetWholeProjectForEachElementOfTypeFix.createByPredicate<JetClass>(
                     predicate = { it.getNode().findChildByType(JetTokens.TRAIT_KEYWORD) != null },
                     taskProcessor = { replaceWithInterfaceKeyword(it.getNode().findChildByType(JetTokens.TRAIT_KEYWORD).getPsi())},
-                    modalTitle = "Replacing deprecated trait syntax",
-                    name = "Replace with 'interface' in whole project",
-                    familyName = "Replace with 'interface' in whole project"
+                    name = "Replace 'trait' with 'interface' in whole project"
             )
         }
     }
