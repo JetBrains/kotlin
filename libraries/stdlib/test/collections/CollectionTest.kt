@@ -534,10 +534,30 @@ class CollectionTest {
         compare(listOf("value").toMutableSet(), setOf("value")) { setBehavior() }
     }
 
+    test fun specialJsSets() {
+        val specialJsStringSet = HashSet<String>()
+        specialJsStringSet.add("kotlin")
+        compare(hashSetOf("kotlin"), specialJsStringSet) { setBehavior() }
+
+        val specialJsNumberSet = HashSet<Double>()
+        specialJsNumberSet.add(3.14)
+        compare(hashSetOf(3.14), specialJsNumberSet) { setBehavior() }
+    }
+
     test fun specialMaps() {
         compare(hashMapOf<String, Int>(), mapOf<String, Int>()) { mapBehavior() }
         compare(linkedMapOf<Int, String>(), emptyMap<Int, String>()) { mapBehavior() }
         compare(linkedMapOf(2 to 3), mapOf(2 to 3)) { mapBehavior() }
+    }
+
+    test fun specialJsMaps() {
+        val specialJsStringMap = HashMap<String, Any>()
+        specialJsStringMap.put("k1", "v1")
+        compare(hashMapOf("k1" to "v1"), specialJsStringMap) { mapBehavior() }
+
+        val specialJsNumberMap = HashMap<Int, Any>(4)
+        specialJsNumberMap.put(5, "v5")
+        compare(hashMapOf(5 to "v5"), specialJsNumberMap) { mapBehavior() }
     }
 
     private fun <T> CompareContext<List<T>>.listBehavior() {
