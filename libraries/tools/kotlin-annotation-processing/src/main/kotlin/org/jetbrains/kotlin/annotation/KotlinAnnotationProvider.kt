@@ -64,7 +64,7 @@ public abstract class KotlinAnnotationProvider {
 
                 ANNOTATED_CLASS, ANNOTATED_FIELD, ANNOTATED_METHOD -> {
                     val annotationName = expandAnnotation(lineParts[1])
-                    val classFqName = expandClassName(lineParts[2])
+                    val classFqName = expandClassName(lineParts[2]).replace('$', '.')
                     val elementName = if (lineParts.size() == 4) lineParts[3] else null
 
                     val set = annotatedKotlinElements.getOrPut(annotationName) { hashSetOf() }
