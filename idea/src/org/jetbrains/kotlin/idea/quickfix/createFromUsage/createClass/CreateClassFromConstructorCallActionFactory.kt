@@ -61,7 +61,7 @@ public object CreateClassFromConstructorCallActionFactory: JetSingleIntentionAct
         val inner = isInnerClassExpected(call)
 
         val valueArguments = callExpr.getValueArguments()
-        val defaultParamName = if (inAnnotationEntry && valueArguments.size == 1) "value" else null
+        val defaultParamName = if (inAnnotationEntry && valueArguments.size() == 1) "value" else null
         val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
         val parameterInfos = valueArguments.map {
             ParameterInfo(

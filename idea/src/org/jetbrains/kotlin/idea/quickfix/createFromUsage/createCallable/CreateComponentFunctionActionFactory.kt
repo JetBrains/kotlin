@@ -42,14 +42,14 @@ object CreateComponentFunctionActionFactory : JetIntentionActionsFactory() {
             TypeInfo(diagnosticWithParameters.getB(), Variance.IN_VARIANCE)
         }
         else {
-            val rhs = multiDeclaration!!.getInitializer() ?: return null
+            val rhs = multiDeclaration.getInitializer() ?: return null
             TypeInfo(rhs, Variance.IN_VARIANCE)
         }
-        val entries = multiDeclaration!!.getEntries()
+        val entries = multiDeclaration.getEntries()
 
         val entry = entries[componentNumber]
         val returnType = TypeInfo(entry, Variance.OUT_VARIANCE)
 
-        return CreateCallableFromUsageFixes(multiDeclaration!!, FunctionInfo(name.getIdentifier(), ownerType, returnType))
+        return CreateCallableFromUsageFixes(multiDeclaration, FunctionInfo(name.getIdentifier(), ownerType, returnType))
     }
 }

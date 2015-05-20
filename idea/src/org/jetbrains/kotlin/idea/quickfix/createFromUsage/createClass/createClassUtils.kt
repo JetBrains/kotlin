@@ -95,7 +95,7 @@ private fun JetExpression.getInheritableTypeInfo(
     if (types.size() != 1) return TypeInfo.Empty to { classKind -> true }
 
     val type = types.first()
-    val descriptor = type.getConstructor().getDeclarationDescriptor()
+    val descriptor = type.getConstructor().getDeclarationDescriptor() ?: return TypeInfo.Empty to { classKind -> false }
 
     val canHaveSubtypes = TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)
     val isEnum = DescriptorUtils.isEnumClass(descriptor)

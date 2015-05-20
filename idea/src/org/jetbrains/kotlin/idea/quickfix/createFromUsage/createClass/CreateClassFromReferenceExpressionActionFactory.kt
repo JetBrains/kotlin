@@ -83,7 +83,7 @@ public object CreateClassFromReferenceExpressionActionFactory : JetIntentionActi
             val createPackageAction = refExpr.getCreatePackageFixIfApplicable(targetParent)
             if (createPackageAction != null) return Collections.singletonList(createPackageAction)
 
-            return (if (name.checkClassName()) ClassKind.values() else array())
+            return (if (name.checkClassName()) ClassKind.values() else arrayOf())
                     .filter {
                         when (it) {
                             ClassKind.ANNOTATION_CLASS -> inImport

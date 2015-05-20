@@ -38,7 +38,6 @@ object CreatePropertyDelegateAccessorsActionFactory : JetIntentionActionsFactory
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>? {
         val expression = diagnostic.getPsiElement() as? JetExpression ?: return null
         val context = expression.analyze()
-        [suppress("UNCHECKED_CAST")]
 
         fun isApplicableForAccessor(accessor: PropertyAccessorDescriptor?): Boolean =
                 accessor != null && context[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, accessor] == null

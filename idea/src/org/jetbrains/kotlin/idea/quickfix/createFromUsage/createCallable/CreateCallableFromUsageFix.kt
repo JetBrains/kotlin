@@ -53,7 +53,7 @@ public class CreateCallableFromUsageFix(
     }
 
     private fun getDeclarationIfApplicable(project: Project, candidate: TypeCandidate): PsiElement? {
-        val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor()
+        val descriptor = candidate.theType.getConstructor().getDeclarationDescriptor() ?: return null
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
         if (declaration !is JetClassOrObject && declaration !is PsiClass) return null
         return if (isExtension || declaration.canRefactor()) declaration else null

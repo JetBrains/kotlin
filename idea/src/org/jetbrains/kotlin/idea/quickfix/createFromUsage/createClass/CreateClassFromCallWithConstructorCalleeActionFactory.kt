@@ -65,7 +65,7 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleI
 
         val anyType = KotlinBuiltIns.getInstance().getNullableAnyType()
         val valueArguments = callElement.getValueArguments()
-        val defaultParamName = if (valueArguments.size == 1) "value" else null
+        val defaultParamName = if (valueArguments.size() == 1) "value" else null
         val parameterInfos = valueArguments.map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
@@ -75,7 +75,9 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : JetSingleI
 
         val typeArgumentInfos = when {
             isAnnotation -> Collections.emptyList<TypeInfo>()
-            else -> callElement.getTypeArguments().map { TypeInfo(it.getTypeReference(), Variance.INVARIANT) }
+            else -> callElement.getTypeArguments()
+                    .map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }
+                    .filterNotNull()
         }
 
         val classInfo = ClassInfo(

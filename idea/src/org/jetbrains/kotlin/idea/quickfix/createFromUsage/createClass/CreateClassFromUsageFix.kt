@@ -21,7 +21,10 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.psi.*
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiPackage
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -66,7 +69,7 @@ public class CreateClassFromUsageFix(
     override fun getText(): String =
             JetBundle.message("create.0.from.usage", "${classInfo.kind.description} '${classInfo.name}'")
 
-    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?): Boolean {
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false
         with(classInfo) {
             if (targetParent is PsiClass) {
@@ -87,8 +90,8 @@ public class CreateClassFromUsageFix(
                     directories.firstOrNull { ModuleUtilCore.findModuleForPsiElement(it) == currentModule }
                     ?: directories.firstOrNull()
 
-            val targetDirectory = if (directories.size > 1 && !ApplicationManager.getApplication().isUnitTestMode()) {
-                DirectoryChooserUtil.chooseDirectory(directories.copyToArray(), preferredDirectory, project, HashMap<PsiDirectory, String>())
+            val targetDirectory = if (directories.size() > 1 && !ApplicationManager.getApplication().isUnitTestMode()) {
+                DirectoryChooserUtil.chooseDirectory(directories.toTypedArray(), preferredDirectory, project, HashMap())
             }
             else {
                 preferredDirectory

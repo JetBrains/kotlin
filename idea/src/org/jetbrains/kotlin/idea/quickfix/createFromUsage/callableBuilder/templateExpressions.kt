@@ -54,7 +54,7 @@ private class ParameterNameExpression(
 
     override fun calculateLookupItems(context: ExpressionContext?): Array<LookupElement>? {
         context!!
-        val names = LinkedHashSet<String>(this.names.toList())
+        val names = LinkedHashSet(this.names.toList())
 
         // find the parameter list
         val project = context.getProject()!!
@@ -63,15 +63,15 @@ private class ParameterNameExpression(
         val editor = context.getEditor()!!
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as JetFile
         val elementAt = file.findElementAt(offset)
-        val declaration = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetFunction>(), javaClass<JetClass>()) ?: return array<LookupElement>()
+        val declaration = PsiTreeUtil.getParentOfType(elementAt, javaClass<JetFunction>(), javaClass<JetClass>()) ?: return arrayOf()
         val parameterList = when (declaration) {
-            is JetFunction -> declaration.getValueParameterList()
-            is JetClass -> declaration.getPrimaryConstructorParameterList()
+            is JetFunction -> declaration.getValueParameterList()!!
+            is JetClass -> declaration.getPrimaryConstructorParameterList()!!
             else -> throw AssertionError("Unexpected declaration: ${declaration.getText()}")
         }
 
         // add names based on selected type
-        val parameter = elementAt.getStrictParentOfType<JetParameter>()
+        val parameter = elementAt?.getStrictParentOfType<JetParameter>()
         if (parameter != null) {
             val parameterTypeRef = parameter.getTypeReference()
             if (parameterTypeRef != null) {
@@ -83,7 +83,7 @@ private class ParameterNameExpression(
         }
 
         // remember other parameter names for later use
-        val parameterNames = parameterList.getParameters().stream().map { jetParameter ->
+        val parameterNames = parameterList.getParameters().asSequence().map { jetParameter ->
             if (jetParameter == parameter) null else jetParameter.getName()
         }.filterNotNullTo(HashSet<String>())
 
@@ -94,7 +94,7 @@ private class ParameterNameExpression(
 
         // ensure there are no conflicts
         val validator = CollectingValidator(parameterNames)
-        return names.map { LookupElementBuilder.create(validator.validateName(it)) }.copyToArray()
+        return names.map { LookupElementBuilder.create(validator.validateName(it)) }.toTypedArray()
     }
 }
 
@@ -104,7 +104,7 @@ private class ParameterNameExpression(
 private abstract class TypeExpression(public val typeCandidates: List<TypeCandidate>) : Expression() {
     class ForTypeReference(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
         override val cachedLookupElements: Array<LookupElement> =
-                typeCandidates.map { LookupElementBuilder.create(it, it.renderedType!!) }.copyToArray()
+                typeCandidates.map { LookupElementBuilder.create(it, it.renderedType!!) }.toTypedArray()
     }
 
     class ForDelegationSpecifier(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
@@ -113,14 +113,14 @@ private abstract class TypeExpression(public val typeCandidates: List<TypeCandid
                     val descriptor = it.theType.getConstructor().getDeclarationDescriptor() as ClassDescriptor
                     val text = it.renderedType!! + if (descriptor.getKind() == ClassKind.INTERFACE) "" else "()"
                     LookupElementBuilder.create(it, text)
-                }.copyToArray()
+                }.toTypedArray()
     }
 
     protected abstract val cachedLookupElements: Array<LookupElement>
 
     override fun calculateResult(context: ExpressionContext?): Result {
         val lookupItems = calculateLookupItems(context)
-        return TextResult(if (lookupItems.size == 0) "" else lookupItems[0].getLookupString())
+        return TextResult(if (lookupItems.size() == 0) "" else lookupItems[0].getLookupString())
     }
 
     override fun calculateQuickResult(context: ExpressionContext?) = calculateResult(context)
@@ -148,7 +148,7 @@ private class TypeParameterListExpression(private val mandatoryTypeParameters: L
         val editor = context.getEditor()!!
         val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument()) as JetFile
         val elementAt = file.findElementAt(offset)
-        val declaration = elementAt.getStrictParentOfType<JetNamedDeclaration>() ?: return TextResult("")
+        val declaration = elementAt?.getStrictParentOfType<JetNamedDeclaration>() ?: return TextResult("")
 
         val renderedTypeParameters = LinkedHashSet<RenderedTypeParameter>()
         renderedTypeParameters.addAll(mandatoryTypeParameters)
@@ -174,18 +174,18 @@ private class TypeParameterListExpression(private val mandatoryTypeParameters: L
         currentTypeParameters = sortedRenderedTypeParameters.map { it.typeParameter }
 
         return TextResult(
-                if (sortedRenderedTypeParameters.empty) "" else sortedRenderedTypeParameters.map { it.text }.joinToString(", ", prefix, ">")
+                if (sortedRenderedTypeParameters.isEmpty()) "" else sortedRenderedTypeParameters.map { it.text }.joinToString(", ", prefix, ">")
         )
     }
 
     override fun calculateQuickResult(context: ExpressionContext?): Result = calculateResult(context)
 
     // do not offer the user any choices
-    override fun calculateLookupItems(context: ExpressionContext?) = array<LookupElement>()
+    override fun calculateLookupItems(context: ExpressionContext?) = arrayOf<LookupElement>()
 }
 
 private object ValVarExpression: Expression() {
-    private val cachedLookupElements = listOf("val", "var").map { LookupElementBuilder.create(it) }.copyToArray<LookupElement>()
+    private val cachedLookupElements = listOf("val", "var").map { LookupElementBuilder.create(it) }.toTypedArray<LookupElement>()
 
     override fun calculateResult(context: ExpressionContext?): Result? = TextResult("val")
 
