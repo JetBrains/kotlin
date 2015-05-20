@@ -1,0 +1,3 @@
+ERROR: compiler/testData/cli/jvm/nonLocalDisabled.kt: (3, 9) Non-local returns are not allowed with inlining disabled
+ERROR: compiler/testData/cli/jvm/nonLocalDisabled.kt: (7, 9) Non-local returns are not allowed with inlining disabled
+COMPILATION_ERROR

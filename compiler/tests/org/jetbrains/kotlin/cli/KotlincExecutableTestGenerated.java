@@ -109,6 +109,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("nonLocalDisabled.args")
+        public void testNonLocalDisabled() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/nonLocalDisabled.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("pluginSimple.args")
         public void testPluginSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/pluginSimple.args");

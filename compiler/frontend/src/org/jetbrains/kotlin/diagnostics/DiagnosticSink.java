@@ -21,6 +21,8 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public interface DiagnosticSink {
@@ -29,6 +31,22 @@ public interface DiagnosticSink {
         public void report(@NotNull Diagnostic diagnostic) {
         }
     };
+
+    class CollectAll implements DiagnosticSink {
+
+        List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
+
+        @Override
+        public void report(@NotNull Diagnostic diagnostic) {
+            diagnostics.add(diagnostic);
+        }
+
+        @NotNull
+        public List<Diagnostic> getDiagnostics() {
+            return Collections.unmodifiableList(diagnostics);
+        }
+    };
+
     DiagnosticSink THROW_EXCEPTION = new DiagnosticSink() {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {

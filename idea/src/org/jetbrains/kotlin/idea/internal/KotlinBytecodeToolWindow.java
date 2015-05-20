@@ -43,7 +43,9 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.util.DebuggerUtils;
@@ -54,6 +56,7 @@ import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.utils.UtilsPackage;
 
 import javax.swing.*;
 import java.awt.*;
@@ -197,6 +200,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             boolean enableOptimization
     ) {
         GenerationState state;
+        DiagnosticSink.CollectAll sink = new DiagnosticSink.CollectAll();
         try {
             ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(jetFile);
 
@@ -233,12 +237,13 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             };
 
             ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(jetFile);
+
             state = new GenerationState(jetFile.getProject(), ClassBuilderFactories.TEST, Progress.DEAF,
                                         moduleDescriptor, bindingContext,
                                         toProcess, !enableAssertions, !enableAssertions,
                                         generateClassFilter,
                                         !enableInline, !enableOptimization, null, null,
-                                        DiagnosticSink.DO_NOTHING, null);
+                                        sink, null);
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         }
         catch (ProcessCanceledException e) {
@@ -249,6 +254,21 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
         }
 
         StringBuilder answer = new StringBuilder();
+
+        List<Diagnostic> diagnostics = sink.getDiagnostics();
+        if (!diagnostics.isEmpty()) {
+            answer.append("// Backend Errors: \n");
+            answer.append("// ================\n");
+            for (Diagnostic diagnostic : diagnostics) {
+                answer.append("// Error at ")
+                        .append(diagnostic.getPsiFile().getName())
+                        .append(UtilsPackage.join(diagnostic.getTextRanges(), ","))
+                        .append(": ")
+                        .append(DefaultErrorMessages.render(diagnostic))
+                        .append("\n");
+            }
+            answer.append("// ================\n\n");
+        }
 
         OutputFileCollection outputFiles = state.getFactory();
         for (OutputFile outputFile : outputFiles.asList()) {

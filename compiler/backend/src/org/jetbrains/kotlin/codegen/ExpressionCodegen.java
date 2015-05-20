@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
@@ -1828,7 +1829,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         NonLocalReturnInfo nonLocalReturn = getNonLocalReturnInfo(descriptor, expression);
         boolean isNonLocalReturn = nonLocalReturn != null;
         if (isNonLocalReturn && !state.isInlineEnabled()) {
-            throw new CompilationException("Non local returns requires enabled inlining", null, expression);
+            state.getDiagnostics().report(Errors.NON_LOCAL_RETURN_IN_DISABLED_INLINE.on(expression));
+            genThrow(v, "java/lang/UnsupportedOperationException",
+                     "Non-local returns are not allowed with inlining disabled");
+            return StackValue.none();
         }
 
         Type returnType = isNonLocalReturn ? nonLocalReturn.returnType : this.returnType;
