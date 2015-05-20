@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.js.test;
 
-import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils;
-import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 
 public abstract class AbstractSingleFileTranslationWithDirectivesTest extends SingleFileTranslationTest {
     public AbstractSingleFileTranslationWithDirectivesTest(@NotNull String main) {
@@ -29,12 +26,5 @@ public abstract class AbstractSingleFileTranslationWithDirectivesTest extends Si
     @Override
     public void setUp() throws Exception {
         super.setUp();
-    }
-
-    @Override
-    protected void processJsProgram(@NotNull JsProgram program) throws Exception {
-        String fileName = getInputFilePath(getTestName(true) + ".kt");
-        String fileText = JsTestUtils.readFile(fileName);
-        DirectiveTestUtils.processDirectives(program, fileText);
     }
 }

@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
 import org.jetbrains.kotlin.js.test.rhino.RhinoResultChecker;
+import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils;
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -195,12 +196,13 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         if (!(translationResult instanceof TranslationResult.Success)) return;
 
         TranslationResult.Success successResult = (TranslationResult.Success) translationResult;
-        processJsProgram(successResult.getProgram());
 
         OutputFileCollection outputFiles = successResult.getOutputFiles(outputFile, getOutputPrefixFile(), getOutputPostfixFile());
         File outputDir = outputFile.getParentFile();
         assert outputDir != null : "Parent file for output file should not be null, outputFilePath: " + outputFile.getPath();
         OutputUtilsPackage.writeAllTo(outputFiles, outputDir);
+
+        processJsProgram(successResult.getProgram(), jetFiles);
     }
 
     protected File getOutputPostfixFile() {
@@ -223,7 +225,12 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return false;
     }
 
-    protected void processJsProgram(@NotNull JsProgram program) throws Exception { }
+    protected void processJsProgram(@NotNull JsProgram program, @NotNull List<JetFile> jetFiles) throws Exception {
+        for (JetFile file : jetFiles) {
+            String text = file.getText();
+            DirectiveTestUtils.processDirectives(program, text);
+        }
+    }
 
     protected void runRhinoTests(
             @NotNull String testName,

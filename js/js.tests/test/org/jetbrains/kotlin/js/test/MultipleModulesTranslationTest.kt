@@ -16,9 +16,12 @@
 
 package org.jetbrains.kotlin.js.test
 
+import com.google.dart.compiler.backend.js.ast.JsProgram
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker
+import org.jetbrains.kotlin.js.test.utils.DirectiveTestUtils
+import org.jetbrains.kotlin.js.test.utils.JsTestUtils
 import org.jetbrains.kotlin.js.test.utils.JsTestUtils.getAllFilesInDir
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.io.File
@@ -61,7 +64,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
             generateJavaScriptFiles(fullFilePaths, moduleDirectoryName, MainCallParameters.noCall(), version, moduleName, libraries)
         }
     }
-
+    
     private fun getMetaFileOutputPath(moduleDirectoryName: String, version: EcmaVersion) =
         KotlinJavascriptMetadataUtils.replaceSuffix(getOutputFilePath(moduleDirectoryName, version))
 

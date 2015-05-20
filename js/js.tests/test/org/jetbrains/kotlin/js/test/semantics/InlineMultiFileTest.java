@@ -147,15 +147,4 @@ public final class InlineMultiFileTest extends MultipleFilesTranslationTest {
     public void testSimpleCapturingInPackage() throws Exception {
         checkFooBoxIsOk();
     }
-
-    @Override
-    protected void processJsProgram(@NotNull JsProgram program) throws Exception {
-        String dir = getTestName(true);
-        List<String> fileNames = getAllFilesInDir(getInputFilePath(dir));
-
-        for (String fileName : fileNames) {
-            String fileText = JsTestUtils.readFile(fileName);
-            DirectiveTestUtils.processDirectives(program, fileText);
-        }
-    }
 }
