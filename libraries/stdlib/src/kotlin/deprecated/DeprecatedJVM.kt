@@ -19,13 +19,13 @@ package kotlin
 import java.util.*
 import java.util.concurrent.Callable
 
-deprecated("Use sortedSetOf(...) instead")
+deprecated("Use sortedSetOf(...) instead", ReplaceWith("sortedSetOf(*values)"))
 public fun sortedSet<T>(vararg values: T): TreeSet<T> = sortedSetOf(*values)
 
-deprecated("Use sortedSetOf(...) instead")
+deprecated("Use sortedSetOf(...) instead", ReplaceWith("sortedSetOf(comparator, *values)"))
 public fun sortedSet<T>(comparator: Comparator<T>, vararg values: T): TreeSet<T> = sortedSetOf(comparator, *values)
 
-deprecated("Use sortedMapOf(...) instead")
+deprecated("Use sortedMapOf(...) instead", ReplaceWith("sortedMapOf(*values)"))
 public fun <K, V> sortedMap(vararg values: Pair<K, V>): SortedMap<K, V> = sortedMapOf(*values)
 
 /**
@@ -38,11 +38,11 @@ public /*inline*/ fun <T> callable(action: () -> T): Callable<T> {
     }
 }
 
-deprecated("Use length() instead")
+deprecated("Use length() instead", ReplaceWith("length()"))
 public val String.size: Int
     get() = length()
 
-deprecated("Use length() instead")
+deprecated("Use length() instead", ReplaceWith("length()"))
 public val CharSequence.size: Int
     get() = length()
 

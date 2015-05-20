@@ -94,7 +94,7 @@ public val Collection<*>.indices: IntRange
 /**
  * Returns an [IntRange] that starts with zero and ends at the value of this number but does not include it.
  */
-deprecated("Use 0..n-1 range instead.")
+deprecated("Use 0..n-1 range instead.", ReplaceWith("0..this - 1"))
 public val Int.indices: IntRange
     get() = 0..this - 1
 

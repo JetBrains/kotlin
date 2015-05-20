@@ -101,7 +101,7 @@ public fun Document?.elements(namespaceUri: String, localName: String): List<Ele
 }
 
 public fun NodeList?.asList() : List<Node> = if (this == null) emptyList() else NodeListAsList(this)
-deprecated("use asList instead")
+deprecated("use asList instead", ReplaceWith("asList()"))
 public fun NodeList?.toList(): List<Node> = asList()
 
 public fun NodeList?.toElementList(): List<Element> {
@@ -268,8 +268,8 @@ private class PreviousSiblings(private var node: Node) : Iterable<Node> {
 }
 
 /** Returns true if this node is a Text node or a CDATA node */
-deprecated("use property isText instead")
-public fun Node.isText() : Boolean = nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE
+deprecated("use property isText instead", ReplaceWith("isText"))
+public fun Node.isText() : Boolean = isText
 
 /**
  * it is *true* when [Node.nodeType] is TEXT_NODE or CDATA_SECTION_NODE

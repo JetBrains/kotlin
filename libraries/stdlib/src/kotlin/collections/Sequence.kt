@@ -41,7 +41,7 @@ public fun <T> Iterator<T>.asSequence(): Sequence<T> {
     return iteratorSequence.constrainOnce()
 }
 
-deprecated("Use asSequence() instead.")
+deprecated("Use asSequence() instead.", ReplaceWith("asSequence()"))
 public fun <T> Iterator<T>.sequence(): Sequence<T> = asSequence()
 
 
@@ -596,7 +596,7 @@ public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> {
     return GeneratorSequence(nextFunction, { nextFunction() }).constrainOnce()
 }
 
-deprecated("Use sequence() instead")
+deprecated("Use sequence() instead", ReplaceWith("sequence(nextFunction)"))
 public fun <T : Any> stream(nextFunction: () -> T?): Sequence<T> = sequence(nextFunction)
 
 /**
@@ -616,5 +616,5 @@ public /*inline*/ fun <T : Any> sequence(initialValue: T, nextFunction: (T) -> T
 public fun <T: Any> sequence(initialValueFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
         GeneratorSequence(initialValueFunction, nextFunction)
 
-deprecated("Use sequence() instead")
+deprecated("Use sequence() instead", ReplaceWith("sequence(initialValue, nextFunction)"))
 public /*inline*/ fun <T : Any> stream(initialValue: T, nextFunction: (T) -> T?): Sequence<T> = sequence(initialValue, nextFunction)

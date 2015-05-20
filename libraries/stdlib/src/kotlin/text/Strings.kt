@@ -79,10 +79,10 @@ public fun String.trimStart(vararg chars: Char): String = trimStart { it in char
  */
 public fun String.trimEnd(vararg chars: Char): String = trimEnd { it in chars }
 
-deprecated("Use removePrefix() instead")
+deprecated("Use removePrefix() instead", ReplaceWith("removePrefix(prefix)"))
 public fun String.trimLeading(prefix: String): String = removePrefix(prefix)
 
-deprecated("Use removeSuffix() instead")
+deprecated("Use removeSuffix() instead", ReplaceWith("removeSuffix(postfix)"))
 public fun String.trimTrailing(postfix: String): String = removeSuffix(postfix)
 
 /**
@@ -95,7 +95,7 @@ public fun String.trim(): String = trim { it.isWhitespace() }
  */
 public fun String.trimStart(): String = trimStart { it.isWhitespace() }
 
-deprecated("Use trimStart instead.")
+deprecated("Use trimStart instead.", ReplaceWith("trimStart()"))
 public fun String.trimLeading(): String = trimStart { it.isWhitespace() }
 
 /**
@@ -103,7 +103,7 @@ public fun String.trimLeading(): String = trimStart { it.isWhitespace() }
  */
 public fun String.trimEnd(): String = trimEnd { it.isWhitespace() }
 
-deprecated("Use trimEnd instead.")
+deprecated("Use trimEnd instead.", ReplaceWith("trimEnd()"))
 public fun String.trimTrailing(): String = trimEnd { it.isWhitespace() }
 
 /**

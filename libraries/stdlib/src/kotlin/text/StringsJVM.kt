@@ -32,7 +32,7 @@ private fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this a
 /**
  * Compares this string to another string, ignoring case considerations.
  */
-deprecated("Use equals(anotherString, ignoreCase = true) instead")
+deprecated("Use equals(anotherString, ignoreCase = true) instead", ReplaceWith("equals(anotherString, ignoreCase = true)"))
 public fun String.equalsIgnoreCase(anotherString: String): Boolean = equals(anotherString, ignoreCase = true)
 
 /**

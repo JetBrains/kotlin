@@ -64,7 +64,7 @@ public fun <T> compareBy(vararg functions: (T) -> Comparable<*>?): Comparator<T>
 /**
  * Creates a comparator using the sequence of functions to calculate a result of comparison.
  */
-deprecated("Use compareBy() instead")
+deprecated("Use compareBy() instead", ReplaceWith("compareBy(*functions)"))
 public fun <T> comparator(vararg functions: (T) -> Comparable<*>?): Comparator<T> = compareBy(*functions)
 
 /**
