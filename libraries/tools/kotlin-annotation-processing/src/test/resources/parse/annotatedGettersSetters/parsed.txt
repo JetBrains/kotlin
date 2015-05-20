@@ -1,0 +1,7 @@
+java.lang.Deprecated org.test.SomeClass getImmutableProperty
+java.lang.Deprecated org.test.SomeClass getMutableProperty
+java.lang.Deprecated org.test.SomeClass setMutableProperty
+kotlin.data org.test.SomeClass
+org.jetbrains.annotations.NotNull org.test.SomeClass copy
+org.jetbrains.annotations.NotNull org.test.SomeClass getMutableProperty
+org.jetbrains.annotations.NotNull org.test.SomeClass mutableProperty

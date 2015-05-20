@@ -1,0 +1,1 @@
+java.lang.Deprecated org.test.SomeClass.a.1 property

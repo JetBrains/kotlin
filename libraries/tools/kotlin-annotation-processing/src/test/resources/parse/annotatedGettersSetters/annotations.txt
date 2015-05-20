@@ -1,0 +1,11 @@
+a kotlin.data 0
+p org.test 0
+c 0 0/SomeClass
+a java.lang.Deprecated 1
+m 1 0/SomeClass getImmutableProperty
+a org.jetbrains.annotations.NotNull 2
+f 2 0/SomeClass mutableProperty
+m 1 0/SomeClass getMutableProperty
+m 2 0/SomeClass getMutableProperty
+m 1 0/SomeClass setMutableProperty
+m 2 0/SomeClass copy

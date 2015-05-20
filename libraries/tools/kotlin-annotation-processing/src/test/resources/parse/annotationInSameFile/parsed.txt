@@ -1,0 +1,2 @@
+org.test.SomeAnnotation org.test.SomeClass
+org.test.SomeAnnotation org.test.SomeClass annotatedFunction
