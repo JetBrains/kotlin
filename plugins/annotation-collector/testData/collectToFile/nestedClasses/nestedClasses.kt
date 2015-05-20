@@ -1,30 +1,28 @@
 package org.test
 
-import javax.inject.*
-
 public class SomeClass {
 
-    Named("CompanionObject")
+    Deprecated
     companion object {
 
     }
 
-    Named("KotlinInnerObject")
+    Deprecated
     object SomeInnerObject {
 
     }
 
-    Named("InnerClass")
+    Deprecated
     inner class InnerClass {
 
-        Named("InnerClassInInnerClass")
+        Deprecated
         inner class InnerClassInInnerClass {
 
         }
 
     }
 
-    Named("NestedClass")
+    Deprecated
     class NestedClass {
 
     }

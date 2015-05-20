@@ -1,8 +1,12 @@
-a javax.inject.Named 0
+a kotlin.data 0
 c 0 SomeClass
-a javax.inject.Inject 1
+a java.lang.Deprecated 1
 f 1 SomeClass annotatedProperty
 a org.jetbrains.annotations.Nullable 2
 f 2 SomeClass annotatedProperty
 m 2 SomeClass getAnnotatedProperty
 m 1 SomeClass annotatedFunction
+a kotlin.inline 3
+m 3 SomeClass annotatedFunction
+a org.jetbrains.annotations.NotNull 4
+m 4 SomeClass copy

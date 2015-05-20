@@ -1,12 +1,10 @@
 package org.test
 
-import javax.inject.*
-
 public class SomeClass {
 
     private fun a() {
         object : Any() {
-            [Inject]
+            [Deprecated]
             val property: Int = 5
         }
 

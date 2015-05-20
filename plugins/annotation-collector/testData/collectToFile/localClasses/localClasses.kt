@@ -1,18 +1,13 @@
 package org.test
 
-import javax.inject.*
-
 public class SomeClass {
 
     public fun someFunction() {
-        [Named("LocalKotlinClass")]
-        class LocalClass {
+        [Deprecated] class LocalClass {
 
-            [Inject]
-            public var annotatedProperty: String? = null
+            public Deprecated var annotatedProperty: String? = null
 
-            [Inject]
-            public fun annotatedFunction() {
+            public inline fun annotatedFunction() {
 
             }
 

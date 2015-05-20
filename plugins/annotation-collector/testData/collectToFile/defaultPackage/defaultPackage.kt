@@ -1,13 +1,8 @@
-import javax.inject.*
+data public class SomeClass {
 
-Named("KotlinClass")
-public class SomeClass {
+    [Deprecated] public var annotatedProperty: String? = null
 
-    Inject
-    public var annotatedProperty: String? = null
-
-    Inject
-    public fun annotatedFunction() {
+    Deprecated public inline fun annotatedFunction() {
 
     }
 

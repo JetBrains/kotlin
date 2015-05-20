@@ -1,9 +1,5 @@
 package org.test
 
-import javax.inject.*
+Deprecated public class SomeClass
 
-Named("KotlinClass")
-public class SomeClass
-
-Named("KotlinObject")
-public object SomeObject
+Deprecated public object SomeObject

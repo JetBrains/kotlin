@@ -1,13 +1,11 @@
 package org.test
 
-import javax.inject.*
-
 public class SomeClass {
 
-    Inject
+    Deprecated
     public val annotatedVal: String? = null
 
-    Inject
+    Deprecated
     public var annotatedVar: Int = 5
 
 }

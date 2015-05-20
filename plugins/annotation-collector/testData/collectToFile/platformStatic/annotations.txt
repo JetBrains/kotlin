@@ -1,7 +1,7 @@
 a kotlin.platform.platformStatic 0
 p org.test 0
 m 0 0/SomeClass$Companion a
-a javax.inject.Inject 1
+a kotlin.inline 1
 m 1 0/SomeClass$Companion a
 a org.jetbrains.annotations.NotNull 2
 m 2 0/SomeClass$Companion access$init$0
