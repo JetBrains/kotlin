@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.utils.LibraryUtils
 import com.intellij.openapi.util.io.FileUtil
 import org.apache.commons.io.FilenameUtils
 import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.IOException
@@ -105,13 +106,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     override val compiler = K2JVMCompiler()
     override fun createBlankArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
-    public var aptFiles: Set<File> = emptySet()
-    public var kotlinAptOutputDir: File? = null
-    public var kotlinAptWorkingDir: File? = null
-
     val srcDirsSources = HashSet<SourceDirectorySet>()
-
-    val annotationProcessingManager = AnnotationProcessingManager(this)
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
@@ -133,10 +128,10 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
         val pluginOptions = arrayListOf(*basePluginOptions)
 
-        if (aptFiles.isNotEmpty()) {
-            val annotationDeclarationsFile = annotationProcessingManager.getAnnotationFile()
-            if (annotationDeclarationsFile.exists()) annotationDeclarationsFile.delete()
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + annotationDeclarationsFile)
+        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
+        if (kaptAnnotationsFile != null) {
+            if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
         }
 
         args.pluginOptions = pluginOptions.toTypedArray()
@@ -173,8 +168,6 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         if (outputDirFile.exists()) {
             FileUtils.copyDirectory(outputDirFile, getDestinationDir())
         }
-
-        annotationProcessingManager.afterKotlinCompile()
     }
 
     // override setSource to track source directory sets
@@ -332,6 +325,14 @@ public open class KDoc() : SourceTask() {
             ExitCode.INTERNAL_ERROR -> throw GradleException("Internal generation error. See log for more details")
         }
 
+    }
+}
+
+private inline fun <reified T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
+    try {
+        return get(id) as T
+    } catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
+        return null
     }
 }
 

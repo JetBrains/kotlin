@@ -43,6 +43,8 @@ import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import java.util.ServiceLoader
 import org.gradle.api.logging.*
+import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.internal.AnnotationProcessingManager
 import java.net.URL
 import java.util.jar.Manifest
 import java.lang.ref.WeakReference
@@ -163,11 +165,16 @@ class Kotlin2JvmSourceSetProcessor(
                     kotlinDirSet?.srcDir(dir)
                 }
 
-                if (aptConfiguration.getDependencies().size() > 1) {
-                    kotlinTask.setProperty("aptFiles", aptConfiguration.resolve())
-                }
+                if (aptConfiguration.getDependencies().size() > 1 && javaTask is JavaCompile) {
+                    val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(kotlinTask, sourceSet.getName())
 
-                project.setAptDirsForSourceSet(kotlinTask, sourceSet.getName())
+                    val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
+                    kotlinTask.storeKaptAnnotationsFile(kaptManager)
+
+                    javaTask.doFirst {
+                        kaptManager.setupKapt()
+                    }
+                }
             }
         }
 
@@ -414,9 +421,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
-            kotlinTask.setProperty("aptFiles", aptFiles)
-
-            val aptOutputDir = project.setAptDirsForSourceSet(kotlinTask, variantDataName)
+            val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(kotlinTask, variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
 
             kotlinTask doFirst {
@@ -425,11 +430,14 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 (it as AbstractCompile).setClasspath(fullClasspath)
             }
 
-            kotlinTask.getExtensions().getExtraProperties().set("javaTask", WeakReference(javaTask))
             javaTask.dependsOn(kotlinTaskName)
 
-            javaTask doFirst  {
+            val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, aptFiles.toSet(), aptOutputDir, aptWorkingDir)
+            kotlinTask.storeKaptAnnotationsFile(kaptManager)
+
+            javaTask doFirst {
                 javaTask.setClasspath(javaTask.getClasspath() + project.files(kotlinTask.property("kotlinDestinationDir")))
+                kaptManager.setupKapt()
             }
         }
     }
@@ -527,16 +535,18 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
     public fun resolveJsLibrary(): File = resolveDependencies(kotlinJsLibraryCoordinates()).first()
 }
 
-private fun Project.setAptDirsForSourceSet(kotlinTask: AbstractCompile, sourceSetName: String): File {
+private fun AbstractCompile.storeKaptAnnotationsFile(kapt: AnnotationProcessingManager) {
+    getExtensions().getExtraProperties().set("kaptAnnotationsFile", kapt.getAnnotationFile())
+}
+
+private fun Project.getAptDirsForSourceSet(kotlinTask: AbstractCompile, sourceSetName: String): Pair<File, File> {
     val aptOutputDir = File(getBuildDir(), "generated/source/kapt")
     val aptOutputDirForVariant = File(aptOutputDir, sourceSetName)
-    kotlinTask.setProperty("kotlinAptOutputDir", aptOutputDirForVariant)
 
     val aptWorkingDir = File(getBuildDir(), "tmp/kapt")
     val aptWorkingDirForVariant = File(aptWorkingDir, sourceSetName)
-    kotlinTask.setProperty("kotlinAptWorkingDir", aptWorkingDirForVariant)
 
-    return aptOutputDirForVariant
+    return aptOutputDirForVariant to aptWorkingDirForVariant
 }
 
 private fun Project.createAptConfiguration(sourceSetName: String, kotlinAnnotationProcessingDep: String): Configuration {

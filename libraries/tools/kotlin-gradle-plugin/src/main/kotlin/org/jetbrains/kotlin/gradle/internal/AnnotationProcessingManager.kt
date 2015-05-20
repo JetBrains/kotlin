@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.gradle.tasks
+package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.org.objectweb.asm.ClassWriter
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes.*
 import java.io.File
 import java.io.IOException
-import java.util.zip.ZipFile
-import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.lang.ref.WeakReference
-import kotlin.properties.Delegates
+import java.util.zip.ZipFile
 
-public class AnnotationProcessingManager(private val task: KotlinCompile) {
+public class AnnotationProcessingManager(
+        private val task: AbstractCompile,
+        val javaTask: JavaCompile,
+        val aptFiles: Set<File>,
+        val aptOutputDir: File,
+        val aptWorkingDir: File) {
 
     private val project = task.getProject()
 
@@ -38,29 +42,12 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
     }
 
     fun getAnnotationFile(): File {
-        val aptWorkingDir = task.kotlinAptWorkingDir!!
         aptWorkingDir.mkdirs()
         return File(aptWorkingDir, "$WRAPPERS_DIRECTORY/$ANNOTATIONS_FILENAME")
     }
 
-    fun afterKotlinCompile() {
-        val extraProperties = task.getExtensions().getExtraProperties()
-
-        val javaTask = try {
-            [suppress("UNCHECKED_CAST")]
-            (extraProperties.get("javaTask") as? WeakReference<JavaCompile>)?.get()
-        }
-        catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
-            null
-        }
-
-        val aptFiles = task.aptFiles
-        val aptWorkingDir = task.kotlinAptWorkingDir
-        val aptOutputDir = task.kotlinAptOutputDir
-
-        if (javaTask == null || aptFiles.isEmpty() || aptWorkingDir == null || aptOutputDir == null) return
-
-        val annotationDeclarationsFile = File(aptWorkingDir, ANNOTATIONS_FILENAME)
+    fun setupKapt() {
+        if (aptFiles.isEmpty()) return
 
         generateJavaHackFile(aptWorkingDir, javaTask)
 
