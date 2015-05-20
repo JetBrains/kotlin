@@ -336,7 +336,7 @@ public class InlineCodegen extends CallGenerator {
 
         FunctionGenerationStrategy strategy =
                 expression instanceof JetCallableReferenceExpression ?
-                new ExpressionCodegen.CallableReferenceGenerationStrategy(
+                new FunctionReferenceGenerationStrategy(
                         state,
                         descriptor,
                         getResolvedCallWithAssert(((JetCallableReferenceExpression) expression).getCallableReference(),
