@@ -1,0 +1,105 @@
+== Foo ==
+open class Foo {
+    fun foo(a: IntArray) {}
+    fun foo(a: Int, b: Int) {}
+}
+---------------------
+L0:
+  1 <START>
+L1:
+    <END>      NEXT:[<SINK>]
+error:
+    <ERROR>    PREV:[]
+sink:
+    <SINK>     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(a: IntArray) {}
+---------------------
+L0:
+  1 <START>
+    v(a: IntArray)
+    magic[FAKE_INITIALIZER](a: IntArray) -> <v0>
+    w(a|<v0>)
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>                                           NEXT:[<SINK>]
+error:
+    <ERROR>                                         PREV:[]
+sink:
+    <SINK>                                          PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun foo(a: Int, b: Int) {}
+---------------------
+L0:
+  1 <START>
+    v(a: Int)
+    magic[FAKE_INITIALIZER](a: Int) -> <v0>
+    w(a|<v0>)
+    v(b: Int)
+    magic[FAKE_INITIALIZER](b: Int) -> <v1>
+    w(b|<v1>)
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun Foo.foo(i: Int) {}
+---------------------
+L0:
+  1 <START>
+    v(i: Int)
+    magic[FAKE_INITIALIZER](i: Int) -> <v0>
+    w(i|<v0>)
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>                                      NEXT:[<SINK>]
+error:
+    <ERROR>                                    PREV:[]
+sink:
+    <SINK>                                     PREV:[<ERROR>, <END>]
+=====================
+== foo ==
+fun Foo.foo() {}
+---------------------
+L0:
+  1 <START>
+  2 mark({})
+    read (Unit)
+L1:
+  1 <END>          NEXT:[<SINK>]
+error:
+    <ERROR>        PREV:[]
+sink:
+    <SINK>         PREV:[<ERROR>, <END>]
+=====================
+== test ==
+fun test() {
+    Foo().foo(bar())
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ Foo().foo(bar()) })
+    mark(Foo().foo(bar()))
+    mark(Foo())
+    call(Foo(), <init>) -> <v0>
+    mark(bar())
+    magic[UNRESOLVED_CALL](bar()|!<v1>) -> <v2>
+    mark(foo(bar()))
+    call(foo(bar()), foo|<v0>, <v2>) -> <v3>
+L1:
+  1 <END>                                          NEXT:[<SINK>]
+error:
+    <ERROR>                                        PREV:[]
+sink:
+    <SINK>                                         PREV:[<ERROR>, <END>]
+=====================

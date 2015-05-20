@@ -1,0 +1,39 @@
+== Foo ==
+open class Foo {
+    fun foo(a: IntArray) {}
+    fun foo(a: Int, b: Int) {}
+}
+---------------------
+=====================
+== foo ==
+fun foo(a: IntArray) {}
+---------------------
+    <v0>: IntArray   NEW: magic[FAKE_INITIALIZER](a: IntArray) -> <v0>
+=====================
+== foo ==
+fun foo(a: Int, b: Int) {}
+---------------------
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](a: Int) -> <v0>
+    <v1>: Int   NEW: magic[FAKE_INITIALIZER](b: Int) -> <v1>
+=====================
+== foo ==
+fun Foo.foo(i: Int) {}
+---------------------
+    <v0>: Int   NEW: magic[FAKE_INITIALIZER](i: Int) -> <v0>
+=====================
+== foo ==
+fun Foo.foo() {}
+---------------------
+=====================
+== test ==
+fun test() {
+    Foo().foo(bar())
+}
+---------------------
+Foo()                  <v0>: {<: Foo}   NEW: call(Foo(), <init>) -> <v0>
+bar                    !<v1>: *
+bar()                  <v2>: IntArray   NEW: magic[UNRESOLVED_CALL](bar()|!<v1>) -> <v2>
+foo(bar())             <v3>: *          NEW: call(foo(bar()), foo|<v0>, <v2>) -> <v3>
+Foo().foo(bar())       <v3>: *          COPY
+{ Foo().foo(bar()) }   <v3>: *          COPY
+=====================

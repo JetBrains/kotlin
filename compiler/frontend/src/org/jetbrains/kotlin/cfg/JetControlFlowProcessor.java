@@ -17,11 +17,13 @@
 package org.jetbrains.kotlin.cfg;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.SmartFMap;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.MultiMap;
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -43,8 +45,15 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
+import org.jetbrains.kotlin.resolve.calls.ValueArgumentsToParametersMapper;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
+import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -220,9 +229,90 @@ public class JetControlFlowProcessor {
             return createNonSyntheticValue(to, Arrays.asList(from), kind);
         }
 
+        @Nullable
+        private Map<PseudoValue, TypePredicate> getTypeMapForUnresolvedCall(@NotNull JetElement to, List<PseudoValue> arguments) {
+            Call call = CallUtilPackage.getCall(to, trace.getBindingContext());
+            if (call == null) return null;
+
+            JetExpression callee = call.getCalleeExpression();
+            if (callee == null) return null;
+
+            Collection<FunctionDescriptor> candidates = KotlinPackage.sortBy(
+                    KotlinPackage.filterIsInstance(
+                            BindingContextUtilPackage.getReferenceTargets(callee, trace.getBindingContext()),
+                            FunctionDescriptor.class
+                    ),
+                    new Function1<FunctionDescriptor, Comparable>() {
+                        @Override
+                        public Comparable invoke(FunctionDescriptor descriptor) {
+                            return DescriptorRenderer.DEBUG_TEXT.render(descriptor);
+                        }
+                    }
+            );
+            if (candidates.isEmpty()) return null;
+
+            ReceiverValue explicitReceiver = call.getExplicitReceiver();
+            int argValueOffset = explicitReceiver.exists() ? 1 : 0;
+
+            MultiMap<PseudoValue, TypePredicate> valuesToPredicates = new MultiMap<PseudoValue, TypePredicate>(arguments.size(), 1);
+
+            candidateLoop:
+            for (FunctionDescriptor candidate : candidates) {
+                ResolvedCallImpl<FunctionDescriptor> candidateCall = ResolvedCallImpl.create(
+                        ResolutionCandidate.create(call,
+                                                   candidate,
+                                                   call.getDispatchReceiver(),
+                                                   explicitReceiver,
+                                                   ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                                                   null),
+                        new DelegatingBindingTrace(trace.getBindingContext(), "Compute type predicates for unresolved call arguments"),
+                        TracingStrategy.EMPTY,
+                        new DataFlowInfoForArgumentsImpl(call)
+                );
+                ValueArgumentsToParametersMapper.Status status = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
+                        call,
+                        TracingStrategy.EMPTY,
+                        candidateCall,
+                        Sets.<ValueArgument>newLinkedHashSet()
+                );
+                if (!status.isSuccess()) continue;
+
+                Map<ValueParameterDescriptor, ResolvedValueArgument> candidateArgumentMap = candidateCall.getValueArguments();
+                List<? extends ValueArgument> callArguments = call.getValueArguments();
+                for (int i = 0; i < callArguments.size(); i++) {
+                    int valueIndex = i + argValueOffset;
+                    if (valueIndex >= arguments.size()) continue candidateLoop;
+                    PseudoValue argumentValue = arguments.get(valueIndex);
+
+                    ArgumentMapping mapping = candidateCall.getArgumentMapping(callArguments.get(i));
+                    if (!(mapping instanceof ArgumentMatch)) continue candidateLoop;
+
+                    ValueParameterDescriptor candidateParameter = ((ArgumentMatch) mapping).getValueParameter();
+                    ResolvedValueArgument resolvedArgument = candidateArgumentMap.get(candidateParameter);
+                    JetType expectedType = resolvedArgument instanceof VarargValueArgument
+                                   ? candidateParameter.getVarargElementType()
+                                   : candidateParameter.getType();
+
+                    valuesToPredicates.putValue(argumentValue, expectedType != null ? new AllSubtypes(expectedType) : AllTypes.INSTANCE$);
+                }
+            }
+
+            SmartFMap<PseudoValue, TypePredicate> result = SmartFMap.emptyMap();
+            for (Map.Entry<PseudoValue, Collection<TypePredicate>> entry : valuesToPredicates.entrySet()) {
+                result = result.plus(entry.getKey(), PseudocodePackage.or(entry.getValue()));
+            }
+
+            return result;
+        }
+
         @NotNull
         private PseudoValue createUnresolvedCallByValues(@NotNull JetElement to, @Nullable JetElement valueElement, List<PseudoValue> arguments) {
-            return builder.magic(to, valueElement, arguments, defaultTypeMap(arguments), MagicKind.UNRESOLVED_CALL).getOutputValue();
+            Map<PseudoValue, TypePredicate> typeMap = getTypeMapForUnresolvedCall(to, arguments);
+            if (typeMap == null) {
+                typeMap = defaultTypeMap(arguments);
+            }
+            
+            return builder.magic(to, valueElement, arguments, typeMap, MagicKind.UNRESOLVED_CALL).getOutputValue();
         }
 
         @NotNull

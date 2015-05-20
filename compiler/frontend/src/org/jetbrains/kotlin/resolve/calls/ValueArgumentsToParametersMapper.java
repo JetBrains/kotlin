@@ -40,7 +40,7 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.calls.ValueArgumentsToParametersMapper.Status.*;
 
-/*package*/ class ValueArgumentsToParametersMapper {
+public class ValueArgumentsToParametersMapper {
 
     public enum Status {
         STRONG_ERROR(false),
