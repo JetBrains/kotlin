@@ -4,7 +4,7 @@ where possible options include:
   -no-stdlib                 Don't use bundled Kotlin stdlib
   -library-files <path[,]>   Path to zipped library sources or kotlin files separated by commas
   -source-map                Generate source map
-  -meta-info <path>          Generate meta information and save to the given file
+  -meta-info                 Generate metadata
   -target <version>          Generate JS files for specific ECMA version (only ECMA 5 is supported)
   -main {call,noCall}        Whether a main function should be called; default 'call' (main function will be auto detected)
   -output-prefix <path>      Path to file which will be added to the beginning of output file

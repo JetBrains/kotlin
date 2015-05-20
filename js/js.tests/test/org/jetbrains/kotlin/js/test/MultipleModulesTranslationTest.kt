@@ -52,15 +52,20 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
     private fun translateModule(dirName: String, pathToDir: String, moduleName: String, dependencies: List<String>) {
         val moduleDirectoryName = getModuleDirectoryName(dirName, moduleName)
         val fullFilePaths = getAllFilesInDir(pathToDir + File.separator + moduleName)
-        val libraries = ArrayList<String>()
-        for (dependencyName in dependencies) {
-            libraries.add(getMetaFileOutputPath(getModuleDirectoryName(dirName, dependencyName)))
+
+        BasicTest.DEFAULT_ECMA_VERSIONS.forEach { version ->
+            val libraries = arrayListOf<String>()
+            for (dependencyName in dependencies) {
+                libraries.add(getMetaFileOutputPath(getModuleDirectoryName(dirName, dependencyName), version))
+            }
+            generateJavaScriptFiles(fullFilePaths, moduleDirectoryName, MainCallParameters.noCall(), version, moduleName, libraries)
         }
-        generateJavaScriptFiles(fullFilePaths, moduleDirectoryName, MainCallParameters.noCall(), BasicTest.DEFAULT_ECMA_VERSIONS, moduleName, libraries)
     }
 
-    override fun getMetaFileOutputPath(moduleId: String): String? =
-        getOutputPath() + moduleId + KotlinJavascriptMetadataUtils.META_JS_SUFFIX
+    private fun getMetaFileOutputPath(moduleDirectoryName: String, version: EcmaVersion) =
+        KotlinJavascriptMetadataUtils.replaceSuffix(getOutputFilePath(moduleDirectoryName, version))
+
+    override fun shouldGenerateMetaInfo() = true
 
     override fun additionalJsFiles(ecmaVersion: EcmaVersion): List<String> {
         val result = super.additionalJsFiles(ecmaVersion)
@@ -92,7 +97,4 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
 
         return result
     }
-
-
-    private fun getModuleDirectoryName(dirName: String, moduleName: String) = dirName + File.separator + moduleName
 }

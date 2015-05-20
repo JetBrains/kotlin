@@ -155,16 +155,32 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
             @NotNull String moduleName,
             @Nullable List<String> libraries
     ) throws Exception {
+        for (EcmaVersion version : ecmaVersions) {
+            generateJavaScriptFiles(files, testName, mainCallParameters, version, moduleName, libraries);
+        }
+    }
+
+    protected void generateJavaScriptFiles(
+            @NotNull List<String> files,
+            @NotNull String testName,
+            @NotNull MainCallParameters mainCallParameters,
+            @NotNull EcmaVersion version,
+            @NotNull String moduleName,
+            @Nullable List<String> libraries
+
+    ) throws Exception {
         Project project = getProject();
         List<String> allFiles = withAdditionalKotlinFiles(files);
         List<JetFile> jetFiles = createJetFileList(project, allFiles, null);
 
-        for (EcmaVersion version : ecmaVersions) {
-            Config config = createConfig(getProject(), moduleName, version, libraries);
-            File outputFile = new File(getOutputFilePath(testName, version));
+        Config config = createConfig(getProject(), moduleName, version, libraries);
+        File outputFile = new File(getOutputFilePath(testName, version));
 
-            translateFiles(jetFiles, outputFile, mainCallParameters, config);
-        }
+        translateFiles(jetFiles, outputFile, mainCallParameters, config);
+    }
+
+    protected String getModuleDirectoryName(String dirName, String moduleName) {
+        return dirName + File.separator + moduleName;
     }
 
     protected void translateFiles(
@@ -203,9 +219,8 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
         return false;
     }
 
-    @Nullable
-    protected String getMetaFileOutputPath(@NotNull String moduleId) {
-        return null;
+    protected boolean shouldGenerateMetaInfo() {
+        return false;
     }
 
     protected void processJsProgram(@NotNull JsProgram program) throws Exception { }
@@ -292,7 +307,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
                 .sourceMap(shouldGenerateSourceMap())
                 .inlineEnabled(IS_INLINE_ENABLED)
                 .isUnitTestConfig(shouldBeTranslateAsUnitTestClass())
-                .metaFileOutputPath(getMetaFileOutputPath(moduleId))
+                .metaInfo(shouldGenerateMetaInfo())
                 .build();
     }
 

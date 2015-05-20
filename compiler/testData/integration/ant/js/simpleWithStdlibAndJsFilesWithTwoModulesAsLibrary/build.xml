@@ -6,8 +6,8 @@
   <target name="build">
     <mkdir dir="${temp.library.path}"/>
 
-    <kotlin2js src="${library.path1}" output="${temp.library.path}/jslib-example1.js" metaInfo="${temp.library.path}/jslib-example1.meta.js"/>
-    <kotlin2js src="${library.path2}" output="${temp.library.path}/jslib-example2.js" metaInfo="${temp.library.path}/jslib-example2.meta.js">
+    <kotlin2js src="${library.path1}" output="${temp.library.path}/jslib-example1.js" metaInfo="true"/>
+    <kotlin2js src="${library.path2}" output="${temp.library.path}/jslib-example2.js" metaInfo="true">
       <library>
         <pathelement path="${temp.library.path}/jslib-example1.meta.js"/>
       </library>
