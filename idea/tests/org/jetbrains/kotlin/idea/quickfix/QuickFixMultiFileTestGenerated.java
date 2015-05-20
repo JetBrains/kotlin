@@ -881,6 +881,27 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/toMethodFromCompanionObject.before.Main.kt");
             doTestWithExtraFile(fileName);
         }
+
+        @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WholeProject extends AbstractQuickFixMultiFileTest {
+            public void testAllFilesPresentInWholeProject() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
+            }
+
+            @TestMetadata("function.before.Main.kt")
+            public void testFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject/function.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+
+            @TestMetadata("property.before.Main.kt")
+            public void testProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject/property.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/migration")

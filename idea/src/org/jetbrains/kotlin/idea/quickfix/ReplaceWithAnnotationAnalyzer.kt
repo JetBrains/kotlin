@@ -22,11 +22,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -35,6 +36,8 @@ import org.jetbrains.kotlin.psi.psiUtil.collectElementsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -43,7 +46,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 //TODO: use ReplaceWith from package kotlin
 data class ReplaceWith(val expression: String, vararg val imports: String)
@@ -56,6 +60,20 @@ object ReplaceWithAnnotationAnalyzer {
     )
 
     public fun analyze(
+            annotation: ReplaceWith,
+            symbolDescriptor: CallableDescriptor,
+            resolutionFacade: ResolutionFacade,
+            file: JetFile/*TODO: drop it*/,
+            project: Project
+    ): ReplacementExpression {
+        val originalDescriptor = (if (symbolDescriptor is CallableMemberDescriptor)
+            DescriptorUtils.unwrapFakeOverride(symbolDescriptor)
+        else
+            symbolDescriptor).getOriginal()
+        return analyzeOriginal(annotation, originalDescriptor, resolutionFacade, file, project)
+    }
+
+    private fun analyzeOriginal(
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
             resolutionFacade: ResolutionFacade,
@@ -159,7 +177,12 @@ object ReplaceWithAnnotationAnalyzer {
                 JetScopeUtils.getPropertyDeclarationInnerScope(descriptor,
                                                                getResolutionScope(descriptor.getContainingDeclaration()!!),
                                                                RedeclarationHandler.DO_NOTHING)
+            is LocalVariableDescriptor -> {
+                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as JetDeclaration
+                declaration.analyze()[BindingContext.RESOLUTION_SCOPE, declaration]
+            }
 
+            //TODO?
             else -> throw IllegalArgumentException("Cannot find resolution scope for $descriptor")
         }
     }
