@@ -14,44 +14,39 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.vfilefinder;
+package org.jetbrains.kotlin.idea.vfilefinder
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.util.indexing.FileBasedIndex;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClassFinder;
-import org.jetbrains.kotlin.name.ClassId;
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.util.indexing.ID
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClassFinder
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
-import java.util.Collection;
+public class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), VirtualFileFinder {
 
-public final class IDEVirtualFileFinder extends VirtualFileKotlinClassFinder implements VirtualFileFinder {
-
-    private static final Logger LOG = Logger.getInstance(IDEVirtualFileFinder.class);
-
-    @NotNull private final GlobalSearchScope scope;
-
-    public IDEVirtualFileFinder(@NotNull GlobalSearchScope scope) {
-        this.scope = scope;
-
+    init {
         if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.getProject() == null) {
-            LOG.warn("Scope with null project " + scope);
+            LOG.warn("Scope with null project " + scope)
         }
     }
 
-    @Nullable
-    @Override
-    public VirtualFile findVirtualFileWithHeader(@NotNull ClassId classId) {
-        Collection<VirtualFile> files = FileBasedIndex.getInstance().getContainingFiles(KotlinClassFileIndex.KEY, classId.asSingleFqName(), scope);
-        if (files.isEmpty()) {
-            return null;
-        }
+    private fun findVirtualFileWithHeader(classId: ClassId, key: ID<FqName, Void>): VirtualFile? {
+        val files = FileBasedIndex.getInstance().getContainingFiles<FqName, Void>(key, classId.asSingleFqName(), scope)
+        if (files.isEmpty()) return null
+
         if (files.size() > 1) {
-            LOG.warn("There are " + files.size() + " classes with same fqName: " + classId + " found.");
+            LOG.warn("There are " + files.size() + " classes with same fqName: " + classId + " found.")
         }
-        return files.iterator().next();
+        return files.iterator().next()
+    }
+
+    override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? = findVirtualFileWithHeader(classId, KotlinClassFileIndex.KEY)
+
+    companion object {
+        private val LOG = Logger.getInstance(javaClass<IDEVirtualFileFinder>())
     }
 }
