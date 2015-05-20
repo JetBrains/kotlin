@@ -17,11 +17,10 @@
 package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
 
-public class CliVirtualFileFinder(private val index: JvmDependenciesIndex) : VirtualFileKotlinClassFinder(), VirtualFileFinder {
+public class JvmCliVirtualFileFinder(private val index: JvmDependenciesIndex) : VirtualFileKotlinClassFinder() {
 
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? {
         val classFileName = classId.getRelativeClassName().asString().replace('.', '$')

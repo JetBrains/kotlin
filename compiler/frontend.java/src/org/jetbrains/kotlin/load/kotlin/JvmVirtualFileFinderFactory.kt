@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler
+package org.jetbrains.kotlin.load.kotlin
 
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import kotlin.platform.platformStatic
 
-public class CliVirtualFileFinderFactory(private val index: JvmDependenciesIndex) : VirtualFileFinderFactory {
-    override fun create(scope: GlobalSearchScope): VirtualFileFinder {
-        return CliVirtualFileFinder(index)
+public interface JvmVirtualFileFinderFactory : VirtualFileFinderFactory {
+    override fun create(scope: GlobalSearchScope): JvmVirtualFileFinder
+
+    public object SERVICE {
+        platformStatic
+        public fun getInstance(project: Project): JvmVirtualFileFinderFactory =
+            ServiceManager.getService(project, javaClass<JvmVirtualFileFinderFactory>())
     }
 }

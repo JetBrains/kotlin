@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
+import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -150,7 +150,7 @@ public class InlineCodegenUtil {
 
     @NotNull
     public static VirtualFile getVirtualFileForCallable(@NotNull ClassId containerClassId, @NotNull GenerationState state) {
-        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(state.getProject());
+        JvmVirtualFileFinder fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(state.getProject());
         VirtualFile file = fileFinder.findVirtualFileWithHeader(containerClassId);
         if (file == null) {
             throw new IllegalStateException("Couldn't find declaration file for " + containerClassId);
@@ -181,7 +181,7 @@ public class InlineCodegenUtil {
     public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalClassName) {
         FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();
         String classNameWithDollars = substringAfterLast(internalClassName, "/", internalClassName);
-        VirtualFileFinder fileFinder = VirtualFileFinder.SERVICE.getInstance(project);
+        JvmVirtualFileFinder fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project);
         //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
         // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
         return fileFinder.findVirtualFileWithHeader(new ClassId(packageFqName, Name.identifier(classNameWithDollars)));

@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.stubs.elements.JetFileStubBuilder
@@ -34,7 +33,7 @@ public class ClsStubConsistencyTest : JetLightCodeInsightFixtureTestCase() {
 
     public fun testConsistencyForKotlinPackage() {
         val project = getProject()
-        val virtualFileFinder = VirtualFileFinderFactory.SERVICE.getInstance(project).create(GlobalSearchScope.allScope(project))
+        val virtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(getProject())
         val kotlinPackageFile = virtualFileFinder.findVirtualFileWithHeader(PackageClassUtils.getPackageClassId(STANDARD_LIBRARY_FQNAME))!!
 
         val decompiledText = buildDecompiledText(kotlinPackageFile).text
