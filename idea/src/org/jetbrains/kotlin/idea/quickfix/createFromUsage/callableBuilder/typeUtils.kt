@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 
 import com.intellij.refactoring.psi.SearchUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -36,8 +37,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import java.util.HashSet
-import java.util.LinkedHashSet
+import java.util.*
 
 private fun JetType.contains(inner: JetType): Boolean {
     return JetTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
@@ -90,9 +90,9 @@ fun JetType.getTypeParameters(): Set<TypeParameterDescriptor> {
 fun JetExpression.guessTypes(
         context: BindingContext,
         module: ModuleDescriptor,
+        pseudocode: Pseudocode? = null,
         coerceUnusedToUnit: Boolean = true
 ): Array<JetType> {
-
     if (coerceUnusedToUnit
         && this !is JetDeclaration
         && isUsedAsStatement(context)
@@ -108,9 +108,7 @@ fun JetExpression.guessTypes(
 
     // expression has an expected type
     val theType2 = context[BindingContext.EXPECTED_EXPRESSION_TYPE, this]
-    if (theType2 != null) {
-        return array(theType2)
-    }
+    if (theType2 != null) return arrayOf(theType2)
 
     val parent = getParent()
     return when {
@@ -174,7 +172,11 @@ fun JetExpression.guessTypes(
         parent is JetStringTemplateEntryWithExpression && parent.getExpression() == this -> {
             array(module.builtIns.getStringType())
         }
-        else -> array() // can't infer anything
+        else -> {
+            pseudocode?.getElementValue(this)?.let {
+                getExpectedTypePredicate(it, context).getRepresentativeTypes().toTypedArray()
+            } ?: arrayOf() // can't infer anything
+        }
     }
 }
 
@@ -230,4 +232,18 @@ fun JetExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight()
 
 fun JetCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
     return getTypeArguments().map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }.filterNotNull()
+}
+
+private fun TypePredicate.getRepresentativeTypes(): Set<JetType> {
+    return when (this) {
+        is SingleType -> Collections.singleton(targetType)
+        is AllSubtypes -> Collections.singleton(upperBound)
+        is ForAllTypes -> {
+            if (typeSets.isEmpty()) AllTypes.getRepresentativeTypes()
+            else typeSets.map { it.getRepresentativeTypes() }.reduce { a, b -> a intersect b }
+        }
+        is ForSomeType -> typeSets.flatMapTo(LinkedHashSet<JetType>()) { it.getRepresentativeTypes() }
+        is AllTypes -> emptySet()
+        else -> throw AssertionError("Invalid type predicate: ${this}")
+    }
 }

@@ -35,6 +35,8 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.getContainingPseudocode
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
@@ -130,6 +132,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
     val currentFileContext: BindingContext
     val currentFileModule: ModuleDescriptor
+
+    val pseudocode: Pseudocode? by Delegates.lazy { config.originalElement.getContainingPseudocode(currentFileContext) }
 
     private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
 
