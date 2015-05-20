@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.daemon.impl.HighlightRangeExtension
 import com.intellij.codeInsight.intention.EmptyIntentionAction
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
@@ -179,18 +180,8 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
         }
 
         private fun registerQuickFix(annotation: Annotation, diagnostic: Diagnostic) {
-            val intentionActionsFactories = QuickFixes.getActionsFactories(diagnostic.getFactory())
-            for (intentionActionsFactory in intentionActionsFactories) {
-                if (intentionActionsFactory != null) {
-                    for (action in intentionActionsFactory.createActions(diagnostic)) {
-                        annotation.registerFix(action)
-                    }
-                }
-            }
-
-            val actions = QuickFixes.getActions(diagnostic.getFactory())
-            for (action in actions) {
-                annotation.registerFix(action)
+            createQuickfixes(diagnostic).forEach {
+                annotation.registerFix(it)
             }
 
             // Making warnings suppressable
@@ -261,5 +252,14 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
                 //DeprecatedAnnotationVisitor(holder, bindingContext)
         )
 
+        public fun createQuickfixes(diagnostic: Diagnostic): Collection<IntentionAction> {
+            val result = arrayListOf<IntentionAction>()
+            val intentionActionsFactories = QuickFixes.getActionsFactories(diagnostic.getFactory())
+            for (intentionActionsFactory in intentionActionsFactories.filterNotNull()) {
+                result.addAll(intentionActionsFactory.createActions(diagnostic))
+            }
+            result.addAll(QuickFixes.getActions(diagnostic.getFactory()))
+            return result
+        }
     }
 }
