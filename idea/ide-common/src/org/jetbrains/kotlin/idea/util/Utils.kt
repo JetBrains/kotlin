@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.idea.util
 
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public fun JetFunctionLiteral.findLabelAndCall(): Pair<String?, JetCallExpression?> {
+public fun JetFunctionLiteral.findLabelAndCall(): Pair<Name?, JetCallExpression?> {
     val literalParent = (this.getParent() as JetFunctionLiteralExpression).getParent()
 
     fun JetValueArgument.callExpression(): JetCallExpression? {
@@ -29,12 +30,12 @@ public fun JetFunctionLiteral.findLabelAndCall(): Pair<String?, JetCallExpressio
     when (literalParent) {
         is JetLabeledExpression -> {
             val callExpression = (literalParent.getParent() as? JetValueArgument)?.callExpression()
-            return Pair(literalParent.getLabelName(), callExpression)
+            return Pair(literalParent.getLabelNameAsName(), callExpression)
         }
 
         is JetValueArgument -> {
             val callExpression = literalParent.callExpression()
-            val label = (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedName()
+            val label = (callExpression?.getCalleeExpression() as? JetSimpleNameExpression)?.getReferencedNameAsName()
             return Pair(label, callExpression)
         }
 

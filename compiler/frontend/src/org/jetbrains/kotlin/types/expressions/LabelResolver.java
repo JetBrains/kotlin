@@ -57,9 +57,9 @@ public class LabelResolver {
     @Nullable
     private Name getLabelNameIfAny(@NotNull PsiElement element) {
         if (element instanceof JetLabeledExpression) {
-            String labelName = ((JetLabeledExpression) element).getLabelName();
+            Name labelName = ((JetLabeledExpression) element).getLabelNameAsName();
             if (labelName != null) {
-                return Name.identifier(labelName);
+                return labelName;
             }
         }
         if (element instanceof JetFunctionLiteralExpression) {
@@ -126,10 +126,9 @@ public class LabelResolver {
             @NotNull ResolutionContext context
     ) {
         JetSimpleNameExpression labelElement = expression.getTargetLabel();
-        String name = expression.getLabelName();
-        if (labelElement == null || name == null) return null;
+        Name labelName = expression.getLabelNameAsName();
+        if (labelElement == null || labelName == null) return null;
 
-        Name labelName = Name.identifier(name);
         Collection<DeclarationDescriptor> declarationsByLabel = context.scope.getDeclarationsByLabel(labelName);
         int size = declarationsByLabel.size();
 

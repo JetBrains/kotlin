@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -58,7 +60,7 @@ public fun JetScope.getImplicitReceiversWithInstanceToExpression(): Map<Receiver
     for ((index, receiver) in receivers.withIndex()) {
         val owner = receiver.getContainingDeclaration()
         val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
-            val thisWithLabel = thisQualifierName(receiver)?.let { "this@$it" }
+            val thisWithLabel = thisQualifierName(receiver)?.let { "this@${it.renderName()}" }
             if (index == 0)
                 (thisWithLabel ?: "this") to true
             else
@@ -83,12 +85,10 @@ public fun JetScope.getImplicitReceiversWithInstanceToExpression(): Map<Receiver
     return result
 }
 
-private fun thisQualifierName(receiver: ReceiverParameterDescriptor): String? {
+private fun thisQualifierName(receiver: ReceiverParameterDescriptor): Name? {
     val descriptor = receiver.getContainingDeclaration()
     val name = descriptor.getName()
-    if (!name.isSpecial()) {
-        return name.asString()
-    }
+    if (!name.isSpecial()) return name
 
     val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? JetFunctionLiteral
     return functionLiteral?.findLabelAndCall()?.first

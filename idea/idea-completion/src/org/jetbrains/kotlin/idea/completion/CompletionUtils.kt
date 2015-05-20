@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.findLabelAndCall
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -209,7 +210,7 @@ fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression,
         val thisType = receiver.getType()
         val fuzzyType = FuzzyType(thisType, listOf())
 
-        fun createLookupElement() = createKeywordWithLabelElement("this", expression.getLabelName())
+        fun createLookupElement() = createKeywordWithLabelElement("this", expression.getLabelNameAsName())
                 .withTypeText(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(thisType))
 
         result.add(ThisItemInfo(::createLookupElement, fuzzyType))
@@ -249,7 +250,7 @@ private fun returnsUnit(declaration: JetDeclarationWithBody, bindingContext: Bin
     return KotlinBuiltIns.isUnit(returnType)
 }
 
-private fun createKeywordWithLabelElement(keyword: String, label: String?, addSpace: Boolean): LookupElement {
+private fun createKeywordWithLabelElement(keyword: String, label: Name?, addSpace: Boolean): LookupElement {
     val element = createKeywordWithLabelElement(keyword, label)
     return if (addSpace) {
         object: LookupElementDecorator<LookupElement>(element) {
@@ -263,12 +264,13 @@ private fun createKeywordWithLabelElement(keyword: String, label: String?, addSp
     }
 }
 
-private fun createKeywordWithLabelElement(keyword: String, label: String?): LookupElementBuilder {
-    var element = LookupElementBuilder.create(KeywordLookupObject, if (label == null) keyword else "$keyword@$label")
+private fun createKeywordWithLabelElement(keyword: String, label: Name?): LookupElementBuilder {
+    val labelInCode = label?.renderName()
+    var element = LookupElementBuilder.create(KeywordLookupObject, if (label == null) keyword else "$keyword@$labelInCode")
     element = element.withPresentableText(keyword)
     element = element.withBoldness(true)
     if (label != null) {
-        element = element.withTailText("@$label", false)
+        element = element.withTailText("@$labelInCode", false)
     }
     return element
 }
@@ -284,7 +286,7 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
                     result.add(createKeywordWithLabelElement(breakOrContinue, null))
                 }
 
-                val label = (parent.getParent() as? JetLabeledExpression)?.getLabelName()
+                val label = (parent.getParent() as? JetLabeledExpression)?.getLabelNameAsName()
                 if (label != null) {
                     result.add(createKeywordWithLabelElement(breakOrContinue, label))
                 }

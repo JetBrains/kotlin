@@ -9,4 +9,4 @@ fun foo(){
             })
 }
 
-// ELEMENT: this@fun
+// ELEMENT: this@`fun`

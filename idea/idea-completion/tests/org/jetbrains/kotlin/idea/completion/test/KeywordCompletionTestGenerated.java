@@ -401,6 +401,12 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         doTest(fileName);
     }
 
+    @TestMetadata("ReturnKeywordName.kt")
+    public void testReturnKeywordName() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/ReturnKeywordName.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("This.kt")
     public void testThis() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/keywords/This.kt");

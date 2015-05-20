@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.name.Name
 
 open public class JetExpressionWithLabel(node: ASTNode) : JetExpressionImpl(node) {
 
@@ -25,7 +26,8 @@ open public class JetExpressionWithLabel(node: ASTNode) : JetExpressionImpl(node
             findChildByType<JetContainerNode>(JetNodeTypes.LABEL_QUALIFIER)?.
             findChildByType(JetNodeTypes.LABEL) as? JetSimpleNameExpression
 
-    public fun getLabelName(): String? = getTargetLabel()?.getIdentifier()?.getText()
+    public fun getLabelName(): String? = getTargetLabel()?.getReferencedName()
+    public fun getLabelNameAsName(): Name? = getTargetLabel()?.getReferencedNameAsName()
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D) = visitor.visitExpressionWithLabel(this, data)
 }

@@ -4,5 +4,5 @@ class `this` {
     }
 }
 
-// ELEMENT: "this@this"
+// ELEMENT: "this@`this`"
 

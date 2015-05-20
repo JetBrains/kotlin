@@ -4,9 +4,9 @@ fun bar(handler: Int.() -> Unit){}
 fun foo(){
     `fun`({
                 bar({
-                            val s: String = this@fun<caret>
+                            val s: String = this@`fun`<caret>
                         })
             })
 }
 
-// ELEMENT: this@fun
+// ELEMENT: this@`fun`
