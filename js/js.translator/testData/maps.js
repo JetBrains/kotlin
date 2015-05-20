@@ -24,6 +24,7 @@
      * @param {V} value
      * @template K, V
      */
+    // TODO: Make Entry implement kotlin.Map.Entry interface
     function Entry(key, value) {
         this.key = key;
         this.value = value;
@@ -35,6 +36,19 @@
 
     Entry.prototype.getValue = function () {
         return this.value;
+    };
+
+    Entry.prototype.hashCode = function() {
+        return mapEntryHashCode(this.key, this.value);
+    };
+
+    Entry.prototype.equals_za3rmp$ = function(o) {
+        // TODO: Check if o is instance of kotlin.Map.Entry
+        return o instanceof Entry && Kotlin.equals(this.key, o.getKey()) && Kotlin.equals(this.value, o.getValue());
+    };
+
+    Entry.prototype.toString = function() {
+        return Kotlin.toString(this.key) + "=" + Kotlin.toString(this.value);
     };
 
     function hashMapPutAll (fromMap) {
@@ -51,6 +65,20 @@
 
         return this.containsAll_4fm7v2$(o);
     }
+
+    function hashSetHashCode() {
+        var h = 0;
+        var i = this.iterator();
+        while (i.hasNext()) {
+            var obj = i.next();
+            h += Kotlin.hashCode(obj);
+        }
+        return h;
+    }
+
+    function convertKeyToString(key) { return key; }
+    function convertKeyToNumber(key) { return +key; }
+    function convertKeyToBoolean(key) { return key == "true"; }
 
     /** @const */
     var FUNCTION = "function";
@@ -98,6 +126,10 @@
                 return Object.prototype.toString.call(obj);
             }
         }
+    }
+
+    function mapEntryHashCode(key, value) {
+        return Kotlin.hashCode(key) ^ Kotlin.hashCode(value);
     }
 
     function equals_fixedValueHasEquals(fixedValue, variableValue) {
@@ -414,7 +446,55 @@
             }
 
             return result;
-        }
+        };
+
+        this.hashCode = function() {
+            var h = 0;
+            var entries = this._entries();
+            var i = entries.length;
+            while (i--) {
+                var entry = entries[i];
+                h += mapEntryHashCode(entry[0], entry[1]);
+            }
+            return h;
+        };
+
+        this.equals_za3rmp$ = function(o) {
+            if (o == null || this.size() !== o.size()) return false;
+
+            var entries = this._entries();
+            var i = entries.length;
+            while (i--) {
+                var entry = entries[i];
+                var key = entry[0];
+                var value = entry[1];
+                if (value == null) {
+                    if (!(o.get_za3rmp$(key) == null && o.contains_za3rmp$(key))) return false;
+                }
+                else {
+                    if (!Kotlin.equals(value, o.get_za3rmp$(key))) return false;
+                }
+            }
+            return true;
+        };
+
+        this.toString = function() {
+            var entries = this._entries();
+            var length = entries.length;
+            if (length === 0) return "{}";
+            var builder = "{";
+            for (var i = 0;;) {
+                var entry = entries[i];
+                var key = entry[0];
+                var value = entry[1];
+                builder +=
+                    (key === this ? "(this Map)" : Kotlin.toString(key)) +
+                    "=" +
+                    (value === this ? "(this Map)" : Kotlin.toString(value));
+                if (++i >= length) return builder + "}";
+                builder += ", "
+            }
+        };
     };
 
     Kotlin.HashTable = Hashtable;
@@ -452,6 +532,9 @@
             this.index = 0;
         }, {
             next: function () {
+                if (!this.hasNext()) {
+                    throw new Kotlin.NoSuchElementException();
+                }
                 return this.map[this.keys[this.index++]];
             },
             hasNext: function () {
@@ -469,7 +552,7 @@
      */
     lazyInitClasses.PrimitiveHashMapValues = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.Collection];
+            return [Kotlin.AbstractCollection];
         },
         function (map) {
             this.map = map;
@@ -478,13 +561,12 @@
                 return new Kotlin.PrimitiveHashMapValuesIterator(this.map.map, Object.keys(this.map.map));
             },
             isEmpty: function () {
-                return this.map.$size === 0;
+                return this.map.isEmpty();
             },
             size: function () {
                 return this.map.size();
             },
-            // TODO: test it
-            contains: function (o) {
+            contains_za3rmp$: function (o) {
                 return this.map.containsValue_za3rmp$(o);
             }
     });
@@ -553,13 +635,16 @@
                 var map = this.map;
                 for (var key in map) {
                     //noinspection JSUnfilteredForInLoop
-                    result.add_za3rmp$(new Entry(key, map[key]));
+                    result.add_za3rmp$(new Entry(this.convertKeyToKeyType(key), map[key]));
                 }
 
                 return result;
             },
             getKeySetClass: function () {
                 throw new Error("Kotlin.AbstractPrimitiveHashMap.getKetSetClass is abstract");
+            },
+            convertKeyToKeyType: function(key) {
+                throw new Error("Kotlin.AbstractPrimitiveHashMap.convertKeyToKeyType is abstract");
             },
             keySet: function () {
                 var result = new (this.getKeySetClass())();
@@ -576,6 +661,31 @@
             },
             toJSON: function () {
                 return this.map;
+            },
+            toString: function() {
+                if (this.isEmpty()) return "{}";
+                var map = this.map;
+                var isFirst = true;
+                var builder = "{";
+                for (var key in map) {
+                    var value = map[key];
+                    builder +=
+                        (isFirst ? "": ", ") +
+                        Kotlin.toString(key) +
+                        "=" +
+                        (value === this ? "(this Map)" : Kotlin.toString(value));
+                    isFirst = false;
+                }
+                return builder + "}";
+            },
+            hashCode: function() {
+                var h = 0;
+                var map = this.map;
+                for (var key in map) {
+                    //noinspection JSUnfilteredForInLoop
+                    h += mapEntryHashCode(this.convertKeyToKeyType(key), map[key]);
+                }
+                return h;
             }
     });
 
@@ -588,7 +698,8 @@
         }, {
             getKeySetClass: function () {
                 return Kotlin.DefaultPrimitiveHashSet;
-            }
+            },
+            convertKeyToKeyType: convertKeyToString
     });
 
     lazyInitClasses.PrimitiveNumberHashMap = Kotlin.createClass(
@@ -601,7 +712,8 @@
         }, {
             getKeySetClass: function () {
                 return Kotlin.PrimitiveNumberHashSet;
-            }
+            },
+            convertKeyToKeyType: convertKeyToNumber
     });
 
     lazyInitClasses.PrimitiveBooleanHashMap = Kotlin.createClass(
@@ -613,7 +725,8 @@
         }, {
             getKeySetClass: function () {
                 return Kotlin.PrimitiveBooleanHashSet;
-            }
+            },
+            convertKeyToKeyType: convertKeyToBoolean
     });
 
     function LinkedHashMap() {
@@ -653,13 +766,13 @@
         };
 
         this.values = function() {
-            var set = new Kotlin.LinkedHashSet();
+            var result = new Kotlin.ArrayList();
 
             for (var i = 0, c = this.orderedKeys, l = c.length; i < l; i++) {
-                set.add_za3rmp$(this.get_za3rmp$(c[i]));
+                result.add_za3rmp$(this.get_za3rmp$(c[i]));
             }
 
-            return set;
+            return result;
         };
 
         this.entrySet = function() {
@@ -693,6 +806,7 @@
         /** @lends {Kotlin.LinkedHashSet.prototype} */
         {
             equals_za3rmp$: hashSetEquals,
+            hashCode: hashSetHashCode,
             size: function () {
                 return this.map.size()
             },
@@ -733,12 +847,18 @@
         /** @lends SetIterator.prototype */
         {
             next: function () {
+                if (!this.hasNext()) {
+                    throw new Kotlin.NoSuchElementException();
+                }
                 return this.keys[this.index++];
             },
             hasNext: function () {
                 return this.index < this.keys.length;
             },
             remove: function () {
+                if (this.index === 0) {
+                    throw Kotlin.IllegalStateException();
+                }
                 this.set.remove_za3rmp$(this.keys[this.index - 1]);
             }
     });
@@ -761,6 +881,7 @@
         /** @lends {Kotlin.AbstractPrimitiveHashSet.prototype} */
         {
             equals_za3rmp$: hashSetEquals,
+            hashCode: hashSetHashCode,
             size: function () {
                 return this.$size;
             },
@@ -819,7 +940,8 @@
         {
             toArray: function () {
                 return Object.keys(this.map);
-            }
+            },
+            convertKeyToKeyType: convertKeyToString
     });
 
     lazyInitClasses.PrimitiveNumberHashSet = Kotlin.createClass(
@@ -832,9 +954,7 @@
         },
         /** @lends {Kotlin.PrimitiveNumberHashSet.prototype} */
         {
-            convertKeyToKeyType: function (key) {
-                return +key;
-            }
+            convertKeyToKeyType: convertKeyToNumber
     });
 
     lazyInitClasses.PrimitiveBooleanHashSet = Kotlin.createClass(
@@ -847,9 +967,7 @@
         },
         /** @lends {Kotlin.PrimitiveBooleanHashSet.prototype} */
         {
-            convertKeyToKeyType: function (key) {
-                return key == "true";
-            }
+            convertKeyToKeyType: convertKeyToBoolean
     });
 
     /**
@@ -958,6 +1076,8 @@
             }
             return true;
         };
+
+        this.hashCode = hashSetHashCode;
     }
 
     lazyInitClasses.HashSet = Kotlin.createClass(
