@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
@@ -117,7 +116,7 @@ public class KotlinBuiltIns {
         PackageFragmentProvider packageFragmentProvider = BuiltinsPackage.createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule,
                 setOf(BUILT_INS_PACKAGE_FQ_NAME, BuiltinsPackage.getKOTLIN_REFLECT_FQ_NAME()),
-                FlexibleTypeCapabilitiesDeserializer.ThrowException.INSTANCE$, new Function1<String, InputStream>() {
+                new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {
                         return KotlinBuiltIns.class.getClassLoader().getResourceAsStream(path);

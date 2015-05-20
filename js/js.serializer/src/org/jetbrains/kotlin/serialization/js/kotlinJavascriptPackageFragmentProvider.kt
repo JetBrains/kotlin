@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.serialization.deserialization.ResourceLoadingClassDataFinder
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolverImpl
+import org.jetbrains.kotlin.serialization.deserialization.ResourceLoadingClassDataFinder
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
@@ -31,7 +31,6 @@ public fun createKotlinJavascriptPackageFragmentProvider(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         packageFqNames: Set<FqName>,
-        flexibleTypeCapabilitiesDeserializer: FlexibleTypeCapabilitiesDeserializer,
         loadResource: (String) -> InputStream?
 ): PackageFragmentProvider {
     val packageFragments = packageFqNames.map { fqName ->
@@ -48,7 +47,7 @@ public fun createKotlinJavascriptPackageFragmentProvider(
             KotlinJavascriptAnnotationAndConstantLoader(module),
             provider,
             localClassResolver,
-            flexibleTypeCapabilitiesDeserializer
+            FlexibleTypeCapabilitiesDeserializer.Dynamic
     )
 
     localClassResolver.setDeserializationComponents(components)

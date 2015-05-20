@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializationUtil
 import org.jetbrains.kotlin.serialization.StringTable
-import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeCapabilitiesDeserializer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
@@ -65,23 +64,21 @@ public object KotlinJavascriptSerializationUtil {
         val packageFqNames = getPackages(contentMap).map { FqName(it) }.toSet()
         if (packageFqNames.isEmpty()) return null
 
-        return createKotlinJavascriptPackageFragmentProvider(
-                storageManager, moduleDescriptor, packageFqNames, FlexibleTypeCapabilitiesDeserializer.Dynamic
-        ) {
+        return createKotlinJavascriptPackageFragmentProvider(storageManager, moduleDescriptor, packageFqNames) {
             path ->
-                if (!contentMap.containsKey(path)) {
-                    when {
-                        isPackageMetadataFile(path) ->
-                            ByteArrayInputStream(PACKAGE_DEFAULT_BYTES)
-                        isStringTableFile(path) ->
-                            ByteArrayInputStream(STRING_TABLE_DEFAULT_BYTES)
-                        isClassesInPackageFile(path) ->
-                            ByteArrayInputStream(CLASSES_IN_PACKAGE_DEFAULT_BYTES)
-                        else ->
-                            null
-                    }
+            if (!contentMap.containsKey(path)) {
+                when {
+                    isPackageMetadataFile(path) ->
+                        ByteArrayInputStream(PACKAGE_DEFAULT_BYTES)
+                    isStringTableFile(path) ->
+                        ByteArrayInputStream(STRING_TABLE_DEFAULT_BYTES)
+                    isClassesInPackageFile(path) ->
+                        ByteArrayInputStream(CLASSES_IN_PACKAGE_DEFAULT_BYTES)
+                    else ->
+                        null
                 }
-                else ByteArrayInputStream(contentMap.get(path))
+            }
+            else ByteArrayInputStream(contentMap.get(path))
         }
     }
 
