@@ -59,6 +59,12 @@ public class AnnotationProcessorBoxTestGenerated extends AbstractAnnotationProce
         doTest(fileName);
     }
 
+    @TestMetadata("constructors")
+    public void testConstructors() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/constructors/");
+        doTest(fileName);
+    }
+
     @TestMetadata("defaultPackage")
     public void testDefaultPackage() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("plugins/annotation-collector/testData/collectToFile/defaultPackage/");
