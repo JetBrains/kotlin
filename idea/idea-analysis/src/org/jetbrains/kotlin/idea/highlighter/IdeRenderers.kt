@@ -14,150 +14,84 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.highlighter;
+package org.jetbrains.kotlin.idea.highlighter
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.diagnostics.rendering.Renderers;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.Renderer;
-import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
+import org.jetbrains.kotlin.idea.highlighter.renderersUtil.renderResolvedCall
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.Renderer
+import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
+import org.jetbrains.kotlin.types.JetType
 
-import java.util.Collection;
-
-import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
-import static org.jetbrains.kotlin.idea.highlighter.renderersUtil.RenderersUtilPackage.renderResolvedCall;
-
-public class IdeRenderers {
-    private static final String RED_TEMPLATE = "<font color=red><b>%s</b></font>";
-    private static final String STRONG_TEMPLATE = "<b>%s</b>";
-
-    @NotNull
-    public static String strong(Object o) {
-        return String.format(STRONG_TEMPLATE, o);
+public object IdeRenderers {
+    public val HTML_AMBIGUOUS_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
+        calls: Collection<ResolvedCall<*>> ->
+        StringBuilder {
+            for (call in calls) {
+                append("<li>")
+                append(DescriptorRenderer.HTML.render(call.getResultingDescriptor()))
+                append("</li>")
+            }
+        }.toString()
     }
 
-    @NotNull
-    public static String error(Object o) {
-        return String.format(RED_TEMPLATE, o);
+    public val HTML_RENDER_TYPE: Renderer<JetType> = Renderer {
+        DescriptorRenderer.HTML.renderType(it)
     }
 
-    @NotNull
-    public static String strong(Object o, boolean error) {
-        return String.format(error ? RED_TEMPLATE : STRONG_TEMPLATE, o);
+    public val HTML_NONE_APPLICABLE_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
+        calls: Collection<ResolvedCall<*>> ->
+        StringBuilder {
+            for (resolvedCall in calls) {
+                append("<li>")
+                append(renderResolvedCall(resolvedCall))
+                append("</li>")
+            }
+        }.toString()
     }
 
-    public static final Renderer<Collection<? extends ResolvedCall<?>>> HTML_AMBIGUOUS_CALLS =
-            new Renderer<Collection<? extends ResolvedCall<?>>>() {
-                @NotNull
-                @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<?>> calls) {
-                    StringBuilder stringBuilder = new StringBuilder("");
-                    for (ResolvedCall<?> call : calls) {
-                        stringBuilder.append("<li>");
-                        stringBuilder.append(DescriptorRenderer.HTML.render(call.getResultingDescriptor()));
-                        stringBuilder.append("</li>");
-                    }
-                    return stringBuilder.toString();
-                }
-            };
+    public val HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER: Renderer<InferenceErrorData> = Renderer {
+        Renderers.renderConflictingSubstitutionsInferenceError(it, HtmlTabledDescriptorRenderer.create()).toString()
+    }
 
-    public static final Renderer<JetType> HTML_RENDER_TYPE = new Renderer<JetType>() {
-        @NotNull
-        @Override
-        public String render(@NotNull JetType type) {
-            return DescriptorRenderer.HTML.renderType(type);
-        }
-    };
+    public val HTML_TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER: Renderer<InferenceErrorData> = Renderer {
+        Renderers.renderTypeConstructorMismatchError(it, HtmlTabledDescriptorRenderer.create()).toString()
+    }
 
-    public static final Renderer<Collection<? extends ResolvedCall<?>>> HTML_NONE_APPLICABLE_CALLS =
-            new Renderer<Collection<? extends ResolvedCall<?>>>() {
+    public val HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER: Renderer<InferenceErrorData> = Renderer {
+        Renderers.renderNoInformationForParameterError(it, HtmlTabledDescriptorRenderer.create()).toString()
+    }
 
-                @NotNull
-                @Override
-                public String render(@NotNull Collection<? extends ResolvedCall<?>> calls) {
-                    StringBuilder stringBuilder = new StringBuilder("");
-                    for (ResolvedCall<?> resolvedCall : calls) {
-                        stringBuilder.append("<li>");
-                        stringBuilder.append(renderResolvedCall(resolvedCall));
-                        stringBuilder.append("</li>");
-                    }
-                    return stringBuilder.toString();
-                }
-            };
+    public val HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER: Renderer<InferenceErrorData> = Renderer {
+        Renderers.renderUpperBoundViolatedInferenceError(it, HtmlTabledDescriptorRenderer.create()).toString()
+    }
 
-    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER =
-            new Renderer<InferenceErrorData>() {
-                @NotNull
-                @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
-                    return renderConflictingSubstitutionsInferenceError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
-                }
-            };
+    public val HTML_RENDER_RETURN_TYPE: Renderer<CallableMemberDescriptor> = Renderer {
+        val returnType = it.getReturnType()!!
+        DescriptorRenderer.HTML.renderType(returnType)
+    }
 
-    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_TYPE_CONSTRUCTOR_MISMATCH_RENDERER =
-            new Renderer<InferenceErrorData>() {
-                @NotNull
-                @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
-                    return renderTypeConstructorMismatchError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
-                }
-            };
-
-    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER =
-            new Renderer<InferenceErrorData>() {
-                @NotNull
-                @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
-                    return renderNoInformationForParameterError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
-                }
-            };
-
-    public static final Renderer<InferenceErrorData> HTML_TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER =
-            new Renderer<InferenceErrorData>() {
-                @NotNull
-                @Override
-                public String render(@NotNull InferenceErrorData inferenceErrorData) {
-                    return renderUpperBoundViolatedInferenceError(inferenceErrorData, HtmlTabledDescriptorRenderer.create()).toString();
-                }
-            };
-
-    public static final Renderer<CallableMemberDescriptor> HTML_RENDER_RETURN_TYPE = new Renderer<CallableMemberDescriptor>() {
-        @NotNull
-        @Override
-        public String render(@NotNull CallableMemberDescriptor object) {
-            JetType returnType = object.getReturnType();
-            assert returnType != null;
-            return DescriptorRenderer.HTML.renderType(returnType);
-        }
-    };
-
-    public static final Renderer<ConflictingJvmDeclarationsData> HTML_CONFLICTING_JVM_DECLARATIONS_DATA = new Renderer<ConflictingJvmDeclarationsData>() {
-        @NotNull
-        @Override
-        public String render(@NotNull ConflictingJvmDeclarationsData data) {
-            StringBuilder sb = new StringBuilder("<ul>");
-            for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
-                DeclarationDescriptor descriptor = origin.getDescriptor();
+    public val HTML_CONFLICTING_JVM_DECLARATIONS_DATA: Renderer<ConflictingJvmDeclarationsData> = Renderer<ConflictingJvmDeclarationsData> {
+        data: ConflictingJvmDeclarationsData ->
+        val sb = StringBuilder {
+            append("<ul>")
+            for (origin in data.signatureOrigins) {
+                val descriptor = origin.descriptor
                 if (descriptor != null) {
-                    sb.append("<li>").append(DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS.render(descriptor)).append("</li>\n");
+                    append("<li>")
+                    append(DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS.render(descriptor))
+                    append("</li>\n")
                 }
             }
-            sb.append("</ul>");
-            return ("The following declarations have the same JVM signature (<code>" + data.getSignature().getName() + data.getSignature().getDesc() + "</code>):<br/>\n" + sb).trim();
+            append("</ul>")
         }
-    };
+        ("The following declarations have the same JVM signature (<code>" + data.signature.name + data.signature.desc + "</code>):<br/>\n" + sb).trim()
+    }
 
-    public static final Renderer<Throwable> HTML_THROWABLE = new Renderer<Throwable>() {
-        @NotNull
-        @Override
-        public String render(@NotNull Throwable e) {
-            return Renderers.THROWABLE.render(e).replace("\n", "<br/>");
-        }
-    };
+    public val HTML_THROWABLE: Renderer<Throwable> = Renderer {
+        Renderers.THROWABLE.render(it).replace("\n", "<br/>")
+    }
 }

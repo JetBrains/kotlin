@@ -16,16 +16,25 @@
 
 package org.jetbrains.kotlin.idea.highlighter.renderersUtil
 
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.callUtil.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.idea.highlighter.IdeRenderers
-import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.hasTypeMismatchErrorOnParameter
+import org.jetbrains.kotlin.resolve.calls.callUtil.hasUnmappedArguments
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.types.ErrorUtils
+
+private val RED_TEMPLATE = "<font color=red><b>%s</b></font>"
+private val STRONG_TEMPLATE = "<b>%s</b>"
+
+public fun renderStrong(o: Any): String = STRONG_TEMPLATE.format(o)
+
+public fun renderError(o: Any): String = RED_TEMPLATE.format(o)
+
+public fun renderStrong(o: Any, error: Boolean): String = (if (error) RED_TEMPLATE else STRONG_TEMPLATE).format(o)
 
 fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): String {
     val htmlRenderer = DescriptorRenderer.HTML_FOR_UNINFERRED_TYPE_PARAMS
@@ -42,7 +51,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
                 htmlRenderer.renderType(parameterType) +
                 if (parameter.hasDefaultValue()) " = ..." else ""
         if (resolvedCall.hasTypeMismatchErrorOnParameter(parameter)) {
-            return IdeRenderers.error(renderedParameter)
+            return renderError(renderedParameter)
         }
         return renderedParameter
     }
@@ -60,7 +69,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
 
         append("<br/>$indent<i>where</i> ")
         if (!notInferredTypeParameters.isEmpty()) {
-            append(notInferredTypeParameters.map { typeParameter -> IdeRenderers.error(typeParameter.getName()) }.join())
+            append(notInferredTypeParameters.map { typeParameter -> renderError(typeParameter.getName()) }.join())
             append("<i> cannot be inferred</i>")
             if (!inferredTypeParameters.isEmpty()) {
                 append("; ")
@@ -82,7 +91,7 @@ fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): 
     }
     append(resultingDescriptor.getName()).append("(")
     append(resultingDescriptor.getValueParameters().map { parameter -> renderParameter(parameter) }.join())
-    append(if (resolvedCall.hasUnmappedArguments()) IdeRenderers.error(")") else ")")
+    append(if (resolvedCall.hasUnmappedArguments()) renderError(")") else ")")
 
     if (!resolvedCall.getCandidateDescriptor().getTypeParameters().isEmpty()) {
         appendTypeParametersSubstitution()

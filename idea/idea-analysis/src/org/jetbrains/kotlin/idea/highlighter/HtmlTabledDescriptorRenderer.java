@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.types.JetType;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.error;
-import static org.jetbrains.kotlin.idea.highlighter.IdeRenderers.strong;
+import static org.jetbrains.kotlin.idea.highlighter.renderersUtil.RenderersUtilPackage.renderError;
+import static org.jetbrains.kotlin.idea.highlighter.renderersUtil.RenderersUtilPackage.renderStrong;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 
@@ -60,10 +60,10 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             result.append(text);
         }
         else if (elementType == TextElementType.ERROR) {
-            result.append(error(text));
+            result.append(renderError(text));
         }
         else if (elementType == TextElementType.STRONG) {
-            result.append(strong(text));
+            result.append(renderStrong(text));
         }
     }
 
@@ -131,7 +131,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             if (isErrorPosition.apply(RECEIVER_POSITION.position())) {
                 error = true;
             }
-            receiver = "receiver: " + strong(getTypeRenderer().render(receiverType), error);
+            receiver = "receiver: " + renderStrong(getTypeRenderer().render(receiverType), error);
         }
         td(result, receiver);
         td(result, hasReceiver ? "arguments: " : "");
@@ -140,7 +140,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             return;
         }
 
-        td(result, strong("("));
+        td(result, renderStrong("("));
         int i = 0;
         for (Iterator<JetType> iterator = argumentTypes.iterator(); iterator.hasNext(); ) {
             JetType argumentType = iterator.next();
@@ -150,10 +150,10 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
             }
             String renderedArgument = getTypeRenderer().render(argumentType);
 
-            tdRight(result, strong(renderedArgument, error) + (iterator.hasNext() ? strong(",") : ""));
+            tdRight(result, renderStrong(renderedArgument, error) + (iterator.hasNext() ? renderStrong(",") : ""));
             i++;
         }
-        td(result, strong(")"));
+        td(result, renderStrong(")"));
     }
 
     public static HtmlTabledDescriptorRenderer create() {
