@@ -137,7 +137,7 @@ public class Profiler {
         paused = true;
         cumulative = 0;
 
-        if (log.isDebugEnabled()) {
+        if (!mute && log.isDebugEnabled()) {
             OUT_LOCK.lock();
             try {
                 println(name, " took ", format(result));
