@@ -69,7 +69,15 @@ public class ReadValueInstruction private (
 
     override fun toString(): String {
         val inVal = if (receiverValues.isEmpty()) "" else "|${receiverValues.keySet().joinToString()}"
-        return "r(${render(element)}$inVal) -> $outputValue"
+        val targetName = when (target) {
+            is AccessTarget.Declaration -> target.descriptor
+            is AccessTarget.Call -> target.resolvedCall.getResultingDescriptor()
+            else -> null
+        }?.getName()?.asString()
+
+        val elementText = render(element)
+        val description = if (targetName != null && targetName != elementText) "$elementText, $targetName" else elementText
+        return "r($description$inVal) -> $outputValue"
     }
 
     override fun createCopy(): InstructionImpl =

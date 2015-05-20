@@ -60,7 +60,7 @@ L0:
   2 mark({ foo[1] })
     mark(foo[1])
     r(foo) -> <v1>
-    r(foo[1]|<v1>) -> <v2>
+    r(foo[1], get|<v1>) -> <v2>
     r(1) -> <v3>
     mark(foo[1])
     call(foo[1], invoke|<v2>, <v3>) -> <v4>
@@ -87,7 +87,7 @@ L0:
   2 mark({ foo[1] })
     mark(foo[1])
     r(foo) -> <v2>
-    r(foo[1]|<v2>) -> <v3>
+    r(foo[1], get|<v2>) -> <v3>
     r(1) -> <v4>
     mark(foo[1])
     call(foo[1], invoke|<v3>, <v4>) -> <v5>

@@ -4,7 +4,7 @@ fun <T: Any, U> T.let(f: (T) -> U): U = f(this)
           <v0>: {<: (T) -> U}   NEW: magic[FAKE_INITIALIZER](f: (T) -> U) -> <v0>
 f         <v1>: {<: (T) -> U}   NEW: r(f) -> <v1>
 this      <v2>: {<: T}          COPY
-this      <v2>: {<: T}          NEW: r(this) -> <v2>
+this      <v2>: {<: T}          NEW: r(this, <this>) -> <v2>
 f(this)   <v3>: {<: U}          NEW: call(f(this), invoke|<v1>, <v2>) -> <v3>
 =====================
 == bar ==

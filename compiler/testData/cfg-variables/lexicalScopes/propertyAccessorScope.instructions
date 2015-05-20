@@ -37,7 +37,7 @@ L3:
   3 <START>                                 INIT: in: {} out: {}
   4 mark({ return $a })
     magic[IMPLICIT_RECEIVER]($a) -> <v0>                            USE: in: {a=READ} out: {a=READ}
-    r($a|<v0>) -> <v1>                                              USE: in: {} out: {a=READ}
+    r($a, a|<v0>) -> <v1>                                           USE: in: {} out: {a=READ}
     ret(*|<v1>) L4
 L4:
   3 <END>

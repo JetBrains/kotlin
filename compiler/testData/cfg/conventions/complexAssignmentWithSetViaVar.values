@@ -31,7 +31,7 @@ fun test(foo: Foo) {
                   <v0>: Foo   NEW: magic[FAKE_INITIALIZER](foo: Foo) -> <v0>
 foo               <v6>: Foo   NEW: r(foo) -> <v6>
 1                 <v8>: Int   NEW: r(1) -> <v8>
-foo[1]            <v7>: Bar   NEW: r(foo[1]|<v6>) -> <v7>
+foo[1]            <v7>: Bar   NEW: r(foo[1], set|<v6>) -> <v7>
 2                 <v4>: Int   NEW: r(2) -> <v4>
 foo[1] += 2       <v9>: *     NEW: call(foo[1] += 2, invoke|<v7>, <v8>, <v5>) -> <v9>
 { foo[1] += 2 }   <v9>: *     COPY

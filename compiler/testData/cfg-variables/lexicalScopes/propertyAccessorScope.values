@@ -18,7 +18,7 @@ get() {
           }
 ---------------------
                 <v0>: A     NEW: magic[IMPLICIT_RECEIVER]($a) -> <v0>
-$a              <v1>: Int   NEW: r($a|<v0>) -> <v1>                  
+$a              <v1>: Int   NEW: r($a, a|<v0>) -> <v1>
 return $a       !<v2>: *                                             
 { return $a }   !<v2>: *    COPY                                     
 =====================

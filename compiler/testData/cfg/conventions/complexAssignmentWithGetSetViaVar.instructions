@@ -86,7 +86,7 @@ L0:
   2 mark({ foo[1] += 2 })
     mark(foo[1])
     r(foo) -> <v1>
-    r(foo[1]|<v1>) -> <v2>
+    r(foo[1], get|<v1>) -> <v2>
     r(1) -> <v3>
     mark(foo[1])
     call(foo[1], invoke|<v2>, <v3>) -> <v4>
@@ -94,7 +94,7 @@ L0:
     mark(foo[1] += 2)
     call(foo[1] += 2, plus|<v4>, <v5>) -> <v6>
     r(foo) -> <v7>
-    r(foo[1]|<v7>) -> <v8>
+    r(foo[1], set|<v7>) -> <v8>
     r(1) -> <v9>
     call(foo[1] += 2, invoke|<v8>, <v9>, <v6>) -> <v10>
 L1:

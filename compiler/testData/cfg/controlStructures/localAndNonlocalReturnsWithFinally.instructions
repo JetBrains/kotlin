@@ -7,7 +7,7 @@ L0:
     magic[FAKE_INITIALIZER](f: (T) -> U) -> <v0>
     w(f|<v0>)
     r(f) -> <v1>
-    r(this) -> <v2>
+    r(this, <this>) -> <v2>
     mark(f(this))
     call(f(this), invoke|<v1>, <v2>) -> <v3>
     ret(*|<v3>) L1
