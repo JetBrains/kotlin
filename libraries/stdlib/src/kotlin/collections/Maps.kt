@@ -38,7 +38,7 @@ public fun mapOf<K, V>(): Map<K, V> = emptyMap()
  * @sample test.collections.MapTest.createUsingPairs
  */
 public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
-    val answer = HashMap<K, V>(values.size())
+    val answer = HashMap<K, V>(mapCapacityForValues(values))
     answer.putAll(*values)
     return answer
 }
@@ -51,9 +51,33 @@ public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
  * @sample test.collections.MapTest.createLinkedMap
  */
 public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
-    val answer = LinkedHashMap<K, V>(values.size())
+    val answer = LinkedHashMap<K, V>(mapCapacityForValues(values))
     answer.putAll(*values)
     return answer
+}
+
+/**
+ * Calculate the initial capacity of a map, based on Guava's com.google.common.collect.Maps approach. This is equivalent
+ * to the Collection constructor for HashSet, (c.size()/.75f) + 1, but provides further optimisations for very small or
+ * very large sizes, allows support non-collection classes, and provides consistency for all map based class construction.
+ */
+
+private val INT_MAX_VALUE: Int = 0x7fffffff
+private val INT_SIZE: Int = 32
+private val INT_MAX_POWER_OF_TWO: Int = 1 shl (INT_SIZE - 2)
+
+private fun mapCapacity(expectedSize: Int): Int {
+    if (expectedSize < 3) {
+        return expectedSize + 1
+    }
+    if (expectedSize < INT_MAX_POWER_OF_TWO) {
+        return expectedSize + expectedSize / 3
+    }
+    return INT_MAX_VALUE // any large value
+}
+
+private fun <T> mapCapacityForValues(values: Array<T>): Int {
+    return mapCapacity(values.size())
 }
 
 /**
