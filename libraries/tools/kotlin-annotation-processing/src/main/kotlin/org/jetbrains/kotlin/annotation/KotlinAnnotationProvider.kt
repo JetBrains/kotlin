@@ -30,7 +30,7 @@ public abstract class KotlinAnnotationProvider {
         val SHORTENED_PACKAGE_NAME = "p"
     }
 
-    public val annotatedKotlinElements: MutableMap<String, MutableSet<AnnotatedElementDescriptor>> by Delegates.lazy {
+    public val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>> by Delegates.lazy {
         readAnnotations()
     }
 
@@ -72,11 +72,11 @@ public abstract class KotlinAnnotationProvider {
                         ANNOTATED_CLASS -> AnnotatedClassDescriptor(classFqName)
                         ANNOTATED_FIELD -> AnnotatedFieldDescriptor(classFqName, elementName!!)
                         ANNOTATED_METHOD -> AnnotatedMethodDescriptor(classFqName, elementName!!)
-                        else -> throw AssertionError("Should not occur")
+                        else -> throw AssertionError("Unknown type: $type")
                     })
 
                 }
-                else -> throw RuntimeException("Unknown type: $type")
+                else -> throw AssertionError("Unknown type: $type")
             }
         }
 
