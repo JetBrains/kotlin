@@ -820,23 +820,7 @@ fun ExtractionData.performAnalysis(): AnalysisResult {
 
     val targetScope = JetScopeUtils.getResolutionScope(targetSibling, bindingContext)
 
-    val pseudocodeDeclaration =
-            PsiTreeUtil.getParentOfType(commonParent, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>())
-            ?: commonParent.getNonStrictParentOfType<JetProperty>()
-            ?: return noContainerError
-
-    val enclosingPseudocodeDeclaration = if (pseudocodeDeclaration is JetFunctionLiteral) {
-        commonParent.parents(withItself = false)
-                .firstOrNull { it is JetDeclaration && it !is JetFunctionLiteral } as? JetDeclaration
-        ?: pseudocodeDeclaration
-    }
-    else {
-        pseudocodeDeclaration
-    }
-
-    val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, bindingContext)
-    val pseudocode = enclosingPseudocode.getPseudocodeByElement(pseudocodeDeclaration)
-                     ?: throw AssertionError("Can't find nested pseudocode for element: ${pseudocodeDeclaration.getElementTextWithContext()}")
+    val pseudocode = commonParent.getContainingPseudocode(bindingContext) ?: return noContainerError
     val localInstructions = getLocalInstructions(pseudocode)
 
     val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)

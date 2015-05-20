@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
@@ -25,6 +26,9 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInst
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getTargetFunctionDescriptor
@@ -179,6 +183,25 @@ fun Pseudocode.getElementValuesRecursively(element: JetElement): List<PseudoValu
 
     collectValues()
     return results
+}
+
+public fun JetElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
+    val pseudocodeDeclaration =
+            PsiTreeUtil.getParentOfType(this, javaClass<JetDeclarationWithBody>(), javaClass<JetClassOrObject>())
+            ?: getNonStrictParentOfType<JetProperty>()
+            ?: return null
+
+    val enclosingPseudocodeDeclaration = if (pseudocodeDeclaration is JetFunctionLiteral) {
+        parents(withItself = false).firstOrNull { it is JetDeclaration && it !is JetFunctionLiteral } as? JetDeclaration
+        ?: pseudocodeDeclaration
+    }
+    else {
+        pseudocodeDeclaration
+    }
+
+    val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, context)
+    return enclosingPseudocode.getPseudocodeByElement(pseudocodeDeclaration)
+           ?: throw AssertionError("Can't find nested pseudocode for element: ${pseudocodeDeclaration.getElementTextWithContext()}")
 }
 
 public fun Pseudocode.getPseudocodeByElement(element: JetElement): Pseudocode? {
