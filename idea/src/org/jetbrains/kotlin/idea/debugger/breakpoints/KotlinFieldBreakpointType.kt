@@ -16,28 +16,40 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
+import com.intellij.CommonBundle
+import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.ui.breakpoints.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.breakpoints.XBreakpoint
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.java.debugger.breakpoints.properties.JavaFieldBreakpointProperties
+import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
+import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -103,8 +115,75 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<JavaFieldBreakpointP
         return delegate.createBreakpointProperties(file, line)
     }
 
-    override fun addBreakpoint(project: Project?, parentComponent: JComponent?): XLineBreakpoint<JavaFieldBreakpointProperties>? {
-        return delegate.addBreakpoint(project, parentComponent)
+    override fun addBreakpoint(project: Project, parentComponent: JComponent?): XLineBreakpoint<JavaFieldBreakpointProperties>? {
+        var result: XLineBreakpoint<JavaFieldBreakpointProperties>? = null
+
+        val dialog = object : AddFieldBreakpointDialog(project) {
+            override fun validateData(): Boolean {
+                val className = getClassName()
+                if (className.isEmpty()) {
+                    reportError(project, DebuggerBundle.message("error.field.breakpoint.class.name.not.specified"))
+                    return false
+                }
+
+                val psiClass = JavaPsiFacade.getInstance(project).findClass(className, GlobalSearchScope.allScope(project))
+                if (psiClass !is KotlinLightClass) {
+                    reportError(project, "Couldn't find '$className' class")
+                    return false
+                }
+
+                val fieldName = getFieldName()
+                if (fieldName.isEmpty()) {
+                    reportError(project, DebuggerBundle.message("error.field.breakpoint.field.name.not.specified"))
+                    return false
+                }
+
+                result = when (psiClass) {
+                    is KotlinLightClassForPackage -> {
+                        psiClass.files.asSequence().map { createBreakpointIfPropertyExists(it, it, className, fieldName) }.firstOrNull()
+                    }
+                    is KotlinLightClassForExplicitDeclaration -> {
+                        val jetClass = psiClass.getOrigin()
+                        createBreakpointIfPropertyExists(jetClass, jetClass.getContainingJetFile(), className, fieldName)
+                    }
+                    else -> null
+                }
+
+                if (result == null) {
+                    reportError(project, DebuggerBundle.message("error.field.breakpoint.field.not.found", className, fieldName, fieldName))
+                }
+
+                return result != null
+            }
+        }
+
+        dialog.show()
+        return result
+    }
+
+    private fun createBreakpointIfPropertyExists(
+            declaration: JetDeclarationContainer,
+            file: JetFile,
+            className: String,
+            fieldName: String
+    ): XLineBreakpoint<JavaFieldBreakpointProperties>? {
+        val project = file.getProject()
+        val property = declaration.getDeclarations().firstOrNull { it is JetProperty && it.getName() == fieldName } ?: return null
+
+        val document = PsiDocumentManager.getInstance(project).getDocument(file) ?: return null
+        val line = document.getLineNumber(property.getTextOffset())
+        return runWriteAction {
+            XDebuggerManager.getInstance(project).getBreakpointManager().addLineBreakpoint(
+                    this,
+                    file.getVirtualFile().getUrl(),
+                    line,
+                    JavaFieldBreakpointProperties(fieldName, className)
+            )
+        }
+    }
+
+    private fun reportError(project: Project, message: String) {
+        Messages.showMessageDialog(project, message, DebuggerBundle.message("add.field.breakpoint.dialog.title"), Messages.getErrorIcon())
     }
 
     override fun isAddBreakpointButtonVisible(): Boolean {
