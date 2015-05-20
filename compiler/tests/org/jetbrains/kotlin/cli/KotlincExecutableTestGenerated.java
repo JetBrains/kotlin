@@ -79,6 +79,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
+        @TestMetadata("inlineCycle.args")
+        public void testInlineCycle() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/inlineCycle.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
@@ -199,6 +205,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
         @TestMetadata("diagnosticWhenReferenceToBuiltinsMember.args")
         public void testDiagnosticWhenReferenceToBuiltinsMember() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.args");
+            doJsTest(fileName);
+        }
+
+        @TestMetadata("inlineCycle.args")
+        public void testInlineCycle() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/inlineCycle.args");
             doJsTest(fileName);
         }
 

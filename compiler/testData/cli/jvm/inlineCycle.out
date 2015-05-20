@@ -1,0 +1,3 @@
+ERROR: compiler/testData/cli/jvm/inlineCycle.kt: (2, 5) The 'b' invocation is a part of inline cycle
+ERROR: compiler/testData/cli/jvm/inlineCycle.kt: (15, 5) The 'a' invocation is a part of inline cycle
+COMPILATION_ERROR

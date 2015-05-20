@@ -19,17 +19,20 @@ package org.jetbrains.kotlin.js.inline;
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import com.intellij.psi.PsiElement;
+import kotlin.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
-import org.jetbrains.kotlin.js.inline.context.*;
+import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.js.inline.context.FunctionContext;
+import org.jetbrains.kotlin.js.inline.context.InliningContext;
+import org.jetbrains.kotlin.js.inline.context.NamingContext;
 import org.jetbrains.kotlin.js.inline.util.ExpressionDecomposer;
-import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy;
 
 import java.util.*;
-import kotlin.Function1;
 
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.canBeExpression;
 import static org.jetbrains.kotlin.js.inline.FunctionInlineMutator.getInlineableCallReplacement;
@@ -235,8 +238,9 @@ public class JsInliner extends JsVisitorWithContextImpl {
             JsCallInfo callInfo = it.next();
             PsiElement psiElement = MetadataPackage.getPsiElement(callInfo.call);
 
-            if (psiElement != null) {
-                trace.report(ErrorsJs.INLINE_CALL_CYCLE.on(psiElement));
+            CallableDescriptor descriptor = MetadataPackage.getDescriptor(callInfo.call);
+            if (psiElement != null && descriptor != null) {
+                trace.report(Errors.INLINE_CALL_CYCLE.on(psiElement, descriptor));
             }
 
             if (callInfo.containingFunction == calledFunction) {

@@ -98,6 +98,9 @@ public class GenerationState {
     private final SamWrapperClasses samWrapperClasses = new SamWrapperClasses(this);
 
     @NotNull
+    private final InlineCycleReporter inlineCycleReporter;
+
+    @NotNull
     private final MappingsClassesForWhenByEnum mappingsClassesForWhenByEnum = new MappingsClassesForWhenByEnum(this);
 
     @NotNull
@@ -194,6 +197,7 @@ public class GenerationState {
 
         this.reflectionTypes = new ReflectionTypes(module);
         this.runtimeTypes = new JvmRuntimeTypes(reflectionTypes);
+        this.inlineCycleReporter = new InlineCycleReporter(diagnostics);
     }
 
     @NotNull
@@ -244,6 +248,11 @@ public class GenerationState {
     @NotNull
     public SamWrapperClasses getSamWrapperClasses() {
         return samWrapperClasses;
+    }
+
+    @NotNull
+    public InlineCycleReporter getInlineCycleReporter() {
+        return inlineCycleReporter;
     }
 
     @NotNull

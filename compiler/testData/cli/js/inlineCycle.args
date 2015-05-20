@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/inlineCycle.kt
+-output
+$TEMP_DIR$

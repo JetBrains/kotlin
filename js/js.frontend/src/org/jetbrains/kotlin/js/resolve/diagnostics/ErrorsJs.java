@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics;
 
-import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
@@ -46,7 +45,6 @@ public interface ErrorsJs {
     DiagnosticFactory1<JetNamedDeclaration, String> NON_TOPLEVEL_CLASS_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
     DiagnosticFactory0<JetNamedDeclaration> SECONDARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<JetExpression> JSCODE_NO_JAVASCRIPT_PRODUCED = DiagnosticFactory0.create(ERROR, DEFAULT);
-    DiagnosticFactory0<PsiElement> INLINE_CALL_CYCLE = DiagnosticFactory0.create(ERROR, DEFAULT);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

@@ -127,6 +127,10 @@ public class InlineCodegen extends CallGenerator {
     @Override
     public void genCallInner(@NotNull Callable callableMethod, @Nullable ResolvedCall<?> resolvedCall, boolean callDefault, @NotNull ExpressionCodegen codegen) {
         SMAPAndMethodNode nodeAndSmap = null;
+        if (!state.getInlineCycleReporter().enterIntoInlining(resolvedCall)) {
+            generateStub(resolvedCall, codegen);
+            return;
+        }
 
         try {
             nodeAndSmap = createMethodNode(callDefault);
@@ -144,8 +148,16 @@ public class InlineCodegen extends CallGenerator {
                                        (generateNodeText ? ("\ncause: " + InlineCodegenUtil.getNodeText(nodeAndSmap != null ? nodeAndSmap.getNode(): null)) : ""),
                                        e, callElement);
         }
+        finally {
+            state.getInlineCycleReporter().exitFromInliningOf(resolvedCall);
+        }
+    }
 
-
+    protected void generateStub(@Nullable ResolvedCall<?> resolvedCall, @NotNull ExpressionCodegen codegen) {
+        leaveTemps();
+        assert resolvedCall != null;
+        String message = "Call is part of inline cycle: " + resolvedCall.getCall().getCallElement().getText();
+        AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", message);
     }
 
     private void endCall(@NotNull InlineResult result) {
