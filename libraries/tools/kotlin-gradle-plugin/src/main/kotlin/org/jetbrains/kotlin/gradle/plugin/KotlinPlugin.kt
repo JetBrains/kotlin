@@ -528,11 +528,11 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
 }
 
 private fun Project.setAptDirsForSourceSet(kotlinTask: AbstractCompile, sourceSetName: String): File {
-    val aptOutputDir = File(getBuildDir(), "generated/source/kotlinApt")
+    val aptOutputDir = File(getBuildDir(), "generated/source/kapt")
     val aptOutputDirForVariant = File(aptOutputDir, sourceSetName)
     kotlinTask.setProperty("kotlinAptOutputDir", aptOutputDirForVariant)
 
-    val aptWorkingDir = File(getBuildDir(), "tmp/kotlinApt")
+    val aptWorkingDir = File(getBuildDir(), "tmp/kapt")
     val aptWorkingDirForVariant = File(aptWorkingDir, sourceSetName)
     kotlinTask.setProperty("kotlinAptWorkingDir", aptWorkingDirForVariant)
 
