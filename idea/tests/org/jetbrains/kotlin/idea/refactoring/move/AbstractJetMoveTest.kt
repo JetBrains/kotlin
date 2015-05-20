@@ -38,6 +38,8 @@ import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
 import com.intellij.refactoring.move.moveMembers.MoveMembersProcessor
 import com.intellij.util.ActionRunner
 import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
+import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
+import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase

@@ -37,8 +37,8 @@ import com.intellij.refactoring.util.CommonRefactoringUtil.RefactoringErrorHintE
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.idea.refactoring.move.getNullableString
-import org.jetbrains.kotlin.idea.refactoring.move.getString
+import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
+import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase

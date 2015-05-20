@@ -29,9 +29,9 @@ import com.intellij.psi.PsiManager
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
+import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.refactoring.move.MoveAction
-import org.jetbrains.kotlin.idea.refactoring.move.getNullableString
-import org.jetbrains.kotlin.idea.refactoring.move.getString
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase

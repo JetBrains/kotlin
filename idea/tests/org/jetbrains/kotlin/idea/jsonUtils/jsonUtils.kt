@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.move
+package org.jetbrains.kotlin.idea.jsonUtils
 
 import com.google.gson.JsonObject
 
