@@ -40,7 +40,9 @@ import org.jetbrains.kotlin.psi.psiUtil.flatMapDescendantsOfTypeVisitor
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.HashMap
 
-public abstract class JetWholeProjectModalAction<D: Any>(val title: String) : IntentionAction {
+public abstract class JetWholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
+    private val LOG = Logger.getInstance(javaClass<JetWholeProjectModalAction<*>>());
+
     override final fun startInWriteAction() = false
 
     override final fun invoke(project: Project, editor: Editor?, file: PsiFile?) = invoke(project)
@@ -51,7 +53,7 @@ public abstract class JetWholeProjectModalAction<D: Any>(val title: String) : In
         ProgressManager.getInstance().run(
             object : Task.Modal(project, title, true) {
                 override fun run(indicator: ProgressIndicator) {
-                    val filesToData = HashMap<JetFile, D>()
+                    val filesToData = HashMap<JetFile, TData>()
                     runReadAction (fun() {
                         val files = PluginJetFilesProvider.allFilesInProject(project)
 
@@ -75,7 +77,7 @@ public abstract class JetWholeProjectModalAction<D: Any>(val title: String) : In
                 }
             })
 
-    private fun applyAll(project: Project, filesToData: Map<JetFile, D>) {
+    private fun applyAll(project: Project, filesToData: Map<JetFile, TData>) {
         UIUtil.invokeLaterIfNeeded {
             project.executeCommand(getText()) {
                 runWriteAction {
@@ -93,70 +95,66 @@ public abstract class JetWholeProjectModalAction<D: Any>(val title: String) : In
     }
 
     // this method will be started under read action
-    protected abstract fun collectDataForFile(project: Project, file: JetFile): D?
+    protected abstract fun collectDataForFile(project: Project, file: JetFile): TData?
 
     // this method will be started under write action
-    protected abstract fun applyChangesForFile(project: Project, file: JetFile, data: D)
-
-    private companion object {
-        val LOG = Logger.getInstance(javaClass<JetWholeProjectModalAction<*>>());
-    }
+    protected abstract fun applyChangesForFile(project: Project, file: JetFile, data: TData)
 }
 
-public abstract class JetWholeProjectModalByCollectionAction<T : Any>(modalTitle: String)
-: JetWholeProjectModalAction<Collection<T>>(modalTitle) {
-    override fun collectDataForFile(project: Project, file: JetFile): Collection<T>? {
-        val accumulator = arrayListOf<T>()
+public abstract class JetWholeProjectModalByCollectionAction<TTask : Any>(modalTitle: String)
+: JetWholeProjectModalAction<Collection<TTask>>(modalTitle) {
+    override fun collectDataForFile(project: Project, file: JetFile): Collection<TTask>? {
+        val accumulator = arrayListOf<TTask>()
         collectTasksForFile(project, file, accumulator)
-        return if (!accumulator.isEmpty()) return accumulator else null
+        return if (!accumulator.isEmpty()) accumulator else null
     }
 
-    abstract fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<T>)
+    abstract fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<TTask>)
 }
 
-class JetWholeProjectForEachElementOfTypeFix<T> private (
-        private val collectingVisitorFactory: (MutableCollection<T>) -> JetVisitorVoid,
-        private val tasksProcessor: (Collection<T>) -> Unit,
+class JetWholeProjectForEachElementOfTypeFix<TTask> private (
+        private val collectingVisitorFactory: (MutableCollection<TTask>) -> JetVisitorVoid,
+        private val tasksProcessor: (Collection<TTask>) -> Unit,
         private val name: String,
         private val familyName: String = name
-) : JetWholeProjectModalByCollectionAction<T>("Applying '$name'") {
+) : JetWholeProjectModalByCollectionAction<TTask>("Applying '$name'") {
 
     override fun getFamilyName() = familyName
     override fun getText() = name
 
-    override fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<T>) {
+    override fun collectTasksForFile(project: Project, file: JetFile, accumulator: MutableCollection<TTask>) {
         file.accept(collectingVisitorFactory(accumulator))
     }
-    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<T>) = tasksProcessor(data)
+    override fun applyChangesForFile(project: Project, file: JetFile, data: Collection<TTask>) = tasksProcessor(data)
 
     companion object {
-        inline fun <reified E : JetElement> createByPredicate(
-                noinline predicate: (E) -> Boolean,
-                noinline taskProcessor: (E) -> Unit,
+        inline fun <reified TElement : JetElement> createByPredicate(
+                noinline predicate: (TElement) -> Boolean,
+                noinline taskProcessor: (TElement) -> Unit,
                 name: String,
                 familyName: String = name
-        ) = createByTaskFactory<E, E>(
+        ) = createByTaskFactory<TElement, TElement>(
                 taskFactory = { if (predicate(it)) it else null },
                 taskProcessor = taskProcessor,
                 name = name,
                 familyName = familyName
         )
 
-        inline fun <reified E : JetElement, D : Any> createByTaskFactory(
-                noinline taskFactory: (E) -> D?,
-                noinline taskProcessor: (D) -> Unit,
+        inline fun <reified TElement : JetElement, TTask : Any> createByTaskFactory(
+                noinline taskFactory: (TElement) -> TTask?,
+                noinline taskProcessor: (TTask) -> Unit,
                 name: String,
                 familyName: String = name
-        ) = createForMultiTask<E, D>(
+        ) = createForMultiTaskOnElement<TElement, TTask>(
                 tasksFactory = { taskFactory(it).singletonOrEmptyList() },
                 tasksProcessor = { it.forEach(taskProcessor) },
                 name = name,
                 familyName = familyName
         )
 
-        inline fun <reified E : JetElement, D> createForMultiTask(
-                noinline tasksFactory: (E) -> Collection<D>,
-                noinline tasksProcessor: (Collection<D>) -> Unit,
+        inline fun <reified TElement : JetElement, TTask> createForMultiTaskOnElement(
+                noinline tasksFactory: (TElement) -> Collection<TTask>,
+                noinline tasksProcessor: (Collection<TTask>) -> Unit,
                 name: String,
                 familyName: String = name
         ) = JetWholeProjectForEachElementOfTypeFix(
