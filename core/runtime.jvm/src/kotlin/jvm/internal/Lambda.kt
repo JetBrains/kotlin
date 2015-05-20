@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package kotlin.reflect.jvm.internal
+package kotlin.jvm.internal
 
-import kotlin.jvm.internal.FunctionImpl
+public abstract class Lambda(private val arity: Int) : FunctionImpl() {
+    override fun getArity() = arity
 
-/**
- * @suppress
- */
-public abstract class KFunctionImpl<out R> : FunctionImpl()
+    override fun toString() = "${(this as Object).getClass().getGenericInterfaces()[0]}"
+}

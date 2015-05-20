@@ -39,6 +39,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.
 public class JvmRuntimeTypes {
     private final ReflectionTypes reflectionTypes;
 
+    private final ClassDescriptor lambda;
     private final ClassDescriptor functionImpl;
     private final ClassDescriptor memberFunctionImpl;
     private final ClassDescriptor extensionFunctionImpl;
@@ -53,6 +54,7 @@ public class JvmRuntimeTypes {
         );
         PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.jvm.internal"));
 
+        this.lambda = createClass(kotlinJvmInternal, "Lambda");
         this.functionImpl = createClass(kotlinJvmInternal, "FunctionImpl");
         this.memberFunctionImpl = createClass(kotlinJvmInternal, "MemberFunctionImpl");
         this.extensionFunctionImpl = createClass(kotlinJvmInternal, "ExtensionFunctionImpl");
@@ -76,8 +78,6 @@ public class JvmRuntimeTypes {
     public Collection<JetType> getSupertypesForClosure(@NotNull FunctionDescriptor descriptor) {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
 
-        ClassDescriptor functionImplClass = receiverParameter != null ? extensionFunctionImpl : functionImpl;
-
         //noinspection ConstantConditions
         JetType functionType = getBuiltIns(descriptor).getFunctionType(
                 Annotations.EMPTY,
@@ -86,7 +86,7 @@ public class JvmRuntimeTypes {
                 descriptor.getReturnType()
         );
 
-        return Arrays.asList(functionImplClass.getDefaultType(), functionType);
+        return Arrays.asList(lambda.getDefaultType(), functionType);
     }
 
     @NotNull

@@ -34,6 +34,8 @@ public class AsmTypes {
     public static final Type PROPERTY_METADATA_TYPE = Type.getObjectType("kotlin/PropertyMetadata");
     public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType("kotlin/PropertyMetadataImpl");
 
+    public static final Type LAMBDA = Type.getObjectType("kotlin/jvm/internal/Lambda");
+
     public static final Type K_CLASS_TYPE = reflect("KClass");
     public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
     public static final Type K_PACKAGE_TYPE = reflect("KPackage");
