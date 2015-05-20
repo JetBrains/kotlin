@@ -41,7 +41,7 @@ public abstract class AnnotationProcessorWrapper(private val processorFqName: St
     private val processor: Processor by Delegates.lazy {
         try {
             val instance = Class.forName(processorFqName).newInstance() as? Processor
-            instance ?: throw IllegalArgumentException("Instance has a wrong type")
+            instance ?: throw IllegalArgumentException("Instance has a wrong type: $processorFqName")
         }
         catch (e: Exception) {
             AnnotationProcessorStub()
@@ -88,7 +88,7 @@ public abstract class AnnotationProcessorWrapper(private val processorFqName: St
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        roundCounter = roundCounter + 1
+        roundCounter += 1
 
         val annotatedKotlinElements = kotlinAnnotationsProvider.annotatedKotlinElements
         val roundEnvironmentWrapper = RoundEnvironmentWrapper(processingEnv, roundEnv, roundCounter, annotatedKotlinElements)
