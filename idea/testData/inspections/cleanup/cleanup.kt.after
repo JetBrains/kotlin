@@ -20,3 +20,15 @@ val f = { a: Int, b: Int -> a + b }
 annotation class Ann(val arg1: KClass<*>, val arg2: KClass<out Any?>)
 
 Ann(String::class, Int::class) class MyClass
+
+class A private constructor()
+
+val x = fun(x: String) { }
+
+fun foo() {
+    loop@
+    for (i in 1..100) {
+        /* comment */
+        continue@loop
+    }
+}

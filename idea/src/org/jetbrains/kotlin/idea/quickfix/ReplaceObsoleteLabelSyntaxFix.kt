@@ -78,13 +78,6 @@ public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry?) : JetIn
             } && analyze().getDiagnostics().forElement(nameExpression).any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
         }
 
-        private fun JetAnnotationEntry.looksLikeObsoleteLabel() =
-                getAtSymbol() != null &&
-                getParent() is JetAnnotatedExpression &&
-                (getParent() as JetAnnotatedExpression).getAnnotationEntries().size() == 1 &&
-                getValueArgumentList() == null &&
-                getCalleeExpression()?.getConstructorReferenceExpression()?.getIdentifier() != null
-
         private fun replaceWithLabel(annotation: JetAnnotationEntry) {
             val labelName = annotation.getCalleeExpression()?.getConstructorReferenceExpression()?.getReferencedName() ?: return
             val annotatedExpression = annotation.getParent() as? JetAnnotatedExpression ?: return
@@ -103,3 +96,10 @@ public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry?) : JetIn
         }
     }
 }
+
+public fun JetAnnotationEntry.looksLikeObsoleteLabel(): Boolean =
+        getAtSymbol() != null &&
+        getParent() is JetAnnotatedExpression &&
+        (getParent() as JetAnnotatedExpression).getAnnotationEntries().size() == 1 &&
+        getValueArgumentList() == null &&
+        getCalleeExpression()?.getConstructorReferenceExpression()?.getIdentifier() != null
