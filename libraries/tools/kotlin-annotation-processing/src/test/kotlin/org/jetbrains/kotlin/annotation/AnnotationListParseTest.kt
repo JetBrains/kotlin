@@ -1,12 +1,22 @@
 package org.jetbrains.kotlin.annotation
 
+import org.junit.Assert
 import org.junit.Test
 import java.io.File
 import org.junit.Assert.*
+import java.io.IOException
 
 public class AnnotationListParseTest {
 
+    Test fun testAnnotatedGettersSetters() = doTest("annotatedGettersSetters")
+
+    Test fun testAnnotationInSameFile() = doTest("annotationInSameFile")
+
+    Test fun testAnonymousClasses() = doTest("anonymousClasses")
+
     Test fun testClassAnnotations() = doTest("classAnnotations")
+
+    Test fun testConstructors() = doTest("constructors")
 
     Test fun testDefaultPackage() = doTest("defaultPackage")
 
@@ -18,6 +28,8 @@ public class AnnotationListParseTest {
 
     Test fun testNestedClasses() = doTest("nestedClasses")
 
+    Test fun testPlatformStatic() = doTest("platformStatic")
+
     Test fun testSimple() = doTest("simple")
 
 
@@ -28,9 +40,6 @@ public class AnnotationListParseTest {
         val expectedFile = File(resourcesRootFile, "$testName/parsed.txt")
 
         assertTrue(annotationsFile.getAbsolutePath() + " does not exist.", annotationsFile.exists())
-        assertTrue(expectedFile.getAbsolutePath() + " does not exist.", expectedFile.exists())
-
-        val expectedParseResult = expectedFile.readText()
 
         val annotationProvider = FileKotlinAnnotationProvider(annotationsFile)
         val parsedAnnotations = annotationProvider.annotatedKotlinElements
@@ -50,7 +59,22 @@ public class AnnotationListParseTest {
         val actualAnnotationsSorted = actualAnnotations.toString()
                 .lines().filter { it.isNotEmpty() }.sort().joinToString("\n")
 
-        assertEquals(expectedParseResult, actualAnnotationsSorted)
+        assertEqualsToFile(expectedFile, actualAnnotationsSorted)
+    }
+
+    // JetTestUtils.assertEqualsToFile() is not reachable from here
+    public fun assertEqualsToFile(expectedFile: File, actual: String) {
+        val lineSeparator = System.getProperty("line.separator")
+        val actualText = actual.replace(lineSeparator, "\n").trim('\n', ' ', '\t')
+
+        if (!expectedFile.exists()) {
+            expectedFile.writeText(actualText.replace("\n", lineSeparator))
+            Assert.fail("Expected data file did not exist. Generating: " + expectedFile)
+        }
+
+        val expectedText = expectedFile.readText().replace(lineSeparator, "\n")
+
+        assertEquals(expectedText, actualText)
     }
 
     public class FileKotlinAnnotationProvider(val annotationsFile: File): KotlinAnnotationProvider() {
