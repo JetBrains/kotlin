@@ -124,17 +124,11 @@ class NoInternalVisibilityInStdLibTest {
 
             val environment = KotlinCoreEnvironment.createForProduction(disposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-            val module = TopDownAnalyzerFacadeForJVM.createJavaModule("<module for validating std lib>")
-            module.addDependencyOnModule(module)
-            module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
-
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(
-                    ModuleContext(module, environment.project),
-                    environment.getSourceFiles(),
-                    CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(),
-                    null,
-                    null
+                    TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(environment.project),
+                    environment.getSourceFiles(), CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace(), null, null
             ).moduleDescriptor
+
         }
     }
 
