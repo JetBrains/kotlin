@@ -272,6 +272,27 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         }
     }
 
+    @TestMetadata("idea/testData/debugger/tinyApp/src/stepOut")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StepOut extends AbstractKotlinSteppingTest {
+        public void testAllFilesPresentInStepOut() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepOut"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("fieldWatchpoints.kt")
+        public void testFieldWatchpoints() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepOut/fieldWatchpoints.kt");
+            doStepOutTest(fileName);
+        }
+
+        @TestMetadata("inapplicableFieldWatchpoints.kt")
+        public void testInapplicableFieldWatchpoints() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepOut/inapplicableFieldWatchpoints.kt");
+            doStepOutTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/debugger/tinyApp/src/filters")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
