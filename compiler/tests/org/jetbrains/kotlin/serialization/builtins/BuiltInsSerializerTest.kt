@@ -64,6 +64,10 @@ public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         doTest("simple.kt")
     }
 
+    fun testNestedClassesAndObjects() {
+        doTest("nestedClassesAndObjects.kt")
+    }
+
     fun testCompileTimeConstants() {
         doTest("compileTimeConstants.kt")
     }

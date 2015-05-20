@@ -101,6 +101,10 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         doTest("builtinsSerializer/simple.kt")
     }
 
+    fun testNestedClassesAndObjects() {
+        doTest("builtinsSerializer/nestedClassesAndObjects.kt")
+    }
+
     fun testCompileTimeConstants() {
         doTest("builtinsSerializer/compileTimeConstants.kt")
     }

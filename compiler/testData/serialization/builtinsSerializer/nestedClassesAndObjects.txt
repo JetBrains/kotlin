@@ -1,0 +1,50 @@
+package test
+
+internal final class ClassA {
+    public constructor ClassA()
+
+    internal companion object Companion {
+        private constructor Companion()
+        internal final val stat: kotlin.Int
+
+        internal final class D {
+            public constructor D()
+            internal final val memberFromD: kotlin.Int = 275
+        }
+    }
+
+    internal object ObjA {
+        private constructor ObjA()
+        internal final val memberFromObjA: kotlin.Int = 300
+    }
+
+    internal final class classB {
+        public constructor classB()
+        internal final fun memberFromB(): kotlin.Int
+
+        internal final class BC {
+            public constructor BC()
+            internal final val memberFromBB: kotlin.Int = 150
+        }
+
+        internal object BO {
+            private constructor BO()
+            internal final val memberFromBO: kotlin.Int = 175
+        }
+    }
+
+    internal final inner class classC {
+        public constructor classC()
+        internal final val memberFromC: kotlin.Int = 200
+
+        internal final class CC {
+            public constructor CC()
+            internal final val memberFromCC: kotlin.Int = 250
+        }
+
+        internal object CO {
+            private constructor CO()
+            internal final val memberFromCO: kotlin.Int = 265
+        }
+    }
+}
