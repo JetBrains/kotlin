@@ -37,6 +37,10 @@ private class RoundEnvironmentWrapper(
         return getEnclosedElements().filter { it.getKind() == kind && it.getSimpleName().toString() == name }
     }
 
+    private fun TypeElement.filterEnclosedElements(kind: ElementKind): List<Element> {
+        return getEnclosedElements().filter { it.getKind() == kind }
+    }
+
     private fun Element.hasAnnotation(annotationFqName: String): Boolean {
         return getAnnotationMirrors().any { annotationFqName == it.getAnnotationType().asElement().toString() }
     }
@@ -49,6 +53,10 @@ private class RoundEnvironmentWrapper(
             val clazz = processingEnv.getElementUtils().getTypeElement(descriptor.classFqName) ?: return@fold set
             when (descriptor) {
                 is AnnotatedClassDescriptor -> set.add(clazz)
+                is AnnotatedConstructorDescriptor -> {
+                    set.addAll(clazz.filterEnclosedElements(ElementKind.CONSTRUCTOR)
+                            .filter { it.hasAnnotation(annotationFqName) })
+                }
                 is AnnotatedFieldDescriptor -> {
                     set.addAll(clazz.filterEnclosedElements(ElementKind.FIELD, descriptor.fieldName)
                             .filter { it.hasAnnotation(annotationFqName) })
