@@ -51,7 +51,8 @@ object KotlinClassInsertHandler : BaseDeclarationInsertHandler() {
                 val nameRef = token.getParent() as? JetNameReferenceExpression
                 if (nameRef != null) {
                     val bindingContext = nameRef.getResolutionFacade().analyze(nameRef, BodyResolveMode.PARTIAL)
-                    val target = bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
+                    val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, nameRef]
+                                 ?: bindingContext[BindingContext.REFERENCE_TARGET, nameRef] as? ClassDescriptor
                     if (target != null && IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(target) == qualifiedName) return
                 }
 
