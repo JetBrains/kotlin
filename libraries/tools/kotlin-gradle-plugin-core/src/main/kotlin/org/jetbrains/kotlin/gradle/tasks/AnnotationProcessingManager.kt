@@ -135,6 +135,9 @@ public class AnnotationProcessingManager(private val task: KotlinCompile) {
         val argIndex = compilerArgs.indexOfFirst { "-s" == it }
 
         if (argIndex >= 0 && compilerArgs.size() > (argIndex + 1)) {
+            task.getLogger().warn("Destination for generated sources was modified by kapt. " +
+                    "Previous value = " + compilerArgs[argIndex + 1])
+
             compilerArgs[argIndex + 1] = outputDir.getAbsolutePath()
         }
         else {
