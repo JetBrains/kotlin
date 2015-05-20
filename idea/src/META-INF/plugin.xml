@@ -1007,6 +1007,14 @@
         level="WARNING"
         />
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinCleanupInspection"
+        shortName="KotlinDeprecation"
+        displayName="Deprecated language feature"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        cleanupTool="true"
+        level="WARNING"/>
+
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>

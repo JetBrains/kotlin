@@ -39,7 +39,7 @@ public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : 
     override fun getText() = JetBundle.message("migrate.lambda.syntax")
     override fun getFamilyName() = JetBundle.message("migrate.lambda.syntax.family")
 
-    override fun invoke(project: Project, editor: Editor, file: JetFile) {
+    override fun invoke(project: Project, editor: Editor?, file: JetFile) {
         DeprecatedSyntaxFix.createFix(element).runFix()
     }
 
