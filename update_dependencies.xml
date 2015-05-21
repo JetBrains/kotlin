@@ -25,6 +25,10 @@
         </and>
     </condition>
 
+    <condition property="kotlinc.executable.path" value="kotlinc.bat" else="kotlinc">
+        <os family="windows"/>
+    </condition>
+
     <property name="idea.sdk.fetch.needed" value="true"/>
 
     <property name="dependencies.info.file" value="dependencies/dependencies.properties"/>
@@ -276,16 +280,7 @@
             </then>
         </if>
 
-        <!-- Markdown parser -->
-        <download_teamcity_artifact
-            teamcity.server.url="https://teamcity.jetbrains.com"
-            build.locator.request="${markdown.locator}"
-            artifact.path="markdown_jar/markdown.jar"
-            dest="dependencies/markdown.jar"
-            usetimestamp="true"
-            build.number.pattern="\d+\s-\sKotlin\s[\d\.]+"
-            />
-
+        <download-or-build-markdown-parser/>
     </target>
 
     <macrodef name="get_android_sdk">
@@ -347,16 +342,75 @@
 
     <macrodef name="build-protobuf-java-lite">
         <sequential>
-            <condition property="kotlinc.executable.path" value="kotlinc.bat" else="kotlinc">
-                <os family="windows"/>
-            </condition>
-
             <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
                 <arg value="-script"/>
                 <arg value="generators/infrastructure/build-protobuf-lite.kts"/>
                 <arg value="${basedir}/ideaSDK/lib/protobuf-2.5.0.jar"/>
                 <arg value="${basedir}/dependencies/protobuf-2.5.0-lite.jar"/>
             </exec>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download-or-build-markdown-parser">
+        <sequential>
+            <download_teamcity_artifact
+                teamcity.server.url="https://teamcity.jetbrains.com"
+                build.locator.request="${markdown.locator}"
+                artifact.path="markdown_jar/markdown.jar"
+                dest="dependencies/markdown.jar"
+                usetimestamp="true"
+                build.number.pattern="\d+\s-\sKotlin\s[\d\.]+"
+                />
+
+            <!-- When ABI version changes, the second build should compile markdown-parser manually instead of using the old version -->
+
+            <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="false"
+                  resultproperty="markdown.abi.incompatible">
+                <arg value="-cp"/>
+                <arg value="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-compiler.jar"/>
+                <arg value="-script"/>
+                <arg value="generators/infrastructure/check-library-abi-version.kts"/>
+                <arg value="${basedir}/dependencies/markdown.jar"/>
+                <arg value="${basedir}/dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
+            </exec>
+
+            <if>
+                <not>
+                    <equals arg1="${markdown.abi.incompatible}" arg2="0"/>
+                </not>
+                <then>
+                    <echo message="Recompiling intellij-markdown manually"/>
+                    <length file="dependencies/markdown.jar" property="old.markdown.size"/>
+                    <echo message="Size of the incompatible jar: ${old.markdown.size} bytes"/>
+
+                    <get src="https://github.com/valich/intellij-markdown/archive/master.zip"
+                         dest="dependencies/download/markdown-sources.zip" usetimestamp="true"/>
+
+                    <delete dir="dependencies/intellij-markdown-master" failonerror="false"/>
+                    <unzip src="dependencies/download/markdown-sources.zip" dest="dependencies"/>
+                    <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
+                        <arg value="dependencies/intellij-markdown-master/src"/>
+                        <arg value="-d"/>
+                        <arg value="dependencies/intellij-markdown-master/out"/>
+                    </exec>
+
+                    <javac srcdir="dependencies/intellij-markdown-master/src"
+                           destdir="dependencies/intellij-markdown-master/out" includeantruntime="false">
+                        <classpath>
+                            <path location="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
+                        </classpath>
+                    </javac>
+
+                    <delete file="dependencies/markdown.jar" failonerror="false"/>
+                    <jar jarfile="dependencies/markdown.jar">
+                        <fileset dir="dependencies/intellij-markdown-master/out" includes="**"/>
+                    </jar>
+
+                    <echo message="Compilation of intellij-markdown finished"/>
+                    <length file="dependencies/markdown.jar" property="new.markdown.size"/>
+                    <echo message="Size of the new jar: ${new.markdown.size} bytes"/>
+                </then>
+            </if>
         </sequential>
     </macrodef>
 
