@@ -118,7 +118,8 @@ private fun findPackagePartFileNamesForElement(elementAt: JetElement): List<Stri
                 }
 
     val packagePartFiles = FilenameIndex.getAllFilenames(project).sequence().filter {
-                it.startsWith(packagePartNameWoHash) && it.endsWith(".class")
+                it.startsWith(packagePartNameWoHash) && it.endsWith(".class") &&
+                    !it.substringAfter(packagePartNameWoHash).contains("\$")
             }.flatMap {
                 FilenameIndex.getVirtualFilesByName(project, it, scope).sequence()
             }.map {
