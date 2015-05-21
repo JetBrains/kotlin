@@ -99,7 +99,7 @@ public class DebuggerUtils {
                 public Boolean invoke(JetFile file) {
                     Integer startLineOffset = CodeInsightUtils.getStartLineOffset(file, lineNumber);
                     assert startLineOffset != null : "Cannot find start line offset for file " + file.getName() + ", line " + lineNumber;
-                    JetElement elementAt = PsiTreeUtil.getParentOfType(file.findElementAt(startLineOffset), JetElement.class);
+                    JetDeclaration elementAt = PsiTreeUtil.getParentOfType(file.findElementAt(startLineOffset), JetDeclaration.class);
                     return elementAt != null &&
                            className.getInternalName().equals(DebuggerPackage.findPackagePartInternalNameForLibraryFile(elementAt));
                 }

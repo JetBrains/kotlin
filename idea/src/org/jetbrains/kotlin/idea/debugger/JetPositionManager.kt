@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
 import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
+import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -353,7 +355,10 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
             }
 
             if (isInLibrary) {
-                val elementAtForLibraryFile = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
+                val elementAtForLibraryFile =
+                        if (element is JetDeclaration) element
+                        else PsiTreeUtil.getParentOfType(element, javaClass<JetDeclaration>())
+
                 assert(elementAtForLibraryFile != null) {
                     "Couldn't find element at breakpoint for library file " + file.getName() +
                          (if (notPositionedElement == null) "" else ", notPositionedElement = " + notPositionedElement.getElementTextWithContext())
@@ -430,9 +435,11 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
                 InlineUtil.isInline(typeMapper.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement))
             ) {
                 val project = myDebugProcess.getProject()
-                val usagesSearchTarget = FindUsagesOptions(project).toSearchTarget(psiElement, true)
+                val options = FindUsagesOptions(project)
+                options.isSearchForTextOccurrences = false
+                val usagesSearchTarget = options.toSearchTarget(psiElement, true)
 
-                val usagesSearchRequest = DefaultSearchHelper<JetNamedFunction>(true).newRequest(usagesSearchTarget)
+                val usagesSearchRequest = FunctionUsagesSearchHelper(skipImports = true).newRequest(usagesSearchTarget)
                 usagesSearchRequest.search().forEach {
                     val psiElement = it.getElement()
                     if (psiElement is JetElement) {

@@ -51,13 +51,7 @@ private val LOG = Logger.getInstance("org.jetbrains.kotlin.idea.debugger")
  * 2. find all descriptors with same signature, if there is one - return it
  * 3. else -> return null, because it means that there is more than one function with same signature in project
  */
-fun findPackagePartInternalNameForLibraryFile(elementAt: JetElement): String? {
-    val topLevelDeclaration = PsiTreeUtil.getTopmostParentOfType(elementAt, javaClass<JetDeclaration>())
-    if (topLevelDeclaration == null) {
-        reportError(elementAt, null)
-        return null
-    }
-
+fun findPackagePartInternalNameForLibraryFile(topLevelDeclaration: JetDeclaration): String? {
     val packagePartFile = findPackagePartFileNamesForElement(topLevelDeclaration).singleOrNull()
     if (packagePartFile != null) return packagePartFile
 
