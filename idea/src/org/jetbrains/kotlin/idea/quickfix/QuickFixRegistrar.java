@@ -173,11 +173,11 @@ public class QuickFixRegistrar {
 
         QuickFixes.factories.put(UNUSED_VARIABLE, RemovePsiElementSimpleFix.createRemoveVariableFactory());
 
-        QuickFixes.actions.put(UNNECESSARY_SAFE_CALL, ReplaceCallFix.toDotCallFromSafeCall());
-        QuickFixes.actions.put(UNSAFE_CALL, ReplaceCallFix.toSafeCall());
+        QuickFixes.factories.put(UNNECESSARY_SAFE_CALL, ReplaceWithDotCallFix.Companion);
+        QuickFixes.factories.put(UNSAFE_CALL, ReplaceWithSafeCallFix.Companion);
 
-        QuickFixes.actions.put(UNSAFE_CALL, ExclExclCallFix.introduceExclExclCall());
-        QuickFixes.actions.put(UNNECESSARY_NOT_NULL_ASSERTION, ExclExclCallFix.removeExclExclCall());
+        QuickFixes.factories.put(UNSAFE_CALL, AddExclExclCallFix.Companion);
+        QuickFixes.factories.put(UNNECESSARY_NOT_NULL_ASSERTION, RemoveExclExclCallFix.Companion);
         QuickFixes.factories.put(UNSAFE_INFIX_CALL, ReplaceInfixCallFix.createFactory());
 
         JetSingleIntentionActionFactory removeProtectedModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(PROTECTED_KEYWORD);

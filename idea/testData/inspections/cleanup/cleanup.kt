@@ -30,3 +30,15 @@ fun foo() {
         continue@loop
     }
 }
+
+fun unnecessarySafeCall(x: String) {
+    x?.length()
+}
+
+fun unnecessaryExclExcl(x: String) {
+    x!!.length()
+}
+
+fun unnecessaryCast(x: String) = x as String
+
+fun unnecessaryElvis(x: String) = x ?: ""

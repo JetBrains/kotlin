@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComme
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.resolve.DeclarationsChecker
 
-class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntentionAction<JetEnumEntry>(element) {
+class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntentionAction<JetEnumEntry>(element), CleanupFix {
 
     override fun getFamilyName(): String = getText()
 
@@ -41,7 +41,7 @@ class DeprecatedEnumEntryDelimiterSyntaxFix(element: JetEnumEntry): JetIntention
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) = insertLackingCommaSemicolon(element)
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
-            = super.isAvailable(project, editor, file) && DeclarationsChecker.enumEntryUsesDeprecatedOrNoDelimiter(element)
+            = super<JetIntentionAction>.isAvailable(project, editor, file) && DeclarationsChecker.enumEntryUsesDeprecatedOrNoDelimiter(element)
 
     companion object : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction? =

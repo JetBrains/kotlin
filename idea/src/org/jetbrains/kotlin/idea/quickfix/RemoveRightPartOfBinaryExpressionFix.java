@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
 
-public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> {
+public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> extends JetIntentionAction<T> implements CleanupFix {
     private final String message;
     
     public RemoveRightPartOfBinaryExpressionFix(@NotNull T element, String message) {

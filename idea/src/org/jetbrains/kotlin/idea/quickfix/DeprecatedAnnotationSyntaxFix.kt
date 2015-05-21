@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPrimaryConstructor
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
-public class DeprecatedAnnotationSyntaxFix(element: JetAnnotation) : JetIntentionAction<JetAnnotation>(element) {
+public class DeprecatedAnnotationSyntaxFix(element: JetAnnotation) : JetIntentionAction<JetAnnotation>(element), CleanupFix {
     override fun getFamilyName(): String = "Replace with '@' annotations"
     override fun getText(): String = "Replace with '@' annotations"
 
