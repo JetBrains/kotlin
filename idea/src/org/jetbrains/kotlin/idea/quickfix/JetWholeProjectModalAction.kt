@@ -131,37 +131,32 @@ class JetWholeProjectForEachElementOfTypeFix<TTask> private (
         inline fun <reified TElement : JetElement> createByPredicate(
                 noinline predicate: (TElement) -> Boolean,
                 noinline taskProcessor: (TElement) -> Unit,
-                name: String,
-                familyName: String = name
+                name: String
         ) = createByTaskFactory<TElement, TElement>(
                 taskFactory = { if (predicate(it)) it else null },
                 taskProcessor = taskProcessor,
-                name = name,
-                familyName = familyName
+                name = name
         )
 
         inline fun <reified TElement : JetElement, TTask : Any> createByTaskFactory(
                 noinline taskFactory: (TElement) -> TTask?,
                 noinline taskProcessor: (TTask) -> Unit,
-                name: String,
-                familyName: String = name
+                name: String
         ) = createForMultiTaskOnElement<TElement, TTask>(
                 tasksFactory = { taskFactory(it).singletonOrEmptyList() },
                 tasksProcessor = { it.forEach(taskProcessor) },
-                name = name,
-                familyName = familyName
+                name = name
         )
 
         inline fun <reified TElement : JetElement, TTask> createForMultiTaskOnElement(
                 noinline tasksFactory: (TElement) -> Collection<TTask>,
                 noinline tasksProcessor: (Collection<TTask>) -> Unit,
-                name: String,
-                familyName: String = name
+                name: String
         ) = JetWholeProjectForEachElementOfTypeFix(
                 collectingVisitorFactory = { accumulator -> flatMapDescendantsOfTypeVisitor(accumulator, tasksFactory) },
                 tasksProcessor = tasksProcessor,
                 name = name,
-                familyName = familyName
+                familyName = name
         )
     }
 }
