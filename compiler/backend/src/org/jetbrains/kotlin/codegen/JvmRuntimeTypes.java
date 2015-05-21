@@ -23,18 +23,16 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor;
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
@@ -48,39 +46,27 @@ public class JvmRuntimeTypes {
     public JvmRuntimeTypes(@NotNull ReflectionTypes reflectionTypes) {
         this.reflectionTypes = reflectionTypes;
 
-        ModuleDescriptorImpl module = new ModuleDescriptorImpl(Name.special("<jvm functions impl>"),
-                                                               LockBasedStorageManager.NO_LOCKS,
-                                                               TopDownAnalyzerFacadeForJVM.JVM_MODULE_PARAMETERS);
+        ModuleDescriptorImpl module = new ModuleDescriptorImpl(
+                Name.special("<jvm functions impl>"),
+                LockBasedStorageManager.NO_LOCKS,
+                TopDownAnalyzerFacadeForJVM.JVM_MODULE_PARAMETERS
+        );
         PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.jvm.internal"));
 
-        this.functionImpl = createClass(kotlinJvmInternal, "FunctionImpl", "out R");
-        this.memberFunctionImpl = createClass(kotlinJvmInternal, "MemberFunctionImpl", "in T", "out R");
-        this.extensionFunctionImpl = createClass(kotlinJvmInternal, "ExtensionFunctionImpl", "in T", "out R");
+        this.functionImpl = createClass(kotlinJvmInternal, "FunctionImpl");
+        this.memberFunctionImpl = createClass(kotlinJvmInternal, "MemberFunctionImpl");
+        this.extensionFunctionImpl = createClass(kotlinJvmInternal, "ExtensionFunctionImpl");
     }
 
     @NotNull
-    private static ClassDescriptor createClass(
-            @NotNull PackageFragmentDescriptor packageFragment,
-            @NotNull String name,
-            @NotNull String... typeParameters
-    ) {
-        MutableClassDescriptor descriptor = new MutableClassDescriptor(packageFragment, packageFragment.getMemberScope(), ClassKind.CLASS,
-                                                                       false, Name.identifier(name), SourceElement.NO_SOURCE);
-        List<TypeParameterDescriptor> typeParameterDescriptors = new ArrayList<TypeParameterDescriptor>(typeParameters.length);
-        for (int i = 0; i < typeParameters.length; i++) {
-            String[] s = typeParameters[i].split(" ");
-            Variance variance = Variance.valueOf(s[0].toUpperCase() + "_VARIANCE");
-            String typeParameterName = s[1];
-            TypeParameterDescriptorImpl typeParameter = TypeParameterDescriptorImpl.createForFurtherModification(
-                    descriptor, Annotations.EMPTY, false, variance, Name.identifier(typeParameterName), i, SourceElement.NO_SOURCE
-            );
-            typeParameter.setInitialized();
-            typeParameterDescriptors.add(typeParameter);
-        }
+    private static ClassDescriptor createClass(@NotNull PackageFragmentDescriptor packageFragment, @NotNull String name) {
+        MutableClassDescriptor descriptor = new MutableClassDescriptor(
+                packageFragment, packageFragment.getMemberScope(), ClassKind.CLASS, false, Name.identifier(name), SourceElement.NO_SOURCE
+        );
 
         descriptor.setModality(Modality.FINAL);
         descriptor.setVisibility(Visibilities.PUBLIC);
-        descriptor.setTypeParameterDescriptors(typeParameterDescriptors);
+        descriptor.setTypeParameterDescriptors(Collections.<TypeParameterDescriptor>emptyList());
         descriptor.createTypeConstructor();
 
         return descriptor;
@@ -90,28 +76,9 @@ public class JvmRuntimeTypes {
     public Collection<JetType> getSupertypesForClosure(@NotNull FunctionDescriptor descriptor) {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
 
-        List<TypeProjection> typeArguments = new ArrayList<TypeProjection>(2);
-
-        ClassDescriptor classDescriptor;
-        if (receiverParameter != null) {
-            classDescriptor = extensionFunctionImpl;
-            typeArguments.add(new TypeProjectionImpl(receiverParameter.getType()));
-        }
-        else {
-            classDescriptor = functionImpl;
-        }
+        ClassDescriptor functionImplClass = receiverParameter != null ? extensionFunctionImpl : functionImpl;
 
         //noinspection ConstantConditions
-        typeArguments.add(new TypeProjectionImpl(descriptor.getReturnType()));
-
-        JetType functionImplType = new JetTypeImpl(
-                classDescriptor.getDefaultType().getAnnotations(),
-                classDescriptor.getTypeConstructor(),
-                false,
-                typeArguments,
-                classDescriptor.getMemberScope(typeArguments)
-        );
-
         JetType functionType = getBuiltIns(descriptor).getFunctionType(
                 Annotations.EMPTY,
                 receiverParameter == null ? null : receiverParameter.getType(),
@@ -119,7 +86,7 @@ public class JvmRuntimeTypes {
                 descriptor.getReturnType()
         );
 
-        return Arrays.asList(functionImplType, functionType);
+        return Arrays.asList(functionImplClass.getDefaultType(), functionType);
     }
 
     @NotNull
@@ -127,36 +94,24 @@ public class JvmRuntimeTypes {
         ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
         ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
 
-        List<TypeProjection> typeArguments = new ArrayList<TypeProjection>(2);
-
-        ClassDescriptor classDescriptor;
+        ClassDescriptor functionImplClass;
         JetType receiverType;
         if (extensionReceiver != null) {
-            classDescriptor = extensionFunctionImpl;
+            functionImplClass = extensionFunctionImpl;
             receiverType = extensionReceiver.getType();
-            typeArguments.add(new TypeProjectionImpl(receiverType));
         }
         else if (dispatchReceiver != null) {
-            classDescriptor = memberFunctionImpl;
+            functionImplClass = memberFunctionImpl;
             receiverType = dispatchReceiver.getType();
-            typeArguments.add(new TypeProjectionImpl(receiverType));
         }
         else {
-            classDescriptor = functionImpl;
+            functionImplClass = functionImpl;
             receiverType = null;
         }
 
+        JetType functionImplType = functionImplClass.getDefaultType();
+
         //noinspection ConstantConditions
-        typeArguments.add(new TypeProjectionImpl(descriptor.getReturnType()));
-
-        JetType functionImplType = new JetTypeImpl(
-                classDescriptor.getDefaultType().getAnnotations(),
-                classDescriptor.getTypeConstructor(),
-                false,
-                typeArguments,
-                classDescriptor.getMemberScope(typeArguments)
-        );
-
         JetType kFunctionType = reflectionTypes.getKFunctionType(
                 Annotations.EMPTY,
                 receiverType,

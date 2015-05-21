@@ -18,6 +18,6 @@ package kotlin.jvm.internal
 
 import java.io.Serializable
 
-public abstract class ExtensionFunctionImpl<in T, out R> : Serializable {
+public abstract class ExtensionFunctionImpl : Serializable {
     override fun toString() = "${(this as Object).getClass().getGenericInterfaces()[0]}"
 }
