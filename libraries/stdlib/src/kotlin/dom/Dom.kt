@@ -383,6 +383,14 @@ public fun Element.addElement(name: String, doc: Document? = null, init: Element
 }
 
 /**
+Adds an element to an element which has an owner Document which can be configured via a function
+ */
+public fun Element.addElement(child: Element): Element {
+    this.appendChild(child)
+    return child
+}
+
+/**
 Adds a newly created text node to an element which either already has an owner Document or one must be provided as a parameter
 */
 public fun Element.addText(text: String?, doc: Document? = null): Element {
