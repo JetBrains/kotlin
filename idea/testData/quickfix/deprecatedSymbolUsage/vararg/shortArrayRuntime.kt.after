@@ -1,0 +1,12 @@
+// "Replace with 'newFun(p)'" "true"
+
+@deprecated("", ReplaceWith("newFun(p)"))
+fun oldFun(vararg p: Short){
+    newFun(p)
+}
+
+fun newFun(p: ShortArray){}
+
+fun foo() {
+    <caret>newFun(shortArrayOf(1))
+}

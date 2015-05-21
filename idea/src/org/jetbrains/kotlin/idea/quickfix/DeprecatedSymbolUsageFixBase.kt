@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analyzer.analyzeInContext
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -40,8 +41,12 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -53,6 +58,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
@@ -177,6 +183,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 val usages = expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_USAGE_KEY] == originalParameter }
                 usages.forEach { it.replace(argument.wrapped) }
 
+                //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
+
                 if (argument.expression.shouldKeepValue(usages.size())) {
                     introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
                 }
@@ -230,6 +238,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
             result = ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(result, shortenFilter) as JetExpression
+
+            simplifySpreadArrayOfArguments(result)
 
             // clean up user data
             result.forEachDescendantOfType<JetExpression> {
@@ -433,7 +443,29 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     return Argument(wrapped.getExpression()!!, wrapped, null/*TODO*/, isDefaultValue = true)
                 }
 
-                is VarargValueArgument -> /*TODO*/ return null
+                is VarargValueArgument -> {
+                    val arguments = resolvedArgument.getArguments()
+                    val single = arguments.singleOrNull()
+                    if (single != null && single.getSpreadElement() != null) {
+                        val expression = single.getArgumentExpression()!!.marked(USER_CODE_KEY)
+                        return Argument(expression, expression, bindingContext.getType(expression), isDefaultValue = false)
+                    }
+
+                    val elementType = parameter.getVarargElementType()!!
+                    val expression = JetPsiFactory(project).buildExpression {
+                        appendFixedText(arrayOfFunctionName(elementType))
+                        appendFixedText("(")
+                        for ((i, argument) in arguments.withIndex()) {
+                            if (i > 0) appendFixedText(",")
+                            if (argument.getSpreadElement() != null) {
+                                appendFixedText("*")
+                            }
+                            appendExpression(argument.getArgumentExpression()!!.marked(USER_CODE_KEY))
+                        }
+                        appendFixedText(")")
+                    }
+                    return Argument(expression, expression, parameter.getType(), isDefaultValue = false)
+                }
 
                 else -> error("Unknown argument type: $resolvedArgument")
             }
@@ -478,6 +510,67 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
 
             values.forEach { it.unwrap() }
+        }
+
+        private fun arrayOfFunctionName(elementType: JetType): String {
+            return when {
+                KotlinBuiltIns.isInt(elementType) -> "kotlin.intArrayOf"
+                KotlinBuiltIns.isLong(elementType) -> "kotlin.longArrayOf"
+                KotlinBuiltIns.isShort(elementType) -> "kotlin.shortArrayOf"
+                KotlinBuiltIns.isChar(elementType) -> "kotlin.charArrayOf"
+                KotlinBuiltIns.isBoolean(elementType) -> "kotlin.booleanArrayOf"
+                KotlinBuiltIns.isByte(elementType) -> "kotlin.byteArrayOf"
+                KotlinBuiltIns.isDouble(elementType) -> "kotlin.doubleArrayOf"
+                KotlinBuiltIns.isFloat(elementType) -> "kotlin.floatArrayOf"
+                elementType.isError() -> "kotlin.arrayOf"
+                else -> "kotlin.arrayOf<" + IdeDescriptorRenderers.SOURCE_CODE.renderType(elementType) + ">"
+            }
+        }
+
+        private fun simplifySpreadArrayOfArguments(expression: JetExpression) {
+            //TODO: test for nested
+
+            val argumentsToExpand = ArrayList<Pair<JetValueArgument, Collection<JetValueArgument>>>()
+
+            expression.accept(object : JetTreeVisitorVoid() {
+                override fun visitArgument(argument: JetValueArgument) {
+                    super.visitArgument(argument)
+
+                    if (argument.getSpreadElement() != null && !argument.isNamed()) {
+                        val call = argument.getArgumentExpression() as? JetCallExpression
+                        if (call != null) {
+                            val resolvedCall = call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL))
+                            if (resolvedCall != null && CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
+                                argumentsToExpand.add(argument to call.getValueArguments())
+                            }
+                        }
+                    }
+                }
+
+                override fun visitJetElement(element: JetElement) {
+                    if (!element[USER_CODE_KEY]) { // do not go inside original user's code
+                        super.visitJetElement(element)
+                    }
+                }
+            })
+
+            for ((argument, replacements) in argumentsToExpand) {
+                argument.replaceByMultiple(replacements)
+            }
+        }
+
+        private fun JetValueArgument.replaceByMultiple(arguments: Collection<JetValueArgument>) {
+            val list = getParent() as JetValueArgumentList
+            if (arguments.isEmpty()) {
+                list.removeArgument(this)
+            }
+            else {
+                var anchor = this
+                for (argument in arguments) {
+                    anchor = list.addArgumentAfter(argument, anchor)
+                }
+                list.removeArgument(this)
+            }
         }
 
         //TODO: making functions below private causes VerifyError

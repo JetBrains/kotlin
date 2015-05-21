@@ -66,14 +66,14 @@ public class JetCallExpression extends JetExpressionImpl implements JetCallEleme
 
     @Override
     @NotNull
-    public List<? extends ValueArgument> getValueArguments() {
+    public List<JetValueArgument> getValueArguments() {
         JetValueArgumentList list = getValueArgumentList();
         List<JetValueArgument> valueArgumentsInParentheses = list != null ? list.getArguments() : Collections.<JetValueArgument>emptyList();
         List<JetFunctionLiteralArgument> functionLiteralArguments = getFunctionLiteralArguments();
         if (functionLiteralArguments.isEmpty()) {
             return valueArgumentsInParentheses;
         }
-        List<ValueArgument> allValueArguments = Lists.newArrayList();
+        List<JetValueArgument> allValueArguments = Lists.newArrayList();
         allValueArguments.addAll(valueArgumentsInParentheses);
         allValueArguments.addAll(functionLiteralArguments);
         return allValueArguments;
