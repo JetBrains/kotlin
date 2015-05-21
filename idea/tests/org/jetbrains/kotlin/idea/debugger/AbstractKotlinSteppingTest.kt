@@ -16,19 +16,17 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.engine.SuspendContextImpl
-import org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler.KotlinMethodSmartStepTarget
-import org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler.KotlinBasicStepMethodFilter
 import com.intellij.debugger.DebuggerManagerEx
-import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.debugger.actions.MethodSmartStepTarget
 import com.intellij.debugger.engine.BasicStepMethodFilter
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
+import com.intellij.debugger.engine.SuspendContextImpl
+import com.intellij.debugger.ui.breakpoints.LineBreakpoint
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler.KotlinBasicStepMethodFilter
+import org.jetbrains.kotlin.idea.debugger.KotlinSmartStepIntoHandler.KotlinMethodSmartStepTarget
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.getPrefixedInt
 import java.io.File
-import kotlin.properties.Delegates
-import com.intellij.debugger.settings.DebuggerSettings
 
 public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
     protected fun doStepIntoTest(path: String) {
@@ -51,7 +49,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
 
         fun repeat(indexPrefix: String, f: SuspendContextImpl.() -> Unit) {
             for (i in 1..(getPrefixedInt(fileText, indexPrefix) ?: 1)) {
-                onBreakpoint(f)
+                doOnBreakpoint(f)
             }
         }
 
@@ -74,7 +72,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         createDebugProcess(path)
 
         for (i in 1..(getPrefixedInt(fileText, "// $command: ") ?: 1)) {
-            onBreakpoint {
+            doOnBreakpoint {
                 when(command) {
                     "STEP_INTO" -> stepInto()
                     "STEP_OUT" -> stepOut()

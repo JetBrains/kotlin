@@ -18,45 +18,39 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.DebuggerManagerEx
-import com.intellij.debugger.engine.DebugProcessImpl
-import com.intellij.debugger.engine.SuspendContextImpl
-import com.intellij.debugger.engine.MethodFilter
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import com.intellij.debugger.impl.PositionUtil
-import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.openapi.roots.libraries.LibraryUtil
-import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
-import com.intellij.openapi.roots.JdkOrderEntry
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.settings.DebuggerSettings
-import kotlin.properties.Delegates
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
-import kotlin.properties.Delegates
+import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.engine.MethodFilter
+import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerContextImpl
+import com.intellij.debugger.impl.PositionUtil
+import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.debugger.ui.breakpoints.BreakpointManager
-import com.intellij.debugger.ui.breakpoints.FieldBreakpoint
-import com.intellij.debugger.ui.breakpoints.JavaFieldBreakpointType
-import com.intellij.openapi.application.ApplicationManager
+import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.util.Computable
+import com.intellij.openapi.roots.JdkOrderEntry
+import com.intellij.openapi.roots.libraries.LibraryUtil
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerUtil
-import com.intellij.xdebugger.breakpoints.*
-import org.jetbrains.java.debugger.breakpoints.properties.JavaFieldBreakpointProperties
+import com.intellij.xdebugger.breakpoints.XBreakpoint
+import com.intellij.xdebugger.breakpoints.XBreakpointProperties
+import com.intellij.xdebugger.breakpoints.XBreakpointType
+import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
+import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import javax.swing.SwingUtilities
+import kotlin.properties.Delegates
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     private var oldSettings: DebuggerSettings by Delegates.notNull()
@@ -115,11 +109,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     protected val dp: DebugProcessImpl
         get() = getDebugProcess() ?: throw AssertionError("createLocalProcess() should be called before getDebugProcess()")
 
-    protected fun onBreakpoint(doOnBreakpoint: SuspendContextImpl.() -> Unit) {
+    public fun doOnBreakpoint(action: SuspendContextImpl.() -> Unit) {
         super.onBreakpoint {
             initContexts(it)
             it.printContext()
-            it.doOnBreakpoint()
+            it.action()
         }
     }
 
@@ -174,7 +168,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun finish() {
-        onBreakpoint {
+        doOnBreakpoint {
             resume(this)
         }
     }

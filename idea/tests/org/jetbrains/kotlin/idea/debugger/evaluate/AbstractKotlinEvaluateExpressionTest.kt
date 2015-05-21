@@ -113,11 +113,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val count = InTextDirectivesUtils.getPrefixedInt(fileText, "// STEP_INTO: ") ?: 0
         if (count > 0) {
             for (i in 1..count) {
-                onBreakpoint { stepInto() }
+                doOnBreakpoint { stepInto() }
             }
         }
 
-        onBreakpoint {
+        doOnBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
             try {
                 for ((expression, expected) in expressions) {
@@ -160,7 +160,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val exceptions = linkedMapOf<String, Throwable>()
         for ((expression, expected) in expressions) {
             mayThrow(exceptions, expression) {
-                onBreakpoint {
+                doOnBreakpoint {
                     try {
                         evaluate(expression, CodeFragmentKind.EXPRESSION, expected)
                     }
