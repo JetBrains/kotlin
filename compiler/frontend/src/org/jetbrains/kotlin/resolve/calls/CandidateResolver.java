@@ -58,7 +58,6 @@ import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumen
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.createCorrespondingExtensionFunctionTypeIfNecessary;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
@@ -534,18 +533,18 @@ public class CandidateResolver {
 
                 ArgumentMatchStatus matchStatus = ArgumentMatchStatus.SUCCESS;
                 JetType resultingType = type;
-                if (type == null || (type.isError() && type != PLACEHOLDER_FUNCTION_TYPE)) {
+                if (type == null || (type.isError() && !ErrorUtils.isFunctionPlaceholder(type))) {
                     matchStatus = ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE;
                 }
                 else if (!noExpectedType(expectedType)) {
                     if (!ArgumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
-                        JetType morePreciseType = makeMorePreciseType(type, expression, newContext);
-                        if (morePreciseType == null) {
+                        JetType smartCast = smartCastValueArgumentTypeIfPossible(expression, newContext.expectedType, type, newContext);
+                        if (smartCast == null) {
                             resultStatus = OTHER_ERROR;
                             matchStatus = ArgumentMatchStatus.TYPE_MISMATCH;
                         }
                         else {
-                            resultingType = morePreciseType;
+                            resultingType = smartCast;
                         }
                     }
                     else if (ErrorUtils.containsUninferredParameter(expectedType)) {
@@ -557,27 +556,6 @@ public class CandidateResolver {
             }
         }
         return new ValueArgumentsCheckingResult(resultStatus, argumentTypes);
-    }
-
-    @Nullable
-    private static <C extends CallResolutionContext<C>> JetType makeMorePreciseType(
-            @NotNull JetType type,
-            @NotNull JetExpression expression,
-            @NotNull CallResolutionContext<C> context
-    ) {
-        JetType smartCastType = smartCastValueArgumentTypeIfPossible(expression, context.expectedType, type, context);
-        if (smartCastType != null) {
-            return smartCastType;
-        }
-        // function literal without declaring receiver type { x -> ... }
-        // can be considered as extension function if one is expected
-        if (ArgumentTypeResolver.isFunctionLiteralArgument(expression, context)) {
-            JetType extensionFunctionType = createCorrespondingExtensionFunctionTypeIfNecessary(type, context.expectedType);
-            if (ArgumentTypeResolver.isSubtypeOfForArgumentType(extensionFunctionType, context.expectedType)) {
-                return extensionFunctionType;
-            }
-        }
-        return null;
     }
 
     @Nullable

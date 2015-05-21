@@ -496,7 +496,7 @@ public class ErrorUtils {
         private final TypeParameterDescriptor typeParameterDescriptor;
         private final TypeConstructor errorTypeConstructor;
 
-        public UninferredParameterTypeConstructor(@NotNull TypeParameterDescriptor descriptor) {
+        private UninferredParameterTypeConstructor(@NotNull TypeParameterDescriptor descriptor) {
             typeParameterDescriptor = descriptor;
             errorTypeConstructor = createErrorTypeConstructorWithCustomDebugName("CANT_INFER_TYPE_PARAMETER: " + descriptor.getName());
         }
@@ -538,6 +538,71 @@ public class ErrorUtils {
         @Override
         public Annotations getAnnotations() {
             return errorTypeConstructor.getAnnotations();
+        }
+    }
+
+    public static boolean isFunctionPlaceholder(@Nullable JetType type) {
+        return type != null && type.getConstructor() instanceof FunctionPlaceholderTypeConstructor;
+    }
+
+    @NotNull
+    public static JetType createFunctionPlaceholderType(@NotNull List<JetType> argumentTypes) {
+        return new ErrorTypeImpl(
+                new FunctionPlaceholderTypeConstructor(argumentTypes),
+                createErrorScope("Scope for function placeholder type"));
+    }
+
+    public static class FunctionPlaceholderTypeConstructor implements TypeConstructor {
+        private final TypeConstructor errorTypeConstructor;
+        private final List<JetType> argumentTypes;
+
+        private FunctionPlaceholderTypeConstructor(@NotNull List<JetType> argumentTypes) {
+            errorTypeConstructor = createErrorTypeConstructorWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE" + argumentTypes);
+            this.argumentTypes = argumentTypes;
+        }
+
+        @NotNull
+        public List<JetType> getArgumentTypes() {
+            return argumentTypes;
+        }
+
+        @NotNull
+        @Override
+        public List<TypeParameterDescriptor> getParameters() {
+            return errorTypeConstructor.getParameters();
+        }
+
+        @NotNull
+        @Override
+        public Collection<JetType> getSupertypes() {
+            return errorTypeConstructor.getSupertypes();
+        }
+
+        @Override
+        public boolean isFinal() {
+            return errorTypeConstructor.isFinal();
+        }
+
+        @Override
+        public boolean isDenotable() {
+            return errorTypeConstructor.isDenotable();
+        }
+
+        @Nullable
+        @Override
+        public ClassifierDescriptor getDeclarationDescriptor() {
+            return errorTypeConstructor.getDeclarationDescriptor();
+        }
+
+        @NotNull
+        @Override
+        public Annotations getAnnotations() {
+            return errorTypeConstructor.getAnnotations();
+        }
+
+        @Override
+        public String toString() {
+            return errorTypeConstructor.toString();
         }
     }
 

@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.ErrorUtils.FunctionPlaceholderTypeConstructor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.types.getCustomTypeVariable
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.types.TypeSubstitution
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
 public class ConstraintSystemImpl : ConstraintSystem {
 
@@ -234,7 +237,7 @@ public class ConstraintSystemImpl : ConstraintSystem {
             return true
         }
 
-        if (type == null || (type.isError() && type != TypeUtils.PLACEHOLDER_FUNCTION_TYPE)) {
+        if (type == null || (type.isError() && !ErrorUtils.isFunctionPlaceholder(type))) {
             errors.add(ErrorInConstrainingType(constraintPosition))
             return true
         }
@@ -251,30 +254,22 @@ public class ConstraintSystemImpl : ConstraintSystem {
         if (isErrorOrSpecialType(subType, constraintPosition) || isErrorOrSpecialType(superType, constraintPosition)) return
         if (subType == null || superType == null) return
 
-        assert(superType != TypeUtils.PLACEHOLDER_FUNCTION_TYPE) {
+        assert(!ErrorUtils.isFunctionPlaceholder(superType)) {
             "The type for " + constraintPosition + " shouldn't be a placeholder for function type"
         }
 
-        if (subType == TypeUtils.PLACEHOLDER_FUNCTION_TYPE) {
-            if (!KotlinBuiltIns.isFunctionOrExtensionFunctionType(superType)) {
-                if (isMyTypeVariable(superType)) {
-                    // a constraint binds type parameter and any function type, so there is no new info and no error
-                    return
-                }
-                errors.add(TypeConstructorMismatch(constraintPosition))
+        // function literal { x -> ... } goes without declaring receiver type
+        // and can be considered as extension function if one is expected
+        val newSubType = if (constraintKind == SUB_TYPE && ErrorUtils.isFunctionPlaceholder(subType)) {
+            if (isMyTypeVariable(superType)) {
+                // the constraint binds type parameter and a function type,
+                // we don't add it without knowing whether it's a function type or an extension function type
+                return
             }
-            return
-        }
-
-        // todo temporary hack
-        // function literal without declaring receiver type { x -> ... }
-        // can be considered as extension function if one is expected
-        // (special type constructor for function/ extension function should be introduced like PLACEHOLDER_FUNCTION_TYPE)
-        val newSubType = if (constraintKind == SUB_TYPE) {
-            createCorrespondingExtensionFunctionTypeIfNecessary(subType, superType)
+            createCorrespondingFunctionTypeForFunctionPlaceholder(subType, superType)
         }
         else {
-            subType : JetType
+            subType
         }
 
         fun simplifyConstraint(subType: JetType, superType: JetType) {
@@ -422,31 +417,29 @@ public class ConstraintSystemImpl : ConstraintSystem {
     override fun getCurrentSubstitutor() = replaceUninferredBy(TypeUtils.DONT_CARE).setApproximateCapturedTypes()
 }
 
-fun createCorrespondingExtensionFunctionTypeIfNecessary(functionType: JetType, expectedType: JetType): JetType {
-    if (KotlinBuiltIns.isFunctionType(functionType) && KotlinBuiltIns.isExtensionFunctionType(expectedType)) {
-        return createCorrespondingExtensionFunctionType(functionType, DONT_CARE)
+fun createCorrespondingFunctionTypeForFunctionPlaceholder(
+        functionPlaceholder: JetType,
+        expectedType: JetType
+): JetType {
+    assert(ErrorUtils.isFunctionPlaceholder(functionPlaceholder)) { "Function placeholder type expected: $functionPlaceholder" }
+    val functionPlaceholderTypeConstructor = functionPlaceholder.getConstructor() as FunctionPlaceholderTypeConstructor
+    val declaredArgumentTypes = functionPlaceholderTypeConstructor.getArgumentTypes()
+
+    val isExtension = KotlinBuiltIns.isExtensionFunctionType(expectedType)
+    val newArgumentTypes = if (declaredArgumentTypes.isEmpty()) {
+        val typeParamSize = expectedType.getConstructor().getParameters().size()
+        // the first parameter is receiver (if present), the last one is return type,
+        // the remaining are function arguments
+        val functionArgumentsSize = if (isExtension) typeParamSize - 2 else typeParamSize - 1
+        val result = arrayListOf<JetType>()
+        (1..functionArgumentsSize).forEach { result.add(DONT_CARE) }
+        result
     }
-    return functionType
-}
-
-private fun createCorrespondingExtensionFunctionType(functionType: JetType, receiverType: JetType): JetType {
-    assert(KotlinBuiltIns.isFunctionType(functionType))
-
-    val typeArguments = functionType.getArguments()
-    assert(!typeArguments.isEmpty())
-
-    val arguments = ArrayList<JetType>()
-    // excluding the last type argument of the function type, which is the return type
-    var index = 0
-    val lastIndex = typeArguments.size() - 1
-    for (typeArgument in typeArguments) {
-        if (index < lastIndex) {
-            arguments.add(typeArgument.getType())
-        }
-        index++
+    else {
+        declaredArgumentTypes
     }
-    val returnType = typeArguments.get(lastIndex).getType()
-    return KotlinBuiltIns.getInstance().getFunctionType(functionType.getAnnotations(), receiverType, arguments, returnType)
+    val receiverType = if (isExtension) DONT_CARE else null
+    return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, newArgumentTypes, DONT_CARE)
 }
 
 private fun TypeSubstitutor.setApproximateCapturedTypes(): TypeSubstitutor {

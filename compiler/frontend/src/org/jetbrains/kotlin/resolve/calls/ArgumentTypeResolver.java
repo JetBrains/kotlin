@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
@@ -36,11 +37,11 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
 
@@ -54,7 +55,9 @@ import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumen
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.types.TypeUtils.*;
+import static org.jetbrains.kotlin.resolve.calls.inference.InferencePackage.createCorrespondingFunctionTypeForFunctionPlaceholder;
+import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
+import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
 
@@ -81,21 +84,21 @@ public class ArgumentTypeResolver {
             @NotNull JetType actualType,
             @NotNull JetType expectedType
     ) {
-        if (actualType == PLACEHOLDER_FUNCTION_TYPE) {
-            return isFunctionOrErrorType(expectedType) || KotlinBuiltIns.isAnyOrNullableAny(expectedType); //todo function type extends
+        if (ErrorUtils.isFunctionPlaceholder(actualType)) {
+            JetType functionType = createCorrespondingFunctionTypeForFunctionPlaceholder(actualType, expectedType);
+            return JetTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
         }
         return JetTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
-    }
-
-    private static boolean isFunctionOrErrorType(@NotNull JetType supertype) {
-        return KotlinBuiltIns.isFunctionOrExtensionFunctionType(supertype) || supertype.isError();
     }
 
     public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context) {
         checkTypesWithNoCallee(context, SHAPE_FUNCTION_ARGUMENTS);
     }
 
-    public void checkTypesWithNoCallee(@NotNull CallResolutionContext<?> context, @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies) {
+    public void checkTypesWithNoCallee(
+            @NotNull CallResolutionContext<?> context,
+            @NotNull ResolveArgumentsMode resolveFunctionArgumentBodies
+    ) {
         if (context.checkArguments == CheckValueArgumentsMode.DISABLED) return;
 
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
@@ -222,27 +225,31 @@ public class ArgumentTypeResolver {
 
     @Nullable
     public JetType getShapeTypeOfFunctionLiteral(
-            @NotNull JetFunction functionLiteral,
+            @NotNull JetFunction function,
             @NotNull JetScope scope,
             @NotNull BindingTrace trace,
             boolean expectedTypeIsUnknown
     ) {
-        if (functionLiteral.getValueParameterList() == null) {
-            return expectedTypeIsUnknown ? PLACEHOLDER_FUNCTION_TYPE : builtIns.getFunctionType(
-                    Annotations.EMPTY, null, Collections.<JetType>emptyList(), DONT_CARE);
+        boolean isFunctionLiteral = function instanceof JetFunctionLiteral;
+        if (function.getValueParameterList() == null && isFunctionLiteral) {
+            return expectedTypeIsUnknown
+                   ? ErrorUtils.createFunctionPlaceholderType(Collections.<JetType>emptyList())
+                   : builtIns.getFunctionType(Annotations.EMPTY, null, Collections.<JetType>emptyList(), DONT_CARE);
         }
-        List<JetParameter> valueParameters = functionLiteral.getValueParameters();
+        List<JetParameter> valueParameters = function.getValueParameters();
         TemporaryBindingTrace temporaryTrace = TemporaryBindingTrace.create(
                 trace, "trace to resolve function literal parameter types");
         List<JetType> parameterTypes = Lists.newArrayList();
         for (JetParameter parameter : valueParameters) {
             parameterTypes.add(resolveTypeRefWithDefault(parameter.getTypeReference(), scope, temporaryTrace, DONT_CARE));
         }
-        JetType returnType = resolveTypeRefWithDefault(functionLiteral.getTypeReference(), scope, temporaryTrace, DONT_CARE);
+        JetType returnType = resolveTypeRefWithDefault(function.getTypeReference(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
-        JetType receiverType = resolveTypeRefWithDefault(functionLiteral.getReceiverTypeReference(), scope, temporaryTrace, null);
-        return builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes,
-                                        returnType);
+        JetType receiverType = resolveTypeRefWithDefault(function.getReceiverTypeReference(), scope, temporaryTrace, null);
+
+        return expectedTypeIsUnknown && isFunctionLiteral
+               ? ErrorUtils.createFunctionPlaceholderType(parameterTypes)
+               : builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, returnType);
     }
 
     @Nullable
