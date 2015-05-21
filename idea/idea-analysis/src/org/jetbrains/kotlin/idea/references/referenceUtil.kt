@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.idea.references
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
+import org.jetbrains.kotlin.idea.search.usagesSearch.dataClassComponentFunctionName
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 import java.util.HashSet
 
@@ -55,6 +57,17 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     if (!canBeReferenceTo(candidateTarget)) return false
 
     val unwrappedCandidate = candidateTarget.unwrapped?.getOriginalElement() ?: return false
+
+    // Optimizations
+    when (this) {
+        is JetInvokeFunctionReference -> {
+            if (candidateTarget !is JetNamedFunction) return false
+        }
+        is JetMultiDeclarationReference -> {
+            if (candidateTarget !is JetNamedFunction && candidateTarget !is JetParameter) return false
+        }
+    }
+
     val targets = unwrappedTargets
     if (unwrappedCandidate in targets) return true
 
