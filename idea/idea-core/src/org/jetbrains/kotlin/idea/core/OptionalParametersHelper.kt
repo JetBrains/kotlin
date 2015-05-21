@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.decompiler.navigation.JetSourceNavigationHelper
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
@@ -118,10 +119,14 @@ public object OptionalParametersHelper {
     //TODO: handle implicit receivers
     public fun defaultParameterValue(parameter: ValueParameterDescriptor, project: Project): DefaultValue? {
         if (!parameter.hasDefaultValue()) return null
+
         //TODO: parameter in overriding method!
-        val sourceParameter = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter) as? JetParameter ?: return null
-        //TODO: use JetSourceNavigationHelper
-        val expression = sourceParameter.getDefaultValue() ?: return null
+        //TODO: it's a temporary code while we don't have default values accessible from descriptors
+        var declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter) as? JetParameter ?: return null
+        if (declaration.getContainingJetFile().isCompiled()) {
+            declaration = JetSourceNavigationHelper.replaceBySourceDeclarationIfPresent(declaration) as? JetParameter ?: return null
+        }
+        val expression = declaration.getDefaultValue() ?: return null
 
         val allParameters = (parameter.getContainingDeclaration() as CallableDescriptor).getValueParameters().toSet()
 

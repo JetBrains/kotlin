@@ -439,6 +439,20 @@ public class JetSourceNavigationHelper {
         public JetDeclaration visitClass(@NotNull JetClass klass, Void data) {
             return getSourceClassOrObject(klass);
         }
+
+        @Override
+        public JetDeclaration visitParameter(@NotNull JetParameter parameter, Void data) {
+            PsiElement pparent = parameter.getParent().getParent();
+            JetCallableDeclaration callableDeclaration = (JetCallableDeclaration) pparent;
+            List<JetParameter> parameters = callableDeclaration.getValueParameters();
+            int index = parameters.indexOf(parameter);
+
+            JetCallableDeclaration sourceCallable = (JetCallableDeclaration) callableDeclaration.accept(this, null);
+            if (sourceCallable == null) return null;
+            List<JetParameter> sourceParameters = sourceCallable.getValueParameters();
+            if (sourceParameters.size() != parameters.size()) return null;
+            return sourceParameters.get(index);
+        }
     }
 
     private static class LibrarySourcesScope extends GlobalSearchScope {

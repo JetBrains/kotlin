@@ -20,18 +20,29 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
-import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.descriptorToKey
-import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
 public abstract class KotlinClsFileBase(provider: FileViewProvider) : JetFile(provider, true) {
     protected abstract val decompiledText: LockedClearableLazyValue<DecompiledText>
 
     public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): JetDeclaration? {
-        val key = descriptorToKey(descriptor.getOriginal())
+        val original = descriptor.getOriginal()
+
+        if (original is ValueParameterDescriptor) {
+            val callable = original.getContainingDeclaration() as? CallableDescriptor ?: return null
+            val callableDeclaration = getDeclarationForDescriptor(callable) as? JetCallableDeclaration ?: return null
+            return callableDeclaration.getValueParameters()[original.getIndex()]
+        }
+
+        val key = descriptorToKey(original)
 
         val range = decompiledText.get().renderedDescriptorsToRange[key]
         return if (range != null) {
