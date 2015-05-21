@@ -667,3 +667,12 @@ public fun JetExpression.getAnnotationEntries(): List<JetAnnotationEntry> {
         else -> emptyList<JetAnnotationEntry>()
     }
 }
+
+public fun JetElement.getQualifiedExpressionForSelector(): JetQualifiedExpression? {
+    val parent = getParent()
+    return if (parent is JetQualifiedExpression && parent.getSelectorExpression() == this) parent else null
+}
+
+public fun JetElement.getQualifiedExpressionForSelectorOrThis(): JetElement {
+    return getQualifiedExpressionForSelector() ?: this
+}

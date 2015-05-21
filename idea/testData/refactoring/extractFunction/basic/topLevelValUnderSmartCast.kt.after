@@ -1,0 +1,11 @@
+// SUGGESTED_NAMES: i, getKm
+// PARAM_TYPES: kotlin.Int
+// PARAM_DESCRIPTOR: internal val meters: kotlin.Int? defined in root package
+val meters: Int? = 1
+
+fun test() {
+    if (meters == null) return
+    val km = i(meters)
+}
+
+private fun i(meters: Int) = meters / 10

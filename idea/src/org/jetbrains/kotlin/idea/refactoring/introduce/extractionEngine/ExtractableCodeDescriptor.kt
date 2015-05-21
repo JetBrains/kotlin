@@ -77,7 +77,7 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
 
     [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun invoke(e: JetElement): JetElement {
-        val expressionToReplace = e.getParent() as? JetThisExpression ?: e
+        var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).getQualifiedExpressionForSelectorOrThis()
         val psiFactory = JetPsiFactory(e)
         val replacement =
                 if (expressionToReplace is JetOperationReferenceExpression) {

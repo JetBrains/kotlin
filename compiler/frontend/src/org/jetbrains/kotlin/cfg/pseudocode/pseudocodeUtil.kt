@@ -191,13 +191,9 @@ public fun JetElement.getContainingPseudocode(context: BindingContext): Pseudoco
             ?: getNonStrictParentOfType<JetProperty>()
             ?: return null
 
-    val enclosingPseudocodeDeclaration = if (pseudocodeDeclaration is JetFunctionLiteral) {
-        parents(withItself = false).firstOrNull { it is JetDeclaration && it !is JetFunctionLiteral } as? JetDeclaration
-        ?: pseudocodeDeclaration
-    }
-    else {
-        pseudocodeDeclaration
-    }
+    val enclosingPseudocodeDeclaration = (pseudocodeDeclaration as? JetFunctionLiteral)?.let {
+        it.parents(withItself = false).firstOrNull { it is JetDeclaration && it !is JetFunctionLiteral } as? JetDeclaration
+    } ?: pseudocodeDeclaration
 
     val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, context)
     return enclosingPseudocode.getPseudocodeByElement(pseudocodeDeclaration)

@@ -348,6 +348,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("extensionValUnderSmartCast.kt")
+            public void testExtensionValUnderSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/extensionValUnderSmartCast.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("fakeOverride.kt")
             public void testFakeOverride() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/fakeOverride.kt");
@@ -456,6 +462,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("memberValUnderSmartCast.kt")
+            public void testMemberValUnderSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/memberValUnderSmartCast.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("memberValUnderSmartCastAndImplicitReceiver.kt")
+            public void testMemberValUnderSmartCastAndImplicitReceiver() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/memberValUnderSmartCastAndImplicitReceiver.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("misdirectedRef.kt")
             public void testMisdirectedRef() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/misdirectedRef.kt");
@@ -495,6 +513,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestMetadata("refInReturn.kt")
             public void testRefInReturn() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/refInReturn.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("topLevelValUnderSmartCast.kt")
+            public void testTopLevelValUnderSmartCast() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/topLevelValUnderSmartCast.kt");
                 doExtractFunctionTest(fileName);
             }
 

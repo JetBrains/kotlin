@@ -633,10 +633,10 @@ private fun ExtractionData.inferParametersInfo(
             info.replacementMap[refInfo.offsetInBody] = FqNameReplacement(originalDescriptor.importableFqNameSafe)
         }
         else {
-            val extractThis = hasThisReceiver || thisExpr != null
-            val extractLocalVar =
+            val extractThis = (hasThisReceiver && refInfo.smartCast == null) || thisExpr != null
+            val extractOrdinaryParameter =
                     originalDeclaration is JetMultiDeclarationEntry ||
-                            (originalDeclaration is JetProperty && originalDeclaration.isLocal()) ||
+                            originalDeclaration is JetProperty ||
                             originalDeclaration is JetParameter
 
             val extractFunctionRef =
@@ -647,11 +647,15 @@ private fun ExtractionData.inferParametersInfo(
 
             val descriptorToExtract = (if (extractThis) thisDescriptor else null) ?: originalDescriptor
 
-            val extractParameter = extractThis || extractLocalVar || extractFunctionRef
+            val extractParameter = extractThis || extractOrdinaryParameter || extractFunctionRef
             if (extractParameter) {
                 val parameterExpression = when {
-                    receiverToExtract is ExpressionReceiver -> receiverToExtract.getExpression()
-                    receiverToExtract.exists() -> null
+                    receiverToExtract is ExpressionReceiver -> {
+                        val receiverExpression = receiverToExtract.getExpression()
+                        // If p.q has a smart-cast, then extract entire qualified expression
+                        if (refInfo.smartCast != null) receiverExpression.getParent() as JetExpression else receiverExpression
+                    }
+                    receiverToExtract.exists() && refInfo.smartCast == null -> null
                     else -> (originalRef.getParent() as? JetThisExpression) ?: originalRef
                 }
 
@@ -683,8 +687,10 @@ private fun ExtractionData.inferParametersInfo(
                                 val label = if (descriptorToExtract is ClassDescriptor) "@${descriptorToExtract.getName().asString()}" else ""
                                 "this$label"
                             }
-                            else
-                                (thisExpr ?: ref).getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = $codeFragmentText")
+                            else {
+                                val argumentExpr = (thisExpr ?: ref).getQualifiedExpressionForSelectorOrThis()
+                                argumentExpr.getText() ?: throw AssertionError("'this' reference shouldn't be empty: code fragment = $codeFragmentText")
+                            }
                     if (extractFunctionRef) {
                         val receiverTypeText = (originalDeclaration as JetCallableDeclaration).getReceiverTypeReference()?.getText() ?: ""
                         argumentText = "$receiverTypeText::$argumentText"
@@ -807,24 +813,18 @@ fun ExtractionData.getDefaultVisibility(): String {
 }
 
 fun ExtractionData.performAnalysis(): AnalysisResult {
-    if (originalElements.isEmpty()) {
-        return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
-    }
+    if (originalElements.isEmpty()) return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_EXPRESSION))
 
     val noContainerError = AnalysisResult(null, Status.CRITICAL_ERROR, listOf(ErrorMessage.NO_CONTAINER))
 
-    val commonParent = PsiTreeUtil.findCommonParent(originalElements) as JetElement
-
-    val bindingContext = commonParent.getContextForContainingDeclarationBody()
-    if (bindingContext == null) return noContainerError
-
-    val targetScope = JetScopeUtils.getResolutionScope(targetSibling, bindingContext)
+    val bindingContext = bindingContext ?: return noContainerError
 
     val pseudocode = commonParent.getContainingPseudocode(bindingContext) ?: return noContainerError
     val localInstructions = getLocalInstructions(pseudocode)
 
     val modifiedVarDescriptorsWithExpressions = localInstructions.getModifiedVarDescriptors(bindingContext)
 
+    val targetScope = JetScopeUtils.getResolutionScope(targetSibling, bindingContext)
     val paramsInfo = inferParametersInfo(commonParent, pseudocode, bindingContext, targetScope, modifiedVarDescriptorsWithExpressions.keySet())
     if (paramsInfo.errorMessage != null) {
         return AnalysisResult(null, Status.CRITICAL_ERROR, listOf(paramsInfo.errorMessage!!))
