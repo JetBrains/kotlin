@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
+import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder;
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl;
 import org.jetbrains.kotlin.load.java.components.TraceBasedExternalSignatureResolver;
 import org.jetbrains.kotlin.load.java.components.LazyResolveBasedCache;
@@ -98,7 +98,7 @@ public class InjectorForLazyResolveWithJava {
     private final GlobalSearchScope moduleContentScope;
     private final ModuleClassResolver moduleClassResolver;
     private final JavaDescriptorResolver javaDescriptorResolver;
-    private final VirtualFileFinder virtualFileFinder;
+    private final JvmVirtualFileFinder jvmVirtualFileFinder;
     private final JavaClassFinderImpl javaClassFinder;
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private final LazyResolveBasedCache lazyResolveBasedCache;
@@ -168,7 +168,7 @@ public class InjectorForLazyResolveWithJava {
         this.moduleContentScope = moduleContentScope;
         this.moduleClassResolver = moduleClassResolver;
         this.javaClassFinder = new JavaClassFinderImpl();
-        this.virtualFileFinder = org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory.SERVICE.getInstance(project).create(moduleContentScope);
+        this.jvmVirtualFileFinder = org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory.SERVICE.getInstance(project).create(moduleContentScope);
         this.traceBasedErrorReporter = new TraceBasedErrorReporter();
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver(traceBasedErrorReporter);
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
@@ -178,7 +178,7 @@ public class InjectorForLazyResolveWithJava {
         this.javaPropertyInitializerEvaluator = new JavaPropertyInitializerEvaluatorImpl();
         this.samConversionResolver = SamConversionResolverImpl.INSTANCE$;
         this.javaSourceElementFactory = new JavaSourceElementFactoryImpl();
-        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, javaClassFinder, virtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, samConversionResolver, javaSourceElementFactory, moduleClassResolver);
+        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, javaClassFinder, jvmVirtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, samConversionResolver, javaSourceElementFactory, moduleClassResolver);
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, moduleDescriptor, reflectionTypes);
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, moduleDescriptor);
@@ -214,8 +214,8 @@ public class InjectorForLazyResolveWithJava {
         this.declarationScopeProvider = new DeclarationScopeProviderImpl(lazyDeclarationResolver);
         this.scriptBodyResolver = new ScriptBodyResolver();
         this.additionalFileScopeProvider = new AdditionalFileScopeProvider();
-        this.javaClassDataFinder = new JavaClassDataFinder(virtualFileFinder, deserializedDescriptorResolver);
-        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, virtualFileFinder, traceBasedErrorReporter);
+        this.javaClassDataFinder = new JavaClassDataFinder(jvmVirtualFileFinder, deserializedDescriptorResolver);
+        this.binaryClassAnnotationAndConstantLoader = new BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, jvmVirtualFileFinder, traceBasedErrorReporter);
         this.deserializationComponentsForJava = new DeserializationComponentsForJava(storageManager, moduleDescriptor, javaClassDataFinder, binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider);
 
         this.resolveSession.setAnnotationResolve(annotationResolver);

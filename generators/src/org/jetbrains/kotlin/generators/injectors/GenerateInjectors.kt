@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPropertyInitializerEvaluatorImpl
 import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
+import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClassFinder
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.CallResolver
@@ -156,8 +156,8 @@ private fun generatorForLazyResolveWithJava() =
 
             publicField<JavaDescriptorResolver>()
 
-            field<VirtualFileFinder>(
-                  init = GivenExpression(javaClass<VirtualFileFinderFactory>().getName()
+            field<JvmVirtualFileFinder>(
+                  init = GivenExpression(javaClass<JvmVirtualFileFinderFactory>().getName()
                                          + ".SERVICE.getInstance(project).create(moduleContentScope)")
             )
 
@@ -259,8 +259,8 @@ private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
     publicField<JavaDescriptorResolver>()
     publicField<DeserializationComponentsForJava>()
 
-    field<VirtualFileFinder>(
-          init = GivenExpression(javaClass<VirtualFileFinderFactory>().getName()
+    field<JvmVirtualFileFinder>(
+          init = GivenExpression(javaClass<JvmVirtualFileFinderFactory>().getName()
                                  + ".SERVICE.getInstance(project).create(moduleContentScope)")
     )
 
@@ -279,7 +279,7 @@ private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
 
     field<KotlinJvmCheckerProvider>(useAsContext = true)
 
-    field<VirtualFileFinder>(init = GivenExpression(javaClass<VirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
+    field<JvmVirtualFileFinder>(init = GivenExpression(javaClass<JvmVirtualFileFinder>().getName() + ".SERVICE.getInstance(project)"))
 }
 
 
