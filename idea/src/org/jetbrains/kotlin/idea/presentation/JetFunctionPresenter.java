@@ -35,7 +35,7 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
         return new JetDefaultNamedDeclarationPresentation(function) {
             @Override
             public String getPresentableText() {
-                StringBuilder presentation = new StringBuilder(function.getName());
+                StringBuilder presentation = new StringBuilder(function.getName() != null ? function.getName() : "");
 
                 Collection<String> paramsStrings = Collections2.transform(function.getValueParameters(), new Function<JetParameter, String>() {
                     @Override
