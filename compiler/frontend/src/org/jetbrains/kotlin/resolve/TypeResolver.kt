@@ -72,8 +72,8 @@ public class TypeResolver(
         val cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference)
         if (cachedType != null) return type(cachedType)
 
-        if (typeReference.debugTypeInfo != null) {
-            val debugType = typeReference.debugTypeInfo
+        val debugType = typeReference.debugTypeInfo
+        if (debugType != null) {
             c.trace.record(BindingContext.TYPE, typeReference, debugType)
             return type(debugType)
         }
