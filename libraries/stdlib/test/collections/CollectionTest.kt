@@ -3,6 +3,7 @@ package test.collections
 import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
+import test.collections.behaviors.*
 
 class CollectionTest {
 
@@ -534,143 +535,11 @@ class CollectionTest {
         compare(listOf("value").toMutableSet(), setOf("value")) { setBehavior() }
     }
 
-    test fun specialJsSets() {
-        val specialJsStringSet = HashSet<String>()
-        specialJsStringSet.add("kotlin")
-        compare(hashSetOf("kotlin"), specialJsStringSet) { setBehavior() }
-
-        val specialJsNumberSet = HashSet<Double>()
-        specialJsNumberSet.add(3.14)
-        compare(hashSetOf(3.14), specialJsNumberSet) { setBehavior() }
-    }
-
     test fun specialMaps() {
         compare(hashMapOf<String, Int>(), mapOf<String, Int>()) { mapBehavior() }
         compare(linkedMapOf<Int, String>(), emptyMap<Int, String>()) { mapBehavior() }
         compare(linkedMapOf(2 to 3), mapOf(2 to 3)) { mapBehavior() }
     }
 
-    test fun specialJsMaps() {
-        val specialJsStringMap = HashMap<String, Any>()
-        specialJsStringMap.put("k1", "v1")
-        compare(hashMapOf("k1" to "v1"), specialJsStringMap) { mapBehavior() }
-
-        val specialJsNumberMap = HashMap<Int, Any>(4)
-        specialJsNumberMap.put(5, "v5")
-        compare(hashMapOf(5 to "v5"), specialJsNumberMap) { mapBehavior() }
-    }
-
-    private fun <T> CompareContext<List<T>>.listBehavior() {
-        equalityBehavior()
-        collectionBehavior()
-        compareProperty( { listIterator() }, { listIteratorBehavior() })
-        compareProperty( { listIterator(0) }, { listIteratorBehavior() })
-
-        propertyFails { listIterator(-1) }
-        propertyFails { listIterator(size() + 1) }
-
-        for (index in expected.indices)
-            propertyEquals { this[index] }
-
-        propertyFails { this[size()] }
-
-        propertyEquals { indexOf(elementAtOrNull(0)) }
-        propertyEquals { lastIndexOf(elementAtOrNull(0)) }
-
-        propertyFails { subList(0, size() + 1)}
-        propertyFails { subList(-1, 0)}
-        propertyEquals { subList(0, size()) }
-    }
-
-    private fun <T> CompareContext<ListIterator<T>>.listIteratorBehavior() {
-        listIteratorProperties()
-
-        while (expected.hasNext()) {
-            propertyEquals { next() }
-            listIteratorProperties()
-        }
-        propertyFails { next() }
-
-        while (expected.hasPrevious()) {
-            propertyEquals { previous() }
-            listIteratorProperties()
-        }
-        propertyFails { previous() }
-    }
-
-    private fun CompareContext<ListIterator<*>>.listIteratorProperties() {
-        propertyEquals { hasNext() }
-        propertyEquals { hasPrevious() }
-        propertyEquals { nextIndex() }
-        propertyEquals { previousIndex() }
-    }
-
-    private fun <T> CompareContext<Iterator<T>>.iteratorBehavior() {
-        propertyEquals { hasNext() }
-
-        while (expected.hasNext()) {
-            propertyEquals { next() }
-            propertyEquals { hasNext() }
-        }
-        propertyFails { next() }
-    }
-
-    private fun <T> CompareContext<Set<T>>.setBehavior(objectName: String = "") {
-        equalityBehavior(objectName)
-        collectionBehavior(objectName)
-        compareProperty({ iterator() }, { iteratorBehavior() })
-    }
-
-    private fun <K, V> CompareContext<Map<K, V>>.mapBehavior() {
-        equalityBehavior()
-        propertyEquals { size() }
-        propertyEquals { isEmpty() }
-
-        (object {}).let { propertyEquals { containsKey(it)}  }
-
-        if (expected.isEmpty().not())
-            propertyEquals { contains(keySet().first()) }
-
-        compareProperty( { keySet() }, { setBehavior("keySet") } )
-        compareProperty( { entrySet() }, { setBehavior("entrySet") } )
-        compareProperty( { values() }, { collectionBehavior("values") })
-    }
-
-    private fun <T> CompareContext<T>.equalityBehavior(objectName: String = "") {
-        val prefix = objectName +  if (objectName.isNotEmpty()) "." else ""
-        equals(objectName)
-        propertyEquals(prefix + "hashCode") { hashCode() }
-        propertyEquals(prefix + "toString") { toString() }
-    }
-
-
-    private fun <T> CompareContext<Collection<T>>.collectionBehavior(objectName: String = "") {
-        val prefix = objectName +  if (objectName.isNotEmpty()) "." else ""
-        propertyEquals (prefix + "size") { size() }
-        propertyEquals (prefix + "isEmpty") { isEmpty() }
-
-        (object {}).let { propertyEquals { contains(it)}  }
-        propertyEquals { contains(firstOrNull()) }
-        propertyEquals { containsAll(this) }
-    }
-
 }
 
-private fun compare<T>(expected: T, actual: T, block: CompareContext<T>.() -> Unit) = CompareContext(expected, actual).block()
-
-private class CompareContext<out T>(public val expected: T, public val actual: T) {
-
-    public fun equals(message: String = "") { assertEquals(expected, actual, message) }
-    public fun propertyEquals<P>(message: String = "", getter: T.() -> P) { assertEquals(expected.getter(), actual.getter(), message) }
-    public fun propertyFails(getter: T.() -> Unit) { assertFailEquals({expected.getter()}, {actual.getter()}) }
-    public fun compareProperty<P>(getter: T.() -> P, block: CompareContext<P>.() -> Unit) {
-        compare(expected.getter(), actual.getter(), block)
-    }
-
-    private fun assertFailEquals(expected: () -> Unit, actual: () -> Unit) {
-        val expectedFail = fails(expected)
-        val actualFail = fails(actual)
-        //assertEquals(expectedFail != null, actualFail != null)
-        assertTypeEquals(expectedFail, actualFail)
-    }
-}

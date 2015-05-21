@@ -1,4 +1,4 @@
-package testPackage
+package test.collections
 
 import java.util.Collections
 import java.util.ArrayList

@@ -1,5 +1,6 @@
-package testPackage
+package test.collections
 
+import test.collections.behaviors.mapBehavior
 import kotlin.test.*
 
 import java.util.*
@@ -22,8 +23,8 @@ class ComplexMapJsTest : MapJsTest() {
 
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
     // hashMapOf returns ComlpexHashMap because it is Generic
-    override fun emptyMutableMap(): MutableMap<String, Int> = hashMapOf()
-    override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = hashMapOf()
+    override fun emptyMutableMap(): MutableMap<String, Int> = genericHashMapOf()
+    override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = genericHashMapOf()
 }
 
 class PrimitiveMapJsTest : MapJsTest() {
@@ -41,6 +42,16 @@ class PrimitiveMapJsTest : MapJsTest() {
     override fun <T : kotlin.Comparable<T>> Collection<T>.toNormalizedList(): List<T> = this.toSortedList()
     override fun emptyMutableMap(): MutableMap<String, Int> = HashMap()
     override fun emptyMutableMapWithNullableKeyValue(): MutableMap<String?, Int?> = HashMap()
+
+    test fun compareBehavior() {
+        val specialJsStringMap = HashMap<String, Any>()
+        specialJsStringMap.put("k1", "v1")
+        compare(genericHashMapOf("k1" to "v1"), specialJsStringMap) { mapBehavior() }
+
+        val specialJsNumberMap = HashMap<Int, Any>(4)
+        specialJsNumberMap.put(5, "v5")
+        compare(genericHashMapOf(5 to "v5"), specialJsNumberMap) { mapBehavior() }
+    }
 }
 
 class LinkedHashMapTest : MapJsTest() {
@@ -475,4 +486,6 @@ abstract class MapJsTest {
         }
         return map
     }
+
+    fun genericHashMapOf<K, V>(vararg values: Pair<K, V>) = hashMapOf(*values)
 }

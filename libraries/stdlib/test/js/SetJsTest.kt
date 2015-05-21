@@ -2,6 +2,7 @@ package test.collections
 
 import kotlin.test.*
 import org.junit.Test
+import test.collections.behaviors.setBehavior
 import java.util.HashSet
 import java.util.LinkedHashSet
 
@@ -22,8 +23,10 @@ class ComplexSetJsTest : SetJsTest() {
     }
 
     // hashSetOf returns ComlpexHashSet because it is Generic
-    override fun createEmptyMutableSet(): MutableSet<String> = hashSetOf()
-    override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = hashSetOf()
+    override fun createEmptyMutableSet(): MutableSet<String> = genericHashSetOf()
+    override fun createEmptyMutableSetWithNullableValues(): MutableSet<String?> = genericHashSetOf()
+
+
 }
 
 class PrimitiveSetJsTest : SetJsTest() {
@@ -38,6 +41,17 @@ class PrimitiveSetJsTest : SetJsTest() {
 
         assertEquals(data, set)
     }
+
+    Test fun compareBehavior() {
+        val specialJsStringSet = HashSet<String>()
+        specialJsStringSet.add("kotlin")
+        compare(genericHashSetOf("kotlin"), specialJsStringSet) { setBehavior() }
+
+        val specialJsNumberSet = HashSet<Double>()
+        specialJsNumberSet.add(3.14)
+        compare(genericHashSetOf(3.14), specialJsNumberSet) { setBehavior() }
+    }
+
 }
 
 class LinkedHashSetJsTest : SetJsTest() {
@@ -58,7 +72,7 @@ abstract class SetJsTest {
     val data: Set<String> = createTestMutableSet()
     val empty: Set<String> = createEmptyMutableSet()
 
-    val SPECIAL_NAMES = array("__proto__", "constructor", "toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable")
+    val SPECIAL_NAMES = arrayOf("__proto__", "constructor", "toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable")
 
     Test fun size() {
         assertEquals(2, data.size())
@@ -222,4 +236,6 @@ abstract class SetJsTest {
         set.add("foo")
         return set
     }
+
+    fun genericHashSetOf<T>(vararg values: T) = hashSetOf(*values)
 }
