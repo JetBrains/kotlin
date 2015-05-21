@@ -113,6 +113,17 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
                 }
             }
 
+            override fun visitAnnotation(name: Name, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                val list = ArrayList<AnnotationDescriptor>()
+                val visitor = loadAnnotation(classId, list)!!
+                return object: KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                    override fun visitEnd() {
+                        visitor.visitEnd()
+                        setArgumentValueByName(name, AnnotationValue(list.single()))
+                    }
+                }
+            }
+
             // NOTE: see analogous code in AnnotationDeserializer
             private fun enumEntryValue(enumClassId: ClassId, name: Name): CompileTimeConstant<*> {
                 val enumClass = resolveClass(enumClassId)

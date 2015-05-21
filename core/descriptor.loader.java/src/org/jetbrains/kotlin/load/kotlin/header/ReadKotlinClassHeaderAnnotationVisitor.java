@@ -149,6 +149,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
+        @Nullable
+        @Override
+        public AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId) {
+            return null;
+        }
+
         @NotNull
         private AnnotationArrayArgumentVisitor stringArrayVisitor() {
             final List<String> strings = new ArrayList<String>(1);

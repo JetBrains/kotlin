@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.header.ReadKotlinClassHeaderAnnotationVi
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.org.objectweb.asm.ClassReader;
-import org.jetbrains.org.objectweb.asm.ClassVisitor;
-import org.jetbrains.org.objectweb.asm.FieldVisitor;
-import org.jetbrains.org.objectweb.asm.MethodVisitor;
+import org.jetbrains.org.objectweb.asm.*;
 
 import java.util.*;
 
@@ -185,6 +182,12 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
                         arv.visitEnd();
                     }
                 };
+            }
+
+            @Override
+            public org.jetbrains.org.objectweb.asm.AnnotationVisitor visitAnnotation(String name, @NotNull String desc) {
+                AnnotationArgumentVisitor arv = v.visitAnnotation(Name.guess(name), resolveNameByDesc(desc, innerClasses));
+                return arv == null ? null : convertAnnotationVisitor(arv, innerClasses);
             }
 
             @Override
