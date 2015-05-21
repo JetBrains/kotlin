@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal;
 
+import kotlin.jvm.internal.FunctionReference;
 import kotlin.jvm.internal.ReflectionFactory;
 import kotlin.reflect.*;
 
@@ -38,6 +39,15 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     public KClass foreignKotlinClass(Class javaClass) {
         return InternalPackage.foreignKotlinClass(javaClass);
     }
+
+    // Functions
+
+    @Override
+    public KFunction function(FunctionReference f) {
+        return f;
+    }
+
+    // Properties
 
     @Override
     public KMemberProperty memberProperty(String name, KClass owner) {

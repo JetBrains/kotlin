@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package kotlin.reflect.jvm.internal
+package kotlin.jvm.internal;
 
-import kotlin.jvm.internal.ExtensionFunctionImpl
+import kotlin.reflect.*;
 
-/**
- * @suppress
- */
-public abstract class KExtensionFunctionImpl<in T, out R> : ExtensionFunctionImpl<T, R>()
+public abstract class FunctionReference
+        extends FunctionImpl
+        implements KTopLevelFunction,
+                   KMemberFunction,
+                   KTopLevelExtensionFunction,
+                   KLocalFunction {
+}

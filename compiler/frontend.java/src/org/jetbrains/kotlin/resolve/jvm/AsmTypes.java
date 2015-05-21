@@ -35,10 +35,17 @@ public class AsmTypes {
     public static final Type PROPERTY_METADATA_IMPL_TYPE = Type.getObjectType("kotlin/PropertyMetadataImpl");
 
     public static final Type LAMBDA = Type.getObjectType("kotlin/jvm/internal/Lambda");
+    public static final Type FUNCTION_REFERENCE = Type.getObjectType("kotlin/jvm/internal/FunctionReference");
 
     public static final Type K_CLASS_TYPE = reflect("KClass");
     public static final Type K_CLASS_ARRAY_TYPE = Type.getObjectType("[" + K_CLASS_TYPE.getDescriptor());
     public static final Type K_PACKAGE_TYPE = reflect("KPackage");
+
+    public static final Type K_FUNCTION = reflect("KFunction");
+    public static final Type K_TOP_LEVEL_FUNCTION = reflect("KTopLevelFunction");
+    public static final Type K_MEMBER_FUNCTION = reflect("KMemberFunction");
+    public static final Type K_TOP_LEVEL_EXTENSION_FUNCTION = reflect("KTopLevelExtensionFunction");
+    public static final Type K_LOCAL_FUNCTION = reflect("KLocalFunction");
 
     public static final Type K_MEMBER_PROPERTY_TYPE = reflect("KMemberProperty");
     public static final Type K_MUTABLE_MEMBER_PROPERTY_TYPE = reflect("KMutableMemberProperty");

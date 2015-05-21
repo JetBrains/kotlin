@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.state;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension;
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.psi.JetScript;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
 
 import java.io.File;
 import java.util.Collection;
@@ -211,7 +211,8 @@ public class GenerationState {
         this.generateClassFilter = generateClassFilter;
 
         this.reflectionTypes = new ReflectionTypes(module);
-        this.runtimeTypes = new JvmRuntimeTypes(reflectionTypes);
+        this.runtimeTypes = new JvmRuntimeTypes();
+
         this.inlineCycleReporter = new InlineCycleReporter(diagnostics);
     }
 

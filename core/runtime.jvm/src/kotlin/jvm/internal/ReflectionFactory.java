@@ -32,6 +32,14 @@ public class ReflectionFactory {
         throw error();
     }
 
+    // Functions
+
+    public KFunction function(FunctionReference f) {
+        return f;
+    }
+
+    // Properties
+
     public KMemberProperty memberProperty(String name, KClass owner) {
         throw error();
     }

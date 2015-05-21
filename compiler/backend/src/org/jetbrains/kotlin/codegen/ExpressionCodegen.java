@@ -1396,7 +1396,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
         return genClosure(
-                declaration, descriptor, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), samType, kind
+                declaration, descriptor, new FunctionGenerationStrategy.FunctionDefault(state, descriptor, declaration), samType, kind, null
         );
     }
 
@@ -1406,7 +1406,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull FunctionDescriptor descriptor,
             @NotNull FunctionGenerationStrategy strategy,
             @Nullable SamType samType,
-            @NotNull KotlinSyntheticClass.Kind kind
+            @NotNull KotlinSyntheticClass.Kind kind,
+            @Nullable FunctionDescriptor functionReferenceTarget
     ) {
         ClassBuilder cv = state.getFactory().newVisitor(
                 OtherOrigin(declaration, descriptor),
@@ -1425,7 +1426,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             propagateChildReifiedTypeParametersUsages(closureCodegen.getReifiedTypeParametersUsages());
         }
 
-        return closureCodegen.putInstanceOnStack(this);
+        return closureCodegen.putInstanceOnStack(this, functionReferenceTarget);
     }
 
     @Override
@@ -2702,7 +2703,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         FunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
         if (functionDescriptor != null) {
             FunctionReferenceGenerationStrategy strategy = new FunctionReferenceGenerationStrategy(state, functionDescriptor, resolvedCall);
-            return genClosure(expression, functionDescriptor, strategy, null, KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER);
+            return genClosure(expression, functionDescriptor, strategy, null, KotlinSyntheticClass.Kind.CALLABLE_REFERENCE_WRAPPER,
+                              (FunctionDescriptor) resolvedCall.getResultingDescriptor());
         }
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);

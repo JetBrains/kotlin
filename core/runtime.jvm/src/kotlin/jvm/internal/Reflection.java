@@ -59,6 +59,14 @@ public class Reflection {
         return factory.foreignKotlinClass(javaClass);
     }
 
+    // Functions
+
+    public static KFunction function(FunctionReference f) {
+        return factory.function(f);
+    }
+
+    // Properties
+
     public static KMemberProperty memberProperty(String name, KClass owner) {
         return factory.memberProperty(name, owner);
     }

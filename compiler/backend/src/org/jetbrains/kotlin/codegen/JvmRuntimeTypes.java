@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
@@ -28,26 +27,19 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.JetTypeImpl;
-import org.jetbrains.kotlin.types.TypeProjection;
-import org.jetbrains.kotlin.types.TypeProjectionImpl;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public class JvmRuntimeTypes {
-    private final ReflectionTypes reflectionTypes;
-
     private final ClassDescriptor lambda;
-    private final ClassDescriptor functionImpl;
-    private final ClassDescriptor memberFunctionImpl;
-    private final ClassDescriptor extensionFunctionImpl;
+    private final ClassDescriptor functionReference;
 
-    public JvmRuntimeTypes(@NotNull ReflectionTypes reflectionTypes) {
-        this.reflectionTypes = reflectionTypes;
-
+    public JvmRuntimeTypes() {
         ModuleDescriptorImpl module = new ModuleDescriptorImpl(
                 Name.special("<jvm functions impl>"),
                 LockBasedStorageManager.NO_LOCKS,
@@ -56,9 +48,7 @@ public class JvmRuntimeTypes {
         PackageFragmentDescriptor kotlinJvmInternal = new MutablePackageFragmentDescriptor(module, new FqName("kotlin.jvm.internal"));
 
         this.lambda = createClass(kotlinJvmInternal, "Lambda");
-        this.functionImpl = createClass(kotlinJvmInternal, "FunctionImpl");
-        this.memberFunctionImpl = createClass(kotlinJvmInternal, "MemberFunctionImpl");
-        this.extensionFunctionImpl = createClass(kotlinJvmInternal, "ExtensionFunctionImpl");
+        this.functionReference = createClass(kotlinJvmInternal, "FunctionReference");
     }
 
     @NotNull
@@ -95,41 +85,8 @@ public class JvmRuntimeTypes {
         ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
         ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
 
-        List<TypeProjection> typeArguments = new ArrayList<TypeProjection>(2);
-
-        ClassDescriptor kFunctionClass;
-        ClassDescriptor functionImplClass;
-        JetType receiverType;
-        if (extensionReceiver != null) {
-            functionImplClass = extensionFunctionImpl;
-            receiverType = extensionReceiver.getType();
-            kFunctionClass = reflectionTypes.getkExtensionFunction();
-            typeArguments.add(new TypeProjectionImpl(receiverType));
-        }
-        else if (dispatchReceiver != null) {
-            functionImplClass = memberFunctionImpl;
-            receiverType = dispatchReceiver.getType();
-            kFunctionClass = reflectionTypes.getkMemberFunction();
-            typeArguments.add(new TypeProjectionImpl(receiverType));
-        }
-        else {
-            functionImplClass = functionImpl;
-            receiverType = null;
-            kFunctionClass = reflectionTypes.getkFunction();
-        }
-
-        JetType functionImplType = functionImplClass.getDefaultType();
-
-        //noinspection ConstantConditions
-        typeArguments.add(new TypeProjectionImpl(descriptor.getReturnType()));
-
-        JetType kFunctionType = new JetTypeImpl(
-                kFunctionClass.getDefaultType().getAnnotations(),
-                kFunctionClass.getTypeConstructor(),
-                false,
-                typeArguments,
-                kFunctionClass.getMemberScope(typeArguments)
-        );
+        JetType receiverType =
+                extensionReceiver != null ? extensionReceiver.getType() : dispatchReceiver != null ? dispatchReceiver.getType() : null;
 
         //noinspection ConstantConditions
         JetType functionType = getBuiltIns(descriptor).getFunctionType(
@@ -139,6 +96,6 @@ public class JvmRuntimeTypes {
                 descriptor.getReturnType()
         );
 
-        return Arrays.asList(functionImplType, kFunctionType, functionType);
+        return Arrays.asList(functionReference.getDefaultType(), functionType);
     }
 }

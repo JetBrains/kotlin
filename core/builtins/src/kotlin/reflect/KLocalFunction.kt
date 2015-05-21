@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package kotlin.jvm.internal
+package kotlin.reflect
 
-import java.io.Serializable
-
-public abstract class ExtensionFunctionImpl : Serializable {
-    override fun toString() = "${(this as Object).getClass().getGenericInterfaces()[0]}"
-}
+/**
+ * Represents a local function.
+ *
+ * @param R the return type of the function.
+ */
+public interface KLocalFunction<out R> : KFunction<R>
