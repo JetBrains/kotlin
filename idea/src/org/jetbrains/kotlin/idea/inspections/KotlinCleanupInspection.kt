@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.highlighter.JetPsiChecker
+import org.jetbrains.kotlin.idea.quickfix.CleanupFix
 import org.jetbrains.kotlin.idea.quickfix.JetWholeProjectModalAction
 import org.jetbrains.kotlin.idea.quickfix.ReplaceObsoleteLabelSyntaxFix
 import org.jetbrains.kotlin.idea.quickfix.looksLikeObsoleteLabel
@@ -66,18 +67,23 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         return problemDescriptors.toTypedArray()
     }
 
-    private fun Diagnostic.isCleanup() = getFactory().isCleanup() || isObsoleteLabel()
+    private fun Diagnostic.isCleanup() = getFactory() in cleanupDiagnosticsFactories || isObsoleteLabel()
 
-    private fun DiagnosticFactory<*>.isCleanup() =
-            this == Errors.DEPRECATED_TRAIT_KEYWORD ||
-            this == Errors.DEPRECATED_ANNOTATION_SYNTAX ||
-            this == Errors.ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER ||
-            this == Errors.ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR ||
-            this == Errors.DEPRECATED_LAMBDA_SYNTAX ||
-            this == Errors.MISSING_CONSTRUCTOR_KEYWORD ||
-            this == Errors.FUNCTION_EXPRESSION_WITH_NAME ||
-            this == Errors.JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION ||
-            this == ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION
+    private val cleanupDiagnosticsFactories = hashSetOf(
+            Errors.DEPRECATED_TRAIT_KEYWORD,
+            Errors.DEPRECATED_ANNOTATION_SYNTAX,
+            Errors.ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER,
+            Errors.ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR,
+            Errors.DEPRECATED_LAMBDA_SYNTAX,
+            Errors.MISSING_CONSTRUCTOR_KEYWORD,
+            Errors.FUNCTION_EXPRESSION_WITH_NAME,
+            Errors.JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION,
+            ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION,
+            Errors.UNNECESSARY_NOT_NULL_ASSERTION,
+            Errors.UNNECESSARY_SAFE_CALL,
+            Errors.USELESS_CAST,
+            Errors.USELESS_ELVIS
+    )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {
         val annotationEntry = getPsiElement().getNonStrictParentOfType<JetAnnotationEntry>() ?: return false
@@ -86,7 +92,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
 
     private fun Diagnostic.toProblemDescriptor(file: JetFile, manager: InspectionManager): ProblemDescriptor? {
         val quickFixes = JetPsiChecker.createQuickfixes(this)
-                .filter { it.isCleanupFix(this) }
+                .filter { it is CleanupFix }
                 .map { IntentionWrapper(it, file) }
 
          return manager.createProblemDescriptor(getPsiElement(),
@@ -94,12 +100,5 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
                                                 false,
                                                 quickFixes.toTypedArray(),
                                                 ProblemHighlightType.GENERIC_ERROR_OR_WARNING)
-    }
-
-    private fun IntentionAction.isCleanupFix(diagnostic: Diagnostic): Boolean {
-        if (diagnostic.getFactory() == Errors.UNRESOLVED_REFERENCE) {
-            return this is ReplaceObsoleteLabelSyntaxFix
-        }
-        return this !is JetWholeProjectModalAction<*>
     }
 }

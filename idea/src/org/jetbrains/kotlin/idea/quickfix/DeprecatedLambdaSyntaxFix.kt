@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.sure
 import java.util.ArrayList
 
-public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : JetIntentionAction<JetFunctionLiteralExpression>(element) {
+public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : JetIntentionAction<JetFunctionLiteralExpression>(element), CleanupFix {
     override fun getText() = JetBundle.message("migrate.lambda.syntax")
     override fun getFamilyName() = JetBundle.message("migrate.lambda.syntax.family")
 

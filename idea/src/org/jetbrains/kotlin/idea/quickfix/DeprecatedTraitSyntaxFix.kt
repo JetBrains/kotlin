@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
 
-public class DeprecatedTraitSyntaxFix(element: PsiElement): JetIntentionAction<PsiElement>(element) {
+public class DeprecatedTraitSyntaxFix(element: PsiElement): JetIntentionAction<PsiElement>(element), CleanupFix {
     override fun getFamilyName() = "Replace with 'interface'"
     override fun getText() = getFamilyName()
 
