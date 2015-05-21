@@ -922,10 +922,6 @@ public fun String.splitToSequence(vararg delimiters: String, ignoreCase: Boolean
  * the beginning to the end of this string, and matches at each position the first element in [delimiters]
  * that is equal to a delimiter in this instance at that position.
  */
-public fun String.split(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
-        splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
-
-deprecated("Use split(delimiters) instead.")
 public fun String.splitBy(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): List<String> =
         splitToSequence(*delimiters, ignoreCase = ignoreCase, limit = limit).toList()
 
