@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -63,7 +63,7 @@ public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : Je
             var wereAutoLabelUsages = false
             val name = function.getName() ?: return
 
-            function.forEachDescendantsOfType<JetReturnExpression> {
+            function.forEachDescendantOfType<JetReturnExpression> {
                 if (!wereAutoLabelUsages && it.getLabelName() == name) {
                     wereAutoLabelUsages = it.analyze().get(BindingContext.LABEL_TARGET, it.getTargetLabel()) == function
                 }

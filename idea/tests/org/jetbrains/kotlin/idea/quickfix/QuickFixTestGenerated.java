@@ -3124,6 +3124,48 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("optionalParameters1.kt")
+        public void testOptionalParameters1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("optionalParameters2.kt")
+        public void testOptionalParameters2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("optionalParameters3.kt")
+        public void testOptionalParameters3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("optionalParameters4.kt")
+        public void testOptionalParameters4() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters4.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("optionalParameters5.kt")
+        public void testOptionalParameters5() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters5.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("optionalParameters7.kt")
+        public void testOptionalParameters7() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters7.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("optionalParameters9.kt")
+        public void testOptionalParameters9() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters9.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("parameters.kt")
         public void testParameters() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/parameters.kt");

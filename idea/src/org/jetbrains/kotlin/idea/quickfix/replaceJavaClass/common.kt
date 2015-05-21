@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -66,7 +66,7 @@ private fun renderClassNameForKClassLiteral(type: JetType): String? {
 fun createReplacementTasks(element: JetElement, anyJavaClass: Boolean = false): List<ReplacementTask> {
     val replacementTasks = arrayListOf<ReplacementTask>()
 
-    element.forEachDescendantsOfType(fun(expression: JetCallExpression) {
+    element.forEachDescendantOfType(fun(expression: JetCallExpression) {
         val context = expression.analyze()
         val resolvedCall = expression.getResolvedCall(context) ?: return
 
@@ -94,7 +94,7 @@ fun createReplacementTasksForAnnotationClass(element: JetClass): List<Replacemen
         replacementTasks.add(JavaClassParameterReplacementTask(typeReference, classTypeArgText))
     }
 
-    element.forEachDescendantsOfType(fun(parameter: JetParameter) {
+    element.forEachDescendantOfType(fun(parameter: JetParameter) {
         val valueParameterDescriptor = parameter.descriptor as? ValueParameterDescriptor ?: return
         val type = valueParameterDescriptor.getType()
 

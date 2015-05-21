@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectElementsOfType
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -144,7 +144,7 @@ object ReplaceWithAnnotationAnalyzer {
         }
 
         val parameterUsages = symbolDescriptor.getValueParameters()
-                .map { parameter -> parameter to expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(parameterUsageKey) == parameter } }
+                .map { parameter -> parameter to expression.collectDescendantsOfType<JetExpression> { it.getCopyableUserData(parameterUsageKey) == parameter } }
                 .toMap()
 
         expression.accept(object : PsiRecursiveElementVisitor() {

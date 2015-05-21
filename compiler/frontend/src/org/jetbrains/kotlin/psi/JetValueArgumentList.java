@@ -66,6 +66,7 @@ public class JetValueArgumentList extends JetElementImpl {
     }
 
     public void removeArgument(@NotNull JetValueArgument argument) {
+        assert argument.getParent() == this;
         EditCommaSeparatedListHelper.INSTANCE$.removeItem(argument);
     }
 }

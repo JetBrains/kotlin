@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
@@ -39,17 +38,18 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectElementsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -122,7 +122,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 resolvedCall: ResolvedCall<out CallableDescriptor>,
                 replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression
         ): JetExpression {
-            var (expression, imports, parameterUsages) = replacement
             val project = element.getProject()
             val psiFactory = JetPsiFactory(project)
             val descriptor = resolvedCall.getResultingDescriptor()
@@ -131,87 +130,100 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val qualifiedExpression = callExpression.getParent() as? JetQualifiedExpression
             val expressionToReplace = qualifiedExpression ?: callExpression
 
-            var receiver = element.getReceiverExpression()
-            receiver?.putCopyableUserData(USER_CODE_KEY, Unit)
+            var receiver = element.getReceiverExpression()?.marked(USER_CODE_KEY)
+            var receiverType = if (receiver != null) bindingContext.getType(receiver) else null
 
             if (receiver == null) {
                 val receiverValue = if (descriptor.isExtension) resolvedCall.getExtensionReceiver() else resolvedCall.getDispatchReceiver()
                 val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expressionToReplace]
                 if (receiverValue is ThisReceiver && resolutionScope != null) {
                     receiver = receiverValue.asExpression(resolutionScope, psiFactory)
+                    receiverType = receiverValue.getType()
                 }
             }
 
-            receiver?.putCopyableUserData(FROM_THIS_KEY, Unit)
+            receiver?.mark(RECEIVER_VALUE_KEY)
+
+            for ((parameter, usages) in replacement.parameterUsages.entrySet()) {
+                usages.forEach { it.put(PARAMETER_USAGE_KEY, parameter) }
+            }
+
+            var expression = replacement.expression
 
             //TODO: this@
-            for (thisExpression in expression.collectElementsOfType<JetThisExpression>()) {
+            for (thisExpression in expression.collectDescendantsOfType<JetThisExpression>()) {
                 if (receiver != null) {
                     thisExpression.replace(receiver)
                 }
                 else {
-                    thisExpression.putCopyableUserData(FROM_THIS_KEY, Unit)
+                    thisExpression.mark(RECEIVER_VALUE_KEY)
                 }
             }
 
-            fun argumentForParameter(parameter: ValueParameterDescriptor): JetExpression? {
-                //TODO: optional parameters
-                val arguments = resolvedCall.getValueArguments()[parameter] ?: return null //TODO: what if not? vararg?
-                return arguments.getArguments().firstOrNull()?.getArgumentExpression() //TODO: what if multiple?
-            }
+            @data class IntroduceValueForParameter(
+                    val parameter: ValueParameterDescriptor,
+                    val value: JetExpression,
+                    val valueType: JetType?)
 
-            val introduceValuesForParameters = ArrayList<Pair<ValueParameterDescriptor, JetExpression>>()
+            val introduceValuesForParameters = ArrayList<IntroduceValueForParameter>()
 
-            for (parameter in descriptor.getValueParameters()) {
-                val argument = argumentForParameter(parameter) ?: continue
-                argument.putCopyableUserData(FROM_PARAMETER_KEY, parameter)
-                argument.putCopyableUserData(USER_CODE_KEY, Unit)
+            // process parameters in reverse order because default values can use previous parameters
+            for (parameter in descriptor.getValueParameters().reverse()) {
+                val argument = argumentForParameter(parameter, resolvedCall, bindingContext, project) ?: continue
 
-                val usages = parameterUsages[parameter.getOriginal()]!!
-                usages.forEach { it.replace(argument) }
+                argument.expression.put(PARAMETER_VALUE_KEY, parameter)
 
-                if (argument.shouldKeepValue(usages.size())) {
-                    introduceValuesForParameters.add(parameter to argument)
+                val originalParameter = parameter.getOriginal()
+                val usages = expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_USAGE_KEY] == originalParameter }
+                usages.forEach { it.replace(argument.wrapped) }
+
+                if (argument.expression.shouldKeepValue(usages.size())) {
+                    introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
                 }
             }
+
+            unwrapDefaultValues(expression)
 
             if (qualifiedExpression is JetSafeQualifiedExpression) {
-                expression = expression.wrapExpressionForSafeCall(expressionToReplace, receiver!!, bindingContext)
+                expression = expression.wrapExpressionForSafeCall(expressionToReplace, receiver!!, receiverType, bindingContext)
             }
             else if (callExpression is JetBinaryExpression && callExpression.getOperationToken() == JetTokens.IDENTIFIER) {
                 expression = expression.keepInfixFormIfPossible()
             }
 
             if (receiver != null) {
-                val thisReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
+                val thisReplaced = expression.collectDescendantsOfType<JetExpression> { it[RECEIVER_VALUE_KEY] }
                 if (receiver.shouldKeepValue(thisReplaced.size())) {
-                    expression = expression.introduceValue(receiver, expressionToReplace, bindingContext, thisReplaced)
+                    expression = expression.introduceValue(receiver, receiverType, expressionToReplace, bindingContext, thisReplaced)
                 }
             }
 
-            for ((parameter, value) in introduceValuesForParameters) {
-                val usagesReplaced = expression.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_PARAMETER_KEY) == parameter }
-                expression = expression.introduceValue(value, expressionToReplace, bindingContext, usagesReplaced, nameSuggestion = parameter.getName().asString())
+            for ((parameter, value, valueType) in introduceValuesForParameters) {
+                val usagesReplaced = expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_VALUE_KEY] == parameter }
+                expression = expression.introduceValue(value, valueType, expressionToReplace, bindingContext, usagesReplaced, nameSuggestion = parameter.getName().asString())
             }
 
-            var result = expressionToReplace.replaced(expression)
+            var result = expressionToReplace.replace(expression) as JetExpression
 
             //TODO: drop import of old function (if not needed anymore)?
 
             val file = result.getContainingJetFile()
-            for (importFqName in imports) {
+            for (importFqName in replacement.imports) {
                 val descriptors = file.getResolutionFacade().resolveImportReference(file, importFqName)
                 val descriptorToImport = descriptors.firstOrNull() ?: continue
                 ImportInsertHelper.getInstance(project).importDescriptor(file, descriptorToImport)
             }
 
+            //TODO: do this earlier
+            dropArgumentsForDefaultValues(result)
+
             val shortenFilter = { element: PsiElement ->
-                if (element.getCopyableUserData(USER_CODE_KEY) != null) {
+                if (element[USER_CODE_KEY]) {
                     ShortenReferences.FilterResult.SKIP
                 }
                 else {
                     val thisReceiver = (element as? JetQualifiedExpression)?.getReceiverExpression() as? JetThisExpression
-                    if (thisReceiver != null && thisReceiver.getCopyableUserData(USER_CODE_KEY) != null) // don't remove explicit 'this' coming from user's code
+                    if (thisReceiver != null && thisReceiver[USER_CODE_KEY]) // don't remove explicit 'this' coming from user's code
                         ShortenReferences.FilterResult.GO_INSIDE
                     else
                         ShortenReferences.FilterResult.PROCESS
@@ -220,13 +232,13 @@ public abstract class DeprecatedSymbolUsageFixBase(
             result = ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(result, shortenFilter) as JetExpression
 
             // clean up user data
-            result.accept(object : PsiRecursiveElementVisitor() {
-                override fun visitElement(element: PsiElement) {
-                    element.putCopyableUserData(USER_CODE_KEY, null)
-                    element.putCopyableUserData(FROM_PARAMETER_KEY, null)
-                    element.putCopyableUserData(FROM_THIS_KEY, null)
-                }
-            })
+            result.forEachDescendantOfType<JetExpression> {
+                it.clear(USER_CODE_KEY)
+                it.clear(PARAMETER_USAGE_KEY)
+                it.clear(PARAMETER_VALUE_KEY)
+                it.clear(RECEIVER_VALUE_KEY)
+                it.clear(DEFAULT_PARAMETER_VALUE_KEY)
+            }
 
             return result
         }
@@ -234,12 +246,13 @@ public abstract class DeprecatedSymbolUsageFixBase(
         private fun JetExpression.wrapExpressionForSafeCall(
                 expressionToReplace: JetExpression,
                 receiver: JetExpression,
+                receiverType: JetType?,
                 bindingContext: BindingContext
         ): JetExpression {
             val psiFactory = JetPsiFactory(this)
             val qualified = this as? JetQualifiedExpression
             if (qualified != null) {
-                if (qualified.getReceiverExpression().getCopyableUserData(FROM_THIS_KEY) != null) {
+                if (qualified.getReceiverExpression()[RECEIVER_VALUE_KEY]) {
                     if (qualified is JetSafeQualifiedExpression) return this // already safe
                     val selector = qualified.getSelectorExpression()
                     if (selector != null) {
@@ -249,8 +262,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
 
             if (expressionToReplace.isUsedAsExpression(bindingContext)) {
-                val thisReplaced = this.collectElementsOfType<JetExpression> { it.getCopyableUserData(FROM_THIS_KEY) != null }
-                return this.introduceValue(receiver, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
+                val thisReplaced = this.collectDescendantsOfType<JetExpression> { it[RECEIVER_VALUE_KEY] }
+                return this.introduceValue(receiver, receiverType, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
             }
             else {
                 return psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", receiver, this)
@@ -260,7 +273,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         private fun JetExpression.keepInfixFormIfPossible(): JetExpression {
             if (this !is JetDotQualifiedExpression) return this
             val receiver = getReceiverExpression()
-            if (receiver.getCopyableUserData(FROM_THIS_KEY) == null) return this
+            if (!receiver[RECEIVER_VALUE_KEY]) return this
             val call = getSelectorExpression() as? JetCallExpression ?: return this
             val nameExpression = call.getCalleeExpression() as? JetSimpleNameExpression ?: return this
             val argument = call.getValueArguments().singleOrNull() ?: return this
@@ -271,6 +284,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
         private fun JetExpression.introduceValue(
                 value: JetExpression,
+                valueType: JetType?,
                 insertDeclarationsBefore: JetExpression,
                 bindingContext: BindingContext,
                 usages: Collection<JetExpression>,
@@ -281,7 +295,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             val psiFactory = JetPsiFactory(this)
 
-            fun nameInCode(name: String) = IdeDescriptorRenderers.SOURCE_CODE.renderName(Name.identifier(name))
+            fun nameInCode(name: String) = Name.identifier(name).renderName()
 
             fun replaceUsages(name: String) {
                 val nameInCode = psiFactory.createExpression(nameInCode(name))
@@ -306,7 +320,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, insertDeclarationsBefore]
 
                     if (usages.isNotEmpty()) {
-                        val valueType = bindingContext.getType(value)
                         var explicitType: JetType? = null
                         if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
                             val valueTypeWithoutExpectedType = value.analyzeInContext(
@@ -358,7 +371,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         }
 
         private fun collectNameUsages(scope: JetExpression, name: String)
-                = scope.collectElementsOfType<JetSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
+                = scope.collectDescendantsOfType<JetSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
 
         private fun JetExpression?.shouldKeepValue(usageCount: Int): Boolean {
             if (usageCount == 1) return false
@@ -381,8 +394,108 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
         }
 
+        private class Argument(
+                val expression: JetExpression,
+                val wrapped: JetExpression,
+                val expressionType: JetType?,
+                val isDefaultValue: Boolean)
+
+        private fun argumentForParameter(
+                parameter: ValueParameterDescriptor,
+                resolvedCall: ResolvedCall<out CallableDescriptor>,
+                bindingContext: BindingContext,
+                project: Project): Argument? {
+            //TODO: named parameters - keep named form if makes sense
+            //TODO: keep functional literal argument form
+            val resolvedArgument = resolvedCall.getValueArguments()[parameter]!!
+            when (resolvedArgument) {
+                is ExpressionValueArgument -> {
+                    val expression = resolvedArgument.getValueArgument()!!.getArgumentExpression()!!
+                    expression.mark(USER_CODE_KEY)
+                    return Argument(expression, expression, bindingContext.getType(expression), isDefaultValue = false)
+                }
+
+                is DefaultValueArgument -> {
+                    val defaultValue = OptionalParametersHelper.defaultParameterValue(parameter, project) ?: return null
+                    val (expression, parameterUsages) = defaultValue
+
+                    for ((param, usages) in parameterUsages) {
+                        usages.forEach { it.put(PARAMETER_USAGE_KEY, param) }
+                    }
+
+                    // we temporary wrap default values into parenthesis so that we can safely mark them with DEFAULT_PARAMETER_VALUE_KEY
+                    val wrapped = JetPsiFactory(project).createExpressionByPattern("($0)", expression) as JetParenthesizedExpression
+                    wrapped.mark(DEFAULT_PARAMETER_VALUE_KEY)
+
+                    // clean up user data in original
+                    expression.forEachDescendantOfType<JetExpression> { it.clear(PARAMETER_USAGE_KEY) }
+
+                    return Argument(wrapped.getExpression()!!, wrapped, null/*TODO*/, isDefaultValue = true)
+                }
+
+                is VarargValueArgument -> /*TODO*/ return null
+
+                else -> error("Unknown argument type: $resolvedArgument")
+            }
+        }
+
+        private fun dropArgumentsForDefaultValues(result: JetExpression) {
+            val project = result.getProject()
+            val newBindingContext = result.analyze()
+            val argumentsToDrop = ArrayList<ValueArgument>()
+
+            // we drop only those arguments that added to the code from some parameter's default
+            fun canDropArgument(argument: ValueArgument) = argument.getArgumentExpression()!![DEFAULT_PARAMETER_VALUE_KEY]
+
+            //TODO: other types of calls
+            result.forEachDescendantOfType<JetCallExpression> { callExpression ->
+                val resolvedCall = callExpression.getResolvedCall(newBindingContext) ?: return@forEachDescendantOfType
+
+                argumentsToDrop.addAll(OptionalParametersHelper.detectArgumentsToDropForDefaults(resolvedCall, project, ::canDropArgument))
+            }
+
+            for (argument in argumentsToDrop) {
+                argument as JetValueArgument
+                val argumentList = argument.getParent() as JetValueArgumentList
+                argumentList.removeArgument(argument)
+            }
+        }
+
+        private fun unwrapDefaultValues(expression: JetExpression) {
+            val values = expression.collectDescendantsOfType<JetParenthesizedExpression> {
+                it[DEFAULT_PARAMETER_VALUE_KEY] && !it.getParent()[DEFAULT_PARAMETER_VALUE_KEY]
+            }
+
+            fun JetParenthesizedExpression.unwrap(): JetExpression {
+                if (!this[DEFAULT_PARAMETER_VALUE_KEY]) return this
+                var inner = getExpression()!!
+                if (inner is JetParenthesizedExpression) {
+                    inner = inner.unwrap()
+                }
+                val result = replace(inner) as JetExpression
+                result.mark(DEFAULT_PARAMETER_VALUE_KEY)
+                return result
+            }
+
+            values.forEach { it.unwrap() }
+        }
+
+        //TODO: making functions below private causes VerifyError
+        fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
+        fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
+        fun <T: Any> JetExpression.clear(key: Key<T>) = putCopyableUserData(key, null)
+        fun <T: Any> JetExpression.put(key: Key<T>, value: T) = putCopyableUserData(key, value)
+        fun JetExpression.mark(key: Key<Unit>) = putCopyableUserData(key, Unit)
+        fun <T: JetExpression> T.marked(key: Key<Unit>): T {
+            putCopyableUserData(key, Unit)
+            return this
+        }
+
         private val USER_CODE_KEY = Key<Unit>("USER_CODE")
-        private val FROM_PARAMETER_KEY = Key<ValueParameterDescriptor>("FROM_PARAMETER")
-        private val FROM_THIS_KEY = Key<Unit>("FROM_THIS")
+        private val PARAMETER_USAGE_KEY = Key<ValueParameterDescriptor>("PARAMETER_USAGE")
+        private val PARAMETER_VALUE_KEY = Key<ValueParameterDescriptor>("PARAMETER_VALUE")
+        private val RECEIVER_VALUE_KEY = Key<Unit>("RECEIVER_VALUE")
+        private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
     }
 }
+

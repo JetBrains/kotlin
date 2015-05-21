@@ -546,33 +546,54 @@ public fun PsiElement.getElementTextWithContext(): String {
 
 // Calls `block` on each descendant of T type
 // Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
-inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(
-    noinline block: (T) -> Unit
-): JetVisitorVoid =
-        object : JetTreeVisitorVoid() {
-            override fun visitJetElement(element: JetElement) {
-                super.visitJetElement(element)
-                if (element is T) {
-                    block(element)
-                }
+public inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): JetVisitorVoid {
+    return object : JetTreeVisitorVoid() {
+        override fun visitJetElement(element: JetElement) {
+            super.visitJetElement(element)
+            if (element is T) {
+                block(element)
             }
         }
+    }
+}
 
-inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(
-    accumulator: MutableCollection<R>,
-    noinline map: (T) -> Collection<R>
-): JetVisitorVoid = forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
+public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): JetVisitorVoid {
+    return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
+}
 
-inline fun <reified T : JetElement> PsiElement.forEachDescendantsOfType(noinline block: (T) -> Unit) =
-        accept(forEachDescendantOfTypeVisitor(block))
-
-inline fun <reified T : JetElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean): Boolean {
-    var result = false
-    accept(forEachDescendantOfTypeVisitor<T> {
-        if (!result && predicate(it)) {
-            result = true
+public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {
+    this.accept(object : PsiRecursiveElementVisitor(){
+        override fun visitElement(element: PsiElement) {
+            super.visitElement(element)
+            if (element is T) {
+                action(element)
+            }
         }
     })
+}
+
+public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean): Boolean {
+    var result = false
+    this.accept(object : PsiRecursiveElementVisitor(){
+        override fun visitElement(element: PsiElement) {
+            if (result) return
+            if (element is T && predicate(element)) {
+                result = true
+                return
+            }
+            super.visitElement(element)
+        }
+    })
+    return result
+}
+
+public inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): Collection<T> {
+    val result = ArrayList<T>()
+    forEachDescendantOfType<T> {
+        if (predicate(it)) {
+            result.add(it)
+        }
+    }
     return result
 }
 
@@ -635,22 +656,4 @@ public fun JetExpression.getAnnotationEntries(): List<JetAnnotationEntry> {
         is JetLabeledExpression -> parent.getAnnotationEntries()
         else -> emptyList<JetAnnotationEntry>()
     }
-}
-
-// TODO: it can be default value for parameter but it's not supported yet by the compiler
-public inline fun <reified TElement> PsiElement.collectElementsOfType(): Collection<TElement> {
-    return collectElementsOfType { true }
-}
-
-public inline fun <reified TElement> PsiElement.collectElementsOfType(@inlineOptions(InlineOption.ONLY_LOCAL_RETURN) predicate: (TElement) -> Boolean): Collection<TElement> {
-    val result = ArrayList<TElement>()
-    this.accept(object : PsiRecursiveElementVisitor(){
-        override fun visitElement(element: PsiElement) {
-            if (element is TElement && predicate(element)) {
-                result.add(element)
-            }
-            super.visitElement(element)
-        }
-    })
-    return result
 }
