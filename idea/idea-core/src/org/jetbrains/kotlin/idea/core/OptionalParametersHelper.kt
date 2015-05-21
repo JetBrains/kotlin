@@ -120,6 +120,11 @@ public object OptionalParametersHelper {
     public fun defaultParameterValue(parameter: ValueParameterDescriptor, project: Project): DefaultValue? {
         if (!parameter.hasDefaultValue()) return null
 
+        if (!parameter.declaresDefaultValue()) {
+            val overridden = parameter.getOverriddenDescriptors().firstOrNull { it.hasDefaultValue() } ?: return null
+            return defaultParameterValue(overridden, project)
+        }
+
         //TODO: parameter in overriding method!
         //TODO: it's a temporary code while we don't have default values accessible from descriptors
         var declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, parameter) as? JetParameter ?: return null

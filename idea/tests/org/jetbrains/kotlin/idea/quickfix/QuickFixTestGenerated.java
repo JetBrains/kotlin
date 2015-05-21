@@ -3284,6 +3284,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/optionalParameters9.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("overridingMethod.kt")
+            public void testOverridingMethod() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/overridingMethod.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/safeCall")
