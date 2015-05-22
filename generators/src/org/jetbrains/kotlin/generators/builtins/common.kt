@@ -31,7 +31,8 @@ enum class PrimitiveType {
 
     val capitalized: String get() = name().toLowerCase().capitalize()
     companion object {
-        val exceptBoolean: Iterable<PrimitiveType> by Delegates.lazy { PrimitiveType.values().filterNot { it == BOOLEAN } }
+        val exceptBoolean: List<PrimitiveType> by Delegates.lazy { PrimitiveType.values().filterNot { it == BOOLEAN } }
+        val onlyNumeric: List<PrimitiveType> by Delegates.lazy { PrimitiveType.values().filterNot { it == BOOLEAN || it == CHAR }}
     }
 }
 
