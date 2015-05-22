@@ -3219,6 +3219,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("dropAll.kt")
+            public void testDropAll() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/dropAll.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("functionalLiteralArgument.kt")
+            public void testFunctionalLiteralArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/functionalLiteralArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("namedArgument.kt")
             public void testNamedArgument() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/namedArgument.kt");

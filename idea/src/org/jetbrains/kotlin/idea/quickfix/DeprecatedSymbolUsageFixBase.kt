@@ -230,6 +230,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
             // TODO: process introduced variables too
             introduceNamedArguments(result)
 
+            // TODO: process introduced variables too
+            restoreFunctionLiteralArguments(result)
+
             //TODO: do this earlier
             dropArgumentsForDefaultValues(result)
 
@@ -249,9 +252,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             // TODO: process introduced variables too
             simplifySpreadArrayOfArguments(result)
-
-            // TODO: process introduced variables too
-            restoreFunctionLiteralArguments(result)
 
             // clean up user data
             //TODO: not correct - we do not process introduced declarations before!!!
@@ -541,6 +541,12 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 argument as JetValueArgument
                 val argumentList = argument.getParent() as JetValueArgumentList
                 argumentList.removeArgument(argument)
+                if (argumentList.getArguments().isEmpty()) {
+                    val callExpression = argumentList.getParent() as JetCallExpression
+                    if (callExpression.getFunctionLiteralArguments().isNotEmpty()) {
+                        argumentList.delete()
+                    }
+                }
             }
         }
 

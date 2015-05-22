@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.copied
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
+import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import java.util.ArrayList
@@ -50,11 +51,10 @@ public object OptionalParametersHelper {
                 .toMap()
         if (parameterToDefaultValue.isEmpty()) return emptyList()
 
-        val arguments = resolvedCall.getCall().getValueArguments()
+        //TODO: drop functional literal out of parenthesis too
+
+        val arguments = resolvedCall.getCall().getValueArgumentsInParentheses()
         val argumentsToDrop = ArrayList<ValueArgument>()
-
-        //TODO: can drop arguments leaving last functional literal one (outside of parenthesis)
-
         for (argument in arguments.reverse()) {
             if (!canDrop(argument) || !argument.matchesDefault(resolvedCall, parameterToDefaultValue)) {
                 if (!argument.isNamed()) break else continue // for a named argument we can try to drop arguments before it as well
