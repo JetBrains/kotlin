@@ -169,7 +169,7 @@ fun main(args: Array<String>) {
             model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
         }
 
-        GenerateRangesCodegenTestData.main(array<String>())
+        GenerateRangesCodegenTestData.main(arrayOf<String>())
 
         testClass(javaClass<AbstractBlackBoxCodegenTest>()) {
             model("codegen/box")
@@ -893,13 +893,17 @@ fun main(args: Array<String>) {
             model("codegen/box/functions/functionExpression", targetBackend = TargetBackend.JS)
         }
 
+        testClass(javaClass<AbstractSecondaryConstructorTest>()) {
+            model("codegen/box/secondaryConstructors", targetBackend = TargetBackend.JS)
+        }
+
     }
 }
 
 private class TestGroup(val testsRoot: String, val testDataRoot: String) {
     inline fun <reified T: TestCase> testClass(
             suiteTestClass: String = getDefaultSuiteTestClass(javaClass<T>()),
-            [noinline] init: TestClass.() -> Unit
+            @noinline init: TestClass.() -> Unit
     ) {
         testClass(javaClass<T>(), suiteTestClass, init)
     }

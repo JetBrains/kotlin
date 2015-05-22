@@ -1,3 +1,6 @@
+// TODO enable for JS backend too when KT-4124 will be fixed
+// TARGET_BACKEND: JVM
+
 open class C(val grandParentProp: String)
 fun box(): String {
     var sideEffects: String = ""

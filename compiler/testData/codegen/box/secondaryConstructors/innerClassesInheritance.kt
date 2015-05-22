@@ -1,3 +1,6 @@
+// TODO enable for JS backend too when KT-4124 will be fixed
+// TARGET_BACKEND: JVM
+
 class Outer {
     val outerProp: String
     constructor(x: String) {
