@@ -232,4 +232,40 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             runnable.invoke()
         }
     }
+
+    protected fun createAdditionalBreakpoints(fileText: String) {
+        val breakpoints = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// ADDITIONAL_BREAKPOINT: ")
+        for (breakpoint in breakpoints) {
+            val position = breakpoint.split(".kt:")
+            assert(position.size() == 2) { "Couldn't parse position from test directive: directive = $breakpoint" }
+            createBreakpoint(position[0], position[1])
+        }
+    }
+
+    private fun createBreakpoint(fileName: String, lineMarker: String) {
+        val project = getProject()!!
+        val sourceFiles = FilenameIndex.getAllFilesByExt(project, "kt").filter {
+            it.getName().contains(fileName) &&
+            it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
+        }
+
+        assert(sourceFiles.size() == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
+
+        val runnable = Runnable() {
+            val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!
+
+            val breakpointManager = DebuggerManagerEx.getInstanceEx(project)?.getBreakpointManager()!!
+            val document = PsiDocumentManager.getInstance(project).getDocument(psiSourceFile)!!
+
+            val index = psiSourceFile.getText()!!.indexOf(lineMarker)
+            val lineNumber = document.getLineNumber(index) + 1
+
+            val breakpoint = breakpointManager.addLineBreakpoint(document, lineNumber)
+            if (breakpoint != null) {
+                println("LineBreakpoint created at " + psiSourceFile.getName() + ":" + lineNumber, ProcessOutputTypes.SYSTEM);
+            }
+        }
+
+        DebuggerInvocationUtil.invokeAndWait(project, runnable, ModalityState.defaultModalityState())
+    }
 }

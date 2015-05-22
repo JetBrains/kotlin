@@ -367,4 +367,19 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
     }
+
+    @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/custom")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Custom extends AbstractKotlinSteppingTest {
+        public void testAllFilesPresentInCustom() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/custom"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("stepIntoStdlibInlineFun2step.kt")
+        public void testStepIntoStdlibInlineFun2step() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/stepIntoStdlibInlineFun2step.kt");
+            doCustomTest(fileName);
+        }
+    }
 }

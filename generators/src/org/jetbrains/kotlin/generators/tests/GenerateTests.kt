@@ -617,6 +617,7 @@ fun main(args: Array<String>) {
             model("debugger/tinyApp/src/stepping/stepInto", testMethod = "doStepIntoTest", testClassName = "StepIntoOnly")
             model("debugger/tinyApp/src/stepping/stepOut", testMethod = "doStepOutTest")
             model("debugger/tinyApp/src/stepping/filters", testMethod = "doStepIntoTest")
+            model("debugger/tinyApp/src/stepping/custom", testMethod = "doCustomTest")
         }
 
         testClass(javaClass<AbstractKotlinEvaluateExpressionTest>()) {

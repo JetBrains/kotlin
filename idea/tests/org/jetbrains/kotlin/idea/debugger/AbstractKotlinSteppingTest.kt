@@ -43,6 +43,29 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
         doTest(path, "SMART_STEP_INTO")
     }
 
+    protected fun doCustomTest(path: String) {
+        val fileText = FileUtil.loadFile(File(path))
+        configureSettings(fileText)
+        createAdditionalBreakpoints(fileText)
+        createDebugProcess(path)
+
+        fun repeat(indexPrefix: String, f: SuspendContextImpl.() -> Unit) {
+            for (i in 1..(getPrefixedInt(fileText, indexPrefix) ?: 1)) {
+                onBreakpoint(f)
+            }
+        }
+
+        File(path).readLines().forEach {
+            when {
+                it.startsWith("// STEP_INTO") -> repeat("// STEP_INTO: ") { stepInto() }
+                it.startsWith("// STEP_OUT") -> repeat("// STEP_OUT: ") { stepOut() }
+                it.startsWith("// SMART_STEP_INTO") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
+            }
+        }
+
+        finish()
+    }
+
     private fun doTest(path: String, command: String) {
         val fileText = FileUtil.loadFile(File(path))
 
