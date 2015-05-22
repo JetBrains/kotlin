@@ -79,6 +79,9 @@ private fun mapCapacity(expectedSize: Int): Int {
     return Int.MAX_VALUE // any large value
 }
 
+/** Returns true if this map is not empty. */
+public fun <K, V> Map<K, V>.isNotEmpty(): Boolean = !isEmpty()
+
 /**
  * Returns the [Map] if its not null, or the empty [Map] otherwise.
  */
