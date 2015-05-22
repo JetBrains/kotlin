@@ -21,6 +21,16 @@ package kotlin
  */
 public interface FloatingPointConstants<T> {
     /**
+     * A constant holding the smallest *positive* nonzero value.
+     */
+    public val MIN_VALUE: T
+
+    /**
+     * A constant holding the largest positive finite value.
+     */
+    public val MAX_VALUE: T
+
+    /**
      * A constant holding the positive infinity value.
      */
     public val POSITIVE_INFINITY: T

@@ -391,6 +391,10 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
 
     public companion object Companion : kotlin.FloatingPointConstants<kotlin.Double> {
         /*primary*/ private constructor Companion()
+        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Double
+            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Double
+        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Double
+            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Double
         public abstract override /*1*/ /*fake_override*/ val NEGATIVE_INFINITY: kotlin.Double
             public abstract override /*1*/ /*fake_override*/ fun <get-NEGATIVE_INFINITY>(): kotlin.Double
         public abstract override /*1*/ /*fake_override*/ val NaN: kotlin.Double
@@ -629,6 +633,10 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
 
     public companion object Companion : kotlin.FloatingPointConstants<kotlin.Float> {
         /*primary*/ private constructor Companion()
+        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Float
+            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Float
+        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Float
+            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Float
         public abstract override /*1*/ /*fake_override*/ val NEGATIVE_INFINITY: kotlin.Float
             public abstract override /*1*/ /*fake_override*/ fun <get-NEGATIVE_INFINITY>(): kotlin.Float
         public abstract override /*1*/ /*fake_override*/ val NaN: kotlin.Float
@@ -700,6 +708,10 @@ public final class FloatRange : kotlin.Range<kotlin.Float>, kotlin.Progression<k
 }
 
 public interface FloatingPointConstants</*0*/ T> {
+    public abstract val MAX_VALUE: T
+        public abstract fun <get-MAX_VALUE>(): T
+    public abstract val MIN_VALUE: T
+        public abstract fun <get-MIN_VALUE>(): T
     public abstract val NEGATIVE_INFINITY: T
         public abstract fun <get-NEGATIVE_INFINITY>(): T
     public abstract val NaN: T

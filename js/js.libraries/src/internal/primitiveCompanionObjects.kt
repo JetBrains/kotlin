@@ -17,12 +17,16 @@
 package kotlin.js.internal
 
 private object DoubleCompanionObject : FloatingPointConstants<Double> {
+    override val MIN_VALUE: Double = js("Number.MIN_VALUE")
+    override val MAX_VALUE: Double = js("Number.MAX_VALUE")
     override val POSITIVE_INFINITY: Double = js("Number.POSITIVE_INFINITY")
     override val NEGATIVE_INFINITY: Double = js("Number.NEGATIVE_INFINITY")
     override val NaN: Double = js("Number.NaN")
 }
 
 private object FloatCompanionObject : FloatingPointConstants<Float> {
+    override val MIN_VALUE: Float = js("Number.MIN_VALUE")
+    override val MAX_VALUE: Float = js("Number.MAX_VALUE")
     override val POSITIVE_INFINITY : Float = js("Number.POSITIVE_INFINITY")
     override val NEGATIVE_INFINITY : Float = js("Number.NEGATIVE_INFINITY")
     override val NaN : Float = js("Number.NaN")
