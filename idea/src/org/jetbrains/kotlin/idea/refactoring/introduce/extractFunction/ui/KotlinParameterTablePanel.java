@@ -43,23 +43,30 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public class KotlinParameterTablePanel extends JPanel {
     public static class ParameterInfo {
         private final Parameter originalParameter;
+        private final boolean receiver;
         private String name;
         private JetType type;
         private boolean enabled = true;
 
-        public ParameterInfo(Parameter originalParameter) {
+        public ParameterInfo(Parameter originalParameter, boolean receiver) {
             this.originalParameter = originalParameter;
-            this.name = originalParameter.getName();
+            this.receiver = receiver;
+            this.name = receiver ? "<receiver>" : originalParameter.getName();
             this.type = originalParameter.getParameterType(false);
         }
 
         public Parameter getOriginalParameter() {
             return originalParameter;
+        }
+
+        public boolean isReceiver() {
+            return receiver;
         }
 
         public boolean isEnabled() {
@@ -100,13 +107,14 @@ public class KotlinParameterTablePanel extends JPanel {
         super(new BorderLayout());
     }
 
-    public void init(List<Parameter> parameters) {
-        parameterInfos = KotlinPackage.map(
+    public void init(@Nullable Parameter receiver, @NotNull List<Parameter> parameters) {
+        parameterInfos = KotlinPackage.mapTo(
                 parameters,
+                receiver != null ? KotlinPackage.arrayListOf(new ParameterInfo(receiver, true)) : new ArrayList<ParameterInfo>(),
                 new Function1<Parameter, ParameterInfo>() {
                     @Override
                     public ParameterInfo invoke(Parameter parameter) {
-                        return new ParameterInfo(parameter);
+                        return new ParameterInfo(parameter, false);
                     }
                 }
         );
@@ -358,7 +366,7 @@ public class KotlinParameterTablePanel extends JPanel {
                 case CHECKMARK_COLUMN:
                     return isEnabled();
                 case PARAMETER_NAME_COLUMN:
-                    return isEnabled() && info.isEnabled();
+                    return isEnabled() && info.isEnabled() && !info.isReceiver();
                 case PARAMETER_TYPE_COLUMN:
                     return isEnabled() && info.isEnabled() && info.getOriginalParameter().getParameterTypeCandidates(false).size() > 1;
                 default:
@@ -376,13 +384,27 @@ public class KotlinParameterTablePanel extends JPanel {
         }
     }
 
+    @Nullable
+    public ParameterInfo getReceiverInfo() {
+        return KotlinPackage.singleOrNull(
+                parameterInfos,
+                new Function1<ParameterInfo, Boolean>() {
+                    @Override
+                    public Boolean invoke(ParameterInfo info) {
+                        return info.isEnabled() && info.isReceiver();
+                    }
+                }
+        );
+    }
+
+    @NotNull
     public List<ParameterInfo> getParameterInfos() {
         return KotlinPackage.filter(
                 parameterInfos,
                 new Function1<ParameterInfo, Boolean>() {
                     @Override
                     public Boolean invoke(ParameterInfo info) {
-                        return info.isEnabled();
+                        return info.isEnabled() && !info.isReceiver();
                     }
                 }
         );

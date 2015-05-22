@@ -1571,6 +1571,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("receiverCandidateTypes.kt")
+                public void testReceiverCandidateTypes() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/receiverCandidateTypes.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("typeHierarchy1.kt")
                 public void testTypeHierarchy1() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/typeHierarchy1.kt");

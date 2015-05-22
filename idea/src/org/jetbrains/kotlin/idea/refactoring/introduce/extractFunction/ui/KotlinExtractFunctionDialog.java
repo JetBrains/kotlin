@@ -28,6 +28,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
@@ -120,8 +121,10 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     protected void init() {
         super.init();
 
+        ExtractableCodeDescriptor extractableCodeDescriptor = originalDescriptor.getDescriptor();
+
         functionNameField = new NameSuggestionsField(
-                ArrayUtil.toStringArray(originalDescriptor.getDescriptor().getSuggestedNames()),
+                ArrayUtil.toStringArray(extractableCodeDescriptor.getSuggestedNames()),
                 project,
                 JetFileType.INSTANCE
         );
@@ -139,7 +142,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         boolean enableVisibility = isVisibilitySectionAvailable();
         visibilityBox.setEnabled(enableVisibility);
         if (enableVisibility) {
-            visibilityBox.setSelectedItem(originalDescriptor.getDescriptor().getVisibility());
+            visibilityBox.setSelectedItem(extractableCodeDescriptor.getVisibility());
         }
         visibilityBox.addItemListener(
                 new ItemListener() {
@@ -166,7 +169,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 doCancelAction();
             }
         };
-        parameterTablePanel.init(originalDescriptor.getDescriptor().getParameters());
+        parameterTablePanel.init(extractableCodeDescriptor.getReceiverParameter(), extractableCodeDescriptor.getParameters());
 
         inputParametersPanel.setText("&Parameters");
         inputParametersPanel.setLabelFor(parameterTablePanel.getTable());
@@ -213,6 +216,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         return createNewDescriptor(originalDescriptor.getDescriptor(),
                                    getFunctionName(),
                                    getVisibility(),
+                                   parameterTablePanel.getReceiverInfo(),
                                    parameterTablePanel.getParameterInfos());
     }
 
@@ -225,11 +229,19 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             @NotNull ExtractableCodeDescriptor originalDescriptor,
             @NotNull String newName,
             @NotNull String newVisibility,
+            @Nullable KotlinParameterTablePanel.ParameterInfo newReceiverInfo,
             @NotNull List<KotlinParameterTablePanel.ParameterInfo> newParameterInfos
     ) {
         Map<Parameter, Parameter> oldToNewParameters = ContainerUtil.newLinkedHashMap();
         for (KotlinParameterTablePanel.ParameterInfo parameterInfo : newParameterInfos) {
             oldToNewParameters.put(parameterInfo.getOriginalParameter(), parameterInfo.toParameter());
+        }
+        ArrayList<Parameter> newParameters = ContainerUtil.newArrayList(oldToNewParameters.values());
+
+        Parameter originalReceiver = originalDescriptor.getReceiverParameter();
+        Parameter newReceiver = newReceiverInfo != null ? newReceiverInfo.toParameter() : null;
+        if (originalReceiver != null && newReceiver != null) {
+            oldToNewParameters.put(originalReceiver, newReceiver);
         }
 
         ControlFlow controlFlow = originalDescriptor.getControlFlow();
@@ -267,8 +279,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 originalDescriptor.getOriginalContext(),
                 Collections.singletonList(newName),
                 newVisibility,
-                ContainerUtil.newArrayList(oldToNewParameters.values()),
-                originalDescriptor.getReceiverParameter(),
+                newParameters,
+                newReceiver,
                 originalDescriptor.getTypeParameters(),
                 replacementMap,
                 controlFlow
