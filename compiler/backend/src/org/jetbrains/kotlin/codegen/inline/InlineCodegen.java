@@ -698,7 +698,6 @@ public class InlineCodegen extends CallGenerator {
             curInstr = curInstr.getNext();
         }
 
-        processor.sortTryCatchBlocks();
         processor.substituteTryBlockNodes(intoNode);
 
         //processor.substituteLocalVarTable(intoNode);

@@ -34,9 +34,6 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
     public var nextFreeLocalIndex: Int = parameterSize
         private set
 
-    public val coveringFromInnermost: List<TryCatchBlockNodeInfo>
-        get() = tryBlocksMetaInfo.currentIntervals.reverse()
-
     public fun getStartNodes(label: LabelNode): List<TryCatchBlockNodeInfo> {
         return tryBlocksMetaInfo.intervalStarts.get(label)
     }
@@ -53,48 +50,14 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
         }
 
         if (curInstr is LabelNode) {
-            updateCoveringTryBlocks(curInstr, directOrder)
-            updateCoveringLocalVars(curInstr, directOrder)
-        }
-    }
-
-    //Keep information about try blocks that cover current instruction -
-    // pushing and popping it to stack entering and exiting tryCatchBlock start and end labels
-    protected open fun updateCoveringTryBlocks(curIns: LabelNode, directOrder: Boolean) {
-        for (startNode in tryBlocksMetaInfo.closeIntervals(curIns, directOrder)) {
-            assert(!startNode.isEmpty(), {"Try block should be non-empty"})
-            val pop = tryBlocksMetaInfo.currentIntervals.pop()
-            //Temporary disabled cause during patched structure of exceptions changed
-//            if (startNode != pop) {
-//                throw RuntimeException("Wrong try-catch structure " + startNode + " " + pop + " " + infosToClose.size())
-//            };
-        }
-
-        //Reversing list order cause we should pop external block before internal one
-        // (originally internal blocks goes before external one, such invariant preserved via sortTryCatchBlocks method)
-        for (info in tryBlocksMetaInfo.openIntervals(curIns, directOrder).reverse()) {
-            assert(!info.isEmpty(), {"Try block should be non-empty"})
-            tryBlocksMetaInfo.currentIntervals.add(info)
-        }
-    }
-
-    protected open fun updateCoveringLocalVars(curIns: LabelNode, directOrder: Boolean) {
-        localVarsMetaInfo.closeIntervals(curIns, directOrder).filterNot {
-            it.isEmpty()
-        } forEach {
-            localVarsMetaInfo.currentIntervals.pop()
-        }
-
-        localVarsMetaInfo.openIntervals(curIns, directOrder).filterNot {
-            it.isEmpty()
-        } forEach {
-            localVarsMetaInfo.currentIntervals.add(it)
+            tryBlocksMetaInfo.processCurrent(curInstr, directOrder)
+            localVarsMetaInfo.processCurrent(curInstr, directOrder)
         }
     }
 
     public abstract fun instructionIndex(inst: AbstractInsnNode): Int
 
-    public fun sortTryCatchBlocks() {
+    public fun sortTryCatchBlocks(intervals: List<TryCatchBlockNodeInfo>): List<TryCatchBlockNodeInfo> {
         val comp = Comparator { t1: TryCatchBlockNodeInfo, t2: TryCatchBlockNodeInfo ->
             var result = instructionIndex(t1.handler) - instructionIndex(t2.handler)
             if (result == 0) {
@@ -107,11 +70,13 @@ public abstract class CoveringTryCatchNodeProcessor(parameterSize: Int) {
             result
         }
 
-        Collections.sort<TryCatchBlockNodeInfo>(tryBlocksMetaInfo.allIntervals, comp)
+        Collections.sort<TryCatchBlockNodeInfo>(intervals, comp)
+        return intervals;
     }
 
     protected fun substituteTryBlockNodes(node: MethodNode) {
         node.tryCatchBlocks.clear()
+        sortTryCatchBlocks(tryBlocksMetaInfo.allIntervals)
         for (info in tryBlocksMetaInfo.getMeaningfulIntervals()) {
             node.tryCatchBlocks.add(info.node)
         }
@@ -134,7 +99,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
 
     val allIntervals: ArrayList<T> = arrayListOf()
 
-    val currentIntervals: Stack<T> = Stack()
+    val currentIntervals: MutableSet<T> = linkedSetOf()
 
     fun addNewInterval(newInfo: T) {
         intervalStarts.put(newInfo.startLabel, newInfo)
@@ -156,6 +121,18 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         return currentIntervals.map { split(it, by, keepStart) }
     }
 
+    fun processCurrent(curIns: LabelNode, directOrder: Boolean) {
+        getInterval(curIns, directOrder).forEach {
+            val b = currentIntervals.add(it)
+            assert(b, "Wrong interval structure: $curIns, $it")
+        }
+
+        getInterval(curIns, !directOrder).forEach {
+            val b = currentIntervals.remove(it)
+            assert(b, "Wrong interval structure: $curIns, $it")
+        }
+    }
+
     fun split(interval: T, by : Interval, keepStart: Boolean): SplittedPair<T> {
         val splittedPair = interval.split(by, keepStart)
         if (!keepStart) {
@@ -167,9 +144,7 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         return splittedPair
     }
 
-    fun closeIntervals(curIns: LabelNode, directOrder: Boolean) = if (!directOrder) intervalStarts.get(curIns) else intervalEnds.get(curIns)
-
-    fun openIntervals(curIns: LabelNode, directOrder: Boolean) = if (directOrder) intervalStarts.get(curIns) else intervalEnds.get(curIns)
+    fun getInterval(curIns: LabelNode, isOpen: Boolean) = if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
 }
 
 private fun Interval.isMeaningless(): Boolean {

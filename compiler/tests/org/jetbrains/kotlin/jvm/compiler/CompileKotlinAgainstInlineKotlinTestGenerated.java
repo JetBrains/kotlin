@@ -725,6 +725,21 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
                     doBoxTestWithInlineCheck(fileName);
                 }
             }
+
+            @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Variables extends AbstractCompileKotlinAgainstInlineKotlinTest {
+                public void testAllFilesPresentInVariables() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables"), Pattern.compile("^(.+)\\.1.kt$"), true);
+                }
+
+                @TestMetadata("kt7792.1.kt")
+                public void testKt7792() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables/kt7792.1.kt");
+                    doBoxTestWithInlineCheck(fileName);
+                }
+            }
         }
     }
 

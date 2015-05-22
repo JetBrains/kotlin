@@ -128,10 +128,12 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 continue;
             }
 
-            List<TryCatchBlockNodeInfo> currentCoveringNodesFromOuterMost = getTryBlocksMetaInfo().getCurrentIntervals();
-            checkCoveringBlocksInvariant(currentCoveringNodesFromOuterMost);
-            if (currentCoveringNodesFromOuterMost.isEmpty() ||
-                currentCoveringNodesFromOuterMost.get(0).getOnlyCopyNotProcess()) {
+            List<TryCatchBlockNodeInfo> currentCoveringNodesFromInnermost =
+                    sortTryCatchBlocks(new ArrayList<TryCatchBlockNodeInfo>(getTryBlocksMetaInfo().getCurrentIntervals()));
+            checkCoveringBlocksInvariant(Lists.reverse(currentCoveringNodesFromInnermost));
+
+            if (currentCoveringNodesFromInnermost.isEmpty() ||
+                currentCoveringNodesFromInnermost.get(currentCoveringNodesFromInnermost.size() - 1).getOnlyCopyNotProcess()) {
                 curIns = curIns.getPrevious();
                 continue;
             }
@@ -146,14 +148,14 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             // Each group that corresponds to try/*catches*/finally contains tryCatch block with default handler.
             // For each such group we should insert corresponding finally before non-local return.
             // So we split all try blocks on current instructions to groups and process them independently
-            List<TryBlockCluster<TryCatchBlockNodeInfo>> clustersFromInnermost = InlinePackage.doClustering(getCoveringFromInnermost());
+            List<TryBlockCluster<TryCatchBlockNodeInfo>> clustersFromInnermost = InlinePackage.doClustering(currentCoveringNodesFromInnermost);
             Iterator<TryBlockCluster<TryCatchBlockNodeInfo>> tryCatchBlockIterator = clustersFromInnermost.iterator();
 
             checkClusterInvariant(clustersFromInnermost);
 
             List<TryCatchBlockNodeInfo> additionalNodesToSplit = new ArrayList<TryCatchBlockNodeInfo>();
             while (tryCatchBlockIterator.hasNext()) {
-                TryBlockCluster clusterToFindFinally = tryCatchBlockIterator.next();
+                TryBlockCluster<TryCatchBlockNodeInfo> clusterToFindFinally = tryCatchBlockIterator.next();
                 List<TryCatchBlockNodeInfo> clusterBlocks = clusterToFindFinally.getBlocks();
                 TryCatchBlockNodeInfo nodeWithDefaultHandlerIfExists = clusterBlocks.get(clusterBlocks.size() - 1);
 
@@ -401,7 +403,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             //TODO add assert
         }
 
-        sortTryCatchBlocks();
+        sortTryCatchBlocks(tryBlocksMetaInfo.getAllIntervals());
     }
 
     private static LabelNode getNewOrOldLabel(LabelNode oldHandler, @NotNull Set<LabelNode> labelsInsideFinally) {
@@ -410,14 +412,6 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         }
 
         return oldHandler;
-    }
-
-    //Keep information about try blocks that cover current instruction -
-    // pushing and popping it to stack entering and exiting tryCatchBlock start and end labels
-    @Override
-    protected void updateCoveringTryBlocks(@NotNull LabelNode curIns, boolean directOrder) {
-        super.updateCoveringTryBlocks(curIns, directOrder);
-        checkCoveringBlocksInvariant(getTryBlocksMetaInfo().getCurrentIntervals());
     }
 
     private static boolean hasFinallyBlocks(List<TryCatchBlockNodeInfo> inlineFunTryBlockInfo) {
