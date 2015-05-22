@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.debugger.DebuggerPackage;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.CompositeBindingContext;
@@ -78,7 +79,15 @@ public class DebuggerUtils {
         }
 
         if (!isPackagePartClassName(className)) {
-            return filesWithExactName.iterator().next();
+            for (JetFile file : filesWithExactName) {
+                boolean hasTopLevelMembers = KotlinPackage.any(file.getDeclarations(), new Function1<JetDeclaration, Boolean>() {
+                    @Override
+                    public Boolean invoke(JetDeclaration declaration) {
+                        return !(declaration instanceof JetClassOrObject);
+                    }
+                });
+                if (hasTopLevelMembers) return file;
+            }
         }
 
         JetFile file = getFileForPackagePartPrefixedName(filesWithExactName, className.getInternalName());
@@ -110,8 +119,11 @@ public class DebuggerUtils {
     }
 
     private static boolean isPackagePartClassName(JvmClassName className) {
-        String packageName = className.getPackageFqName().asString().replaceAll("\\.", "/");
-        return className.getInternalName().startsWith(packageName + "/" + PackageClassUtils.getPackageClassName(className.getPackageFqName()));
+        FqName packageFqName = PackageClassUtils.getPackageClassFqName(className.getPackageFqName());
+        String packageName = packageFqName.asString().replaceAll("\\.", "/");
+
+        String internalName = className.getInternalName();
+        return !internalName.equals(packageName) && internalName.startsWith(packageName);
     }
 
     @Nullable
