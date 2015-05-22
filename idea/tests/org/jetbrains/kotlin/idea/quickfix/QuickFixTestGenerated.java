@@ -2938,6 +2938,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("keepArgumentNamed.kt")
+        public void testKeepArgumentNamed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepArgumentNamed.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("keepInfixCall.kt")
         public void testKeepInfixCall() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepInfixCall.kt");
@@ -3211,6 +3217,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public static class OptionalParameters extends AbstractQuickFixTest {
             public void testAllFilesPresentInOptionalParameters() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("namedArgument.kt")
+            public void testNamedArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters/namedArgument.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("optionalParameters1.kt")
