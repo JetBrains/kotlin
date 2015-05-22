@@ -130,7 +130,8 @@ object ReplaceWithAnnotationAnalyzer {
             }
         }
 
-        for ((expr, receiverExpression) in receiversToAdd) {
+        // add receivers in reverse order because arguments of a call were processed after the callee's name
+        for ((expr, receiverExpression) in receiversToAdd.reverse()) {
             val expressionToReplace = expr.getParent() as? JetCallExpression ?: expr
             val newExpr = expressionToReplace.replaced(psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
             if (expressionToReplace == expression) {

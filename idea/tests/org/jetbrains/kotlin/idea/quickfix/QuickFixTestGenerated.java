@@ -2862,6 +2862,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class DeprecatedSymbolUsage extends AbstractQuickFixTest {
+        @TestMetadata("addImplicitReceiverNested.kt")
+        public void testAddImplicitReceiverNested() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/addImplicitReceiverNested.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInDeprecatedSymbolUsage() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
