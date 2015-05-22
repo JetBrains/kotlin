@@ -21,19 +21,18 @@ import com.intellij.psi.PsiWhiteSpace
 
 public class JetFunctionLiteralArgument(node: ASTNode) : JetValueArgument(node), FunctionLiteralArgument {
 
-    private fun assertFL() = throw AssertionError("Function literal argument doesn't contain function literal expression: " +
-                                                          "${super<JetValueArgument>.getArgumentExpression()?.getText()} (it should be guaranteed by parser)")
+    override fun getArgumentExpression() = super<JetValueArgument>.getArgumentExpression()!!
 
-    override fun getArgumentExpression() = super<JetValueArgument>.getArgumentExpression() ?: assertFL()
-
-    override fun getFunctionLiteral(): JetFunctionLiteralExpression = unpackFunctionLiteral(getArgumentExpression())
-
-    private fun unpackFunctionLiteral(expression: JetExpression?): JetFunctionLiteralExpression =
-            when (expression) {
-                is JetFunctionLiteralExpression -> expression
-                is JetLabeledExpression -> unpackFunctionLiteral(expression.getBaseExpression())
-                is JetAnnotatedExpression -> unpackFunctionLiteral(expression.getBaseExpression())
-                else -> assertFL()
-            }
+    override fun getFunctionLiteral(): JetFunctionLiteralExpression = getArgumentExpression().unpackFunctionLiteral()!!
 }
+
+public fun JetExpression.unpackFunctionLiteral(): JetFunctionLiteralExpression? {
+    return when (this) {
+        is JetFunctionLiteralExpression -> this
+        is JetLabeledExpression -> getBaseExpression()?.unpackFunctionLiteral()
+        is JetAnnotatedExpression -> getBaseExpression()?.unpackFunctionLiteral()
+        else -> null
+    }
+}
+
 

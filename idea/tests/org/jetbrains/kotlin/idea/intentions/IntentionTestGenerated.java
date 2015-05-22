@@ -4951,6 +4951,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("inapplicableAlreadyHasFunctionLiteral.kt")
+        public void testInapplicableAlreadyHasFunctionLiteral() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/inapplicableAlreadyHasFunctionLiteral.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inapplicableOptionalParametersAfter.kt")
         public void testInapplicableOptionalParametersAfter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/inapplicableOptionalParametersAfter.kt");

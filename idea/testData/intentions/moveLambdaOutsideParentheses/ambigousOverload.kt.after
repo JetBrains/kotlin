@@ -3,7 +3,7 @@
 // ERROR: Unresolved reference: it
 
 fun foo() {
-    bar <caret>{ it }
+    bar<caret> { it }
 }
 
 fun bar(a: Int = 0, f: (Int) -> Int) { }

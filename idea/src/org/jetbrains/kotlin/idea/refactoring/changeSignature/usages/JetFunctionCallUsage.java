@@ -391,8 +391,9 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             element.deleteChildRange(KotlinPackage.first(lambdaArguments), KotlinPackage.last(lambdaArguments));
         }
 
+        //TODO: this is not correct!
         JetValueArgument lastArgument = KotlinPackage.lastOrNull(newArgumentList.getArguments());
-        boolean hasTrailingLambdaInArgumentListAfter = lastArgument != null && lastArgument.getArgumentExpression() instanceof JetFunctionLiteralExpression;
+        boolean hasTrailingLambdaInArgumentListAfter = lastArgument != null && PsiPackage.unpackFunctionLiteral(lastArgument.getArgumentExpression()) != null;
 
         arguments = (JetValueArgumentList) arguments.replace(newArgumentList);
 
@@ -430,11 +431,11 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         if (hasTrailingLambdaInArgumentListAfter) {
-            JetCallElement newCallElement =
-                    (JetCallElement) (newElement instanceof JetQualifiedExpression
+            JetCallExpression newCallExpression =
+                    (JetCallExpression) (newElement instanceof JetQualifiedExpression
                                       ? ((JetQualifiedExpression) newElement).getSelectorExpression()
                                       : newElement);
-            PsiModificationUtilPackage.moveLambdaOutsideParentheses(newCallElement);
+            PsiModificationUtilPackage.moveFunctionLiteralOutsideParentheses(newCallExpression);
         }
     }
 

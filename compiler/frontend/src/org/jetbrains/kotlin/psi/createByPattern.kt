@@ -95,7 +95,10 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
     CodeEditUtil.setNodeGeneratedRecursively(expression.getNode(), false)
 
     for ((pointer, n) in pointers) {
-        val element = pointer.getElement()!!
+        var element = pointer.getElement()!!
+        if (element is JetFunctionLiteral) {
+            element = element.getParent() as JetFunctionLiteralExpression
+        }
         element.replace(args[n] as PsiElement)
     }
 

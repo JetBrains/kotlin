@@ -20,7 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveLambdaOutsideParentheses
+import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -29,9 +29,10 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Move lambda argument out of parentheses") {
     override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
-        val argument = element.getValueArgumentsInParentheses().lastOrNull() ?: return false
+        if (element.getFunctionLiteralArguments().isNotEmpty()) return false
+        val argument = element.getValueArguments().lastOrNull() ?: return false
         val expression = argument.getArgumentExpression() ?: return false
-        val functionLiteral = getFunctionLiteral(expression) ?: return false
+        val functionLiteral = expression.unpackFunctionLiteral() ?: return false
 
         val callee = element.getCalleeExpression()
         if (callee is JetSimpleNameExpression) {
@@ -54,15 +55,7 @@ public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<J
         return !bodyRange.containsInside(caretOffset)
     }
 
-    private fun getFunctionLiteral(expression: JetExpression?): JetFunctionLiteral? {
-        return when (expression) {
-            is JetFunctionLiteralExpression -> expression.getFunctionLiteral()
-            is JetLabeledExpression -> getFunctionLiteral(expression.getBaseExpression())
-            else -> null
-        }
-    }
-
     override fun applyTo(element: JetCallExpression, editor: Editor) {
-        element.moveLambdaOutsideParentheses()
+        element.moveFunctionLiteralOutsideParentheses()
     }
 }
