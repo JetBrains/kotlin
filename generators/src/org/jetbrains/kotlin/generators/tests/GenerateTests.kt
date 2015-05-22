@@ -612,11 +612,11 @@ fun main(args: Array<String>) {
         }
 
         testClass(javaClass<AbstractKotlinSteppingTest>()) {
-            model("debugger/tinyApp/src/stepInto/stepIntoAndSmartStepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
-            model("debugger/tinyApp/src/stepInto/stepIntoAndSmartStepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
-            model("debugger/tinyApp/src/stepInto/stepInto", testMethod = "doStepIntoTest", testClassName = "StepIntoOnly")
-            model("debugger/tinyApp/src/stepOut", testMethod = "doStepOutTest")
-            model("debugger/tinyApp/src/filters", testMethod = "doStepIntoTest")
+            model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", testMethod = "doStepIntoTest", testClassName = "StepInto")
+            model("debugger/tinyApp/src/stepping/stepIntoAndSmartStepInto", testMethod = "doSmartStepIntoTest", testClassName = "SmartStepInto")
+            model("debugger/tinyApp/src/stepping/stepInto", testMethod = "doStepIntoTest", testClassName = "StepIntoOnly")
+            model("debugger/tinyApp/src/stepping/stepOut", testMethod = "doStepOutTest")
+            model("debugger/tinyApp/src/stepping/filters", testMethod = "doStepIntoTest")
         }
 
         testClass(javaClass<AbstractKotlinEvaluateExpressionTest>()) {

@@ -1,6 +1,6 @@
 package classFromAnotherPackage
 
-import stepInto.MyJavaClass
+import forTests.MyJavaClass
 
 fun main(args: Array<String>) {
     //Breakpoint!
@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
 }
 
 // EXPRESSION: MyJavaClass()
-// RESULT: instance of stepInto.MyJavaClass(id=ID): LstepInto/MyJavaClass;
+// RESULT: instance of forTests.MyJavaClass(id=ID): LforTests/MyJavaClass;
 
-// EXPRESSION: stepInto.MyJavaClass()
-// RESULT: instance of stepInto.MyJavaClass(id=ID): LstepInto/MyJavaClass;
+// EXPRESSION: forTests.MyJavaClass()
+// RESULT: instance of forTests.MyJavaClass(id=ID): LforTests/MyJavaClass;

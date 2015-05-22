@@ -1,4 +1,4 @@
-package stepInto;
+package forTests;
 
 import org.jetbrains.annotations.NotNull;
 

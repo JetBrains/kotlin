@@ -1,6 +1,6 @@
 package stepIntoSpecificKotlinClasses
 
-import stepInto.MyJavaClass
+import forTests.MyJavaClass
 
 fun main(args: Array<String>) {
     val myClass = MyJavaClass()

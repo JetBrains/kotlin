@@ -3,7 +3,7 @@ LineBreakpoint created at classFromAnotherPackage.kt:7
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 classFromAnotherPackage.kt:7
 Compile bytecode for MyJavaClass()
-Compile bytecode for stepInto.MyJavaClass()
+Compile bytecode for forTests.MyJavaClass()
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

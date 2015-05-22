@@ -32,38 +32,34 @@ import com.intellij.debugger.settings.DebuggerSettings
 
 public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
     protected fun doStepIntoTest(path: String) {
-        val fileText = FileUtil.loadFile(File(path))
-
-        configureSettings(fileText)
-
-        createDebugProcess(path)
-        val count = findStringWithPrefixes(fileText, "// STEP_INTO: ")?.toInt() ?: 1
-
-        for (i in 1..count) {
-            onBreakpoint { stepInto() }
-        }
-
-        finish()
+        doTest(path, "STEP_INTO")
     }
 
     protected fun doStepOutTest(path: String) {
+        doTest(path, "STEP_OUT")
+    }
+
+    protected fun doSmartStepIntoTest(path: String) {
+        doTest(path, "SMART_STEP_INTO")
+    }
+
+    private fun doTest(path: String, command: String) {
         val fileText = FileUtil.loadFile(File(path))
 
         configureSettings(fileText)
 
         createDebugProcess(path)
-        val count = findStringWithPrefixes(fileText, "// STEP_OUT: ")?.toInt() ?: 1
 
-        for (i in 1..count) {
-            onBreakpoint { stepOut() }
+        for (i in 1..(getPrefixedInt(fileText, "// $command: ") ?: 1)) {
+            onBreakpoint {
+                when(command) {
+                    "STEP_INTO" -> stepInto()
+                    "STEP_OUT" -> stepOut()
+                    "SMART_STEP_INTO" -> smartStepInto()
+                }
+            }
         }
 
-        finish()
-    }
-
-    protected fun doSmartStepIntoTest(path: String) {
-        createDebugProcess(path)
-        onBreakpoint { smartStepInto() }
         finish()
     }
 
