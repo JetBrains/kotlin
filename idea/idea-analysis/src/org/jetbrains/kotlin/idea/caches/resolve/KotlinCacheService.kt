@@ -72,11 +72,12 @@ public class KotlinCacheService(val project: Project) {
                 return cache.getLazyResolveSession(file).getScopeProvider().getFileScope(file)
             }
 
-            override fun resolveImportReference(file: JetFile, fqName: FqName): Collection<DeclarationDescriptor> {
+            override fun resolveImportReference(file: JetFile, fqName: FqName, isDefaultImport: Boolean): Collection<DeclarationDescriptor> {
                 val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
                 val moduleDescriptor = findModuleDescriptor(file)
-                val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
-                val resolver = cache.getLazyResolveSession(file).getQualifiedExpressionResolver()
+                val resolveSession = cache.getLazyResolveSession(file)
+                val scope = JetModuleUtil.getImportsResolutionScope(moduleDescriptor, !isDefaultImport)
+                val resolver = resolveSession.getQualifiedExpressionResolver()
                 return resolver.processImportReference(
                         importDirective, scope, scope, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
             }

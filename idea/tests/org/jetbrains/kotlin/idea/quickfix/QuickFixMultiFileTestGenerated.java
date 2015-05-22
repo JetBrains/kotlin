@@ -889,6 +889,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             public void testAllFilesPresentInImports() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/imports"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
             }
+
+            @TestMetadata("rootPackage.before.Main.kt")
+            public void testRootPackage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/imports/rootPackage.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/wholeProject")

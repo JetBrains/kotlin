@@ -310,7 +310,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             = this == KotlinReferenceData.Kind.EXTENSION_FUNCTION || this == KotlinReferenceData.Kind.EXTENSION_PROPERTY
 
     private fun findImportableDescriptors(fqName: FqName, file: JetFile): Collection<DeclarationDescriptor> {
-        return file.getResolutionFacade().resolveImportReference(file, fqName)
+        return file.getResolutionFacade().resolveImportReference(file, fqName, isDefaultImport = true/*TODO: temporary hack until we don't have ability to insert qualified reference into root package*/)
     }
 
     private fun findCallableToImport(fqName: FqName, file: JetFile): CallableDescriptor?
