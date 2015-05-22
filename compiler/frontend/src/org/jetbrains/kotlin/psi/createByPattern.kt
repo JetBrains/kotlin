@@ -30,13 +30,19 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.LinkedHashMap
 
-public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): JetExpression {
+public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): JetExpression
+        = createByPattern(pattern, *args) { createExpression(it) }
+
+public fun <TDeclaration : JetDeclaration> JetPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
+        = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
+
+public fun <TElement : JetElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
     val (processedText, allPlaceholders) = processPattern(pattern, args)
 
-    var expression = createExpression(processedText.trim())
-    val project = expression.getProject()
+    var resultElement = factory(processedText.trim())
+    val project = resultElement.getProject()
 
-    val start = expression.startOffset
+    val start = resultElement.startOffset
 
     val pointerManager = SmartPointerManager.getInstance(project)
 
@@ -52,7 +58,7 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
         }
 
         for ((range, text) in placeholders) {
-            val token = expression.findElementAt(range.getStartOffset())!!
+            val token = resultElement.findElementAt(range.getStartOffset())!!
             for (element in token.parents()) {
                 val elementRange = element.getTextRange().shiftRight(-start)
                 if (elementRange == range && expectedElementType.isInstance(element)) {
@@ -79,20 +85,20 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
 
     // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)
     if (stringPlaceholderRanges.none()) {
-        expression = codeStyleManager.reformat(expression, true) as JetExpression
+        resultElement = codeStyleManager.reformat(resultElement, true) as TElement
     }
     else {
-        var bound = expression.endOffset - 1
+        var bound = resultElement.endOffset - 1
         for (range in stringPlaceholderRanges) {
             // we extend reformatting range by 1 to the right because otherwise some of spaces are not reformatted
-            expression = codeStyleManager.reformatRange(expression, range.getEndOffset() + start, bound + 1, true) as JetExpression
+            resultElement = codeStyleManager.reformatRange(resultElement, range.getEndOffset() + start, bound + 1, true) as TElement
             bound = range.getStartOffset() + start
         }
-        expression = codeStyleManager.reformatRange(expression, start, bound + 1, true) as JetExpression
+        resultElement = codeStyleManager.reformatRange(resultElement, start, bound + 1, true) as TElement
     }
 
     // do not reformat the whole expression in PostprocessReformattingAspect
-    CodeEditUtil.setNodeGeneratedRecursively(expression.getNode(), false)
+    CodeEditUtil.setNodeGeneratedRecursively(resultElement.getNode(), false)
 
     for ((pointer, n) in pointers) {
         var element = pointer.getElement()!!
@@ -102,9 +108,9 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
         element.replace(args[n] as PsiElement)
     }
 
-    codeStyleManager.adjustLineIndent(expression.getContainingFile(), expression.getTextRange())
+    codeStyleManager.adjustLineIndent(resultElement.getContainingFile(), resultElement.getTextRange())
 
-    return expression
+    return resultElement
 }
 
 private data class Placeholder(val range: TextRange, val text: String)
@@ -182,22 +188,22 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
     return PatternData(text, ranges)
 }
 
-public class ExpressionBuilder {
+public class BuilderByPattern<TElement> {
     private val patternBuilder = StringBuilder()
     private val arguments = ArrayList<Any>()
 
-    public fun appendFixedText(text: String): ExpressionBuilder {
+    public fun appendFixedText(text: String): BuilderByPattern<TElement> {
         patternBuilder.append(text)
         return this
     }
 
-    public fun appendNonFormattedText(text: String): ExpressionBuilder {
+    public fun appendNonFormattedText(text: String): BuilderByPattern<TElement> {
         patternBuilder.append("$" + arguments.size())
         arguments.add(text)
         return this
     }
 
-    public fun appendExpression(expression: JetExpression?): ExpressionBuilder {
+    public fun appendExpression(expression: JetExpression?): BuilderByPattern<TElement> {
         if (expression != null) {
             patternBuilder.append("$" + arguments.size())
             arguments.add(expression)
@@ -205,7 +211,7 @@ public class ExpressionBuilder {
         return this
     }
 
-    public fun appendTypeReference(typeRef: JetTypeReference?): ExpressionBuilder {
+    public fun appendTypeReference(typeRef: JetTypeReference?): BuilderByPattern<TElement> {
         if (typeRef != null) {
             patternBuilder.append("$" + arguments.size())
             arguments.add(typeRef)
@@ -213,13 +219,17 @@ public class ExpressionBuilder {
         return this
     }
 
-    public fun createExpression(factory: JetPsiFactory): JetExpression {
-        return factory.createExpressionByPattern(patternBuilder.toString(), *arguments.toArray())
+    public fun create(factory: (String, Array<out Any>) -> TElement): TElement {
+        return factory(patternBuilder.toString(), arguments.toArray())
     }
 }
 
-public fun JetPsiFactory.buildExpression(build: ExpressionBuilder.() -> Unit): JetExpression {
-    val builder = ExpressionBuilder()
+public fun JetPsiFactory.buildExpression(build: BuilderByPattern<JetExpression>.() -> Unit): JetExpression {
+    return buildByPattern({ pattern, args -> this.createExpressionByPattern(pattern, *args) }, build)
+}
+
+public fun <TElement> buildByPattern(factory: (String, Array<out Any>) -> TElement, build: BuilderByPattern<TElement>.() -> Unit): TElement {
+    val builder = BuilderByPattern<TElement>()
     builder.build()
-    return builder.createExpression(this)
+    return builder.create(factory)
 }

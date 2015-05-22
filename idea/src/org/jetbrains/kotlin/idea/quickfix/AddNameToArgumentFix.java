@@ -147,7 +147,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
     private static JetValueArgument getParsedArgumentWithName(@NotNull String name, @NotNull JetValueArgument argument) {
         JetExpression argumentExpression = argument.getArgumentExpression();
         assert argumentExpression != null : "Argument should be already parsed.";
-        return JetPsiFactory(argument).createArgumentWithName(name, argumentExpression);
+        return JetPsiFactory(argument).createArgument(argumentExpression, name, false);
     }
 
     @NotNull

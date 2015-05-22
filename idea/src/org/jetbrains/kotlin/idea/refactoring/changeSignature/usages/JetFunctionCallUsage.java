@@ -369,7 +369,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 changeArgumentName(argumentNameExpression, parameterInfo);
                 //noinspection ConstantConditions
                 newArgument.replace(oldArgument instanceof JetFunctionLiteralArgument
-                                    ? psiFactory.createArgument(oldArgument.getArgumentExpression())
+                                    ? psiFactory.createArgument(oldArgument.getArgumentExpression(), null, false)
                                     : oldArgument.asElement());
             }
             // TODO: process default arguments in the middle

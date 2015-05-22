@@ -23,13 +23,14 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.LocalTimeCounter
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder.Target
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.io.PrintWriter
@@ -187,12 +188,12 @@ public class JetPsiFactory(private val project: Project) {
         return createDeclaration(text)
     }
 
-    public fun <T> createDeclaration(text: String): T {
+    public fun <TDeclaration : JetDeclaration> createDeclaration(text: String): TDeclaration {
         val file = createFile(text)
-        val dcls = file.getDeclarations()
-        assert(dcls.size() == 1) { "${dcls.size()} declarations in $text" }
-        [suppress("UNCHECKED_CAST")]
-        val result = dcls.first() as T
+        val declarations = file.getDeclarations()
+        assert(declarations.size() == 1) { "${declarations.size()} declarations in $text" }
+        @suppress("UNCHECKED_CAST")
+        val result = declarations.first() as TDeclaration
         return result
     }
 
@@ -361,13 +362,24 @@ public class JetPsiFactory(private val project: Project) {
             createExpressionByPattern("if ($0) $1", condition, thenExpr)) as JetIfExpression
     }
 
-    public fun createArgumentWithName(name: String?, argumentExpression: JetExpression): JetValueArgument {
-        val argumentText = (if (name != null) "$name = " else "") + argumentExpression.getText()
-        return createCallArguments("($argumentText)").getArguments().first()
-    }
+    public fun createArgument(expression: JetExpression, name: String? = null, isSpread: Boolean = false): JetValueArgument {
+        val argumentList = buildByPattern({ pattern, args -> createByPattern(pattern, *args) { createCallArguments(it) } }) {
+            appendFixedText("(")
 
-    public fun createArgument(argumentExpression: JetExpression): JetValueArgument {
-        return createArgumentWithName(null, argumentExpression)
+            if (name != null) {
+                appendFixedText(Name.identifier(name).renderName())
+                appendFixedText("=")
+            }
+
+            if (isSpread) {
+                appendFixedText("*")
+            }
+
+            appendExpression(expression)
+
+            appendFixedText(")")
+        }
+        return argumentList.getArguments().single()
     }
 
     public fun createDelegatorToSuperCall(text: String): JetDelegatorToSuperCall {

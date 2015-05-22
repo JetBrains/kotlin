@@ -48,7 +48,7 @@ fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
 
     val psiFactory = JetPsiFactory(getProject())
     val argument = if (newCallExpression.getValueArgumentsInParentheses().any { it.getArgumentName() != null }) {
-        psiFactory.createArgumentWithName(functionLiteralArgumentName, replacement)
+        psiFactory.createArgument(replacement, functionLiteralArgumentName)
     }
     else {
         psiFactory.createArgument(replacement)
