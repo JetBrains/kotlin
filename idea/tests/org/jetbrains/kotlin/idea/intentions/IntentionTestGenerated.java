@@ -4921,6 +4921,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/moveLambdaOutsideParentheses"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("ambigousOverload.kt")
+        public void testAmbigousOverload() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/ambigousOverload.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionalValueCall.kt")
+        public void testFunctionalValueCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/functionalValueCall.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("inapplicable1.kt")
         public void testInapplicable1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/inapplicable1.kt");
@@ -4936,6 +4948,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("inapplicable3.kt")
         public void testInapplicable3() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/inapplicable3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableOptionalParametersAfter.kt")
+        public void testInapplicableOptionalParametersAfter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/moveLambdaOutsideParentheses/inapplicableOptionalParametersAfter.kt");
             doTest(fileName);
         }
 

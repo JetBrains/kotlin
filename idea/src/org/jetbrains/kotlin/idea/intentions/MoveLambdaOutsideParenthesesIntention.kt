@@ -17,16 +17,38 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveLambdaOutsideParentheses
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class MoveLambdaOutsideParenthesesIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Move lambda argument out of parentheses") {
     override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
         val argument = element.getValueArgumentsInParentheses().lastOrNull() ?: return false
         val expression = argument.getArgumentExpression() ?: return false
         val functionLiteral = getFunctionLiteral(expression) ?: return false
+
+        val callee = element.getCalleeExpression()
+        if (callee is JetSimpleNameExpression) {
+            val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+            val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }
+                          ?: bindingContext[BindingContext.AMBIGUOUS_REFERENCE_TARGET, callee]
+                          ?: listOf()
+            val candidates = targets.filterIsInstance<FunctionDescriptor>()
+            // if there are functions among candidates but none of them have last function parameter then not show the intention
+            if (candidates.isNotEmpty() && candidates.none {
+                val lastParameter = it.getValueParameters().lastOrNull()
+                lastParameter != null && KotlinBuiltIns.isFunctionOrExtensionFunctionType(lastParameter.getType())
+            }) {
+                return false
+            }
+        }
+
         if (caretOffset < argument.asElement().startOffset) return false
         val bodyRange = functionLiteral.getBodyExpression()?.getTextRange() ?: return true
         return !bodyRange.containsInside(caretOffset)
