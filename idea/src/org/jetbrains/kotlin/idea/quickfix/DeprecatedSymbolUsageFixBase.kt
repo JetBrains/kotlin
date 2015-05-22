@@ -154,10 +154,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 usages.forEach { it.put(PARAMETER_USAGE_KEY, parameter) }
             }
 
-            var expression = replacement.expression
-
             //TODO: this@
-            for (thisExpression in expression.collectDescendantsOfType<JetThisExpression>()) {
+            for (thisExpression in replacement.expression.collectDescendantsOfType<JetThisExpression>()) {
                 if (receiver != null) {
                     thisExpression.replace(receiver)
                 }
@@ -180,7 +178,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 argument.expression.put(PARAMETER_VALUE_KEY, parameter)
 
                 val originalParameter = parameter.getOriginal()
-                val usages = expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_USAGE_KEY] == originalParameter }
+                val usages = replacement.expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_USAGE_KEY] == originalParameter }
                 usages.forEach {
                     if (argument.isNamed) {
                         (it.getParent() as? JetValueArgument)?.mark(MAKE_ARGUMENT_NAMED_KEY)
@@ -195,28 +193,30 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
-            unwrapDefaultValues(expression)
+            unwrapDefaultValues(replacement.expression)
+
+            val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToReplace, bindingContext)
 
             if (qualifiedExpression is JetSafeQualifiedExpression) {
-                expression = expression.wrapExpressionForSafeCall(expressionToReplace, receiver!!, receiverType, bindingContext)
+                wrapper.wrapExpressionForSafeCall(receiver!!, receiverType)
             }
             else if (callExpression is JetBinaryExpression && callExpression.getOperationToken() == JetTokens.IDENTIFIER) {
-                expression = expression.keepInfixFormIfPossible()
+                wrapper.keepInfixFormIfPossible()
             }
 
             if (receiver != null) {
-                val thisReplaced = expression.collectDescendantsOfType<JetExpression> { it[RECEIVER_VALUE_KEY] }
+                val thisReplaced = wrapper.expression.collectDescendantsOfType<JetExpression> { it[RECEIVER_VALUE_KEY] }
                 if (receiver.shouldKeepValue(thisReplaced.size())) {
-                    expression = expression.introduceValue(receiver, receiverType, expressionToReplace, bindingContext, thisReplaced)
+                    wrapper.introduceValue(receiver, receiverType, thisReplaced)
                 }
             }
 
             for ((parameter, value, valueType) in introduceValuesForParameters) {
-                val usagesReplaced = expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_VALUE_KEY] == parameter }
-                expression = expression.introduceValue(value, valueType, expressionToReplace, bindingContext, usagesReplaced, nameSuggestion = parameter.getName().asString())
+                val usagesReplaced = wrapper.expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_VALUE_KEY] == parameter }
+                wrapper.introduceValue(value, valueType, usagesReplaced, nameSuggestion = parameter.getName().asString())
             }
 
-            var result = expressionToReplace.replace(expression) as JetExpression
+            var result = expressionToReplace.replace(wrapper.expression) as JetExpression
 
             //TODO: drop import of old function (if not needed anymore)?
 
@@ -227,178 +227,44 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 ImportInsertHelper.getInstance(project).importDescriptor(file, descriptorToImport)
             }
 
-            // TODO: process introduced variables too
-            introduceNamedArguments(result)
-
-            // TODO: process introduced variables too
-            restoreFunctionLiteralArguments(result)
-
-            //TODO: do this earlier
-            dropArgumentsForDefaultValues(result)
-
-            val shortenFilter = { element: PsiElement ->
-                if (element[USER_CODE_KEY]) {
-                    ShortenReferences.FilterResult.SKIP
-                }
-                else {
-                    val thisReceiver = (element as? JetQualifiedExpression)?.getReceiverExpression() as? JetThisExpression
-                    if (thisReceiver != null && thisReceiver[USER_CODE_KEY]) // don't remove explicit 'this' coming from user's code
-                        ShortenReferences.FilterResult.GO_INSIDE
-                    else
-                        ShortenReferences.FilterResult.PROCESS
-                }
-            }
-            result = ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(result, shortenFilter) as JetExpression
-
-            // TODO: process introduced variables too
-            simplifySpreadArrayOfArguments(result)
-
-            // clean up user data
-            //TODO: not correct - we do not process introduced declarations before!!!
-            result.forEachDescendantOfType<JetExpression> {
-                it.clear(USER_CODE_KEY)
-                it.clear(PARAMETER_USAGE_KEY)
-                it.clear(PARAMETER_VALUE_KEY)
-                it.clear(RECEIVER_VALUE_KEY)
-                it.clear(DEFAULT_PARAMETER_VALUE_KEY)
-                it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
-            }
-            result.forEachDescendantOfType<JetValueArgument> {
-                it.clear(MAKE_ARGUMENT_NAMED_KEY)
-            }
+            result = postProcessInsertedExpression(result, wrapper.addedStatements)
 
             return result
         }
 
-        private fun JetExpression.wrapExpressionForSafeCall(
-                expressionToReplace: JetExpression,
-                receiver: JetExpression,
-                receiverType: JetType?,
-                bindingContext: BindingContext
-        ): JetExpression {
-            val psiFactory = JetPsiFactory(this)
-            val qualified = this as? JetQualifiedExpression
+        private fun ConstructedExpressionWrapper.wrapExpressionForSafeCall(receiver: JetExpression, receiverType: JetType?) {
+            val qualified = expression as? JetQualifiedExpression
             if (qualified != null) {
                 if (qualified.getReceiverExpression()[RECEIVER_VALUE_KEY]) {
-                    if (qualified is JetSafeQualifiedExpression) return this // already safe
+                    if (qualified is JetSafeQualifiedExpression) return // already safe
                     val selector = qualified.getSelectorExpression()
                     if (selector != null) {
-                        return psiFactory.createExpressionByPattern("$0?.$1", receiver, selector)
+                        expression = psiFactory.createExpressionByPattern("$0?.$1", receiver, selector)
+                        return
                     }
                 }
             }
 
-            if (expressionToReplace.isUsedAsExpression(bindingContext)) {
-                val thisReplaced = this.collectDescendantsOfType<JetExpression> { it[RECEIVER_VALUE_KEY] }
-                return this.introduceValue(receiver, receiverType, expressionToReplace, bindingContext, thisReplaced, safeCall = true)
+            if (expressionToBeReplaced.isUsedAsExpression(bindingContext)) {
+                val thisReplaced = expression.collectDescendantsOfType<JetExpression> { it[RECEIVER_VALUE_KEY] }
+                introduceValue(receiver, receiverType, thisReplaced, safeCall = true)
             }
             else {
-                return psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", receiver, this)
+                expression = psiFactory.createExpressionByPattern("if ($0 != null) { $1 }", receiver, expression)
             }
         }
 
-        private fun JetExpression.keepInfixFormIfPossible(): JetExpression {
-            if (this !is JetDotQualifiedExpression) return this
-            val receiver = getReceiverExpression()
-            if (!receiver[RECEIVER_VALUE_KEY]) return this
-            val call = getSelectorExpression() as? JetCallExpression ?: return this
-            val nameExpression = call.getCalleeExpression() as? JetSimpleNameExpression ?: return this
-            val argument = call.getValueArguments().singleOrNull() ?: return this
-            if (argument.getArgumentName() != null) return this
-            val argumentExpression = argument.getArgumentExpression() ?: return this
-            return JetPsiFactory(this).createExpressionByPattern("$0 ${nameExpression.getText()} $1", receiver, argumentExpression)
+        private fun ConstructedExpressionWrapper.keepInfixFormIfPossible() {
+            val dotQualified = expression as? JetDotQualifiedExpression ?: return
+            val receiver = dotQualified.getReceiverExpression()
+            if (!receiver[RECEIVER_VALUE_KEY]) return
+            val call = dotQualified.getSelectorExpression() as? JetCallExpression ?: return
+            val nameExpression = call.getCalleeExpression() as? JetSimpleNameExpression ?: return
+            val argument = call.getValueArguments().singleOrNull() ?: return
+            if (argument.getArgumentName() != null) return
+            val argumentExpression = argument.getArgumentExpression() ?: return
+            expression = psiFactory.createExpressionByPattern("$0 ${nameExpression.getText()} $1", receiver, argumentExpression)
         }
-
-        private fun JetExpression.introduceValue(
-                value: JetExpression,
-                valueType: JetType?,
-                insertDeclarationsBefore: JetExpression,
-                bindingContext: BindingContext,
-                usages: Collection<JetExpression>,
-                nameSuggestion: String? = null,
-                safeCall: Boolean = false
-        ): JetExpression {
-            assert(usages.all { isAncestor(it, strict = true) })
-
-            val psiFactory = JetPsiFactory(this)
-
-            fun nameInCode(name: String) = Name.identifier(name).renderName()
-
-            fun replaceUsages(name: String) {
-                val nameInCode = psiFactory.createExpression(nameInCode(name))
-                for (usage in usages) {
-                    usage.replace(nameInCode)
-                }
-            }
-
-            fun suggestName(validator: JetNameValidator): String {
-                return if (nameSuggestion != null)
-                    validator.validateName(nameSuggestion)
-                else
-                    JetNameSuggester.suggestNamesForExpression(value, validator, "t").first()
-            }
-
-            // checks that name is used (without receiver) inside this expression but not inside usages that will be replaced
-            fun isNameUsed(name: String) = collectNameUsages(this, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
-
-            if (!safeCall) {
-                val block = insertDeclarationsBefore.getParent() as? JetBlockExpression
-                if (block != null) {
-                    val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, insertDeclarationsBefore]
-
-                    if (usages.isNotEmpty()) {
-                        var explicitType: JetType? = null
-                        if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
-                            val valueTypeWithoutExpectedType = value.analyzeInContext(
-                                    resolutionScope,
-                                    dataFlowInfo = bindingContext.getDataFlowInfo(insertDeclarationsBefore)
-                            ).getType(value)
-                            if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
-                                explicitType = valueType
-                            }
-                        }
-
-                        val name = suggestName(object : JetNameValidator() {
-                            override fun validateInner(name: String): Boolean {
-                                return resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
-                            }
-                        })
-
-                        var declaration = psiFactory.createDeclaration<JetVariableDeclaration>("val ${nameInCode(name)} = " + value.getText())
-                        declaration = block.addBefore(declaration, insertDeclarationsBefore) as JetVariableDeclaration
-                        block.addBefore(psiFactory.createNewLine(), insertDeclarationsBefore)
-
-                        if (explicitType != null) {
-                            declaration.setType(explicitType)
-                        }
-
-                        replaceUsages(name)
-                    }
-                    else {
-                        block.addBefore(value, insertDeclarationsBefore)
-                        block.addBefore(psiFactory.createNewLine(), insertDeclarationsBefore)
-                    }
-                    return this
-                }
-            }
-
-            val dot = if (safeCall) "?." else "."
-
-            if (!isNameUsed("it")) {
-                replaceUsages("it")
-                return psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, this)
-            }
-            else {
-                val name = suggestName(object : JetNameValidator() {
-                    override fun validateInner(name: String) = !isNameUsed(name)
-                })
-                replaceUsages(name)
-                return psiFactory.createExpressionByPattern("$0${dot}let { ${nameInCode(name)} -> $1 }", value, this)
-            }
-        }
-
-        private fun collectNameUsages(scope: JetExpression, name: String)
-                = scope.collectDescendantsOfType<JetSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
 
         private fun JetExpression?.shouldKeepValue(usageCount: Int): Boolean {
             if (usageCount == 1) return false
@@ -491,6 +357,56 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
                 else -> error("Unknown argument type: $resolvedArgument")
             }
+        }
+
+        private fun postProcessInsertedExpression(result: JetExpression, additionalStatements: Collection<JetExpression>): JetExpression {
+            var allExpressions = listOf(result) + additionalStatements
+
+            allExpressions.forEach {
+                introduceNamedArguments(it)
+
+                restoreFunctionLiteralArguments(it)
+
+                //TODO: do this earlier
+                dropArgumentsForDefaultValues(it)
+            }
+
+
+            val shortenFilter = { element: PsiElement ->
+                if (element[USER_CODE_KEY]) {
+                    ShortenReferences.FilterResult.SKIP
+                }
+                else {
+                    val thisReceiver = (element as? JetQualifiedExpression)?.getReceiverExpression() as? JetThisExpression
+                    if (thisReceiver != null && thisReceiver[USER_CODE_KEY]) // don't remove explicit 'this' coming from user's code
+                        ShortenReferences.FilterResult.GO_INSIDE
+                    else
+                        ShortenReferences.FilterResult.PROCESS
+                }
+            }
+
+            allExpressions = allExpressions.map {
+                ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(it, shortenFilter) as JetExpression
+            }
+
+            allExpressions.forEach {
+                simplifySpreadArrayOfArguments(it)
+
+                // clean up user data
+                it.forEachDescendantOfType<JetExpression> {
+                    it.clear(USER_CODE_KEY)
+                    it.clear(PARAMETER_USAGE_KEY)
+                    it.clear(PARAMETER_VALUE_KEY)
+                    it.clear(RECEIVER_VALUE_KEY)
+                    it.clear(DEFAULT_PARAMETER_VALUE_KEY)
+                    it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
+                }
+                it.forEachDescendantOfType<JetValueArgument> {
+                    it.clear(MAKE_ARGUMENT_NAMED_KEY)
+                }
+            }
+
+            return allExpressions.first()
         }
 
         private fun introduceNamedArguments(result: JetExpression) {
@@ -680,5 +596,103 @@ public abstract class DeprecatedSymbolUsageFixBase(
         // this key is used on JetValueArgument
         private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
     }
-}
 
+    class ConstructedExpressionWrapper(
+            var expression: JetExpression,
+            val expressionToBeReplaced: JetExpression,
+            val bindingContext: BindingContext
+    ) {
+        val addedStatements = ArrayList<JetExpression>()
+
+        val psiFactory = JetPsiFactory(expressionToBeReplaced)
+
+        public fun introduceValue(
+                value: JetExpression,
+                valueType: JetType?,
+                usages: Collection<JetExpression>,
+                nameSuggestion: String? = null,
+                safeCall: Boolean = false
+        ) {
+            assert(usages.all { expression.isAncestor(it, strict = true) })
+
+            fun nameInCode(name: String) = Name.identifier(name).renderName()
+
+            fun replaceUsages(name: String) {
+                val nameInCode = psiFactory.createExpression(nameInCode(name))
+                for (usage in usages) {
+                    usage.replace(nameInCode)
+                }
+            }
+
+            fun suggestName(validator: JetNameValidator): String {
+                return if (nameSuggestion != null)
+                    validator.validateName(nameSuggestion)
+                else
+                    JetNameSuggester.suggestNamesForExpression(value, validator, "t").first()
+            }
+
+            // checks that name is used (without receiver) inside expression being constructed but not inside usages that will be replaced
+            fun isNameUsed(name: String) = collectNameUsages(expression, name).any { nameUsage -> usages.none { it.isAncestor(nameUsage) } }
+
+            if (!safeCall) {
+                val block = expressionToBeReplaced.getParent() as? JetBlockExpression
+                if (block != null) {
+                    val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expressionToBeReplaced]
+
+                    if (usages.isNotEmpty()) {
+                        var explicitType: JetType? = null
+                        if (valueType != null && !ErrorUtils.containsErrorType(valueType)) {
+                            val valueTypeWithoutExpectedType = value.analyzeInContext(
+                                    resolutionScope,
+                                    dataFlowInfo = bindingContext.getDataFlowInfo(expressionToBeReplaced)
+                            ).getType(value)
+                            if (valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)) {
+                                explicitType = valueType
+                            }
+                        }
+
+                        val name = suggestName(object : JetNameValidator() {
+                            override fun validateInner(name: String): Boolean {
+                                return resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
+                            }
+                        })
+
+                        var declaration = psiFactory.createDeclaration<JetVariableDeclaration>("val ${nameInCode(name)} = " + value.getText())
+                        declaration = block.addBefore(declaration, expressionToBeReplaced) as JetVariableDeclaration
+                        block.addBefore(psiFactory.createNewLine(), expressionToBeReplaced)
+
+                        if (explicitType != null) {
+                            declaration.setType(explicitType)
+                        }
+
+                        replaceUsages(name)
+
+                        addedStatements.add(declaration)
+                    }
+                    else {
+                        addedStatements.add(block.addBefore(value, expressionToBeReplaced) as JetExpression)
+                        block.addBefore(psiFactory.createNewLine(), expressionToBeReplaced)
+                    }
+                    return
+                }
+            }
+
+            val dot = if (safeCall) "?." else "."
+
+            expression = if (!isNameUsed("it")) {
+                replaceUsages("it")
+                psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, expression)
+            }
+            else {
+                val name = suggestName(object : JetNameValidator() {
+                    override fun validateInner(name: String) = !isNameUsed(name)
+                })
+                replaceUsages(name)
+                psiFactory.createExpressionByPattern("$0${dot}let { ${nameInCode(name)} -> $1 }", value, expression)
+            }
+        }
+
+        private fun collectNameUsages(scope: JetExpression, name: String)
+                = scope.collectDescendantsOfType<JetSimpleNameExpression> { it.getReceiverExpression() == null && it.getReferencedName() == name }
+    }
+}
