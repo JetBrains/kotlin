@@ -56,7 +56,7 @@ data class ReplaceWith(val expression: String, vararg val imports: String)
 object ReplaceWithAnnotationAnalyzer {
     public data class ReplacementExpression(
             val expression: JetExpression,
-            val imports: Collection<FqName>,
+            val descriptorsToImport: Collection<DeclarationDescriptor>,
             val parameterUsages: Map<ValueParameterDescriptor, Collection<JetExpression>>
     )
 
@@ -84,14 +84,15 @@ object ReplaceWithAnnotationAnalyzer {
         val psiFactory = JetPsiFactory(project)
         var expression = psiFactory.createExpression(annotation.expression)
 
-        val importFqNames = annotation.imports
+        val explicitlyImportedSymbols = annotation.imports
                 .filter { FqNameUnsafe.isValid(it) }
                 .map { FqNameUnsafe(it) }
                 .filter { it.isSafe() }
                 .mapTo(LinkedHashSet<FqName>()) { it.toSafe() }
+                .flatMap { resolutionFacade.resolveImportReference(file, it) }
+        val descriptorsToImport = explicitlyImportedSymbols.toArrayList()
 
         val symbolScope = getResolutionScope(symbolDescriptor)
-        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(file, it) }
         val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)
 
         val bindingContext = expression.analyzeInContext(scope)
@@ -103,10 +104,8 @@ object ReplaceWithAnnotationAnalyzer {
         expression.forEachDescendantOfType<JetSimpleNameExpression> { expression ->
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
-            if (target.canBeReferencedViaImport()) {
-                if (target.isExtension || expression.getReceiverExpression() == null) {
-                    importFqNames.addIfNotNull(target.importableFqName)
-                }
+            if (target.canBeReferencedViaImport() && (target.isExtension || expression.getReceiverExpression() == null)) {
+                descriptorsToImport.addIfNotNull(target)
             }
 
             if (expression.getReceiverExpression() == null) {
@@ -147,7 +146,7 @@ object ReplaceWithAnnotationAnalyzer {
             it.putCopyableUserData(parameterUsageKey, null)
         }
 
-        return ReplacementExpression(expression, importFqNames, parameterUsages)
+        return ReplacementExpression(expression, descriptorsToImport, parameterUsages)
     }
 
     private fun getResolutionScope(descriptor: DeclarationDescriptor): JetScope {
