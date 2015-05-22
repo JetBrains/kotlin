@@ -53,7 +53,7 @@ public abstract class KotlinAnnotationProvider {
 
         val annotatedKotlinElements: MutableMap<String, MutableSet<AnnotatedElementDescriptor>> = hashMapOf()
 
-        for (line in serializedAnnotations.split('\n')) {
+        for (line in serializedAnnotations.lines()) {
             if (line.isEmpty()) continue
             val lineParts = line.split(' ')
 
