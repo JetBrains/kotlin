@@ -23,6 +23,7 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.engine.evaluation.expression.*
+import com.intellij.diagnostic.LogMessageEx
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
@@ -149,7 +150,10 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             val attachments = arrayOf(attachmentByPsiFile(sourcePosition.getFile()),
                                       attachmentByPsiFile(codeFragment),
                                       Attachment("breakpoint.info", "line: ${sourcePosition.getLine()}"))
-            logger.error("Couldn't evaluate expression:\n" + ExceptionUtil.getThrowableText(e), mergeAttachments(*attachments))
+            logger.error(LogMessageEx.createEvent(
+                                "Couldn't evaluate expression",
+                                ExceptionUtil.getThrowableText(e),
+                                mergeAttachments(*attachments)))
 
             val cause = if (e.getMessage() != null) ": ${e.getMessage()}" else ""
             exception("An exception occurs during Evaluate Expression Action $cause")
