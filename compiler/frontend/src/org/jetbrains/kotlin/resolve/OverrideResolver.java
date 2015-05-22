@@ -844,7 +844,7 @@ public class OverrideResolver {
         }
     }
 
-    private static boolean shouldReportParameterNameOverrideWarning(
+    public static boolean shouldReportParameterNameOverrideWarning(
             @NotNull ValueParameterDescriptor parameterFromSubclass,
             @NotNull ValueParameterDescriptor parameterFromSuperclass
     ) {

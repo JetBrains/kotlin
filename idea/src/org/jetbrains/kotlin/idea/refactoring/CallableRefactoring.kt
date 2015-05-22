@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignature
 import org.jetbrains.kotlin.psi.JetDeclaration
 
 public abstract class CallableRefactoring<T: CallableDescriptor>(
@@ -60,6 +61,10 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
     private val LOG = Logger.getInstance(javaClass<CallableRefactoring<*>>())
 
     private val kind = (callableDescriptor as? CallableMemberDescriptor)?.getKind() ?: CallableMemberDescriptor.Kind.DECLARATION
+
+    protected open fun forcePerformForSelectedFunctionOnly(): Boolean {
+        return false
+    }
 
     private fun getClosestModifiableDescriptors(): Set<CallableDescriptor> {
         return when (kind) {
@@ -138,6 +143,11 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
         }
 
         val closestModifiableDescriptors = getClosestModifiableDescriptors()
+        if (forcePerformForSelectedFunctionOnly()) {
+            performRefactoring(closestModifiableDescriptors)
+            return true
+        }
+
         assert(!closestModifiableDescriptors.isEmpty(), "Should contain original declaration or some of its super declarations")
         val deepestSuperDeclarations =
                 (callableDescriptor as? CallableMemberDescriptor)?.let { OverrideResolver.getDeepestSuperDeclarations(it) }

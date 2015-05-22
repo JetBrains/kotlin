@@ -154,6 +154,11 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
                 return false;
             }
+
+            @Override
+            public boolean forcePerformForSelectedFunctionOnly() {
+                return false;
+            }
         };
     }
 

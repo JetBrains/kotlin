@@ -37,6 +37,10 @@ public trait JetChangeSignatureConfiguration {
     fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean {
         return false
     }
+
+    fun forcePerformForSelectedFunctionOnly(): Boolean {
+        return false
+    }
 }
 
 fun JetMethodDescriptor.modify(action: JetMutableMethodDescriptor.() -> Unit): JetMethodDescriptor {
@@ -62,6 +66,8 @@ public class JetChangeSignature(project: Project,
                                 commandName: String?): CallableRefactoring<FunctionDescriptor>(project, functionDescriptor, bindingContext, commandName) {
 
     private val LOG = Logger.getInstance(javaClass<JetChangeSignature>())
+
+    override fun forcePerformForSelectedFunctionOnly() = configuration.forcePerformForSelectedFunctionOnly()
 
     override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
         assert (descriptorsForChange.all { it is FunctionDescriptor }) {

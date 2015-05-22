@@ -243,6 +243,11 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                 public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
                     return true;
                 }
+
+                @Override
+                public boolean forcePerformForSelectedFunctionOnly() {
+                    return false;
+                }
             };
             BindingContext context = ResolvePackage.analyze(method, BodyResolveMode.FULL);
 

@@ -172,6 +172,11 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                 PsiElement onlyFunction = affectedFunctions.iterator().next();
                 return !hasTypeMismatches && !isConstructor() && !hasOtherUsages(onlyFunction);
             }
+
+            @Override
+            public boolean forcePerformForSelectedFunctionOnly() {
+                return false;
+            }
         };
     }
 

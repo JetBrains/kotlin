@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.OverrideResolver
 
 public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
@@ -41,7 +42,12 @@ public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
         assert(paramIndex != -1, { "couldn't find parameter in parent ${element.getElementTextWithContext()}" })
 
         val context = function.analyze()
-        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
+        val functionDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
+        val parameterDescriptor = functionDescriptor.getValueParameters()[paramIndex]
+
+        val parameterNameChangedOnOverride = parameterDescriptor.getOverriddenDescriptors().any {
+            overriddenParameter -> OverrideResolver.shouldReportParameterNameOverrideWarning(parameterDescriptor, overriddenParameter)
+        }
 
         val changeSignatureConfiguration = object : JetChangeSignatureConfiguration {
             override fun configure(originalDescriptor: JetMethodDescriptor, bindingContext: BindingContext): JetMethodDescriptor {
@@ -49,8 +55,10 @@ public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
             }
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
+
+            override fun forcePerformForSelectedFunctionOnly() = parameterNameChangedOnOverride
         }
 
-        runChangeSignature(element.getProject(), descriptor, changeSignatureConfiguration, context, element, "Rename parameter")
+        runChangeSignature(element.getProject(), functionDescriptor, changeSignatureConfiguration, context, element, "Rename parameter")
     }
 }

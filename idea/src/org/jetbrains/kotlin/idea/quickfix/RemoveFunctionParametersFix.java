@@ -79,6 +79,11 @@ public class RemoveFunctionParametersFix extends ChangeFunctionSignatureFix {
             public boolean performSilently(@NotNull Collection<? extends PsiElement> elements) {
                 return false;
             }
+
+            @Override
+            public boolean forcePerformForSelectedFunctionOnly() {
+                return false;
+            }
         }, bindingContext, context, getText());
     }
 }
