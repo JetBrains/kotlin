@@ -41,7 +41,7 @@ fun arrays(): List<GenericFunction> {
         doc { "Returns the last valid index for the array" }
         returns("Int")
         body {
-            "get() = size - 1"
+            "get() = size() - 1"
         }
     }
 

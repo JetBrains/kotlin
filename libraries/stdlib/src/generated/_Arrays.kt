@@ -275,53 +275,53 @@ public fun ShortArray.isNotEmpty(): Boolean {
  * Returns the last valid index for the array
  */
 public val <T> Array<out T>.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
 /**
  * Returns the last valid index for the array
  */
 public val BooleanArray.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
 /**
  * Returns the last valid index for the array
  */
 public val ByteArray.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
 /**
  * Returns the last valid index for the array
  */
 public val CharArray.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
 /**
  * Returns the last valid index for the array
  */
 public val DoubleArray.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
 /**
  * Returns the last valid index for the array
  */
 public val FloatArray.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
 /**
  * Returns the last valid index for the array
  */
 public val IntArray.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
 /**
  * Returns the last valid index for the array
  */
 public val LongArray.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
 /**
  * Returns the last valid index for the array
  */
 public val ShortArray.lastIndex: Int
-    get() = size - 1
+    get() = size() - 1
 
