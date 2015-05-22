@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -99,41 +100,35 @@ object ReplaceWithAnnotationAnalyzer {
 
         val parameterUsageKey = Key<ValueParameterDescriptor>("parameterUsageKey")
 
-        expression.accept(object : JetVisitorVoid(){
-            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
-                val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return
+        expression.forEachDescendantOfType<JetSimpleNameExpression> { expression ->
+            val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
-                if (target.canBeReferencedViaImport()) {
-                    if (target.isExtension || expression.getReceiverExpression() == null) {
-                        importFqNames.addIfNotNull(target.importableFqName)
-                    }
+            if (target.canBeReferencedViaImport()) {
+                if (target.isExtension || expression.getReceiverExpression() == null) {
+                    importFqNames.addIfNotNull(target.importableFqName)
+                }
+            }
+
+            if (expression.getReceiverExpression() == null) {
+                if (target is ValueParameterDescriptor && target.getContainingDeclaration() == symbolDescriptor) {
+                    expression.putCopyableUserData(parameterUsageKey, target)
                 }
 
-                if (expression.getReceiverExpression() == null) {
-                    if (target is ValueParameterDescriptor && target.getContainingDeclaration() == symbolDescriptor) {
-                        expression.putCopyableUserData(parameterUsageKey, target)
-                    }
-
-                    val resolvedCall = expression.getResolvedCall(bindingContext)
-                    if (resolvedCall != null && resolvedCall.getStatus().isSuccess()) {
-                        val receiver = if (resolvedCall.getResultingDescriptor().isExtension)
-                            resolvedCall.getExtensionReceiver()
-                        else
-                            resolvedCall.getDispatchReceiver()
-                        if (receiver is ThisReceiver) {
-                            val receiverExpression = receiver.asExpression(symbolScope, psiFactory)
-                            if (receiverExpression != null) {
-                                receiversToAdd.add(expression to receiverExpression)
-                            }
+                val resolvedCall = expression.getResolvedCall(bindingContext)
+                if (resolvedCall != null && resolvedCall.getStatus().isSuccess()) {
+                    val receiver = if (resolvedCall.getResultingDescriptor().isExtension)
+                        resolvedCall.getExtensionReceiver()
+                    else
+                        resolvedCall.getDispatchReceiver()
+                    if (receiver is ThisReceiver) {
+                        val receiverExpression = receiver.asExpression(symbolScope, psiFactory)
+                        if (receiverExpression != null) {
+                            receiversToAdd.add(expression to receiverExpression)
                         }
                     }
                 }
             }
-
-            override fun visitJetElement(element: JetElement) {
-                element.acceptChildren(this)
-            }
-        })
+        }
 
         for ((expr, receiverExpression) in receiversToAdd) {
             val expressionToReplace = expr.getParent() as? JetCallExpression ?: expr
@@ -147,11 +142,9 @@ object ReplaceWithAnnotationAnalyzer {
                 .map { parameter -> parameter to expression.collectDescendantsOfType<JetExpression> { it.getCopyableUserData(parameterUsageKey) == parameter } }
                 .toMap()
 
-        expression.accept(object : PsiRecursiveElementVisitor() {
-            override fun visitElement(element: PsiElement) {
-                element.putCopyableUserData(parameterUsageKey, null)
-            }
-        })
+        expression.forEachDescendantOfType<JetExpression> {
+            it.putCopyableUserData(parameterUsageKey, null)
+        }
 
         return ReplacementExpression(expression, importFqNames, parameterUsages)
     }
