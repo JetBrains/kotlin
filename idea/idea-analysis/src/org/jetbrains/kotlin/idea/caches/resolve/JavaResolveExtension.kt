@@ -46,12 +46,13 @@ public object JavaResolveExtension : CacheExtension<(PsiElement) -> Pair<JavaDes
 }
 
 fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor {
-    val resolver = JavaResolveExtension.getResolver(getProject(), this)
+    val method = getOriginalElement() as PsiMethod
+    val resolver = JavaResolveExtension.getResolver(method.getProject(), method)
     val methodDescriptor = when {
-        this.isConstructor() -> resolver.resolveConstructor(JavaConstructorImpl(this))
-        else -> resolver.resolveMethod(JavaMethodImpl(this))
+        method.isConstructor() -> resolver.resolveConstructor(JavaConstructorImpl(method))
+        else -> resolver.resolveMethod(JavaMethodImpl(method))
     }
-    assert(methodDescriptor != null) { "No descriptor found for " + getText() }
+    assert(methodDescriptor != null) { "No descriptor found for " + method.getText() }
 
     return methodDescriptor!!
 }

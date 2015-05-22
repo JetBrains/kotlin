@@ -330,10 +330,22 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                 ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(),
                                                           TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtil.NEW_AS_CONSTRUCTOR)
                 : myFixture.getElementAtCaret();
-        if (InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_MIRROR_ELEMENT")) {
+        boolean findByMirrorElement = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_MIRROR_ELEMENT");
+        boolean findByNavigationElement = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_NAVIGATION_ELEMENT");
+        if (findByMirrorElement && findByNavigationElement) {
+            fail("Incompatible directives");
+        }
+
+        if (findByMirrorElement) {
             assert originalElement instanceof PsiCompiledElement : "PsiCompiledElement is expected: " + originalElement;
             originalElement = ((PsiCompiledElement)originalElement).getMirror();
         }
+
+        if (findByNavigationElement) {
+            assert originalElement != null : "Original element is not found";
+            originalElement = originalElement.getNavigationElement();
+        }
+
         T caretElement = PsiTreeUtil.getParentOfType(originalElement, caretElementClass, false);
         assertNotNull(String.format("Element with type '%s' wasn't found at caret position", caretElementClass), caretElement);
 
