@@ -134,14 +134,14 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             val callExpression = resolvedCall.getCall().getCallElement() as JetExpression
             val qualifiedExpression = callExpression.getParent() as? JetQualifiedExpression
-            val expressionToReplace = qualifiedExpression ?: callExpression
+            val expressionToBeReplaced = qualifiedExpression ?: callExpression
 
             var receiver = element.getReceiverExpression()?.marked(USER_CODE_KEY)
             var receiverType = if (receiver != null) bindingContext.getType(receiver) else null
 
             if (receiver == null) {
                 val receiverValue = if (descriptor.isExtension) resolvedCall.getExtensionReceiver() else resolvedCall.getDispatchReceiver()
-                val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expressionToReplace]
+                val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, expressionToBeReplaced]
                 if (receiverValue is ThisReceiver && resolutionScope != null) {
                     receiver = receiverValue.asExpression(resolutionScope, psiFactory)
                     receiverType = receiverValue.getType()
@@ -195,7 +195,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             unwrapDefaultValues(replacement.expression)
 
-            val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToReplace, bindingContext)
+            val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToBeReplaced, bindingContext)
 
             if (qualifiedExpression is JetSafeQualifiedExpression) {
                 wrapper.wrapExpressionForSafeCall(receiver!!, receiverType)
@@ -216,7 +216,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 wrapper.introduceValue(value, valueType, usagesReplaced, nameSuggestion = parameter.getName().asString())
             }
 
-            var result = expressionToReplace.replace(wrapper.expression) as JetExpression
+            var result = expressionToBeReplaced.replace(wrapper.expression) as JetExpression
 
             //TODO: drop import of old function (if not needed anymore)?
 
