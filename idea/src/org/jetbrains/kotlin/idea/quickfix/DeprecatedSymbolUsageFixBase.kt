@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName
@@ -51,10 +52,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -241,6 +239,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             simplifySpreadArrayOfArguments(result)
 
+            restoreFunctionLiteralArguments(result)
+
             // clean up user data
             result.forEachDescendantOfType<JetExpression> {
                 it.clear(USER_CODE_KEY)
@@ -248,6 +248,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 it.clear(PARAMETER_VALUE_KEY)
                 it.clear(RECEIVER_VALUE_KEY)
                 it.clear(DEFAULT_PARAMETER_VALUE_KEY)
+                it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
             }
 
             return result
@@ -420,8 +421,12 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val resolvedArgument = resolvedCall.getValueArguments()[parameter]!!
             when (resolvedArgument) {
                 is ExpressionValueArgument -> {
-                    val expression = resolvedArgument.getValueArgument()!!.getArgumentExpression()!!
+                    val valueArgument = resolvedArgument.getValueArgument()!!
+                    val expression = valueArgument.getArgumentExpression()!!
                     expression.mark(USER_CODE_KEY)
+                    if (valueArgument is FunctionLiteralArgument) {
+                        expression.mark(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
+                    }
                     return Argument(expression, expression, bindingContext.getType(expression), isDefaultValue = false)
                 }
 
@@ -573,6 +578,32 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
         }
 
+        //TODO: do this before processing of optional parameters
+        private fun restoreFunctionLiteralArguments(expression: JetExpression) {
+            val callExpressions = ArrayList<JetCallExpression>()
+
+            expression.forEachDescendantOfType<JetExpression>( fun (expr: JetExpression) {
+                if (!expr[WAS_FUNCTION_LITERAL_ARGUMENT_KEY]) return
+                assert(expr.unpackFunctionLiteral() != null)
+
+                val argument = expr.getParent() as? JetValueArgument ?: return
+                if (argument is JetFunctionLiteralArgument) return
+                if (argument.isNamed()) return
+                val argumentList = argument.getParent() as? JetValueArgumentList ?: return
+                if (argument != argumentList.getArguments().last()) return
+                val callExpression = argumentList.getParent() as? JetCallExpression ?: return
+                if (callExpression.getFunctionLiteralArguments().isNotEmpty()) return
+
+                val resolvedCall = callExpression.getResolvedCall(callExpression.analyze(BodyResolveMode.PARTIAL)) ?: return
+                val argumentMatch = resolvedCall.getArgumentMapping(argument) as? ArgumentMatch ?: return
+                if (argumentMatch.valueParameter != resolvedCall.getResultingDescriptor().getValueParameters().last()) return
+
+                callExpressions.add(callExpression)
+            })
+
+            callExpressions.forEach { it.moveFunctionLiteralOutsideParentheses() }
+        }
+
         //TODO: making functions below private causes VerifyError
         fun <T: Any> PsiElement.get(key: Key<T>): T? = getCopyableUserData(key)
         fun PsiElement.get(key: Key<Unit>): Boolean = getCopyableUserData(key) != null
@@ -589,6 +620,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         private val PARAMETER_VALUE_KEY = Key<ValueParameterDescriptor>("PARAMETER_VALUE")
         private val RECEIVER_VALUE_KEY = Key<Unit>("RECEIVER_VALUE")
         private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
+        private val WAS_FUNCTION_LITERAL_ARGUMENT_KEY = Key<Unit>("WAS_FUNCTION_LITERAL_ARGUMENT")
     }
 }
 

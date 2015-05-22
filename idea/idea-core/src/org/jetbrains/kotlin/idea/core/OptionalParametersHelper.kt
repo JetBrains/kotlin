@@ -52,6 +52,7 @@ public object OptionalParametersHelper {
 
         val arguments = resolvedCall.getCall().getValueArguments()
         val argumentsToDrop = ArrayList<ValueArgument>()
+        //TODO: can drop arguments leaving last functional literal one (outside of parenthesis)
         for (argument in arguments.reverse()) {
             if (!canDrop(argument)) break // TODO: not correct because of named arguments
             if (!argument.matchesDefault(resolvedCall, parameterToDefaultValue)) break // TODO: not correct because of named arguments
