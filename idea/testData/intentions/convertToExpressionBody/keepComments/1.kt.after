@@ -1,0 +1,1 @@
+fun getText()<selection>: String</selection> = "xxx" //TODO

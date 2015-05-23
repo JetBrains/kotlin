@@ -1,0 +1,2 @@
+fun getText()<selection>: String</selection> = // let's return xxx
+        "xxx"

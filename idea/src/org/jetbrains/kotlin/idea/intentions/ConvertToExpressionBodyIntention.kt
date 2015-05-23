@@ -22,17 +22,15 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.CommentSaver
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import kotlin.platform.platformName
 
 public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependentIntention<JetDeclarationWithBody>(
         javaClass(), "Convert to expression body", firstElementOfTypeOnly = true
@@ -73,8 +71,13 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
         val omitType = declaration.hasDeclaredReturnType() && declaration is JetCallableDeclaration && canOmitType(declaration, value)
 
         val body = declaration.getBodyExpression()!!
+
+        val commentSaver = CommentSaver(body)
+
         declaration.addBefore(JetPsiFactory(declaration).createEQ(), body)
-        body.replace(value)
+        val newBody = body.replace(value)
+
+        commentSaver.restoreComments(newBody)
 
         if (omitType) {
             onFinish(declaration as JetCallableDeclaration)

@@ -3876,6 +3876,39 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/while.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("idea/testData/intentions/convertToExpressionBody/keepComments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class KeepComments extends AbstractIntentionTest {
+            @TestMetadata("1.kt")
+            public void test1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/keepComments/1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("2.kt")
+            public void test2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/keepComments/2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("3.kt")
+            public void test3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/keepComments/3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("4.kt")
+            public void test4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToExpressionBody/keepComments/4.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInKeepComments() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToExpressionBody/keepComments"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/intentions/convertToForEachFunctionCall")
