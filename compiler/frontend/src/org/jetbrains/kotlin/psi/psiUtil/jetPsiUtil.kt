@@ -646,11 +646,17 @@ public fun JetElement.getCalleeHighlightingRange(): TextRange {
     return TextRange(startOffset, annotationEntry.getCalleeExpression().endOffset)
 }
 
-public val PsiElement.startOffset: Int
-    get() = getTextRange().getStartOffset()
-
-public val PsiElement.endOffset: Int
-    get() = getTextRange().getEndOffset()
+public fun JetBlockExpression.contentRange(): PsiChildRange {
+    val first = (getLBrace()?.getNextSibling() ?: getFirstChild())
+                        ?.siblings(withItself = false)
+                        ?.firstOrNull { it !is PsiWhiteSpace }
+    val rBrace = getRBrace()
+    if (first == rBrace) return PsiChildRange.EMPTY
+    val last = rBrace!!
+            .siblings(forward = false, withItself = false)
+            .first { it !is PsiWhiteSpace }
+    return PsiChildRange(first, last)
+}
 
 // Annotations on labeled expression lies on it's base expression
 public fun JetExpression.getAnnotationEntries(): List<JetAnnotationEntry> {

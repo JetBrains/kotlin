@@ -3898,6 +3898,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("commentsInBody.kt")
+        public void testCommentsInBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/commentsInBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("commentsInBody2.kt")
+        public void testCommentsInBody2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/commentsInBody2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("iterativeElementTypeSpecified.kt")
         public void testIterativeElementTypeSpecified() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/iterativeElementTypeSpecified.kt");

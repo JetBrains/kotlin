@@ -143,8 +143,8 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
 
         if (thenBranch is JetBlockExpression) {
             val range = thenBranch.contentRange()
-            if (range != null) {
-                parent.addRangeAfter(range.first, range.second, ifExpression)
+            if (!range.isEmpty) {
+                parent.addRangeAfter(range.first, range.last, ifExpression)
                 parent.addAfter(factory.createNewLine(), ifExpression)
             }
         }
@@ -153,14 +153,6 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
             parent.addAfter(factory.createNewLine(), ifExpression)
         }
         return ifExpression
-    }
-
-    private fun JetBlockExpression.contentRange(): Pair<PsiElement, PsiElement>? {
-        val first = getLBrace()?.siblings(withItself = false)?.firstOrNull { it !is PsiWhiteSpace } ?: return null
-        val rBrace = getRBrace()
-        if (first == rBrace) return null
-        val last = rBrace!!.siblings(forward = false, withItself = false).first { it !is PsiWhiteSpace }
-        return Pair(first, last)
     }
 
     private fun exitStatementExecutedAfter(expression: JetExpression): JetExpression? {

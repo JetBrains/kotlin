@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
+import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getText
 
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>(javaClass(), "Replace with a forEach function call") {
     override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
@@ -35,7 +38,15 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
         val loopParameter = element.getLoopParameter()!!
 
         val functionBodyText = when (body) {
-            is JetBlockExpression -> body.getStatements().map { it.getText() }.joinToString("\n")
+            is JetBlockExpression -> {
+                val content = body.contentRange()
+                val text = content.getText()
+                if (content.last?.getNode()?.getElementType() == JetTokens.EOL_COMMENT)
+                    text + "\n"
+                else
+                    text
+            }
+
             else -> body.getText()
         }
 

@@ -1,0 +1,7 @@
+fun foo() {
+    val list = 1..4
+
+    list.forEach { x ->// comment
+        var v = x + 1
+    }
+}
