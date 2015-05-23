@@ -45,7 +45,7 @@ class PartialBodyResolveFilter(
     private val nothingFunctionNames = HashSet(probablyNothingCallableNames.functionNames())
     private val nothingVariableNames = HashSet(probablyNothingCallableNames.propertyNames())
 
-    override val filter: ((JetElement) -> Boolean)? = { it is JetExpression && statementMarks.statementMark(it) != MarkLevel.SKIP }
+    override val filter: ((JetExpression) -> Boolean)? = { statementMarks.statementMark(it) != MarkLevel.SKIP }
 
     init {
         assert(declaration.isAncestor(elementToResolve))

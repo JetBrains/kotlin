@@ -403,7 +403,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
         if (expr instanceof JetBlockExpression) {
             JetBlockExpression blockExpression = (JetBlockExpression) expr;
-            List<JetElement> statements = blockExpression.getStatements();
+            List<JetExpression> statements = blockExpression.getStatements();
             if (statements.size() == 0 || statements.size() == 1 && isEmptyExpression(statements.get(0))) {
                 return true;
             }
@@ -497,9 +497,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (body instanceof JetBlockExpression) {
             // If body's a block, it can contain variable declarations which may be used in the condition of a do-while loop.
             // We handle this case separately because otherwise such variable will be out of the frame map after the block ends
-            List<JetElement> doWhileStatements = ((JetBlockExpression) body).getStatements();
+            List<JetExpression> doWhileStatements = ((JetBlockExpression) body).getStatements();
 
-            List<JetElement> statements = new ArrayList<JetElement>(doWhileStatements.size() + 1);
+            List<JetExpression> statements = new ArrayList<JetExpression>(doWhileStatements.size() + 1);
             statements.addAll(doWhileStatements);
             statements.add(condition);
 
@@ -1539,7 +1539,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     private StackValue generateBlock(
-            List<JetElement> statements,
+            List<JetExpression> statements,
             boolean isStatement,
             Label labelBeforeLastExpression,
             @Nullable final Label labelBlockEnd
@@ -1550,13 +1550,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         StackValue answer = StackValue.none();
 
-        for (Iterator<JetElement> iterator = statements.iterator(); iterator.hasNext(); ) {
-            JetElement possiblyLabeledStatement = iterator.next();
+        for (Iterator<JetExpression> iterator = statements.iterator(); iterator.hasNext(); ) {
+            JetExpression possiblyLabeledStatement = iterator.next();
 
-            JetElement statement = possiblyLabeledStatement instanceof JetExpression
-                                   ? JetPsiUtil.safeDeparenthesize((JetExpression) possiblyLabeledStatement, true)
-                                   : possiblyLabeledStatement;
-
+            JetElement statement = JetPsiUtil.safeDeparenthesize(possiblyLabeledStatement, true);
 
             if (statement instanceof JetNamedDeclaration) {
                 JetNamedDeclaration declaration = (JetNamedDeclaration) statement;
@@ -1915,7 +1912,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private static boolean endsWithReturn(JetElement bodyExpression) {
         if (bodyExpression instanceof JetBlockExpression) {
-            List<JetElement> statements = ((JetBlockExpression) bodyExpression).getStatements();
+            List<JetExpression> statements = ((JetBlockExpression) bodyExpression).getStatements();
             return statements.size() > 0 && statements.get(statements.size() - 1) instanceof JetReturnExpression;
         }
 

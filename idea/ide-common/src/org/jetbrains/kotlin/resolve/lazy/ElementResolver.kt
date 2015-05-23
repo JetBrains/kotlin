@@ -240,7 +240,7 @@ public abstract class ElementResolver protected(
         get() {
             val context = getContext()
             if (context is JetBlockExpression) {
-                return context.getStatements().filterIsInstance<JetExpression>().lastOrNull() ?: context
+                return context.getStatements().lastOrNull() ?: context
             }
             return context
         }

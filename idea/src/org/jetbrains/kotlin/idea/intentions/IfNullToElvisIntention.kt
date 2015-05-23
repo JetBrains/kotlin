@@ -102,7 +102,7 @@ public class IfNullToElvisIntention : JetSelfTargetingRangeIntention<JetIfExpres
         val then = ifExpression.getThen() ?: return null
 
         if (then is JetBlockExpression) {
-            val statement = then.getStatements().singleOrNull() as? JetExpression ?: return null
+            val statement = then.getStatements().singleOrNull() ?: return null
             return Data(initializer, prevStatement, statement)
         }
         else {

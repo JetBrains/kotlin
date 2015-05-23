@@ -90,7 +90,7 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
         // Workaround for anonymous objects and similar expressions without resolution scope
         // TODO: This should probably be fixed in front-end so that resolution scope is recorded for anonymous objects as well
         val scopeExpression = ((declaration as? JetDeclarationWithBody)?.getBodyExpression() as? JetBlockExpression)
-                                 ?.getStatements()?.singleOrNull() as? JetExpression
+                                 ?.getStatements()?.singleOrNull()
                          ?: return false
 
         val declaredType = (declaration.resolveToDescriptor() as? CallableDescriptor)?.getReturnType() ?: return false
@@ -113,14 +113,12 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
             //TODO: IMO this is not good code, there should be a way to detect that JetExpression does not have value
             is JetDeclaration, is JetLoopExpression -> return null // is JetExpression but does not have value
 
-            is JetExpression -> {
+            else  -> {
                 if (statement is JetBinaryExpression && statement.getOperationToken() == JetTokens.EQ) return null // assignment does not have value
                 val expressionType = statement.analyze().getType(statement) ?: return null
                 if (!KotlinBuiltIns.isUnit(expressionType) && !KotlinBuiltIns.isNothing(expressionType)) return null
                 return statement
             }
-
-            else -> return null
         }
     }
 

@@ -23,7 +23,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFinallySection;
 import org.jetbrains.kotlin.psi.JetTryExpression;
 
@@ -51,7 +51,7 @@ public class KotlinTryFinallySurrounder extends KotlinTrySurrounderBase {
     protected TextRange getTextRangeForCaret(@NotNull JetTryExpression expression) {
         JetFinallySection block = expression.getFinallyBlock();
         assert block != null : "Finally block should exists for " + expression.getText();
-        JetElement blockExpression = block.getFinalExpression().getStatements().get(0);
+        JetExpression blockExpression = block.getFinalExpression().getStatements().get(0);
         return blockExpression.getTextRange();
     }
 

@@ -313,9 +313,9 @@ public class ControlStructureTypingUtils {
                 if (expression.getStatements().isEmpty()) {
                     return checkExpressionType(expression, c);
                 }
-                JetElement lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
-                if (lastStatement instanceof JetExpression) {
-                    return checkExpressionTypeRecursively((JetExpression) lastStatement, c);
+                JetExpression lastStatement = JetPsiUtil.getLastStatementInABlock(expression);
+                if (lastStatement != null) {
+                    return checkExpressionTypeRecursively(lastStatement, c);
                 }
                 return false;
             }

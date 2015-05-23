@@ -61,7 +61,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
                 } as JetBlockExpression
 
                 if (actualContainer != container) {
-                    val bodyExpression = actualContainer.getStatements().first() as JetExpression
+                    val bodyExpression = actualContainer.getStatements().first()
                     originalElement = (bodyExpression as? JetReturnExpression)?.getReturnedExpression() ?: bodyExpression
                 }
 

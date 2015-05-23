@@ -320,12 +320,12 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         else if (body != null) {
             WritableScope writableScope = newWritableScopeImpl(context, "do..while body scope");
             conditionScope = writableScope;
-            List<JetElement> block;
+            List<JetExpression> block;
             if (body instanceof JetBlockExpression) {
                 block = ((JetBlockExpression)body).getStatements();
             }
             else {
-                block = Collections.<JetElement>singletonList(body);
+                block = Collections.singletonList(body);
             }
             bodyTypeInfo = components.expressionTypingServices.getBlockReturnedTypeWithWritableScope(
                     writableScope, block, CoercionStrategy.NO_COERCION, context);

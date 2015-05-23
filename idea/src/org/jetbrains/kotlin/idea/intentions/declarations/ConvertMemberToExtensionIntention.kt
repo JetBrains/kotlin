@@ -80,7 +80,7 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
         fun selectBody(declaration: JetDeclarationWithBody) {
             if (bodyToSelect == null) {
                 val body = declaration.getBodyExpression()
-                bodyToSelect = if (body is JetBlockExpression) body.getStatements().single() as JetExpression else body
+                bodyToSelect = if (body is JetBlockExpression) body.getStatements().single() else body
             }
         }
 

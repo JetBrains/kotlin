@@ -159,7 +159,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
     private fun exitStatementExecutedAfter(expression: JetExpression): JetExpression? {
         val parent = expression.getParent()
         if (parent is JetBlockExpression) {
-            val lastStatement = parent.getStatements().lastIsInstanceOrNull<JetExpression>()!!
+            val lastStatement = parent.getStatements().last()
             if (expression == lastStatement) {
                 return exitStatementExecutedAfter(parent)
             }

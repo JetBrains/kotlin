@@ -46,8 +46,8 @@ public class JetBlockExpression extends JetExpressionImpl implements JetStatemen
 
     @ReadOnly
     @NotNull
-    public List<JetElement> getStatements() {
-        return Arrays.asList(findChildrenByClass(JetElement.class));
+    public List<JetExpression> getStatements() {
+        return Arrays.asList(findChildrenByClass(JetExpression.class));
     }
 
     @Nullable

@@ -152,7 +152,7 @@ public fun JetElement.blockExpressionsOrSingle(): Sequence<JetElement> =
         if (this is JetBlockExpression) getStatements().asSequence() else sequenceOf(this)
 
 public fun JetExpression.lastBlockStatementOrThis(): JetExpression
-        = (this as? JetBlockExpression)?.getStatements()?.lastIsInstanceOrNull<JetExpression>() ?: this
+        = (this as? JetBlockExpression)?.getStatements()?.lastOrNull() ?: this
 
 public fun JetBlockExpression.contentRange(): PsiChildRange {
     val first = (getLBrace()?.getNextSibling() ?: getFirstChild())

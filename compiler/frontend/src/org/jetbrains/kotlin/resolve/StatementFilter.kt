@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetBlockExpression
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
 
 public open class StatementFilter {
 
-    public open val filter: ((JetElement) -> Boolean)?
+    public open val filter: ((JetExpression) -> Boolean)?
         get() = null
 
     companion object {
@@ -30,7 +31,7 @@ public open class StatementFilter {
     }
 }
 
-fun StatementFilter.filterStatements(block: JetBlockExpression): List<JetElement> {
+fun StatementFilter.filterStatements(block: JetBlockExpression): List<JetExpression> {
     if (filter == null || block is JetPsiUtil.JetExpressionWrapper) return block.getStatements()
     return block.getStatements().filter { filter!!(it) }
 }

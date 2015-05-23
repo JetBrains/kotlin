@@ -150,7 +150,7 @@ public class ExpressionTypingServices {
             @NotNull CoercionStrategy coercionStrategyForLastExpression,
             @NotNull ExpressionTypingContext context
     ) {
-        List<JetElement> block = ResolvePackage.filterStatements(statementFilter, expression);
+        List<JetExpression> block = ResolvePackage.filterStatements(statementFilter, expression);
 
         // SCRIPT: get code descriptor for script declaration
         DeclarationDescriptor containingDescriptor = context.scope.getContainingDeclaration();

@@ -63,7 +63,7 @@ public abstract class KotlinUnwrapRemoveBase extends AbstractUnwrapper<KotlinUnw
         }
 
         public void extractFromBlock(@NotNull JetBlockExpression block, @NotNull JetElement from) throws IncorrectOperationException {
-            List<JetElement> expressions = block.getStatements();
+            List<JetExpression> expressions = block.getStatements();
             if (!expressions.isEmpty()) {
                 extract(expressions.get(0), expressions.get(expressions.size() - 1), from);
             }

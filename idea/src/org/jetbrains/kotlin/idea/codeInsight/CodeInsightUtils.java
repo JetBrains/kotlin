@@ -55,11 +55,11 @@ public class CodeInsightUtils {
         }
 
         if (element instanceof JetBlockExpression) {
-            List<JetElement> statements = ((JetBlockExpression) element).getStatements();
+            List<JetExpression> statements = ((JetBlockExpression) element).getStatements();
             if (statements.size() == 1) {
-                JetElement elem = statements.get(0);
-                if (elem.getText().equals(element.getText()) && elem instanceof JetExpression) {
-                    return (JetExpression) elem;
+                JetExpression statement = statements.get(0);
+                if (statement.getText().equals(element.getText())) {
+                    return statement;
                 }
             }
         }

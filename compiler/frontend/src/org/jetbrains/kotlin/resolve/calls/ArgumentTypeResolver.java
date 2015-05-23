@@ -180,9 +180,9 @@ public class ArgumentTypeResolver {
             // This case is a temporary hack for 'if' branches.
             // The right way to implement this logic is to interpret 'if' branches as function literals with explicitly-typed signatures
             // (no arguments and no receiver) and therefore analyze them straight away (not in the 'complete' phase).
-            JetElement lastStatementInABlock = ResolvePackage.getLastStatementInABlock(context.statementFilter, blockExpression);
-            if (lastStatementInABlock instanceof JetExpression) {
-                return getLastElementDeparenthesized((JetExpression) lastStatementInABlock, context);
+            JetExpression lastStatementInABlock = ResolvePackage.getLastStatementInABlock(context.statementFilter, blockExpression);
+            if (lastStatementInABlock != null) {
+                return getLastElementDeparenthesized(lastStatementInABlock, context);
             }
         }
         return deparenthesizedExpression;

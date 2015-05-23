@@ -1186,8 +1186,8 @@ public class JetControlFlowProcessor {
                 builder.enterLexicalScope(expression);
             }
             mark(expression);
-            List<JetElement> statements = expression.getStatements();
-            for (JetElement statement : statements) {
+            List<JetExpression> statements = expression.getStatements();
+            for (JetExpression statement : statements) {
                 generateInstructions(statement);
             }
             if (statements.isEmpty()) {
