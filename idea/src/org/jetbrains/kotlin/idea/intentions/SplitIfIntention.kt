@@ -17,10 +17,16 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.conversion.copy.length
+import org.jetbrains.kotlin.idea.conversion.copy.range
+import org.jetbrains.kotlin.idea.conversion.copy.start
+import org.jetbrains.kotlin.idea.core.CommentSaver
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -40,8 +46,11 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaCla
         }
 
         val ifExpression = operator.getNonStrictParentOfType<JetIfExpression>()
+
+        val commentSaver = CommentSaver(ifExpression!!)
+
         val expression = operator.getParent() as JetBinaryExpression
-        val rightExpression = JetPsiUtil.safeDeparenthesize(getRight(expression, ifExpression!!.getCondition()!!))
+        val rightExpression = JetPsiUtil.safeDeparenthesize(getRight(expression, ifExpression.getCondition()!!, commentSaver))
         val leftExpression = JetPsiUtil.safeDeparenthesize(expression.getLeft()!!)
         val thenBranch = ifExpression.getThen()!!
         val elseBranch = ifExpression.getElse()
@@ -50,32 +59,41 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaCla
 
         val innerIf = psiFactory.createIf(rightExpression, thenBranch, elseBranch)
 
-        when (operator.getReferencedNameElementType()) {
-            JetTokens.ANDAND -> ifExpression.replace(psiFactory.createIf(leftExpression, psiFactory.wrapInABlock(innerIf), elseBranch))
+        val newIf = when (operator.getReferencedNameElementType()) {
+            JetTokens.ANDAND -> psiFactory.createIf(leftExpression, psiFactory.createSingleStatementBlock(innerIf), elseBranch)
 
             JetTokens.OROR -> {
                 val container = ifExpression.getParent()
 
                 if (container is JetBlockExpression && elseBranch == null && thenBranch.lastBlockStatementOrThis().isExitStatement()) { // special case
-                    container.addAfter(innerIf, ifExpression)
+                    val secondIf = container.addAfter(innerIf, ifExpression)
                     container.addAfter(psiFactory.createNewLine(), ifExpression)
-                    ifExpression.replace(psiFactory.createIf(leftExpression, thenBranch))
+                    val firstIf = ifExpression.replace(psiFactory.createIf(leftExpression, thenBranch))
+                    commentSaver.restoreComments(PsiChildRange(firstIf, secondIf))
                     return
                 }
-
-                ifExpression.replace(psiFactory.createIf(leftExpression, thenBranch, innerIf))
+                else {
+                    psiFactory.createIf(leftExpression, thenBranch, innerIf)
+                }
             }
 
             else -> throw IllegalArgumentException()
         }
+
+        val result = ifExpression.replace(newIf)
+        commentSaver.restoreComments(result)
     }
 
-    private fun getRight(element: JetBinaryExpression, condition: JetExpression): JetExpression {
+    private fun getRight(element: JetBinaryExpression, condition: JetExpression, commentSaver: CommentSaver): JetExpression {
         //gets the textOffset of the right side of the JetBinaryExpression in context to condition
-        val startOffset = element.getRight()!!.startOffset - condition.startOffset
-        val rightString = condition.getText()!!.substring(startOffset, condition.getTextLength())
+        val conditionRange = condition.range
+        val startOffset = element.getRight()!!.startOffset - conditionRange.start
+        val endOffset = conditionRange.length
+        val rightString = condition.getText().substring(startOffset, endOffset)
 
-        return JetPsiFactory(element).createExpression(rightString)
+        val expression = JetPsiFactory(element).createExpression(rightString)
+        commentSaver.elementCreatedByText(expression, condition, TextRange(startOffset, endOffset))
+        return expression
     }
 
     private fun getFirstValidOperator(element: JetIfExpression): JetSimpleNameExpression? {

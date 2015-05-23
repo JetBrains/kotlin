@@ -17,13 +17,18 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.*
-import java.util.*
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.LinkedHashMap
 
 public class CommentSaver(originalElements: PsiChildRange) {
     public constructor(originalElement: PsiElement) : this(PsiChildRange.singleElement(originalElement))
@@ -60,6 +65,8 @@ public class CommentSaver(originalElements: PsiChildRange) {
 
         val nextElements: Sequence<TreeElement>
             get() = nextSiblings.flatMap { it.withDescendants(leftToRight = true) }
+
+//        var debugText: String? = null
     }
 
     private data class CommentData(
@@ -98,7 +105,8 @@ public class CommentSaver(originalElements: PsiChildRange) {
             assert(child.savedTreeElement == null)
 
             val savedChild = TreeElement(parent = parentTreeElement, prev = last)
-            child.putCopyableUserData(SAVED_TREE_KEY, savedChild)
+//            savedChild.debugText = child.getText()
+            child.savedTreeElement = savedChild
             last?.next = savedChild
             last = savedChild
 
@@ -116,8 +124,9 @@ public class CommentSaver(originalElements: PsiChildRange) {
     private val PsiElement.shouldSave: Boolean
         get() = this !is PsiWhiteSpace
 
-    private val PsiElement.savedTreeElement: TreeElement?
+    private var PsiElement.savedTreeElement: TreeElement?
         get() = getCopyableUserData(SAVED_TREE_KEY)
+        set(value) = putCopyableUserData(SAVED_TREE_KEY, value)
 
     public fun deleteCommentsInside(element: PsiElement) {
         element.accept(object : PsiRecursiveElementVisitor() {
@@ -126,6 +135,32 @@ public class CommentSaver(originalElements: PsiChildRange) {
                 if (treeElement != null) {
                     commentsToRestore.remove(treeElement)
                 }
+            }
+        })
+    }
+
+    public fun elementCreatedByText(createdElement: PsiElement, original: PsiElement, rangeInOriginal: TextRange) {
+        assert(createdElement.getTextLength() == rangeInOriginal.getLength())
+        assert(createdElement.getText() == original.getText().substring(rangeInOriginal.getStartOffset(), rangeInOriginal.getEndOffset()))
+
+        createdElement.accept(object : PsiRecursiveElementVisitor() {
+            override fun visitElement(element: PsiElement) {
+                if (!element.shouldSave) return
+
+                val token = original.findElementAt(element.getStartOffsetIn(createdElement) + rangeInOriginal.getStartOffset())
+                if (token != null) {
+                    val elementLength = element.getTextLength()
+                    for (originalElement in token.parents()) {
+                        val length = originalElement.getTextLength()
+                        if (length < elementLength) continue
+                        if (length == elementLength) {
+                            element.savedTreeElement = originalElement.savedTreeElement
+                        }
+                        break
+                    }
+                }
+
+                super.visitElement(element)
             }
         })
     }
@@ -141,7 +176,7 @@ public class CommentSaver(originalElements: PsiChildRange) {
         resultElements.forEach {
             it.accept(object : PsiRecursiveElementVisitor() {
                 override fun visitElement(element: PsiElement) {
-                    element.putCopyableUserData(SAVED_TREE_KEY, null)
+                    element.savedTreeElement = null
                     super.visitElement(element)
                 }
             })

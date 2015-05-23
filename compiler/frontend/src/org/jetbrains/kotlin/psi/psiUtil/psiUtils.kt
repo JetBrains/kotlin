@@ -27,6 +27,16 @@ public val PsiElement.startOffset: Int
 public val PsiElement.endOffset: Int
     get() = getTextRange().getEndOffset()
 
+public fun PsiElement.getStartOffsetIn(ancestor: PsiElement): Int {
+    var offset = 0
+    var parent = this
+    while (parent != this) {
+        offset += parent.getStartOffsetInParent()
+        parent = parent.getParent()
+    }
+    return offset
+}
+
 public data class PsiChildRange(public val first: PsiElement?, public val last: PsiElement?) : Sequence<PsiElement> {
     init {
         if (first == null) {

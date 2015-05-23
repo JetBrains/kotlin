@@ -55,7 +55,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
         val elseBranch = ifExpression.getElse() ?: psiFactory.createEmptyBody()
 
         val newThen = if (elseBranch is JetIfExpression)
-            psiFactory.wrapInABlock(elseBranch)
+            psiFactory.createSingleStatementBlock(elseBranch)
         else
             elseBranch
 

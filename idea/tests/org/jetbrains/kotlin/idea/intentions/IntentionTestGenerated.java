@@ -3906,7 +3906,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             }
 
             public void testAllFilesPresentInKeepComments() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToExpressionBody/keepComments"), Pattern.compile("^(.+)\\.kt$"), true);
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToExpressionBody/keepComments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
         }
     }
@@ -6628,6 +6628,39 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         public void testWrongCaretLocation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/wrongCaretLocation.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/intentions/splitIf/keepComments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class KeepComments extends AbstractIntentionTest {
+            public void testAllFilesPresentInKeepComments() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/splitIf/keepComments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ifOrReturn.kt")
+            public void testIfOrReturn() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/keepComments/ifOrReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("twoOperators.kt")
+            public void testTwoOperators() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/keepComments/twoOperators.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withAnd.kt")
+            public void testWithAnd() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/keepComments/withAnd.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("withOR.kt")
+            public void testWithOR() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/splitIf/keepComments/withOR.kt");
+                doTest(fileName);
+            }
         }
     }
 
