@@ -587,21 +587,18 @@ public class JetPsiFactory(private val project: Project) {
         return comment
     }
 
-    public fun wrapInABlock(expression: JetExpression): JetBlockExpression {
+    // special hack used in ControlStructureTypingVisitor
+    // TODO: get rid of it
+    public fun wrapInABlockWrapper(expression: JetExpression): JetBlockExpression {
         if (expression is JetBlockExpression) {
             return expression
         }
-        return BlockWrapper(expression)
-    }
-
-    public fun BlockWrapper(expressionToWrap: JetExpression): BlockWrapper {
-        val function = createFunction("fun f() { ${expressionToWrap.getText()} }")
+        val function = createFunction("fun f() { ${expression.getText()} }")
         val block = function.getBodyExpression() as JetBlockExpression
-        return BlockWrapper(block, expressionToWrap)
+        return BlockWrapper(block, expression)
     }
 
-    private inner class BlockWrapper(fakeBlockExpression: JetBlockExpression, private val expression: JetExpression) : JetBlockExpression(fakeBlockExpression.getNode()), JetPsiUtil.JetExpressionWrapper {
-
+    private class BlockWrapper(fakeBlockExpression: JetBlockExpression, private val expression: JetExpression) : JetBlockExpression(fakeBlockExpression.getNode()), JetPsiUtil.JetExpressionWrapper {
         override fun getStatements(): List<JetElement> {
             return listOf(expression)
         }

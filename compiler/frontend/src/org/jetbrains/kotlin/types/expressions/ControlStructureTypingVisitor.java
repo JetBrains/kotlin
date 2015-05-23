@@ -126,8 +126,8 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
                     elseBranch, elseScope, elseInfo, thenInfo, contextWithExpectedType, ifExpression, isStatement);
         }
         JetPsiFactory psiFactory = JetPsiFactory(ifExpression);
-        JetBlockExpression thenBlock = psiFactory.wrapInABlock(thenBranch);
-        JetBlockExpression elseBlock = psiFactory.wrapInABlock(elseBranch);
+        JetBlockExpression thenBlock = psiFactory.wrapInABlockWrapper(thenBranch);
+        JetBlockExpression elseBlock = psiFactory.wrapInABlockWrapper(elseBranch);
         Call callForIf = createCallForSpecialConstruction(ifExpression, ifExpression, Lists.newArrayList(thenBlock, elseBlock));
         MutableDataFlowInfoForArguments dataFlowInfoForArguments =
                     createDataFlowInfoForArgumentsForIfCall(callForIf, thenInfo, elseInfo);
