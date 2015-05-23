@@ -24,6 +24,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
@@ -105,7 +106,14 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
         if (element is JetFunctionLiteral) {
             element = element.getParent() as JetFunctionLiteralExpression
         }
-        element.replace(args[n] as PsiElement)
+        val argument = args[n] as PsiElement
+        // if argument element has generated flag then it has not been formatted yet and we should do this manually
+        // (because we cleared this flag for the whole tree above and PostprocessReformattingAspect won't format anything)
+        val reformat = CodeEditUtil.isNodeGenerated(argument.getNode())
+        element = element.replaced(argument)
+        if (reformat) {
+            codeStyleManager.reformat(element, true)
+        }
     }
 
     codeStyleManager.adjustLineIndent(resultElement.getContainingFile(), resultElement.getTextRange())
