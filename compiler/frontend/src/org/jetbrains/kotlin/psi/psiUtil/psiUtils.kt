@@ -53,6 +53,8 @@ public data class PsiChildRange(public val first: PsiElement?, public val last: 
 
     companion object {
         public val EMPTY: PsiChildRange = PsiChildRange(null, null)
+
+        public fun singleElement(element: PsiElement): PsiChildRange = PsiChildRange(element, element)
     }
 }
 
