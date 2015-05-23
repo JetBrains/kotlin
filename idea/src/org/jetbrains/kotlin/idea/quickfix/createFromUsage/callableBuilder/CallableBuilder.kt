@@ -708,7 +708,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 throw IncorrectOperationException("Failed to parse file template", e)
             }
 
-            oldBody.replace(JetPsiFactory(func).createFunctionBody(bodyText))
+            oldBody.replace(JetPsiFactory(func).createBlock(bodyText))
         }
 
         private fun setupCallTypeArguments(callElement: JetCallElement, typeParameters: List<TypeParameterDescriptor>) {

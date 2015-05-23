@@ -39,7 +39,7 @@ public class AddBracesIntention : JetSelfTargetingIntention<JetExpression>(javaC
         }
 
         val psiFactory = JetPsiFactory(element)
-        expression.replace(psiFactory.createFunctionBody(expression.getText()))
+        expression.replace(psiFactory.createSingleStatementBlock(expression))
 
         if (element is JetDoWhileExpression) { // remove new line between '}' and while
             (element.getBody()!!.getParent().getNextSibling() as? PsiWhiteSpace)?.delete()

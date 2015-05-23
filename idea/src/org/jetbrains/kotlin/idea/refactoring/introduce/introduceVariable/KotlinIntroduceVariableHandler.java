@@ -21,6 +21,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiDocumentManager;
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntenti
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.introduce.IntroducePackage;
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
@@ -65,10 +67,7 @@ import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
@@ -272,28 +271,24 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     final JetExpression originalBody = originalDeclaration.getBodyExpression();
                     assert originalBody != null : "Original body is not found: " + originalDeclaration;
 
+                    Key<Boolean> EXPRESSION_KEY = Key.create("EXPRESSION_KEY");
+                    Key<Boolean> REPLACE_KEY = Key.create("REPLACE_KEY");
+                    Key<Boolean> COMMON_PARENT_KEY = Key.create("COMMON_PARENT_KEY");
+                    expression.putCopyableUserData(EXPRESSION_KEY, true);
+                    for (JetExpression replace : allReplaces) {
+                        replace.putCopyableUserData(REPLACE_KEY, true);
+                    }
+                    commonParent.putCopyableUserData(COMMON_PARENT_KEY, true);
+
                     JetDeclarationWithBody newDeclaration = ConvertToBlockBodyIntention.Companion.convert(originalDeclaration);
 
                     JetBlockExpression newCommonContainer = (JetBlockExpression) newDeclaration.getBodyExpression();
                     assert newCommonContainer != null : "New body is not found: " + newDeclaration;
 
-                    JetExpression resultExpression = (JetExpression) newCommonContainer.getStatements().get(0);
-                    if (resultExpression instanceof JetReturnExpression && !(originalBody instanceof JetReturnExpression)) {
-                        resultExpression = ((JetReturnExpression) resultExpression).getReturnedExpression();
-                    }
-                    final JetExpression finalResultExpression = resultExpression;
+                    JetExpression newExpression = IntroducePackage.findExpressionByCopyableDataAndClearIt(newCommonContainer, EXPRESSION_KEY);
+                    PsiElement newCommonParent = IntroducePackage.findElementByCopyableDataAndClearIt(newCommonContainer, COMMON_PARENT_KEY);
+                    List<JetExpression> newAllReplaces = IntroducePackage.findExpressionsByCopyableDataAndClearIt(newCommonContainer, REPLACE_KEY);
 
-                    JetExpression newExpression = (JetExpression) findElementCounterpart(expression, originalBody, resultExpression);
-                    PsiElement newCommonParent = findElementCounterpart(commonParent, originalBody, resultExpression);
-                    List<JetExpression> newAllReplaces = KotlinPackage.map(
-                            allReplaces,
-                            new Function1<JetExpression, JetExpression>() {
-                                @Override
-                                public JetExpression invoke(JetExpression expression) {
-                                    return (JetExpression) findElementCounterpart(expression, originalBody, finalResultExpression);
-                                }
-                            }
-                    );
                     run(newExpression, newCommonContainer, newCommonParent, newAllReplaces);
                 }
                 else {
@@ -436,14 +431,6 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 if (noTypeInference) {
                     ShortenReferences.DEFAULT.process(property);
                 }
-            }
-
-            private PsiElement findElementCounterpart(PsiElement oldElement, PsiElement oldContainer, PsiElement newContainer) {
-                return findElementByOffsetAndText(
-                        oldElement.getTextOffset() - oldContainer.getTextOffset(),
-                        oldElement.getText(),
-                        newContainer
-                );
             }
 
             private PsiElement findElementByOffsetAndText(int offset, String text, PsiElement newContainer) {

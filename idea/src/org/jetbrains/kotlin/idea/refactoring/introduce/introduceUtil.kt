@@ -16,14 +16,21 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce
 
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.idea.refactoring.*
-import com.intellij.openapi.editor.*
-import com.intellij.psi.*
-import com.intellij.psi.util.*
-import org.jetbrains.kotlin.idea.codeInsight.*
-import com.intellij.openapi.project.*
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.ScrollType
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getOutermostParentContainedIn
 
 fun showErrorHint(project: Project, editor: Editor, message: String, title: String) {
     CodeInsightUtils.showErrorHint(project, editor, message, title, null)
@@ -121,4 +128,22 @@ fun selectElementsWithTargetParent(
 
     editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE)
     selectSingleExpression()
+}
+
+fun PsiElement.findExpressionByCopyableDataAndClearIt(key: Key<Boolean>): JetExpression {
+    val result = findDescendantOfType<JetExpression> { it.getCopyableUserData(key) != null }!!
+    result.putCopyableUserData(key, null)
+    return result
+}
+
+fun PsiElement.findElementByCopyableDataAndClearIt(key: Key<Boolean>): PsiElement {
+    val result = findDescendantOfType<PsiElement> { it.getCopyableUserData(key) != null }!!
+    result.putCopyableUserData(key, null)
+    return result
+}
+
+fun PsiElement.findExpressionsByCopyableDataAndClearIt(key: Key<Boolean>): List<JetExpression> {
+    val results = collectDescendantsOfType<JetExpression> { it.getCopyableUserData(key) != null }
+    results.forEach { it.putCopyableUserData(key, null) }
+    return results
 }

@@ -573,12 +573,16 @@ public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(no
 }
 
 public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean): Boolean {
-    var result = false
+    return findDescendantOfType(predicate) != null
+}
+
+public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean): T? {
+    var result: T? = null
     this.accept(object : PsiRecursiveElementVisitor(){
         override fun visitElement(element: PsiElement) {
-            if (result) return
+            if (result != null) return
             if (element is T && predicate(element)) {
-                result = true
+                result = element
                 return
             }
             super.visitElement(element)
@@ -587,7 +591,7 @@ public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinli
     return result
 }
 
-public inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): Collection<T> {
+public inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
     val result = ArrayList<T>()
     forEachDescendantOfType<T> {
         if (predicate(it)) {

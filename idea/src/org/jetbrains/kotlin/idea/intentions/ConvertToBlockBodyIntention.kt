@@ -56,9 +56,9 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
                 val needReturn = returnsValue &&
                                  (bodyType == null || (!KotlinBuiltIns.isUnit(bodyType) && !KotlinBuiltIns.isNothing(bodyType)))
 
-                val oldBodyText = body.getText()!!
-                val newBodyText = if (needReturn) "return ${oldBodyText}" else oldBodyText
-                return JetPsiFactory(declaration).createFunctionBody(newBodyText)
+                val factory = JetPsiFactory(declaration)
+                val statement = if (needReturn) factory.createExpressionByPattern("return $0", body) else body
+                return factory.createSingleStatementBlock(statement)
             }
 
             val newBody = when (declaration) {

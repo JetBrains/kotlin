@@ -85,7 +85,7 @@ public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<
         when (extension) {
             is JetFunction -> {
                 if (!extension.hasBody()) {
-                    extension.add(psiFactory.createFunctionBody(THROW_UNSUPPORTED_OPERATION_EXCEPTION))
+                    extension.add(psiFactory.createBlock(THROW_UNSUPPORTED_OPERATION_EXCEPTION))
                     selectBody(extension)
                 }
             }

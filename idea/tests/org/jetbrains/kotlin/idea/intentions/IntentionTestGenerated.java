@@ -3417,6 +3417,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ConvertToBlockBody extends AbstractIntentionTest {
+        @TestMetadata("addSpace.kt")
+        public void testAddSpace() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/addSpace.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInConvertToBlockBody() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToBlockBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }

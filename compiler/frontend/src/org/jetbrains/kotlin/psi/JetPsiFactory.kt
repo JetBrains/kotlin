@@ -566,8 +566,12 @@ public class JetPsiFactory(private val project: Project) {
         }
     }
 
-    public fun createFunctionBody(bodyText: String): JetBlockExpression {
+    public fun createBlock(bodyText: String): JetBlockExpression {
         return createFunction("fun foo() {\n" + bodyText + "\n}").getBodyExpression() as JetBlockExpression
+    }
+
+    public fun createSingleStatementBlock(statement: JetExpression): JetBlockExpression {
+        return createDeclarationByPattern<JetNamedFunction>("fun foo() {\n$0\n}", statement).getBodyExpression() as JetBlockExpression
     }
 
     public fun createComment(text: String): PsiComment {
