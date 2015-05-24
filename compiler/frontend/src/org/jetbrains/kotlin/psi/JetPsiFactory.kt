@@ -146,17 +146,9 @@ public class JetPsiFactory(private val project: Project) {
 
     public fun createFile(fileName: String, text: String): JetFile {
         val file = doCreateFile(fileName, text)
-        //TODO: KotlinInternalMode should be used here
-        if (ApplicationManager.getApplication()!!.isInternal()) {
-            val sw = StringWriter()
-            Exception().printStackTrace(PrintWriter(sw))
-            file.doNotAnalyze = "This file was created by JetPsiFactory and should not be analyzed. It was created at:\n" + sw.toString()
-        }
-        else {
-            file.doNotAnalyze = "This file was created by JetPsiFactory and should not be analyzed\n" +
-                                "Enable kotlin internal mode get more info for debugging\n" +
-                                "Use createAnalyzableFile to create file that can be analyzed\n"
-        }
+
+        file.doNotAnalyze = "This file was created by JetPsiFactory and should not be analyzed\n" +
+                            "Use createAnalyzableFile to create file that can be analyzed\n"
 
         return file
     }
