@@ -121,6 +121,11 @@ public class Profiler {
         return this;
     }
 
+    public Profiler printThreadName() {
+        println(Thread.currentThread().getName() + " ", name);
+        return this;
+    }
+
     public Profiler start() {
         if (paused) {
             start = System.nanoTime();
