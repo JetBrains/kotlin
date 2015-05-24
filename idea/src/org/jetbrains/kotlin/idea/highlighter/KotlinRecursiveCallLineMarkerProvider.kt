@@ -28,13 +28,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
+import org.jetbrains.kotlin.lexer.JetToken
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.HashSet
 
 public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
@@ -42,6 +43,7 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
 
     override fun collectSlowLineMarkers(elements: MutableList<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
         val markedLineNumbers = HashSet<Int>()
+
         for (element in elements) {
             ProgressManager.checkCanceled()
             if (element is JetElement) {
@@ -54,11 +56,16 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
         }
     }
 
-    private fun getEnclosingFunction(element: JetElement): JetNamedFunction? {
+    private fun getEnclosingFunction(element: JetElement, stopOnNonInlinedLambdas: Boolean): JetNamedFunction? {
         for (parent in element.parents) {
             when (parent) {
-                is JetFunctionLiteral -> if (!InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
-                is JetNamedFunction -> if (!InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return parent
+                is JetFunctionLiteral -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
+                is JetNamedFunction -> {
+                    when (parent.getParent()) {
+                        is JetBlockExpression, is JetClassBody, is JetFile, is JetScript -> return parent
+                        else -> if (stopOnNonInlinedLambdas && !InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
+                    }
+                }
                 is JetClassOrObject -> return null
             }
         }
@@ -66,8 +73,14 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
     }
 
     private fun isRecursiveCall(element: JetElement): Boolean {
-        if (element.getParent() is JetCallableReferenceExpression) return false
-        val enclosingFunction = getEnclosingFunction(element) ?: return false
+        // Fast check for names without resolve
+        val resolveName = getCallNameFromPsi(element) ?: return false
+        val enclosingFunction = getEnclosingFunction(element, false) ?: return false
+
+        if (enclosingFunction.getName() != resolveName.asString()) return false
+
+        // Check that there were no not-inlined lambdas on the way to enclosing function
+        if (enclosingFunction != getEnclosingFunction(element, true)) return false
 
         val bindingContext = element.analyze()
         val enclosingFunctionDescriptor = bindingContext[BindingContext.FUNCTION, enclosingFunction] ?: return false
@@ -116,4 +129,35 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
 
 private fun PsiElement.getLineNumber(): Int {
     return PsiDocumentManager.getInstance(getProject()).getDocument(getContainingFile())!!.getLineNumber(getTextOffset())
+}
+
+private fun getCallNameFromPsi(element: JetElement): Name? {
+    when (element) {
+        is JetSimpleNameExpression -> {
+            val elementParent = element.getParent()
+            when (elementParent) {
+                is JetCallExpression -> return Name.identifierNoValidate(element.getText())
+                is JetOperationExpression -> {
+                    val operationReference = elementParent.getOperationReference()
+                    if (element == operationReference) {
+                        val node = operationReference.getReferencedNameElementType()
+                        return if (node is JetToken) {
+                            OperatorConventions.getNameForOperationSymbol(node) ?: Name.identifierNoValidate(element.getText())
+                        }
+                        else {
+                            Name.identifierNoValidate(element.getText())
+                        }
+                    }
+                }
+            }
+        }
+        is JetArrayAccessExpression ->
+            return Name.identifier("get")
+        is JetThisExpression ->
+            if (element.getParent() is JetCallExpression) {
+                return OperatorConventions.INVOKE
+            }
+    }
+
+    return null
 }
