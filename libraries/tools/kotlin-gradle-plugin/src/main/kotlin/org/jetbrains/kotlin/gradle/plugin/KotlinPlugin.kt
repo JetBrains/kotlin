@@ -365,7 +365,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             val variantDataName = variantData.getName()
             logger.kotlinDebug("Process variant [$variantDataName]")
 
-            val javaTask = variantData.javaCompileTask
+            val javaTask = AndroidGradleWrapper.getJavaCompile(variantData)
 
             val kotlinTaskName = "compile${variantDataName.capitalize()}Kotlin"
             val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
@@ -432,12 +432,16 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             javaTask.dependsOn(kotlinTaskName)
 
-            val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, aptFiles.toSet(), aptOutputDir, aptWorkingDir)
-            kotlinTask.storeKaptAnnotationsFile(kaptManager)
+            val kaptManager = if (javaTask is JavaCompile) {
+                val manager = AnnotationProcessingManager(kotlinTask, javaTask, aptFiles.toSet(), aptOutputDir, aptWorkingDir)
+                kotlinTask.storeKaptAnnotationsFile(manager)
+                manager
+            }
+            else null
 
             javaTask doFirst {
                 javaTask.setClasspath(javaTask.getClasspath() + project.files(kotlinTask.property("kotlinDestinationDir")))
-                kaptManager.setupKapt()
+                kaptManager?.setupKapt()
             }
         }
     }

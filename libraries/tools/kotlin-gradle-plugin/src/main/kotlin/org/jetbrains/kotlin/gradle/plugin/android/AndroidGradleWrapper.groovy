@@ -6,6 +6,7 @@ import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.TestVariant
 import org.gradle.api.internal.DefaultDomainObjectSet
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.util.PatternFilterable
 import org.jetbrains.annotations.NotNull
 
@@ -41,6 +42,11 @@ class AndroidGradleWrapper {
   @NotNull
   static def String getVariantName(Object variant) {
     return variant.getBuildType().getName()
+  }
+
+  @NotNull
+  static def AbstractCompile getJavaCompile(Object baseVariantData) {
+    return baseVariantData.javaCompileTask
   }
 
   @NotNull
