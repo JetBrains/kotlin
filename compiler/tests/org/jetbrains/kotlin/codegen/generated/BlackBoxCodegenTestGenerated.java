@@ -6402,6 +6402,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("accessToNestedObject.kt")
+        public void testAccessToNestedObject() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToNestedObject.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInSecondaryConstructors() throws Exception {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/secondaryConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
         }

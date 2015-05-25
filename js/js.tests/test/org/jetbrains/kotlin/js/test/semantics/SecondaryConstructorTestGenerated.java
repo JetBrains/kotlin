@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class SecondaryConstructorTestGenerated extends AbstractSecondaryConstructorTest {
+    @TestMetadata("accessToNestedObject.kt")
+    public void ignoredAccessToNestedObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/accessToNestedObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("innerClasses.kt")
     public void ignoredInnerClasses() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/secondaryConstructors/innerClasses.kt");
