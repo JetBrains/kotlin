@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToLibrarySourceTest
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.AbstractClsStubBuilderTest
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextFromJsMetadataTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractDecompiledTextTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractJetQuickDocProviderTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
@@ -592,6 +593,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractDecompiledTextTest>()) {
             model("decompiler/decompiledText", pattern = """^([^\.]+)$""")
+        }
+
+        testClass(javaClass<AbstractDecompiledTextFromJsMetadataTest>()) {
+            model("decompiler/decompiledText", pattern = """^([^\.]+)$""", targetBackend = TargetBackend.JS)
         }
 
         testClass(javaClass<AbstractClsStubBuilderTest>()) {

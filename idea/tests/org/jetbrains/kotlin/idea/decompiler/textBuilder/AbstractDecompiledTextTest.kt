@@ -16,46 +16,17 @@
 
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
-import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import com.intellij.testFramework.UsefulTestCase.*
-import org.junit.Assert.*
-import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
-import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
-import com.intellij.psi.PsiRecursiveElementVisitor
-import com.intellij.psi.PsiErrorElement
-import org.jetbrains.kotlin.psi.JetPsiUtil
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
+import kotlin.test.assertTrue
 
-public abstract class AbstractDecompiledTextTest() : JetLightCodeInsightFixtureTestCase() {
+public abstract class AbstractDecompiledTextTest() : AbstractDecompiledTextBaseTest() {
 
-    private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/decompiler/decompiledText"
+    protected override fun getFileToDecompile(): VirtualFile =
+        NavigateToDecompiledLibraryTest.getClassFile(TEST_PACKAGE, getTestName(false), myModule!!)
 
-    public fun doTest(path: String) {
-        val classFile = NavigateToDecompiledLibraryTest.getClassFile("test", getTestName(false), myModule!!)
-        val clsFile = PsiManager.getInstance(getProject()!!).findFile(classFile)
-        assertTrue("Expecting decompiled kotlin file, was: " + clsFile!!.javaClass, clsFile is JetClsFile)
-        assertSameLinesWithFile(path.substring(0, path.length - 1) + ".expected.kt", clsFile.getText())
-        checkThatFileWasParsedCorrectly(clsFile)
-    }
-
-    override fun getProjectDescriptor(): LightProjectDescriptor {
-        if (isAllFilesPresentInTest()) {
-            return JetLightProjectDescriptor.INSTANCE
-        }
-        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false)
-    }
-
-    private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {
-        clsFile.accept(object : PsiRecursiveElementVisitor() {
-            override fun visitErrorElement(element: PsiErrorElement) {
-                fail("Decompiled file should not contain error elements!\n${element.getElementTextWithContext()}")
-            }
-        })
-    }
+    protected override fun checkPsiFile(psiFile: PsiFile) =
+            assertTrue(psiFile is JetClsFile, "Expecting decompiled kotlin file, was: " + psiFile.javaClass)
 }
