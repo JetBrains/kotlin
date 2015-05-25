@@ -38,9 +38,32 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
 public fun <TDeclaration : JetDeclaration> JetPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
         = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
 
+private open class ArgumentType<T : Any>(val klass: Class<T>)
+
+class PlainTextArgumentType<T : Any>(klass: Class<T>, val toPlainText: (T) -> String) : ArgumentType<T>(klass)
+
+private val SUPPORTED_ARGUMENT_TYPES = listOf(
+        ArgumentType<JetExpression>(javaClass()),
+        ArgumentType<JetTypeReference>(javaClass()),
+        PlainTextArgumentType<String>(javaClass(), toPlainText = { it }),
+        PlainTextArgumentType<Name>(javaClass(), toPlainText = { it.renderName() })
+)
+
 public fun <TElement : JetElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
+    val argumentTypes = args.map { arg ->
+        SUPPORTED_ARGUMENT_TYPES.firstOrNull { it.klass.isInstance(arg) }
+            ?: throw IllegalArgumentException("Unsupported argument type: ${arg.javaClass}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.getSimpleName() }.joinToString()}")
+    }
+
+    // convert arguments that can be converted into plain text
     @suppress("NAME_SHADOWING")
-    val args = args.map { if (it is Name) it.renderName() else it }
+    val args = args.zip(argumentTypes).map {
+        val (arg, type) = it
+        if (type is PlainTextArgumentType)
+            (type.toPlainText as Function1<Any, String>).invoke(arg) // TODO: see KT-7833
+        else
+            arg
+    }
 
     val (processedText, allPlaceholders) = processPattern(pattern, args)
 
@@ -55,12 +78,9 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
 
     PlaceholdersLoop@
     for ((n, placeholders) in allPlaceholders) {
-        val expectedElementType = when (args[n]) {
-            is String -> continue@PlaceholdersLoop // already in the text
-            is JetExpression -> javaClass<JetExpression>()
-            is JetTypeReference -> javaClass<JetTypeReference>()
-            else -> throw IllegalArgumentException("Unknown argument ${args[n]} - should be JetExpression, JetTypeReference or String")
-        }
+        val arg = args[n]
+        if (arg is String) continue // already in the text
+        val expectedElementType = argumentTypes[n].klass
 
         for ((range, text) in placeholders) {
             val token = resultElement.findElementAt(range.getStartOffset())!!
@@ -163,7 +183,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
                         if (arg is String) arg else "xyz"
                     }
                     else {
-                        check(arg !is String, "do not specify placeholder text for $$n - String argument passed")
+                        check(arg !is String, "do not specify placeholder text for $$n - plain text argument passed")
                         i += 2 // skip ':' and '\''
                         val endIndex = pattern.indexOf('\'', i)
                         check(endIndex >= 0, "unclosed placeholder text")
