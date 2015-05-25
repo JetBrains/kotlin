@@ -5,7 +5,7 @@ fun test1(f: String.() -> Unit) {
 }
 
 fun test2(f: (Int) -> Int) {
-    1.f(<!TOO_MANY_ARGUMENTS!>2<!>)
+    1.<!FREE_FUNCTION_CALLED_AS_EXTENSION!>f<!>(<!TOO_MANY_ARGUMENTS!>2<!>)
 
-    2.(f)(<!TOO_MANY_ARGUMENTS!>2<!>)
+    2.<!FREE_FUNCTION_CALLED_AS_EXTENSION!>(f)<!>(<!TOO_MANY_ARGUMENTS!>2<!>)
 }

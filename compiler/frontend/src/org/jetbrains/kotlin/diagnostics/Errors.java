@@ -411,6 +411,8 @@ public interface Errors {
     DiagnosticFactory1<JetExpression, JetType> MISSING_RECEIVER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetExpression> NO_RECEIVER_ALLOWED = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<JetExpression> FREE_FUNCTION_CALLED_AS_EXTENSION = DiagnosticFactory0.create(ERROR);
+
     // Call resolution
 
     DiagnosticFactory1<JetExpression, String> ILLEGAL_SELECTOR = DiagnosticFactory1.create(ERROR);

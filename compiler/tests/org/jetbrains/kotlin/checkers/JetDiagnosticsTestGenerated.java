@@ -223,6 +223,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("FreeFunctionCalledAsExtension.kt")
+        public void testFreeFunctionCalledAsExtension() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/FreeFunctionCalledAsExtension.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("FunctionCalleeExpressions.kt")
         public void testFunctionCalleeExpressions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/FunctionCalleeExpressions.kt");

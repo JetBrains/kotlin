@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind.Function
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.ArrayList
 
 fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collection<FunctionDescriptor> {
@@ -82,4 +84,10 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
     )
 
     return result
+}
+
+fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
+    return descriptor.getName() == OperatorConventions.INVOKE &&
+           (descriptor as? FunctionDescriptor)?.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED &&
+           descriptor.getContainingDeclaration() is FunctionClassDescriptor
 }

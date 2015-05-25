@@ -239,4 +239,8 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         }
     }
 
+    @Override
+    public void freeFunctionCalledAsExtension(@NotNull BindingTrace trace) {
+        trace.report(FREE_FUNCTION_CALLED_AS_EXTENSION.on(reference));
+    }
 }

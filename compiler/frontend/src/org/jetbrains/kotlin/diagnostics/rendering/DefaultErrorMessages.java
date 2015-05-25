@@ -546,6 +546,8 @@ public class DefaultErrorMessages {
         MAP.put(MISSING_RECEIVER, "A receiver of type {0} is required", RENDER_TYPE);
         MAP.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property");
 
+        MAP.put(FREE_FUNCTION_CALLED_AS_EXTENSION, "The function cannot be called as an extension function");
+
         MAP.put(CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, "Cannot create an instance of an abstract class");
 
         MAP.put(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS, "Type inference failed: {0}", TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER);

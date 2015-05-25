@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionTask;
+import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
@@ -169,6 +170,8 @@ public class CandidateResolver {
         }
 
         checkAbstractAndSuper(context);
+
+        checkNonExtensionCalledWithReceiver(context);
     }
 
     private static boolean checkDispatchReceiver(@NotNull CallCandidateResolutionContext<?> context) {
@@ -234,6 +237,16 @@ public class CandidateResolver {
         JetSuperExpression superExtensionReceiver = getReceiverSuper(candidateCall.getExtensionReceiver());
         if (superExtensionReceiver != null) {
             context.trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(superExtensionReceiver, superExtensionReceiver.getText()));
+            candidateCall.addStatus(OTHER_ERROR);
+        }
+    }
+
+    private static void checkNonExtensionCalledWithReceiver(@NotNull CallCandidateResolutionContext<?> context) {
+        MutableResolvedCall<?> candidateCall = context.candidateCall;
+
+        if (TasksPackage.isSynthesizedInvoke(candidateCall.getCandidateDescriptor()) &&
+            !KotlinBuiltIns.isExtensionFunctionType(candidateCall.getDispatchReceiver().getType())) {
+            context.tracing.freeFunctionCalledAsExtension(context.trace);
             candidateCall.addStatus(OTHER_ERROR);
         }
     }

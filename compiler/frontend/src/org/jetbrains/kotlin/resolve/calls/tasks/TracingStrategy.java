@@ -99,6 +99,9 @@ public interface TracingStrategy {
 
         @Override
         public void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData) {}
+
+        @Override
+        public void freeFunctionCalledAsExtension(@NotNull BindingTrace trace) { }
     };
 
     void bindCall(@NotNull BindingTrace trace, @NotNull Call call);
@@ -149,4 +152,6 @@ public interface TracingStrategy {
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor);
 
     void typeInferenceFailed(@NotNull BindingTrace trace, @NotNull InferenceErrorData inferenceErrorData);
+
+    void freeFunctionCalledAsExtension(@NotNull BindingTrace trace);
 }

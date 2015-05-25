@@ -521,5 +521,10 @@ public class ControlStructureTypingUtils {
         ) {
             logError();
         }
+
+        @Override
+        public void freeFunctionCalledAsExtension(@NotNull BindingTrace trace) {
+            logError();
+        }
     }
 }
