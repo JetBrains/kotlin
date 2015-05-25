@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.idea.test
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
+import com.intellij.testFramework.LightPlatformTestCase
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.util.Consumer
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -64,4 +66,7 @@ public fun JetFile.dumpTextWithErrors(): String {
     val header = errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
     return header + getText()
 }
+
+public fun closeAndDeleteProject(): Unit =
+    ApplicationManager.getApplication().runWriteAction() { LightPlatformTestCase.closeAndDeleteProject() }
 

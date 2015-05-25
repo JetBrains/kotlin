@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.LightPlatformTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.ModuleKind
+import org.jetbrains.kotlin.idea.test.closeAndDeleteProject
 import org.jetbrains.kotlin.idea.test.configureAs
 
 public class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
@@ -51,16 +50,11 @@ public class NavigateToStdlibSourceTest : KotlinCodeInsightTestCase() {
     }
 
     override fun tearDown() {
-        // Copied verbatim from NavigateToStdlibSourceRegressionTest.
+        super.tearDown()
         // Workaround for IDEA's bug during tests.
         // After tests IDEA disposes VirtualFiles within LocalFileSystem, but doesn't rebuild indices.
         // This causes library source files to be impossible to find via indices
-        super.tearDown()
-        ApplicationManager.getApplication().runWriteAction(object : Runnable {
-            override fun run() {
-                LightPlatformTestCase.closeAndDeleteProject()
-            }
-        })
+        closeAndDeleteProject()
     }
 
     protected fun configureAndResolve(
