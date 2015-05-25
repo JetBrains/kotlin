@@ -1,0 +1,5 @@
+package
+
+internal fun foo(/*0*/ g: () -> kotlin.Int): kotlin.Unit
+internal fun foo(/*0*/ f: (kotlin.Int) -> kotlin.Int): kotlin.Unit
+internal fun test(): kotlin.Unit

@@ -9012,6 +9012,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("EmptyArgumentListInLambda.kt")
+            public void testEmptyArgumentListInLambda() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/EmptyArgumentListInLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExtFunDifferentReceiver.kt")
             public void testExtFunDifferentReceiver() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/overload/ExtFunDifferentReceiver.kt");

@@ -233,7 +233,7 @@ public class ArgumentTypeResolver {
         boolean isFunctionLiteral = function instanceof JetFunctionLiteral;
         if (function.getValueParameterList() == null && isFunctionLiteral) {
             return expectedTypeIsUnknown
-                   ? ErrorUtils.createFunctionPlaceholderType(Collections.<JetType>emptyList())
+                   ? ErrorUtils.createFunctionPlaceholderType(Collections.<JetType>emptyList(), /* hasDeclaredArguments = */ false)
                    : builtIns.getFunctionType(Annotations.EMPTY, null, Collections.<JetType>emptyList(), DONT_CARE);
         }
         List<JetParameter> valueParameters = function.getValueParameters();
@@ -248,7 +248,7 @@ public class ArgumentTypeResolver {
         JetType receiverType = resolveTypeRefWithDefault(function.getReceiverTypeReference(), scope, temporaryTrace, null);
 
         return expectedTypeIsUnknown && isFunctionLiteral
-               ? ErrorUtils.createFunctionPlaceholderType(parameterTypes)
+               ? ErrorUtils.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
                : builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameterTypes, returnType);
     }
 

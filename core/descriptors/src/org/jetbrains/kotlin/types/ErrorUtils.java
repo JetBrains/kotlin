@@ -546,24 +546,30 @@ public class ErrorUtils {
     }
 
     @NotNull
-    public static JetType createFunctionPlaceholderType(@NotNull List<JetType> argumentTypes) {
+    public static JetType createFunctionPlaceholderType(@NotNull List<JetType> argumentTypes, boolean hasDeclaredArguments) {
         return new ErrorTypeImpl(
-                new FunctionPlaceholderTypeConstructor(argumentTypes),
+                new FunctionPlaceholderTypeConstructor(argumentTypes, hasDeclaredArguments),
                 createErrorScope("Scope for function placeholder type"));
     }
 
     public static class FunctionPlaceholderTypeConstructor implements TypeConstructor {
         private final TypeConstructor errorTypeConstructor;
         private final List<JetType> argumentTypes;
+        private final boolean hasDeclaredArguments;
 
-        private FunctionPlaceholderTypeConstructor(@NotNull List<JetType> argumentTypes) {
+        private FunctionPlaceholderTypeConstructor(@NotNull List<JetType> argumentTypes, boolean hasDeclaredArguments) {
             errorTypeConstructor = createErrorTypeConstructorWithCustomDebugName("PLACEHOLDER_FUNCTION_TYPE" + argumentTypes);
             this.argumentTypes = argumentTypes;
+            this.hasDeclaredArguments = hasDeclaredArguments;
         }
 
         @NotNull
         public List<JetType> getArgumentTypes() {
             return argumentTypes;
+        }
+
+        public boolean hasDeclaredArguments() {
+            return hasDeclaredArguments;
         }
 
         @NotNull

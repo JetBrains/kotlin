@@ -423,10 +423,9 @@ fun createCorrespondingFunctionTypeForFunctionPlaceholder(
 ): JetType {
     assert(ErrorUtils.isFunctionPlaceholder(functionPlaceholder)) { "Function placeholder type expected: $functionPlaceholder" }
     val functionPlaceholderTypeConstructor = functionPlaceholder.getConstructor() as FunctionPlaceholderTypeConstructor
-    val declaredArgumentTypes = functionPlaceholderTypeConstructor.getArgumentTypes()
 
     val isExtension = KotlinBuiltIns.isExtensionFunctionType(expectedType)
-    val newArgumentTypes = if (declaredArgumentTypes.isEmpty()) {
+    val newArgumentTypes = if (!functionPlaceholderTypeConstructor.hasDeclaredArguments()) {
         val typeParamSize = expectedType.getConstructor().getParameters().size()
         // the first parameter is receiver (if present), the last one is return type,
         // the remaining are function arguments
@@ -436,7 +435,7 @@ fun createCorrespondingFunctionTypeForFunctionPlaceholder(
         result
     }
     else {
-        declaredArgumentTypes
+        functionPlaceholderTypeConstructor.getArgumentTypes()
     }
     val receiverType = if (isExtension) DONT_CARE else null
     return KotlinBuiltIns.getInstance().getFunctionType(Annotations.EMPTY, receiverType, newArgumentTypes, DONT_CARE)
