@@ -35,6 +35,12 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("DeprecatedFunctionClasses.kt")
+    public void testDeprecatedFunctionClasses() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/DeprecatedFunctionClasses.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("instar.kt")
     public void testInstar() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/instar.kt");

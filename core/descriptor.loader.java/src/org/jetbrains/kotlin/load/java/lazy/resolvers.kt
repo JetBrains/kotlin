@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -75,6 +76,13 @@ fun LazyJavaResolverContext.findClassInJava(classId: ClassId): JavaClassLookupRe
     val kotlinClass = kotlinClassFinder.findKotlinClass(classId)
     val binaryClassResult = resolveBinaryClass(kotlinClass)
     if (binaryClassResult != null) return binaryClassResult
+
+    if (!classId.isLocal() && !classId.isNestedClass() &&
+        DeprecatedFunctionClassFqNameParser.isDeprecatedFunctionClassFqName(classId.asSingleFqName().asString())) {
+        // Ignore deprecated kotlin.Function{n} / kotlin.ExtensionFunction{n} Java classes
+        // TODO: drop after M12
+        return JavaClassLookupResult.EMPTY
+    }
 
     val javaClass = finder.findClass(classId)
     if (javaClass != null) return JavaClassLookupResult(javaClass)

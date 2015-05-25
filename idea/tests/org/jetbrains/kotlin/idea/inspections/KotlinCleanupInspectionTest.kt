@@ -31,9 +31,9 @@ class KotlinCleanupInspectionTest(): JetLightCodeInsightFixtureTestCase() {
 
     override fun getProjectDescriptor(): LightProjectDescriptor = JetWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    public fun testCleanup() {
+    private fun doTest(result: String, vararg files: String) {
         myFixture.enableInspections(javaClass<KotlinCleanupInspection>())
-        myFixture.configureByFiles("cleanup.kt", "JavaAnn.java")
+        myFixture.configureByFiles(*files)
 
         val project = myFixture.getProject()
         val managerEx = InspectionManager.getInstance(project)
@@ -42,6 +42,14 @@ class KotlinCleanupInspectionTest(): JetLightCodeInsightFixtureTestCase() {
         val profile = InspectionProjectProfileManager.getInstance(project).getInspectionProfile()
         globalContext.codeCleanup(project, analysisScope, profile, "Cleanup", null, true)
 
-        myFixture.checkResultByFile("cleanup.kt.after")
+        myFixture.checkResultByFile(result)
+    }
+
+    public fun testCleanup() {
+        doTest("cleanup.kt.after", "cleanup.kt", "JavaAnn.java")
+    }
+
+    public fun testDeprecatedFunctionClasses() {
+        doTest("DeprecatedFunctionClasses.java.after", "DeprecatedFunctionClasses.java")
     }
 }

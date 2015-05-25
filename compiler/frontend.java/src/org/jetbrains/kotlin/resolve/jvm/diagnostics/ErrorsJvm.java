@@ -57,6 +57,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<JetElement> TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory2<JetElement, String, String> JAVA_METHOD_USES_DEPRECATED_FUNCTION_CLASS = DiagnosticFactory2.create(ERROR);
+
     // TODO: make this a warning
     DiagnosticFactory1<JetExpression, JetExpression> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory1.create(ERROR);
 

@@ -60,7 +60,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION, "Usage of `javaClass<T>()` in annotations is deprecated. Use T::class instead");
         MAP.put(ErrorsJvm.DEPRECATED_ANNOTATION_METHOD_CALL, "Annotation methods are deprecated. Use property instead");
 
-        MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Expression ''{0}'' uses reflection which is not found in compilation classpath. Make sure you have kotlin-reflect.jar in the classpath", Renderers.ELEMENT_TEXT);
+        MAP.put(ErrorsJvm.NO_REFLECTION_IN_CLASS_PATH, "Expression ''{0}'' uses reflection which is not found in compilation classpath. " +
+                                                       "Make sure you have kotlin-reflect.jar in the classpath", Renderers.ELEMENT_TEXT);
 
         MAP.put(ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Expected type does not accept nulls in {0}, but the value may be null in {1}", Renderers.TO_STRING, Renderers.TO_STRING);
@@ -68,8 +69,11 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
 
         MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument ''{0}'' can be null in Java, but exhaustive when contains no null branch");
-    }
 
+        MAP.put(ErrorsJvm.JAVA_METHOD_USES_DEPRECATED_FUNCTION_CLASS,
+                "This Java method uses the deprecated {0} class, which will be removed soon. " +
+                "Please change the signature to use the new {1} class instead", Renderers.TO_STRING, Renderers.TO_STRING);
+    }
 
     @NotNull
     @Override

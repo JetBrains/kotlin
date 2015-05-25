@@ -666,6 +666,17 @@
         </new-kotlinc>
     </target>
 
+    <target name="functions-migration">
+        <new-kotlinc output="${output}/classes/functions-migration">
+            <src>
+                <include name="core/functions.migration/src"/>
+            </src>
+            <class-path>
+                <pathelement path="${output}/classes/builtins"/>
+            </class-path>
+        </new-kotlinc>
+    </target>
+
     <target name="stdlib">
         <new-kotlinc output="${output}/classes/stdlib">
             <src>
@@ -736,6 +747,7 @@
         <pack-runtime-jar jar-name="kotlin-runtime.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime}">
             <jar-content>
                 <fileset dir="${output}/classes/builtins"/>
+                <fileset dir="${output}/classes/functions-migration"/>
                 <fileset dir="${output}/classes/stdlib"/>
                 <zipfileset dir="${output}/builtins">
                     <include name="kotlin/**"/>
@@ -804,6 +816,7 @@
             <jar-content>
                 <fileset dir="${basedir}/core/builtins/native" includes="**/*"/>
                 <fileset dir="${basedir}/core/builtins/src" includes="**/*"/>
+                <fileset dir="${basedir}/core/functions.migration/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
@@ -813,7 +826,7 @@
     </target>
 
     <target name="runtime"
-            depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
+            depends="builtins,functions-migration,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
             depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"

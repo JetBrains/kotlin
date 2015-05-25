@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.generators.builtins.generateBuiltIns
 
+import org.jetbrains.kotlin.generators.builtins.GenerateDeprecatedJavaFunction
 import org.jetbrains.kotlin.generators.builtins.arrayIterators.GenerateArrayIterators
 import org.jetbrains.kotlin.generators.builtins.arrays.GenerateArrays
 import org.jetbrains.kotlin.generators.builtins.functionImpl.GenerateFunctionImpl
@@ -34,6 +35,7 @@ fun assertExists(file: File): Unit =
 val BUILT_INS_NATIVE_DIR = File("core/builtins/native/")
 val BUILT_INS_SRC_DIR = File("core/builtins/src/")
 val RUNTIME_JVM_DIR = File("core/runtime.jvm/src/")
+val FUNCTIONS_MIGRATION_DIR = File("core/functions.migration/src/")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected abstract fun generateBody(): Unit
@@ -43,7 +45,7 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected open val language: Language = Language.KOTLIN
 
     enum class Language {
-        KOTLIN
+        KOTLIN,
         JAVA
     }
 
@@ -75,6 +77,13 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     generate(File(BUILT_INS_SRC_DIR, "kotlin/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
     generate(File(BUILT_INS_SRC_DIR, "kotlin/Progressions.kt")) { GenerateProgressions(it) }
     generate(File(BUILT_INS_SRC_DIR, "kotlin/Ranges.kt")) { GenerateRanges(it) }
+
+    for (i in 0..22) {
+        generate(File(FUNCTIONS_MIGRATION_DIR, "kotlin/Function$i.java")) { GenerateDeprecatedJavaFunction(it, i, false) }
+    }
+    for (i in 0..21) {
+        generate(File(FUNCTIONS_MIGRATION_DIR, "kotlin/ExtensionFunction$i.java")) { GenerateDeprecatedJavaFunction(it, i, true) }
+    }
 }
 
 fun main(args: Array<String>) {

@@ -21,8 +21,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.load.java.lazy.DeprecatedFunctionClassFqNameParser
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNotNull
 import org.jetbrains.kotlin.load.java.lazy.types.isMarkedNullable
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -34,8 +40,11 @@ import org.jetbrains.kotlin.resolve.annotations.hasInlineAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasPlatformStaticAnnotation
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
+import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -51,6 +60,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
+import java.util.ArrayList
 
 public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
         additionalDeclarationCheckers = listOf(PlatformStaticAnnotationChecker(),
@@ -60,7 +70,8 @@ public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
                                                OverloadsAnnotationChecker()),
 
         additionalCallCheckers = listOf(NeedSyntheticChecker(), JavaAnnotationCallChecker(),
-                                        JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker()),
+                                        JavaAnnotationMethodCallChecker(), TraitDefaultMethodCallChecker(),
+                                        DeprecatedFunctionClassChecker()),
 
         additionalTypeCheckers = listOf(JavaNullabilityWarningsChecker()),
         additionalSymbolUsageValidators = listOf()
@@ -319,6 +330,27 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
             doIfNotNull(dataFlowValue, c) {
                 c.trace.report(Errors.UNNECESSARY_SAFE_CALL.on(c.call.getCallOperationNode().getPsi(), receiverArgument.getType()))
             }
+        }
+    }
+}
+
+public class DeprecatedFunctionClassChecker : CallChecker {
+    override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, c: BasicCallResolutionContext) {
+        val javaMethod = (resolvedCall.getResultingDescriptor().getSource() as? JavaSourceElement)?.javaElement as? JavaMethod ?: return
+
+        val fqNames = ArrayList<Pair<String, String>>(0)
+
+        fun processType(type: JavaType) {
+            val javaClass = (type as? JavaClassifierType)?.getClassifier() as? JavaClass ?: return
+            val fqName = javaClass.getFqName()?.asString() ?: return
+            fqNames.add(DeprecatedFunctionClassFqNameParser.extractOldAndNewFqName(fqName) ?: return)
+        }
+
+        javaMethod.getValueParameters().forEach { processType(it.getType()) }
+        javaMethod.getReturnType()?.let { processType(it) }
+
+        for ((oldFqName, newFqName) in fqNames) {
+            c.trace.report(ErrorsJvm.JAVA_METHOD_USES_DEPRECATED_FUNCTION_CLASS.on(c.call.getCallElement(), oldFqName, newFqName))
         }
     }
 }

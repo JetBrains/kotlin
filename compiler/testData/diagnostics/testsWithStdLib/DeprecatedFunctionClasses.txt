@@ -1,0 +1,19 @@
+package
+
+internal fun bar(): kotlin.Unit
+internal fun baz(): kotlin.Unit
+internal fun foo(): kotlin.Unit
+internal fun quux(): kotlin.ExtensionFunction0<kotlin.String!, kotlin.Unit!>!
+
+public open class J {
+    public constructor J()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun ef1(/*0*/ ef: kotlin.ExtensionFunction1<kotlin.Int!, kotlin.Int!, kotlin.Int!>!): kotlin.Unit
+    public open fun ef2(): kotlin.ExtensionFunction0<kotlin.String!, kotlin.Unit!>!
+    public open fun f1(/*0*/ f: (() -> kotlin.Unit!)!): kotlin.Unit
+    public open fun f2(/*0*/ f: ((kotlin.String!) -> kotlin.String!)!): kotlin.Unit
+}
