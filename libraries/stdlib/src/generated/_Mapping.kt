@@ -521,77 +521,77 @@ public inline fun <K> String.groupByTo(map: MutableMap<K, MutableList<Char>>, to
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> CharArray.map(transform: (Char) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> FloatArray.map(transform: (Float) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> IntArray.map(transform: (Int) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> LongArray.map(transform: (Long) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> ShortArray.map(transform: (Short) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
 /**
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <K, V, R> Map<K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(size()), transform)
 }
 
 /**
@@ -614,7 +614,7 @@ public fun <T, R> Stream<T>.map(transform: (T) -> R): Stream<R> {
  * Returns a list containing the results of applying the given *transform* function to each element of the original collection
  */
 public inline fun <R> String.map(transform: (Char) -> R): List<R> {
-    return mapTo(ArrayList<R>(), transform)
+    return mapTo(ArrayList<R>(length()), transform)
 }
 
 /**

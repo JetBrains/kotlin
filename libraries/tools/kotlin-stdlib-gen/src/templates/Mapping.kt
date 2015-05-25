@@ -74,7 +74,13 @@ fun mapping(): List<GenericFunction> {
         typeParam("R")
         returns("List<R>")
         body {
-            "return mapTo(ArrayList<R>(), transform)"
+            "return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, Maps) {
+            "return mapTo(ArrayList<R>(size()), transform)"
+        }
+        body(Strings) {
+            "return mapTo(ArrayList<R>(length()), transform)"
         }
 
         inline(false, Sequences)
