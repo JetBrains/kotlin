@@ -71,6 +71,7 @@ public object JetUsageTypeProvider : UsageTypeProviderEx {
             CLASS_CAST_TO -> UsageType.CLASS_CAST_TO
             ANNOTATION -> UsageType.ANNOTATION
             CLASS_NEW_OPERATOR -> UsageType.CLASS_NEW_OPERATOR
+            NAMED_ARGUMENT -> JetUsageTypes.NAMED_ARGUMENT
         }
     }
 }
@@ -107,4 +108,5 @@ object JetUsageTypes {
 
     // common usage types
     val CALLABLE_REFERENCE = UsageType(JetBundle.message("usageType.callable.reference"))
+    val NAMED_ARGUMENT = UsageType("Named argument")
 }

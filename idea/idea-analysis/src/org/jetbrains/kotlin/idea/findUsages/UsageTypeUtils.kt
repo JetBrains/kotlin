@@ -133,6 +133,8 @@ public object UsageTypeUtils {
                 return DELEGATE
             }
 
+            if (refExpr.getParent() is JetValueArgumentName) return NAMED_ARGUMENT
+
             val dotQualifiedExpression = refExpr.getNonStrictParentOfType<JetDotQualifiedExpression>()
 
             if (dotQualifiedExpression != null) {
@@ -258,5 +260,6 @@ enum class UsageTypeEnum {
     TYPE_PARAMETER,
     CLASS_CAST_TO,
     ANNOTATION,
-    CLASS_NEW_OPERATOR
+    CLASS_NEW_OPERATOR,
+    NAMED_ARGUMENT
 }

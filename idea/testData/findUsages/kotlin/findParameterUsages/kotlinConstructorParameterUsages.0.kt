@@ -6,4 +6,12 @@ open class A<T>(<caret>foo: T) {
     }
 
     val t: T = foo
+
+    fun usage() {
+        return A(foo = ":)")
+    }
+}
+
+fun usage() {
+    A(foo = ":)")
 }

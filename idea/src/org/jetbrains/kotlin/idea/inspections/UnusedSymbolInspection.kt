@@ -199,7 +199,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         return !query.forEach(Processor {
             assert(it != null, { "Found reference is null, was looking for: " + declaration.getElementTextWithContext() +
                                  " findAll(): " + query.findAll().map { it?.getElement()?.let{ it.getElementTextWithContext() } } })
-            declaration.isAncestor(it.getElement())
+            declaration.isAncestor(it.getElement()) || it.getElement().getParent() is JetValueArgumentName
         })
     }
 
