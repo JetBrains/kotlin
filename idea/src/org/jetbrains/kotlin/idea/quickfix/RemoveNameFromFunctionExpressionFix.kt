@@ -61,10 +61,10 @@ public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : Je
 
         private fun removeNameFromFunction(function: JetNamedFunction) {
             var wereAutoLabelUsages = false
-            val name = function.getName() ?: return
+            val name = function.getNameAsName() ?: return
 
             function.forEachDescendantOfType<JetReturnExpression> {
-                if (!wereAutoLabelUsages && it.getLabelName() == name) {
+                if (!wereAutoLabelUsages && it.getLabelNameAsName() == name) {
                     wereAutoLabelUsages = it.analyze().get(BindingContext.LABEL_TARGET, it.getTargetLabel()) == function
                 }
             }
@@ -73,7 +73,7 @@ public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : Je
 
             if (wereAutoLabelUsages) {
                 val psiFactory = JetPsiFactory(function)
-                val newFunction = psiFactory.createExpressionByPattern("$name@ $0", function)
+                val newFunction = psiFactory.createExpressionByPattern("$0@ $1", name, function)
                 function.replace(newFunction)
             }
         }

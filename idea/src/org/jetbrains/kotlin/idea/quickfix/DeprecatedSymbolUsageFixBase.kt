@@ -611,20 +611,19 @@ public abstract class DeprecatedSymbolUsageFixBase(
         ) {
             assert(usages.all { expression.isAncestor(it, strict = true) })
 
-            fun nameInCode(name: String) = Name.identifier(name).renderName()
-
-            fun replaceUsages(name: String) {
-                val nameInCode = psiFactory.createExpression(nameInCode(name))
+            fun replaceUsages(name: Name) {
+                val nameInCode = psiFactory.createExpression(name.renderName())
                 for (usage in usages) {
                     usage.replace(nameInCode)
                 }
             }
 
-            fun suggestName(validator: JetNameValidator): String {
-                return if (nameSuggestion != null)
+            fun suggestName(validator: JetNameValidator): Name {
+                val name = if (nameSuggestion != null)
                     validator.validateName(nameSuggestion)
                 else
                     JetNameSuggester.suggestNamesForExpression(value, validator, "t").first()
+                return Name.identifier(name)
             }
 
             // checks that name is used (without receiver) inside expression being constructed but not inside usages that will be replaced
@@ -653,7 +652,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                             }
                         })
 
-                        var declaration = psiFactory.createDeclaration<JetVariableDeclaration>("val ${nameInCode(name)} = " + value.getText())
+                        var declaration = psiFactory.createDeclarationByPattern<JetVariableDeclaration>("val $0 = $1", name, value)
                         declaration = block.addBefore(declaration, expressionToBeReplaced) as JetVariableDeclaration
                         block.addBefore(psiFactory.createNewLine(), expressionToBeReplaced)
 
@@ -676,7 +675,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val dot = if (safeCall) "?." else "."
 
             expression = if (!isNameUsed("it")) {
-                replaceUsages("it")
+                replaceUsages(Name.identifier("it"))
                 psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, expression)
             }
             else {
@@ -684,7 +683,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     override fun validateInner(name: String) = !isNameUsed(name)
                 })
                 replaceUsages(name)
-                psiFactory.createExpressionByPattern("$0${dot}let { ${nameInCode(name)} -> $1 }", value, expression)
+                psiFactory.createExpressionByPattern("$0${dot}let { $1 -> $2 }", value, name, expression)
             }
         }
 

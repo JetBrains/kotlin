@@ -94,7 +94,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry?) : JetIn
             val textRangeToRetain = TextRange(annotation.getTextRange().getEndOffset(), baseExpressionStart)
             val textToRetain = textRangeToRetain.substring(annotation.getContainingFile().getText())
 
-            val labeledExpression = JetPsiFactory(annotation).createExpressionByPattern("$labelName@$0$1", textToRetain, expression)
+            val labeledExpression = JetPsiFactory(annotation).createExpressionByPattern("$0@$1$2", labelName, textToRetain, expression)
 
             annotatedExpression.replace(labeledExpression)
         }

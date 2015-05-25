@@ -22,11 +22,12 @@ import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.LinkedHashMap
@@ -38,6 +39,9 @@ public fun <TDeclaration : JetDeclaration> JetPsiFactory.createDeclarationByPatt
         = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
 
 public fun <TElement : JetElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
+    @suppress("NAME_SHADOWING")
+    val args = args.map { if (it is Name) it.renderName() else it }
+
     val (processedText, allPlaceholders) = processPattern(pattern, args)
 
     var resultElement = factory(processedText.trim())
@@ -125,7 +129,7 @@ private data class Placeholder(val range: TextRange, val text: String)
 
 private data class PatternData(val processedText: String, val placeholders: Map<Int, List<Placeholder>>)
 
-private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
+private fun processPattern(pattern: String, args: List<Any>): PatternData {
     val ranges = LinkedHashMap<Int, MutableList<Placeholder>>()
 
     fun charOrNull(i: Int) = if (0 <= i && i < pattern.length()) pattern[i] else null
@@ -155,13 +159,13 @@ private fun processPattern(pattern: String, args: Array<out Any>): PatternData {
                     i = lastIndex
 
                     val arg: Any? = if (n < args.size()) args[n] else null /* report wrong number of arguments later */
-                    val placeholderText = if (charOrNull(i) != '=') {
+                    val placeholderText = if (charOrNull(i) != ':' || charOrNull(i + 1) != '\'') {
                         if (arg is String) arg else "xyz"
                     }
                     else {
                         check(arg !is String, "do not specify placeholder text for $$n - String argument passed")
-                        i++
-                        val endIndex = pattern.indexOf('$', i)
+                        i += 2 // skip ':' and '\''
+                        val endIndex = pattern.indexOf('\'', i)
                         check(endIndex >= 0, "unclosed placeholder text")
                         check(endIndex > i, "empty placeholder text")
                         val text = pattern.substring(i, endIndex)
@@ -224,6 +228,12 @@ public class BuilderByPattern<TElement> {
             patternBuilder.append("$" + arguments.size())
             arguments.add(typeRef)
         }
+        return this
+    }
+
+    public fun appendName(name: Name): BuilderByPattern<TElement> {
+        patternBuilder.append("$" + arguments.size())
+        arguments.add(name)
         return this
     }
 

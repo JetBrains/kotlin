@@ -372,7 +372,7 @@ public class JetPsiFactory(private val project: Project) {
             appendFixedText("(")
 
             if (name != null) {
-                appendFixedText(Name.identifier(name).renderName())
+                appendName(Name.identifier(name))
                 appendFixedText("=")
             }
 

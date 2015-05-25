@@ -89,7 +89,7 @@ fun splitPropertyDeclaration(property: JetProperty): JetBinaryExpression {
     val explicitTypeToSet = if (property.getTypeReference() != null) null else initializer.analyze().getType(initializer)
 
     val psiFactory = JetPsiFactory(property)
-    var assignment = psiFactory.createExpressionByPattern("$0 = $1", property.getName()!!, initializer)
+    var assignment = psiFactory.createExpressionByPattern("$0 = $1", property.getNameAsName()!!, initializer)
 
     assignment = parent.addAfter(assignment, property) as JetBinaryExpression
     parent.addAfter(psiFactory.createNewLine(), property)

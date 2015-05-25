@@ -76,7 +76,7 @@ fun JetCallExpression.moveFunctionLiteralOutsideParentheses() {
     val expression = argument.getArgumentExpression()!!
     assert(expression.unpackFunctionLiteral() != null)
 
-    val dummyCall = JetPsiFactory(this).createExpressionByPattern("foo()$0={}$", expression) as JetCallExpression
+    val dummyCall = JetPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as JetCallExpression
     val functionLiteralArgument = dummyCall.getFunctionLiteralArguments().single()
     this.add(functionLiteralArgument)
     if (argumentList.getArguments().size() > 1) {
