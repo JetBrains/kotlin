@@ -67,7 +67,7 @@ native public interface DOMElementMap {
     nativeSetter fun set(name: String, value: Element): Unit = noImpl
 }
 
-native public open class Document : Node {
+native public open class Document : Node, GeometryNode {
     var fullscreenEnabled: Boolean
         get() = noImpl
         set(value) = noImpl
@@ -459,6 +459,9 @@ native public open class Document : Node {
     fun createTreeWalker(root: Node, whatToShow: Int = noImpl, filter: NodeFilter? = null): TreeWalker = noImpl
     fun createTreeWalker(root: Node, whatToShow: Int = noImpl, filter: ((Node) -> Short)? = null): TreeWalker = noImpl
     fun getSelection(): Selection = noImpl
+    fun elementFromPoint(x: Double, y: Double): Element? = noImpl
+    fun elementsFromPoint(x: Double, y: Double): Array<Element> = noImpl
+    fun caretPositionFromPoint(x: Double, y: Double): CaretPosition? = noImpl
     fun getElementById(elementId: String): Element? = noImpl
     fun prepend(vararg nodes: dynamic): Unit = noImpl
     fun append(vararg nodes: dynamic): Unit = noImpl
@@ -466,6 +469,10 @@ native public open class Document : Node {
     fun queryAll(relativeSelectors: String): dynamic = noImpl
     fun querySelector(selectors: String): Element? = noImpl
     fun querySelectorAll(selectors: String): NodeList = noImpl
+    fun getBoxQuads(options: BoxQuadOptions = noImpl): Array<DOMQuad> = noImpl
+    fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
 }
 
 native public open class XMLDocument : Document() {
@@ -549,6 +556,21 @@ native public interface HTMLElement : Element {
         get() = noImpl
         set(value) = noImpl
     var commandChecked: Boolean?
+        get() = noImpl
+        set(value) = noImpl
+    var offsetParent: Element?
+        get() = noImpl
+        set(value) = noImpl
+    var offsetTop: Double
+        get() = noImpl
+        set(value) = noImpl
+    var offsetLeft: Double
+        get() = noImpl
+        set(value) = noImpl
+    var offsetWidth: Double
+        get() = noImpl
+        set(value) = noImpl
+    var offsetHeight: Double
         get() = noImpl
         set(value) = noImpl
     var onabort: ((Event) -> dynamic)?
@@ -3098,6 +3120,42 @@ native public interface Window : EventTarget, UnionMessagePortOrWindow {
     var applicationCache: ApplicationCache
         get() = noImpl
         set(value) = noImpl
+    var screen: Screen
+        get() = noImpl
+        set(value) = noImpl
+    var innerWidth: Double
+        get() = noImpl
+        set(value) = noImpl
+    var innerHeight: Double
+        get() = noImpl
+        set(value) = noImpl
+    var scrollX: Double
+        get() = noImpl
+        set(value) = noImpl
+    var pageXOffset: Double
+        get() = noImpl
+        set(value) = noImpl
+    var scrollY: Double
+        get() = noImpl
+        set(value) = noImpl
+    var pageYOffset: Double
+        get() = noImpl
+        set(value) = noImpl
+    var screenX: Double
+        get() = noImpl
+        set(value) = noImpl
+    var screenY: Double
+        get() = noImpl
+        set(value) = noImpl
+    var outerWidth: Double
+        get() = noImpl
+        set(value) = noImpl
+    var outerHeight: Double
+        get() = noImpl
+        set(value) = noImpl
+    var devicePixelRatio: Double
+        get() = noImpl
+        set(value) = noImpl
     var onabort: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -3352,6 +3410,14 @@ native public interface Window : EventTarget, UnionMessagePortOrWindow {
     fun captureEvents(): Unit = noImpl
     fun releaseEvents(): Unit = noImpl
     fun getSelection(): Selection = noImpl
+    fun matchMedia(query: String): MediaQueryList = noImpl
+    fun moveTo(x: Double, y: Double): Unit = noImpl
+    fun moveBy(x: Double, y: Double): Unit = noImpl
+    fun resizeTo(x: Double, y: Double): Unit = noImpl
+    fun resizeBy(x: Double, y: Double): Unit = noImpl
+    fun scroll(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
+    fun scrollTo(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
+    fun scrollBy(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
     fun btoa(btoa: String): String = noImpl
     fun atob(atob: String): String = noImpl
     fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
@@ -4187,6 +4253,12 @@ native public interface HTMLImageElement : HTMLElement, CanvasImageSource, Image
     var currentSrc: String
         get() = noImpl
         set(value) = noImpl
+    var x: Double
+        get() = noImpl
+        set(value) = noImpl
+    var y: Double
+        get() = noImpl
+        set(value) = noImpl
 }
 
 native public interface HTMLPictureElement : HTMLElement {
@@ -4393,7 +4465,7 @@ native public interface DocumentType : Node {
     fun remove(): Unit = noImpl
 }
 
-native public interface Element : Node, UnionElementOrHTMLCollection, UnionElementOrRadioNodeList, UnionElementOrMouseEvent, UnionElementOrProcessingInstruction {
+native public interface Element : Node, UnionElementOrHTMLCollection, UnionElementOrRadioNodeList, UnionElementOrMouseEvent, UnionElementOrProcessingInstruction, GeometryNode {
     var innerHTML: String
         get() = noImpl
         set(value) = noImpl
@@ -4422,6 +4494,30 @@ native public interface Element : Node, UnionElementOrHTMLCollection, UnionEleme
         get() = noImpl
         set(value) = noImpl
     var attributes: NamedNodeMap
+        get() = noImpl
+        set(value) = noImpl
+    var scrollTop: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var scrollLeft: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var scrollWidth: Double
+        get() = noImpl
+        set(value) = noImpl
+    var scrollHeight: Double
+        get() = noImpl
+        set(value) = noImpl
+    var clientTop: Double
+        get() = noImpl
+        set(value) = noImpl
+    var clientLeft: Double
+        get() = noImpl
+        set(value) = noImpl
+    var clientWidth: Double
+        get() = noImpl
+        set(value) = noImpl
+    var clientHeight: Double
         get() = noImpl
         set(value) = noImpl
     var children: HTMLCollection
@@ -4476,6 +4572,10 @@ native public interface Element : Node, UnionElementOrHTMLCollection, UnionEleme
     fun getElementsByTagName(localName: String): HTMLCollection = noImpl
     fun getElementsByTagNameNS(namespace: String?, localName: String): HTMLCollection = noImpl
     fun getElementsByClassName(classNames: String): HTMLCollection = noImpl
+    fun getClientRects(): dynamic = noImpl
+    fun getBoundingClientRect(): DOMRect = noImpl
+    fun scrollIntoView(): Unit = noImpl
+    fun scrollIntoView(top: Boolean, options: ScrollOptions = noImpl): Unit = noImpl
     fun prepend(vararg nodes: dynamic): Unit = noImpl
     fun append(vararg nodes: dynamic): Unit = noImpl
     fun query(relativeSelectors: String): Element? = noImpl
@@ -4486,6 +4586,10 @@ native public interface Element : Node, UnionElementOrHTMLCollection, UnionEleme
     fun after(vararg nodes: dynamic): Unit = noImpl
     fun replaceWith(vararg nodes: dynamic): Unit = noImpl
     fun remove(): Unit = noImpl
+    fun getBoxQuads(options: BoxQuadOptions = noImpl): Array<DOMQuad> = noImpl
+    fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
 }
 
 native public interface NamedNodeMap {
@@ -4557,11 +4661,15 @@ native public interface CharacterData : Node {
     fun remove(): Unit = noImpl
 }
 
-native public open class Text(data: String = "") : CharacterData {
+native public open class Text(data: String = "") : CharacterData, GeometryNode {
     var wholeText: String
         get() = noImpl
         set(value) = noImpl
     fun splitText(offset: Int): Text = noImpl
+    fun getBoxQuads(options: BoxQuadOptions = noImpl): Array<DOMQuad> = noImpl
+    fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
 }
 
 native public interface ProcessingInstruction : CharacterData, UnionElementOrProcessingInstruction {
@@ -4616,6 +4724,8 @@ native public open class Range {
     fun isPointInRange(node: Node, offset: Int): Boolean = noImpl
     fun comparePoint(node: Node, offset: Int): Short = noImpl
     fun intersectsNode(node: Node): Boolean = noImpl
+    fun getClientRects(): dynamic = noImpl
+    fun getBoundingClientRect(): DOMRect = noImpl
 
     companion object {
         val START_TO_START: Short = 0
@@ -4768,6 +4878,258 @@ native public open class EditingInputEventInit : EventInit() {
     var value: String
 }
 
+native public open class DOMPointReadOnly(x: Double, y: Double, z: Double, w: Double) {
+    var x: Double
+        get() = noImpl
+        set(value) = noImpl
+    var y: Double
+        get() = noImpl
+        set(value) = noImpl
+    var z: Double
+        get() = noImpl
+        set(value) = noImpl
+    var w: Double
+        get() = noImpl
+        set(value) = noImpl
+    fun matrixTransform(matrix: DOMMatrixReadOnly): DOMPoint = noImpl
+}
+
+native public open class DOMPoint(point: DOMPointInit = noImpl) : DOMPointReadOnly(noImpl, noImpl, noImpl, noImpl) {
+}
+
+native public open class DOMPointInit {
+    var x: Double = 0.0
+    var y: Double = 0.0
+    var z: Double = 0.0
+    var w: Double = 1.0
+}
+
+native public open class DOMRect(x: Double = 0.0, y: Double = 0.0, width: Double = 0.0, height: Double = 0.0) : DOMRectReadOnly(x, y, width, height) {
+}
+
+native public open class DOMRectReadOnly(x: Double, y: Double, width: Double, height: Double) {
+    var x: Double
+        get() = noImpl
+        set(value) = noImpl
+    var y: Double
+        get() = noImpl
+        set(value) = noImpl
+    var width: Double
+        get() = noImpl
+        set(value) = noImpl
+    var height: Double
+        get() = noImpl
+        set(value) = noImpl
+    var top: Double
+        get() = noImpl
+        set(value) = noImpl
+    var right: Double
+        get() = noImpl
+        set(value) = noImpl
+    var bottom: Double
+        get() = noImpl
+        set(value) = noImpl
+    var left: Double
+        get() = noImpl
+        set(value) = noImpl
+}
+
+native public open class DOMRectInit {
+    var x: Double = 0.0
+    var y: Double = 0.0
+    var width: Double = 0.0
+    var height: Double = 0.0
+}
+
+native public open class DOMQuad(p1: DOMPointInit = noImpl, p2: DOMPointInit = noImpl, p3: DOMPointInit = noImpl, p4: DOMPointInit = noImpl) {
+    var p1: DOMPoint
+        get() = noImpl
+        set(value) = noImpl
+    var p2: DOMPoint
+        get() = noImpl
+        set(value) = noImpl
+    var p3: DOMPoint
+        get() = noImpl
+        set(value) = noImpl
+    var p4: DOMPoint
+        get() = noImpl
+        set(value) = noImpl
+    var bounds: DOMRectReadOnly
+        get() = noImpl
+        set(value) = noImpl
+}
+
+native public open class DOMMatrixReadOnly(numberSequence: Array<Double>) {
+    var a: Double
+        get() = noImpl
+        set(value) = noImpl
+    var b: Double
+        get() = noImpl
+        set(value) = noImpl
+    var c: Double
+        get() = noImpl
+        set(value) = noImpl
+    var d: Double
+        get() = noImpl
+        set(value) = noImpl
+    var e: Double
+        get() = noImpl
+        set(value) = noImpl
+    var f: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m11: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m12: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m13: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m14: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m21: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m22: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m23: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m24: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m31: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m32: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m33: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m34: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m41: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m42: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m43: Double
+        get() = noImpl
+        set(value) = noImpl
+    var m44: Double
+        get() = noImpl
+        set(value) = noImpl
+    var is2D: Boolean
+        get() = noImpl
+        set(value) = noImpl
+    var isIdentity: Boolean
+        get() = noImpl
+        set(value) = noImpl
+    fun translate(tx: Double, ty: Double, tz: Double = 0.0): DOMMatrix = noImpl
+    fun scale(scale: Double, originX: Double = 0.0, originY: Double = 0.0): DOMMatrix = noImpl
+    fun scale3d(scale: Double, originX: Double = 0.0, originY: Double = 0.0, originZ: Double = 0.0): DOMMatrix = noImpl
+    fun scaleNonUniform(scaleX: Double, scaleY: Double = 1.0, scaleZ: Double = 1.0, originX: Double = 0.0, originY: Double = 0.0, originZ: Double = 0.0): DOMMatrix = noImpl
+    fun rotate(angle: Double, originX: Double = 0.0, originY: Double = 0.0): DOMMatrix = noImpl
+    fun rotateFromVector(x: Double, y: Double): DOMMatrix = noImpl
+    fun rotateAxisAngle(x: Double, y: Double, z: Double, angle: Double): DOMMatrix = noImpl
+    fun skewX(sx: Double): DOMMatrix = noImpl
+    fun skewY(sy: Double): DOMMatrix = noImpl
+    fun multiply(other: DOMMatrix): DOMMatrix = noImpl
+    fun flipX(): DOMMatrix = noImpl
+    fun flipY(): DOMMatrix = noImpl
+    fun inverse(): DOMMatrix = noImpl
+    fun transformPoint(point: DOMPointInit = noImpl): DOMPoint = noImpl
+    fun toFloat32Array(): Float32Array = noImpl
+    fun toFloat64Array(): Float64Array = noImpl
+}
+
+native public open class DOMMatrix : DOMMatrixReadOnly(noImpl) {
+    fun multiplySelf(other: DOMMatrix): DOMMatrix = noImpl
+    fun preMultiplySelf(other: DOMMatrix): DOMMatrix = noImpl
+    fun translateSelf(tx: Double, ty: Double, tz: Double = 0.0): DOMMatrix = noImpl
+    fun scaleSelf(scale: Double, originX: Double = 0.0, originY: Double = 0.0): DOMMatrix = noImpl
+    fun scale3dSelf(scale: Double, originX: Double = 0.0, originY: Double = 0.0, originZ: Double = 0.0): DOMMatrix = noImpl
+    fun scaleNonUniformSelf(scaleX: Double, scaleY: Double = 1.0, scaleZ: Double = 1.0, originX: Double = 0.0, originY: Double = 0.0, originZ: Double = 0.0): DOMMatrix = noImpl
+    fun rotateSelf(angle: Double, originX: Double = 0.0, originY: Double = 0.0): DOMMatrix = noImpl
+    fun rotateFromVectorSelf(x: Double, y: Double): DOMMatrix = noImpl
+    fun rotateAxisAngleSelf(x: Double, y: Double, z: Double, angle: Double): DOMMatrix = noImpl
+    fun skewXSelf(sx: Double): DOMMatrix = noImpl
+    fun skewYSelf(sy: Double): DOMMatrix = noImpl
+    fun invertSelf(): DOMMatrix = noImpl
+    fun setMatrixValue(transformList: String): DOMMatrix = noImpl
+}
+
+native public open class ScrollOptions {
+    var behavior: String = "auto"
+}
+
+native public interface MediaQueryList {
+    var media: String
+        get() = noImpl
+        set(value) = noImpl
+    var matches: Boolean
+        get() = noImpl
+        set(value) = noImpl
+    fun addListener(listener: (MediaQueryList) -> Unit): Unit = noImpl
+    fun removeListener(listener: (MediaQueryList) -> Unit): Unit = noImpl
+}
+
+native public interface Screen {
+    var availWidth: Double
+        get() = noImpl
+        set(value) = noImpl
+    var availHeight: Double
+        get() = noImpl
+        set(value) = noImpl
+    var width: Double
+        get() = noImpl
+        set(value) = noImpl
+    var height: Double
+        get() = noImpl
+        set(value) = noImpl
+    var colorDepth: Int
+        get() = noImpl
+        set(value) = noImpl
+    var pixelDepth: Int
+        get() = noImpl
+        set(value) = noImpl
+}
+
+native public interface CaretPosition {
+    var offsetNode: Node
+        get() = noImpl
+        set(value) = noImpl
+    var offset: Int
+        get() = noImpl
+        set(value) = noImpl
+    fun getClientRect(): DOMRect? = noImpl
+}
+
+native public open class ScrollOptionsHorizontal : ScrollOptions() {
+    var x: Double
+}
+
+native public open class ScrollOptionsVertical : ScrollOptions() {
+    var y: Double
+}
+
+native public open class BoxQuadOptions {
+    var box: String = "border"
+    var relativeTo: GeometryNode
+}
+
+native public open class ConvertCoordinateOptions {
+    var fromBox: String = "border"
+    var toBox: String = "border"
+}
+
 native public marker interface UnionElementOrHTMLCollection {
 }
 
@@ -4802,5 +5164,8 @@ native public marker interface CanvasImageSource {
 }
 
 native public marker interface ImageBitmapSource {
+}
+
+native public marker interface GeometryNode {
 }
 

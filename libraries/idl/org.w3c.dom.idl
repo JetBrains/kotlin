@@ -5111,4 +5111,578 @@ partial interface Window {
 };
 
 callback FrameRequestCallback = void (DOMHighResTimeStamp time);
+// Downloaded from http://www.w3.org/TR/geometry-1/
+[Constructor(unrestricted double x, unrestricted double y,
+             unrestricted double z, unrestricted double w),
+ Exposed=(Window,Worker)]
+interface DOMPointReadOnly {
+    readonly attribute unrestricted double x;
+    readonly attribute unrestricted double y;
+    readonly attribute unrestricted double z;
+    readonly attribute unrestricted double w;
+
+    DOMPoint matrixTransform(DOMMatrixReadOnly matrix);
+};
+
+[Constructor(optional DOMPointInit point),
+ Constructor(optional unrestricted double x = 0, optional unrestricted double y = 0,
+             optional unrestricted double z = 0, optional unrestricted double w = 1),
+ Exposed=(Window,Worker)]
+interface DOMPoint : DOMPointReadOnly {
+    inherit attribute unrestricted double x;
+    inherit attribute unrestricted double y;
+    inherit attribute unrestricted double z;
+    inherit attribute unrestricted double w;
+};
+
+dictionary DOMPointInit {
+    unrestricted double x = 0;
+    unrestricted double y = 0;
+    unrestricted double z = 0;
+    unrestricted double w = 1;
+};
+[Constructor(unrestricted double x = 0, unrestricted double y = 0,
+             unrestricted double width = 0, unrestricted double height = 0),
+ Exposed=(Window,Worker)]
+interface DOMRect : DOMRectReadOnly {
+    inherit attribute unrestricted double x;
+    inherit attribute unrestricted double y;
+    inherit attribute unrestricted double width;
+    inherit attribute unrestricted double height;
+};
+
+[Constructor(unrestricted double x, unrestricted double y,
+             unrestricted double width, unrestricted double height),
+ Exposed=(Window,Worker)]
+interface DOMRectReadOnly {
+    readonly attribute unrestricted double x;
+    readonly attribute unrestricted double y;
+    readonly attribute unrestricted double width;
+    readonly attribute unrestricted double height;
+    readonly attribute unrestricted double top;
+    readonly attribute unrestricted double right;
+    readonly attribute unrestricted double bottom;
+    readonly attribute unrestricted double left;
+};
+
+dictionary DOMRectInit {
+    unrestricted double x = 0;
+    unrestricted double y = 0;
+    unrestricted double width = 0;
+    unrestricted double height = 0;
+};
+[NoInterfaceObject,
+ ArrayClass]
+interface DOMRectList {
+    readonly attribute unsigned long length;
+    getter DOMRect? item(unsigned long index);
+};
+[Constructor(optional DOMPointInit p1, optional DOMPointInit p2,
+             optional DOMPointInit p3, optional DOMPointInit p4),
+ Constructor(optional DOMRectInit rect),
+ Exposed=(Window,Worker)]
+interface DOMQuad {
+    [SameObject] readonly attribute DOMPoint p1;
+    [SameObject] readonly attribute DOMPoint p2;
+    [SameObject] readonly attribute DOMPoint p3;
+    [SameObject] readonly attribute DOMPoint p4;
+    [SameObject] readonly attribute DOMRectReadOnly bounds;
+};
+[Constructor(sequence<unrestricted double> numberSequence),
+ Exposed=(Window,Worker)]
+interface DOMMatrixReadOnly {
+    // These attributes are simple aliases for certain elements of the 4x4 matrix
+    readonly attribute unrestricted double a;
+    readonly attribute unrestricted double b;
+    readonly attribute unrestricted double c;
+    readonly attribute unrestricted double d;
+    readonly attribute unrestricted double e;
+    readonly attribute unrestricted double f;
+
+    readonly attribute unrestricted double m11;
+    readonly attribute unrestricted double m12;
+    readonly attribute unrestricted double m13;
+    readonly attribute unrestricted double m14;
+    readonly attribute unrestricted double m21;
+    readonly attribute unrestricted double m22;
+    readonly attribute unrestricted double m23;
+    readonly attribute unrestricted double m24;
+    readonly attribute unrestricted double m31;
+    readonly attribute unrestricted double m32;
+    readonly attribute unrestricted double m33;
+    readonly attribute unrestricted double m34;
+    readonly attribute unrestricted double m41;
+    readonly attribute unrestricted double m42;
+    readonly attribute unrestricted double m43;
+    readonly attribute unrestricted double m44;
+
+    readonly attribute boolean is2D;
+    readonly attribute boolean isIdentity;
+
+    // Immutable transform methods
+    DOMMatrix translate(unrestricted double tx,
+                        unrestricted double ty,
+                        optional unrestricted double tz = 0);
+    DOMMatrix scale(unrestricted double scale,
+                    optional unrestricted double originX = 0,
+                    optional unrestricted double originY = 0);
+    DOMMatrix scale3d(unrestricted double scale,
+                      optional unrestricted double originX = 0,
+                      optional unrestricted double originY = 0,
+                      optional unrestricted double originZ = 0);
+    DOMMatrix scaleNonUniform(unrestricted double scaleX,
+                              optional unrestricted double scaleY = 1,
+                              optional unrestricted double scaleZ = 1,
+                              optional unrestricted double originX = 0,
+                              optional unrestricted double originY = 0,
+                              optional unrestricted double originZ = 0);
+    DOMMatrix rotate(unrestricted double angle,
+                     optional unrestricted double originX = 0,
+                     optional unrestricted double originY = 0);
+    DOMMatrix rotateFromVector(unrestricted double x,
+                               unrestricted double y);
+    DOMMatrix rotateAxisAngle(unrestricted double x,
+                              unrestricted double y,
+                              unrestricted double z,
+                              unrestricted double angle);
+    DOMMatrix skewX(unrestricted double sx);
+    DOMMatrix skewY(unrestricted double sy);
+    DOMMatrix multiply(DOMMatrix other);
+    DOMMatrix flipX();
+    DOMMatrix flipY();
+    DOMMatrix inverse();
+
+    DOMPoint            transformPoint(optional DOMPointInit point);
+    Float32Array        toFloat32Array();
+    Float64Array        toFloat64Array();
+                        stringifier;
+};
+
+[Constructor,
+ Constructor(DOMString transformList),
+ Constructor(DOMMatrixReadOnly other),
+ Constructor(Float32Array array32),
+ Constructor(Float64Array array64),
+ Constructor(sequence<unrestricted double> numberSequence),
+ Exposed=(Window,Worker)]
+interface DOMMatrix : DOMMatrixReadOnly {
+    // These attributes are simple aliases for certain elements of the 4x4 matrix
+    inherit attribute unrestricted double a;
+    inherit attribute unrestricted double b;
+    inherit attribute unrestricted double c;
+    inherit attribute unrestricted double d;
+    inherit attribute unrestricted double e;
+    inherit attribute unrestricted double f;
+
+    inherit attribute unrestricted double m11;
+    inherit attribute unrestricted double m12;
+    inherit attribute unrestricted double m13;
+    inherit attribute unrestricted double m14;
+    inherit attribute unrestricted double m21;
+    inherit attribute unrestricted double m22;
+    inherit attribute unrestricted double m23;
+    inherit attribute unrestricted double m24;
+    inherit attribute unrestricted double m31;
+    inherit attribute unrestricted double m32;
+    inherit attribute unrestricted double m33;
+    inherit attribute unrestricted double m34;
+    inherit attribute unrestricted double m41;
+    inherit attribute unrestricted double m42;
+    inherit attribute unrestricted double m43;
+    inherit attribute unrestricted double m44;
+
+    // Mutable transform methods
+    DOMMatrix multiplySelf(DOMMatrix other);
+    DOMMatrix preMultiplySelf(DOMMatrix other);
+    DOMMatrix translateSelf(unrestricted double tx,
+                     unrestricted double ty,
+                     optional unrestricted double tz = 0);
+    DOMMatrix scaleSelf(unrestricted double scale,
+                 optional unrestricted double originX = 0,
+                 optional unrestricted double originY = 0);
+    DOMMatrix scale3dSelf(unrestricted double scale,
+                   optional unrestricted double originX = 0,
+                   optional unrestricted double originY = 0,
+                   optional unrestricted double originZ = 0);
+    DOMMatrix scaleNonUniformSelf(unrestricted double scaleX,
+                           optional unrestricted double scaleY = 1,
+                           optional unrestricted double scaleZ = 1,
+                           optional unrestricted double originX = 0,
+                           optional unrestricted double originY = 0,
+                           optional unrestricted double originZ = 0);
+    DOMMatrix rotateSelf(unrestricted double angle,
+                  optional unrestricted double originX = 0,
+                  optional unrestricted double originY = 0);
+    DOMMatrix rotateFromVectorSelf(unrestricted double x,
+                            unrestricted double y);
+    DOMMatrix rotateAxisAngleSelf(unrestricted double x,
+                           unrestricted double y,
+                           unrestricted double z,
+                           unrestricted double angle);
+    DOMMatrix skewXSelf(unrestricted double sx);
+    DOMMatrix skewYSelf(unrestricted double sy);
+    DOMMatrix invertSelf();
+
+    DOMMatrix setMatrixValue(DOMString transformList);
+};
+[Constructor(unrestricted double x, unrestricted double y,
+             unrestricted double z, unrestricted double w),
+ Exposed=(Window,Worker)]
+interface DOMPointReadOnly {
+    readonly attribute unrestricted double x;
+    readonly attribute unrestricted double y;
+    readonly attribute unrestricted double z;
+    readonly attribute unrestricted double w;
+
+    DOMPoint matrixTransform(DOMMatrixReadOnly matrix);
+};
+
+[Constructor(optional DOMPointInit point),
+ Constructor(optional unrestricted double x = 0, optional unrestricted double y = 0,
+             optional unrestricted double z = 0, optional unrestricted double w = 1),
+ Exposed=(Window,Worker)]
+interface DOMPoint : DOMPointReadOnly {
+    inherit attribute unrestricted double x;
+    inherit attribute unrestricted double y;
+    inherit attribute unrestricted double z;
+    inherit attribute unrestricted double w;
+};
+
+dictionary DOMPointInit {
+    unrestricted double x = 0;
+    unrestricted double y = 0;
+    unrestricted double z = 0;
+    unrestricted double w = 1;
+};
+
+[Constructor(unrestricted double x = 0, unrestricted double y = 0,
+             unrestricted double width = 0, unrestricted double height = 0),
+ Exposed=(Window,Worker)]
+interface DOMRect : DOMRectReadOnly {
+    inherit attribute unrestricted double x;
+    inherit attribute unrestricted double y;
+    inherit attribute unrestricted double width;
+    inherit attribute unrestricted double height;
+};
+
+[Constructor(unrestricted double x, unrestricted double y,
+             unrestricted double width, unrestricted double height),
+ Exposed=(Window,Worker)]
+interface DOMRectReadOnly {
+    readonly attribute unrestricted double x;
+    readonly attribute unrestricted double y;
+    readonly attribute unrestricted double width;
+    readonly attribute unrestricted double height;
+    readonly attribute unrestricted double top;
+    readonly attribute unrestricted double right;
+    readonly attribute unrestricted double bottom;
+    readonly attribute unrestricted double left;
+};
+
+dictionary DOMRectInit {
+    unrestricted double x = 0;
+    unrestricted double y = 0;
+    unrestricted double width = 0;
+    unrestricted double height = 0;
+};
+
+[NoInterfaceObject,
+ ArrayClass]
+interface DOMRectList {
+    readonly attribute unsigned long length;
+    getter DOMRect? item(unsigned long index);
+};
+
+[Constructor(optional DOMPointInit p1, optional DOMPointInit p2,
+             optional DOMPointInit p3, optional DOMPointInit p4),
+ Constructor(optional DOMRectInit rect),
+ Exposed=(Window,Worker)]
+interface DOMQuad {
+    [SameObject] readonly attribute DOMPoint p1;
+    [SameObject] readonly attribute DOMPoint p2;
+    [SameObject] readonly attribute DOMPoint p3;
+    [SameObject] readonly attribute DOMPoint p4;
+    [SameObject] readonly attribute DOMRectReadOnly bounds;
+};
+
+[Constructor(sequence<unrestricted double> numberSequence),
+ Exposed=(Window,Worker)]
+interface DOMMatrixReadOnly {
+    // These attributes are simple aliases for certain elements of the 4x4 matrix
+    readonly attribute unrestricted double a;
+    readonly attribute unrestricted double b;
+    readonly attribute unrestricted double c;
+    readonly attribute unrestricted double d;
+    readonly attribute unrestricted double e;
+    readonly attribute unrestricted double f;
+
+    readonly attribute unrestricted double m11;
+    readonly attribute unrestricted double m12;
+    readonly attribute unrestricted double m13;
+    readonly attribute unrestricted double m14;
+    readonly attribute unrestricted double m21;
+    readonly attribute unrestricted double m22;
+    readonly attribute unrestricted double m23;
+    readonly attribute unrestricted double m24;
+    readonly attribute unrestricted double m31;
+    readonly attribute unrestricted double m32;
+    readonly attribute unrestricted double m33;
+    readonly attribute unrestricted double m34;
+    readonly attribute unrestricted double m41;
+    readonly attribute unrestricted double m42;
+    readonly attribute unrestricted double m43;
+    readonly attribute unrestricted double m44;
+
+    readonly attribute boolean is2D;
+    readonly attribute boolean isIdentity;
+
+    // Immutable transform methods
+    DOMMatrix translate(unrestricted double tx,
+                        unrestricted double ty,
+                        optional unrestricted double tz = 0);
+    DOMMatrix scale(unrestricted double scale,
+                    optional unrestricted double originX = 0,
+                    optional unrestricted double originY = 0);
+    DOMMatrix scale3d(unrestricted double scale,
+                      optional unrestricted double originX = 0,
+                      optional unrestricted double originY = 0,
+                      optional unrestricted double originZ = 0);
+    DOMMatrix scaleNonUniform(unrestricted double scaleX,
+                              optional unrestricted double scaleY = 1,
+                              optional unrestricted double scaleZ = 1,
+                              optional unrestricted double originX = 0,
+                              optional unrestricted double originY = 0,
+                              optional unrestricted double originZ = 0);
+    DOMMatrix rotate(unrestricted double angle,
+                     optional unrestricted double originX = 0,
+                     optional unrestricted double originY = 0);
+    DOMMatrix rotateFromVector(unrestricted double x,
+                               unrestricted double y);
+    DOMMatrix rotateAxisAngle(unrestricted double x,
+                              unrestricted double y,
+                              unrestricted double z,
+                              unrestricted double angle);
+    DOMMatrix skewX(unrestricted double sx);
+    DOMMatrix skewY(unrestricted double sy);
+    DOMMatrix multiply(DOMMatrix other);
+    DOMMatrix flipX();
+    DOMMatrix flipY();
+    DOMMatrix inverse();
+
+    DOMPoint            transformPoint(optional DOMPointInit point);
+    Float32Array        toFloat32Array();
+    Float64Array        toFloat64Array();
+                        stringifier;
+};
+
+[Constructor,
+ Constructor(DOMString transformList),
+ Constructor(DOMMatrixReadOnly other),
+ Constructor(Float32Array array32),
+ Constructor(Float64Array array64),
+ Constructor(sequence<unrestricted double> numberSequence),
+ Exposed=(Window,Worker)]
+interface DOMMatrix : DOMMatrixReadOnly {
+    // These attributes are simple aliases for certain elements of the 4x4 matrix
+    inherit attribute unrestricted double a;
+    inherit attribute unrestricted double b;
+    inherit attribute unrestricted double c;
+    inherit attribute unrestricted double d;
+    inherit attribute unrestricted double e;
+    inherit attribute unrestricted double f;
+
+    inherit attribute unrestricted double m11;
+    inherit attribute unrestricted double m12;
+    inherit attribute unrestricted double m13;
+    inherit attribute unrestricted double m14;
+    inherit attribute unrestricted double m21;
+    inherit attribute unrestricted double m22;
+    inherit attribute unrestricted double m23;
+    inherit attribute unrestricted double m24;
+    inherit attribute unrestricted double m31;
+    inherit attribute unrestricted double m32;
+    inherit attribute unrestricted double m33;
+    inherit attribute unrestricted double m34;
+    inherit attribute unrestricted double m41;
+    inherit attribute unrestricted double m42;
+    inherit attribute unrestricted double m43;
+    inherit attribute unrestricted double m44;
+
+    // Mutable transform methods
+    DOMMatrix multiplySelf(DOMMatrix other);
+    DOMMatrix preMultiplySelf(DOMMatrix other);
+    DOMMatrix translateSelf(unrestricted double tx,
+                     unrestricted double ty,
+                     optional unrestricted double tz = 0);
+    DOMMatrix scaleSelf(unrestricted double scale,
+                 optional unrestricted double originX = 0,
+                 optional unrestricted double originY = 0);
+    DOMMatrix scale3dSelf(unrestricted double scale,
+                   optional unrestricted double originX = 0,
+                   optional unrestricted double originY = 0,
+                   optional unrestricted double originZ = 0);
+    DOMMatrix scaleNonUniformSelf(unrestricted double scaleX,
+                           optional unrestricted double scaleY = 1,
+                           optional unrestricted double scaleZ = 1,
+                           optional unrestricted double originX = 0,
+                           optional unrestricted double originY = 0,
+                           optional unrestricted double originZ = 0);
+    DOMMatrix rotateSelf(unrestricted double angle,
+                  optional unrestricted double originX = 0,
+                  optional unrestricted double originY = 0);
+    DOMMatrix rotateFromVectorSelf(unrestricted double x,
+                            unrestricted double y);
+    DOMMatrix rotateAxisAngleSelf(unrestricted double x,
+                           unrestricted double y,
+                           unrestricted double z,
+                           unrestricted double angle);
+    DOMMatrix skewXSelf(unrestricted double sx);
+    DOMMatrix skewYSelf(unrestricted double sy);
+    DOMMatrix invertSelf();
+
+    DOMMatrix setMatrixValue(DOMString transformList);
+};
+// Downloaded from http://www.w3.org/TR/cssom-view/
+enum ScrollBehavior { "auto", "instant", "smooth" };
+
+dictionary ScrollOptions {
+  ScrollBehavior behavior = "auto";
+};
+
+partial interface Window {
+  MediaQueryList matchMedia(DOMString query);
+  [SameObject] readonly attribute Screen screen;
+
+  // browsing context
+  void moveTo(double x, double y);
+  void moveBy(double x, double y);
+  void resizeTo(double x, double y);
+  void resizeBy(double x, double y);
+
+  // viewport
+  readonly attribute double innerWidth;
+  readonly attribute double innerHeight;
+
+  // viewport scrolling
+  readonly attribute double scrollX;
+  readonly attribute double pageXOffset;
+  readonly attribute double scrollY;
+  readonly attribute double pageYOffset;
+  void scroll(double x, double y, optional ScrollOptions options);
+  void scrollTo(double x, double y, optional ScrollOptions options);
+  void scrollBy(double x, double y, optional ScrollOptions options);
+
+  // client
+  readonly attribute double screenX;
+  readonly attribute double screenY;
+  readonly attribute double outerWidth;
+  readonly attribute double outerHeight;
+  readonly attribute double devicePixelRatio;
+};
+interface MediaQueryList {
+  readonly attribute DOMString media;
+  readonly attribute boolean matches;
+  void addListener(MediaQueryListListener listener);
+  void removeListener(MediaQueryListListener listener);
+};
+
+callback MediaQueryListListener = void (MediaQueryList list);
+interface Screen {
+  readonly attribute double availWidth;
+  readonly attribute double availHeight;
+  readonly attribute double width;
+  readonly attribute double height;
+  readonly attribute unsigned long colorDepth;
+  readonly attribute unsigned long pixelDepth;
+};
+partial interface Document {
+  Element? elementFromPoint(double x, double y);
+  sequence<Element> elementsFromPoint(double x, double y);
+  CaretPosition? caretPositionFromPoint(double x, double y);
+};
+interface CaretPosition {
+  readonly attribute Node offsetNode;
+  readonly attribute unsigned long offset;
+  DOMRect? getClientRect();
+};
+dictionary ScrollOptionsHorizontal : ScrollOptions {
+  double x;
+};
+dictionary ScrollOptionsVertical : ScrollOptions  {
+  double y;
+};
+
+partial interface Element {
+  DOMRectList getClientRects();
+  DOMRect getBoundingClientRect();
+  void scrollIntoView();
+  void scrollIntoView(boolean top, optional ScrollOptions options);
+  attribute (double or ScrollOptionsVertical) scrollTop;
+  attribute (double or ScrollOptionsHorizontal) scrollLeft;
+  readonly attribute double scrollWidth;
+  readonly attribute double scrollHeight;
+  readonly attribute double clientTop;
+  readonly attribute double clientLeft;
+  readonly attribute double clientWidth;
+  readonly attribute double clientHeight;
+};
+partial interface HTMLElement {
+  readonly attribute Element? offsetParent;
+  readonly attribute double offsetTop;
+  readonly attribute double offsetLeft;
+  readonly attribute double offsetWidth;
+  readonly attribute double offsetHeight;
+};
+partial interface HTMLImageElement {
+  readonly attribute double x;
+  readonly attribute double y;
+};
+partial interface Range {
+  DOMRectList getClientRects();
+  DOMRect getBoundingClientRect();
+};
+partial interface MouseEvent {
+  readonly attribute double screenX;
+  readonly attribute double screenY;
+  readonly attribute double pageX;
+  readonly attribute double pageY;
+  readonly attribute double clientX;
+  readonly attribute double clientY;
+  readonly attribute double x;
+  readonly attribute double y;
+  readonly attribute double offsetX;
+  readonly attribute double offsetY;
+};
+
+partial dictionary MouseEventInit {
+  double screenX = 0.0;
+  double screenY = 0.0;
+  double clientX = 0.0;
+  double clientY = 0.0;
+};
+enum CSSBoxType { "margin", "border", "padding", "content" };
+dictionary BoxQuadOptions {
+  CSSBoxType box = "border";
+  GeometryNode relativeTo;
+};
+
+dictionary ConvertCoordinateOptions {
+  CSSBoxType fromBox = "border";
+  CSSBoxType toBox = "border";
+};
+
+[NoInterfaceObject]
+interface GeometryUtils {
+  sequence<DOMQuad> getBoxQuads(optional BoxQuadOptions options);
+  DOMQuad convertQuadFromNode(DOMQuad quad, GeometryNode from, optional ConvertCoordinateOptions options);
+  DOMQuad convertRectFromNode(DOMRectReadOnly rect, GeometryNode from, optional ConvertCoordinateOptions options);
+  DOMPoint convertPointFromNode(DOMPointInit point, GeometryNode from, optional ConvertCoordinateOptions options);
+};
+
+Text implements GeometryUtils;
+Element implements GeometryUtils;
+PseudoElement implements GeometryUtils;
+Document implements GeometryUtils;
+
+typedef (Text or Element or PseudoElement or Document) GeometryNode;
 

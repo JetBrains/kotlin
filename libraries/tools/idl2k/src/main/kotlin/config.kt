@@ -21,6 +21,8 @@ val urls = listOf(
         "https://raw.githubusercontent.com/whatwg/dom/master/dom.html" to "org.w3c.dom",
         "https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html" to "org.w3c.dom",
         "http://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
+        "http://www.w3.org/TR/geometry-1/" to "org.w3c.dom",
+        "http://www.w3.org/TR/cssom-view/" to "org.w3c.dom",
         "http://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
         "http://dev.w3.org/csswg/cssom/" to "org.w3c.dom.css",
         "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",

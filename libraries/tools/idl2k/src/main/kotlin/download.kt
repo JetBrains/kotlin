@@ -27,7 +27,18 @@ fun main(args: Array<String>) {
     val dir = File("../../idl")
     dir.mkdirs()
 
-    val urlsPerFiles = urls.groupBy { it.second + ".idl" }
+    var packageFilter: String? = null
+    val argsIterator = args.iterator()
+    while (argsIterator.hasNext()) {
+        val arg = argsIterator.next()
+
+        when (arg) {
+            "-package", "-pkg", "--package" -> if (argsIterator.hasNext()) packageFilter = argsIterator.next() else throw IllegalArgumentException("argument $arg requires argument")
+            else -> throw IllegalArgumentException("Argument $arg is unknown")
+        }
+    }
+
+    val urlsPerFiles = urls.filter { packageFilter == null || it.second == packageFilter }.groupBy { it.second + ".idl" }
 
     urlsPerFiles.forEach { e ->
         val fileName = e.key

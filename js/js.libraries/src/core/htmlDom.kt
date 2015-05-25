@@ -200,19 +200,11 @@ public native trait HTMLElement : Element {
     public native var lang: String
     public native var dir: String
     public native var style: CSSStyleDeclaration
-    public native var clientWidth: Double
-    public native var clientHeight: Double
-    public native var clientTop: Double
-    public native var clientLeft: Double
     public native var offsetWidth: Double
     public native var offsetHeight: Double
     public native var offsetTop: Double
     public native var offsetLeft: Double
     public native var offsetParent: HTMLElement?
-    public native var scrollWidth: Double
-    public native var scrollHeight: Double
-    public native var scrollTop: Double
-    public native var scrollLeft: Double
     public native var stylesheet: Stylesheet
     public native var onblur: () -> Unit
     public native var onclick: () -> Unit

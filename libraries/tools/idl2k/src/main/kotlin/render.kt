@@ -39,7 +39,11 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, overri
 private val keywords = setOf("interface")
 
 private fun String.parse() = if (this.startsWith("0x")) BigInteger(this.substring(2), 16) else BigInteger(this)
-private fun String.replaceWrongConstants(type: String) = if (this == "noImpl" || type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong())) "noImpl" else this
+private fun String.replaceWrongConstants(type: String) = when {
+    this == "noImpl" || type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong()) -> "noImpl"
+    type == "Double" && this.matches("[0-9]+".toRegex()) -> "${this}.0"
+    else -> this
+}
 private fun String.replaceKeywords() = if (this in keywords) this + "_" else this
 
 private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>, omitDefaults: Boolean) =

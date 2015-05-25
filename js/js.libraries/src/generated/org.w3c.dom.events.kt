@@ -56,6 +56,36 @@ native public open class MouseEvent(typeArg: String, mouseEventInitDict: MouseEv
     var region: String?
         get() = noImpl
         set(value) = noImpl
+//    var screenX: Double
+//        get() = noImpl
+//        set(value) = noImpl
+//    var screenY: Double
+//        get() = noImpl
+//        set(value) = noImpl
+    var pageX: Double
+        get() = noImpl
+        set(value) = noImpl
+    var pageY: Double
+        get() = noImpl
+        set(value) = noImpl
+//    var clientX: Double
+//        get() = noImpl
+//        set(value) = noImpl
+//    var clientY: Double
+//        get() = noImpl
+//        set(value) = noImpl
+//    var x: Double
+//        get() = noImpl
+//        set(value) = noImpl
+//    var y: Double
+//        get() = noImpl
+//        set(value) = noImpl
+    var offsetX: Double
+        get() = noImpl
+        set(value) = noImpl
+    var offsetY: Double
+        get() = noImpl
+        set(value) = noImpl
     fun getModifierState(keyArg: String): Boolean = noImpl
     fun initMouseEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, screenXArg: Int, screenYArg: Int, clientXArg: Int, clientYArg: Int, ctrlKeyArg: Boolean, altKeyArg: Boolean, shiftKeyArg: Boolean, metaKeyArg: Boolean, buttonArg: Short, relatedTargetArg: EventTarget?): Unit = noImpl
 }

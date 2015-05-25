@@ -869,7 +869,7 @@ native public interface CSSStyleDeclaration {
     fun removeProperty(property: String): String = noImpl
 }
 
-native public interface PseudoElement {
+native public interface PseudoElement : GeometryNode {
     var cascadedStyle: CSSStyleDeclaration
         get() = noImpl
         set(value) = noImpl
@@ -882,6 +882,10 @@ native public interface PseudoElement {
     var usedStyle: CSSStyleDeclaration
         get() = noImpl
         set(value) = noImpl
+    fun getBoxQuads(options: BoxQuadOptions = noImpl): Array<DOMQuad> = noImpl
+    fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
 }
 
 native public interface CSS {
