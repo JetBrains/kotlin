@@ -18,15 +18,17 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.replaced
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.util.ArrayList
 import java.util.HashMap
@@ -38,15 +40,53 @@ public fun JetPsiFactory.createExpressionByPattern(pattern: String, vararg args:
 public fun <TDeclaration : JetDeclaration> JetPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
         = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
 
-private open class ArgumentType<T : Any>(val klass: Class<T>)
+private abstract class ArgumentType<T : Any>(val klass: Class<T>)
 
-class PlainTextArgumentType<T : Any>(klass: Class<T>, val toPlainText: (T) -> String) : ArgumentType<T>(klass)
+private class PlainTextArgumentType<T : Any>(klass: Class<T>, val toPlainText: (T) -> String) : ArgumentType<T>(klass)
+
+private abstract class PsiElementPlaceholderArgumentType<T : Any, TPlaceholder : PsiElement>(klass: Class<T>, val placeholderClass: Class<TPlaceholder>) : ArgumentType<T>(klass) {
+    abstract fun replacePlaceholderElement(placeholder: TPlaceholder, argument: T)
+}
+
+private class PsiElementArgumentType<T : PsiElement>(klass: Class<T>) : PsiElementPlaceholderArgumentType<T, T>(klass, klass) {
+    override fun replacePlaceholderElement(placeholder: T, argument: T) {
+        // if argument element has generated flag then it has not been formatted yet and we should do this manually
+        // (because we cleared this flag for the whole tree above and PostprocessReformattingAspect won't format anything)
+        val reformat = CodeEditUtil.isNodeGenerated(argument.getNode())
+        val result = placeholder.replace(argument)
+        if (reformat) {
+            CodeStyleManager.getInstance(result.getProject()).reformat(result, true)
+        }
+    }
+}
+
+private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<PsiChildRange, JetElement>(javaClass(), javaClass()) {
+    override fun replacePlaceholderElement(placeholder: JetElement, argument: PsiChildRange) {
+        val project = placeholder.getProject()
+        val codeStyleManager = CodeStyleManager.getInstance(project)
+
+        if (argument.isEmpty) {
+            placeholder.delete()
+        }
+        else {
+            val first = placeholder.getParent().addRangeBefore(argument.first!!, argument.last!!, placeholder)
+            val last = placeholder.getPrevSibling()
+            placeholder.delete()
+
+            codeStyleManager.reformatNewlyAddedElement(first.getNode().getTreeParent(), first.getNode())
+            if (last != first) {
+                codeStyleManager.reformatNewlyAddedElement(last.getNode().getTreeParent(), last.getNode())
+            }
+        }
+    }
+}
 
 private val SUPPORTED_ARGUMENT_TYPES = listOf(
-        ArgumentType<JetExpression>(javaClass()),
-        ArgumentType<JetTypeReference>(javaClass()),
+        PsiElementArgumentType<JetExpression>(javaClass()),
+        PsiElementArgumentType<JetTypeReference>(javaClass()),
         PlainTextArgumentType<String>(javaClass(), toPlainText = { it }),
-        PlainTextArgumentType<Name>(javaClass(), toPlainText = { it.renderName() })
+        PlainTextArgumentType<Name>(javaClass(), toPlainText = { it.renderName() }),
+        PsiChildRangeArgumentType
 )
 
 public fun <TElement : JetElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
@@ -60,7 +100,7 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
     val args = args.zip(argumentTypes).map {
         val (arg, type) = it
         if (type is PlainTextArgumentType)
-            (type.toPlainText as Function1<Any, String>).invoke(arg) // TODO: see KT-7833
+            (type.toPlainText as Function1<in Any, String>).invoke(arg) // TODO: see KT-7833
         else
             arg
     }
@@ -80,7 +120,7 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
     for ((n, placeholders) in allPlaceholders) {
         val arg = args[n]
         if (arg is String) continue // already in the text
-        val expectedElementType = argumentTypes[n].klass
+        val expectedElementType = (argumentTypes[n] as PsiElementPlaceholderArgumentType<*, *>).placeholderClass
 
         for ((range, text) in placeholders) {
             val token = resultElement.findElementAt(range.getStartOffset())!!
@@ -130,14 +170,7 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
         if (element is JetFunctionLiteral) {
             element = element.getParent() as JetFunctionLiteralExpression
         }
-        val argument = args[n] as PsiElement
-        // if argument element has generated flag then it has not been formatted yet and we should do this manually
-        // (because we cleared this flag for the whole tree above and PostprocessReformattingAspect won't format anything)
-        val reformat = CodeEditUtil.isNodeGenerated(argument.getNode())
-        element = element.replaced(argument)
-        if (reformat) {
-            codeStyleManager.reformat(element, true)
-        }
+        (argumentTypes[n] as PsiElementPlaceholderArgumentType<in Any, in PsiElement>).replacePlaceholderElement(element, args[n])
     }
 
     codeStyleManager.adjustLineIndent(resultElement.getContainingFile(), resultElement.getTextRange())

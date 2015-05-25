@@ -3943,6 +3943,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("emptyBody.kt")
+        public void testEmptyBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/emptyBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("iterativeElementTypeSpecified.kt")
         public void testIterativeElementTypeSpecified() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/iterativeElementTypeSpecified.kt");

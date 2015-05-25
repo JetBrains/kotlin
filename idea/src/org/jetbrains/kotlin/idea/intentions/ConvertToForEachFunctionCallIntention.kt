@@ -37,21 +37,10 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
         val body = element.getBody()!!
         val loopParameter = element.getLoopParameter()!!
 
-        val functionBodyText = when (body) {
-            is JetBlockExpression -> {
-                val content = body.contentRange()
-                val text = content.getText()
-                if (content.last?.getNode()?.getElementType() == JetTokens.EOL_COMMENT)
-                    text + "\n"
-                else
-                    text
-            }
-
-            else -> body.getText()
-        }
+        val functionBodyArgument: Any = if (body is JetBlockExpression) body.contentRange() else body
 
         val foreachExpression = JetPsiFactory(element).createExpressionByPattern(
-                "$0.forEach{$1->$2}", element.getLoopRange()!!, loopParameter, functionBodyText)
+                "$0.forEach{$1->$2}", element.getLoopRange()!!, loopParameter, functionBodyArgument)
         element.replace(foreachExpression)
     }
 }
