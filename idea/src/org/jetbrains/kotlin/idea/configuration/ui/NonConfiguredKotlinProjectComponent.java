@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration.ui;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationsConfiguration;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
@@ -40,7 +41,12 @@ public class NonConfiguredKotlinProjectComponent extends AbstractProjectComponen
         StartupManager.getInstance(myProject).registerPostStartupActivity(new Runnable() {
             @Override
             public void run() {
-                ConfigureKotlinInProjectUtils.showConfigureKotlinNotificationIfNeeded(myProject);
+                DumbService.getInstance(myProject).smartInvokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        ConfigureKotlinInProjectUtils.showConfigureKotlinNotificationIfNeeded(myProject);
+                    }
+                });
             }
         });
     }
