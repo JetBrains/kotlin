@@ -502,11 +502,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     public JetTypeInfo visitClassLiteralExpression(@NotNull JetClassLiteralExpression expression, ExpressionTypingContext c) {
         JetType type = resolveClassLiteral(expression, c);
         if (type != null && !type.isError()) {
-            JetType kClassType = components.reflectionTypes.getKClassType(Annotations.EMPTY, type);
-            if (!kClassType.isError()) {
-                return TypeInfoFactoryPackage.createTypeInfo(kClassType, c);
-            }
-            c.trace.report(REFLECTION_TYPES_NOT_LOADED.on(expression.getDoubleColonTokenReference()));
+            return TypeInfoFactoryPackage.createTypeInfo(components.reflectionTypes.getKClassType(Annotations.EMPTY, type), c);
         }
 
         return TypeInfoFactoryPackage.createTypeInfo(ErrorUtils.createErrorType("Unresolved class"), c);
@@ -723,11 +719,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 isExtension
         );
 
-        if (type.isError()) {
-            context.trace.report(REFLECTION_TYPES_NOT_LOADED.on(expression.getDoubleColonTokenReference()));
-            return null;
-        }
-
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(
                 context.scope.getContainingDeclaration(),
                 Annotations.EMPTY,
@@ -752,11 +743,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         JetType type = components.reflectionTypes.getKPropertyType(Annotations.EMPTY, receiverType, descriptor.getType(), isExtension,
                                                                    descriptor.isVar());
-
-        if (type.isError()) {
-            context.trace.report(REFLECTION_TYPES_NOT_LOADED.on(expression.getDoubleColonTokenReference()));
-            return null;
-        }
 
         LocalVariableDescriptor localVariable =
                 new LocalVariableDescriptor(context.scope.getContainingDeclaration(), Annotations.EMPTY, Name.special("<anonymous>"),

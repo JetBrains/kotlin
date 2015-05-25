@@ -1,4 +1,4 @@
-// !DIAGNOSTICS: -UNUSED_EXPRESSION, -REFLECTION_TYPES_NOT_LOADED
+// !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 class Delegate() {
     deprecated("text")

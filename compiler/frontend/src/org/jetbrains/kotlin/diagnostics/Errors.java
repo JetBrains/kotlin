@@ -446,8 +446,6 @@ public interface Errors {
 
     // Reflection
 
-    DiagnosticFactory0<PsiElement> REFLECTION_TYPES_NOT_LOADED = DiagnosticFactory0.create(ERROR);
-
     DiagnosticFactory1<JetExpression, CallableMemberDescriptor> EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetExpression> CALLABLE_REFERENCE_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
 
