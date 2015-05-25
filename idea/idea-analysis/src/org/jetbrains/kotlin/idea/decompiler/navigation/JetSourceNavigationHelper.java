@@ -442,8 +442,7 @@ public class JetSourceNavigationHelper {
 
         @Override
         public JetDeclaration visitParameter(@NotNull JetParameter parameter, Void data) {
-            PsiElement pparent = parameter.getParent().getParent();
-            JetCallableDeclaration callableDeclaration = (JetCallableDeclaration) pparent;
+            JetCallableDeclaration callableDeclaration = (JetCallableDeclaration) parameter.getParent().getParent();
             List<JetParameter> parameters = callableDeclaration.getValueParameters();
             int index = parameters.indexOf(parameter);
 
