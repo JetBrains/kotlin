@@ -41,14 +41,14 @@ public inline fun <T> ReentrantReadWriteLock.write(action: () -> T): T {
     val rl = readLock()
 
     val readCount = if (getWriteHoldCount() == 0) getReadHoldCount() else 0
-    readCount times { rl.unlock() }
+    repeat(readCount) { rl.unlock() }
 
     val wl = writeLock()
     wl.lock()
     try {
         return action()
     } finally {
-        readCount times { rl.lock() }
+        repeat(readCount) { rl.lock() }
         wl.unlock()
     }
 }
