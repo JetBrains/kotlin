@@ -17,14 +17,13 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.idea.core.CommentSaver
 import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetForExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.getText
 
 public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<JetForExpression>(javaClass(), "Replace with a forEach function call") {
     override fun isApplicableTo(element: JetForExpression, caretOffset: Int): Boolean {
@@ -34,6 +33,8 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
     }
 
     override fun applyTo(element: JetForExpression, editor: Editor) {
+        val commentSaver = CommentSaver(element)
+
         val body = element.getBody()!!
         val loopParameter = element.getLoopParameter()!!
 
@@ -41,6 +42,8 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
 
         val foreachExpression = JetPsiFactory(element).createExpressionByPattern(
                 "$0.forEach{$1->$2}", element.getLoopRange()!!, loopParameter, functionBodyArgument)
-        element.replace(foreachExpression)
+        val result = element.replace(foreachExpression)
+
+        commentSaver.restoreComments(result)
     }
 }

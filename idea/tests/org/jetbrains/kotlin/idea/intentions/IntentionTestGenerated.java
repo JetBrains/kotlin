@@ -3943,6 +3943,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("commentsOutsideBody.kt")
+        public void testCommentsOutsideBody() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/commentsOutsideBody.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyBody.kt")
         public void testEmptyBody() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToForEachFunctionCall/emptyBody.kt");
