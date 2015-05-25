@@ -25,6 +25,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Mutable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -248,7 +249,7 @@ public class PackageCodegen {
         }
 
         bindings.add(v.getSerializationBindings());
-        writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings));
+        writeKotlinPackageAnnotationIfNeeded(JvmSerializationBindings.union(bindings), tasks.keySet());
     }
 
     private void generateKotlinPackageReflectionField() {
@@ -260,7 +261,10 @@ public class PackageCodegen {
         FunctionCodegen.endVisit(mv, "package facade static initializer", null);
     }
 
-    private void writeKotlinPackageAnnotationIfNeeded(@NotNull JvmSerializationBindings bindings) {
+    private void writeKotlinPackageAnnotationIfNeeded(
+            @NotNull JvmSerializationBindings bindings,
+            @NotNull final Collection<CallableMemberDescriptor> relevantCallables
+    ) {
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) {
             return;
         }
@@ -274,7 +278,12 @@ public class PackageCodegen {
         Collection<PackageFragmentDescriptor> packageFragments = Lists.newArrayList();
         ContainerUtil.addIfNotNull(packageFragments, packageFragment);
         ContainerUtil.addIfNotNull(packageFragments, compiledPackageFragment);
-        ProtoBuf.Package packageProto = serializer.packageProto(packageFragments).build();
+        ProtoBuf.Package packageProto = serializer.packageProto(packageFragments, new Function1<DeclarationDescriptor, Boolean>() {
+            @Override
+            public Boolean invoke(DeclarationDescriptor descriptor) {
+                return !(descriptor instanceof CallableMemberDescriptor && relevantCallables.contains(descriptor));
+            }
+        }).build();
 
         if (packageProto.getMemberCount() == 0) return;
 

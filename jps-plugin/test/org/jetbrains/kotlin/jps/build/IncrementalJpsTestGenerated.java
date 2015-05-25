@@ -43,6 +43,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("circularDependencySamePackageUnchanged")
+        public void testCircularDependencySamePackageUnchanged() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circularDependencySamePackageUnchanged/");
+            doTest(fileName);
+        }
+
         @TestMetadata("circularDependencyTopLevelFunctions")
         public void testCircularDependencyTopLevelFunctions() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyTopLevelFunctions/");
