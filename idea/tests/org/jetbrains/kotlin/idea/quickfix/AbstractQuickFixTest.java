@@ -31,8 +31,12 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.FileViewProvider;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.StubUpdatingIndex;
+import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.PsiManagerEx;
+import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.util.indexing.FileBasedIndex;
 import kotlin.KotlinPackage;
@@ -41,6 +45,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
 import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
+import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -62,6 +67,21 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
+        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
+
+        super.tearDown();
+
+        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
+        // otherwise built-ins psi elements will become invalid in next test.
+        for (JetFile source : builtInsSources) {
+            FileViewProvider provider = source.getViewProvider();
+            fileManager.setViewProvider(provider.getVirtualFile(), provider);
+        }
     }
 
     @Nullable
