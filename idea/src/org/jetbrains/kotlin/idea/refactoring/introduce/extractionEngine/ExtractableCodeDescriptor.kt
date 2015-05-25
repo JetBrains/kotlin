@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import kotlin.properties.Delegates
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
+import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.util.isUnit
@@ -291,6 +294,19 @@ data class ControlFlow(
     }
 }
 
+val ControlFlow.possibleReturnTypes: List<JetType>
+    get() {
+        val returnType = outputValueBoxer.returnType
+        return when {
+            !returnType.isNullabilityFlexible() ->
+                listOf(returnType)
+            returnType.isAnnotatedNotNull(), returnType.isAnnotatedNullable() ->
+                listOf(approximateFlexibleTypes(returnType))
+            else ->
+                returnType.getCapability(javaClass<Flexibility>()).let { listOf(it.upperBound, it.lowerBound) }
+        }
+    }
+
 fun ControlFlow.toDefault(): ControlFlow =
         copy(outputValues = outputValues.filterNot { it is OutputValue.Jump || it is OutputValue.ExpressionValue })
 
@@ -303,7 +319,8 @@ data class ExtractableCodeDescriptor(
         val receiverParameter: Parameter?,
         val typeParameters: List<TypeParameter>,
         val replacementMap: Map<Int, Replacement>,
-        val controlFlow: ControlFlow
+        val controlFlow: ControlFlow,
+        val returnType: JetType
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
     val duplicates: List<DuplicateInfo> by Delegates.lazy { findDuplicates() }
@@ -365,7 +382,7 @@ enum class ExtractionTarget(val name: String) {
 
         fun checkSignatureAndParent(descriptor: ExtractableCodeDescriptor): Boolean {
             if (!descriptor.parameters.isEmpty()) return false
-            if (descriptor.controlFlow.outputValueBoxer.returnType.isUnit()) return false
+            if (descriptor.returnType.isUnit()) return false
 
             val parent = descriptor.extractionData.targetSibling.getParent()
             return (parent is JetFile || parent is JetClassBody)

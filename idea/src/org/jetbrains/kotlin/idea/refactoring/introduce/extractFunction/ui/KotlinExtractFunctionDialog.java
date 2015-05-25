@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.types.JetType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -53,6 +54,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     private JPanel functionNamePanel;
     private NameSuggestionsField functionNameField;
     private JLabel functionNameLabel;
+    private JComboBox returnTypeBox;
+    private JPanel returnTypePanel;
     private KotlinParameterTablePanel parameterTablePanel;
 
     private final Project project;
@@ -139,6 +142,40 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         functionNamePanel.add(functionNameField, BorderLayout.CENTER);
         functionNameLabel.setLabelFor(functionNameField);
 
+        List<JetType> possibleReturnTypes = ExtractionEnginePackage.getPossibleReturnTypes(extractableCodeDescriptor.getControlFlow());
+        if (possibleReturnTypes.size() > 1) {
+            DefaultComboBoxModel returnTypeBoxModel = new DefaultComboBoxModel(possibleReturnTypes.toArray());
+            returnTypeBox.setModel(returnTypeBoxModel);
+            returnTypeBox.setRenderer(
+                    new DefaultListCellRenderer() {
+                        @NotNull
+                        @Override
+                        public Component getListCellRendererComponent(
+                                JList list,
+                                Object value,
+                                int index,
+                                boolean isSelected,
+                                boolean cellHasFocus
+                        ) {
+                            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                            setText(IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType((JetType) value));
+                            return this;
+                        }
+                    }
+            );
+            returnTypeBox.addItemListener(
+                    new ItemListener() {
+                        @Override
+                        public void itemStateChanged(@NotNull ItemEvent e) {
+                            update();
+                        }
+                    }
+            );
+        }
+        else {
+            returnTypePanel.getParent().remove(returnTypePanel);
+        }
+
         boolean enableVisibility = isVisibilitySectionAvailable();
         visibilityBox.setEnabled(enableVisibility);
         if (enableVisibility) {
@@ -217,7 +254,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                                    getFunctionName(),
                                    getVisibility(),
                                    parameterTablePanel.getReceiverInfo(),
-                                   parameterTablePanel.getParameterInfos());
+                                   parameterTablePanel.getParameterInfos(),
+                                   (JetType) returnTypeBox.getSelectedItem());
     }
 
     @NotNull
@@ -230,7 +268,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
             @NotNull String newName,
             @NotNull String newVisibility,
             @Nullable KotlinParameterTablePanel.ParameterInfo newReceiverInfo,
-            @NotNull List<KotlinParameterTablePanel.ParameterInfo> newParameterInfos
+            @NotNull List<KotlinParameterTablePanel.ParameterInfo> newParameterInfos,
+            @Nullable JetType returnType
     ) {
         Map<Parameter, Parameter> oldToNewParameters = ContainerUtil.newLinkedHashMap();
         for (KotlinParameterTablePanel.ParameterInfo parameterInfo : newParameterInfos) {
@@ -283,7 +322,8 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
                 newReceiver,
                 originalDescriptor.getTypeParameters(),
                 replacementMap,
-                controlFlow
+                controlFlow,
+                returnType != null ? returnType : originalDescriptor.getReturnType()
         );
     }
 }

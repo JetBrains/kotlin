@@ -88,7 +88,7 @@ public class KotlinIntroducePropertyHandler(
                             project = project,
                             title = INTRODUCE_PROPERTY,
                             doNotChangeVar = false,
-                            exprType = descriptor.controlFlow.outputValueBoxer.returnType,
+                            exprType = descriptor.returnType,
                             extractionResult = it,
                             availableTargets = propertyTargets.filter { it.isAvailable(descriptor) }
                     )

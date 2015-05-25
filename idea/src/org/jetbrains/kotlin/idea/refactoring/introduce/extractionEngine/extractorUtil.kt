@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.isNullabilityFlexible
 import java.util.ArrayList
 import java.util.Collections
 import java.util.HashMap
@@ -85,7 +87,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
                           parameter.getParameterType(descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
         }
 
-        with(descriptor.controlFlow.outputValueBoxer.returnType) {
+        with(descriptor.returnType) {
             if (isDefault() || isError() || extractionTarget == ExtractionTarget.PROPERTY_WITH_INITIALIZER) {
                 builder.noReturnType()
             } else {
@@ -272,7 +274,7 @@ private fun makeCall(
             }
             else {
                 val varNameValidator = JetNameValidatorImpl(block, anchorInBlock, JetNameValidatorImpl.Target.PROPERTIES)
-                val resultVal = JetNameSuggester.suggestNames(controlFlow.outputValueBoxer.returnType, varNameValidator, null).first()
+                val resultVal = JetNameSuggester.suggestNames(extractableDescriptor.returnType, varNameValidator, null).first()
                 block.addBefore(psiFactory.createDeclaration("val $resultVal = $callText"), anchorInBlock)
                 block.addBefore(newLine, anchorInBlock)
                 controlFlow.outputValueBoxer.getUnboxingExpressions(resultVal)
@@ -541,7 +543,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             val bodyExpression = body.getStatements().singleOrNull()
             val bodyOwner = body.getParent() as JetDeclarationWithBody
             if (bodyExpression != null && !bodyExpression.isMultiLine() && convertToExpressionBody.isApplicableTo(bodyOwner)) {
-                convertToExpressionBody.applyTo(bodyOwner)
+                convertToExpressionBody.applyTo(bodyOwner, !descriptor.returnType.isFlexible())
             }
         }
     }

@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -239,6 +240,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
             val explicitPreviousSibling = file.findElementByComment("// SIBLING:")
             val fileText = file.getText() ?: ""
             val expectedNames = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_NAMES: ")
+            val expectedReturnTypes = InTextDirectivesUtils.findListWithPrefixes(fileText, "// SUGGESTED_RETURN_TYPES: ")
             val expectedDescriptors =
                     InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "// PARAM_DESCRIPTOR: ").joinToString()
             val expectedTypes =
@@ -269,6 +271,9 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
                         ) {
                             val descriptor = descriptorWithConflicts.descriptor
                             val actualNames = descriptor.suggestedNames
+                            val actualReturnTypes = descriptor.controlFlow.possibleReturnTypes.map {
+                                IdeDescriptorRenderers.SOURCE_CODE.renderType(it)
+                            }
                             val allParameters = emptyOrSingletonList(descriptor.receiverParameter) + descriptor.parameters
                             val actualDescriptors = allParameters.map { renderer.render(it.originalDescriptor) }.joinToString()
                             val actualTypes = allParameters.map {
@@ -277,6 +282,9 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
                             if (actualNames.size() != 1 || expectedNames.isNotEmpty()) {
                                 assertEquals(expectedNames, actualNames, "Expected names mismatch.")
+                            }
+                            if (actualReturnTypes.size() != 1 || expectedReturnTypes.isNotEmpty()) {
+                                assertEquals(expectedReturnTypes, actualReturnTypes, "Expected return types mismatch.")
                             }
                             assertEquals(expectedDescriptors, actualDescriptors, "Expected descriptors mismatch.")
                             assertEquals(expectedTypes, actualTypes, "Expected types mismatch.")

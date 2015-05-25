@@ -15,4 +15,4 @@ class Foo<T> {
     }
 }
 
-private fun <T> Foo<T>.t(l: String) = map[l]
+private fun <T> Foo<T>.t(l: String): T = map[l]

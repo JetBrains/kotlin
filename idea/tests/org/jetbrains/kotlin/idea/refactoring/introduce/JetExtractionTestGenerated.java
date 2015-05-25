@@ -1050,6 +1050,33 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 }
             }
 
+            @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/returnTypeCandidates")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ReturnTypeCandidates extends AbstractJetExtractionTest {
+                public void testAllFilesPresentInReturnTypeCandidates() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/controlFlow/returnTypeCandidates"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("javaAnnotatedNotNull.kt")
+                public void testJavaAnnotatedNotNull() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/returnTypeCandidates/javaAnnotatedNotNull.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("javaAnnotatedNullable.kt")
+                public void testJavaAnnotatedNullable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/returnTypeCandidates/javaAnnotatedNullable.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("javaNoNullabilityAnnotation.kt")
+                public void testJavaNoNullabilityAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/controlFlow/returnTypeCandidates/javaNoNullabilityAnnotation.kt");
+                    doExtractFunctionTest(fileName);
+                }
+            }
+
             @TestMetadata("idea/testData/refactoring/extractFunction/controlFlow/throws")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

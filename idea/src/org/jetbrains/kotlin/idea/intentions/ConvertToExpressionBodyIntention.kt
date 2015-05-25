@@ -43,14 +43,24 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
     }
 
     override fun applyTo(element: JetDeclarationWithBody, editor: Editor) {
-        applyToInternal(element, editor)
+        applyToInternal(element) {
+            val typeRef = it.getTypeReference()!!
+            val colon = it.getColon()!!
+            val range = TextRange(colon.startOffset, typeRef.endOffset)
+            editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
+            editor.getCaretModel().moveToOffset(range.getEndOffset())
+        }
     }
 
-    public fun applyTo(declaration: JetDeclarationWithBody) {
-        applyToInternal(declaration, null)
+    public fun applyTo(declaration: JetDeclarationWithBody, canDeleteTypeRef: Boolean) {
+        applyToInternal(declaration) {
+            if (canDeleteTypeRef) {
+                it.deleteChildRange(it.getColon()!!, it.getTypeReference()!!)
+            }
+        }
     }
 
-    private fun applyToInternal(declaration: JetDeclarationWithBody, editor: Editor?) {
+    private fun applyToInternal(declaration: JetDeclarationWithBody, onFinish: (JetCallableDeclaration) -> Unit) {
         val value = calcValue(declaration)!!
 
         if (!declaration.hasDeclaredReturnType() && declaration is JetNamedFunction) {
@@ -67,18 +77,7 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
         body.replace(value)
 
         if (omitType) {
-            declaration as JetCallableDeclaration
-
-            val typeRef = declaration.getTypeReference()!!
-            val colon = declaration.getColon()!!
-            if (editor != null) {
-                val range = TextRange(colon.startOffset, typeRef.endOffset)
-                editor.getSelectionModel().setSelection(range.getStartOffset(), range.getEndOffset())
-                editor.getCaretModel().moveToOffset(range.getEndOffset())
-            }
-            else {
-                (declaration as PsiElement).deleteChildRange(colon, typeRef)
-            }
+            onFinish(declaration as JetCallableDeclaration)
         }
     }
 

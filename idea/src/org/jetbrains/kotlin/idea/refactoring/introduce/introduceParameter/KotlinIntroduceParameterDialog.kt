@@ -75,7 +75,7 @@ public class KotlinIntroduceParameterDialog private (
             introduceParameterDescriptor,
             lambdaExtractionDescriptor,
             lambdaExtractionDescriptor.suggestedNames.copyToArray(),
-            listOf(lambdaExtractionDescriptor.controlFlow.outputValueBoxer.returnType),
+            listOf(lambdaExtractionDescriptor.returnType),
             helper
     )
 
@@ -275,7 +275,8 @@ public class KotlinIntroduceParameterDialog private (
                                     chosenName,
                                     "",
                                     parameterTablePanel?.getReceiverInfo(),
-                                    parameterTablePanel?.getParameterInfos() ?: listOf()
+                                    parameterTablePanel?.getParameterInfos() ?: listOf(),
+                                    null
                             )
                             val options = ExtractionGeneratorOptions.DEFAULT.copy(
                                     target = ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,

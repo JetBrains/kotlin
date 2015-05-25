@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
@@ -49,13 +50,13 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
         // Foo<Bar!>! -> Foo<Bar>?
         var approximation =
                 if (isCollection)
-                    TypeUtils.makeNullableAsSpecified(if (jetType.isMarkedReadOnly()) flexible.upperBound else flexible.lowerBound, outermost)
+                    TypeUtils.makeNullableAsSpecified(if (jetType.isAnnotatedReadOnly()) flexible.upperBound else flexible.lowerBound, outermost)
                 else
                     if (outermost) flexible.upperBound else flexible.lowerBound
 
         approximation = approximateFlexibleTypes(approximation)
 
-        approximation = if (jetType.isMarkedNotNull()) approximation.makeNotNullable() else approximation
+        approximation = if (jetType.isAnnotatedNotNull()) approximation.makeNotNullable() else approximation
 
         if (approximation.isMarkedNullable() && !flexible.lowerBound.isMarkedNullable() && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
             approximation = approximation.makeNotNullable()
@@ -72,8 +73,9 @@ public fun approximateFlexibleTypes(jetType: JetType, outermost: Boolean = true)
     )
 }
 
-private fun JetType.isMarkedReadOnly() = hasAnnotationMaybeExternal(JETBRAINS_READONLY_ANNOTATION)
-private fun JetType.isMarkedNotNull() = hasAnnotationMaybeExternal(JETBRAINS_NOT_NULL_ANNOTATION)
+public fun JetType.isAnnotatedReadOnly(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_READONLY_ANNOTATION)
+public fun JetType.isAnnotatedNotNull(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NOT_NULL_ANNOTATION)
+public fun JetType.isAnnotatedNullable(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NULLABLE_ANNOTATION)
 
 private fun JetType.hasAnnotationMaybeExternal(fqName: FqName) = with (getAnnotations()) {
     findAnnotation(fqName) ?: findExternalAnnotation(fqName)
