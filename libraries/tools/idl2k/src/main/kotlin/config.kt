@@ -26,6 +26,7 @@ val urls = listOf(
         "http://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
         "http://dev.w3.org/csswg/cssom/" to "org.w3c.dom.css",
         "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
+        "https://raw.githubusercontent.com/whatwg/url/master/url.html" to "org.w3c.dom.url",
 
         "http://web.archive.org/web/20150317051602/http://www.w3.org/TR/SVG11/single-page.html" to "org.w3c.dom.svg",
         "https://www.khronos.org/registry/webgl/specs/latest/1.0/webgl.idl" to "org.khronos.webgl",

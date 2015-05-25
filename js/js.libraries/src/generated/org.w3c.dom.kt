@@ -12,6 +12,7 @@ import org.w3c.dom.css.*
 import org.w3c.dom.events.*
 import org.w3c.dom.parsing.*
 import org.w3c.dom.svg.*
+import org.w3c.dom.url.*
 import org.w3c.fetch.*
 import org.w3c.files.*
 import org.w3c.notifications.*
@@ -1060,6 +1061,42 @@ native public interface HTMLAnchorElement : HTMLElement {
     var shape: String
         get() = noImpl
         set(value) = noImpl
+    var href: String
+        get() = noImpl
+        set(value) = noImpl
+    var origin: String
+        get() = noImpl
+        set(value) = noImpl
+    var protocol: String
+        get() = noImpl
+        set(value) = noImpl
+    var username: String
+        get() = noImpl
+        set(value) = noImpl
+    var password: String
+        get() = noImpl
+        set(value) = noImpl
+    var host: String
+        get() = noImpl
+        set(value) = noImpl
+    var hostname: String
+        get() = noImpl
+        set(value) = noImpl
+    var port: String
+        get() = noImpl
+        set(value) = noImpl
+    var pathname: String
+        get() = noImpl
+        set(value) = noImpl
+    var search: String
+        get() = noImpl
+        set(value) = noImpl
+    var searchParams: URLSearchParams
+        get() = noImpl
+        set(value) = noImpl
+    var hash: String
+        get() = noImpl
+        set(value) = noImpl
 }
 
 native public interface HTMLDataElement : HTMLElement {
@@ -1749,6 +1786,42 @@ native public interface HTMLAreaElement : HTMLElement {
         get() = noImpl
         set(value) = noImpl
     var noHref: Boolean
+        get() = noImpl
+        set(value) = noImpl
+    var href: String
+        get() = noImpl
+        set(value) = noImpl
+    var origin: String
+        get() = noImpl
+        set(value) = noImpl
+    var protocol: String
+        get() = noImpl
+        set(value) = noImpl
+    var username: String
+        get() = noImpl
+        set(value) = noImpl
+    var password: String
+        get() = noImpl
+        set(value) = noImpl
+    var host: String
+        get() = noImpl
+        set(value) = noImpl
+    var hostname: String
+        get() = noImpl
+        set(value) = noImpl
+    var port: String
+        get() = noImpl
+        set(value) = noImpl
+    var pathname: String
+        get() = noImpl
+        set(value) = noImpl
+    var search: String
+        get() = noImpl
+        set(value) = noImpl
+    var searchParams: URLSearchParams
+        get() = noImpl
+        set(value) = noImpl
+    var hash: String
         get() = noImpl
         set(value) = noImpl
 }
@@ -3455,6 +3528,42 @@ native public interface Location {
     var ancestorOrigins: Array<String>
         get() = noImpl
         set(value) = noImpl
+    var href: String
+        get() = noImpl
+        set(value) = noImpl
+    var origin: String
+        get() = noImpl
+        set(value) = noImpl
+    var protocol: String
+        get() = noImpl
+        set(value) = noImpl
+    var username: String
+        get() = noImpl
+        set(value) = noImpl
+    var password: String
+        get() = noImpl
+        set(value) = noImpl
+    var host: String
+        get() = noImpl
+        set(value) = noImpl
+    var hostname: String
+        get() = noImpl
+        set(value) = noImpl
+    var port: String
+        get() = noImpl
+        set(value) = noImpl
+    var pathname: String
+        get() = noImpl
+        set(value) = noImpl
+    var search: String
+        get() = noImpl
+        set(value) = noImpl
+    var searchParams: URLSearchParams
+        get() = noImpl
+        set(value) = noImpl
+    var hash: String
+        get() = noImpl
+        set(value) = noImpl
     fun assign(url: String): Unit = noImpl
     fun replace(url: String): Unit = noImpl
     fun reload(): Unit = noImpl
@@ -3969,6 +4078,33 @@ native public interface WorkerNavigator {
 }
 
 native public interface WorkerLocation {
+    var href: String
+        get() = noImpl
+        set(value) = noImpl
+    var origin: String
+        get() = noImpl
+        set(value) = noImpl
+    var protocol: String
+        get() = noImpl
+        set(value) = noImpl
+    var host: String
+        get() = noImpl
+        set(value) = noImpl
+    var hostname: String
+        get() = noImpl
+        set(value) = noImpl
+    var port: String
+        get() = noImpl
+        set(value) = noImpl
+    var pathname: String
+        get() = noImpl
+        set(value) = noImpl
+    var search: String
+        get() = noImpl
+        set(value) = noImpl
+    var hash: String
+        get() = noImpl
+        set(value) = noImpl
 }
 
 native public interface Storage {
