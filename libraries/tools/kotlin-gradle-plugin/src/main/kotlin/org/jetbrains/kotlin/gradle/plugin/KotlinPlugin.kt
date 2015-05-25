@@ -174,6 +174,10 @@ class Kotlin2JvmSourceSetProcessor(
                     javaTask.doFirst {
                         kaptManager.setupKapt()
                     }
+
+                    javaTask.doLast {
+                        kaptManager.afterJavaCompile()
+                    }
                 }
             }
         }
@@ -442,6 +446,10 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             javaTask doFirst {
                 javaTask.setClasspath(javaTask.getClasspath() + project.files(kotlinTask.property("kotlinDestinationDir")))
                 kaptManager?.setupKapt()
+            }
+
+            javaTask doLast {
+                kaptManager?.afterJavaCompile()
             }
         }
     }

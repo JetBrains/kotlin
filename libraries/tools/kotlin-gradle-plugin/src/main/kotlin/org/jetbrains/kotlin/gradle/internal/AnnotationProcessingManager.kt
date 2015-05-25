@@ -39,6 +39,7 @@ public class AnnotationProcessingManager(
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
         val WRAPPERS_DIRECTORY = "wrappers"
         val ANNOTATIONS_FILENAME = "annotations.kotlin.txt"
+        val GEN_ANNOTATION = "__gen/annotation"
     }
 
     fun getAnnotationFile(): File {
@@ -59,9 +60,14 @@ public class AnnotationProcessingManager(
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
     }
 
+    fun afterJavaCompile() {
+        val generatedFile = File(javaTask.getDestinationDir(), "$GEN_ANNOTATION/Cl.class")
+        if (generatedFile.exists()) generatedFile.delete()
+    }
+
     private fun generateJavaHackFile(aptDir: File, javaTask: JavaCompile) {
         val javaAptSourceDir = File(aptDir, "java_src")
-        val javaHackPackageDir = File(javaAptSourceDir, "__gen/annotation")
+        val javaHackPackageDir = File(javaAptSourceDir, GEN_ANNOTATION)
 
         javaHackPackageDir.mkdirs()
 
