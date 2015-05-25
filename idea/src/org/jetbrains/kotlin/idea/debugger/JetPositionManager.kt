@@ -217,10 +217,15 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
 
     private fun classNameForPosition(element: PsiElement): String? {
         return runReadAction {
-            val file = element.getContainingFile() as JetFile
-            val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
-            val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
-            getInternalClassNameForElement(element, typeMapper, file, isInLibrary).className
+            if (DumbService.getInstance(element.getProject()).isDumb()) {
+                null
+            }
+            else {
+                val file = element.getContainingFile() as JetFile
+                val isInLibrary = LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null
+                val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
+                getInternalClassNameForElement(element, typeMapper, file, isInLibrary).className
+            }
         }
     }
 
