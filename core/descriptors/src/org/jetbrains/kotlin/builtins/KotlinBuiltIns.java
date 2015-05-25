@@ -22,6 +22,7 @@ import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl;
@@ -49,8 +50,6 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 public class KotlinBuiltIns {
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
-
-    public static final int FUNCTION_TRAIT_COUNT = 23;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -164,13 +163,11 @@ public class KotlinBuiltIns {
         public final FqNameUnsafe array = fqNameUnsafe("Array");
 
         public final FqNameUnsafe _boolean = fqNameUnsafe("Boolean");
-
         public final FqNameUnsafe _char = fqNameUnsafe("Char");
         public final FqNameUnsafe _byte = fqNameUnsafe("Byte");
         public final FqNameUnsafe _short = fqNameUnsafe("Short");
         public final FqNameUnsafe _int = fqNameUnsafe("Int");
         public final FqNameUnsafe _long = fqNameUnsafe("Long");
-
         public final FqNameUnsafe _float = fqNameUnsafe("Float");
         public final FqNameUnsafe _double = fqNameUnsafe("Double");
 
@@ -195,8 +192,6 @@ public class KotlinBuiltIns {
             }
         }
 
-        public final Set<FqNameUnsafe> functionClasses = computeIndexedFqNames("Function", FUNCTION_TRAIT_COUNT);
-
         @NotNull
         private static FqNameUnsafe fqNameUnsafe(@NotNull String simpleName) {
             return fqName(simpleName).toUnsafe();
@@ -205,15 +200,6 @@ public class KotlinBuiltIns {
         @NotNull
         private static FqName fqName(@NotNull String simpleName) {
             return BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
-        }
-
-        @NotNull
-        private static Set<FqNameUnsafe> computeIndexedFqNames(@NotNull String prefix, int count) {
-            Set<FqNameUnsafe> result = new HashSet<FqNameUnsafe>();
-            for (int i = 0; i < count; i++) {
-                result.add(fqNameUnsafe(prefix + i));
-            }
-            return result;
         }
     }
 
@@ -764,31 +750,32 @@ public class KotlinBuiltIns {
     }
 
     public static boolean isExactFunctionOrExtensionFunctionType(@NotNull JetType type) {
-        return isExactFunctionType(type) || isExactExtensionFunctionType(type);
+        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
+        return descriptor != null && isNumberedFunctionClassFqName(getFqName(descriptor));
     }
 
     public static boolean isExactFunctionType(@NotNull JetType type) {
-        return isTypeConstructorFqNameInSet(type, FQ_NAMES.functionClasses) && !isTypeAnnotatedWithExtension(type);
+        return isExactFunctionOrExtensionFunctionType(type) && !isTypeAnnotatedWithExtension(type);
     }
 
     public static boolean isExactExtensionFunctionType(@NotNull JetType type) {
-        return isTypeConstructorFqNameInSet(type, FQ_NAMES.functionClasses) && isTypeAnnotatedWithExtension(type);
+        return isExactFunctionOrExtensionFunctionType(type) && isTypeAnnotatedWithExtension(type);
     }
 
     /**
-     * @return true if this is an FQ name of a fictitious class representing the function type, e.g. kotlin.Function1
+     * @return true if this is an FQ name of a fictitious class representing the function type,
+     * e.g. kotlin.Function1 (but NOT kotlin.reflect.KFunction1)
      */
     public static boolean isNumberedFunctionClassFqName(@NotNull FqNameUnsafe fqName) {
-        return FQ_NAMES.functionClasses.contains(fqName);
-    }
+        List<Name> segments = fqName.pathSegments();
+        if (segments.size() != 2) return false;
 
-    private static boolean isTypeConstructorFqNameInSet(@NotNull JetType type, @NotNull Set<FqNameUnsafe> classes) {
-        ClassifierDescriptor declarationDescriptor = type.getConstructor().getDeclarationDescriptor();
+        if (!BUILT_INS_PACKAGE_NAME.equals(first(segments))) return false;
 
-        if (declarationDescriptor == null) return false;
-
-        FqNameUnsafe fqName = getFqName(declarationDescriptor);
-        return classes.contains(fqName);
+        return BuiltInFictitiousFunctionClassFactory.parseClassName(
+                last(segments).asString(),
+                FunctionClassDescriptor.Kinds.Functions
+        ) != null;
     }
 
     @Nullable

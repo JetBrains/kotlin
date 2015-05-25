@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.storage.StorageManager
+import kotlin.platform.platformStatic
 
 /**
  * Produces descriptors representing the fictitious classes for function types, such as kotlin.Function1 or kotlin.reflect.KMemberFunction0.
@@ -36,21 +37,25 @@ public class BuiltInFictitiousFunctionClassFactory(
 
     private data class KindWithArity(val kind: Kind, val arity: Int)
 
-    private fun parseClassName(className: String, allowedKinds: Set<Kind>): KindWithArity? {
-        for (kind in allowedKinds) {
-            val prefix = kind.classNamePrefix
-            if (!className.startsWith(prefix)) continue
+    companion object {
+        platformStatic public fun parseClassName(className: String, allowedKinds: Set<Kind>): KindWithArity? {
+            for (kind in allowedKinds) {
+                val prefix = kind.classNamePrefix
+                if (!className.startsWith(prefix)) continue
 
-            val arity = try {
-                className.substring(prefix.length()).toInt()
+                val arity = try {
+                    className.substring(prefix.length()).toInt()
+                }
+                catch (e: NumberFormatException) {
+                    continue
+                }
+
+                // TODO: validate arity, should be <= 255 for functions, <= 254 for members/extensions
+                return KindWithArity(kind, arity)
             }
-            catch (e: NumberFormatException) { continue }
 
-            // TODO: validate arity, should be <= 255 for functions, <= 254 for members/extensions
-            return KindWithArity(kind, arity)
+            return null
         }
-
-        return null
     }
 
     override fun createClass(classId: ClassId): ClassDescriptor? {
