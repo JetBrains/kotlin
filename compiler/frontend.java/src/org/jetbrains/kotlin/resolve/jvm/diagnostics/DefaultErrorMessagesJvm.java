@@ -66,6 +66,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "Expected type does not accept nulls in {0}, but the value may be null in {1}", Renderers.TO_STRING, Renderers.TO_STRING);
 
         MAP.put(ErrorsJvm.TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
+
+        MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument ''{0}'' can be null in Java, but exhaustive when contains no null branch");
     }
 
 

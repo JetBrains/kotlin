@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
+import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 
 public object KotlinJvmCheckerProvider : AdditionalCheckerProvider(
@@ -221,6 +223,20 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         }
 
         when (expression) {
+            is JetWhenExpression ->
+                    if (expression.getElseExpression() == null) {
+                        // Check for conditionally-exhaustive when on platform enums, see KT-6399
+                        val type = expression.getSubjectExpression()?.let { c.trace.getType(it) } ?: return
+                        if (type.isFlexible() && TypeUtils.isNullableType(type.flexibility().upperBound) && !type.getAnnotations().isMarkedNotNull()) {
+                            val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(type) ?: return
+
+                            if (WhenChecker.isWhenOnEnumExhaustive(expression, c.trace, enumClassDescriptor)
+                                && !WhenChecker.containsNullCase(expression, c.trace)) {
+
+                                c.trace.report(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA.on(expression.getSubjectExpression()))
+                            }
+                        }
+                    }
             is JetPostfixExpression ->
                     if (expression.getOperationToken() == JetTokens.EXCLEXCL) {
                         val baseExpression = expression.getBaseExpression() ?: return

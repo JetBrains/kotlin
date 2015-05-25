@@ -186,6 +186,11 @@ public class DataFlowUtils {
             return expressionType;
         }
 
+        if (expression instanceof JetWhenExpression) {
+            // No need in additional check because type mismatch is already reported for entries
+            return expressionType;
+        }
+
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
         for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
