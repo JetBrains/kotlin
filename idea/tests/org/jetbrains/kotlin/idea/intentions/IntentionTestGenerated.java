@@ -2875,6 +2875,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("keepComments.kt")
+        public void testKeepComments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/keepComments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("parenthesizedExpression.kt")
         public void testParenthesizedExpression() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/parenthesizedExpression.kt");

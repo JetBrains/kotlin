@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.CommentSaver
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
@@ -37,8 +37,13 @@ public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependen
 
     override fun applyTo(element: JetSimpleNameExpression, editor: Editor) {
         val (expressionToReplace, receiver, functionLiteral) = extractData(element)!!
+
+        val commentSaver = CommentSaver(expressionToReplace)
+
         val loop = generateLoop(functionLiteral, receiver)
-        expressionToReplace.replace(loop)
+        val result = expressionToReplace.replace(loop)
+
+        commentSaver.restoreComments(result)
     }
 
     private data class Data(
