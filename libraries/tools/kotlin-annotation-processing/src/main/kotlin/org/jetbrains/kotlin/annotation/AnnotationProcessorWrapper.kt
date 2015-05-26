@@ -96,7 +96,8 @@ public abstract class AnnotationProcessorWrapper(
 
         val annotatedKotlinElements = kotlinAnnotationsProvider.annotatedKotlinElements
         val roundEnvironmentWrapper = RoundEnvironmentWrapper(processingEnv, roundEnv, roundCounter, annotatedKotlinElements)
-        return processor.process(annotations, roundEnvironmentWrapper)
+        processor.process(annotations, roundEnvironmentWrapper)
+        return false
     }
 
     override fun getSupportedOptions(): MutableSet<String> {
