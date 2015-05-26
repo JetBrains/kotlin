@@ -67,10 +67,13 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
 
+        //TODO: escape $!
+
         val argumentText = StringBuilder {
             append("kotlin.ReplaceWith(\"")
             append(escapedText)
             append("\"")
+            //TODO: who should escape keywords here?
             replaceWith.imports.forEach { append(",\"").append(it).append("\"") }
             append(")")
         }.toString()
@@ -164,7 +167,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         if (!hasBlockBody()) return body
         val block = body as? JetBlockExpression ?: return null
         val statement = block.getStatements().singleOrNull() as? JetExpression ?: return null
-        val returnsUnit = (analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor)?.getReturnType()?.isUnit() ?: true
+        val returnsUnit = (analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor)?.getReturnType()?.isUnit() ?: return null
         return when (statement) {
             is JetReturnExpression -> statement.getReturnedExpression()
             else -> if (returnsUnit) statement else null
