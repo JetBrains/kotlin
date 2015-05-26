@@ -230,12 +230,15 @@ public class AnnotationCollectorExtension(
         val outputFilename: String? = null
 ) : AnnotationCollectorExtensionBase() {
 
+    private var writerInternal: Writer? = null
+
     override fun getWriter(diagnostic: DiagnosticSink): Writer {
-        try {
-            return with (File(outputFilename)) {
+        return writerInternal ?: try {
+            with (File(outputFilename)) {
                 val parent = getParentFile()
                 if (!parent.exists()) parent.mkdirs()
-                bufferedWriter()
+                writerInternal = bufferedWriter()
+                writerInternal!!
             }
         }
         catch (e: IOException) {
