@@ -5,7 +5,7 @@ package foo
 
 data class State(var count: Int = 0)
 
-inline fun repeat(times: Int, action: () -> Unit) {
+inline fun repeatAction(times: Int, action: () -> Unit) {
     for (i in 1..times) {
         action()
     }
@@ -16,7 +16,7 @@ fun capturedInLambda(state: State, a: Int, b: Int): Int {
         count++
     }
 
-    repeat(a + b)  {
+    repeatAction(a + b)  {
         state.inc()
     }
 
@@ -25,12 +25,12 @@ fun capturedInLambda(state: State, a: Int, b: Int): Int {
 
 
 fun declaredInLambda(state: State, a: Int, b: Int): Int {
-    repeat(a)  {
+    repeatAction(a)  {
         [inline] fun State.inc() {
             count++
         }
 
-        repeat(b) {
+        repeatAction(b) {
             state.inc()
         }
     }

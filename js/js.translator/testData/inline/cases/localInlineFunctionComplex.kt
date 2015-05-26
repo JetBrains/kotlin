@@ -4,7 +4,7 @@ package foo
 
 data class State(var count: Int = 0)
 
-inline fun repeat(times: Int, action: () -> Unit) {
+inline fun repeatAction(times: Int, action: () -> Unit) {
     for (i in 1..times) {
         action()
     }
@@ -19,12 +19,12 @@ fun add(state: State, a: Int, b: Int): Int {
         return inc(a)
     }
 
-    repeat(a)  {
+    repeatAction(a)  {
         [inline] fun inc2(a: Int): Int {
             return inc1(a)
         }
 
-        repeat(b) {
+        repeatAction(b) {
             [inline] fun State.inc() {
                 count = inc2(count)
             }

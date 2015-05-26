@@ -3,7 +3,7 @@ package foo
 // CHECK_CONTAINS_NO_CALLS: localWithCapture
 // CHECK_CONTAINS_NO_CALLS: localWithoutCapture
 
-inline fun repeat(times: Int, action: () -> Unit) {
+inline fun repeatAction(times: Int, action: () -> Unit) {
     for (i in 1..times) {
         action()
     }
@@ -12,12 +12,12 @@ inline fun repeat(times: Int, action: () -> Unit) {
 fun localWithoutCapture(a: Int, b: Int): Int {
     var mult = 0
 
-    repeat(a) {
+    repeatAction(a) {
         [inline] fun inc(x: Int): Int {
             return x + 1
         }
 
-        repeat(b) {
+        repeatAction(b) {
             mult = inc(mult)
         }
     }
@@ -28,12 +28,12 @@ fun localWithoutCapture(a: Int, b: Int): Int {
 fun localWithCapture(a: Int, b: Int): Int {
     var mult = 0
 
-    repeat(a) {
+    repeatAction(a) {
         [inline] fun inc() {
             mult++
         }
 
-        repeat(b) {
+        repeatAction(b) {
             inc()
         }
     }
