@@ -78,7 +78,7 @@ public class DebuggerUtils {
             return filesWithExactName.iterator().next();
         }
 
-        if (!isPackagePartClassName(className)) {
+        if (isPackageClassName(className)) {
             for (JetFile file : filesWithExactName) {
                 boolean hasTopLevelMembers = KotlinPackage.any(file.getDeclarations(), new Function1<JetDeclaration, Boolean>() {
                     @Override
@@ -90,40 +90,49 @@ public class DebuggerUtils {
             }
         }
 
-        JetFile file = getFileForPackagePartPrefixedName(filesWithExactName, className.getInternalName());
-        if (file != null) {
-            return file;
-        }
-
-        boolean isInLibrary = KotlinPackage.all(filesWithExactName, new Function1<JetFile, Boolean>() {
-            @Override
-            public Boolean invoke(JetFile file) {
-                return LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null;
+        if (isPackagePartClassName(className)) {
+            JetFile file = getFileForPackagePartPrefixedName(filesWithExactName, className.getInternalName());
+            if (file != null) {
+                return file;
             }
-        });
 
-        if (isInLibrary) {
-            return KotlinPackage.singleOrNull(KotlinPackage.filter(filesWithExactName, new Function1<JetFile, Boolean>() {
+            boolean isInLibrary = KotlinPackage.all(filesWithExactName, new Function1<JetFile, Boolean>() {
                 @Override
                 public Boolean invoke(JetFile file) {
-                    Integer startLineOffset = CodeInsightUtils.getStartLineOffset(file, lineNumber);
-                    assert startLineOffset != null : "Cannot find start line offset for file " + file.getName() + ", line " + lineNumber;
-                    JetDeclaration elementAt = PsiTreeUtil.getParentOfType(file.findElementAt(startLineOffset), JetDeclaration.class);
-                    return elementAt != null &&
-                           className.getInternalName().equals(DebuggerPackage.findPackagePartInternalNameForLibraryFile(elementAt));
+                    return LibraryUtil.findLibraryEntry(file.getVirtualFile(), file.getProject()) != null;
                 }
-            }));
+            });
+
+            if (isInLibrary) {
+                return KotlinPackage.singleOrNull(KotlinPackage.filter(filesWithExactName, new Function1<JetFile, Boolean>() {
+                    @Override
+                    public Boolean invoke(JetFile file) {
+                        Integer startLineOffset = CodeInsightUtils.getStartLineOffset(file, lineNumber);
+                        assert startLineOffset != null : "Cannot find start line offset for file " + file.getName() + ", line " + lineNumber;
+                        JetDeclaration elementAt = PsiTreeUtil.getParentOfType(file.findElementAt(startLineOffset), JetDeclaration.class);
+                        return elementAt != null &&
+                               className.getInternalName().equals(DebuggerPackage.findPackagePartInternalNameForLibraryFile(elementAt));
+                    }
+                }));
+            }
+
+            return null;
         }
 
-        return null;
+        return filesWithExactName.iterator().next();
     }
 
     private static boolean isPackagePartClassName(JvmClassName className) {
-        FqName packageFqName = PackageClassUtils.getPackageClassFqName(className.getPackageFqName());
-        String packageName = packageFqName.asString().replaceAll("\\.", "/");
+        String packageName = PackageClassUtils.getPackageClassInternalName(className.getPackageFqName());
 
         String internalName = className.getInternalName();
         return !internalName.equals(packageName) && internalName.startsWith(packageName);
+    }
+
+    private static boolean isPackageClassName(JvmClassName className) {
+        String packageName = PackageClassUtils.getPackageClassInternalName(className.getPackageFqName());
+
+        return packageName.equals(className.getInternalName());
     }
 
     @Nullable
