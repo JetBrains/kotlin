@@ -120,7 +120,7 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
 
 public class OverloadsAnnotationChecker: DeclarationChecker {
     override fun check(declaration: JetDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink) {
-        if (descriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.overloads")) != null) {
+        if (descriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.jvmOverloads")) != null) {
             checkDeclaration(declaration, descriptor, diagnosticHolder)
         }
     }

@@ -1,1 +1,1 @@
-class C [overloads] (private val string: String, a: Int = string.length())
+class C [jvmOverloads] (private val string: String, a: Int = string.length())

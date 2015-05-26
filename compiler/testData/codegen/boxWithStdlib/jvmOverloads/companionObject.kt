@@ -1,6 +1,6 @@
 class C {
     companion object {
-        [kotlin.platform.platformStatic] [kotlin.jvm.overloads] public fun foo(o: String, k: String = "K"): String {
+        [kotlin.platform.platformStatic] [kotlin.jvm.jvmOverloads] public fun foo(o: String, k: String = "K"): String {
             return o + k
         }
     }

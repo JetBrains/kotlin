@@ -1,5 +1,5 @@
 class C {
-    [kotlin.jvm.overloads] public fun foo(o: String = "O", k: String = "K"): String = o + k
+    [kotlin.jvm.jvmOverloads] public fun foo(o: String = "O", k: String = "K"): String = o + k
 }
 
 fun box(): String {

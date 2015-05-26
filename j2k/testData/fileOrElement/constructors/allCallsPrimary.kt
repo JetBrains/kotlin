@@ -1,6 +1,6 @@
 package pack
 
-class C [overloads] (arg1: Int, arg2: Int = 0, arg3: Int = 0)
+class C [jvmOverloads] (arg1: Int, arg2: Int = 0, arg3: Int = 0)
 
 public object User {
     public fun main() {

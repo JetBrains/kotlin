@@ -17,4 +17,4 @@
 package kotlin.jvm
 
 // is used in common generated code in stdlib
-internal annotation class overloads
+internal annotation class jvmOverloads

@@ -1,7 +1,7 @@
 class C(val i: Int) {
     var status = "fail"
 
-    [kotlin.jvm.overloads] constructor(o: String, k: String = "K"): this(-1) {
+    [kotlin.jvm.jvmOverloads] constructor(o: String, k: String = "K"): this(-1) {
         status = o + k
     }
 }

@@ -1,7 +1,7 @@
 class C {
 }
 
-[kotlin.jvm.overloads] fun C.foo(o: String, k: String = "K"): String {
+[kotlin.jvm.jvmOverloads] fun C.foo(o: String, k: String = "K"): String {
     return o + k
 }
 

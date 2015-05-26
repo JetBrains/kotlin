@@ -49,7 +49,7 @@ interface TraitWithImpl {
 
 public class TraitWithDelegatedWithImpl(f: TraitWithImpl) : TraitWithImpl by f
 
-kotlin.jvm.overloads
+kotlin.jvm.jvmOverloads
 public fun withJvmOverloads(i: Int, b: Boolean = false, s: String="hello") {}
 
 

@@ -2,7 +2,7 @@ package test
 
 class E1: Exception()
 
-throws(E1::class) overloads
+throws(E1::class) jvmOverloads
 fun one(a: Int = 1) {}
 
 class One [throws(E1::class)] (a: Int = 1) {

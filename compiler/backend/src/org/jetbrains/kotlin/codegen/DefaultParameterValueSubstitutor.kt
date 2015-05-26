@@ -58,7 +58,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
     }
 
     /**
-     * If the function is annotated with [kotlin.jvm.overloads], generates Java methods that
+     * If the function is annotated with [kotlin.jvm.jvmOverloads], generates Java methods that
      * have the default parameter values substituted. If a method has N parameters and M of which
      * have default values, M overloads are generated: the first one takes N-1 parameters (all but
      * the last one that takes a default value), the second takes N-2 parameters, and so on.
@@ -75,7 +75,7 @@ public class DefaultParameterValueSubstitutor(val state: GenerationState) {
                                   delegateFunctionDescriptor: FunctionDescriptor,
                                   owner: CodegenContext<*>,
                                   classBuilder: ClassBuilder): Boolean {
-        if (functionDescriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.overloads")) == null) {
+        if (functionDescriptor.getAnnotations().findAnnotation(FqName("kotlin.jvm.jvmOverloads")) == null) {
             return false
         }
 

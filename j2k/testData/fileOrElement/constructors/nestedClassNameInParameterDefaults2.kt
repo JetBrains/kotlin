@@ -1,7 +1,7 @@
 // ERROR: Property must be initialized or be abstract
 import A.Nested
 
-class A [overloads] (nested: Nested = Nested(Nested.FIELD)) {
+class A [jvmOverloads] (nested: Nested = Nested(Nested.FIELD)) {
 
     class Nested(p: Int) {
         companion object {

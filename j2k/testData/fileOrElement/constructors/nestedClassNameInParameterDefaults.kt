@@ -1,4 +1,4 @@
-class A [overloads] (nested: A.Nested = A.Nested(A.Nested.FIELD)) {
+class A [jvmOverloads] (nested: A.Nested = A.Nested(A.Nested.FIELD)) {
 
     class Nested(p: Int) {
         companion object {

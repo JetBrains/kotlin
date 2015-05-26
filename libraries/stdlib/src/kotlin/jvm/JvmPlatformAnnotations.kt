@@ -26,4 +26,4 @@ import java.lang.annotation.RetentionPolicy
  * takes N-1 parameters (all but the last one that takes a default value), the second takes N-2 parameters, and so on.
  */
 Retention(RetentionPolicy.CLASS)
-public annotation class overloads
+public annotation class jvmOverloads

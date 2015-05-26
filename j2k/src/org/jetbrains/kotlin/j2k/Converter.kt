@@ -422,7 +422,7 @@ class Converter private(
 
         if (function.parameterList.parameters.any { it.defaultValue != null }) {
             function.annotations += Annotations(
-                    listOf(Annotation(Identifier("overloads").assignNoPrototype(),
+                    listOf(Annotation(Identifier("jvmOverloads").assignNoPrototype(),
                                       listOf(),
                                       brackets = function is PrimaryConstructor,
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()

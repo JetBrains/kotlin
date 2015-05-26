@@ -4,7 +4,7 @@ class A() {
     private val s = ""
     private val x = 0
 
-    overloads public constructor(p: Int, s: String, x: Int = 1) : this() {
+    jvmOverloads public constructor(p: Int, s: String, x: Int = 1) : this() {
         this.s = s
         this.x = x
     }
