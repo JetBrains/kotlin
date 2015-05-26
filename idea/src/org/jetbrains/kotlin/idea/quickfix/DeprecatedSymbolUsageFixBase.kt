@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.CommentSaver
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
@@ -42,17 +43,13 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -62,7 +59,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
+import java.util.ArrayList
+import java.util.LinkedHashSet
 
 //TODO: replacement of class usages
 //TODO: different replacements for property accessors
@@ -135,6 +133,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val callExpression = resolvedCall.getCall().getCallElement() as JetExpression
             val qualifiedExpression = callExpression.getParent() as? JetQualifiedExpression
             val expressionToBeReplaced = qualifiedExpression ?: callExpression
+
+            val commentSaver = CommentSaver(expressionToBeReplaced)
 
             var receiver = element.getReceiverExpression()?.marked(USER_CODE_KEY)
             var receiverType = if (receiver != null) bindingContext.getType(receiver) else null
@@ -224,6 +224,12 @@ public abstract class DeprecatedSymbolUsageFixBase(
             replacement.descriptorsToImport.forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
             result = postProcessInsertedExpression(result, wrapper.addedStatements)
+
+            val resultRange = if (wrapper.addedStatements.isEmpty())
+                PsiChildRange.singleElement(result)
+            else
+                PsiChildRange(wrapper.addedStatements.first(), result)
+            commentSaver.restoreComments(resultRange)
 
             return result
         }

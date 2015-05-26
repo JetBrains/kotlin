@@ -333,6 +333,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             // if when entry has block, spacing after arrow should be set by lbrace rule
             aroundInside(ARROW, WHEN_ENTRY).spaceIf(jetSettings.SPACE_AROUND_WHEN_ARROW)
+
+            after(EOL_COMMENT).lineBreakInCode()
         }
     }
 }

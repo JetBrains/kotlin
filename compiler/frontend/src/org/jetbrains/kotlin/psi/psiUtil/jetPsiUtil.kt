@@ -572,11 +572,11 @@ public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(no
     })
 }
 
-public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean): Boolean {
+public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean = { true }): Boolean {
     return findDescendantOfType(predicate) != null
 }
 
-public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean): T? {
+public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean = { true }): T? {
     var result: T? = null
     this.accept(object : PsiRecursiveElementVisitor(){
         override fun visitElement(element: PsiElement) {

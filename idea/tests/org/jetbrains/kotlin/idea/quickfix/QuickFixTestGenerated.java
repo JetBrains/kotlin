@@ -3217,6 +3217,51 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class KeepComments extends AbstractQuickFixTest {
+            public void testAllFilesPresentInKeepComments() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/keepComments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("commentBeforeArgument.kt")
+            public void testCommentBeforeArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments/commentBeforeArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("dropArgument.kt")
+            public void testDropArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments/dropArgument.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multipleArguments.kt")
+            public void testMultipleArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments/multipleArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments/simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("usedTwice.kt")
+            public void testUsedTwice() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments/usedTwice.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("variableForArgument.kt")
+            public void testVariableForArgument() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments/variableForArgument.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/optionalParameters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
