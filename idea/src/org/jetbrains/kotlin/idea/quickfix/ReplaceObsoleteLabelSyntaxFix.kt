@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
@@ -40,7 +39,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry?) : JetIn
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val annotationEntry = diagnostic.getPsiElement().getNonStrictParentOfType<JetAnnotationEntry>() ?: return null
 
-            if (!annotationEntry.looksLikeObsoleteLabel()) return null
+            if (!looksLikeObsoleteLabel(annotationEntry)) return null
 
             return ReplaceObsoleteLabelSyntaxFix(annotationEntry)
         }
@@ -64,7 +63,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry?) : JetIn
                 expression.getAnnotationEntries().filter { it.looksLikeObsoleteLabelWithReferencesInCode() }
 
         private fun JetAnnotationEntry.looksLikeObsoleteLabelWithReferencesInCode(): Boolean {
-            if (!looksLikeObsoleteLabel()) return false
+            if (!looksLikeObsoleteLabel(this)) return false
 
             val baseExpression = (getParent() as? JetAnnotatedExpression)?.getBaseExpression() ?: return false
 
@@ -77,6 +76,13 @@ public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry?) : JetIn
                 it.getTargetLabel()?.analyze()?.get(BindingContext.LABEL_TARGET, it.getTargetLabel()) == null
             } && analyze().getDiagnostics().forElement(nameExpression).any { it.getFactory() == Errors.UNRESOLVED_REFERENCE }
         }
+
+        public fun looksLikeObsoleteLabel(entry: JetAnnotationEntry): Boolean =
+                entry.getAtSymbol() != null &&
+                entry.getParent() is JetAnnotatedExpression &&
+                (entry.getParent() as JetAnnotatedExpression).getAnnotationEntries().size() == 1 &&
+                entry.getValueArgumentList() == null &&
+                entry.getCalleeExpression()?.getConstructorReferenceExpression()?.getIdentifier() != null
 
         private fun replaceWithLabel(annotation: JetAnnotationEntry) {
             val labelName = annotation.getCalleeExpression()?.getConstructorReferenceExpression()?.getReferencedName() ?: return
@@ -96,10 +102,3 @@ public class ReplaceObsoleteLabelSyntaxFix(element: JetAnnotationEntry?) : JetIn
         }
     }
 }
-
-public fun JetAnnotationEntry.looksLikeObsoleteLabel(): Boolean =
-        getAtSymbol() != null &&
-        getParent() is JetAnnotatedExpression &&
-        (getParent() as JetAnnotatedExpression).getAnnotationEntries().size() == 1 &&
-        getValueArgumentList() == null &&
-        getCalleeExpression()?.getConstructorReferenceExpression()?.getIdentifier() != null

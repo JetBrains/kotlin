@@ -16,21 +16,17 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.*
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.highlighter.JetPsiChecker
 import org.jetbrains.kotlin.idea.quickfix.CleanupFix
-import org.jetbrains.kotlin.idea.quickfix.JetWholeProjectModalAction
 import org.jetbrains.kotlin.idea.quickfix.ReplaceObsoleteLabelSyntaxFix
-import org.jetbrains.kotlin.idea.quickfix.looksLikeObsoleteLabel
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.JetAnnotationEntry
 import org.jetbrains.kotlin.psi.JetFile
@@ -85,7 +81,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {
         val annotationEntry = getPsiElement().getNonStrictParentOfType<JetAnnotationEntry>() ?: return false
-        return annotationEntry.looksLikeObsoleteLabel()
+        return ReplaceObsoleteLabelSyntaxFix.looksLikeObsoleteLabel(annotationEntry)
     }
 
     private fun Diagnostic.toProblemDescriptor(file: JetFile, manager: InspectionManager): ProblemDescriptor? {
