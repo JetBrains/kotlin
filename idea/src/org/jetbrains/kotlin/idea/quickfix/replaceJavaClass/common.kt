@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.replaceJavaClass
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfJavaLangClass
 import org.jetbrains.kotlin.types.typeUtil.isJavaLangClass
 
@@ -51,6 +53,16 @@ private class JavaClassParameterReplacementTask(
     override val element: JetElement = typeReference
 }
 
+private fun renderClassNameForKClassLiteral(type: JetType): String? {
+    val descriptorRenderer = IdeDescriptorRenderers.SOURCE_CODE
+    if (KotlinBuiltIns.isArray(type)) {
+        return descriptorRenderer.renderType(type)
+    }
+
+    val classDescriptor = (type.getConstructor().getDeclarationDescriptor() as? ClassDescriptor) ?: return null
+    return descriptorRenderer.renderClassifierName(classDescriptor)
+}
+
 fun createReplacementTasks(element: JetElement, anyJavaClass: Boolean = false): List<ReplacementTask> {
     val replacementTasks = arrayListOf<ReplacementTask>()
 
@@ -64,7 +76,7 @@ fun createReplacementTasks(element: JetElement, anyJavaClass: Boolean = false): 
         if (returnType.isJavaLangClass()) {
             val inferredType = returnType.getArguments().firstOrNull()?.getType() ?: return
             if (inferredType.isError()) return
-            val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(inferredType)
+            val renderedType = renderClassNameForKClassLiteral(inferredType) ?: return
             replacementTasks.add(JavaClassCallReplacementTask(expression, renderedType))
         }
     })

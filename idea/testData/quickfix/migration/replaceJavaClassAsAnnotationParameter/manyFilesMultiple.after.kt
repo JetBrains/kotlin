@@ -16,7 +16,7 @@ Ann2(arg = array(Double::class)) class MyClass3 [Ann1(Char::class)] () {
     Ann3(String::class) class Nested {
         Ann1(arg = String::class) fun foo1() {
             annotation class LocalAnn(val arg: KClass<*>)
-            [LocalAnn(Class<*>::class)] val x = 1
+            [LocalAnn(Class::class)] val x = 1
         }
     }
 

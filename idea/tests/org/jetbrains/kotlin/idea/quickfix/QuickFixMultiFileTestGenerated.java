@@ -983,6 +983,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
                 doTestWithExtraFile(fileName);
             }
 
+            @TestMetadata("genericArgumentMultiple.before.Main.kt")
+            public void testGenericArgumentMultiple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/replaceJavaClassWithKClassForJavaAnnotation/genericArgumentMultiple.before.Main.kt");
+                doTestWithExtraFile(fileName);
+            }
+
             @TestMetadata("implicitParameterMultiple.before.Main.kt")
             public void testImplicitParameterMultiple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/replaceJavaClassWithKClassForJavaAnnotation/implicitParameterMultiple.before.Main.kt");
