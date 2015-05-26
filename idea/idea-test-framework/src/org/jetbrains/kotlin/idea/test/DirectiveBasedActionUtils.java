@@ -83,7 +83,7 @@ public class DirectiveBasedActionUtils {
                     }
                 })));
 
-        UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position: %s. Use // ACTION: directive",
+        UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position. Use // ACTION: directive",
                                            filterOutIrrelevantActions(actualActions), filterOutIrrelevantActions(validActions));
     }
 

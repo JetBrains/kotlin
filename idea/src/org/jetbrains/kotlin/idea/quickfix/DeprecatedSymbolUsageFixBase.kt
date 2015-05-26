@@ -107,7 +107,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
     companion object {
         public fun replaceWithPattern(descriptor: DeclarationDescriptor): ReplaceWith? {
             val annotationClass = descriptor.builtIns.getDeprecatedAnnotation()
-            val annotation = descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass))!!
+            val annotation = descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
+            //TODO: code duplication
             val replaceWithValue = annotation.getAllValueArguments().entrySet()
                                            .singleOrNull { it.key.getName().asString() == "replaceWith"/*TODO*/ }
                                            ?.value?.getValue() as? AnnotationDescriptor ?: return null
