@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.TypeLazinessToken
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.debugTypeInfo
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -272,6 +272,8 @@ public class TypeResolver(
             val projectionKind = argumentElement.getProjectionKind()
             ModifiersChecker.checkIncompatibleVarianceModifiers(argumentElement.getModifierList(), c.trace)
             if (projectionKind == JetProjectionKind.STAR) {
+                ModifiersChecker.reportIllegalModifiers(argumentElement.getModifierList(), listOf(JetTokens.IN_KEYWORD, JetTokens.OUT_KEYWORD), c.trace)
+
                 val parameters = constructor.getParameters()
                 if (parameters.size() > i) {
                     val parameterDescriptor = parameters[i]
@@ -282,8 +284,7 @@ public class TypeResolver(
                 }
             }
             else {
-                // TODO : handle the Foo<in *> case
-                val type = resolveType(c.noBareTypes(), argumentElement.getTypeReference())
+                val type = resolveType(c.noBareTypes(), argumentElement.getTypeReference()!!)
                 val kind = resolveProjectionKind(projectionKind)
                 if (constructor.getParameters().size() > i) {
                     val parameterDescriptor = constructor.getParameters()[i]

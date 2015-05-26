@@ -64,6 +64,11 @@ public class JetTypeProjection extends JetModifierListOwnerStub<KotlinTypeProjec
 
     @Nullable
     public ASTNode getProjectionNode() {
+        PsiElement star = findChildByType(JetTokens.MUL);
+        if (star != null) {
+            return star.getNode();
+        }
+
         JetModifierList modifierList = getModifierList();
         if (modifierList != null) {
             ASTNode node = modifierList.getModifierNode(JetTokens.IN_KEYWORD);
@@ -74,10 +79,6 @@ public class JetTypeProjection extends JetModifierListOwnerStub<KotlinTypeProjec
             if (node != null) {
                 return node;
             }
-        }
-        PsiElement star = findChildByType(JetTokens.MUL);
-        if (star != null) {
-            return star.getNode();
         }
 
         return null;

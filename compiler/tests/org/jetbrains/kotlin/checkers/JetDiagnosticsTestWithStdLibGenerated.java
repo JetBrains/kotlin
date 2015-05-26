@@ -35,6 +35,18 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("instar.kt")
+    public void testInstar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/instar.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("outstar.kt")
+    public void testOutstar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/outstar.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
