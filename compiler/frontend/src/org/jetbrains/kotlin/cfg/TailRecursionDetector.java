@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.cfg;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult;

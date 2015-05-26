@@ -1,14 +1,13 @@
 package test.kotlin.jtests;
 
-import static kotlin.KotlinPackage.*;
-import static kotlin.util.UtilPackage.*;
-
 import junit.framework.TestCase;
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function1;
 
 import java.util.Collection;
 import java.util.List;
+
+import static kotlin.KotlinPackage.*;
+import static kotlin.util.UtilPackage.*;
 
 /**
  * Lets try using the Kotlin standard library from Java code

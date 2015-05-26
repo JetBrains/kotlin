@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;

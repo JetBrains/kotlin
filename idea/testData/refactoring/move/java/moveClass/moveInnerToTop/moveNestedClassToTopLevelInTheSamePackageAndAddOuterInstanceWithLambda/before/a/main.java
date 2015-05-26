@@ -1,7 +1,6 @@
 package a;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 
 public class A {
     public class <caret>X {

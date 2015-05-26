@@ -37,9 +37,8 @@ import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Query;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.messages.MessageBus;
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.ClassId;
 

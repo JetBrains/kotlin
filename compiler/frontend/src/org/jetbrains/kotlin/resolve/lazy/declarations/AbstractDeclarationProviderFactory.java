@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;

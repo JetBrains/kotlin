@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.psi.tree.IElementType;
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

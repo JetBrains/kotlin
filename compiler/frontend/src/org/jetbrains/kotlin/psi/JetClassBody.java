@@ -20,9 +20,8 @@ import com.google.common.collect.Lists;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 import java.util.Arrays;
 import java.util.List;
 
-import static kotlin.KotlinPackage.firstOrNull;
 import static org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes.*;
 
 public class JetClassBody extends JetElementImplStub<KotlinPlaceHolderStub<JetClassBody>> implements JetDeclarationContainer {

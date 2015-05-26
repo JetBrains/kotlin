@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.idea.stubs;
 
 import com.intellij.openapi.util.io.FileUtil;
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;

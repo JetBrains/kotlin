@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.util.slicedMap;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;

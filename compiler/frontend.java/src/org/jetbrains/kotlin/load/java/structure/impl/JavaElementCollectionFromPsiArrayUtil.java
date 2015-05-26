@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.Name;

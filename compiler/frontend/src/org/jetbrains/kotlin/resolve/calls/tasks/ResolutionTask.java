@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.tasks;
 
 import com.google.common.collect.Lists;
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -27,8 +26,8 @@ import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
-import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
+import org.jetbrains.kotlin.resolve.calls.context.*;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;

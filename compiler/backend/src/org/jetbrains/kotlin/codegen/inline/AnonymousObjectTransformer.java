@@ -18,8 +18,7 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.codegen.ClassBuilder;

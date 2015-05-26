@@ -28,15 +28,14 @@ import com.intellij.psi.PsiFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.UIUtil;
 import junit.framework.ComparisonFailure;
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
 

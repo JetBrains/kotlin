@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.cfg.pseudocode;
 
 import com.google.common.collect.*;
 import com.intellij.util.containers.BidirectionalMap;
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.Label;

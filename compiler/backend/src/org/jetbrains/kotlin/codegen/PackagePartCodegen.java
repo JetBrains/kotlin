@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.util.ArrayUtil;
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;

@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.cfg;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;

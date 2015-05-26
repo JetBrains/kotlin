@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Pair;
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;

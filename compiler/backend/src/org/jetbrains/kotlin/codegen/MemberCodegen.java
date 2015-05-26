@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.*;
@@ -55,7 +54,6 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.calculateInnerClassAccessFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForScriptDescriptor;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.descriptors.SourceElement.NO_SOURCE;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;

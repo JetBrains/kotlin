@@ -16,18 +16,17 @@
 
 package org.jetbrains.kotlin.load.kotlin;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
-import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.serialization.PackageData;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents;
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 

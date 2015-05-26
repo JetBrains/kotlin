@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;

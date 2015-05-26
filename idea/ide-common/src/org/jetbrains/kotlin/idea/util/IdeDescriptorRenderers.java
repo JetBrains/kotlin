@@ -16,8 +16,7 @@
 
 package org.jetbrains.kotlin.idea.util;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
 import org.jetbrains.kotlin.renderer.NameShortness;

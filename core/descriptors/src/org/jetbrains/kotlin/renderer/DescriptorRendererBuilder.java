@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.renderer;
 
-import kotlin.jvm.functions.*;
-import kotlin.*;
 import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.types.JetType;

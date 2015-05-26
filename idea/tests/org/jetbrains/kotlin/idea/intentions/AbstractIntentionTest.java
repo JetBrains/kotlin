@@ -28,15 +28,14 @@ import com.intellij.refactoring.BaseRefactoringProcessor;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Convertor;
-import kotlin.jvm.functions.*;
-import kotlin.*;
+import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.util.application.ApplicationPackage;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.junit.Assert;
 
