@@ -160,14 +160,14 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
                 project.executeWriteCommand(getText()) {
                     val psiFactory = JetPsiFactory(project)
 
+                    kotlinCalls.forEach { it.replace(it.getCalleeExpression()!!) }
+                    foreignRefs.forEach { it.handleElementRename(getterName) }
                     callables.forEach {
                         when (it) {
                             is JetNamedFunction -> convertFunction(it, psiFactory)
                             is PsiMethod -> it.setName(getterName)
                         }
                     }
-                    kotlinCalls.forEach { it.replace(it.getCalleeExpression()) }
-                    foreignRefs.forEach { it.handleElementRename(getterName) }
 
                     ShortenReferences.DEFAULT.process(elementsToShorten)
                 }

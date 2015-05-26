@@ -2926,6 +2926,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("recursiveFunction.kt")
+        public void testRecursiveFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/recursiveFunction.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeArgumentsConflict.kt")
         public void testTypeArgumentsConflict() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertFunctionToProperty/typeArgumentsConflict.kt");
@@ -3346,6 +3352,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("propertyCallGroovy.kt")
         public void testPropertyCallGroovy() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/propertyCallGroovy.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("recursiveAccessor.kt")
+        public void testRecursiveAccessor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyToFunction/recursiveAccessor.kt");
             doTest(fileName);
         }
 

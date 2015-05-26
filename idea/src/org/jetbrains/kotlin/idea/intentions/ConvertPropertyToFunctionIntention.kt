@@ -153,15 +153,15 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
                     val kotlinPsiFactory = JetPsiFactory(project)
                     val javaPsiFactory = PsiElementFactory.SERVICE.getInstance(project)
 
+                    kotlinRefs.forEach { it.replace(kotlinPsiFactory.createExpressionByPattern("$0()", it)) }
+                    foreignRefsToRename.forEach { it.handleElementRename(propertyName) }
+                    javaRefsToReplaceWithCall.forEach { it.replace(javaPsiFactory.createExpressionFromText(it.getText() + "()", null)) }
                     callables.forEach {
                         when (it) {
                             is JetProperty -> convertProperty(it, kotlinPsiFactory)
                             is PsiMethod -> it.setName(propertyName)
                         }
                     }
-                    kotlinRefs.forEach { it.replace(kotlinPsiFactory.createExpressionByPattern("$0()", it)) }
-                    foreignRefsToRename.forEach { it.handleElementRename(propertyName) }
-                    javaRefsToReplaceWithCall.forEach { it.replace(javaPsiFactory.createExpressionFromText(it.getText() + "()", null)) }
                 }
             }
         }
