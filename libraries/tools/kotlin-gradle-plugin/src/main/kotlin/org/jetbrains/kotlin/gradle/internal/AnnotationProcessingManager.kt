@@ -29,6 +29,7 @@ import java.util.zip.ZipFile
 public class AnnotationProcessingManager(
         private val task: AbstractCompile,
         val javaTask: JavaCompile,
+        val taskQualifier: String,
         val aptFiles: Set<File>,
         val aptOutputDir: File,
         val aptWorkingDir: File) {
@@ -38,13 +39,12 @@ public class AnnotationProcessingManager(
     private companion object {
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
         val WRAPPERS_DIRECTORY = "wrappers"
-        val ANNOTATIONS_FILENAME = "annotations.kotlin.txt"
         val GEN_ANNOTATION = "__gen/annotation"
     }
 
     fun getAnnotationFile(): File {
         aptWorkingDir.mkdirs()
-        return File(aptWorkingDir, "$WRAPPERS_DIRECTORY/$ANNOTATIONS_FILENAME")
+        return File(aptWorkingDir, "$WRAPPERS_DIRECTORY/annotations.$taskQualifier.txt")
     }
 
     fun setupKapt() {
@@ -79,7 +79,7 @@ public class AnnotationProcessingManager(
         javaTask.source(javaAptSourceDir)
     }
 
-    private fun generateAnnotationProcessorStubs(aptDir: File, javaTask: JavaCompile, apFqNames: Set<String>) {
+    private fun generateAnnotationProcessorStubs(aptDir: File, javaTask: JavaCompile, processorFqNames: Set<String>) {
         val stubOutputDir = File(aptDir, "$WRAPPERS_DIRECTORY")
 
         generateKotlinAptAnnotation(stubOutputDir)
@@ -87,12 +87,12 @@ public class AnnotationProcessingManager(
         val stubOutputPackageDir = File(stubOutputDir, "__gen")
         stubOutputPackageDir.mkdirs()
 
-        for (processor in apFqNames) {
+        for (processor in processorFqNames) {
             generateAnnotationProcessorWrapper(processor, "__gen", stubOutputPackageDir)
         }
 
-        val annotationProcessorWrapperFqNames = apFqNames
-                .map { "__gen.AnnotationProcessorWrapper_${it.replace('.', '_')}" }
+        val annotationProcessorWrapperFqNames = processorFqNames
+                .map { fqName -> "__gen." + getProcessorStubClassName(fqName) }
                 .joinToString(",")
 
         javaTask.appendClasspath(stubOutputDir)
@@ -118,6 +118,10 @@ public class AnnotationProcessingManager(
         }
 
         javaTask.getOptions().setCompilerArgs(compilerArgs)
+    }
+
+    private fun getProcessorStubClassName(processorFqName: String): String {
+        return "AnnotationProcessorWrapper_${taskQualifier}_${processorFqName.replace('.', '_')}"
     }
 
     private fun addGeneratedSourcesOutputToCompilerArgs(javaTask: JavaCompile, outputDir: File) {
@@ -160,7 +164,7 @@ public class AnnotationProcessingManager(
     }
 
     private fun generateAnnotationProcessorWrapper(processorFqName: String, packageName: String, outputDirectory: File) {
-        val className = "AnnotationProcessorWrapper_${processorFqName.replace('.', '_')}"
+        val className = getProcessorStubClassName(processorFqName)
         val classFqName = "$packageName/$className"
 
         val bytes = with (ClassWriter(0)) {
@@ -174,9 +178,10 @@ public class AnnotationProcessingManager(
             with (visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)) {
                 visitVarInsn(ALOAD, 0)
                 visitLdcInsn(processorFqName)
-                visitMethodInsn(INVOKESPECIAL, superClass, "<init>", "(Ljava/lang/String;)V", false)
+                visitLdcInsn(taskQualifier)
+                visitMethodInsn(INVOKESPECIAL, superClass, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V", false)
                 visitInsn(RETURN)
-                visitMaxs(2, 1)
+                visitMaxs(3 /*max stack*/, 1 /*max locals*/)
                 visitEnd()
             }
 

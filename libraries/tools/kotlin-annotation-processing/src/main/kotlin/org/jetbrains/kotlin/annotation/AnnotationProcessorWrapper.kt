@@ -37,7 +37,10 @@ data class AnnotatedMethodDescriptor(classFqName: String, public val methodName:
 data class AnnotatedConstructorDescriptor(classFqName: String) : AnnotatedElementDescriptor(classFqName)
 data class AnnotatedFieldDescriptor(classFqName: String, public val fieldName: String) : AnnotatedElementDescriptor(classFqName)
 
-public abstract class AnnotationProcessorWrapper(private val processorFqName: String) : Processor {
+public abstract class AnnotationProcessorWrapper(
+        private val processorFqName: String,
+        private val taskQualifier: String
+) : Processor {
 
     private val processor: Processor by Delegates.lazy {
         try {
@@ -72,7 +75,7 @@ public abstract class AnnotationProcessorWrapper(private val processorFqName: St
             return
         }
 
-        val annotationsTxt = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "annotations.kotlin.txt")
+        val annotationsTxt = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "annotations.$taskQualifier.txt")
         kotlinAnnotationsProvider = FileObjectKotlinAnnotationProvider(annotationsTxt)
 
         processor.init(processingEnv)
