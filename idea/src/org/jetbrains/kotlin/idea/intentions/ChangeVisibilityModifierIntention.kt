@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public open class ChangeVisibilityModifierIntention protected(
+public open class ChangeVisibilityModifierIntention protected constructor(
         val modifier: JetModifierKeywordToken
 ) : JetSelfTargetingRangeIntention<JetDeclaration>(javaClass(), "Make ${modifier.getValue()}") {
 
@@ -52,7 +52,9 @@ public open class ChangeVisibilityModifierIntention protected(
         if (modifierList?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false) {
             val callableDescriptor = descriptor  as? CallableDescriptor ?: return null
             // cannot make visibility less than (or non-comparable with) any of the supers
-            if (callableDescriptor.getOverriddenDescriptors().any { val c = Visibilities.compare(it.getVisibility(), targetVisibility); c == null || c > 0  }) return null
+            if (callableDescriptor.getOverriddenDescriptors()
+                    .map { Visibilities.compare(it.getVisibility(), targetVisibility) }
+                    .any { it == null || it > 0  }) return null
         }
 
         setText(defaultText)
