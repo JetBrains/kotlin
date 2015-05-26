@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix
 
 /**
- * Marker interface for quickfixes that can be used as part of the "Cleanup Code" action.
+ * Marker interface for quickfixes that can be used as part of the "Cleanup Code" action. The diagnostics
+ * that produce these quickfixes need to be added to KotlinCleanupInspection.cleanupDiagnosticsFactories.
  */
 public interface CleanupFix

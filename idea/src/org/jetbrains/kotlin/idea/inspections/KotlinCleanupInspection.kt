@@ -56,12 +56,10 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         file.acceptChildren(object: JetTreeVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 super.visitElement(element)
-                val collection = diagnostics.forElement(element)
-                collection.forEach {
-                    if (it.isCleanup()) {
-                        problemDescriptors.add(it.toProblemDescriptor(file, manager))
-                    }
-                }
+                diagnostics.forElement(element)
+                   .filter { it.isCleanup() }
+                   .map { it.toProblemDescriptor(file, manager) }
+                   .filterNotNullTo(problemDescriptors)
             }
         })
         return problemDescriptors.toTypedArray()
@@ -69,7 +67,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
 
     private fun Diagnostic.isCleanup() = getFactory() in cleanupDiagnosticsFactories || isObsoleteLabel()
 
-    private val cleanupDiagnosticsFactories = hashSetOf(
+    private val cleanupDiagnosticsFactories = setOf(
             Errors.DEPRECATED_TRAIT_KEYWORD,
             Errors.DEPRECATED_ANNOTATION_SYNTAX,
             Errors.ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER,
@@ -95,7 +93,9 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
                 .filter { it is CleanupFix }
                 .map { IntentionWrapper(it, file) }
 
-         return manager.createProblemDescriptor(getPsiElement(),
+        if (quickFixes.isEmpty()) return null
+
+        return manager.createProblemDescriptor(getPsiElement(),
                                                 DefaultErrorMessages.render(this),
                                                 false,
                                                 quickFixes.toTypedArray(),
