@@ -185,7 +185,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         }
 
         if (psiFile is ClsFileImpl) {
-            val decompiledPsiFile = psiFile.getDecompiledPsiFile()
+            val decompiledPsiFile = runReadAction { psiFile.getDecompiledPsiFile() }
             if (decompiledPsiFile is JetClsFile && sourcePosition.getLine() == -1) {
                 val className = PackageClassUtils.getPackageClassInternalName(decompiledPsiFile.getPackageFqName())
                 return myDebugProcess.getVirtualMachineProxy().classesByName(className)
