@@ -82,7 +82,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
 
     open protected fun createKotlinSourceSet(): KotlinSourceSet? =
             if (sourceSet is HasConvention) {
-                logger.debug("Creating KotlinSourceSet for source set ${sourceSet}")
+                logger.kotlinDebug("Creating KotlinSourceSet for source set ${sourceSet}")
                 val kotlinSourceSet = KotlinSourceSetImpl(sourceSet.getName(), project.getFileResolver())
                 sourceSet.getConvention().getPlugins().put(pluginName, kotlinSourceSet)
                 kotlinSourceSet
@@ -92,14 +92,14 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
 
     open protected fun createKotlinDirSet(): SourceDirectorySet? {
         val srcDir = project.file(sourceRootDir)
-        logger.debug("Creating Kotlin SourceDirectorySet for source set ${kotlinSourceSet} with src dir ${srcDir}")
+        logger.kotlinDebug("Creating Kotlin SourceDirectorySet for source set ${kotlinSourceSet} with src dir ${srcDir}")
         val kotlinDirSet = kotlinSourceSet?.getKotlin()
         kotlinDirSet?.srcDir(srcDir)
         return kotlinDirSet
     }
 
     open protected fun addSourcesToKotlinDirSet() {
-        logger.debug("Adding Kotlin SourceDirectorySet ${kotlinDirSet} to source set ${sourceSet}")
+        logger.kotlinDebug("Adding Kotlin SourceDirectorySet ${kotlinDirSet} to source set ${sourceSet}")
         sourceSet.getAllJava()?.source(kotlinDirSet)
         sourceSet.getAllSource()?.source(kotlinDirSet)
         sourceSet.getResources()?.getFilter()?.exclude { kotlinDirSet!!.contains(it.getFile()) }
@@ -107,7 +107,7 @@ abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
 
     open protected fun createKotlinCompileTask(): T {
         val name = sourceSet.getCompileTaskName(compileTaskNameSuffix)
-        logger.debug("Creating kotlin compile task $name with class $compilerClass")
+        logger.kotlinDebug("Creating kotlin compile task $name with class $compilerClass")
         return project.getTasks().create(name, compilerClass)
     }
 
@@ -329,7 +329,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                   }))
                  but those methods were removed so commented as temporary hack*/
 
-                project.getLogger().debug("Created kotlin sourceDirectorySet at ${kotlinDirSet.getSrcDirs()}")
+                project.getLogger().kotlinDebug("Created kotlin sourceDirectorySet at ${kotlinDirSet.getSrcDirs()}")
             }
         })
 
@@ -363,7 +363,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
         for (variantData in variantDataList) {
             val variantDataName = variantData.getName()
-            logger.debug("Process variant [$variantDataName]")
+            logger.kotlinDebug("Process variant [$variantDataName]")
 
             val javaTask = variantData.javaCompileTask
 
@@ -384,7 +384,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             fun SourceDirectorySet.addSourceDirectories(additionalSourceFiles: Collection<File>) {
                 for (dir in additionalSourceFiles) {
                     this.srcDir(dir)
-                    logger.debug("Source directory ${dir.getAbsolutePath()} was added to kotlin source for $kotlinTaskName")
+                    logger.kotlinDebug("Source directory ${dir.getAbsolutePath()} was added to kotlin source for $kotlinTaskName")
                 }
             }
 
@@ -496,7 +496,7 @@ private class SubpluginEnvironment(
             val args = subplugin.getExtraArguments(project, compileTask)
 
             with (subplugin) {
-                logger.debug("Subplugin ${getPluginName()} (${getGroupName()}:${getArtifactName()}) loaded.")
+                logger.kotlinDebug("Subplugin ${getPluginName()} (${getGroupName()}:${getArtifactName()}) loaded.")
             }
 
             val subpluginClasspath = subpluginClasspaths[subplugin]

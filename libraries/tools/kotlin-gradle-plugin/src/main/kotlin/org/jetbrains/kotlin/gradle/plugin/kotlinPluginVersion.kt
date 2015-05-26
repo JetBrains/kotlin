@@ -21,7 +21,7 @@ import java.io.FileNotFoundException
 import java.util.*
 
 private fun Any.loadKotlinVersionFromResource(log: Logger): String {
-    log.debug("Loading version information")
+    log.kotlinDebug("Loading version information")
     val props = Properties()
     val propFileName = "project.properties"
     val inputStream = javaClass.getClassLoader()!!.getResourceAsStream(propFileName)
@@ -33,6 +33,6 @@ private fun Any.loadKotlinVersionFromResource(log: Logger): String {
     props.load(inputStream)
 
     val projectVersion = props["project.version"] as String
-    log.debug("Found project version [$projectVersion]")
+    log.kotlinDebug("Found project version [$projectVersion]")
     return projectVersion
 }

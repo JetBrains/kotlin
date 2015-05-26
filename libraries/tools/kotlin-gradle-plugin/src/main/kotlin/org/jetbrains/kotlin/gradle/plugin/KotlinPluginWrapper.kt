@@ -10,6 +10,7 @@ import java.util.Properties
 import java.io.FileNotFoundException
 import org.gradle.api.initialization.dsl.ScriptHandler
 import org.gradle.api.invocation.Gradle
+import org.gradle.api.logging.Logger
 import java.lang.reflect.Method
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
@@ -41,33 +42,33 @@ abstract class KotlinBasePluginWrapper: Plugin<Project> {
         val dependencyHandler: DependencyHandler = sourceBuildScript.getDependencies()
         val configurationsContainer: ConfigurationContainer = sourceBuildScript.getConfigurations()
 
-        log.debug("Creating configuration and dependency")
+        log.kotlinDebug("Creating configuration and dependency")
         val kotlinPluginCoreCoordinates = "org.jetbrains.kotlin:kotlin-gradle-plugin-core:" + projectVersion
         val dependency = dependencyHandler.create(kotlinPluginCoreCoordinates)
         val configuration = configurationsContainer.detachedConfiguration(dependency)
 
-        log.debug("Resolving [" + kotlinPluginCoreCoordinates + "]")
+        log.kotlinDebug("Resolving [" + kotlinPluginCoreCoordinates + "]")
         val kotlinPluginDependencies: List<URL> = configuration.getResolvedConfiguration().getFiles({ true })!!.map { it.toURI().toURL() }
-        log.debug("Resolved files: [" + kotlinPluginDependencies.toString() + "]")
-        log.debug("Load plugin in parent-last URL classloader")
+        log.kotlinDebug("Resolved files: [" + kotlinPluginDependencies.toString() + "]")
+        log.kotlinDebug("Load plugin in parent-last URL classloader")
         val kotlinPluginClassloader = ParentLastURLClassLoader(kotlinPluginDependencies, this.javaClass.getClassLoader())
-        log.debug("Class loader created")
+        log.kotlinDebug("Class loader created")
 
         return kotlinPluginClassloader
     }
 
     private fun findSourceBuildScript(project: Project): ScriptHandler? {
-        log.debug("Looking for proper script handler")
+        log.kotlinDebug("Looking for proper script handler")
         var curProject = project
         while (curProject != curProject.getParent()) {
-            log.debug("Looking in project $project")
+            log.kotlinDebug("Looking in project $project")
             val scriptHandler = curProject.getBuildscript()
             val found = scriptHandler.getConfigurations().findByName("classpath")?.firstOrNull { it.name.contains("kotlin-gradle-plugin") } != null
             if (found) {
-                log.debug("Found! returning...")
+                log.kotlinDebug("Found! returning...")
                 return scriptHandler
             }
-            log.debug("not found, switching to parent")
+            log.kotlinDebug("not found, switching to parent")
             curProject = curProject.getParent()!!
         }
         return null
@@ -84,5 +85,9 @@ open class KotlinAndroidPluginWrapper : KotlinBasePluginWrapper() {
 
 open class Kotlin2JsPluginWrapper : KotlinBasePluginWrapper() {
     override fun getPlugin(pluginClassLoader: ParentLastURLClassLoader, scriptHandler: ScriptHandler) = Kotlin2JsPlugin(scriptHandler, KotlinTasksProvider(pluginClassLoader))
+}
+
+fun Logger.kotlinDebug(message: String) {
+    this.debug("[KOTLIN] $message")
 }
 

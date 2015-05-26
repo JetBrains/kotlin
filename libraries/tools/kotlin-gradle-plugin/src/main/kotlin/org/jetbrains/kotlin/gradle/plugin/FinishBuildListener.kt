@@ -28,7 +28,7 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
     private var threadTracker: ThreadTracker? = ThreadTracker()
 
     override fun buildFinished(result: BuildResult?) {
-        log.debug("Build finished listener")
+        log.kotlinDebug("Build finished listener")
 
         stopZipFileCache()
         stopLowMemoryWatcher()
@@ -47,7 +47,7 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
 
     public fun removeThreadLocals() {
         try {
-            log.debug("Remove ChildURLClassLoader thread locals")
+            log.kotlinDebug("Remove ChildURLClassLoader thread locals")
 
             val thread = Thread.currentThread()
             val threadLocalsField = javaClass<Thread>().getDeclaredField("threadLocals")
@@ -72,24 +72,24 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
                 }
             }
 
-            log.debug("Removing ChildURLClassLoader thread locals finished successfully")
+            log.kotlinDebug("Removing ChildURLClassLoader thread locals finished successfully")
         } catch (e: Throwable) {
-            log.debug("Exception during thread locals remove: " + e)
+            log.kotlinDebug("Exception during thread locals remove: " + e)
         }
     }
 
     private fun stopZipFileCache() {
         callVoidStaticMethod("com.intellij.openapi.util.io.ZipFileCache", "stopBackgroundThread")
-        log.debug("ZipFileCache finished successfully")
+        log.kotlinDebug("ZipFileCache finished successfully")
     }
 
     private fun stopLowMemoryWatcher() {
         callVoidStaticMethod("com.intellij.openapi.util.LowMemoryWatcher", "stopAll")
-        log.debug("LowMemoryWatcher finished successfully")
+        log.kotlinDebug("LowMemoryWatcher finished successfully")
     }
 
     private fun stopJobScheduler() {
-        log.debug("Stop JobScheduler")
+        log.kotlinDebug("Stop JobScheduler")
 
         val jobSchedulerClass = Class.forName("com.intellij.concurrency.JobScheduler", false, pluginClassLoader)
 
@@ -97,19 +97,19 @@ class FinishBuildListener(var pluginClassLoader: ParentLastURLClassLoader?) : Bu
         val executorService = getSchedulerMethod.invoke(this) as ScheduledExecutorService
 
         executorService.shutdown()
-        log.debug("JobScheduler stopped")
+        log.kotlinDebug("JobScheduler stopped")
     }
 
     private fun callVoidStaticMethod(classFqName: String, methodName: String) {
         val shortName = classFqName.substring(classFqName.lastIndexOf('.') + 1)
 
-        log.debug("Looking for $shortName class")
+        log.kotlinDebug("Looking for $shortName class")
         val lowMemoryWatcherClass = Class.forName(classFqName, false, pluginClassLoader)
 
-        log.debug("Looking for $methodName() method")
+        log.kotlinDebug("Looking for $methodName() method")
         val shutdownMethod = lowMemoryWatcherClass.getMethod(methodName)
 
-        log.debug("Call $shortName.$methodName()")
+        log.kotlinDebug("Call $shortName.$methodName()")
         shutdownMethod.invoke(null)
     }
 }

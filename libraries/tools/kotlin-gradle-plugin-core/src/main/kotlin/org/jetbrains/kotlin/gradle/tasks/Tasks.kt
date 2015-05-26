@@ -111,9 +111,11 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
         args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
+        getLogger().kotlinDebug("args.freeArgs = ${args.freeArgs}")
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
             args.classpath = getClasspath().filter({ it != null && it.exists() }).joinToString(File.pathSeparator)
+            getLogger().kotlinDebug("args.classpath = ${args.classpath}")
         }
 
         args.destination = if (StringUtils.isEmpty(kotlinOptions.destination)) {
@@ -121,9 +123,11 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         } else {
             kotlinOptions.destination
         }
+        getLogger().kotlinDebug("args.destination = ${args.destination}")
 
         val extraProperties = getExtensions().getExtraProperties()
         args.pluginClasspaths = extraProperties.get("compilerPluginClasspaths") as? Array<String>
+        getLogger().kotlinDebug("args.pluginClasspaths = ${args.pluginClasspaths.joinToString(File.pathSeparator)}")
         val basePluginOptions = (extraProperties.get("compilerPluginArguments") as? Array<String>) ?: array()
 
         val pluginOptions = arrayListOf(*basePluginOptions)
@@ -135,12 +139,14 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         }
 
         args.pluginOptions = pluginOptions.toTypedArray()
+        getLogger().kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
 
         val embeddedAnnotations = getAnnotations(getProject(), getLogger())
         val userAnnotations = kotlinOptions.annotations?.split(File.pathSeparatorChar)?.toList() ?: emptyList()
         val allAnnotations = if (kotlinOptions.noJdkAnnotations) userAnnotations else userAnnotations.plus(embeddedAnnotations.map { it.getPath() })
         if (allAnnotations.isNotEmpty()) {
             args.annotations = allAnnotations.join(File.pathSeparator)
+            getLogger().kotlinDebug("args.annotations = ${args.annotations}")
         }
 
         args.noStdlib = true
@@ -383,4 +389,8 @@ class GradleMessageCollector(val logger: Logger) : MessageCollector {
             else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
         }
     }
+}
+
+fun Logger.kotlinDebug(message: String) {
+    this.debug("[KOTLIN] $message")
 }
