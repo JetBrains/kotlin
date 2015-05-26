@@ -283,6 +283,12 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ResolveTypeInAnnotationArgumentRuntime.kt")
+        public void testResolveTypeInAnnotationArgumentRuntime() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ResolveTypeInAnnotationArgumentRuntime.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ReturnTypeMismatchOnOverride.kt")
         public void testReturnTypeMismatchOnOverride() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/ReturnTypeMismatchOnOverride.kt");

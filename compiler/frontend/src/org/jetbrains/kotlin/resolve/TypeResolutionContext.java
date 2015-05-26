@@ -24,15 +24,27 @@ public class TypeResolutionContext {
     public final BindingTrace trace;
     public final boolean checkBounds;
     public final boolean allowBareTypes;
+    public final boolean forceResolveLazyTypes;
 
     public TypeResolutionContext(@NotNull JetScope scope, @NotNull BindingTrace trace, boolean checkBounds, boolean allowBareTypes) {
+        this(scope, trace, checkBounds, allowBareTypes, allowBareTypes);
+    }
+
+    private TypeResolutionContext(
+            @NotNull JetScope scope,
+            @NotNull BindingTrace trace,
+            boolean checkBounds,
+            boolean allowBareTypes,
+            boolean forceResolveLazyTypes
+    ) {
         this.scope = scope;
         this.trace = trace;
         this.checkBounds = checkBounds;
         this.allowBareTypes = allowBareTypes;
+        this.forceResolveLazyTypes = forceResolveLazyTypes;
     }
 
     public TypeResolutionContext noBareTypes() {
-        return new TypeResolutionContext(scope, trace, checkBounds, false);
+        return new TypeResolutionContext(scope, trace, checkBounds, false, forceResolveLazyTypes);
     }
 }
