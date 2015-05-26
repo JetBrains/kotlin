@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
+import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveFilesOrDirectoriesDialogWithKotlinOptions
 import org.jetbrains.kotlin.idea.references.JetReference
@@ -315,7 +316,9 @@ public fun moveFilesOrDirectories(
 
                 elementsToMove.forEach {
                     MoveFilesOrDirectoriesUtil.checkMove(it, selectedDir)
-                    (it as? JetFile)?.let { it.updatePackageDirective = updatePackageDirective }
+                    if (it is JetFile && it.isInJavaSourceRoot()) {
+                        it.updatePackageDirective = updatePackageDirective
+                    }
                 }
 
                 if (elementsToMove.isNotEmpty()) {

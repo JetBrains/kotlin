@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesDialog
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.packageMatchesDirectory
 import java.awt.GridBagConstraints
@@ -70,7 +71,7 @@ public class MoveFilesOrDirectoriesDialogWithKotlinOptions(
         super.setData(psiElements, initialTargetDirectory, helpID)
 
         with (cbUpdatePackageDirective!!) {
-            val jetFiles = psiElements.filterIsInstance<JetFile>()
+            val jetFiles = psiElements.filterIsInstance<JetFile>().filter { it.isInJavaSourceRoot() }
             if (jetFiles.isEmpty()) {
                 getParent().remove(cbUpdatePackageDirective)
                 return
