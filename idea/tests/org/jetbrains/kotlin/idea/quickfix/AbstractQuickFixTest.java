@@ -32,7 +32,9 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
+import com.intellij.util.indexing.FileBasedIndex;
 import kotlin.KotlinPackage;
 import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
@@ -155,6 +157,9 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     private void configureRuntimeIfNeeded(@NotNull String beforeFileName) {
         if (beforeFileName.endsWith("JsRuntime.kt")) {
+            // Without the following line of code subsequent tests with js-runtime will be prone to failure due "outdated stub in index" error.
+            FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID);
+
             ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(getModule(), getFullJavaJDK());
             KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary();
         }
