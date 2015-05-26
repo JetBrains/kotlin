@@ -31,10 +31,7 @@ class A {
     init {
         // EXPRESSION: i
         // RESULT: 1: I
-
-        // EXPRESSION: i
-        // RESULT: 2: I
-        for (i in 1..2) {
+        for (i in 1..1) {
             //Breakpoint!
             val a = 1
         }
@@ -44,6 +41,8 @@ class A {
     // RESULT: 7: I
     //Breakpoint!
     val prop = 1
+
+    fun test()= prop
 }
 
 fun main(args: Array<String>) {
@@ -53,5 +52,5 @@ fun main(args: Array<String>) {
     aWoBody
     aWoBody2
 
-    A().prop
+    A().test()
 }

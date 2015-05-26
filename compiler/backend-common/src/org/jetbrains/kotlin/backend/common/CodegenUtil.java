@@ -224,7 +224,6 @@ public class CodegenUtil {
             }
         }
         Document document = file.getViewProvider().getDocument();
-        TextRange textRange = statement.getTextRange();
-        return document != null ? document.getLineNumber(markEndOffset ? textRange.getEndOffset() : textRange.getStartOffset()) + 1 : null;
+        return document != null ? document.getLineNumber(markEndOffset ? statement.getTextRange().getEndOffset() : statement.getTextOffset()) + 1 : null;
     }
 }
