@@ -130,9 +130,14 @@ public fun String.split(regex: Pattern, limit: Int = 0): List<String>
 /**
  * Splits this string around matches of the given regular expression.
  */
-deprecated("Convert an argument to regex with toRegex or use splitBy instead.")
-public fun String.split(regex: String): Array<String> = split(regex.toRegex()).toTypedArray()
+deprecated("Convert String argument to regex with toRegex or use splitBy instead.")
+public fun String.split(regex: String): Array<String> = (this as java.lang.String).split(regex)
 
+/**
+ * Splits this string into at most [limit] chunks around matches of the given regular expression.
+ */
+deprecated("Convert String argument to regex with toRegex or use splitBy instead.")
+public fun String.split(regex: String, limit: Int): Array<String> = (this as java.lang.String).split(regex, limit)
 
 /**
  * Returns a substring of this string starting with the specified index.
