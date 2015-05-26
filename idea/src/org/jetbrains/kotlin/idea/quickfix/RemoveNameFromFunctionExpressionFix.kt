@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : JetIntentionAction<JetNamedFunction>(element) {
+public class RemoveNameFromFunctionExpressionFix(element: JetNamedFunction) : JetIntentionAction<JetNamedFunction>(element), CleanupFix {
     override fun getText(): String = "Remove identifier from function expression"
     override fun getFamilyName(): String = getText()
 

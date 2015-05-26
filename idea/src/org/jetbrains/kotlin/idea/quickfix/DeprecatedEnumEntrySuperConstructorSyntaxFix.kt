@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComme
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 import org.jetbrains.kotlin.resolve.DeclarationsChecker
 
-class DeprecatedEnumEntrySuperConstructorSyntaxFix(element: JetEnumEntry): JetIntentionAction<JetEnumEntry>(element) {
+class DeprecatedEnumEntrySuperConstructorSyntaxFix(element: JetEnumEntry): JetIntentionAction<JetEnumEntry>(element), CleanupFix {
     override fun getFamilyName(): String = getText()
 
     override fun getText(): String = "Change to short enum entry super constructor"
@@ -44,7 +44,7 @@ class DeprecatedEnumEntrySuperConstructorSyntaxFix(element: JetEnumEntry): JetIn
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) = changeConstructorToShort(element)
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
-            = super.isAvailable(project, editor, file) && DeclarationsChecker.enumEntryUsesDeprecatedSuperConstructor(element)
+            = super<JetIntentionAction>.isAvailable(project, editor, file) && DeclarationsChecker.enumEntryUsesDeprecatedSuperConstructor(element)
 
     companion object: JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction?  =

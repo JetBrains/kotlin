@@ -33,7 +33,7 @@ import java.util.ArrayList
 
 public class ReplaceJavaClassAsAnnotationArgumentFix(
         annotationEntry: JetAnnotationEntry
-) : JetIntentionAction<JetAnnotationEntry>(annotationEntry) {
+) : JetIntentionAction<JetAnnotationEntry>(annotationEntry), CleanupFix {
 
     override fun getText() = JetBundle.message("replace.java.class.argument")
     override fun getFamilyName() = JetBundle.message("replace.java.class.argument.family")
