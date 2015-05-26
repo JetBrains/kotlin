@@ -49,7 +49,7 @@ public abstract class BooleanIterator : kotlin.Iterator<kotlin.Boolean> {
 public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     /*primary*/ private constructor Byte()
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
@@ -57,7 +57,7 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun dec(): kotlin.Byte
     public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
@@ -66,14 +66,14 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final fun inc(): kotlin.Byte
     public final fun minus(): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
@@ -81,21 +81,21 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun plus(): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ByteRange
-    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.CharRange
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.CharRange
     public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
     public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
     public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
     public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
     public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
@@ -184,49 +184,49 @@ public final class ByteRange : kotlin.Range<kotlin.Byte>, kotlin.Progression<kot
 
 public final class Char : kotlin.Comparable<kotlin.Char> {
     /*primary*/ private constructor Char()
-    public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Long): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun dec(): kotlin.Char
-    public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Long): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun inc(): kotlin.Char
-    public final fun minus(): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
-    public final fun plus(): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
+    kotlin.deprecated(value = "This operation will change return type to Char in M13. Either call toInt or toChar on return value or convert Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Long): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
+    kotlin.deprecated(value = "This operation will change return type to Char in M13. Either call toInt or toChar on return value or convert Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.CharRange
-    public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Long): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Short): kotlin.Int
     public open fun toByte(): kotlin.Byte
     public open fun toChar(): kotlin.Char
     public open fun toDouble(): kotlin.Double
@@ -329,7 +329,7 @@ public interface Comparable</*0*/ in T> {
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     /*primary*/ private constructor Double()
     public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
@@ -337,7 +337,7 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun dec(): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun div(/*0*/ other: kotlin.Char): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Char): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Float): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Int): kotlin.Double
@@ -346,14 +346,14 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final fun inc(): kotlin.Double
     public final fun minus(): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Char): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Float): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Int): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Long): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Short): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Char): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Float): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Int): kotlin.Double
@@ -361,21 +361,21 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final fun mod(/*0*/ other: kotlin.Short): kotlin.Double
     public final fun plus(): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Char): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Float): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Int): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Long): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Short): kotlin.Double
     public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.DoubleRange
-    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.DoubleRange
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.DoubleRange
     public final fun times(/*0*/ other: kotlin.Byte): kotlin.Double
-    public final fun times(/*0*/ other: kotlin.Char): kotlin.Double
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Char): kotlin.Double
     public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun times(/*0*/ other: kotlin.Float): kotlin.Double
     public final fun times(/*0*/ other: kotlin.Int): kotlin.Double
@@ -479,7 +479,7 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     /*primary*/ private constructor Float()
     public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
@@ -487,7 +487,7 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun dec(): kotlin.Float
     public final fun div(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun div(/*0*/ other: kotlin.Char): kotlin.Float
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Char): kotlin.Float
     public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun div(/*0*/ other: kotlin.Int): kotlin.Float
@@ -496,14 +496,14 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final fun inc(): kotlin.Float
     public final fun minus(): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Float
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Char): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Int): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Long): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Short): kotlin.Float
     public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Float
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Char): kotlin.Float
     public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun mod(/*0*/ other: kotlin.Int): kotlin.Float
@@ -511,21 +511,21 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final fun mod(/*0*/ other: kotlin.Short): kotlin.Float
     public final fun plus(): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Float
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Char): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Int): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Long): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Short): kotlin.Float
     public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.FloatRange
-    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.FloatRange
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.FloatRange
     public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
     public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.FloatRange
     public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.FloatRange
     public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.FloatRange
     public final fun times(/*0*/ other: kotlin.Byte): kotlin.Float
-    public final fun times(/*0*/ other: kotlin.Char): kotlin.Float
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Char): kotlin.Float
     public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun times(/*0*/ other: kotlin.Int): kotlin.Float
@@ -685,7 +685,7 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     /*primary*/ private constructor Int()
     public final fun and(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
@@ -693,7 +693,7 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun dec(): kotlin.Int
     public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
@@ -703,14 +703,14 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final fun inv(): kotlin.Int
     public final fun minus(): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
@@ -719,14 +719,14 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final fun or(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun plus(): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.IntRange
-    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.IntRange
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.IntRange
     public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
     public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
@@ -735,7 +735,7 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final fun shl(/*0*/ bits: kotlin.Int): kotlin.Int
     public final fun shr(/*0*/ bits: kotlin.Int): kotlin.Int
     public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun times(/*0*/ other: kotlin.Int): kotlin.Int
@@ -867,7 +867,7 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     /*primary*/ private constructor Long()
     public final fun and(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
@@ -875,7 +875,7 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun dec(): kotlin.Long
     public final fun div(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun div(/*0*/ other: kotlin.Char): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Char): kotlin.Long
     public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun div(/*0*/ other: kotlin.Int): kotlin.Long
@@ -885,14 +885,14 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final fun inv(): kotlin.Long
     public final fun minus(): kotlin.Long
     public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Char): kotlin.Long
     public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Int): kotlin.Long
     public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun minus(/*0*/ other: kotlin.Short): kotlin.Long
     public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Char): kotlin.Long
     public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun mod(/*0*/ other: kotlin.Int): kotlin.Long
@@ -901,14 +901,14 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final fun or(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun plus(): kotlin.Long
     public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Char): kotlin.Long
     public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Int): kotlin.Long
     public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun plus(/*0*/ other: kotlin.Short): kotlin.Long
     public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.LongRange
-    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.LongRange
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.LongRange
     public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
     public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.LongRange
@@ -917,7 +917,7 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final fun shl(/*0*/ bits: kotlin.Int): kotlin.Long
     public final fun shr(/*0*/ bits: kotlin.Int): kotlin.Long
     public final fun times(/*0*/ other: kotlin.Byte): kotlin.Long
-    public final fun times(/*0*/ other: kotlin.Char): kotlin.Long
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Char): kotlin.Long
     public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun times(/*0*/ other: kotlin.Int): kotlin.Long
@@ -1173,7 +1173,7 @@ public interface Set</*0*/ out E> : kotlin.Collection<E> {
 public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     /*primary*/ private constructor Short()
     public final fun compareTo(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun compareTo(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Double): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Float): kotlin.Int
     public final fun compareTo(/*0*/ other: kotlin.Int): kotlin.Int
@@ -1181,7 +1181,7 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun dec(): kotlin.Short
     public final fun div(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun div(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun div(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun div(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun div(/*0*/ other: kotlin.Int): kotlin.Int
@@ -1190,14 +1190,14 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final fun inc(): kotlin.Short
     public final fun minus(): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun minus(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun minus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun minus(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun minus(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun minus(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun mod(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun mod(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun mod(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun mod(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun mod(/*0*/ other: kotlin.Int): kotlin.Int
@@ -1205,21 +1205,21 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final fun mod(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun plus(): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun plus(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun plus(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun plus(/*0*/ other: kotlin.Int): kotlin.Int
     public final fun plus(/*0*/ other: kotlin.Long): kotlin.Long
     public final fun plus(/*0*/ other: kotlin.Short): kotlin.Int
     public final fun rangeTo(/*0*/ other: kotlin.Byte): kotlin.ShortRange
-    public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.ShortRange
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun rangeTo(/*0*/ other: kotlin.Char): kotlin.ShortRange
     public final fun rangeTo(/*0*/ other: kotlin.Double): kotlin.DoubleRange
     public final fun rangeTo(/*0*/ other: kotlin.Float): kotlin.FloatRange
     public final fun rangeTo(/*0*/ other: kotlin.Int): kotlin.IntRange
     public final fun rangeTo(/*0*/ other: kotlin.Long): kotlin.LongRange
     public final fun rangeTo(/*0*/ other: kotlin.Short): kotlin.ShortRange
     public final fun times(/*0*/ other: kotlin.Byte): kotlin.Int
-    public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
+    kotlin.deprecated(value = "This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.": kotlin.String) public final fun times(/*0*/ other: kotlin.Char): kotlin.Int
     public final fun times(/*0*/ other: kotlin.Double): kotlin.Double
     public final fun times(/*0*/ other: kotlin.Float): kotlin.Float
     public final fun times(/*0*/ other: kotlin.Int): kotlin.Int

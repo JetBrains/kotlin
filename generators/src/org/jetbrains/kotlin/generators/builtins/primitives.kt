@@ -100,6 +100,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println(" * Returns zero if this value is equal to the specified other value, a negative number if its less than other, ")
             out.println(" * or a positive number if its greater than other.")
             out.println(" */")
+            if (otherKind == PrimitiveType.CHAR)
+                out.println("""    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")""")
             out.print("    public ")
             if (otherKind == thisKind) out.print("override ")
             out.println("fun compareTo(other: ${otherKind.capitalized}): Int")
@@ -117,6 +119,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (otherKind in PrimitiveType.exceptBoolean) {
             val returnType = getOperatorReturnType(thisKind, otherKind)
             out.println("    /** $doc */")
+            if (otherKind == PrimitiveType.CHAR)
+                out.println("""    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")""")
             out.println("    public fun $name(other: ${otherKind.capitalized}): $returnType")
         }
         out.println()
@@ -126,6 +130,8 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         for (otherKind in PrimitiveType.exceptBoolean) {
             val returnType = if (otherKind.ordinal() > thisKind.ordinal()) otherKind else thisKind
             out.println("     /** Creates a range from this value to the specified [other] value. */")
+            if (otherKind == PrimitiveType.CHAR)
+                out.println("""    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")""")
             out.println("    public fun rangeTo(other: ${otherKind.capitalized}): ${returnType.capitalized}Range")
         }
         out.println()

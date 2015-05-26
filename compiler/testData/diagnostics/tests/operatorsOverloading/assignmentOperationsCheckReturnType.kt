@@ -1,12 +1,12 @@
 fun intBinEq() {
     var x = 0
-    x += 'a'
+    x <!DEPRECATED_SYMBOL_WITH_MESSAGE!>+=<!> 'a'
     x += 1.toByte()
     x += 1.toShort()
     <!TYPE_MISMATCH!>x += 1L<!>
     <!TYPE_MISMATCH!>x += 1f<!>
     <!TYPE_MISMATCH!>x += 1.0<!>
-    x *= 'a'
+    x <!DEPRECATED_SYMBOL_WITH_MESSAGE!>*=<!> 'a'
     x *= 1.toByte()
     x *= 1.toShort()
     <!TYPE_MISMATCH!>x *= 1L<!>
@@ -16,14 +16,14 @@ fun intBinEq() {
 
 fun shortBinEq() {
     var x = 0.toShort()
-    <!TYPE_MISMATCH!>x += 'a'<!>
+    <!TYPE_MISMATCH!>x <!DEPRECATED_SYMBOL_WITH_MESSAGE!>+=<!> 'a'<!>
     <!TYPE_MISMATCH!>x += 1.toByte()<!>
     <!TYPE_MISMATCH!>x += 1.toShort()<!>
     <!TYPE_MISMATCH!>x += 1L<!>
     <!TYPE_MISMATCH!>x += 1f<!>
     <!TYPE_MISMATCH!>x += 1.0<!>
 
-    <!TYPE_MISMATCH!>x *= 'a'<!>
+    <!TYPE_MISMATCH!>x <!DEPRECATED_SYMBOL_WITH_MESSAGE!>*=<!> 'a'<!>
     <!TYPE_MISMATCH!>x *= 1.toByte()<!>
     <!TYPE_MISMATCH!>x *= 1.toShort()<!>
     <!TYPE_MISMATCH!>x *= 1L<!>
