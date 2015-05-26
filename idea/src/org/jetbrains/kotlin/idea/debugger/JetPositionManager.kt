@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -176,8 +177,11 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
     override fun getAllClasses(sourcePosition: SourcePosition): List<ReferenceType> {
         val psiFile = sourcePosition.getFile()
         if (psiFile is JetFile) {
-            val names = classNameForPositionAndInlinedOnes(sourcePosition)
             val result = ArrayList<ReferenceType>()
+
+            if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return result
+
+            val names = classNameForPositionAndInlinedOnes(sourcePosition)
             for (name in names) {
                 result.addAll(myDebugProcess.getVirtualMachineProxy().classesByName(name))
             }
