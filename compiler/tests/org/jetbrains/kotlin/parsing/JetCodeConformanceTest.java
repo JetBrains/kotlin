@@ -43,9 +43,9 @@ public class JetCodeConformanceTest extends TestCase {
             new File("libraries/tools/kotlin-js-tests/src/test/web/qunit.js"),
             new File("out"),
             new File("dist"),
-            new File("docs"),
             new File("ideaSDK"),
             new File("libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp"),
+            new File("libraries/tools/kotlin-maven-plugin/target/generated-sources"),
             new File("compiler/testData/psi/kdoc"),
             new File("compiler/tests/org/jetbrains/kotlin/parsing/JetCodeConformanceTest.java")
     );
