@@ -198,4 +198,11 @@ public class BindingContextUtils {
         return new Pair<FunctionDescriptor, PsiElement>(containingFunctionDescriptor, containingFunction);
     }
 
+    @Nullable
+    public static ResolvedCall<ConstructorDescriptor> getDelegationConstructorCall(
+            @NotNull BindingContext bindingContext,
+            @NotNull ConstructorDescriptor constructorDescriptor
+    ) {
+        return bindingContext.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructorDescriptor);
+    }
 }
