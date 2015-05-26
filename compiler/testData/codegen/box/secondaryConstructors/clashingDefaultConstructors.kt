@@ -26,8 +26,8 @@ fun box(): String {
     val b2 = B("hij", "klm", 2).toString()
     if (b2 != "hij#klm2") return "fail5: $b2"
 
-    val b3 = B(123.0).toString()
-    if (b3 != "123.0#efg") return "fail6: $b3"
+    val b3 = B(123.1).toString()
+    if (b3 != "123.1#efg") return "fail6: $b3"
 
     val b4 = B(x="test").toString()
     if (b4 != "test#123") return "fail7: $b4"
