@@ -230,7 +230,7 @@ public class CommentSaver(originalElements: PsiChildRange) {
             val anchor = chooseAnchor(anchorBefore, anchorAfter)
 
             if (anchor != null) {
-                val anchorElement = findFinalAnchorElement(anchor)
+                val anchorElement = findFinalAnchorElement(anchor, comment)
                 val parent = anchorElement.getParent()
                 if (anchor.before) {
                     parent.addAfter(comment, anchorElement)
@@ -288,21 +288,29 @@ public class CommentSaver(originalElements: PsiChildRange) {
         return anchorBefore //TODO: more analysis?
     }
 
-    private fun findFinalAnchorElement(anchor: Anchor): PsiElement {
+    private fun findFinalAnchorElement(anchor: Anchor, comment: PsiComment): PsiElement {
         val tokensBetween = anchor.treeElementsBetween.filterIsInstance<TokenTreeElement>()
-        var psiElement = anchor.element
-        if (tokensBetween.isEmpty()) return psiElement
 
         fun PsiElement.next(): PsiElement? {
             val filter = { element: PsiElement -> element !is PsiWhiteSpace && element.getTextLength() > 0 }
             return if (anchor.before) nextLeaf(filter) else prevLeaf(filter)
         }
 
+        var psiElement = anchor.element
         for (token in tokensBetween.reverse()) {
             val next = psiElement.next() ?: break
             if (next.getNode().getElementType() != token.tokenType) break
             psiElement = next
         }
+
+        // don't put end of line comment right before comma
+        if (anchor.before && comment.getNode().getElementType() == JetTokens.EOL_COMMENT) {
+            val next = psiElement.next()
+            if (next != null && next.getNode().getElementType() == JetTokens.COMMA) {
+                psiElement = next
+            }
+        }
+
         return psiElement
     }
 }

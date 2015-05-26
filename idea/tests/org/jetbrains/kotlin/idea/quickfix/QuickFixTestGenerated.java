@@ -3221,6 +3221,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class KeepComments extends AbstractQuickFixTest {
+            @TestMetadata("addArguments.kt")
+            public void testAddArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/keepComments/addArguments.kt");
+                doTest(fileName);
+            }
+
             public void testAllFilesPresentInKeepComments() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/keepComments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
