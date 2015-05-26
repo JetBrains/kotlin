@@ -279,13 +279,11 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 is JetStringTemplateExpression -> getEntries().any { if (sideEffectOnly) it.getExpression().shouldKeepValue(usageCount) else it is JetStringTemplateEntryWithExpression }
                 is JetThisExpression, is JetSuperExpression, is JetConstantExpression -> false
                 is JetParenthesizedExpression -> getExpression().shouldKeepValue(usageCount)
-
-            // TODO: discuss it
+                is JetArrayAccessExpression -> if (sideEffectOnly) getArrayExpression().shouldKeepValue(usageCount) || getIndexExpressions().any { it.shouldKeepValue(usageCount) } else true
                 is JetBinaryExpression -> if (sideEffectOnly) getLeft().shouldKeepValue(usageCount) || getRight().shouldKeepValue(usageCount) else true
                 is JetIfExpression -> if (sideEffectOnly) getCondition().shouldKeepValue(usageCount) || getThen().shouldKeepValue(usageCount) || getElse().shouldKeepValue(usageCount) else true
                 is JetBinaryExpressionWithTypeRHS -> true
-
-                else -> true // what else it can be?
+                else -> true
             }
         }
 
