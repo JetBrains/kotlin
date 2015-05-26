@@ -130,6 +130,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         if (commonDataFlowInfo == null) {
             commonDataFlowInfo = context.dataFlowInfo;
         }
+        else if (expression.getElseExpression() == null && !WhenChecker.isWhenExhaustive(expression, context.trace)) {
+            // Without else expression in non-exhaustive when, we *must* take initial data flow info into account,
+            // because data flow can bypass all when branches in this case
+            commonDataFlowInfo = commonDataFlowInfo.or(context.dataFlowInfo);
+        }
 
         return TypeInfoFactoryPackage.createTypeInfo(expressionTypes.isEmpty() ? null : DataFlowUtils.checkType(
                                                              DataFlowUtils.checkImplicitCast(

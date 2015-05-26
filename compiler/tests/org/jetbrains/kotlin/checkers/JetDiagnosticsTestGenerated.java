@@ -13548,6 +13548,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("BranchBypassVal.kt")
+            public void testBranchBypassVal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/BranchBypassVal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BranchBypassVar.kt")
+            public void testBranchBypassVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/BranchBypassVar.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BranchFalseBypass.kt")
+            public void testBranchFalseBypass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/BranchFalseBypass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("BranchFalseBypassElse.kt")
+            public void testBranchFalseBypassElse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/BranchFalseBypassElse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ElseOnNullableEnum.kt")
             public void testElseOnNullableEnum() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ElseOnNullableEnum.kt");
