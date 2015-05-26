@@ -229,6 +229,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/reflection"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
+        @TestMetadata("functionReferenceErasedToKFunction")
+        public void testFunctionReferenceErasedToKFunction() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/functionReferenceErasedToKFunction/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("javaPropertyInheritedInKotlin")
         public void testJavaPropertyInheritedInKotlin() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reflection/javaPropertyInheritedInKotlin/");

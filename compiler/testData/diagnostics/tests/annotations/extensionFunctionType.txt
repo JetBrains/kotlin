@@ -1,0 +1,18 @@
+package
+
+internal interface Some {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal abstract fun f1(): kotlin.String.() -> kotlin.Int
+    internal abstract fun f2(): @[kotlin.extension()] kotlin.String.() -> kotlin.Int
+    internal abstract fun f3(): @[ann()] kotlin.String.() -> kotlin.Int
+    internal abstract fun f4(): @[kotlin.extension() ann()] kotlin.String.() -> kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final annotation class ann : kotlin.Annotation {
+    public constructor ann()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

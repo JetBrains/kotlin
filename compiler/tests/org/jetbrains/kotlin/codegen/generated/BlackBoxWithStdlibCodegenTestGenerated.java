@@ -513,6 +513,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("listOfStringsMapLength.kt")
+            public void testListOfStringsMapLength() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/listOfStringsMapLength.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("nestedConstructorFromClass.kt")
             public void testNestedConstructorFromClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/function/nestedConstructorFromClass.kt");

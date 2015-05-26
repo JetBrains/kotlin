@@ -711,6 +711,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("extensionFunctionType.kt")
+            public void testExtensionFunctionType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/extensionFunctionType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("forParameterAnnotationResolve.kt")
             public void testForParameterAnnotationResolve() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/forParameterAnnotationResolve.kt");
