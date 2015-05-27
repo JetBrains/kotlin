@@ -69,6 +69,7 @@ import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinSourceRoot
+import org.jetbrains.kotlin.config.kotlinSourceRoots
 import org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
@@ -214,8 +215,7 @@ public class KotlinCoreEnvironment private(
     private fun getSourceRootsCheckingForDuplicates(): Collection<String> {
         val uniqueSourceRoots = Sets.newLinkedHashSet<String>()
 
-        configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS).filterIsInstance<KotlinSourceRoot>().forEach { sourceRoot ->
-            val path = sourceRoot.path
+        configuration.kotlinSourceRoots.forEach { path ->
             if (!uniqueSourceRoots.add(path)) {
                 report(WARNING, "Duplicate source root: $path")
             }
