@@ -144,7 +144,6 @@ class Kotlin2JvmSourceSetProcessor(
         val javaTask = project.getTasks().findByName(sourceSet.getCompileJavaTaskName()) as AbstractCompile?
 
         if (javaTask != null) {
-            kotlinTask.getExtensions().getExtraProperties().set("javaTask", WeakReference(javaTask))
             javaTask.dependsOn(kotlinTaskName)
             val javacClassPath = javaTask.getClasspath() + project.files(kotlinDestinationDir);
             javaTask.setClasspath(javacClassPath)
