@@ -55,37 +55,18 @@ public open class JetClass : JetClassOrObject {
         return constructor.add(JetPsiFactory(getProject()).createParameterList("()")) as JetParameterList
     }
 
+    public fun getColon(): PsiElement? = findChildByType(JetTokens.COLON)
 
-    public fun getColon(): PsiElement? {
-        return findChildByType(JetTokens.COLON)
-    }
+    public fun getProperties(): List<JetProperty> = getBody()?.getProperties().orEmpty()
 
-    public fun getProperties(): List<JetProperty> {
-        val body = getBody() ?: return emptyList<JetProperty>()
+    public fun isAnnotation(): Boolean = hasModifier(JetTokens.ANNOTATION_KEYWORD)
 
-        return body.getProperties()
-    }
+    public fun isInterface(): Boolean =
+        getStub()?.isInterface()
+        ?: (findChildByType<PsiElement>(JetTokens.TRAIT_KEYWORD) != null || findChildByType<PsiElement>(JetTokens.INTERFACE_KEYWORD) != null)
 
-    public fun isInterface(): Boolean {
-        val stub = getStub()
-        if (stub != null) {
-            return stub.isInterface()
-        }
-
-        return findChildByType<PsiElement>(JetTokens.TRAIT_KEYWORD) != null || findChildByType<PsiElement>(JetTokens.INTERFACE_KEYWORD) != null
-    }
-
-    public fun isEnum(): Boolean {
-        return hasModifier(JetTokens.ENUM_KEYWORD)
-    }
-
-    public fun isAnnotation(): Boolean {
-        return hasModifier(JetTokens.ANNOTATION_KEYWORD)
-    }
-
-    public fun isInner(): Boolean {
-        return hasModifier(JetTokens.INNER_KEYWORD)
-    }
+    public fun isEnum(): Boolean = hasModifier(JetTokens.ENUM_KEYWORD)
+    public fun isInner(): Boolean = hasModifier(JetTokens.INNER_KEYWORD)
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         if (super.isEquivalentTo(another)) {
@@ -122,12 +103,7 @@ public open class JetClass : JetClassOrObject {
         return StringUtil.join(parts, ".")
     }
 
-    public fun getCompanionObjects(): List<JetObjectDeclaration> {
-        val body = getBody() ?: return emptyList<JetObjectDeclaration>()
-        return body.getAllCompanionObjects()
-    }
+    public fun getCompanionObjects(): List<JetObjectDeclaration> = getBody()?.getAllCompanionObjects().orEmpty()
 
-    public fun getClassOrInterfaceKeyword(): PsiElement? {
-        return findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.INTERFACE_KEYWORD))
-    }
+    public fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.INTERFACE_KEYWORD))
 }
