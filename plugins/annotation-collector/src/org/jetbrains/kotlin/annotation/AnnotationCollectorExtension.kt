@@ -46,8 +46,6 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
 
     protected abstract val annotationFilterList: List<String>?
 
-    private val classBuilderFactories = arrayListOf<AnnotationCollectorClassBuilderFactory>()
-
     private val shortenedAnnotationCache = ShortenedNameCache(RecordTypes.SHORTENED_ANNOTATION)
     private val shortenedPackageNameCache = ShortenedNameCache(RecordTypes.SHORTENED_PACKAGE_NAME)
 
@@ -56,12 +54,11 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
             bindingContext: BindingContext,
             diagnostics: DiagnosticSink
     ): ClassBuilderFactory {
-        val factory = AnnotationCollectorClassBuilderFactory(interceptedFactory, getWriter(diagnostics), diagnostics)
-        classBuilderFactories.add(factory)
-        return factory
+        return AnnotationCollectorClassBuilderFactory(interceptedFactory, getWriter(diagnostics), diagnostics)
     }
 
     protected abstract fun getWriter(diagnostic: DiagnosticSink): Writer
+    protected abstract fun closeWriter()
 
     private inner class AnnotationCollectorClassBuilderFactory(
             private val delegateFactory: ClassBuilderFactory,
@@ -84,11 +81,7 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
         }
 
         override fun close() {
-            for (factory in classBuilderFactories) {
-                factory.writer.close()
-            }
-            classBuilderFactories.clear()
-
+            closeWriter()
             delegateFactory.close()
         }
     }
@@ -231,6 +224,10 @@ public class AnnotationCollectorExtension(
 ) : AnnotationCollectorExtensionBase() {
 
     private var writerInternal: Writer? = null
+
+    override fun closeWriter() {
+        writerInternal?.close()
+    }
 
     override fun getWriter(diagnostic: DiagnosticSink): Writer {
         return writerInternal ?: try {

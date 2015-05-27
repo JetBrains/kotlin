@@ -67,6 +67,7 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
         val stringWriter = StringWriter()
 
         override fun getWriter(diagnostic: DiagnosticSink) = stringWriter
+        override fun closeWriter() {}
 
         override val annotationFilterList = listOf<String>()
     }
