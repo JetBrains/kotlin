@@ -22,6 +22,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
@@ -217,10 +218,15 @@ data class DataForConversion private(
             }
             else {
                 add(fileText.substring(range.start, elements.first().range.start))
-                addAll(elements)
+                elements.flatMapTo(this) {
+                    if (shouldExpandToChildren(it)) it.allChildren.toList() else listOf(it)
+                }
                 add(fileText.substring(elements.last().range.end, range.end))
             }
         }
+
+        // converting of PsiModifierList is not supported by converter, but converting of single annotations inside it is supported
+        private fun shouldExpandToChildren(element: PsiElement) = element is PsiModifierList
 
         private fun buildImportsAndPackage(sourceFile: PsiJavaFile): String {
             return StringBuilder {
