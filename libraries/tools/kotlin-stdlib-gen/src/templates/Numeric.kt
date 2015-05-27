@@ -24,7 +24,7 @@ fun numeric(): List<GenericFunction> {
 
     templates add f("average()") {
         exclude(Strings)
-        doc { "Returns an average value of elements in the collection"}
+        doc { "Returns an average value of elements in the collection."}
         returns("Double")
         platformName("averageOf<T>")
         body {

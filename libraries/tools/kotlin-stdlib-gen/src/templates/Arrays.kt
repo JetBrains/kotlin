@@ -7,7 +7,7 @@ fun arrays(): List<GenericFunction> {
 
     templates add f("isEmpty()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns true if the array is empty" }
+        doc { "Returns `true` if the array is empty." }
         returns("Boolean")
         body {
             "return size() == 0"
@@ -16,7 +16,7 @@ fun arrays(): List<GenericFunction> {
 
     templates add f("isNotEmpty()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns true if the array is not empty" }
+        doc { "Returns `true` if the array is not empty." }
         returns("Boolean")
         body {
             "return !isEmpty()"
@@ -25,7 +25,7 @@ fun arrays(): List<GenericFunction> {
 
     templates add f("asIterable()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns the Iterable that wraps the original array" }
+        doc { "Returns the Iterable that wraps the original array." }
         returns("Iterable<T>")
         body {
             """
@@ -38,7 +38,7 @@ fun arrays(): List<GenericFunction> {
 
     templates add pval("lastIndex") {
         only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns the last valid index for the array" }
+        doc { "Returns the last valid index for the array." }
         returns("Int")
         body {
             "get() = size() - 1"
@@ -47,7 +47,7 @@ fun arrays(): List<GenericFunction> {
 
     templates add pval("indices") {
         only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns the range of valid indices for the array" }
+        doc { "Returns the range of valid indices for the array." }
         returns("IntRange")
         body {
             "get() = IntRange(0, lastIndex)"

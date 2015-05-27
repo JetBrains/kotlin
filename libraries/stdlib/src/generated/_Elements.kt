@@ -361,70 +361,70 @@ public inline fun <T> List<T>.component5(): T {
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun <T> Array<out T>.contains(element: T): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun BooleanArray.contains(element: Boolean): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun ByteArray.contains(element: Byte): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun CharArray.contains(element: Char): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun DoubleArray.contains(element: Double): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun FloatArray.contains(element: Float): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun IntArray.contains(element: Int): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun LongArray.contains(element: Long): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun ShortArray.contains(element: Short): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun <T> Iterable<T>.contains(element: T): Boolean {
     if (this is Collection<*>)
@@ -433,7 +433,7 @@ public fun <T> Iterable<T>.contains(element: T): Boolean {
 }
 
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun <T> Sequence<T>.contains(element: T): Boolean {
     if (this is Collection<*>)
@@ -444,7 +444,7 @@ public fun <T> Sequence<T>.contains(element: T): Boolean {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns true if *element* is found in the collection
+ * Returns `true` if [element] is found in the collection.
  */
 public fun <T> Stream<T>.contains(element: T): Boolean {
     if (this is Collection<*>)
@@ -521,7 +521,7 @@ public fun ShortArray.elementAt(index: Int): Short {
 public fun <T> Iterable<T>.elementAt(index: Int): T {
     if (this is List<T>)
         return get(index)
-    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Collection doesn't contain element at index $index") }
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Collection doesn't contain element at index $index.") }
 }
 
 /**
@@ -535,7 +535,7 @@ public fun <T> List<T>.elementAt(index: Int): T {
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
 public fun <T> Sequence<T>.elementAt(index: Int): T {
-    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index") }
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
 }
 
 
@@ -544,7 +544,7 @@ deprecated("Migrate to using Sequence<T> and respective functions")
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
 public fun <T> Stream<T>.elementAt(index: Int): T {
-    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Stream doesn't contain element at index $index") }
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Stream doesn't contain element at index $index.") }
 }
 
 /**
@@ -814,110 +814,110 @@ public fun String.elementAtOrNull(index: Int): Char? {
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Array<out T>.first(): T {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun BooleanArray.first(): Boolean {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun ByteArray.first(): Byte {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun CharArray.first(): Char {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun DoubleArray.first(): Double {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun FloatArray.first(): Float {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun IntArray.first(): Int {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun LongArray.first(): Long {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun ShortArray.first(): Short {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Iterable<T>.first(): T {
     when (this) {
         is List<*> -> {
             if (isEmpty())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             else
                 return this[0] as T
         }
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             return iterator.next()
         }
     }
@@ -925,30 +925,30 @@ public fun <T> Iterable<T>.first(): T {
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> List<T>.first(): T {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Sequence<T>.first(): T {
     when (this) {
         is List<*> -> {
             if (isEmpty())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             else
                 return this[0] as T
         }
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             return iterator.next()
         }
     }
@@ -958,20 +958,20 @@ public fun <T> Sequence<T>.first(): T {
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns first element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Stream<T>.first(): T {
     when (this) {
         is List<*> -> {
             if (isEmpty())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             else
                 return this[0] as T
         }
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             return iterator.next()
         }
     }
@@ -979,198 +979,198 @@ public fun <T> Stream<T>.first(): T {
 
 /**
  * Returns first character.
- * @throws NoSuchElementException if the string is empty.
+ * @throws [NoSuchElementException] if the string is empty.
  */
 public fun String.first(): Char {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[0]
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Array<out T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun BooleanArray.first(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun ByteArray.first(predicate: (Byte) -> Boolean): Byte {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun CharArray.first(predicate: (Char) -> Boolean): Char {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun DoubleArray.first(predicate: (Double) -> Boolean): Double {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun FloatArray.first(predicate: (Float) -> Boolean): Float {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun IntArray.first(predicate: (Int) -> Boolean): Int {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun LongArray.first(predicate: (Long) -> Boolean): Long {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun ShortArray.first(predicate: (Short) -> Boolean): Short {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns the first element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Stream<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
  * Returns the first character matching the given [predicate].
- * @throws NoSuchElementException if no such character is found.
+ * @throws [NoSuchElementException] if no such character is found.
  */
 public inline fun String.first(predicate: (Char) -> Boolean): Char {
     for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found")
+    throw NoSuchElementException("No element matching predicate was found.")
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun <T> Array<out T>.firstOrNull(): T? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun BooleanArray.firstOrNull(): Boolean? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun ByteArray.firstOrNull(): Byte? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun CharArray.firstOrNull(): Char? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun DoubleArray.firstOrNull(): Double? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun FloatArray.firstOrNull(): Float? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun IntArray.firstOrNull(): Int? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun LongArray.firstOrNull(): Long? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun ShortArray.firstOrNull(): Short? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun <T> Iterable<T>.firstOrNull(): T? {
     when (this) {
@@ -1190,14 +1190,14 @@ public fun <T> Iterable<T>.firstOrNull(): T? {
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun <T> List<T>.firstOrNull(): T? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun <T> Sequence<T>.firstOrNull(): T? {
     when (this) {
@@ -1219,7 +1219,7 @@ public fun <T> Sequence<T>.firstOrNull(): T? {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the first element, or null if the collection is empty.
+ * Returns the first element, or `null` if the collection is empty.
  */
 public fun <T> Stream<T>.firstOrNull(): T? {
     when (this) {
@@ -1239,14 +1239,14 @@ public fun <T> Stream<T>.firstOrNull(): T? {
 }
 
 /**
- * Returns the first character, or null if string is empty.
+ * Returns the first character, or `null` if string is empty.
  */
 public fun String.firstOrNull(): Char? {
     return if (isEmpty()) null else this[0]
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun <T> Array<out T>.firstOrNull(predicate: (T) -> Boolean): T? {
     for (element in this) if (predicate(element)) return element
@@ -1254,7 +1254,7 @@ public inline fun <T> Array<out T>.firstOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun BooleanArray.firstOrNull(predicate: (Boolean) -> Boolean): Boolean? {
     for (element in this) if (predicate(element)) return element
@@ -1262,7 +1262,7 @@ public inline fun BooleanArray.firstOrNull(predicate: (Boolean) -> Boolean): Boo
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun ByteArray.firstOrNull(predicate: (Byte) -> Boolean): Byte? {
     for (element in this) if (predicate(element)) return element
@@ -1270,7 +1270,7 @@ public inline fun ByteArray.firstOrNull(predicate: (Byte) -> Boolean): Byte? {
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun CharArray.firstOrNull(predicate: (Char) -> Boolean): Char? {
     for (element in this) if (predicate(element)) return element
@@ -1278,7 +1278,7 @@ public inline fun CharArray.firstOrNull(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun DoubleArray.firstOrNull(predicate: (Double) -> Boolean): Double? {
     for (element in this) if (predicate(element)) return element
@@ -1286,7 +1286,7 @@ public inline fun DoubleArray.firstOrNull(predicate: (Double) -> Boolean): Doubl
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun FloatArray.firstOrNull(predicate: (Float) -> Boolean): Float? {
     for (element in this) if (predicate(element)) return element
@@ -1294,7 +1294,7 @@ public inline fun FloatArray.firstOrNull(predicate: (Float) -> Boolean): Float? 
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun IntArray.firstOrNull(predicate: (Int) -> Boolean): Int? {
     for (element in this) if (predicate(element)) return element
@@ -1302,7 +1302,7 @@ public inline fun IntArray.firstOrNull(predicate: (Int) -> Boolean): Int? {
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun LongArray.firstOrNull(predicate: (Long) -> Boolean): Long? {
     for (element in this) if (predicate(element)) return element
@@ -1310,7 +1310,7 @@ public inline fun LongArray.firstOrNull(predicate: (Long) -> Boolean): Long? {
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun ShortArray.firstOrNull(predicate: (Short) -> Boolean): Short? {
     for (element in this) if (predicate(element)) return element
@@ -1318,7 +1318,7 @@ public inline fun ShortArray.firstOrNull(predicate: (Short) -> Boolean): Short? 
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
     for (element in this) if (predicate(element)) return element
@@ -1326,7 +1326,7 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
     for (element in this) if (predicate(element)) return element
@@ -1336,7 +1336,7 @@ public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the first element matching the given [predicate], or `null` if element was not found
+ * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun <T> Stream<T>.firstOrNull(predicate: (T) -> Boolean): T? {
     for (element in this) if (predicate(element)) return element
@@ -1344,7 +1344,7 @@ public inline fun <T> Stream<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns the first character matching the given [predicate], or `null` if character was not found
+ * Returns the first character matching the given [predicate], or `null` if character was not found.
  */
 public inline fun String.firstOrNull(predicate: (Char) -> Boolean): Char? {
     for (element in this) if (predicate(element)) return element
@@ -1352,7 +1352,7 @@ public inline fun String.firstOrNull(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Array<out T>.indexOf(element: T): Int {
     if (element == null) {
@@ -1372,7 +1372,7 @@ public fun <T> Array<out T>.indexOf(element: T): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun BooleanArray.indexOf(element: Boolean): Int {
     for (index in indices) {
@@ -1384,7 +1384,7 @@ public fun BooleanArray.indexOf(element: Boolean): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun ByteArray.indexOf(element: Byte): Int {
     for (index in indices) {
@@ -1396,7 +1396,7 @@ public fun ByteArray.indexOf(element: Byte): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun CharArray.indexOf(element: Char): Int {
     for (index in indices) {
@@ -1408,7 +1408,7 @@ public fun CharArray.indexOf(element: Char): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun DoubleArray.indexOf(element: Double): Int {
     for (index in indices) {
@@ -1420,7 +1420,7 @@ public fun DoubleArray.indexOf(element: Double): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun FloatArray.indexOf(element: Float): Int {
     for (index in indices) {
@@ -1432,7 +1432,7 @@ public fun FloatArray.indexOf(element: Float): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun IntArray.indexOf(element: Int): Int {
     for (index in indices) {
@@ -1444,7 +1444,7 @@ public fun IntArray.indexOf(element: Int): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun LongArray.indexOf(element: Long): Int {
     for (index in indices) {
@@ -1456,7 +1456,7 @@ public fun LongArray.indexOf(element: Long): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun ShortArray.indexOf(element: Short): Int {
     for (index in indices) {
@@ -1468,7 +1468,7 @@ public fun ShortArray.indexOf(element: Short): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Iterable<T>.indexOf(element: T): Int {
     var index = 0
@@ -1481,7 +1481,7 @@ public fun <T> Iterable<T>.indexOf(element: T): Int {
 }
 
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Sequence<T>.indexOf(element: T): Int {
     var index = 0
@@ -1496,7 +1496,7 @@ public fun <T> Sequence<T>.indexOf(element: T): Int {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns first index of [element], or -1 if the collection does not contain element
+ * Returns first index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Stream<T>.indexOf(element: T): Int {
     var index = 0
@@ -1509,7 +1509,7 @@ public fun <T> Stream<T>.indexOf(element: T): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Array<out T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     for (index in indices) {
@@ -1521,7 +1521,7 @@ public inline fun <T> Array<out T>.indexOfFirst(predicate: (T) -> Boolean): Int 
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun BooleanArray.indexOfFirst(predicate: (Boolean) -> Boolean): Int {
     for (index in indices) {
@@ -1533,7 +1533,7 @@ public inline fun BooleanArray.indexOfFirst(predicate: (Boolean) -> Boolean): In
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun ByteArray.indexOfFirst(predicate: (Byte) -> Boolean): Int {
     for (index in indices) {
@@ -1545,7 +1545,7 @@ public inline fun ByteArray.indexOfFirst(predicate: (Byte) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun CharArray.indexOfFirst(predicate: (Char) -> Boolean): Int {
     for (index in indices) {
@@ -1557,7 +1557,7 @@ public inline fun CharArray.indexOfFirst(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun DoubleArray.indexOfFirst(predicate: (Double) -> Boolean): Int {
     for (index in indices) {
@@ -1569,7 +1569,7 @@ public inline fun DoubleArray.indexOfFirst(predicate: (Double) -> Boolean): Int 
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun FloatArray.indexOfFirst(predicate: (Float) -> Boolean): Int {
     for (index in indices) {
@@ -1581,7 +1581,7 @@ public inline fun FloatArray.indexOfFirst(predicate: (Float) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun IntArray.indexOfFirst(predicate: (Int) -> Boolean): Int {
     for (index in indices) {
@@ -1593,7 +1593,7 @@ public inline fun IntArray.indexOfFirst(predicate: (Int) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun LongArray.indexOfFirst(predicate: (Long) -> Boolean): Int {
     for (index in indices) {
@@ -1605,7 +1605,7 @@ public inline fun LongArray.indexOfFirst(predicate: (Long) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun ShortArray.indexOfFirst(predicate: (Short) -> Boolean): Int {
     for (index in indices) {
@@ -1617,7 +1617,7 @@ public inline fun ShortArray.indexOfFirst(predicate: (Short) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     var index = 0
@@ -1630,7 +1630,7 @@ public inline fun <T> Iterable<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     for (index in indices) {
@@ -1642,7 +1642,7 @@ public inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Sequence<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     var index = 0
@@ -1657,7 +1657,7 @@ public inline fun <T> Sequence<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Stream<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     var index = 0
@@ -1670,7 +1670,7 @@ public inline fun <T> Stream<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun String.indexOfFirst(predicate: (Char) -> Boolean): Int {
     for (index in indices) {
@@ -1682,7 +1682,7 @@ public inline fun String.indexOfFirst(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Array<out T>.indexOfLast(predicate: (T) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1694,7 +1694,7 @@ public inline fun <T> Array<out T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun BooleanArray.indexOfLast(predicate: (Boolean) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1706,7 +1706,7 @@ public inline fun BooleanArray.indexOfLast(predicate: (Boolean) -> Boolean): Int
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun ByteArray.indexOfLast(predicate: (Byte) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1718,7 +1718,7 @@ public inline fun ByteArray.indexOfLast(predicate: (Byte) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun CharArray.indexOfLast(predicate: (Char) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1730,7 +1730,7 @@ public inline fun CharArray.indexOfLast(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun DoubleArray.indexOfLast(predicate: (Double) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1742,7 +1742,7 @@ public inline fun DoubleArray.indexOfLast(predicate: (Double) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun FloatArray.indexOfLast(predicate: (Float) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1754,7 +1754,7 @@ public inline fun FloatArray.indexOfLast(predicate: (Float) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun IntArray.indexOfLast(predicate: (Int) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1766,7 +1766,7 @@ public inline fun IntArray.indexOfLast(predicate: (Int) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun LongArray.indexOfLast(predicate: (Long) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1778,7 +1778,7 @@ public inline fun LongArray.indexOfLast(predicate: (Long) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1790,7 +1790,7 @@ public inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     var lastIndex = -1
@@ -1804,7 +1804,7 @@ public inline fun <T> Iterable<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1816,7 +1816,7 @@ public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     var lastIndex = -1
@@ -1832,7 +1832,7 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Stream<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     var lastIndex = -1
@@ -1846,7 +1846,7 @@ public inline fun <T> Stream<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element
+ * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun String.indexOfLast(predicate: (Char) -> Boolean): Int {
     for (index in indices.reversed()) {
@@ -1859,110 +1859,110 @@ public inline fun String.indexOfLast(predicate: (Char) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Array<out T>.last(): T {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun BooleanArray.last(): Boolean {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun ByteArray.last(): Byte {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun CharArray.last(): Char {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun DoubleArray.last(): Double {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun FloatArray.last(): Float {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun IntArray.last(): Int {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun LongArray.last(): Long {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun ShortArray.last(): Short {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Iterable<T>.last(): T {
     when (this) {
         is List<*> -> {
             if (isEmpty())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             else
                 return this[this.lastIndex] as T
         }
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             var last = iterator.next()
             while (iterator.hasNext())
                 last = iterator.next()
@@ -1973,22 +1973,22 @@ public fun <T> Iterable<T>.last(): T {
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> List<T>.last(): T {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Sequence<T>.last(): T {
     val iterator = iterator()
     if (!iterator.hasNext())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     var last = iterator.next()
     while (iterator.hasNext())
         last = iterator.next()
@@ -1999,12 +1999,12 @@ public fun <T> Sequence<T>.last(): T {
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns the last element.
- * @throws NoSuchElementException if the collection is empty.
+ * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Stream<T>.last(): T {
     val iterator = iterator()
     if (!iterator.hasNext())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     var last = iterator.next()
     while (iterator.hasNext())
         last = iterator.next()
@@ -2013,17 +2013,17 @@ public fun <T> Stream<T>.last(): T {
 
 /**
  * "Returns the last character.
- * @throws NoSuchElementException if the string is empty.
+ * @throws [NoSuchElementException] if the string is empty.
  */
 public fun String.last(): Char {
     if (isEmpty())
-        throw NoSuchElementException("Collection is empty")
+        throw NoSuchElementException("Collection is empty.")
     return this[lastIndex]
 }
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
     for (index in this.indices.reversed()) {
@@ -2035,7 +2035,7 @@ public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
     for (index in this.indices.reversed()) {
@@ -2047,7 +2047,7 @@ public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
     for (index in this.indices.reversed()) {
@@ -2059,7 +2059,7 @@ public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun CharArray.last(predicate: (Char) -> Boolean): Char {
     for (index in this.indices.reversed()) {
@@ -2071,7 +2071,7 @@ public inline fun CharArray.last(predicate: (Char) -> Boolean): Char {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
     for (index in this.indices.reversed()) {
@@ -2083,7 +2083,7 @@ public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
     for (index in this.indices.reversed()) {
@@ -2095,7 +2095,7 @@ public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
     for (index in this.indices.reversed()) {
@@ -2107,7 +2107,7 @@ public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
     for (index in this.indices.reversed()) {
@@ -2119,7 +2119,7 @@ public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
     for (index in this.indices.reversed()) {
@@ -2131,7 +2131,7 @@ public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
     if (this is List<T>)
@@ -2150,7 +2150,7 @@ public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
     for (index in this.indices.reversed()) {
@@ -2162,7 +2162,7 @@ public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
     var last: T? = null
@@ -2181,7 +2181,7 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Returns the last element matching the given [predicate].
- * @throws NoSuchElementException if no such element is found.
+ * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Stream<T>.last(predicate: (T) -> Boolean): T {
     var last: T? = null
@@ -2198,7 +2198,7 @@ public inline fun <T> Stream<T>.last(predicate: (T) -> Boolean): T {
 
 /**
  * "Returns the last character matching the given [predicate].
- * @throws NoSuchElementException if no such character is found.
+ * @throws [NoSuchElementException] if no such character is found.
  */
 public inline fun String.last(predicate: (Char) -> Boolean): Char {
     var last: Char? = null
@@ -2214,7 +2214,7 @@ public inline fun String.last(predicate: (Char) -> Boolean): Char {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Array<out T>.lastIndexOf(element: T): Int {
     if (element == null) {
@@ -2234,7 +2234,7 @@ public fun <T> Array<out T>.lastIndexOf(element: T): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun BooleanArray.lastIndexOf(element: Boolean): Int {
     for (index in indices.reverse()) {
@@ -2246,7 +2246,7 @@ public fun BooleanArray.lastIndexOf(element: Boolean): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun ByteArray.lastIndexOf(element: Byte): Int {
     for (index in indices.reverse()) {
@@ -2258,7 +2258,7 @@ public fun ByteArray.lastIndexOf(element: Byte): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun CharArray.lastIndexOf(element: Char): Int {
     for (index in indices.reverse()) {
@@ -2270,7 +2270,7 @@ public fun CharArray.lastIndexOf(element: Char): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun DoubleArray.lastIndexOf(element: Double): Int {
     for (index in indices.reverse()) {
@@ -2282,7 +2282,7 @@ public fun DoubleArray.lastIndexOf(element: Double): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun FloatArray.lastIndexOf(element: Float): Int {
     for (index in indices.reverse()) {
@@ -2294,7 +2294,7 @@ public fun FloatArray.lastIndexOf(element: Float): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun IntArray.lastIndexOf(element: Int): Int {
     for (index in indices.reverse()) {
@@ -2306,7 +2306,7 @@ public fun IntArray.lastIndexOf(element: Int): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun LongArray.lastIndexOf(element: Long): Int {
     for (index in indices.reverse()) {
@@ -2318,7 +2318,7 @@ public fun LongArray.lastIndexOf(element: Long): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun ShortArray.lastIndexOf(element: Short): Int {
     for (index in indices.reverse()) {
@@ -2330,7 +2330,7 @@ public fun ShortArray.lastIndexOf(element: Short): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
     var lastIndex = -1
@@ -2344,7 +2344,7 @@ public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
 }
 
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Sequence<T>.lastIndexOf(element: T): Int {
     var lastIndex = -1
@@ -2360,7 +2360,7 @@ public fun <T> Sequence<T>.lastIndexOf(element: T): Int {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns last index of *element*, or -1 if the collection does not contain element
+ * Returns last index of [element], or -1 if the collection does not contain element.
  */
 public fun <T> Stream<T>.lastIndexOf(element: T): Int {
     var lastIndex = -1
@@ -2374,70 +2374,70 @@ public fun <T> Stream<T>.lastIndexOf(element: T): Int {
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun <T> Array<out T>.lastOrNull(): T? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun BooleanArray.lastOrNull(): Boolean? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun ByteArray.lastOrNull(): Byte? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun CharArray.lastOrNull(): Char? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun DoubleArray.lastOrNull(): Double? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun FloatArray.lastOrNull(): Float? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun IntArray.lastOrNull(): Int? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun LongArray.lastOrNull(): Long? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun ShortArray.lastOrNull(): Short? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun <T> Iterable<T>.lastOrNull(): T? {
     when (this) {
@@ -2455,14 +2455,14 @@ public fun <T> Iterable<T>.lastOrNull(): T? {
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun <T> List<T>.lastOrNull(): T? {
     return if (isEmpty()) null else this[size() - 1]
 }
 
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun <T> Sequence<T>.lastOrNull(): T? {
     val iterator = iterator()
@@ -2477,7 +2477,7 @@ public fun <T> Sequence<T>.lastOrNull(): T? {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the last element, or `null` if the collection is empty
+ * Returns the last element, or `null` if the collection is empty.
  */
 public fun <T> Stream<T>.lastOrNull(): T? {
     val iterator = iterator()
@@ -2490,7 +2490,7 @@ public fun <T> Stream<T>.lastOrNull(): T? {
 }
 
 /**
- * Returns the last character, or `null` if the string is empty
+ * Returns the last character, or `null` if the string is empty.
  */
 public fun String.lastOrNull(): Char? {
     return if (isEmpty()) null else this[length() - 1]
@@ -2667,9 +2667,9 @@ public inline fun String.lastOrNull(predicate: (Char) -> Boolean): Char? {
  */
 public fun <T> Array<out T>.single(): T {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2678,9 +2678,9 @@ public fun <T> Array<out T>.single(): T {
  */
 public fun BooleanArray.single(): Boolean {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2689,9 +2689,9 @@ public fun BooleanArray.single(): Boolean {
  */
 public fun ByteArray.single(): Byte {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2700,9 +2700,9 @@ public fun ByteArray.single(): Byte {
  */
 public fun CharArray.single(): Char {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2711,9 +2711,9 @@ public fun CharArray.single(): Char {
  */
 public fun DoubleArray.single(): Double {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2722,9 +2722,9 @@ public fun DoubleArray.single(): Double {
  */
 public fun FloatArray.single(): Float {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2733,9 +2733,9 @@ public fun FloatArray.single(): Float {
  */
 public fun IntArray.single(): Int {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2744,9 +2744,9 @@ public fun IntArray.single(): Int {
  */
 public fun LongArray.single(): Long {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2755,9 +2755,9 @@ public fun LongArray.single(): Long {
  */
 public fun ShortArray.single(): Short {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2767,17 +2767,17 @@ public fun ShortArray.single(): Short {
 public fun <T> Iterable<T>.single(): T {
     when (this) {
         is List<*> -> return when (size()) {
-            0 -> throw NoSuchElementException("Collection is empty")
+            0 -> throw NoSuchElementException("Collection is empty.")
             1 -> this[0] as T
-            else -> throw IllegalArgumentException("Collection has more than one element")
+            else -> throw IllegalArgumentException("Collection has more than one element.")
         }
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             var single = iterator.next()
             if (iterator.hasNext())
-                throw IllegalArgumentException("Collection has more than one element")
+                throw IllegalArgumentException("Collection has more than one element.")
             return single
         }
     }
@@ -2788,9 +2788,9 @@ public fun <T> Iterable<T>.single(): T {
  */
 public fun <T> List<T>.single(): T {
     return when (size()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
@@ -2800,17 +2800,17 @@ public fun <T> List<T>.single(): T {
 public fun <T> Sequence<T>.single(): T {
     when (this) {
         is List<*> -> return when (size()) {
-            0 -> throw NoSuchElementException("Collection is empty")
+            0 -> throw NoSuchElementException("Collection is empty.")
             1 -> this[0] as T
-            else -> throw IllegalArgumentException("Collection has more than one element")
+            else -> throw IllegalArgumentException("Collection has more than one element.")
         }
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             var single = iterator.next()
             if (iterator.hasNext())
-                throw IllegalArgumentException("Collection has more than one element")
+                throw IllegalArgumentException("Collection has more than one element.")
             return single
         }
     }
@@ -2824,17 +2824,17 @@ deprecated("Migrate to using Sequence<T> and respective functions")
 public fun <T> Stream<T>.single(): T {
     when (this) {
         is List<*> -> return when (size()) {
-            0 -> throw NoSuchElementException("Collection is empty")
+            0 -> throw NoSuchElementException("Collection is empty.")
             1 -> this[0] as T
-            else -> throw IllegalArgumentException("Collection has more than one element")
+            else -> throw IllegalArgumentException("Collection has more than one element.")
         }
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             var single = iterator.next()
             if (iterator.hasNext())
-                throw IllegalArgumentException("Collection has more than one element")
+                throw IllegalArgumentException("Collection has more than one element.")
             return single
         }
     }
@@ -2845,232 +2845,232 @@ public fun <T> Stream<T>.single(): T {
  */
 public fun String.single(): Char {
     return when (length()) {
-        0 -> throw NoSuchElementException("Collection is empty")
+        0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
-        else -> throw IllegalArgumentException("Collection has more than one element")
+        else -> throw IllegalArgumentException("Collection has more than one element.")
     }
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun <T> Array<out T>.single(predicate: (T) -> Boolean): T {
     var single: T? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as T
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun BooleanArray.single(predicate: (Boolean) -> Boolean): Boolean {
     var single: Boolean? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Boolean
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun ByteArray.single(predicate: (Byte) -> Boolean): Byte {
     var single: Byte? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Byte
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun CharArray.single(predicate: (Char) -> Boolean): Char {
     var single: Char? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Char
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun DoubleArray.single(predicate: (Double) -> Boolean): Double {
     var single: Double? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Double
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun FloatArray.single(predicate: (Float) -> Boolean): Float {
     var single: Float? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Float
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun IntArray.single(predicate: (Int) -> Boolean): Int {
     var single: Int? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Int
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun LongArray.single(predicate: (Long) -> Boolean): Long {
     var single: Long? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Long
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun ShortArray.single(predicate: (Short) -> Boolean): Short {
     var single: Short? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Short
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T {
     var single: T? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as T
 }
 
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun <T> Sequence<T>.single(predicate: (T) -> Boolean): T {
     var single: T? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as T
 }
 
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element
+ * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
  */
 public inline fun <T> Stream<T>.single(predicate: (T) -> Boolean): T {
     var single: T? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as T
 }
 
 /**
- * Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character
+ * Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character.
  */
 public inline fun String.single(predicate: (Char) -> Boolean): Char {
     var single: Char? = null
     var found = false
     for (element in this) {
         if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
             single = element
             found = true
         }
     }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
     return single as Char
 }
 
@@ -3208,7 +3208,7 @@ public fun String.singleOrNull(): Char? {
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var single: T? = null
@@ -3225,7 +3225,7 @@ public inline fun <T> Array<out T>.singleOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean): Boolean? {
     var single: Boolean? = null
@@ -3242,7 +3242,7 @@ public inline fun BooleanArray.singleOrNull(predicate: (Boolean) -> Boolean): Bo
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean): Byte? {
     var single: Byte? = null
@@ -3259,7 +3259,7 @@ public inline fun ByteArray.singleOrNull(predicate: (Byte) -> Boolean): Byte? {
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
     var single: Char? = null
@@ -3276,7 +3276,7 @@ public inline fun CharArray.singleOrNull(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean): Double? {
     var single: Double? = null
@@ -3293,7 +3293,7 @@ public inline fun DoubleArray.singleOrNull(predicate: (Double) -> Boolean): Doub
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun FloatArray.singleOrNull(predicate: (Float) -> Boolean): Float? {
     var single: Float? = null
@@ -3310,7 +3310,7 @@ public inline fun FloatArray.singleOrNull(predicate: (Float) -> Boolean): Float?
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun IntArray.singleOrNull(predicate: (Int) -> Boolean): Int? {
     var single: Int? = null
@@ -3327,7 +3327,7 @@ public inline fun IntArray.singleOrNull(predicate: (Int) -> Boolean): Int? {
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun LongArray.singleOrNull(predicate: (Long) -> Boolean): Long? {
     var single: Long? = null
@@ -3344,7 +3344,7 @@ public inline fun LongArray.singleOrNull(predicate: (Long) -> Boolean): Long? {
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun ShortArray.singleOrNull(predicate: (Short) -> Boolean): Short? {
     var single: Short? = null
@@ -3361,7 +3361,7 @@ public inline fun ShortArray.singleOrNull(predicate: (Short) -> Boolean): Short?
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var single: T? = null
@@ -3378,7 +3378,7 @@ public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var single: T? = null
@@ -3397,7 +3397,7 @@ public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found
+ * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun <T> Stream<T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var single: T? = null
@@ -3414,7 +3414,7 @@ public inline fun <T> Stream<T>.singleOrNull(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found
+ * Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found.
  */
 public inline fun String.singleOrNull(predicate: (Char) -> Boolean): Char? {
     var single: Char? = null

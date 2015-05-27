@@ -11,14 +11,14 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun <T> Array<out T>.asList(): List<T> {
     return Arrays.asList(*this)
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun BooleanArray.asList(): List<Boolean> {
     return object : AbstractList<Boolean>(), RandomAccess {
@@ -33,7 +33,7 @@ public fun BooleanArray.asList(): List<Boolean> {
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun ByteArray.asList(): List<Byte> {
     return object : AbstractList<Byte>(), RandomAccess {
@@ -48,7 +48,7 @@ public fun ByteArray.asList(): List<Byte> {
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun CharArray.asList(): List<Char> {
     return object : AbstractList<Char>(), RandomAccess {
@@ -63,7 +63,7 @@ public fun CharArray.asList(): List<Char> {
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun DoubleArray.asList(): List<Double> {
     return object : AbstractList<Double>(), RandomAccess {
@@ -78,7 +78,7 @@ public fun DoubleArray.asList(): List<Double> {
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun FloatArray.asList(): List<Float> {
     return object : AbstractList<Float>(), RandomAccess {
@@ -93,7 +93,7 @@ public fun FloatArray.asList(): List<Float> {
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun IntArray.asList(): List<Int> {
     return object : AbstractList<Int>(), RandomAccess {
@@ -108,7 +108,7 @@ public fun IntArray.asList(): List<Int> {
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun LongArray.asList(): List<Long> {
     return object : AbstractList<Long>(), RandomAccess {
@@ -123,7 +123,7 @@ public fun LongArray.asList(): List<Long> {
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun ShortArray.asList(): List<Short> {
     return object : AbstractList<Short>(), RandomAccess {
@@ -194,196 +194,196 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun <T> Array<out T>.copyOf(): Array<T> {
     return Arrays.copyOf(this, size()) as Array<T>
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun BooleanArray.copyOf(): BooleanArray {
     return Arrays.copyOf(this, size())
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun ByteArray.copyOf(): ByteArray {
     return Arrays.copyOf(this, size())
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun CharArray.copyOf(): CharArray {
     return Arrays.copyOf(this, size())
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun DoubleArray.copyOf(): DoubleArray {
     return Arrays.copyOf(this, size())
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun FloatArray.copyOf(): FloatArray {
     return Arrays.copyOf(this, size())
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun IntArray.copyOf(): IntArray {
     return Arrays.copyOf(this, size())
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun LongArray.copyOf(): LongArray {
     return Arrays.copyOf(this, size())
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun ShortArray.copyOf(): ShortArray {
     return Arrays.copyOf(this, size())
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun <T> Array<out T>.copyOf(newSize: Int): Array<T?> {
     return Arrays.copyOf(this, newSize) as Array<T?>
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun BooleanArray.copyOf(newSize: Int): BooleanArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun ByteArray.copyOf(newSize: Int): ByteArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun CharArray.copyOf(newSize: Int): CharArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun DoubleArray.copyOf(newSize: Int): DoubleArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun FloatArray.copyOf(newSize: Int): FloatArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun IntArray.copyOf(newSize: Int): IntArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun LongArray.copyOf(newSize: Int): LongArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of the original array
+ * Returns new array which is a copy of the original array.
  */
 public fun ShortArray.copyOf(newSize: Int): ShortArray {
     return Arrays.copyOf(this, newSize)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun <T> Array<out T>.copyOfRange(from: Int, to: Int): Array<T> {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun BooleanArray.copyOfRange(from: Int, to: Int): BooleanArray {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun ByteArray.copyOfRange(from: Int, to: Int): ByteArray {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun CharArray.copyOfRange(from: Int, to: Int): CharArray {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun DoubleArray.copyOfRange(from: Int, to: Int): DoubleArray {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun FloatArray.copyOfRange(from: Int, to: Int): FloatArray {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun IntArray.copyOfRange(from: Int, to: Int): IntArray {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun LongArray.copyOfRange(from: Int, to: Int): LongArray {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Returns new array which is a copy of range of original array
+ * Returns new array which is a copy of range of original array.
  */
 public fun ShortArray.copyOfRange(from: Int, to: Int): ShortArray {
     return Arrays.copyOfRange(this, from, to)
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun <T> Array<out T>.fill(element: T): Array<out T> {
     Arrays.fill(this, element)
@@ -391,7 +391,7 @@ public fun <T> Array<out T>.fill(element: T): Array<out T> {
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun BooleanArray.fill(element: Boolean): BooleanArray {
     Arrays.fill(this, element)
@@ -399,7 +399,7 @@ public fun BooleanArray.fill(element: Boolean): BooleanArray {
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun ByteArray.fill(element: Byte): ByteArray {
     Arrays.fill(this, element)
@@ -407,7 +407,7 @@ public fun ByteArray.fill(element: Byte): ByteArray {
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun CharArray.fill(element: Char): CharArray {
     Arrays.fill(this, element)
@@ -415,7 +415,7 @@ public fun CharArray.fill(element: Char): CharArray {
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun DoubleArray.fill(element: Double): DoubleArray {
     Arrays.fill(this, element)
@@ -423,7 +423,7 @@ public fun DoubleArray.fill(element: Double): DoubleArray {
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun FloatArray.fill(element: Float): FloatArray {
     Arrays.fill(this, element)
@@ -431,7 +431,7 @@ public fun FloatArray.fill(element: Float): FloatArray {
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun IntArray.fill(element: Int): IntArray {
     Arrays.fill(this, element)
@@ -439,7 +439,7 @@ public fun IntArray.fill(element: Int): IntArray {
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun LongArray.fill(element: Long): LongArray {
     Arrays.fill(this, element)
@@ -447,7 +447,7 @@ public fun LongArray.fill(element: Long): LongArray {
 }
 
 /**
- * Fills original array with the provided value
+ * Fills original array with the provided value.
  */
 public fun ShortArray.fill(element: Short): ShortArray {
     Arrays.fill(this, element)
@@ -455,21 +455,21 @@ public fun ShortArray.fill(element: Short): ShortArray {
 }
 
 /**
- * Returns a list containing all elements that are instances of specified type parameter R
+ * Returns a list containing all elements that are instances of specified type parameter R.
  */
 public inline fun <reified R> Array<*>.filterIsInstance(): List<R> {
     return filterIsInstanceTo(ArrayList<R>())
 }
 
 /**
- * Returns a list containing all elements that are instances of specified type parameter R
+ * Returns a list containing all elements that are instances of specified type parameter R.
  */
 public inline fun <reified R> Iterable<*>.filterIsInstance(): List<R> {
     return filterIsInstanceTo(ArrayList<R>())
 }
 
 /**
- * Returns a sequence containing all elements that are instances of specified type parameter R
+ * Returns a sequence containing all elements that are instances of specified type parameter R.
  */
 public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<R> {
     return filter { it is R } as Sequence<R>
@@ -478,28 +478,28 @@ public inline fun <reified R> Sequence<*>.filterIsInstance(): Sequence<R> {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns a stream containing all elements that are instances of specified type parameter R
+ * Returns a stream containing all elements that are instances of specified type parameter R.
  */
 public inline fun <reified R> Stream<*>.filterIsInstance(): Stream<R> {
     return filter { it is R } as Stream<R>
 }
 
 /**
- * Returns a list containing all elements that are instances of specified class
+ * Returns a list containing all elements that are instances of specified class.
  */
 public fun <R> Array<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
 }
 
 /**
- * Returns a list containing all elements that are instances of specified class
+ * Returns a list containing all elements that are instances of specified class.
  */
 public fun <R> Iterable<*>.filterIsInstance(klass: Class<R>): List<R> {
     return filterIsInstanceTo(ArrayList<R>(), klass)
 }
 
 /**
- * Returns a sequence containing all elements that are instances of specified class
+ * Returns a sequence containing all elements that are instances of specified class.
  */
 public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
     return filter { klass.isInstance(it) } as Sequence<R>
@@ -508,14 +508,14 @@ public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns a stream containing all elements that are instances of specified class
+ * Returns a stream containing all elements that are instances of specified class.
  */
 public fun <R> Stream<*>.filterIsInstance(klass: Class<R>): Stream<R> {
     return filter { klass.isInstance(it) } as Stream<R>
 }
 
 /**
- * Appends all elements that are instances of specified type parameter R to the given *destination*
+ * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
 public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
@@ -523,7 +523,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInst
 }
 
 /**
- * Appends all elements that are instances of specified type parameter R to the given *destination*
+ * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
 public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
@@ -531,7 +531,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsI
 }
 
 /**
- * Appends all elements that are instances of specified type parameter R to the given *destination*
+ * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
 public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
@@ -541,7 +541,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Sequence<*>.filterIsI
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Appends all elements that are instances of specified type parameter R to the given *destination*
+ * Appends all elements that are instances of specified type parameter R to the given [destination].
  */
 public inline fun <reified R, C : MutableCollection<in R>> Stream<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
@@ -549,7 +549,7 @@ public inline fun <reified R, C : MutableCollection<in R>> Stream<*>.filterIsIns
 }
 
 /**
- * Appends all elements that are instances of specified class to the given *destination*
+ * Appends all elements that are instances of specified class to the given [destination].
  */
 public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
@@ -557,7 +557,7 @@ public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destinat
 }
 
 /**
- * Appends all elements that are instances of specified class to the given *destination*
+ * Appends all elements that are instances of specified class to the given [destination].
  */
 public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
@@ -565,7 +565,7 @@ public fun <C : MutableCollection<in R>, R> Iterable<*>.filterIsInstanceTo(desti
 }
 
 /**
- * Appends all elements that are instances of specified class to the given *destination*
+ * Appends all elements that are instances of specified class to the given [destination].
  */
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
@@ -575,7 +575,7 @@ public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(desti
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Appends all elements that are instances of specified class to the given *destination*
+ * Appends all elements that are instances of specified class to the given [destination].
  */
 public fun <C : MutableCollection<in R>, R> Stream<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     for (element in this) if (klass.isInstance(element)) destination.add(element as R)
@@ -583,56 +583,56 @@ public fun <C : MutableCollection<in R>, R> Stream<*>.filterIsInstanceTo(destina
 }
 
 /**
- * Sorts array or range in array inplace
+ * Sorts array or range in array inplace.
  */
 public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
- * Sorts array or range in array inplace
+ * Sorts array or range in array inplace.
  */
 public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
- * Sorts array or range in array inplace
+ * Sorts array or range in array inplace.
  */
 public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
- * Sorts array or range in array inplace
+ * Sorts array or range in array inplace.
  */
 public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
- * Sorts array or range in array inplace
+ * Sorts array or range in array inplace.
  */
 public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
- * Sorts array or range in array inplace
+ * Sorts array or range in array inplace.
  */
 public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
- * Sorts array or range in array inplace
+ * Sorts array or range in array inplace.
  */
 public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
 /**
- * Sorts array or range in array inplace
+ * Sorts array or range in array inplace.
  */
 public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
     Arrays.sort(this, fromIndex, toIndex)

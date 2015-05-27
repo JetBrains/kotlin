@@ -6,7 +6,7 @@ fun ordering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("reverse()") {
-        doc { "Returns a list with elements in reversed order" }
+        doc { "Returns a list with elements in reversed order." }
         returns { "List<T>" }
         body {
             """
@@ -16,7 +16,7 @@ fun ordering(): List<GenericFunction> {
             """
         }
 
-        doc(Strings) { "Returns a string with characters in reversed order" }
+        doc(Strings) { "Returns a string with characters in reversed order." }
         returns(Strings) { "String" }
         body(Strings) {
             // TODO: Replace with StringBuilder(this) when JS can handle it
@@ -31,7 +31,7 @@ fun ordering(): List<GenericFunction> {
     templates add f("sort()") {
         doc {
             """
-            Returns a sorted list of all elements
+            Returns a sorted list of all elements.
             """
         }
         returns("List<T>")
@@ -53,7 +53,7 @@ fun ordering(): List<GenericFunction> {
     templates add f("toSortedList()") {
         doc {
             """
-            Returns a sorted list of all elements
+            Returns a sorted list of all elements.
             """
         }
         returns("List<T>")
@@ -72,7 +72,7 @@ fun ordering(): List<GenericFunction> {
     templates add f("sortDescending()") {
         doc {
             """
-            Returns a sorted list of all elements, in descending order
+            Returns a sorted list of all elements, in descending order.
             """
         }
         returns("List<T>")
@@ -96,7 +96,7 @@ fun ordering(): List<GenericFunction> {
 
         doc {
             """
-            Returns a sorted list of all elements, ordered by results of specified *order* function.
+            Returns a sorted list of all elements, ordered by results of specified [order] function.
             """
         }
         returns("List<T>")
@@ -118,7 +118,7 @@ fun ordering(): List<GenericFunction> {
     templates add f("toSortedListBy(order: (T) -> V)") {
         doc {
             """
-            Returns a sorted list of all elements, ordered by results of specified *order* function.
+            Returns a sorted list of all elements, ordered by results of specified [order] function.
             """
         }
         returns("List<T>")
@@ -141,7 +141,7 @@ fun ordering(): List<GenericFunction> {
 
         doc {
             """
-            Returns a sorted list of all elements, in descending order by results of specified *order* function.
+            Returns a sorted list of all elements, in descending order by results of specified [order] function.
             """
         }
         returns("List<T>")
@@ -163,7 +163,7 @@ fun ordering(): List<GenericFunction> {
     templates add f("sortBy(comparator: Comparator<in T>)") {
         doc {
             """
-            Returns a list of all elements, sorted by the specified *comparator*
+            Returns a list of all elements, sorted by the specified [comparator].
             """
         }
         returns("List<T>")

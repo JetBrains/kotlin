@@ -7,7 +7,7 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("all(predicate: (T) -> Boolean)") {
         inline(true)
-        doc { "Returns *true* if all elements match the given *predicate*" }
+        doc { "Returns `true` if all elements match the given [predicate]." }
         returns("Boolean")
         body {
             """
@@ -21,7 +21,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("none(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns *true* if no elements match the given *predicate*" }
+        doc { "Returns `true` if no elements match the given [predicate]." }
         returns("Boolean")
         body {
             """
@@ -33,7 +33,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("none()") {
-        doc { "Returns *true* if collection has no elements" }
+        doc { "Returns `true` if collection has no elements." }
         returns("Boolean")
         body {
             """
@@ -47,7 +47,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("any(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns *true* if any element matches the given [predicate]" }
+        doc { "Returns `true` if at least one element matches the given [predicate]." }
         returns("Boolean")
         body {
             """
@@ -59,7 +59,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("any()") {
-        doc { "Returns *true* if collection has at least one element" }
+        doc { "Returns `true` if collection has at least one element." }
         returns("Boolean")
         body {
             """
@@ -73,7 +73,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("count(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns the number of elements matching the given [predicate]" }
+        doc { "Returns the number of elements matching the given [predicate]." }
         returns("Int")
         body {
             """
@@ -86,7 +86,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("count()") {
-        doc { "Returns the number of elements" }
+        doc { "Returns the number of elements in this collection." }
         returns("Int")
         body {
             """
@@ -95,6 +95,7 @@ fun aggregates(): List<GenericFunction> {
             return count
             """
         }
+        doc(Strings) { "Returns the length of this string."}
         body(Strings) {
             "return length()"
         }
@@ -105,8 +106,8 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("sumBy(transform: (T) -> Int)") {
         inline(true)
-        doc { "Returns the sum of all values produced by [transform] function from elements in the collection" }
-        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string" }
+        doc { "Returns the sum of all values produced by [transform] function from elements in the collection." }
+        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string." }
         returns("Int")
         body {
             """
@@ -121,8 +122,8 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("sumByDouble(transform: (T) -> Double)") {
         inline(true)
-        doc { "Returns the sum of all values produced by [transform] function from elements in the collection" }
-        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string" }
+        doc { "Returns the sum of all values produced by [transform] function from elements in the collection." }
+        doc(Strings) { "Returns the sum of all values produced by [transform] function from characters in the string." }
         returns("Double")
         body {
             """
@@ -136,7 +137,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("min()") {
-        doc { "Returns the smallest element or null if there are no elements" }
+        doc { "Returns the smallest element or `null` if there are no elements." }
         returns("T?")
         exclude(PrimitiveType.Boolean)
         typeParam("T : Comparable<T>")
@@ -169,7 +170,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("minBy(f: (T) -> R)") {
         inline(true)
 
-        doc { "Returns the first element yielding the smallest value of the given function or null if there are no elements" }
+        doc { "Returns the first element yielding the smallest value of the given function or `null` if there are no elements." }
         typeParam("R : Comparable<R>")
         typeParam("T : Any")
         returns("T?")
@@ -214,7 +215,7 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         only(Maps)
-        doc { "Returns the first element yielding the smallest value of the given function or null if there are no elements" }
+        doc { "Returns the first element yielding the smallest value of the given function or `null` if there are no elements." }
         typeParam("R : Comparable<R>")
         returns("T?")
         body {
@@ -238,7 +239,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("max()") {
-        doc { "Returns the largest element or null if there are no elements" }
+        doc { "Returns the largest element or `null` if there are no elements." }
         returns("T?")
         exclude(PrimitiveType.Boolean)
         typeParam("T : Comparable<T>")
@@ -273,7 +274,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("maxBy(f: (T) -> R)") {
         inline(true)
 
-        doc { "Returns the first element yielding the largest value of the given function or null if there are no elements" }
+        doc { "Returns the first element yielding the largest value of the given function or `null` if there are no elements." }
         typeParam("R : Comparable<R>")
         typeParam("T : Any")
         returns("T?")
@@ -318,7 +319,7 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         only(Maps)
-        doc { "Returns the first element yielding the largest value of the given function or null if there are no elements" }
+        doc { "Returns the first element yielding the largest value of the given function or `null` if there are no elements." }
         typeParam("R : Comparable<R>")
         returns("T?")
         body {
@@ -344,7 +345,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("fold(initial: R, operation: (R, T) -> R)") {
         inline(true)
 
-        doc { "Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element" }
+        doc { "Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element." }
         typeParam("R")
         returns("R")
         body {
@@ -360,7 +361,7 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value" }
+        doc { "Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value." }
         typeParam("R")
         returns("R")
         body {
@@ -380,12 +381,12 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
         exclude(ArraysOfObjects, Iterables, Sequences)
 
-        doc { "Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element" }
+        doc { "Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element." }
         returns("T")
         body {
             """
             val iterator = this.iterator()
-            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
 
             var accumulator = iterator.next()
             while (iterator.hasNext()) {
@@ -400,14 +401,14 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
         only(ArraysOfObjects, Iterables, Sequences)
 
-        doc { "Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element" }
+        doc { "Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element." }
         typeParam("S")
         typeParam("T: S")
         returns("S")
         body {
             """
             val iterator = this.iterator()
-            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
 
             var accumulator: S = iterator.next()
             while (iterator.hasNext()) {
@@ -422,12 +423,12 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         only(Strings, ArraysOfPrimitives)
-        doc { "Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value" }
+        doc { "Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value." }
         returns("T")
         body {
             """
             var index = lastIndex
-            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
 
             var accumulator = get(index--)
             while (index >= 0) {
@@ -443,14 +444,14 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         only(Lists, ArraysOfObjects)
-        doc { "Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value" }
+        doc { "Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value." }
         typeParam("S")
         typeParam("T: S")
         returns("S")
         body {
             """
             var index = lastIndex
-            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
 
             var accumulator: S = get(index--)
             while (index >= 0) {
@@ -465,7 +466,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("forEach(operation: (T) -> Unit)") {
         inline(true)
 
-        doc { "Performs the given *operation* on each element" }
+        doc { "Performs the given [operation] on each element." }
         returns("Unit")
         body {
             """
@@ -477,7 +478,7 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("forEachIndexed(operation: (Int, T) -> Unit)") {
         inline(true)
-        doc { "Performs the given *operation* on each element, providing sequential index with the element" }
+        doc { "Performs the given [operation] on each element, providing sequential index with the element." }
         returns("Unit")
         body {
             """

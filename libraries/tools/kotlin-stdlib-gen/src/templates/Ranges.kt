@@ -8,8 +8,8 @@ fun ranges(): List<GenericFunction> {
     templates add f("reversed()") {
         only(RangesOfPrimitives, ProgressionsOfPrimitives)
         exclude(PrimitiveType.Boolean)
-        doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range in the opposite direction with the same step" }
-        doc(RangesOfPrimitives) { "Returns a progression that goes over this range in reverse direction" }
+        doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range in the opposite direction with the same step." }
+        doc(RangesOfPrimitives) { "Returns a progression that goes over this range in reverse direction." }
         returns("TProgression")
         body(RangesOfPrimitives) {
             "return TProgression(end, start, -ONE)"
@@ -22,8 +22,8 @@ fun ranges(): List<GenericFunction> {
     templates add f("step(step: SUM)") {
         only(RangesOfPrimitives, ProgressionsOfPrimitives)
         exclude(PrimitiveType.Boolean)
-        doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range with the given step" }
-        doc(RangesOfPrimitives) { "Returns a progression that goes over this range with given step" }
+        doc(ProgressionsOfPrimitives) { "Returns a progression that goes over the same range with the given step." }
+        doc(RangesOfPrimitives) { "Returns a progression that goes over this range with given step." }
         returns("TProgression")
         body(RangesOfPrimitives) {
             """
@@ -33,7 +33,7 @@ fun ranges(): List<GenericFunction> {
         }
         bodyForTypes(RangesOfPrimitives, PrimitiveType.Float, PrimitiveType.Double) {
             """
-            if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN")
+            if (step.isNaN()) throw IllegalArgumentException("Step must not be NaN.")
             checkStepIsPositive(step > 0, step)
             return TProgression(start, end, step)
             """

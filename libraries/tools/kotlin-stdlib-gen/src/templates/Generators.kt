@@ -7,7 +7,7 @@ fun generators(): List<GenericFunction> {
 
     templates add f("plus(element: T)") {
         exclude(Strings)
-        doc { "Returns a list containing all elements of original collection and then the given element" }
+        doc { "Returns a list containing all elements of original collection and then the given [element]." }
         returns("List<T>")
         body {
             """
@@ -26,7 +26,7 @@ fun generators(): List<GenericFunction> {
             """
         }
 
-        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then the given element" }
+        doc(Sequences) { "Returns a sequence containing all elements of original sequence and then the given [element]." }
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """
@@ -37,7 +37,7 @@ fun generators(): List<GenericFunction> {
 
     templates add f("plus(collection: Iterable<T>)") {
         exclude(Strings, Sequences)
-        doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
+        doc { "Returns a list containing all elements of original collection and then all elements of the given [collection]." }
         returns("List<T>")
         body {
             """
@@ -60,7 +60,7 @@ fun generators(): List<GenericFunction> {
 
     templates add f("plus(array: Array<out T>)") {
         exclude(Strings, Sequences)
-        doc { "Returns a list containing all elements of original collection and then all elements of the given *collection*" }
+        doc { "Returns a list containing all elements of original collection and then all elements of the given [collection]." }
         returns("List<T>")
         body {
             """
@@ -82,7 +82,7 @@ fun generators(): List<GenericFunction> {
 
     templates add f("plus(collection: Iterable<T>)") {
         only(Sequences)
-        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [collection]" }
+        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [collection]." }
         returns("Sequence<T>")
         body {
             """
@@ -93,7 +93,7 @@ fun generators(): List<GenericFunction> {
 
     templates add f("plus(sequence: Sequence<T>)") {
         only(Sequences)
-        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]" }
+        doc { "Returns a sequence containing all elements of original sequence and then all elements of the given [sequence]." }
         returns("Sequence<T>")
         body {
             """
@@ -108,8 +108,8 @@ fun generators(): List<GenericFunction> {
         doc {
             """
             Splits original collection into pair of collections,
-            where *first* collection contains elements for which predicate yielded *true*,
-            while *second* collection contains elements for which predicate yielded *false*
+            where *first* collection contains elements for which [predicate] yielded [true],
+            while *second* collection contains elements for which [predicate] yielded [false].
             """
         }
         // TODO: Sequence variant
@@ -150,7 +150,7 @@ fun generators(): List<GenericFunction> {
         exclude(Sequences, Strings)
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
             """
         }
         typeParam("R")
@@ -185,7 +185,7 @@ fun generators(): List<GenericFunction> {
         exclude(Sequences, Strings)
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
             """
         }
         typeParam("R")
@@ -222,7 +222,7 @@ fun generators(): List<GenericFunction> {
         only(ArraysOfPrimitives)
         doc {
             """
-            Returns a list of values built from elements of both collections with same indexes using provided *transform*. List has length of shortest collection.
+            Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
             """
         }
         typeParam("V")
@@ -246,7 +246,7 @@ fun generators(): List<GenericFunction> {
         only(Sequences)
         doc {
             """
-            Returns a sequence of values built from elements of both collections with same indexes using provided *transform*. Resulting sequence has length of shortest input sequences.
+            Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
             """
         }
         typeParam("R")

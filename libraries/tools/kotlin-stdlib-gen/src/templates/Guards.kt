@@ -11,7 +11,7 @@ fun guards(): List<GenericFunction> {
     templates add f("requireNoNulls()") {
         include(Lists)
         exclude(Strings, ArraysOfPrimitives)
-        doc { "Returns an original collection containing all the non-*null* elements, throwing an [[IllegalArgumentException]] if there are any null elements" }
+        doc { "Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements." }
         typeParam("T : Any")
         toNullableT = true
         returns("SELF")
@@ -19,7 +19,7 @@ fun guards(): List<GenericFunction> {
             """
             for (element in this) {
                 if (element == null) {
-                    throw IllegalArgumentException("null element found in $THIS")
+                    throw IllegalArgumentException("null element found in $THIS.")
                 }
             }
             return this as SELF
@@ -27,7 +27,7 @@ fun guards(): List<GenericFunction> {
         }
         body(Sequences) {
             """
-            return map { it ?: throw IllegalArgumentException("null element found in $THIS") }
+            return map { it ?: throw IllegalArgumentException("null element found in $THIS.") }
             """
         }
     }

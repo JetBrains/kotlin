@@ -7,7 +7,7 @@ fun specialJS(): List<GenericFunction> {
 
     templates add f("asList()") {
         only(ArraysOfObjects, ArraysOfPrimitives)
-        doc { "Returns a list that wraps the original array" }
+        doc { "Returns a [List] that wraps the original array." }
         returns("List<T>")
         body(ArraysOfObjects) {
             """

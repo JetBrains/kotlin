@@ -11,7 +11,7 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public fun <T> Array<out T>.asList(): List<T> {
     val al = ArrayList<T>()
@@ -20,56 +20,56 @@ public fun <T> Array<out T>.asList(): List<T> {
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public inline fun BooleanArray.asList(): List<Boolean> {
     return (this as Array<Boolean>).asList()
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public inline fun ByteArray.asList(): List<Byte> {
     return (this as Array<Byte>).asList()
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public inline fun CharArray.asList(): List<Char> {
     return (this as Array<Char>).asList()
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public inline fun DoubleArray.asList(): List<Double> {
     return (this as Array<Double>).asList()
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public inline fun FloatArray.asList(): List<Float> {
     return (this as Array<Float>).asList()
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public inline fun IntArray.asList(): List<Int> {
     return (this as Array<Int>).asList()
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public inline fun LongArray.asList(): List<Long> {
     return (this as Array<Long>).asList()
 }
 
 /**
- * Returns a list that wraps the original array
+ * Returns a [List] that wraps the original array.
  */
 public inline fun ShortArray.asList(): List<Short> {
     return (this as Array<Short>).asList()

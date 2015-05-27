@@ -11,7 +11,7 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -19,7 +19,7 @@ public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -27,7 +27,7 @@ public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -35,7 +35,7 @@ public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -43,7 +43,7 @@ public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -51,7 +51,7 @@ public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -59,7 +59,7 @@ public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -67,7 +67,7 @@ public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -75,7 +75,7 @@ public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -83,7 +83,7 @@ public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -91,7 +91,7 @@ public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -99,7 +99,7 @@ public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean):
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -109,7 +109,7 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun <T> Stream<T>.all(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -117,7 +117,7 @@ public inline fun <T> Stream<T>.all(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if all elements match the given *predicate*
+ * Returns `true` if all elements match the given [predicate].
  */
 public inline fun String.all(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -125,7 +125,7 @@ public inline fun String.all(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun <T> Array<out T>.any(): Boolean {
     for (element in this) return true
@@ -133,7 +133,7 @@ public fun <T> Array<out T>.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun BooleanArray.any(): Boolean {
     for (element in this) return true
@@ -141,7 +141,7 @@ public fun BooleanArray.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun ByteArray.any(): Boolean {
     for (element in this) return true
@@ -149,7 +149,7 @@ public fun ByteArray.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun CharArray.any(): Boolean {
     for (element in this) return true
@@ -157,7 +157,7 @@ public fun CharArray.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun DoubleArray.any(): Boolean {
     for (element in this) return true
@@ -165,7 +165,7 @@ public fun DoubleArray.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun FloatArray.any(): Boolean {
     for (element in this) return true
@@ -173,7 +173,7 @@ public fun FloatArray.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun IntArray.any(): Boolean {
     for (element in this) return true
@@ -181,7 +181,7 @@ public fun IntArray.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun LongArray.any(): Boolean {
     for (element in this) return true
@@ -189,7 +189,7 @@ public fun LongArray.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun ShortArray.any(): Boolean {
     for (element in this) return true
@@ -197,7 +197,7 @@ public fun ShortArray.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun <T> Iterable<T>.any(): Boolean {
     for (element in this) return true
@@ -205,7 +205,7 @@ public fun <T> Iterable<T>.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun <K, V> Map<K, V>.any(): Boolean {
     for (element in this) return true
@@ -213,7 +213,7 @@ public fun <K, V> Map<K, V>.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun <T> Sequence<T>.any(): Boolean {
     for (element in this) return true
@@ -223,7 +223,7 @@ public fun <T> Sequence<T>.any(): Boolean {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun <T> Stream<T>.any(): Boolean {
     for (element in this) return true
@@ -231,7 +231,7 @@ public fun <T> Stream<T>.any(): Boolean {
 }
 
 /**
- * Returns *true* if collection has at least one element
+ * Returns `true` if collection has at least one element.
  */
 public fun String.any(): Boolean {
     for (element in this) return true
@@ -239,7 +239,7 @@ public fun String.any(): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -247,7 +247,7 @@ public inline fun <T> Array<out T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -255,7 +255,7 @@ public inline fun BooleanArray.any(predicate: (Boolean) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -263,7 +263,7 @@ public inline fun ByteArray.any(predicate: (Byte) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -271,7 +271,7 @@ public inline fun CharArray.any(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -279,7 +279,7 @@ public inline fun DoubleArray.any(predicate: (Double) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -287,7 +287,7 @@ public inline fun FloatArray.any(predicate: (Float) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -295,7 +295,7 @@ public inline fun IntArray.any(predicate: (Int) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -303,7 +303,7 @@ public inline fun LongArray.any(predicate: (Long) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -311,7 +311,7 @@ public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -319,7 +319,7 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -327,7 +327,7 @@ public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean):
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun <T> Sequence<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -337,7 +337,7 @@ public inline fun <T> Sequence<T>.any(predicate: (T) -> Boolean): Boolean {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun <T> Stream<T>.any(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -345,7 +345,7 @@ public inline fun <T> Stream<T>.any(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if any element matches the given [predicate]
+ * Returns `true` if at least one element matches the given [predicate].
  */
 public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return true
@@ -353,77 +353,77 @@ public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun <T> Array<out T>.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun BooleanArray.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun ByteArray.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun CharArray.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun DoubleArray.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun FloatArray.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun IntArray.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun LongArray.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun ShortArray.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun <T> Collection<T>.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun <T> Iterable<T>.count(): Int {
     var count = 0
@@ -432,14 +432,14 @@ public fun <T> Iterable<T>.count(): Int {
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun <K, V> Map<K, V>.count(): Int {
     return size()
 }
 
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun <T> Sequence<T>.count(): Int {
     var count = 0
@@ -450,7 +450,7 @@ public fun <T> Sequence<T>.count(): Int {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the number of elements
+ * Returns the number of elements in this collection.
  */
 public fun <T> Stream<T>.count(): Int {
     var count = 0
@@ -459,14 +459,14 @@ public fun <T> Stream<T>.count(): Int {
 }
 
 /**
- * Returns the number of elements
+ * Returns the length of this string.
  */
 public fun String.count(): Int {
     return length()
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
@@ -475,7 +475,7 @@ public inline fun <T> Array<out T>.count(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
     var count = 0
@@ -484,7 +484,7 @@ public inline fun BooleanArray.count(predicate: (Boolean) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
     var count = 0
@@ -493,7 +493,7 @@ public inline fun ByteArray.count(predicate: (Byte) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
     var count = 0
@@ -502,7 +502,7 @@ public inline fun CharArray.count(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
     var count = 0
@@ -511,7 +511,7 @@ public inline fun DoubleArray.count(predicate: (Double) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
     var count = 0
@@ -520,7 +520,7 @@ public inline fun FloatArray.count(predicate: (Float) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
     var count = 0
@@ -529,7 +529,7 @@ public inline fun IntArray.count(predicate: (Int) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
     var count = 0
@@ -538,7 +538,7 @@ public inline fun LongArray.count(predicate: (Long) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
     var count = 0
@@ -547,7 +547,7 @@ public inline fun ShortArray.count(predicate: (Short) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
@@ -556,7 +556,7 @@ public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
     var count = 0
@@ -565,7 +565,7 @@ public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
@@ -576,7 +576,7 @@ public inline fun <T> Sequence<T>.count(predicate: (T) -> Boolean): Int {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun <T> Stream<T>.count(predicate: (T) -> Boolean): Int {
     var count = 0
@@ -585,7 +585,7 @@ public inline fun <T> Stream<T>.count(predicate: (T) -> Boolean): Int {
 }
 
 /**
- * Returns the number of elements matching the given [predicate]
+ * Returns the number of elements matching the given [predicate].
  */
 public inline fun String.count(predicate: (Char) -> Boolean): Int {
     var count = 0
@@ -594,7 +594,7 @@ public inline fun String.count(predicate: (Char) -> Boolean): Int {
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <T, R> Array<out T>.fold(initial: R, operation: (R, T) -> R): R {
     var accumulator = initial
@@ -603,7 +603,7 @@ public inline fun <T, R> Array<out T>.fold(initial: R, operation: (R, T) -> R): 
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> BooleanArray.fold(initial: R, operation: (R, Boolean) -> R): R {
     var accumulator = initial
@@ -612,7 +612,7 @@ public inline fun <R> BooleanArray.fold(initial: R, operation: (R, Boolean) -> R
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> ByteArray.fold(initial: R, operation: (R, Byte) -> R): R {
     var accumulator = initial
@@ -621,7 +621,7 @@ public inline fun <R> ByteArray.fold(initial: R, operation: (R, Byte) -> R): R {
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> CharArray.fold(initial: R, operation: (R, Char) -> R): R {
     var accumulator = initial
@@ -630,7 +630,7 @@ public inline fun <R> CharArray.fold(initial: R, operation: (R, Char) -> R): R {
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> DoubleArray.fold(initial: R, operation: (R, Double) -> R): R {
     var accumulator = initial
@@ -639,7 +639,7 @@ public inline fun <R> DoubleArray.fold(initial: R, operation: (R, Double) -> R):
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> FloatArray.fold(initial: R, operation: (R, Float) -> R): R {
     var accumulator = initial
@@ -648,7 +648,7 @@ public inline fun <R> FloatArray.fold(initial: R, operation: (R, Float) -> R): R
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> IntArray.fold(initial: R, operation: (R, Int) -> R): R {
     var accumulator = initial
@@ -657,7 +657,7 @@ public inline fun <R> IntArray.fold(initial: R, operation: (R, Int) -> R): R {
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> LongArray.fold(initial: R, operation: (R, Long) -> R): R {
     var accumulator = initial
@@ -666,7 +666,7 @@ public inline fun <R> LongArray.fold(initial: R, operation: (R, Long) -> R): R {
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> ShortArray.fold(initial: R, operation: (R, Short) -> R): R {
     var accumulator = initial
@@ -675,7 +675,7 @@ public inline fun <R> ShortArray.fold(initial: R, operation: (R, Short) -> R): R
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R {
     var accumulator = initial
@@ -684,7 +684,7 @@ public inline fun <T, R> Iterable<T>.fold(initial: R, operation: (R, T) -> R): R
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R {
     var accumulator = initial
@@ -695,7 +695,7 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <T, R> Stream<T>.fold(initial: R, operation: (R, T) -> R): R {
     var accumulator = initial
@@ -704,7 +704,7 @@ public inline fun <T, R> Stream<T>.fold(initial: R, operation: (R, T) -> R): R {
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with [initial] value and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R): R {
     var accumulator = initial
@@ -713,7 +713,7 @@ public inline fun <R> String.fold(initial: R, operation: (R, Char) -> R): R {
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) -> R): R {
     var index = lastIndex
@@ -725,7 +725,7 @@ public inline fun <T, R> Array<out T>.foldRight(initial: R, operation: (T, R) ->
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R) -> R): R {
     var index = lastIndex
@@ -737,7 +737,7 @@ public inline fun <R> BooleanArray.foldRight(initial: R, operation: (Boolean, R)
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R): R {
     var index = lastIndex
@@ -749,7 +749,7 @@ public inline fun <R> ByteArray.foldRight(initial: R, operation: (Byte, R) -> R)
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, R) -> R): R {
     var index = lastIndex
@@ -761,7 +761,7 @@ public inline fun <R> CharArray.foldRight(initial: R, operation: (Char, R) -> R)
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -> R): R {
     var index = lastIndex
@@ -773,7 +773,7 @@ public inline fun <R> DoubleArray.foldRight(initial: R, operation: (Double, R) -
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, R) -> R): R {
     var index = lastIndex
@@ -785,7 +785,7 @@ public inline fun <R> FloatArray.foldRight(initial: R, operation: (Float, R) -> 
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, R) -> R): R {
     var index = lastIndex
@@ -797,7 +797,7 @@ public inline fun <R> IntArray.foldRight(initial: R, operation: (Int, R) -> R): 
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R): R {
     var index = lastIndex
@@ -809,7 +809,7 @@ public inline fun <R> LongArray.foldRight(initial: R, operation: (Long, R) -> R)
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> R): R {
     var index = lastIndex
@@ -821,7 +821,7 @@ public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> 
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): R {
     var index = lastIndex
@@ -833,7 +833,7 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
 }
 
 /**
- * Accumulates value starting with *initial* value and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with [initial] value and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R): R {
     var index = lastIndex
@@ -845,84 +845,84 @@ public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R): R
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun <T> Array<out T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun BooleanArray.forEach(operation: (Boolean) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun ByteArray.forEach(operation: (Byte) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun CharArray.forEach(operation: (Char) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun DoubleArray.forEach(operation: (Double) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun FloatArray.forEach(operation: (Float) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun IntArray.forEach(operation: (Int) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun LongArray.forEach(operation: (Long) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun ShortArray.forEach(operation: (Short) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun <T> Iterable<T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun <K, V> Map<K, V>.forEach(operation: (Map.Entry<K, V>) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun <T> Sequence<T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
@@ -931,21 +931,21 @@ public inline fun <T> Sequence<T>.forEach(operation: (T) -> Unit): Unit {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun <T> Stream<T>.forEach(operation: (T) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element
+ * Performs the given [operation] on each element.
  */
 public inline fun String.forEach(operation: (Char) -> Unit): Unit {
     for (element in this) operation(element)
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun <T> Array<out T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
     var index = 0
@@ -953,7 +953,7 @@ public inline fun <T> Array<out T>.forEachIndexed(operation: (Int, T) -> Unit): 
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun BooleanArray.forEachIndexed(operation: (Int, Boolean) -> Unit): Unit {
     var index = 0
@@ -961,7 +961,7 @@ public inline fun BooleanArray.forEachIndexed(operation: (Int, Boolean) -> Unit)
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun ByteArray.forEachIndexed(operation: (Int, Byte) -> Unit): Unit {
     var index = 0
@@ -969,7 +969,7 @@ public inline fun ByteArray.forEachIndexed(operation: (Int, Byte) -> Unit): Unit
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun CharArray.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
     var index = 0
@@ -977,7 +977,7 @@ public inline fun CharArray.forEachIndexed(operation: (Int, Char) -> Unit): Unit
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun DoubleArray.forEachIndexed(operation: (Int, Double) -> Unit): Unit {
     var index = 0
@@ -985,7 +985,7 @@ public inline fun DoubleArray.forEachIndexed(operation: (Int, Double) -> Unit): 
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun FloatArray.forEachIndexed(operation: (Int, Float) -> Unit): Unit {
     var index = 0
@@ -993,7 +993,7 @@ public inline fun FloatArray.forEachIndexed(operation: (Int, Float) -> Unit): Un
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun IntArray.forEachIndexed(operation: (Int, Int) -> Unit): Unit {
     var index = 0
@@ -1001,7 +1001,7 @@ public inline fun IntArray.forEachIndexed(operation: (Int, Int) -> Unit): Unit {
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun LongArray.forEachIndexed(operation: (Int, Long) -> Unit): Unit {
     var index = 0
@@ -1009,7 +1009,7 @@ public inline fun LongArray.forEachIndexed(operation: (Int, Long) -> Unit): Unit
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun ShortArray.forEachIndexed(operation: (Int, Short) -> Unit): Unit {
     var index = 0
@@ -1017,7 +1017,7 @@ public inline fun ShortArray.forEachIndexed(operation: (Int, Short) -> Unit): Un
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun <T> Iterable<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
     var index = 0
@@ -1025,7 +1025,7 @@ public inline fun <T> Iterable<T>.forEachIndexed(operation: (Int, T) -> Unit): U
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun <T> Sequence<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
     var index = 0
@@ -1035,7 +1035,7 @@ public inline fun <T> Sequence<T>.forEachIndexed(operation: (Int, T) -> Unit): U
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun <T> Stream<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
     var index = 0
@@ -1043,7 +1043,7 @@ public inline fun <T> Stream<T>.forEachIndexed(operation: (Int, T) -> Unit): Uni
 }
 
 /**
- * Performs the given *operation* on each element, providing sequential index with the element
+ * Performs the given [operation] on each element, providing sequential index with the element.
  */
 public inline fun String.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
     var index = 0
@@ -1051,7 +1051,7 @@ public inline fun String.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Array<out T>.max(): T? {
     if (isEmpty()) return null
@@ -1064,7 +1064,7 @@ public fun <T : Comparable<T>> Array<out T>.max(): T? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun ByteArray.max(): Byte? {
     if (isEmpty()) return null
@@ -1077,7 +1077,7 @@ public fun ByteArray.max(): Byte? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun CharArray.max(): Char? {
     if (isEmpty()) return null
@@ -1090,7 +1090,7 @@ public fun CharArray.max(): Char? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun DoubleArray.max(): Double? {
     if (isEmpty()) return null
@@ -1103,7 +1103,7 @@ public fun DoubleArray.max(): Double? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun FloatArray.max(): Float? {
     if (isEmpty()) return null
@@ -1116,7 +1116,7 @@ public fun FloatArray.max(): Float? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun IntArray.max(): Int? {
     if (isEmpty()) return null
@@ -1129,7 +1129,7 @@ public fun IntArray.max(): Int? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun LongArray.max(): Long? {
     if (isEmpty()) return null
@@ -1142,7 +1142,7 @@ public fun LongArray.max(): Long? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun ShortArray.max(): Short? {
     if (isEmpty()) return null
@@ -1155,7 +1155,7 @@ public fun ShortArray.max(): Short? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     val iterator = iterator()
@@ -1169,7 +1169,7 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Sequence<T>.max(): T? {
     val iterator = iterator()
@@ -1185,7 +1185,7 @@ public fun <T : Comparable<T>> Sequence<T>.max(): T? {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Stream<T>.max(): T? {
     val iterator = iterator()
@@ -1199,7 +1199,7 @@ public fun <T : Comparable<T>> Stream<T>.max(): T? {
 }
 
 /**
- * Returns the largest element or null if there are no elements
+ * Returns the largest element or `null` if there are no elements.
  */
 public fun String.max(): Char? {
     val iterator = iterator()
@@ -1213,7 +1213,7 @@ public fun String.max(): Char? {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Array<out T>.maxBy(f: (T) -> R): T? {
     if (isEmpty()) return null
@@ -1231,7 +1231,7 @@ public inline fun <R : Comparable<R>, T : Any> Array<out T>.maxBy(f: (T) -> R): 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> BooleanArray.maxBy(f: (Boolean) -> R): Boolean? {
     if (isEmpty()) return null
@@ -1249,7 +1249,7 @@ public inline fun <R : Comparable<R>> BooleanArray.maxBy(f: (Boolean) -> R): Boo
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> ByteArray.maxBy(f: (Byte) -> R): Byte? {
     if (isEmpty()) return null
@@ -1267,7 +1267,7 @@ public inline fun <R : Comparable<R>> ByteArray.maxBy(f: (Byte) -> R): Byte? {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> CharArray.maxBy(f: (Char) -> R): Char? {
     if (isEmpty()) return null
@@ -1285,7 +1285,7 @@ public inline fun <R : Comparable<R>> CharArray.maxBy(f: (Char) -> R): Char? {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> DoubleArray.maxBy(f: (Double) -> R): Double? {
     if (isEmpty()) return null
@@ -1303,7 +1303,7 @@ public inline fun <R : Comparable<R>> DoubleArray.maxBy(f: (Double) -> R): Doubl
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> FloatArray.maxBy(f: (Float) -> R): Float? {
     if (isEmpty()) return null
@@ -1321,7 +1321,7 @@ public inline fun <R : Comparable<R>> FloatArray.maxBy(f: (Float) -> R): Float? 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> IntArray.maxBy(f: (Int) -> R): Int? {
     if (isEmpty()) return null
@@ -1339,7 +1339,7 @@ public inline fun <R : Comparable<R>> IntArray.maxBy(f: (Int) -> R): Int? {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> LongArray.maxBy(f: (Long) -> R): Long? {
     if (isEmpty()) return null
@@ -1357,7 +1357,7 @@ public inline fun <R : Comparable<R>> LongArray.maxBy(f: (Long) -> R): Long? {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> ShortArray.maxBy(f: (Short) -> R): Short? {
     if (isEmpty()) return null
@@ -1375,7 +1375,7 @@ public inline fun <R : Comparable<R>> ShortArray.maxBy(f: (Short) -> R): Short? 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Iterable<T>.maxBy(f: (T) -> R): T? {
     val iterator = iterator()
@@ -1394,7 +1394,7 @@ public inline fun <R : Comparable<R>, T : Any> Iterable<T>.maxBy(f: (T) -> R): T
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Sequence<T>.maxBy(f: (T) -> R): T? {
     val iterator = iterator()
@@ -1415,7 +1415,7 @@ public inline fun <R : Comparable<R>, T : Any> Sequence<T>.maxBy(f: (T) -> R): T
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Stream<T>.maxBy(f: (T) -> R): T? {
     val iterator = iterator()
@@ -1434,7 +1434,7 @@ public inline fun <R : Comparable<R>, T : Any> Stream<T>.maxBy(f: (T) -> R): T? 
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> String.maxBy(f: (Char) -> R): Char? {
     val iterator = iterator()
@@ -1453,7 +1453,7 @@ public inline fun <R : Comparable<R>> String.maxBy(f: (Char) -> R): Char? {
 }
 
 /**
- * Returns the first element yielding the largest value of the given function or null if there are no elements
+ * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
 public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(f: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     val iterator = iterator()
@@ -1472,7 +1472,7 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(f: (Map.Entry<K, V>)
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Array<out T>.min(): T? {
     if (isEmpty()) return null
@@ -1485,7 +1485,7 @@ public fun <T : Comparable<T>> Array<out T>.min(): T? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun ByteArray.min(): Byte? {
     if (isEmpty()) return null
@@ -1498,7 +1498,7 @@ public fun ByteArray.min(): Byte? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun CharArray.min(): Char? {
     if (isEmpty()) return null
@@ -1511,7 +1511,7 @@ public fun CharArray.min(): Char? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun DoubleArray.min(): Double? {
     if (isEmpty()) return null
@@ -1524,7 +1524,7 @@ public fun DoubleArray.min(): Double? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun FloatArray.min(): Float? {
     if (isEmpty()) return null
@@ -1537,7 +1537,7 @@ public fun FloatArray.min(): Float? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun IntArray.min(): Int? {
     if (isEmpty()) return null
@@ -1550,7 +1550,7 @@ public fun IntArray.min(): Int? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun LongArray.min(): Long? {
     if (isEmpty()) return null
@@ -1563,7 +1563,7 @@ public fun LongArray.min(): Long? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun ShortArray.min(): Short? {
     if (isEmpty()) return null
@@ -1576,7 +1576,7 @@ public fun ShortArray.min(): Short? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Iterable<T>.min(): T? {
     val iterator = iterator()
@@ -1590,7 +1590,7 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Sequence<T>.min(): T? {
     val iterator = iterator()
@@ -1606,7 +1606,7 @@ public fun <T : Comparable<T>> Sequence<T>.min(): T? {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Stream<T>.min(): T? {
     val iterator = iterator()
@@ -1620,7 +1620,7 @@ public fun <T : Comparable<T>> Stream<T>.min(): T? {
 }
 
 /**
- * Returns the smallest element or null if there are no elements
+ * Returns the smallest element or `null` if there are no elements.
  */
 public fun String.min(): Char? {
     val iterator = iterator()
@@ -1634,7 +1634,7 @@ public fun String.min(): Char? {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): T? {
     if (size() == 0) return null
@@ -1652,7 +1652,7 @@ public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boolean? {
     if (size() == 0) return null
@@ -1670,7 +1670,7 @@ public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boo
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
     if (size() == 0) return null
@@ -1688,7 +1688,7 @@ public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
     if (size() == 0) return null
@@ -1706,7 +1706,7 @@ public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Double? {
     if (size() == 0) return null
@@ -1724,7 +1724,7 @@ public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Doubl
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? {
     if (size() == 0) return null
@@ -1742,7 +1742,7 @@ public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
     if (size() == 0) return null
@@ -1760,7 +1760,7 @@ public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
     if (size() == 0) return null
@@ -1778,7 +1778,7 @@ public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> ShortArray.minBy(f: (Short) -> R): Short? {
     if (size() == 0) return null
@@ -1796,7 +1796,7 @@ public inline fun <R : Comparable<R>> ShortArray.minBy(f: (Short) -> R): Short? 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(f: (T) -> R): T? {
     val iterator = iterator()
@@ -1815,7 +1815,7 @@ public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(f: (T) -> R): T
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Sequence<T>.minBy(f: (T) -> R): T? {
     val iterator = iterator()
@@ -1836,7 +1836,7 @@ public inline fun <R : Comparable<R>, T : Any> Sequence<T>.minBy(f: (T) -> R): T
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>, T : Any> Stream<T>.minBy(f: (T) -> R): T? {
     val iterator = iterator()
@@ -1855,7 +1855,7 @@ public inline fun <R : Comparable<R>, T : Any> Stream<T>.minBy(f: (T) -> R): T? 
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <R : Comparable<R>> String.minBy(f: (Char) -> R): Char? {
     val iterator = iterator()
@@ -1874,7 +1874,7 @@ public inline fun <R : Comparable<R>> String.minBy(f: (Char) -> R): Char? {
 }
 
 /**
- * Returns the first element yielding the smallest value of the given function or null if there are no elements
+ * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
 public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(f: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     val iterator = iterator()
@@ -1893,7 +1893,7 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(f: (Map.Entry<K, V>)
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun <T> Array<out T>.none(): Boolean {
     for (element in this) return false
@@ -1901,7 +1901,7 @@ public fun <T> Array<out T>.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun BooleanArray.none(): Boolean {
     for (element in this) return false
@@ -1909,7 +1909,7 @@ public fun BooleanArray.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun ByteArray.none(): Boolean {
     for (element in this) return false
@@ -1917,7 +1917,7 @@ public fun ByteArray.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun CharArray.none(): Boolean {
     for (element in this) return false
@@ -1925,7 +1925,7 @@ public fun CharArray.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun DoubleArray.none(): Boolean {
     for (element in this) return false
@@ -1933,7 +1933,7 @@ public fun DoubleArray.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun FloatArray.none(): Boolean {
     for (element in this) return false
@@ -1941,7 +1941,7 @@ public fun FloatArray.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun IntArray.none(): Boolean {
     for (element in this) return false
@@ -1949,7 +1949,7 @@ public fun IntArray.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun LongArray.none(): Boolean {
     for (element in this) return false
@@ -1957,7 +1957,7 @@ public fun LongArray.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun ShortArray.none(): Boolean {
     for (element in this) return false
@@ -1965,7 +1965,7 @@ public fun ShortArray.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun <T> Iterable<T>.none(): Boolean {
     for (element in this) return false
@@ -1973,7 +1973,7 @@ public fun <T> Iterable<T>.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun <K, V> Map<K, V>.none(): Boolean {
     for (element in this) return false
@@ -1981,7 +1981,7 @@ public fun <K, V> Map<K, V>.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun <T> Sequence<T>.none(): Boolean {
     for (element in this) return false
@@ -1991,7 +1991,7 @@ public fun <T> Sequence<T>.none(): Boolean {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun <T> Stream<T>.none(): Boolean {
     for (element in this) return false
@@ -1999,7 +1999,7 @@ public fun <T> Stream<T>.none(): Boolean {
 }
 
 /**
- * Returns *true* if collection has no elements
+ * Returns `true` if collection has no elements.
  */
 public fun String.none(): Boolean {
     for (element in this) return false
@@ -2007,7 +2007,7 @@ public fun String.none(): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2015,7 +2015,7 @@ public inline fun <T> Array<out T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2023,7 +2023,7 @@ public inline fun BooleanArray.none(predicate: (Boolean) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2031,7 +2031,7 @@ public inline fun ByteArray.none(predicate: (Byte) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2039,7 +2039,7 @@ public inline fun CharArray.none(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2047,7 +2047,7 @@ public inline fun DoubleArray.none(predicate: (Double) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2055,7 +2055,7 @@ public inline fun FloatArray.none(predicate: (Float) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2063,7 +2063,7 @@ public inline fun IntArray.none(predicate: (Int) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2071,7 +2071,7 @@ public inline fun LongArray.none(predicate: (Long) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2079,7 +2079,7 @@ public inline fun ShortArray.none(predicate: (Short) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2087,7 +2087,7 @@ public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2095,7 +2095,7 @@ public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean)
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2105,7 +2105,7 @@ public inline fun <T> Sequence<T>.none(predicate: (T) -> Boolean): Boolean {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun <T> Stream<T>.none(predicate: (T) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2113,7 +2113,7 @@ public inline fun <T> Stream<T>.none(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
- * Returns *true* if no elements match the given *predicate*
+ * Returns `true` if no elements match the given [predicate].
  */
 public inline fun String.none(predicate: (Char) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -2121,11 +2121,11 @@ public inline fun String.none(predicate: (Char) -> Boolean): Boolean {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <S, T: S> Array<out T>.reduce(operation: (S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2134,11 +2134,11 @@ public inline fun <S, T: S> Array<out T>.reduce(operation: (S, T) -> S): S {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2147,11 +2147,11 @@ public inline fun <S, T: S> Iterable<T>.reduce(operation: (S, T) -> S): S {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2162,11 +2162,11 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun <S, T: S> Stream<T>.reduce(operation: (S, T) -> S): S {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator: S = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2175,11 +2175,11 @@ public inline fun <S, T: S> Stream<T>.reduce(operation: (S, T) -> S): S {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean): Boolean {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2188,11 +2188,11 @@ public inline fun BooleanArray.reduce(operation: (Boolean, Boolean) -> Boolean):
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte): Byte {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2201,11 +2201,11 @@ public inline fun ByteArray.reduce(operation: (Byte, Byte) -> Byte): Byte {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun CharArray.reduce(operation: (Char, Char) -> Char): Char {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2214,11 +2214,11 @@ public inline fun CharArray.reduce(operation: (Char, Char) -> Char): Char {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun DoubleArray.reduce(operation: (Double, Double) -> Double): Double {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2227,11 +2227,11 @@ public inline fun DoubleArray.reduce(operation: (Double, Double) -> Double): Dou
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun FloatArray.reduce(operation: (Float, Float) -> Float): Float {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2240,11 +2240,11 @@ public inline fun FloatArray.reduce(operation: (Float, Float) -> Float): Float {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun IntArray.reduce(operation: (Int, Int) -> Int): Int {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2253,11 +2253,11 @@ public inline fun IntArray.reduce(operation: (Int, Int) -> Int): Int {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun LongArray.reduce(operation: (Long, Long) -> Long): Long {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2266,11 +2266,11 @@ public inline fun LongArray.reduce(operation: (Long, Long) -> Long): Long {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2279,11 +2279,11 @@ public inline fun ShortArray.reduce(operation: (Short, Short) -> Short): Short {
 }
 
 /**
- * Accumulates value starting with the first element and applying *operation* from left to right to current accumulator value and each element
+ * Accumulates value starting with the first element and applying [operation] from left to right to current accumulator value and each element.
  */
 public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = iterator.next()
     while (iterator.hasNext()) {
         accumulator = operation(accumulator, iterator.next())
@@ -2292,11 +2292,11 @@ public inline fun String.reduce(operation: (Char, Char) -> Char): Char {
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, S) -> S): S {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator: S = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2305,11 +2305,11 @@ public inline fun <S, T: S> Array<out T>.reduceRight(operation: (T, S) -> S): S 
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator: S = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2318,11 +2318,11 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Boolean): Boolean {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2331,11 +2331,11 @@ public inline fun BooleanArray.reduceRight(operation: (Boolean, Boolean) -> Bool
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte): Byte {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2344,11 +2344,11 @@ public inline fun ByteArray.reduceRight(operation: (Byte, Byte) -> Byte): Byte {
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char): Char {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2357,11 +2357,11 @@ public inline fun CharArray.reduceRight(operation: (Char, Char) -> Char): Char {
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double): Double {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2370,11 +2370,11 @@ public inline fun DoubleArray.reduceRight(operation: (Double, Double) -> Double)
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float): Float {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2383,11 +2383,11 @@ public inline fun FloatArray.reduceRight(operation: (Float, Float) -> Float): Fl
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun IntArray.reduceRight(operation: (Int, Int) -> Int): Int {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2396,11 +2396,11 @@ public inline fun IntArray.reduceRight(operation: (Int, Int) -> Int): Int {
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2409,11 +2409,11 @@ public inline fun LongArray.reduceRight(operation: (Long, Long) -> Long): Long {
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Short {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2422,11 +2422,11 @@ public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Sh
 }
 
 /**
- * Accumulates value starting with last element and applying *operation* from right to left to each element and current accumulator value
+ * Accumulates value starting with last element and applying [operation] from right to left to each element and current accumulator value.
  */
 public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
     var index = lastIndex
-    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced")
+    if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
     var accumulator = get(index--)
     while (index >= 0) {
         accumulator = operation(get(index--), accumulator)
@@ -2435,7 +2435,7 @@ public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun <T> Array<out T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -2446,7 +2446,7 @@ public inline fun <T> Array<out T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun BooleanArray.sumBy(transform: (Boolean) -> Int): Int {
     var sum: Int = 0
@@ -2457,7 +2457,7 @@ public inline fun BooleanArray.sumBy(transform: (Boolean) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun ByteArray.sumBy(transform: (Byte) -> Int): Int {
     var sum: Int = 0
@@ -2468,7 +2468,7 @@ public inline fun ByteArray.sumBy(transform: (Byte) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun CharArray.sumBy(transform: (Char) -> Int): Int {
     var sum: Int = 0
@@ -2479,7 +2479,7 @@ public inline fun CharArray.sumBy(transform: (Char) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun DoubleArray.sumBy(transform: (Double) -> Int): Int {
     var sum: Int = 0
@@ -2490,7 +2490,7 @@ public inline fun DoubleArray.sumBy(transform: (Double) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun FloatArray.sumBy(transform: (Float) -> Int): Int {
     var sum: Int = 0
@@ -2501,7 +2501,7 @@ public inline fun FloatArray.sumBy(transform: (Float) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun IntArray.sumBy(transform: (Int) -> Int): Int {
     var sum: Int = 0
@@ -2512,7 +2512,7 @@ public inline fun IntArray.sumBy(transform: (Int) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun LongArray.sumBy(transform: (Long) -> Int): Int {
     var sum: Int = 0
@@ -2523,7 +2523,7 @@ public inline fun LongArray.sumBy(transform: (Long) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun ShortArray.sumBy(transform: (Short) -> Int): Int {
     var sum: Int = 0
@@ -2534,7 +2534,7 @@ public inline fun ShortArray.sumBy(transform: (Short) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -2545,7 +2545,7 @@ public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun <T> Sequence<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -2558,7 +2558,7 @@ public inline fun <T> Sequence<T>.sumBy(transform: (T) -> Int): Int {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun <T> Stream<T>.sumBy(transform: (T) -> Int): Int {
     var sum: Int = 0
@@ -2569,7 +2569,7 @@ public inline fun <T> Stream<T>.sumBy(transform: (T) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from characters in the string
+ * Returns the sum of all values produced by [transform] function from characters in the string.
  */
 public inline fun String.sumBy(transform: (Char) -> Int): Int {
     var sum: Int = 0
@@ -2580,7 +2580,7 @@ public inline fun String.sumBy(transform: (Char) -> Int): Int {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun <T> Array<out T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -2591,7 +2591,7 @@ public inline fun <T> Array<out T>.sumByDouble(transform: (T) -> Double): Double
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun BooleanArray.sumByDouble(transform: (Boolean) -> Double): Double {
     var sum: Double = 0.0
@@ -2602,7 +2602,7 @@ public inline fun BooleanArray.sumByDouble(transform: (Boolean) -> Double): Doub
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun ByteArray.sumByDouble(transform: (Byte) -> Double): Double {
     var sum: Double = 0.0
@@ -2613,7 +2613,7 @@ public inline fun ByteArray.sumByDouble(transform: (Byte) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun CharArray.sumByDouble(transform: (Char) -> Double): Double {
     var sum: Double = 0.0
@@ -2624,7 +2624,7 @@ public inline fun CharArray.sumByDouble(transform: (Char) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun DoubleArray.sumByDouble(transform: (Double) -> Double): Double {
     var sum: Double = 0.0
@@ -2635,7 +2635,7 @@ public inline fun DoubleArray.sumByDouble(transform: (Double) -> Double): Double
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun FloatArray.sumByDouble(transform: (Float) -> Double): Double {
     var sum: Double = 0.0
@@ -2646,7 +2646,7 @@ public inline fun FloatArray.sumByDouble(transform: (Float) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun IntArray.sumByDouble(transform: (Int) -> Double): Double {
     var sum: Double = 0.0
@@ -2657,7 +2657,7 @@ public inline fun IntArray.sumByDouble(transform: (Int) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun LongArray.sumByDouble(transform: (Long) -> Double): Double {
     var sum: Double = 0.0
@@ -2668,7 +2668,7 @@ public inline fun LongArray.sumByDouble(transform: (Long) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun ShortArray.sumByDouble(transform: (Short) -> Double): Double {
     var sum: Double = 0.0
@@ -2679,7 +2679,7 @@ public inline fun ShortArray.sumByDouble(transform: (Short) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -2690,7 +2690,7 @@ public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double 
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun <T> Sequence<T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -2703,7 +2703,7 @@ public inline fun <T> Sequence<T>.sumByDouble(transform: (T) -> Double): Double 
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns the sum of all values produced by [transform] function from elements in the collection
+ * Returns the sum of all values produced by [transform] function from elements in the collection.
  */
 public inline fun <T> Stream<T>.sumByDouble(transform: (T) -> Double): Double {
     var sum: Double = 0.0
@@ -2714,7 +2714,7 @@ public inline fun <T> Stream<T>.sumByDouble(transform: (T) -> Double): Double {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function from characters in the string
+ * Returns the sum of all values produced by [transform] function from characters in the string.
  */
 public inline fun String.sumByDouble(transform: (Char) -> Double): Double {
     var sum: Double = 0.0

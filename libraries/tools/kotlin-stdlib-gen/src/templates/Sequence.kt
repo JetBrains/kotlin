@@ -45,7 +45,7 @@ fun sequences(): List<GenericFunction> {
     templates add f("asSequence()") {
         include(Maps)
         exclude(Sequences)
-        doc { "Returns a sequence from the given collection" }
+        doc { "Returns a sequence from the given collection." }
         returns("Sequence<T>")
         body {
             """

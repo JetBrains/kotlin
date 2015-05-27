@@ -11,7 +11,7 @@ import java.util.*
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfInt")
 public fun Iterable<Int>.average(): Double {
@@ -26,7 +26,7 @@ public fun Iterable<Int>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfInt")
 public fun Sequence<Int>.average(): Double {
@@ -43,7 +43,7 @@ public fun Sequence<Int>.average(): Double {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfInt")
 public fun Stream<Int>.average(): Double {
@@ -58,7 +58,7 @@ public fun Stream<Int>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfInt")
 public fun Array<out Int>.average(): Double {
@@ -73,7 +73,7 @@ public fun Array<out Int>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 public fun IntArray.average(): Double {
     val iterator = iterator()
@@ -87,7 +87,7 @@ public fun IntArray.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfLong")
 public fun Iterable<Long>.average(): Double {
@@ -102,7 +102,7 @@ public fun Iterable<Long>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfLong")
 public fun Sequence<Long>.average(): Double {
@@ -119,7 +119,7 @@ public fun Sequence<Long>.average(): Double {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfLong")
 public fun Stream<Long>.average(): Double {
@@ -134,7 +134,7 @@ public fun Stream<Long>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfLong")
 public fun Array<out Long>.average(): Double {
@@ -149,7 +149,7 @@ public fun Array<out Long>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 public fun LongArray.average(): Double {
     val iterator = iterator()
@@ -163,7 +163,7 @@ public fun LongArray.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfByte")
 public fun Iterable<Byte>.average(): Double {
@@ -178,7 +178,7 @@ public fun Iterable<Byte>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfByte")
 public fun Sequence<Byte>.average(): Double {
@@ -195,7 +195,7 @@ public fun Sequence<Byte>.average(): Double {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfByte")
 public fun Stream<Byte>.average(): Double {
@@ -210,7 +210,7 @@ public fun Stream<Byte>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfByte")
 public fun Array<out Byte>.average(): Double {
@@ -225,7 +225,7 @@ public fun Array<out Byte>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 public fun ByteArray.average(): Double {
     val iterator = iterator()
@@ -239,7 +239,7 @@ public fun ByteArray.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfShort")
 public fun Iterable<Short>.average(): Double {
@@ -254,7 +254,7 @@ public fun Iterable<Short>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfShort")
 public fun Sequence<Short>.average(): Double {
@@ -271,7 +271,7 @@ public fun Sequence<Short>.average(): Double {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfShort")
 public fun Stream<Short>.average(): Double {
@@ -286,7 +286,7 @@ public fun Stream<Short>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfShort")
 public fun Array<out Short>.average(): Double {
@@ -301,7 +301,7 @@ public fun Array<out Short>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 public fun ShortArray.average(): Double {
     val iterator = iterator()
@@ -315,7 +315,7 @@ public fun ShortArray.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfDouble")
 public fun Iterable<Double>.average(): Double {
@@ -330,7 +330,7 @@ public fun Iterable<Double>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfDouble")
 public fun Sequence<Double>.average(): Double {
@@ -347,7 +347,7 @@ public fun Sequence<Double>.average(): Double {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfDouble")
 public fun Stream<Double>.average(): Double {
@@ -362,7 +362,7 @@ public fun Stream<Double>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfDouble")
 public fun Array<out Double>.average(): Double {
@@ -377,7 +377,7 @@ public fun Array<out Double>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 public fun DoubleArray.average(): Double {
     val iterator = iterator()
@@ -391,7 +391,7 @@ public fun DoubleArray.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfFloat")
 public fun Iterable<Float>.average(): Double {
@@ -406,7 +406,7 @@ public fun Iterable<Float>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfFloat")
 public fun Sequence<Float>.average(): Double {
@@ -423,7 +423,7 @@ public fun Sequence<Float>.average(): Double {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfFloat")
 public fun Stream<Float>.average(): Double {
@@ -438,7 +438,7 @@ public fun Stream<Float>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 platformName("averageOfFloat")
 public fun Array<out Float>.average(): Double {
@@ -453,7 +453,7 @@ public fun Array<out Float>.average(): Double {
 }
 
 /**
- * Returns an average value of elements in the collection
+ * Returns an average value of elements in the collection.
  */
 public fun FloatArray.average(): Double {
     val iterator = iterator()

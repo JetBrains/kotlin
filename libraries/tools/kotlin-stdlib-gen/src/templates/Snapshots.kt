@@ -7,7 +7,7 @@ fun snapshots(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("toCollection(collection: C)") {
-        doc { "Appends all elements to the given *collection*" }
+        doc { "Appends all elements to the given [collection]." }
         returns("C")
         typeParam("C : MutableCollection<in T>")
         body {
@@ -21,7 +21,7 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toSet()") {
-        doc { "Returns a Set of all elements" }
+        doc { "Returns a [Set] of all elements." }
         returns("Set<T>")
         body { "return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(LinkedHashSet<T>())" }
@@ -30,7 +30,7 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toHashSet()") {
-        doc { "Returns a HashSet of all elements" }
+        doc { "Returns a [HashSet] of all elements." }
         returns("HashSet<T>")
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
@@ -39,13 +39,13 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toSortedSet()") {
-        doc { "Returns a SortedSet of all elements" }
+        doc { "Returns a [SortedSet] of all elements." }
         returns("SortedSet<T>")
         body { "return toCollection(TreeSet<T>())" }
     }
 
     templates add f("toArrayList()") {
-        doc { "Returns an ArrayList of all elements" }
+        doc { "Returns an [ArrayList] of all elements." }
         returns("ArrayList<T>")
         body { "return toCollection(ArrayList<T>())" }
         body(Iterables) {
@@ -69,7 +69,7 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("toList()") {
         only(Maps)
-        doc { "Returns a List containing all key-value pairs" }
+        doc { "Returns a [List] containing all key-value pairs." }
         returns("List<Pair<K, V>>")
         body {
             """
@@ -82,13 +82,13 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toList()") {
-        doc { "Returns a List containing all elements" }
+        doc { "Returns a [List] containing all elements." }
         returns("List<T>")
         body { "return this.toArrayList()" }
     }
 
     templates add f("toLinkedList()") {
-        doc { "Returns a LinkedList containing all elements" }
+        doc { "Returns a [LinkedList] containing all elements." }
         returns("LinkedList<T>")
         body { "return toCollection(LinkedList<T>())" }
     }
@@ -98,7 +98,7 @@ fun snapshots(): List<GenericFunction> {
         typeParam("K")
         doc {
             """
-            Returns Map containing all the values from the given collection indexed by *selector*
+            Returns Map containing all the values from the given collection indexed by [selector].
             """
         }
         returns("Map<K, T>")
@@ -155,7 +155,7 @@ fun snapshots(): List<GenericFunction> {
         typeParam("V")
         doc {
             """
-            Returns Map containing all the values provided by *transform* and indexed by *selector* from the given collection
+            Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
             """
         }
         returns("Map<K, V>")

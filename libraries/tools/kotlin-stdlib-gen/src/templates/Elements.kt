@@ -6,7 +6,7 @@ fun elements(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("contains(element: T)") {
-        doc { "Returns true if *element* is found in the collection" }
+        doc { "Returns `true` if [element] is found in the collection." }
         returns("Boolean")
         body {
             """
@@ -25,7 +25,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("indexOf(element: T)") {
         exclude(Strings, Lists) // has native implementation
-        doc { "Returns first index of [element], or -1 if the collection does not contain element" }
+        doc { "Returns first index of [element], or -1 if the collection does not contain element." }
         returns("Int")
         body {
             """
@@ -71,7 +71,7 @@ fun elements(): List<GenericFunction> {
 
     templates add f("lastIndexOf(element: T)") {
         exclude(Strings, Lists) // has native implementation
-        doc { "Returns last index of *element*, or -1 if the collection does not contain element" }
+        doc { "Returns last index of [element], or -1 if the collection does not contain element." }
         returns("Int")
         body {
             """
@@ -119,7 +119,7 @@ fun elements(): List<GenericFunction> {
     templates add f("indexOfFirst(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element" }
+        doc { "Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element." }
         returns("Int")
         body {
             """
@@ -148,7 +148,7 @@ fun elements(): List<GenericFunction> {
     templates add f("indexOfLast(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element" }
+        doc { "Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element." }
         returns("Int")
         body {
             """
@@ -184,12 +184,12 @@ fun elements(): List<GenericFunction> {
             if (this is List<T>)
                 return get(index)
 
-            return elementAtOrElse(index) { throw IndexOutOfBoundsException("Collection doesn't contain element at index $index") }
+            return elementAtOrElse(index) { throw IndexOutOfBoundsException("Collection doesn't contain element at index $index.") }
             """
         }
         body(Sequences) {
             """
-            return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index") }
+            return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
             """
         }
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
@@ -283,10 +283,10 @@ fun elements(): List<GenericFunction> {
 
     templates add f("first()") {
         doc { """Returns first element.
-        @throws NoSuchElementException if the collection is empty.
+        @throws [NoSuchElementException] if the collection is empty.
         """ }
         doc(Strings) { """Returns first character.
-        @throws NoSuchElementException if the string is empty.
+        @throws [NoSuchElementException] if the string is empty.
         """ }
         returns("T")
         body {
@@ -294,14 +294,14 @@ fun elements(): List<GenericFunction> {
             when (this) {
                 is List<*> -> {
                     if (isEmpty())
-                        throw NoSuchElementException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty.")
                     else
                         return this[0] as T
                 }
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
-                        throw NoSuchElementException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty.")
                     return iterator.next()
                 }
             }
@@ -310,14 +310,14 @@ fun elements(): List<GenericFunction> {
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             return this[0]
             """
         }
     }
     templates add f("firstOrNull()") {
-        doc { "Returns the first element, or null if the collection is empty." }
-        doc(Strings) { "Returns the first character, or null if string is empty." }
+        doc { "Returns the first element, or `null` if the collection is empty." }
+        doc(Strings) { "Returns the first character, or `null` if string is empty." }
         returns("T?")
         body {
             """
@@ -348,14 +348,14 @@ fun elements(): List<GenericFunction> {
         inline(true)
 
         doc { """Returns the first element matching the given [predicate].
-        @throws NoSuchElementException if no such element is found.""" }
+        @throws [NoSuchElementException] if no such element is found.""" }
         doc(Strings) { """Returns the first character matching the given [predicate].
-        @throws NoSuchElementException if no such character is found.""" }
+        @throws [NoSuchElementException] if no such character is found.""" }
         returns("T")
         body {
             """
             for (element in this) if (predicate(element)) return element
-            throw NoSuchElementException("No element matching predicate was found")
+            throw NoSuchElementException("No element matching predicate was found.")
             """
         }
     }
@@ -363,8 +363,8 @@ fun elements(): List<GenericFunction> {
     templates add f("firstOrNull(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { "Returns the first element matching the given [predicate], or `null` if element was not found" }
-        doc(Strings) { "Returns the first character matching the given [predicate], or `null` if character was not found" }
+        doc { "Returns the first element matching the given [predicate], or `null` if element was not found." }
+        doc(Strings) { "Returns the first character matching the given [predicate], or `null` if character was not found." }
         returns("T?")
         body {
             """
@@ -376,23 +376,23 @@ fun elements(): List<GenericFunction> {
 
     templates add f("last()") {
         doc { """Returns the last element.
-        @throws NoSuchElementException if the collection is empty.""" }
+        @throws [NoSuchElementException] if the collection is empty.""" }
         doc(Strings) { """"Returns the last character.
-        @throws NoSuchElementException if the string is empty.""" }
+        @throws [NoSuchElementException] if the string is empty.""" }
         returns("T")
         body {
             """
             when (this) {
                 is List<*> -> {
                     if (isEmpty())
-                        throw NoSuchElementException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty.")
                     else
                         return this[this.lastIndex] as T
                 }
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
-                        throw NoSuchElementException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty.")
                     var last = iterator.next()
                     while (iterator.hasNext())
                         last = iterator.next()
@@ -405,7 +405,7 @@ fun elements(): List<GenericFunction> {
             """
             val iterator = iterator()
             if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             var last = iterator.next()
             while (iterator.hasNext())
                 last = iterator.next()
@@ -415,15 +415,15 @@ fun elements(): List<GenericFunction> {
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             if (isEmpty())
-                throw NoSuchElementException("Collection is empty")
+                throw NoSuchElementException("Collection is empty.")
             return this[lastIndex]
             """
         }
     }
 
     templates add f("lastOrNull()") {
-        doc { "Returns the last element, or `null` if the collection is empty" }
-        doc(Strings) { "Returns the last character, or `null` if the string is empty" }
+        doc { "Returns the last element, or `null` if the collection is empty." }
+        doc(Strings) { "Returns the last character, or `null` if the string is empty." }
         returns("T?")
         body {
             """
@@ -467,9 +467,9 @@ fun elements(): List<GenericFunction> {
     templates add f("last(predicate: (T) -> Boolean)") {
         inline(true)
         doc { """Returns the last element matching the given [predicate].
-        @throws NoSuchElementException if no such element is found.""" }
+        @throws [NoSuchElementException] if no such element is found.""" }
         doc(Strings) { """"Returns the last character matching the given [predicate].
-        @throws NoSuchElementException if no such character is found.""" }
+        @throws [NoSuchElementException] if no such character is found.""" }
         returns("T")
         body {
             """
@@ -568,17 +568,17 @@ fun elements(): List<GenericFunction> {
             """
             when (this) {
                 is List<*> -> return when (size()) {
-                    0 -> throw NoSuchElementException("Collection is empty")
+                    0 -> throw NoSuchElementException("Collection is empty.")
                     1 -> this[0] as T
-                    else -> throw IllegalArgumentException("Collection has more than one element")
+                    else -> throw IllegalArgumentException("Collection has more than one element.")
                 }
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
-                        throw NoSuchElementException("Collection is empty")
+                        throw NoSuchElementException("Collection is empty.")
                     var single = iterator.next()
                     if (iterator.hasNext())
-                        throw IllegalArgumentException("Collection has more than one element")
+                        throw IllegalArgumentException("Collection has more than one element.")
                     return single
                 }
             }
@@ -587,18 +587,18 @@ fun elements(): List<GenericFunction> {
         body(Strings) {
             """
             return when (length()) {
-                0 -> throw NoSuchElementException("Collection is empty")
+                0 -> throw NoSuchElementException("Collection is empty.")
                 1 -> this[0]
-                else -> throw IllegalArgumentException("Collection has more than one element")
+                else -> throw IllegalArgumentException("Collection has more than one element.")
             }
             """
         }
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
             return when (size()) {
-                0 -> throw NoSuchElementException("Collection is empty")
+                0 -> throw NoSuchElementException("Collection is empty.")
                 1 -> this[0]
-                else -> throw IllegalArgumentException("Collection has more than one element")
+                else -> throw IllegalArgumentException("Collection has more than one element.")
             }
             """
         }
@@ -638,8 +638,8 @@ fun elements(): List<GenericFunction> {
 
     templates add f("single(predicate: (T) -> Boolean)") {
         inline(true)
-        doc { "Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element" }
-        doc(Strings) { "Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character" }
+        doc { "Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element." }
+        doc(Strings) { "Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character." }
         returns("T")
         body {
             """
@@ -647,12 +647,12 @@ fun elements(): List<GenericFunction> {
             var found = false
             for (element in this) {
                 if (predicate(element)) {
-                    if (found) throw IllegalArgumentException("Collection contains more than one matching element")
+                    if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
                     single = element
                     found = true
                 }
             }
-            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate")
+            if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
             return single as T
             """
         }
@@ -660,8 +660,8 @@ fun elements(): List<GenericFunction> {
 
     templates add f("singleOrNull(predicate: (T) -> Boolean)") {
         inline(true)
-        doc { "Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found" }
-        doc(Strings) { "Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found" }
+        doc { "Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found." }
+        doc(Strings) { "Returns the single character matching the given [predicate], or `null` if character was not found or more than one character was found." }
         returns("T?")
         body {
             """
