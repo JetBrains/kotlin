@@ -848,8 +848,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val adjustedDeclaration = when (declaration) {
                     is JetNamedFunction, is JetProperty -> {
                         val klass = psiFactory.createClass("class Foo {}")
-                        klass.getBody().add(declaration)
-                        (declaration.replace(klass) as JetClass).getBody().getDeclarations().first()
+                        klass.getBody()!!.add(declaration)
+                        (declaration.replace(klass) as JetClass).getBody()!!.getDeclarations().first()
                     }
                     else -> declaration
                 }

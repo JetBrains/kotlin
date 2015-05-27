@@ -14,246 +14,207 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList
+import java.util.Collections
 
-public class JetClass extends JetTypeParameterListOwnerStub<KotlinClassStub> implements JetClassOrObject {
+public open class JetClass : JetTypeParameterListOwnerStub<KotlinClassStub>, JetClassOrObject {
 
-    public JetClass(@NotNull ASTNode node) {
-        super(node);
+    public constructor(node: ASTNode) : super(node) {
     }
 
-    public JetClass(@NotNull KotlinClassStub stub) {
-        super(stub, JetStubElementTypes.CLASS);
+    public constructor(stub: KotlinClassStub) : super(stub, JetStubElementTypes.CLASS) {
     }
 
-    @NotNull
-    @Override
-    public List<JetDeclaration> getDeclarations() {
-        JetClassBody body = getBody();
-        if (body == null) return Collections.emptyList();
+    override fun getDeclarations(): List<JetDeclaration> {
+        val body = getBody() ?: return emptyList<JetDeclaration>()
 
-        return body.getDeclarations();
+        return body.getDeclarations()
     }
 
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitClass(this, data);
+    override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
+        return visitor.visitClass(this, data)
     }
 
-    @Nullable
-    public JetPrimaryConstructor getPrimaryConstructor() {
-        return getStubOrPsiChild(JetStubElementTypes.PRIMARY_CONSTRUCTOR);
+    public fun getPrimaryConstructor(): JetPrimaryConstructor? {
+        return getStubOrPsiChild(JetStubElementTypes.PRIMARY_CONSTRUCTOR)
     }
 
-    @Nullable
-    public JetParameterList getPrimaryConstructorParameterList() {
-        JetPrimaryConstructor primaryConstructor = getPrimaryConstructor();
-        return primaryConstructor != null ? primaryConstructor.getValueParameterList() : null;
+    public fun getPrimaryConstructorParameterList(): JetParameterList? {
+        val primaryConstructor = getPrimaryConstructor()
+        return primaryConstructor?.getValueParameterList()
     }
 
-    @NotNull
-    public List<JetParameter> getPrimaryConstructorParameters() {
-        JetParameterList list = getPrimaryConstructorParameterList();
-        if (list == null) return Collections.emptyList();
-        return list.getParameters();
+    public fun getPrimaryConstructorParameters(): List<JetParameter> {
+        val list = getPrimaryConstructorParameterList() ?: return emptyList<JetParameter>()
+        return list.getParameters()
     }
 
-    @NotNull
-    public JetPrimaryConstructor createPrimaryConstructorIfAbsent() {
-        JetPrimaryConstructor constructor = getPrimaryConstructor();
-        if (constructor != null) return constructor;
-        PsiElement anchor = getTypeParameterList();
-        if (anchor == null) anchor = getNameIdentifier();
-        if (anchor == null) anchor = getLastChild();
-        return (JetPrimaryConstructor) addAfter(new JetPsiFactory(getProject()).createPrimaryConstructor(), anchor);
+    public fun createPrimaryConstructorIfAbsent(): JetPrimaryConstructor {
+        val constructor = getPrimaryConstructor()
+        if (constructor != null) return constructor
+        var anchor: PsiElement? = getTypeParameterList()
+        if (anchor == null) anchor = getNameIdentifier()
+        if (anchor == null) anchor = getLastChild()
+        return addAfter(JetPsiFactory(getProject()).createPrimaryConstructor(), anchor) as JetPrimaryConstructor
     }
 
-    @NotNull
-    public JetParameterList createPrimaryConstructorParameterListIfAbsent() {
-        JetPrimaryConstructor constructor = createPrimaryConstructorIfAbsent();
-        JetParameterList parameterList = constructor.getValueParameterList();
-        if (parameterList != null) return parameterList;
-        return (JetParameterList) constructor.add(new JetPsiFactory(getProject()).createParameterList("()"));
+    public fun createPrimaryConstructorParameterListIfAbsent(): JetParameterList {
+        val constructor = createPrimaryConstructorIfAbsent()
+        val parameterList = constructor.getValueParameterList()
+        if (parameterList != null) return parameterList
+        return constructor.add(JetPsiFactory(getProject()).createParameterList("()")) as JetParameterList
     }
 
-    @Override
-    @Nullable
-    public JetDelegationSpecifierList getDelegationSpecifierList() {
-        return getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST);
+    override fun getDelegationSpecifierList(): JetDelegationSpecifierList? {
+        return getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST)
     }
 
-    @Override
-    @NotNull
-    public List<JetDelegationSpecifier> getDelegationSpecifiers() {
-        JetDelegationSpecifierList list = getDelegationSpecifierList();
-        return list != null ? list.getDelegationSpecifiers() : Collections.<JetDelegationSpecifier>emptyList();
+    override fun getDelegationSpecifiers(): List<JetDelegationSpecifier> {
+        val list = getDelegationSpecifierList()
+        return if (list != null) list.getDelegationSpecifiers() else emptyList<JetDelegationSpecifier>()
     }
 
-    @Nullable
-    public JetModifierList getPrimaryConstructorModifierList() {
-        JetPrimaryConstructor primaryConstructor = getPrimaryConstructor();
-        return primaryConstructor != null ? primaryConstructor.getModifierList() : null;
+    public fun getPrimaryConstructorModifierList(): JetModifierList? {
+        val primaryConstructor = getPrimaryConstructor()
+        return primaryConstructor?.getModifierList()
     }
 
-    @Override
-    @NotNull
-    public List<JetClassInitializer> getAnonymousInitializers() {
-        JetClassBody body = getBody();
-        if (body == null) return Collections.emptyList();
+    override fun getAnonymousInitializers(): List<JetClassInitializer> {
+        val body = getBody() ?: return emptyList<JetClassInitializer>()
 
-        return body.getAnonymousInitializers();
+        return body.getAnonymousInitializers()
     }
 
-    public boolean hasExplicitPrimaryConstructor() {
-        return getPrimaryConstructor() != null;
+    public fun hasExplicitPrimaryConstructor(): Boolean {
+        return getPrimaryConstructor() != null
     }
 
-    @Override
-    public JetObjectDeclarationName getNameAsDeclaration() {
-        return (JetObjectDeclarationName) findChildByType(JetNodeTypes.OBJECT_DECLARATION_NAME);
+    override fun getNameAsDeclaration(): JetObjectDeclarationName? {
+        return findChildByType<PsiElement>(JetNodeTypes.OBJECT_DECLARATION_NAME) as JetObjectDeclarationName
     }
 
-    @Override
-    public JetClassBody getBody() {
-        return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY);
+    override fun getBody(): JetClassBody? {
+        return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY)
     }
 
-    @Nullable
-    public PsiElement getColon() {
-        return findChildByType(JetTokens.COLON);
+    public fun getColon(): PsiElement? {
+        return findChildByType(JetTokens.COLON)
     }
 
-    public List<JetProperty> getProperties() {
-        JetClassBody body = getBody();
-        if (body == null) return Collections.emptyList();
+    public fun getProperties(): List<JetProperty> {
+        val body = getBody() ?: return emptyList<JetProperty>()
 
-        return body.getProperties();
+        return body.getProperties()
     }
 
-    public boolean isInterface() {
-        KotlinClassStub stub = getStub();
+    public fun isInterface(): Boolean {
+        val stub = getStub()
         if (stub != null) {
-            return stub.isInterface();
+            return stub.isInterface()
         }
 
-        return findChildByType(JetTokens.TRAIT_KEYWORD) != null ||
-               findChildByType(JetTokens.INTERFACE_KEYWORD) != null;
+        return findChildByType<PsiElement>(JetTokens.TRAIT_KEYWORD) != null || findChildByType<PsiElement>(JetTokens.INTERFACE_KEYWORD) != null
     }
 
-    public boolean isEnum() {
-        return hasModifier(JetTokens.ENUM_KEYWORD);
+    public fun isEnum(): Boolean {
+        return hasModifier(JetTokens.ENUM_KEYWORD)
     }
 
-    public boolean isAnnotation() {
-        return hasModifier(JetTokens.ANNOTATION_KEYWORD);
+    public fun isAnnotation(): Boolean {
+        return hasModifier(JetTokens.ANNOTATION_KEYWORD)
     }
 
-    public boolean isInner() {
-        return hasModifier(JetTokens.INNER_KEYWORD);
+    public fun isInner(): Boolean {
+        return hasModifier(JetTokens.INNER_KEYWORD)
     }
 
-    @Override
-    public boolean isEquivalentTo(PsiElement another) {
-        if (super.isEquivalentTo(another)) {
-            return true;
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        if (super<JetTypeParameterListOwnerStub>.isEquivalentTo(another)) {
+            return true
         }
-        if (another instanceof JetClass) {
-            String fq1 = getQualifiedName();
-            String fq2 = ((JetClass) another).getQualifiedName();
-            return fq1 != null && fq2 != null && fq1.equals(fq2);
+        if (another is JetClass) {
+            val fq1 = getQualifiedName()
+            val fq2 = another.getQualifiedName()
+            return fq1 != null && fq2 != null && fq1 == fq2
         }
-        return false;
+        return false
     }
 
-    @Nullable
-    private String getQualifiedName() {
-        KotlinClassStub stub = getStub();
+    private fun getQualifiedName(): String? {
+        val stub = getStub()
         if (stub != null) {
-            FqName fqName = stub.getFqName();
-            return fqName == null ? null : fqName.asString();
+            val fqName = stub.getFqName()
+            return fqName?.asString()
         }
 
-        List<String> parts = new ArrayList<String>();
-        JetClassOrObject current = this;
+        val parts = ArrayList<String>()
+        var current: JetClassOrObject? = this
         while (current != null) {
-            parts.add(current.getName());
-            current = PsiTreeUtil.getParentOfType(current, JetClassOrObject.class);
+            parts.add(current.getName())
+            current = PsiTreeUtil.getParentOfType<JetClassOrObject>(current, javaClass<JetClassOrObject>())
         }
-        PsiFile file = getContainingFile();
-        if (!(file instanceof JetFile)) return null;
-        String fileQualifiedName = ((JetFile) file).getPackageFqName().asString();
+        val file = getContainingFile()
+        if (file !is JetFile) return null
+        val fileQualifiedName = file.getPackageFqName().asString()
         if (!fileQualifiedName.isEmpty()) {
-            parts.add(fileQualifiedName);
+            parts.add(fileQualifiedName)
         }
-        Collections.reverse(parts);
-        return StringUtil.join(parts, ".");
+        Collections.reverse(parts)
+        return StringUtil.join(parts, ".")
     }
 
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
+    override fun getPresentation(): ItemPresentation? {
+        return ItemPresentationProviders.getItemPresentation(this)
     }
 
-    @Override
-    public boolean isTopLevel() {
-        return getContainingFile() == getParent();
+    override fun isTopLevel(): Boolean {
+        return getContainingFile() == getParent()
     }
 
-    @Override
-    public boolean isLocal() {
-        KotlinClassStub stub = getStub();
+    override fun isLocal(): Boolean {
+        val stub = getStub()
         if (stub != null) {
-            return stub.isLocal();
+            return stub.isLocal()
         }
-        return JetPsiUtil.isLocal(this);
+        return JetPsiUtil.isLocal(this)
     }
 
-    @NotNull
-    public List<JetObjectDeclaration> getCompanionObjects() {
-        JetClassBody body = getBody();
-        if (body == null) {
-            return Collections.emptyList();
-        }
-        return body.getAllCompanionObjects();
+    public fun getCompanionObjects(): List<JetObjectDeclaration> {
+        val body = getBody() ?: return emptyList<JetObjectDeclaration>()
+        return body.getAllCompanionObjects()
     }
 
-    public boolean hasPrimaryConstructor() {
-        return hasExplicitPrimaryConstructor() || !hasSecondaryConstructors();
+    public fun hasPrimaryConstructor(): Boolean {
+        return hasExplicitPrimaryConstructor() || !hasSecondaryConstructors()
     }
 
-    private boolean hasSecondaryConstructors() {
-        return !getSecondaryConstructors().isEmpty();
+    private fun hasSecondaryConstructors(): Boolean {
+        return !getSecondaryConstructors().isEmpty()
     }
 
-    @NotNull
-    public List<JetSecondaryConstructor> getSecondaryConstructors() {
-        JetClassBody body = getBody();
-        return body != null ? body.getSecondaryConstructors() : Collections.<JetSecondaryConstructor>emptyList();
+    public fun getSecondaryConstructors(): List<JetSecondaryConstructor> {
+        val body = getBody()
+        return if (body != null) body.getSecondaryConstructors() else emptyList<JetSecondaryConstructor>()
     }
 
-    @Nullable
-    public PsiElement getClassOrInterfaceKeyword() {
-        return findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.INTERFACE_KEYWORD));
+    public fun getClassOrInterfaceKeyword(): PsiElement? {
+        return findChildByType(TokenSet.create(JetTokens.CLASS_KEYWORD, JetTokens.INTERFACE_KEYWORD))
     }
 }

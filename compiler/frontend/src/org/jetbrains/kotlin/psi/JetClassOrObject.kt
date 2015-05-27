@@ -14,40 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.psi.PsiNameIdentifierOwner;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.Name;
+import com.intellij.psi.PsiNameIdentifierOwner
+import org.jetbrains.kotlin.name.Name
 
-import java.util.List;
+public interface JetClassOrObject : PsiNameIdentifierOwner, JetDeclarationContainer, JetElement, JetModifierListOwner, JetNamedDeclaration {
+    public fun getDelegationSpecifierList(): JetDelegationSpecifierList?
 
-public interface JetClassOrObject extends PsiNameIdentifierOwner, JetDeclarationContainer, JetElement, JetModifierListOwner, JetNamedDeclaration {
-    @Nullable
-    JetDelegationSpecifierList getDelegationSpecifierList();
+    public fun getDelegationSpecifiers(): List<JetDelegationSpecifier>
 
-    @NotNull
-    List<JetDelegationSpecifier> getDelegationSpecifiers();
+    public fun getAnonymousInitializers(): List<JetClassInitializer>
 
-    @NotNull
-    List<JetClassInitializer> getAnonymousInitializers();
+    override fun getNameAsName(): Name?
 
-    @Override
-    @Nullable
-    Name getNameAsName();
+    override fun getModifierList(): JetModifierList?
 
-    @Override
-    @Nullable
-    JetModifierList getModifierList();
+    public fun getNameAsDeclaration(): JetObjectDeclarationName?
 
-    @Nullable
-    JetObjectDeclarationName getNameAsDeclaration();
+    public fun getBody(): JetClassBody?
 
-    @Nullable
-    JetClassBody getBody();
+    public fun isTopLevel(): Boolean
 
-    boolean isTopLevel();
-
-    boolean isLocal();
+    public fun isLocal(): Boolean
 }
