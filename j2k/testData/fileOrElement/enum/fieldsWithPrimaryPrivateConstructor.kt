@@ -1,4 +1,4 @@
-enum class Color private (public val code: Int) {
+enum class Color private constructor(public val code: Int) {
     WHITE : Color(21)
     BLACK : Color(22)
     RED : Color(23)

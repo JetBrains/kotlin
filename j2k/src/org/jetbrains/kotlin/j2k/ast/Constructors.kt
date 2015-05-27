@@ -58,12 +58,20 @@ class PrimaryConstructorSignature(val annotations: Annotations, private val modi
     }
 
     override fun generateCode(builder: CodeBuilder) {
+        var needConstructorKeyword = false
+
         if (!annotations.isEmpty) {
-            builder append " " append annotations.withBrackets()
+            builder append " " append annotations.withAt()
+            needConstructorKeyword = true
         }
 
         if (accessModifier != null) {
             builder append " " append Modifiers(listOf(accessModifier)).assignPrototypesFrom(modifiers)
+            needConstructorKeyword = true
+        }
+
+        if (needConstructorKeyword) {
+            builder append " constructor"
         }
 
         builder append "(" append parameterList append ")"

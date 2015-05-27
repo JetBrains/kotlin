@@ -18,33 +18,26 @@ package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.*
 
-class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, DeferredElement<Expression>>>, val brackets: Boolean, val newLineAfter: Boolean) : Element() {
-    private fun CodeBuilder.surroundWithBrackets(action: () -> Unit) {
-        if (brackets) append("[")
-        action()
-        if (brackets) append("]")
-    }
-
+class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, DeferredElement<Expression>>>, val withAt: Boolean, val newLineAfter: Boolean) : Element() {
     override fun generateCode(builder: CodeBuilder) {
+        if (withAt) builder.append("@")
         if (arguments.isEmpty()) {
-            builder.surroundWithBrackets { builder.append(name) }
+            builder.append(name)
         }
         else {
-            builder.surroundWithBrackets {
-                builder.append(name)
-                        .append("(")
-                        .append(arguments.map {
-                            {
-                                if (it.first != null) {
-                                    builder append it.first!! append " = " append it.second
-                                }
-                                else {
-                                    builder append it.second
-                                }
+            builder.append(name)
+                    .append("(")
+                    .append(arguments.map {
+                        {
+                            if (it.first != null) {
+                                builder append it.first!! append " = " append it.second
                             }
-                        }, ", ")
-                        .append(")")
-            }
+                            else {
+                                builder append it.second
+                            }
+                        }
+                    }, ", ")
+                    .append(")")
         }
     }
 
@@ -69,5 +62,5 @@ class Annotations(val annotations: List<Annotation>) : Element() {
     }
 }
 
-fun Annotations.withBrackets(): Annotations
+fun Annotations.withAt(): Annotations
         = Annotations(annotations.map { Annotation(it.name, it.arguments, true, it.newLineAfter).assignPrototypesFrom(it) }).assignPrototypesFrom(this)

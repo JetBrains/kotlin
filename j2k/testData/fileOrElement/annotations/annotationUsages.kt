@@ -21,7 +21,7 @@ class C {
 
     Anon6
     fun foo(deprecated("") p1: Int, deprecated("") Anon5(2) p2: Char) {
-        [deprecated("")] [Anon5(3)] val c = 'a'
+        @deprecated("") @Anon5(3) val c = 'a'
     }
 
     Anon5(1) fun bar() {

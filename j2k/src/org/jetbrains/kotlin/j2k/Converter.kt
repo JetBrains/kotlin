@@ -424,7 +424,7 @@ class Converter private(
             function.annotations += Annotations(
                     listOf(Annotation(Identifier("jvmOverloads").assignNoPrototype(),
                                       listOf(),
-                                      brackets = function is PrimaryConstructor,
+                                      withAt = function is PrimaryConstructor,
                                       newLineAfter = false).assignNoPrototype())).assignNoPrototype()
         }
 
