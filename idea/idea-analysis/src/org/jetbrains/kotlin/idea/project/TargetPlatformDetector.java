@@ -53,7 +53,7 @@ public class TargetPlatformDetector {
     }
 
     @NotNull
-    private static TargetPlatform getDefaultPlatform() {
+    public static TargetPlatform getDefaultPlatform() {
         LOG.info("Using default platform");
         return TargetPlatform.JVM;
     }

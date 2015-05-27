@@ -202,7 +202,12 @@ public class KotlinCacheService(val project: Project) {
             getCacheForSyntheticFiles(syntheticFiles)
         }
         else {
-            getGlobalCache(TargetPlatformDetector.getPlatform(files.first()))
+            val firstFile = files.firstOrNull()
+            val targetPlatform = if (firstFile != null)
+                TargetPlatformDetector.getPlatform(firstFile)
+            else
+                TargetPlatformDetector.getDefaultPlatform()
+            getGlobalCache(targetPlatform)
         }
     }
 
