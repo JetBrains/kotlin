@@ -4,8 +4,6 @@ class F {
     //c3
 
 
-
-
     //c4
 
     fun f2() {
