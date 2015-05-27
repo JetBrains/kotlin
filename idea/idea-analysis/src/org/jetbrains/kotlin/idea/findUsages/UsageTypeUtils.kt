@@ -48,7 +48,7 @@ public object UsageTypeUtils {
             is JetPropertyDelegate -> return PROPERTY_DELEGATION
         }
 
-        val refExpr = element.getNonStrictParentOfType<JetReferenceExpression>()
+        val refExpr = element?.getNonStrictParentOfType<JetReferenceExpression>()
         if (refExpr == null) return null
 
         val context = refExpr.analyze()
