@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.*
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
@@ -90,7 +93,8 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.UNNECESSARY_SAFE_CALL,
             Errors.USELESS_CAST,
             Errors.USELESS_ELVIS,
-            ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
+            ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION,
+            Errors.DEPRECATED_SYMBOL_WITH_MESSAGE
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {
@@ -98,10 +102,18 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         return ReplaceObsoleteLabelSyntaxFix.looksLikeObsoleteLabel(annotationEntry)
     }
 
+    private class Wrapper(val intention: IntentionAction, file: JetFile) : IntentionWrapper(intention, file) {
+        override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+            if (intention.isAvailable(project, editor, file)) { // we should check isAvailable here because some elements may get invalidated (or other conditions may change)
+                super.invoke(project, editor, file)
+            }
+        }
+    }
+
     private fun Diagnostic.toProblemDescriptor(file: JetFile, manager: InspectionManager): ProblemDescriptor? {
         val quickFixes = JetPsiChecker.createQuickfixes(this)
                 .filter { it is CleanupFix }
-                .map { IntentionWrapper(it, file) }
+                .map { Wrapper(it, file) }
 
         if (quickFixes.isEmpty()) return null
 

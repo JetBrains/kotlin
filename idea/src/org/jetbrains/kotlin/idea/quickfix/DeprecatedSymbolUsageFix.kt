@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 public class DeprecatedSymbolUsageFix(
         element: JetSimpleNameExpression/*TODO?*/,
         replaceWith: ReplaceWith
-) : DeprecatedSymbolUsageFixBase(element, replaceWith), HighPriorityAction {
+) : DeprecatedSymbolUsageFixBase(element, replaceWith), CleanupFix, HighPriorityAction {
 
     override fun getFamilyName() = "Replace deprecated symbol usage"
 

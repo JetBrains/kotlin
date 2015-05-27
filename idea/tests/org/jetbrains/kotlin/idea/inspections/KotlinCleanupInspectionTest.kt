@@ -46,7 +46,7 @@ class KotlinCleanupInspectionTest(): JetLightCodeInsightFixtureTestCase() {
     }
 
     public fun testCleanup() {
-        doTest("cleanup.kt.after", "cleanup.kt", "JavaAnn.java")
+        doTest("cleanup.kt.after", "cleanup.kt", "JavaAnn.java", "deprecatedSymbols.kt")
     }
 
     public fun testDeprecatedFunctionClasses() {
