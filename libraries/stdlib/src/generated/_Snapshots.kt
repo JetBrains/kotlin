@@ -550,7 +550,8 @@ public fun String.toList(): List<Char> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
     val capacity = (size()/.75f) + 1
@@ -562,7 +563,8 @@ public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boolean> {
     val capacity = (size()/.75f) + 1
@@ -574,7 +576,8 @@ public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boole
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
     val capacity = (size()/.75f) + 1
@@ -586,7 +589,8 @@ public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
     val capacity = (size()/.75f) + 1
@@ -598,7 +602,8 @@ public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double> {
     val capacity = (size()/.75f) + 1
@@ -610,7 +615,8 @@ public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double>
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
     val capacity = (size()/.75f) + 1
@@ -622,7 +628,8 @@ public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
     val capacity = (size()/.75f) + 1
@@ -634,7 +641,8 @@ public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
     val capacity = (size()/.75f) + 1
@@ -646,7 +654,8 @@ public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
     val capacity = (size()/.75f) + 1
@@ -658,7 +667,8 @@ public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
     val capacity = (collectionSizeOrDefault(10)/.75f) + 1
@@ -670,7 +680,8 @@ public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K> Sequence<T>.toMap(selector: (T) -> K): Map<K, T> {
     val result = LinkedHashMap<K, T>()
@@ -683,7 +694,8 @@ public inline fun <T, K> Sequence<T>.toMap(selector: (T) -> K): Map<K, T> {
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K> Stream<T>.toMap(selector: (T) -> K): Map<K, T> {
     val result = LinkedHashMap<K, T>()
@@ -694,7 +706,8 @@ public inline fun <T, K> Stream<T>.toMap(selector: (T) -> K): Map<K, T> {
 }
 
 /**
- * Returns Map containing all the values from the given collection indexed by [selector].
+ * Returns Map containing the values from the given collection indexed by [selector].
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
     val capacity = (length()/.75f) + 1
@@ -706,7 +719,8 @@ public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -718,7 +732,8 @@ public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -730,7 +745,8 @@ public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform:
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -742,7 +758,8 @@ public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -754,7 +771,8 @@ public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -766,7 +784,8 @@ public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -778,7 +797,8 @@ public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Fl
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -790,7 +810,8 @@ public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -802,7 +823,8 @@ public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
     val capacity = (size()/.75f) + 1
@@ -814,7 +836,8 @@ public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Sh
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     val capacity = (collectionSizeOrDefault(10)/.75f) + 1
@@ -826,7 +849,8 @@ public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T)
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -839,7 +863,8 @@ public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T)
 
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Stream<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
     val result = LinkedHashMap<K, V>()
@@ -850,7 +875,8 @@ public inline fun <T, K, V> Stream<T>.toMap(selector: (T) -> K, transform: (T) -
 }
 
 /**
- * Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+ * Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
     val capacity = (length()/.75f) + 1

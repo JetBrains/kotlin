@@ -98,7 +98,8 @@ fun snapshots(): List<GenericFunction> {
         typeParam("K")
         doc {
             """
-            Returns Map containing all the values from the given collection indexed by [selector].
+            Returns Map containing the values from the given collection indexed by [selector].
+            If any two elements would have the same key returned by [selector] the last one gets added to the map.
             """
         }
         returns("Map<K, T>")
@@ -155,7 +156,8 @@ fun snapshots(): List<GenericFunction> {
         typeParam("V")
         doc {
             """
-            Returns Map containing all the values provided by [transform] and indexed by [selector] from the given collection.
+            Returns Map containing the values provided by [transform] and indexed by [selector] from the given collection.
+            If any two elements would have the same key returned by [selector] the last one gets added to the map.
             """
         }
         returns("Map<K, V>")
