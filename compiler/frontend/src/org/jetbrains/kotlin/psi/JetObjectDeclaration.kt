@@ -48,12 +48,8 @@ public class JetObjectDeclaration : JetClassOrObject {
         return nameAsDeclaration?.getName()
     }
 
-    override fun getNameIdentifier(): PsiElement? {
-        val nameAsDeclaration = getNameAsDeclaration()
-        return nameAsDeclaration?.getNameIdentifier()
-    }
+    override fun getNameIdentifier(): PsiElement? = getNameAsDeclaration()?.getNameIdentifier()
 
-    throws(IncorrectOperationException::class)
     override fun setName(NonNls name: String): PsiElement {
         val declarationName = getNameAsDeclaration()
         if (declarationName == null) {
@@ -68,37 +64,16 @@ public class JetObjectDeclaration : JetClassOrObject {
         }
     }
 
-    public fun isCompanion(): Boolean {
-        val stub = getStub()
-        if (stub != null) {
-            return stub.isCompanion()
-        }
-        return hasModifier(JetTokens.COMPANION_KEYWORD)
-    }
+    public fun isCompanion(): Boolean = getStub()?.isCompanion() ?: hasModifier(JetTokens.COMPANION_KEYWORD)
 
-    override fun getTextOffset(): Int {
-        val nameIdentifier = getNameIdentifier()
-        if (nameIdentifier != null) {
-            return nameIdentifier.getTextRange().getStartOffset()
-        }
-        else {
-            return getObjectKeyword().getTextRange().getStartOffset()
-        }
-    }
+    override fun getTextOffset(): Int = getNameIdentifier()?.getTextRange()?.getStartOffset()
+                                        ?: getObjectKeyword().getTextRange().getStartOffset()
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
         return visitor.visitObjectDeclaration(this, data)
     }
 
-    public fun isObjectLiteral(): Boolean {
-        val stub = getStub()
-        if (stub != null) {
-            return stub.isObjectLiteral()
-        }
-        return getParent() is JetObjectLiteralExpression
-    }
+    public fun isObjectLiteral(): Boolean = getStub()?.isObjectLiteral() ?: (getParent() is JetObjectLiteralExpression)
 
-    public fun getObjectKeyword(): PsiElement {
-        return findChildByType(JetTokens.OBJECT_KEYWORD)
-    }
+    public fun getObjectKeyword(): PsiElement = findChildByType(JetTokens.OBJECT_KEYWORD)
 }
