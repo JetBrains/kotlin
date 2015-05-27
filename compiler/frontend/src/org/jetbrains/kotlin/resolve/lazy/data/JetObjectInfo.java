@@ -44,12 +44,6 @@ public class JetObjectInfo extends JetClassOrObjectInfo<JetObjectDeclaration> {
 
     @NotNull
     @Override
-    public List<? extends JetParameter> getPrimaryConstructorParameters() {
-        return Collections.emptyList();
-    }
-
-    @NotNull
-    @Override
     public ClassKind getClassKind() {
         return kind;
     }

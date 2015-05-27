@@ -47,4 +47,17 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
     override fun getDeclarations() = getBody()?.getDeclarations().orEmpty()
 
     override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)
+
+    public fun getPrimaryConstructor(): JetPrimaryConstructor? = getStubOrPsiChild(JetStubElementTypes.PRIMARY_CONSTRUCTOR)
+
+    public fun getPrimaryConstructorModifierList(): JetModifierList? = getPrimaryConstructor()?.getModifierList()
+    public fun getPrimaryConstructorParameterList(): JetParameterList? = getPrimaryConstructor()?.getValueParameterList()
+    public fun getPrimaryConstructorParameters(): List<JetParameter> = getPrimaryConstructorParameterList()?.getParameters().orEmpty()
+
+    public fun hasExplicitPrimaryConstructor(): Boolean = getPrimaryConstructor() != null
+
+    public fun hasPrimaryConstructor(): Boolean = hasExplicitPrimaryConstructor() || !hasSecondaryConstructors()
+    private fun hasSecondaryConstructors(): Boolean = !getSecondaryConstructors().isEmpty()
+
+    public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 }
