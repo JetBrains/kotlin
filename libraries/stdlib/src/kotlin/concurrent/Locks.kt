@@ -33,8 +33,8 @@ public inline fun <T> ReentrantReadWriteLock.read(action: () -> T): T {
 
 /**
  * Executes the given [action] under the write lock of this lock.
- * The method does upgrade from read to write lock if needed
- * If such write has been initiated by checking some condition, the condition must be rechecked inside the action to avoid possible races
+ * The method does upgrade from read to write lock if needed.
+ * If such write has been initiated by checking some condition, the condition must be rechecked inside the action to avoid possible races.
  * @return the return value of the action.
  */
 public inline fun <T> ReentrantReadWriteLock.write(action: () -> T): T {

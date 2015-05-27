@@ -15,7 +15,7 @@ private fun constructMessage(file: File, other: File?, reason: String?): String 
 }
 
 /**
- * A base exception class for file system exceptions
+ * A base exception class for file system exceptions.
  */
 open public class FileSystemException(public val file: File,
                                       public val other: File? = null,
@@ -23,21 +23,21 @@ open public class FileSystemException(public val file: File,
 ) : IOException(constructMessage(file, other, reason))
 
 /**
- * An exception class which is used when some file to create or copy to already exists
+ * An exception class which is used when some file to create or copy to already exists.
  */
 public class FileAlreadyExistsException(file: File,
                                         other: File? = null,
                                         reason: String? = null) : FileSystemException(file, other, reason)
 
 /**
- * An exception class which is used when we have not enough access for some operation
+ * An exception class which is used when we have not enough access for some operation.
  */
 public class AccessDeniedException(file: File,
                                    other: File? = null,
                                    reason: String? = null) : FileSystemException(file, other, reason)
 
 /**
- * An exception class which is used when file to copy does not exist
+ * An exception class which is used when file to copy does not exist.
  */
 public class NoSuchFileException(file: File,
                                  other: File? = null,

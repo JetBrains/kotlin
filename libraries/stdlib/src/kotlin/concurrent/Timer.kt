@@ -70,7 +70,7 @@ public fun Timer.scheduleAtFixedRate(time: Date, period: Long, action: TimerTask
  * and the start of the next one.
  *
  * @param name the name to use for the thread which is running the timer.
- * @param daemon if true, the thread is started as a daemon thread (the VM will exit when only daemon threads are running)
+ * @param daemon if `true`, the thread is started as a daemon thread (the VM will exit when only daemon threads are running).
  */
 public fun timer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, action: TimerTask.() -> Unit): Timer {
     val timer = if (name == null) Timer(daemon) else Timer(name, daemon)
@@ -83,7 +83,7 @@ public fun timer(name: String? = null, daemon: Boolean = false, initialDelay: Lo
  * and with the interval of [period] milliseconds between the end of the previous task and the start of the next one.
  *
  * @param name the name to use for the thread which is running the timer.
- * @param daemon if true, the thread is started as a daemon thread (the VM will exit when only daemon threads are running)
+ * @param daemon if `true`, the thread is started as a daemon thread (the VM will exit when only daemon threads are running).
  */
 public fun timer(name: String? = null, daemon: Boolean = false, startAt: Date, period: Long, action: TimerTask.() -> Unit): Timer {
     val timer = if (name == null) Timer(daemon) else Timer(name, daemon)
@@ -97,7 +97,7 @@ public fun timer(name: String? = null, daemon: Boolean = false, startAt: Date, p
  * and the start of the next one.
  *
  * @param name the name to use for the thread which is running the timer.
- * @param daemon if true, the thread is started as a daemon thread (the VM will exit when only daemon threads are running)
+ * @param daemon if `true`, the thread is started as a daemon thread (the VM will exit when only daemon threads are running).
  */
 public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, initialDelay: Long = 0.toLong(), period: Long, action: TimerTask.() -> Unit): Timer {
     val timer = if (name == null) Timer(daemon) else Timer(name, daemon)
@@ -110,7 +110,7 @@ public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, initial
  * and with the interval of [period] milliseconds between the start of the previous task and the start of the next one.
  *
  * @param name the name to use for the thread which is running the timer.
- * @param daemon if true, the thread is started as a daemon thread (the VM will exit when only daemon threads are running)
+ * @param daemon if `true`, the thread is started as a daemon thread (the VM will exit when only daemon threads are running).
  */
 public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, startAt: Date, period: Long, action: TimerTask.() -> Unit): Timer {
     val timer = if (name == null) Timer(daemon) else Timer(name, daemon)
@@ -119,7 +119,7 @@ public fun fixedRateTimer(name: String? = null, daemon: Boolean = false, startAt
 }
 
 /**
- * Wraps the specified [action] in a `TimerTask`.
+ * Wraps the specified [action] in a [TimerTask].
  */
 public fun timerTask(action: TimerTask.() -> Unit): TimerTask = object : TimerTask() {
     public override fun run() {

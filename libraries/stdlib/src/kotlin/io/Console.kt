@@ -5,17 +5,17 @@ import java.io.InputStreamReader
 import java.io.BufferedReader
 
 /**
- * Returns the default buffer size when working with buffered streams
+ * Returns the default buffer size when working with buffered streams.
  */
 public val defaultBufferSize: Int = 64 * 1024
 
 /**
- * Returns the default block size for forEachBlock()
+ * Returns the default block size for forEachBlock().
  */
 public val defaultBlockSize: Int = 4096
 
 /**
- * Returns the minimum block size for forEachBlock()
+ * Returns the minimum block size for forEachBlock().
  */
 public val minimumBlockSize: Int = 512
 
@@ -168,6 +168,6 @@ private val stdin: BufferedReader = BufferedReader(InputStreamReader(object : In
 /**
  * Reads a line of input from the standard input stream.
  *
- * @return the line read or null if the input stream is redirected to a file and the end of file has been reached.
+ * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
  */
 public fun readLine(): String? = stdin.readLine()

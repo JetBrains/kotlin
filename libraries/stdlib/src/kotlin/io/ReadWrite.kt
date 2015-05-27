@@ -14,7 +14,7 @@ public fun File.reader(): FileReader = FileReader(this)
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
  *
- * @param bufferSize necessary size of the buffer
+ * @param bufferSize necessary size of the buffer.
  */
 public fun File.bufferedReader(bufferSize: Int = defaultBufferSize): BufferedReader = reader().buffered(bufferSize)
 
@@ -26,7 +26,7 @@ public fun File.writer(): FileWriter = FileWriter(this)
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
  *
- * @param bufferSize necessary size of the buffer
+ * @param bufferSize necessary size of the buffer.
  */
 public fun File.bufferedWriter(bufferSize: Int = defaultBufferSize): BufferedWriter = writer().buffered(bufferSize)
 
@@ -38,9 +38,9 @@ public fun File.printWriter(): PrintWriter = PrintWriter(bufferedWriter())
 /**
  * Gets the entire content of this file as a byte array.
  *
- * This method is not recommended on huge files. It has an internal limitation of 2 GB byte array size
+ * This method is not recommended on huge files. It has an internal limitation of 2 GB byte array size.
  *
- * @return the entire content of this file as a byte array
+ * @return the entire content of this file as a byte array.
  */
 public fun File.readBytes(): ByteArray = FileInputStream(this).use { it.readBytes(length().toInt()) }
 
@@ -48,34 +48,34 @@ public fun File.readBytes(): ByteArray = FileInputStream(this).use { it.readByte
  * Sets the content of this file as an [array] of bytes.
  * If this file already exists, it becomes overwritten.
  *
- * @param array byte array to write into this file
+ * @param array byte array to write into this file.
  */
 public fun File.writeBytes(array: ByteArray): Unit = FileOutputStream(this).use { it.write(array) }
 
 /**
  * Appends an [array] of bytes to the content of this file.
  *
- * @param array byte array to append to this file
+ * @param array byte array to append to this file.
  */
 public fun File.appendBytes(array: ByteArray): Unit = FileOutputStream(this, true).use { it.write(array) }
 
 /**
  * Gets the entire content of this file as a String using specified [charset].
  *
- * This method is not recommended on huge files. It has an internal limitation of 2 GB file size
+ * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
  *
- * @param charset character set to use
- * @return the entire content of this file as a String
+ * @param charset character set to use.
+ * @return the entire content of this file as a String.
  */
 public fun File.readText(charset: String): String = readBytes().toString(charset)
 
 /**
  * Gets the entire content of this file as a String using UTF-8 or specified [charset].
  *
- * This method is not recommended on huge files. It has an internal limitation of 2 GB file size
+ * This method is not recommended on huge files. It has an internal limitation of 2 GB file size.
  *
- * @param charset character set to use
- * @return the entire content of this file as a String
+ * @param charset character set to use.
+ * @return the entire content of this file as a String.
  */
 public fun File.readText(charset: Charset = Charsets.UTF_8): String = readBytes().toString(charset)
 
@@ -83,8 +83,8 @@ public fun File.readText(charset: Charset = Charsets.UTF_8): String = readBytes(
  * Sets the content of this file as [text] encoded using the specified [charset].
  * If this file exists, it becomes overwritten.
  *
- * @param text text to write into file
- * @param charset character set to use
+ * @param text text to write into file.
+ * @param charset character set to use.
  */
 public fun File.writeText(text: String, charset: String): Unit = writeBytes(text.toByteArray(charset))
 
@@ -92,24 +92,24 @@ public fun File.writeText(text: String, charset: String): Unit = writeBytes(text
  * Sets the content of this file as [text] encoded using UTF-8 or specified [charset].
  * If this file exists, it becomes overwritten.
  *
- * @param text text to write into file
- * @param charset character set to use
+ * @param text text to write into file.
+ * @param charset character set to use.
  */
 public fun File.writeText(text: String, charset: Charset = Charsets.UTF_8): Unit = writeBytes(text.toByteArray(charset))
 
 /**
  * Appends [text] to the content of this file using UTF-8 or the specified [charset].
  *
- * @param text text to append to file
- * @param charset character set to use
+ * @param text text to append to file.
+ * @param charset character set to use.
  */
 public fun File.appendText(text: String, charset: Charset = Charsets.UTF_8): Unit = appendBytes(text.toByteArray(charset))
 
 /**
  * Appends [text] to the content of the file using the specified [charset].
  *
- * @param text text to append to file
- * @param charset character set to use
+ * @param text text to append to file.
+ * @param charset character set to use.
  */
 public fun File.appendText(text: String, charset: String): Unit = appendBytes(text.toByteArray(charset))
 
@@ -120,7 +120,7 @@ public fun File.appendText(text: String, charset: String): Unit = appendBytes(te
  *
  * You can use this function for huge files.
  *
- * @param operation function to process file blocks
+ * @param operation function to process file blocks.
  */
 public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit): Unit = forEachBlock(operation, defaultBlockSize)
 
@@ -130,8 +130,8 @@ public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit): Unit = forEac
  *
  * You can use this function for huge files.
  *
- * @param operation function to process file blocks
- * @param blockSize size of a block, replaced by 512 if it's less, 4096 by default
+ * @param operation function to process file blocks.
+ * @param blockSize size of a block, replaced by 512 if it's less, 4096 by default.
  */
 public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit, blockSize: Int): Unit {
     val arr = ByteArray(if (blockSize < minimumBlockSize) minimumBlockSize else blockSize)
@@ -157,8 +157,8 @@ public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit, blockSize: Int
  *
  * You may use this function on huge files.
  *
- * @param charset character set to use
- * @param operation function to process file lines
+ * @param charset character set to use.
+ * @param operation function to process file lines.
  */
 public fun File.forEachLine(charset: Charset = Charsets.UTF_8, operation: (line: String) -> Unit): Unit {
     // Note: close is called at forEachLine
@@ -170,8 +170,8 @@ public fun File.forEachLine(charset: Charset = Charsets.UTF_8, operation: (line:
  *
  * You may use this function on huge files.
  *
- * @param charset character set to use
- * @param operation function to process file lines
+ * @param charset character set to use.
+ * @param operation function to process file lines.
  */
 public fun File.forEachLine(charset: String, operation: (line: String) -> Unit): Unit = forEachLine(Charset.forName(charset), operation)
 
@@ -180,8 +180,8 @@ public fun File.forEachLine(charset: String, operation: (line: String) -> Unit):
  *
  * Do not use this function for huge files.
  *
- * @param charset character set to use
- * @return list of file lines
+ * @param charset character set to use.
+ * @return list of file lines.
  */
 public fun File.readLines(charset: String): List<String> = readLines(Charset.forName(charset))
 
@@ -204,8 +204,8 @@ public fun File.outputStream(): OutputStream {
  *
  * Do not use this function for huge files.
  *
- * @param charset character set to use
- * @return list of file lines
+ * @param charset character set to use.
+ * @return list of file lines.
  */
 public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
     val result = ArrayList<String>()
@@ -223,9 +223,9 @@ public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
 
 /**
  * Iterates through each line of this reader, calls [block] for each line read
- * and closes the [Reader] when it's completed
+ * and closes the [Reader] when it's completed.
  *
- * @param block function to process file lines
+ * @param block function to process file lines.
  */
 public fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { it.forEach(block) }
 
@@ -238,7 +238,7 @@ public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
         buffered().use { block(it.lines()) }
 
 /**
- * Returns a sequence of corresponding file lines
+ * Returns a sequence of corresponding file lines.
  *
  * *Note*: the caller must close the underlying `BufferedReader`
  * when the iteration is finished; as the user may not complete the iteration loop (e.g. using a method like find() or any() on the iterator
@@ -280,11 +280,11 @@ private class LinesSequence(private val reader: BufferedReader) : Sequence<Strin
 }
 
 /**
- * Reads this reader completely as a String
+ * Reads this reader completely as a String.
  *
  * *Note*:  It is the caller's responsibility to close this reader.
  *
- * @return the string with corresponding file content
+ * @return the string with corresponding file content.
  */
 public fun Reader.readText(): String {
     val buffer = StringWriter()
@@ -295,11 +295,11 @@ public fun Reader.readText(): String {
 /**
  * Copies this reader to the given [out] writer, returning the number of bytes copied.
  *
- * **Note** it is the caller's responsibility to close both of these resources
+ * **Note** it is the caller's responsibility to close both of these resources.
  *
- * @param out writer to write to
- * @param bufferSize size of character buffer to use in process
- * @return number of bytes copies
+ * @param out writer to write to.
+ * @param bufferSize size of character buffer to use in process.
+ * @return number of bytes copies.
  */
 public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long {
     var charsCopied: Long = 0
@@ -318,8 +318,8 @@ public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long
  *
  * This method is not recommended on huge files.
  *
- * @param charset a character set to use
- * @return a string with this URL entire content
+ * @param charset a character set to use.
+ * @return a string with this URL entire content.
  */
 public fun URL.readText(charset: String): String = readBytes().toString(charset)
 
@@ -328,26 +328,26 @@ public fun URL.readText(charset: String): String = readBytes().toString(charset)
  *
  * This method is not recommended on huge files.
  *
- * @param charset a character set to use
- * @return a string with this URL entire content
+ * @param charset a character set to use.
+ * @return a string with this URL entire content.
  */
 public fun URL.readText(charset: Charset = Charsets.UTF_8): String = readBytes().toString(charset)
 
 /**
- * Reads the entire content of the URL as byte array
+ * Reads the entire content of the URL as byte array.
  *
  * This method is not recommended on huge files.
  *
- * @return a byte array with this URL entire content
+ * @return a byte array with this URL entire content.
  */
 public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
 
 /**
  * Executes the given [block] function on this resource and then closes it down correctly whether an exception
- * is thrown or not
+ * is thrown or not.
  *
- * @param block a function to process this closable resource
- * @return the result of [block] function on this closable resource
+ * @param block a function to process this closable resource.
+ * @return the result of [block] function on this closable resource.
  */
 public inline fun <T : Closeable, R> T.use(block: (T) -> R): R {
     var closed = false

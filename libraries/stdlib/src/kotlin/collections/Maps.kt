@@ -79,11 +79,11 @@ private fun mapCapacity(expectedSize: Int): Int {
     return Int.MAX_VALUE // any large value
 }
 
-/** Returns true if this map is not empty. */
+/** Returns `true` if this map is not empty. */
 public fun <K, V> Map<K, V>.isNotEmpty(): Boolean = !isEmpty()
 
 /**
- * Returns the [Map] if its not null, or the empty [Map] otherwise.
+ * Returns the [Map] if its not `null`, or the empty [Map] otherwise.
  */
 public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V> = this ?: emptyMap()
 
@@ -347,7 +347,7 @@ public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
 public fun <K, V> Map<K, V>.toLinkedMap(): MutableMap<K, V> = LinkedHashMap(this)
 
 /**
- * Creates a new read-only map by replacing or adding an entry to this map from a given key-value [pair]
+ * Creates a new read-only map by replacing or adding an entry to this map from a given key-value [pair].
  */
 public fun <K, V> Map<K, V>.plus(pair: Pair<K, V>): Map<K, V> {
     val newMap = this.toLinkedMap()
@@ -356,7 +356,7 @@ public fun <K, V> Map<K, V>.plus(pair: Pair<K, V>): Map<K, V> {
 }
 
 /**
- * Creates a new read-only map by replacing or adding entries to this map from a given collection of key-value [pairs]
+ * Creates a new read-only map by replacing or adding entries to this map from a given collection of key-value [pairs].
  */
 public fun <K, V> Map<K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V> {
     val newMap = this.toLinkedMap()
@@ -365,7 +365,7 @@ public fun <K, V> Map<K, V>.plus(pairs: Iterable<Pair<K, V>>): Map<K, V> {
 }
 
 /**
- * Creates a new read-only map by replacing or adding entries to this map from another [map]
+ * Creates a new read-only map by replacing or adding entries to this map from another [map].
  */
 public fun <K, V> Map<K, V>.plus(map: Map<K, V>): Map<K, V> {
     val newMap = this.toLinkedMap()
@@ -374,14 +374,14 @@ public fun <K, V> Map<K, V>.plus(map: Map<K, V>): Map<K, V> {
 }
 
 /**
- * Creates a new read-only map by removing a key from this map
+ * Creates a new read-only map by removing a [key] from this map.
  */
 public fun <K, V> Map<K, V>.minus(key: K): Map<K, V> {
     return this.filterKeys { key != it }
 }
 
 /**
- * Creates a new read-only map by removing a collection of keys from this map
+ * Creates a new read-only map by removing a collection of [keys] from this map.
  */
 public fun <K, V> Map<K, V>.minus(keys: Iterable<K>): Map<K, V> {
     val result = LinkedHashMap<K, V>()

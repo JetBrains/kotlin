@@ -13,8 +13,8 @@ import java.util.ArrayList
  *
  * @return a file object corresponding to a newly-created directory.
 *
- * @throws IOException in case of input/output error
- * @throws IllegalArgumentException if [prefix] is shorter than three symbols
+ * @throws IOException in case of input/output error.
+ * @throws IllegalArgumentException if [prefix] is shorter than three symbols.
  */
 public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directory: File? = null): File {
     val dir = File.createTempFile(prefix, suffix, directory)
@@ -35,21 +35,21 @@ public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directo
  *
  * @return a file object corresponding to a newly-created file.
 *
- * @throws IOException in case of input/output error
- * @throws IllegalArgumentException if [prefix] is shorter than three symbols
+ * @throws IOException in case of input/output error.
+ * @throws IllegalArgumentException if [prefix] is shorter than three symbols.
  */
 public fun createTempFile(prefix: String = "tmp", suffix: String? = null, directory: File? = null): File {
     return File.createTempFile(prefix, suffix, directory)
 }
 
 /**
- * Returns this if this file is a directory, or the parent if it is a file inside a directory
+ * Returns this if this file is a directory, or the parent if it is a file inside a directory.
  */
 public val File.directory: File
     get() = if (isDirectory()) this else parent!!
 
 /**
- * Returns parent of this abstract path name, or null if it has no parent
+ * Returns parent of this abstract path name, or `null` if it has no parent.
  */
 public val File.parent: File?
     get() = getParentFile()
@@ -61,13 +61,13 @@ public val File.canonicalPath: String
     get() = getCanonicalPath()
 
 /**
- * Returns the file name
+ * Returns the file name.
  */
 public val File.name: String
     get() = getName()
 
 /**
- * Returns the file path
+ * Returns the file path.
  */
 public val File.path: String
     get() = getPath()
@@ -81,7 +81,7 @@ public val File.extension: String
 /**
  * Replaces all separators in the string used to separate directories with system ones and returns the resulting string.
  *
- * @return the pathname with system separators
+ * @return the pathname with system separators.
  */
 public fun String.separatorsToSystem(): String {
     val otherSep = if (File.separator == "/") "\\" else "/"
@@ -91,7 +91,7 @@ public fun String.separatorsToSystem(): String {
 /**
  * Replaces all path separators in the string with system ones and returns the resulting string.
  *
- * @return the pathname with system separators
+ * @return the pathname with system separators.
  */
 public fun String.pathSeparatorsToSystem(): String {
     val otherSep = if (File.pathSeparator == ":") ";" else ":"
@@ -101,22 +101,22 @@ public fun String.pathSeparatorsToSystem(): String {
 /**
  * Replaces path and directories separators with corresponding system ones and returns the resulting string.
  *
- * @return the pathname with system separators
+ * @return the pathname with system separators.
  */
 public fun String.allSeparatorsToSystem(): String {
     return separatorsToSystem().pathSeparatorsToSystem()
 }
 
-/** Creates a new reader for the string */
+/** Creates a new reader for the string. */
 public fun String.reader(): StringReader = StringReader(this)
 
-/** Creates a new byte input stream for the string */
+/** Creates a new byte input stream for the string. */
 public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): InputStream = ByteArrayInputStream(toByteArray(charset))
 
 /**
- * Returns a pathname of this file with all path separators replaced with File.pathSeparator
+ * Returns a pathname of this file with all path separators replaced with File.pathSeparator.
  *
- * @return the pathname with system separators
+ * @return the pathname with system separators.
  */
 public fun File.separatorsToSystem(): String {
     return toString().separatorsToSystem()
@@ -133,7 +133,7 @@ public val File.nameWithoutExtension: String
  * Note that the [base] file is treated as a directory.
  * If this file matches the [base] file, then an empty string will be returned.
  *
- * @return relative path from [base] to this
+ * @return relative path from [base] to this.
 *
  * @throws IllegalArgumentException if child and parent have different roots.
  */
@@ -189,18 +189,18 @@ public fun File.relativePath(descendant: File): String {
  * Copies this file to the given output [dst], returning the number of bytes copied.
  *
  * If some directories on a way to the [dst] are missing, then they will be created.
- * If the [dst] file already exists, then this function will fail unless [overwrite] argument is set to true.
+ * If the [dst] file already exists, then this function will fail unless [overwrite] argument is set to `true`.
  * Otherwise this file overwrites [dst] if it's a file to, or is written into [dst] if it's a directory.
  *
  * Note: this function fails if you call it on a directory.
  * If you want to copy directories, use 'copyRecursively' function instead.
  *
- * @param overwrite true if destination overwrite is allowed
+ * @param overwrite `true` if destination overwrite is allowed.
  * @param bufferSize the buffer size to use when copying.
  * @return the number of bytes copied
- * @throws NoSuchFileException if the source file doesn't exist
- * @throws FileAlreadyExistsException if the destination file already exists and 'rewrite' argument is set to false
- * @throws IOException if any errors occur while copying
+ * @throws NoSuchFileException if the source file doesn't exist.
+ * @throws FileAlreadyExistsException if the destination file already exists and 'rewrite' argument is set to `false`.
+ * @throws IOException if any errors occur while copying.
  */
 public fun File.copyTo(dst: File, overwrite: Boolean = false, bufferSize: Int = defaultBufferSize): Long {
     if (!exists()) {
@@ -241,7 +241,7 @@ public enum class OnErrorAction {
     TERMINATE
 }
 
-/** Private exception class, used to terminate recursive copying */
+/** Private exception class, used to terminate recursive copying. */
 private class TerminateException(file: File) : FileSystemException(file) {}
 
 /**
@@ -258,7 +258,7 @@ private class TerminateException(file: File) : FileSystemException(file) {}
  * AccessDeniedException - if there was an attempt to open a directory that didn't succeed.
  * IOException - if some problems occur when copying.
  *
- * @return false if the copying was terminated, true otherwise.
+ * @return `false` if the copying was terminated, `true` otherwise.
 *
 * Note that if this function fails, then partial copying may have taken place.
  */
@@ -305,13 +305,13 @@ public fun File.copyRecursively(dst: File,
  * Delete this file with all its children.
  * Note that if this operation fails then partial deletion may have taken place.
  *
- * @return true if the file or directory is successfully deleted, false otherwise.
+ * @return `true` if the file or directory is successfully deleted, `false` otherwise.
  */
 public fun File.deleteRecursively(): Boolean = walkBottomUp().fold(exists(), { res, it -> it.delete() && res })
 
 /**
  * Returns an array of files and directories in the directory that match the specified [filter]
- * or null if this file does not denote a directory.
+ * or `null` if this file does not denote a directory.
  */
 public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listFiles(FileFilter(filter))
 
@@ -321,7 +321,7 @@ public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listF
  * So if [other] has N components, first N components of `this` must be the same as in [other].
  * For relative [other], `this` can belong to any root.
  *
- * @return true if this path starts with [other] path, false otherwise
+ * @return `true` if this path starts with [other] path, `false` otherwise.
  */
 public fun File.startsWith(other: File): Boolean {
     val components = filePathComponents()
@@ -338,7 +338,7 @@ public fun File.startsWith(other: File): Boolean {
  * So if [other] has N components, first N components of `this` must be the same as in [other].
  * For relative [other], `this` can belong to any root.
  *
- * @return true if this path starts with [other] path, false otherwise
+ * @return `true` if this path starts with [other] path, `false` otherwise.
  */
 public fun File.startsWith(other: String): Boolean = startsWith(File(other))
 
@@ -348,7 +348,7 @@ public fun File.startsWith(other: String): Boolean = startsWith(File(other))
  * So if [other] has N components, last N components of `this` must be the same as in [other].
  * For relative [other], `this` can belong to any root.
  *
- * @return true if this path ends with [other] path, false otherwise
+ * @return `true` if this path ends with [other] path, `false` otherwise.
  */
 public fun File.endsWith(other: File): Boolean {
     val components = filePathComponents()
@@ -366,15 +366,15 @@ public fun File.endsWith(other: File): Boolean {
  * So if [other] has N components, last N components of `this` must be the same as in [other].
  * For relative [other], `this` can belong to any root.
  *
- * @return true if this path ends with [other] path, false otherwise
+ * @return `true` if this path ends with [other] path, `false` otherwise.
  */
 public fun File.endsWith(other: String): Boolean = endsWith(File(other))
 
 /**
  * Removes all . and resolves all possible .. in this file name.
- * For instance, File("/foo/./bar/gav/../baaz").normalize is File("/foo/bar/baaz")
+ * For instance, `File("/foo/./bar/gav/../baaz").normalize()` is `File("/foo/bar/baaz")`.
  *
- * @return normalized pathname with . and possibly .. removed
+ * @return normalized pathname with . and possibly .. removed.
  */
 public fun File.normalize(): File {
     val components = filePathComponents()
@@ -395,11 +395,11 @@ public fun File.normalize(): File {
 /**
  * Adds [relative] file to this, considering this as a directory.
  * If [relative] has a root, [relative] is returned back.
- * For instance, File("/foo/bar").resolve(File("gav")) is File("/foo/bar/gav").
- * This function is complementary with (File.relativeTo),
- * so f.resolve(g.relativeTo(f)) == g should be always true except for different roots case.
+ * For instance, `File("/foo/bar").resolve(File("gav"))` is `File("/foo/bar/gav")`.
+ * This function is complementary with [relativeTo],
+ * so `f.resolve(g.relativeTo(f)) == g` should be always `true` except for different roots case.
  *
- * @return concatenated this and [relative] paths, or just [relative] if it's absolute
+ * @return concatenated this and [relative] paths, or just [relative] if it's absolute.
  */
 public fun File.resolve(relative: File): File {
     if (relative.root != null)
@@ -411,18 +411,18 @@ public fun File.resolve(relative: File): File {
 /**
  * Adds [relative] name to this, considering this as a directory.
  * If [relative] has a root, [relative] is returned back.
- * For instance, File("/foo/bar").resolve("gav") is File("/foo/bar/gav")
+ * For instance, `File("/foo/bar").resolve("gav")` is `File("/foo/bar/gav")`.
  *
- * @return concatenated this and [relative] paths, or just [relative] if it's absolute
+ * @return concatenated this and [relative] paths, or just [relative] if it's absolute.
  */
 public fun File.resolve(relative: String): File = resolve(File(relative))
 
 /**
  * Adds [relative] file to this parent directory.
  * If [relative] has a root or this has no parent directory, [relative] is returned back.
- * For instance, File("/foo/bar").resolveSibling(File("gav")) is File("/foo/gav")
+ * For instance, `File("/foo/bar").resolveSibling(File("gav"))` is `File("/foo/gav")`.
  *
- * @return concatenated this.parent and [relative] paths, or just [relative] if it's absolute or this has no parent
+ * @return concatenated this.parent and [relative] paths, or just [relative] if it's absolute or this has no parent.
  */
 public fun File.resolveSibling(relative: File): File {
     val components = filePathComponents()
@@ -432,9 +432,9 @@ public fun File.resolveSibling(relative: File): File {
 
 /**
  * Adds [relative] name to this parent directory.
- * If [relative] has a root or this has no parent directory, [relative] is returned back
- * For instance, File("/foo/bar").resolveSibling("gav") is File("/foo/gav")
+ * If [relative] has a root or this has no parent directory, [relative] is returned back.
+ * For instance, `File("/foo/bar").resolveSibling("gav")` is `File("/foo/gav")`.
  *
- * @return concatenated this.parent and [relative] paths, or just [relative] if it's absolute or this has no parent
+ * @return concatenated this.parent and [relative] paths, or just [relative] if it's absolute or this has no parent.
  */
 public fun File.resolveSibling(relative: String): File = resolveSibling(File(relative))

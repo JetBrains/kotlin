@@ -87,6 +87,6 @@ public inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
     return thisCollection.toArray(arrayOfNulls<T>(thisCollection.size())) as Array<T>
 }
 
-/** Returns the array if it's not null, or an empty array otherwise. */
+/** Returns the array if it's not `null`, or an empty array otherwise. */
 public inline fun <reified T> Array<out T>?.orEmpty(): Array<out T> = this ?: arrayOf<T>()
 

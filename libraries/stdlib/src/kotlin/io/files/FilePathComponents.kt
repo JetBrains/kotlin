@@ -16,7 +16,7 @@ import kotlin.text.Regex
  * which is incorrect for current OS. For instance, in Unix function cannot detect
  * network root names like //network.name/root, but can detect Windows roots like C:/.
  *
- * @return string representing the root for this file, or empty string is this file name is relative
+ * @return string representing the root for this file, or empty string is this file name is relative.
  */
 private fun String.getRootName(): String {
     // Note: separators should be already replaced to system ones
@@ -61,7 +61,7 @@ private fun String.getRootName(): String {
  * which is incorrect for current OS. For instance, in Unix function cannot detect
  * network root names like //network.name/root, but can detect Windows roots like C:/.
  *
- * @return string representing the root for this file, or empty string is this file name is relative
+ * @return string representing the root for this file, or empty string is this file name is relative.
  */
 public val File.rootName: String
     get() = separatorsToSystem().getRootName()
@@ -69,7 +69,7 @@ public val File.rootName: String
 /**
  * Returns root component of this abstract name, like / from /home/user, or C:\ from C:\file.tmp,
  * or //my.host/home for //my.host/home/user,
- * or null if this name is relative, like bar/gav
+ * or `null` if this name is relative, like bar/gav
  */
 public val File.root: File?
     get() {
@@ -105,9 +105,9 @@ public fun File.filePathComponents(): FilePathComponents {
  * beginning from component [beginIndex], inclusive,
  * ending at component [endIndex], exclusive.
  * Number 0 belongs to a component closest to the root,
- * number count-1 belongs to a component farthest from the root
+ * number count-1 belongs to a component farthest from the root.
  * @throws IllegalArgumentException if [beginIndex] is negative,
 * or [endIndex] is greater than existing number of components,
-* or [beginIndex] is greater than [endIndex]
+* or [beginIndex] is greater than [endIndex].
  */
 public fun File.subPath(beginIndex: Int, endIndex: Int): File = filePathComponents().subPath(beginIndex, endIndex)

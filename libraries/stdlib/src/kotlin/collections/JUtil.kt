@@ -99,23 +99,23 @@ public val Int.indices: IntRange
     get() = 0..this - 1
 
 /**
- * Returns the index of the last item in the list or -1 if the list is empty
+ * Returns the index of the last item in the list or -1 if the list is empty.
  *
  * @sample test.collections.ListSpecificTest.lastIndex
  */
 public val <T> List<T>.lastIndex: Int
     get() = this.size() - 1
 
-/** Returns true if the collection is not empty */
+/** Returns `true` if the collection is not empty. */
 public fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
 
-/** Returns this Collection if it's not null and the empty list otherwise. */
+/** Returns this Collection if it's not `null` and the empty list otherwise. */
 public fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
 
-/** Returns this List if it's not null and the empty list otherwise. */
+/** Returns this List if it's not `null` and the empty list otherwise. */
 public fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
 
-/** Returns this Set if it's not null and the empty set otherwise. */
+/** Returns this Set if it's not `null` and the empty set otherwise. */
 public fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
 
 /**

@@ -13,7 +13,7 @@ import java.util.Properties
 public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
 
 /**
- * Converts this [Map] to a [SortedMap] so iteration order will be in key order
+ * Converts this [Map] to a [SortedMap] so iteration order will be in key order.
  *
  * @sample test.collections.MapJVMTest.toSortedMap
  */
@@ -21,7 +21,7 @@ public fun <K : Comparable<K>, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = Tre
 
 /**
  * Converts this [Map] to a [SortedMap] using the given [comparator] so that iteration order will be in the order
- * defined by the comparator
+ * defined by the comparator.
  *
  * @sample test.collections.MapJVMTest.toSortedMapWithComparator
  */
@@ -51,7 +51,7 @@ public fun <K, V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K, V> {
 
 
 /**
- * Converts this [Map] to a [Properties] object
+ * Converts this [Map] to a [Properties] object.
  *
  * @sample test.collections.MapJVMTest.toProperties
  */

@@ -52,7 +52,7 @@ public var Thread.contextClassLoader: ClassLoader?
     }
 
 /**
- * Creates a thread that runs the specified [block] of code.\
+ * Creates a thread that runs the specified [block] of code.
  *
  * @param start if `true`, the thread is immediately started.
  * @param daemon if `true`, the thread is created as a daemon thread. The Java Virtual Machine exits when
