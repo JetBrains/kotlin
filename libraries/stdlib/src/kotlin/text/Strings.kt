@@ -947,6 +947,9 @@ public fun String.split(vararg delimiters: Char, ignoreCase: Boolean = false, li
 
 /**
  * Splits this string around matches of the given regular expression.
+ *
+ * @param limit Non-negative value specifying the maximum number of substrings to return.
+ * Zero by default means no limit is set.
  */
 public fun String.split(pattern: Regex, limit: Int = 0): List<String> = pattern.split(this, limit)
 

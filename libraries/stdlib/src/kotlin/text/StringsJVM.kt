@@ -120,7 +120,8 @@ public fun String.format(locale: Locale, vararg args : Any?) : String = java.lan
 /**
  * Splits this string around matches of the given regular expression.
 
- * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
+ * @param limit Non-negative value specifying the maximum number of substrings to return.
+ * Zero by default means no limit is set.
  */
 public fun String.split(regex: Pattern, limit: Int = 0): List<String>
 {
@@ -130,13 +131,13 @@ public fun String.split(regex: Pattern, limit: Int = 0): List<String>
 /**
  * Splits this string around matches of the given regular expression.
  */
-deprecated("Convert String argument to regex with toRegex or use splitBy instead. Please note the change of return type and empty elements handling.")
+deprecated("Convert String argument to regex with toRegex or use splitBy instead for literal delimiters. Please note the change of return type.", ReplaceWith("split(regex.toRegex()).toTypedArray()"))
 public fun String.split(regex: String): Array<String> = (this as java.lang.String).split(regex)
 
 /**
  * Splits this string into at most [limit] chunks around matches of the given regular expression.
  */
-deprecated("Convert String argument to regex with toRegex or use splitBy instead. Please note the change of return type and limit parameter restrictions.")
+deprecated("Convert String argument to regex with toRegex or use splitBy instead for literal delimiters. Please note the change of return type and the restriction of limit to be non-negative.", ReplaceWith("split(regex.toRegex(), limit.coerceAtLeast(0)).toTypedArray()"))
 public fun String.split(regex: String, limit: Int): Array<String> = (this as java.lang.String).split(regex, limit)
 
 /**
