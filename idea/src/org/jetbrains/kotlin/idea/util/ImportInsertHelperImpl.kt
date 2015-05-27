@@ -65,46 +65,6 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         }
     }
 
-    private fun addImport(file: JetFile, importPath: ImportPath): JetImportDirective {
-        //TODO: it's a temporary hack for JetCodeFragment's and non-physical files
-        // We should increment modification tracker after inserting import to invalidate resolve caches.
-        // Without this modification references with new import won't be resolved.
-        (PsiModificationTracker.SERVICE.getInstance(project) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
-
-        val psiFactory = JetPsiFactory(project)
-        if (file is JetCodeFragment) {
-            val newDirective = psiFactory.createImportDirective(importPath)
-            file.addImportsFromString(newDirective.getText())
-            return newDirective
-        }
-
-        val importList = file.getImportList()
-        if (importList != null) {
-            val newDirective = psiFactory.createImportDirective(importPath)
-            val imports = importList.getImports()
-            if (imports.isEmpty()) { //TODO: strange hack
-                importList.add(psiFactory.createNewLine())
-                return importList.add(newDirective) as JetImportDirective
-            }
-            else {
-                val insertAfter = imports
-                        .reverse()
-                        .firstOrNull {
-                            val directivePath = it.getImportPath()
-                            directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
-                        }
-                return importList.addAfter(newDirective, insertAfter) as JetImportDirective
-            }
-        }
-        else {
-            val newImportList = psiFactory.createImportDirectiveWithImportList(importPath)
-            val packageDirective = file.getPackageDirective()
-                                   ?: throw IllegalStateException("Scripts are not supported: " + file.getName())
-            val addedImportList = packageDirective.getParent().addAfter(newImportList, packageDirective) as JetImportList
-            return addedImportList.getImports().single()
-        }
-    }
-
     override val importSortComparator: Comparator<ImportPath>
         get() = ImportPathComparator
 
@@ -395,7 +355,46 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         private fun JetReferenceExpression.resolveTargets(): Collection<DeclarationDescriptor>
                 = this.getImportableTargets(resolutionFacade.analyze(this, BodyResolveMode.PARTIAL))
 
-        private fun addImport(fqName: FqName, allUnder: Boolean): JetImportDirective
-                = addImport(file, ImportPath(fqName, allUnder))
+        private fun addImport(fqName: FqName, allUnder: Boolean): JetImportDirective {
+            //TODO: it's a temporary hack for JetCodeFragment's and non-physical files
+            // We should increment modification tracker after inserting import to invalidate resolve caches.
+            // Without this modification references with new import won't be resolved.
+            (PsiModificationTracker.SERVICE.getInstance(project) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
+
+            val importPath = ImportPath(fqName, allUnder)
+
+            val psiFactory = JetPsiFactory(project)
+            if (file is JetCodeFragment) {
+                val newDirective = psiFactory.createImportDirective(importPath)
+                file.addImportsFromString(newDirective.getText())
+                return newDirective
+            }
+
+            val importList = file.getImportList()
+            if (importList != null) {
+                val newDirective = psiFactory.createImportDirective(importPath)
+                val imports = importList.getImports()
+                if (imports.isEmpty()) { //TODO: strange hack
+                    importList.add(psiFactory.createNewLine())
+                    return importList.add(newDirective) as JetImportDirective
+                }
+                else {
+                    val insertAfter = imports
+                            .reverse()
+                            .firstOrNull {
+                                val directivePath = it.getImportPath()
+                                directivePath != null && ImportPathComparator.compare(directivePath, importPath) <= 0
+                            }
+                    return importList.addAfter(newDirective, insertAfter) as JetImportDirective
+                }
+            }
+            else {
+                val newImportList = psiFactory.createImportDirectiveWithImportList(importPath)
+                val packageDirective = file.getPackageDirective()
+                                       ?: throw IllegalStateException("Scripts are not supported: " + file.getName())
+                val addedImportList = packageDirective.getParent().addAfter(newImportList, packageDirective) as JetImportList
+                return addedImportList.getImports().single()
+            }
+        }
     }
 }
