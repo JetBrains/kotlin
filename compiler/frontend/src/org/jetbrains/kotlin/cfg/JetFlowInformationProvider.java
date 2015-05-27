@@ -674,7 +674,7 @@ public class JetFlowInformationProvider {
                                     }
                                     else if (owner instanceof JetPrimaryConstructor) {
                                         if (!((JetParameter) element).hasValOrVar() &&
-                                            !((JetPrimaryConstructor) owner).getContainingClass().isAnnotation()) {
+                                            !((JetPrimaryConstructor) owner).getContainingClassOrObject().isAnnotation()) {
                                             report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
                                         }
                                     }

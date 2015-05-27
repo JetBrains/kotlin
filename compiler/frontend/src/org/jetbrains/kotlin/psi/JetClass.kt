@@ -59,8 +59,6 @@ public open class JetClass : JetClassOrObject {
 
     public fun getProperties(): List<JetProperty> = getBody()?.getProperties().orEmpty()
 
-    public fun isAnnotation(): Boolean = hasModifier(JetTokens.ANNOTATION_KEYWORD)
-
     public fun isInterface(): Boolean =
         getStub()?.isInterface()
         ?: (findChildByType<PsiElement>(JetTokens.TRAIT_KEYWORD) != null || findChildByType<PsiElement>(JetTokens.INTERFACE_KEYWORD) != null)

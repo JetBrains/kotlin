@@ -71,17 +71,9 @@ public class JetPrimaryConstructor extends JetDeclarationStub<KotlinPlaceHolderS
         }
     }
 
-    @Nullable
-    public JetClass getContainingClassOrNull() {
-        JetClassOrObject classOrObject = (JetClassOrObject) getParent();
-        return classOrObject instanceof JetClass ? (JetClass) classOrObject : null;
-    }
-
     @NotNull
-    public JetClass getContainingClass() {
-        JetClass classOrNull = getContainingClassOrNull();
-        assert classOrNull != null : "This method should be called when parent is JetClass";
-        return classOrNull;
+    public JetClassOrObject getContainingClassOrObject() {
+        return (JetClassOrObject) getParent();
     }
 
     public boolean hasConstructorKeyword() {
