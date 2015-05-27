@@ -68,7 +68,7 @@ deprecated("Use compareBy() instead", ReplaceWith("compareBy(*functions)"))
 public fun <T> comparator(vararg functions: (T) -> Comparable<*>?): Comparator<T> = compareBy(*functions)
 
 /**
- * Creates a comparator using the function to transform value to a [Comparable] instance for comparison
+ * Creates a comparator using the function to transform value to a [Comparable] instance for comparison.
  */
 inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
     return object : Comparator<T> {
@@ -77,7 +77,7 @@ inline public fun <T> compareBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) co
 }
 
 /**
- * Creates a descending comparator using the function to transform value to a [Comparable] instance for comparison
+ * Creates a descending comparator using the function to transform value to a [Comparable] instance for comparison.
  */
 inline public fun <T> compareByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
     return object : Comparator<T> {
@@ -87,7 +87,7 @@ inline public fun <T> compareByDescending(inlineOptions(InlineOption.ONLY_LOCAL_
 
 /**
  * Creates a comparator using the primary comparator and
- * the function to transform value to a [Comparable] instance for comparison
+ * the function to transform value to a [Comparable] instance for comparison.
  */
 inline public fun <T> Comparator<T>.thenBy(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
     return object : Comparator<T> {
@@ -100,7 +100,7 @@ inline public fun <T> Comparator<T>.thenBy(inlineOptions(InlineOption.ONLY_LOCAL
 
 /**
  * Creates a descending comparator using the primary comparator and
- * the function to transform value to a [Comparable] instance for comparison
+ * the function to transform value to a [Comparable] instance for comparison.
  */
 inline public fun <T> Comparator<T>.thenByDescending(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) comparable: (T) -> Comparable<*>): Comparator<T> {
     return object : Comparator<T> {

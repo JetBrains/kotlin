@@ -148,13 +148,13 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String {
     return sb.toString()
 }
 
-/** Returns true if the string is not null and not empty */
+/** Returns `true` if the string is not `null` and not empty */
 deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.")
 platformName("isNotEmptyNullable")
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 
 /**
- * Returns `true` if this nullable string is either null or empty.
+ * Returns `true` if this nullable string is either `null` or empty.
  */
 public fun String?.isNullOrEmpty(): Boolean = this == null || this.length() == 0
 
@@ -178,12 +178,12 @@ public fun String.isNotEmpty(): Boolean = length() > 0
 public fun String.isNotBlank(): Boolean = !isBlank()
 
 /**
- * Returns `true` if this nullable string is either null or empty or consists solely of whitespace characters.
+ * Returns `true` if this nullable string is either `null` or empty or consists solely of whitespace characters.
  */
 public fun String?.isNullOrBlank(): Boolean = this == null || this.isBlank()
 
 /**
- * Iterator for characters of given CharSequence
+ * Iterator for characters of given CharSequence.
  */
 public fun CharSequence.iterator(): CharIterator = object : CharIterator() {
     private var index = 0
@@ -193,7 +193,7 @@ public fun CharSequence.iterator(): CharIterator = object : CharIterator() {
     public override fun hasNext(): Boolean = index < length
 }
 
-/** Returns the string if it is not null, or the empty string otherwise. */
+/** Returns the string if it is not `null`, or the empty string otherwise. */
 public fun String?.orEmpty(): String = this ?: ""
 
 /**
@@ -203,7 +203,7 @@ public val String.indices: IntRange
     get() = 0..length() - 1
 
 /**
- * Returns the index of the last character in the String or -1 if the String is empty
+ * Returns the index of the last character in the String or -1 if the String is empty.
  */
 public val String.lastIndex: Int
     get() = this.length() - 1
@@ -218,7 +218,7 @@ public val String.lastIndex: Int
 public fun CharSequence.get(index: Int): Char = this.charAt(index)
 
 /**
- * Returns `true` if this CharSequence has Unicode surrogate pair at the specified [index]
+ * Returns `true` if this CharSequence has Unicode surrogate pair at the specified [index].
  */
 public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
     return index in 0..length() - 2

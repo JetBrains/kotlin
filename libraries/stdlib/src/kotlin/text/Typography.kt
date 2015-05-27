@@ -1,7 +1,7 @@
 package kotlin
 
 /**
- * Defines names for Unicode symbols used in proper Typography
+ * Defines names for Unicode symbols used in proper Typography.
  */
 public object Typography {
     /** The character &#x22; */

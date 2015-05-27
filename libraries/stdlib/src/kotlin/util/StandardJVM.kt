@@ -12,7 +12,7 @@ public fun Throwable.printStackTrace(writer: PrintWriter): Unit {
 }
 
 /**
- * Allows a stack trace to be printed from Kotlin's [Throwable]
+ * Allows a stack trace to be printed from Kotlin's [Throwable].
  */
 public fun Throwable.printStackTrace(stream: PrintStream): Unit {
     val jlt = this as java.lang.Throwable

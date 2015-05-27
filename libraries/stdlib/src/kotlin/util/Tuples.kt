@@ -11,10 +11,10 @@ import java.io.Serializable
  * An example of decomposing it into values:
  * @sample test.tuples.PairTest.pairMultiAssignment
  *
- * @param A type of the first value
- * @param B type of the second value
- * @property first First value
- * @property second Second value
+ * @param A type of the first value.
+ * @param B type of the second value.
+ * @property first First value.
+ * @property second Second value.
  * @constructor Creates a new instance of Pair.
  */
 public data class Pair<out A, out B>(
@@ -41,12 +41,12 @@ public fun <T> Pair<T, T>.toList(): List<T> = listOf(first, second)
  * An example of decomposing it into values:
  * @sample test.tuples.TripleTest.tripleMultiAssignment
  *
- * @param A type of the first value
- * @param B type of the second value
- * @param C type of the third value
- * @property first First value
- * @property second Second value
- * @property third Third value
+ * @param A type of the first value.
+ * @param B type of the second value.
+ * @param C type of the third value.
+ * @property first First value.
+ * @property second Second value.
+ * @property third Third value.
  */
 public data class Triple<out A, out B, out C>(
         public val first: A,

@@ -19,7 +19,7 @@ package kotlin.text
 /** Represents a collection of captured groups in a single match. */
 public interface MatchGroupCollection : Collection<MatchGroup?> {
 
-    /** Returns a group with the specified [index]
+    /** Returns a group with the specified [index].
      *
      * @return An instance of [MatchGroup] if the group with the specified [index] was matched or `null` otherwise.
      *

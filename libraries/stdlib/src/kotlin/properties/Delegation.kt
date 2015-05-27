@@ -47,7 +47,7 @@ public interface ReadWriteProperty<in R, T> {
  */
 public object Delegates {
     /**
-     * Returns a property delegate for a read/write property with a non-null value that is initialized not during
+     * Returns a property delegate for a read/write property with a non-`null` value that is initialized not during
      * object construction time but at a later time. Trying to read the property before the initial value has been
      * assigned results in an exception.
      */
@@ -87,7 +87,7 @@ public object Delegates {
      * allowing the callback to veto the modification.
      * @param initial the initial value of the property.
      * @param onChange the callback which is called when a change to the property value is attempted. The new value
-    *                  is saved if the callback returns true and discarded if the callback returns false.
+    *                  is saved if the callback returns `true` and discarded if the callback returns `false`.
      */
     public fun vetoable<T>(initial: T, onChange: (desc: PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ReadWriteProperty<Any?, T> {
         return ObservableProperty<T>(initial, onChange)
@@ -133,7 +133,7 @@ private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
  * Implements a property delegate for a read/write property that calls a specified callback function when changed.
  * @param initialValue the initial value of the property.
  * @param onChange the callback which is called when a change to the property value is attempted. The new value
-*                  is saved if the callback returns true and discarded if the callback returns false.
+*                  is saved if the callback returns `true` and discarded if the callback returns `false`.
  */
 public class ObservableProperty<T>(
         initialValue: T, private val onChange: (name: PropertyMetadata, oldValue: T, newValue: T) -> Boolean

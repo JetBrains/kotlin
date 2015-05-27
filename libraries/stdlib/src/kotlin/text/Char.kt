@@ -26,7 +26,7 @@ public fun Char.plus(string: String) : String = this.toString() + string
  *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
  *
- * Two characters are considered the same ignoring case if at least one of the following is true:
+ * Two characters are considered the same ignoring case if at least one of the following is `true`:
  *   - The two characters are the same (as compared by the == operator)
  *   - Applying the method [toUpperCase] to each character produces the same result
  *   - Applying the method [toLowerCase] to each character produces the same result

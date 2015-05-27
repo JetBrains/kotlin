@@ -484,7 +484,7 @@ public fun String.decapitalize(): String {
 
 /**
  * Repeats a given string [n] times.
- * @throws IllegalArgumentException when n < 0
+ * @throws [IllegalArgumentException] when n < 0.
  * @sample test.text.StringJVMTest.repeat
  */
 public fun String.repeat(n: Int): String {

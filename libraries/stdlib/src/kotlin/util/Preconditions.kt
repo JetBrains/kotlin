@@ -94,7 +94,7 @@ public fun <T:Any> checkNotNull(value: T?, message: Any = "Required value was nu
 }
 
 /**
- * Throws an [IllegalStateException] with the given [message]
+ * Throws an [IllegalStateException] with the given [message].
  *
  * @sample test.collections.PreconditionsTest.error
  */

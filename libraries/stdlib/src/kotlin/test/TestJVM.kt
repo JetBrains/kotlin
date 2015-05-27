@@ -2,7 +2,7 @@ package kotlin.test
 
 import java.util.ServiceLoader
 
-/** Asserts that a block fails with a specific exception being thrown */
+/** Asserts that a [block] fails with a specific exception being thrown */
 public fun <T: Throwable> failsWith(exceptionClass: Class<T>, block: ()-> Any): T {
     try {
         block()
@@ -17,7 +17,7 @@ public fun <T: Throwable> failsWith(exceptionClass: Class<T>, block: ()-> Any): 
 }
 
 /**
- * Comments out a block of test code until it is implemented while keeping a link to the code
+ * Comments out a [block] of test code until it is implemented while keeping a link to the code
  * to implement in your unit test output
  */
 public inline fun todo(block: ()-> Any) {

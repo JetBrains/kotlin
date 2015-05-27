@@ -114,6 +114,6 @@ public fun Char.directionality(): CharDirectionality = CharDirectionality.valueO
 
 // TODO Provide name for JVM7+
 ///**
-// * Returns the Unicode name of this character, or null if the code point of this character is unassigned.
+// * Returns the Unicode name of this character, or `null` if the code point of this character is unassigned.
 // */
 //public fun Char.name(): String? = Character.getName(this.toInt())

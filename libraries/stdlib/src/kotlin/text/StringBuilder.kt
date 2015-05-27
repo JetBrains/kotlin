@@ -10,7 +10,7 @@ public inline fun StringBuilder(body: StringBuilder.() -> Unit): StringBuilder {
 }
 
 /**
- * Appends all arguments to the given Appendable
+ * Appends all arguments to the given Appendable.
  */
 public fun <T : Appendable> T.append(vararg value: CharSequence?): T {
     for (item in value)
@@ -19,7 +19,7 @@ public fun <T : Appendable> T.append(vararg value: CharSequence?): T {
 }
 
 /**
- * Appends all arguments to the given StringBuilder
+ * Appends all arguments to the given StringBuilder.
  */
 public fun StringBuilder.append(vararg value: String?): StringBuilder {
     for (item in value)
@@ -28,7 +28,7 @@ public fun StringBuilder.append(vararg value: String?): StringBuilder {
 }
 
 /**
- * Appends all arguments to the given StringBuilder
+ * Appends all arguments to the given StringBuilder.
  */
 public fun StringBuilder.append(vararg value: Any?): StringBuilder {
     for (item in value)
