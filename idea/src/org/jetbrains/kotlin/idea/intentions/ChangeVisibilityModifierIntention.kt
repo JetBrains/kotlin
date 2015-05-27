@@ -40,7 +40,7 @@ public open class ChangeVisibilityModifierIntention protected constructor(
 //        val descriptor = element.resolveToDescriptor() as? DeclarationDescriptorWithVisibility ?: return null
         val bindingContext = element.analyze()
         var descriptor = (if (element is JetPrimaryConstructor) //TODO: temporary code
-            ((element.getParent() as JetClass).resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor()
+            (element.getContainingClassOrObject().resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor()
         else
             bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]) as? DeclarationDescriptorWithVisibility ?: return null
         if (descriptor is ValueParameterDescriptor) {

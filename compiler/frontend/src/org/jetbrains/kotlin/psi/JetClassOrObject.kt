@@ -60,4 +60,6 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
     private fun hasSecondaryConstructors(): Boolean = !getSecondaryConstructors().isEmpty()
 
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
+
+    public fun isAnnotation(): Boolean = hasModifier(JetTokens.ANNOTATION_KEYWORD)
 }
