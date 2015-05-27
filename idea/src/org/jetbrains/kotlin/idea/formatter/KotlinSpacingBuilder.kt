@@ -17,16 +17,17 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.formatting.*
-
-import com.intellij.psi.codeStyle.CodeStyleSettings
-import java.util.ArrayList
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.idea.JetLanguage
-import com.intellij.psi.formatter.common.AbstractBlock
-import com.intellij.lang.ASTNode
-import com.intellij.formatting.DependentSpacingRule.Trigger
 import com.intellij.formatting.DependentSpacingRule.Anchor
+import com.intellij.formatting.DependentSpacingRule.Trigger
+import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.codeStyle.CodeStyleSettings
+import com.intellij.psi.formatter.common.AbstractBlock
+import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.idea.JetLanguage
+import org.jetbrains.kotlin.lexer.JetTokens
+import java.util.ArrayList
 
 class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
     class SpacingNodeBlock(node: ASTNode): AbstractBlock(node, null, null) {
@@ -114,7 +115,14 @@ class KotlinSpacingBuilder(val codeStyleSettings: CodeStyleSettings) {
 
         for (builder in builders) {
             val spacing = builder.getSpacing(parent, child1, child2)
+
             if (spacing != null) {
+                // TODO: it's a severe hack but I don't know how to implement it in other way
+                if (child1.getNode().getElementType() == JetTokens.EOL_COMMENT && spacing.toString().contains("minLineFeeds=0")) {
+                    val isBeforeBlock = child2.getNode().getElementType() == JetNodeTypes.BLOCK || child2.getNode().getFirstChildNode()?.getElementType() == JetNodeTypes.BLOCK
+                    val keepBlankLines = if (isBeforeBlock) 0 else codeStyleSettings.KEEP_BLANK_LINES_IN_CODE
+                    return Spacing.createSpacing(0, 0, 1, true, keepBlankLines)
+                }
                 return spacing
             }
         }
