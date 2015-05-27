@@ -45,12 +45,13 @@ class KotlinFilterLexer(table: OccurrenceConsumer): BaseFilterLexer(JetLexer(), 
             JetTokens.RBRACKET, JetTokens.SEMICOLON, JetTokens.COMMA, JetTokens.DOT
     )
 
-    private var previousTokens = LinkedList<IElementType>()
+    private val previousTokens = LinkedList<IElementType>()
 
     override fun advance() {
         fun isMultiDeclarationPosition(): Boolean {
-            return previousTokens[0] == JetTokens.VAL_KEYWORD || previousTokens[0] == JetTokens.VAR_KEYWORD
-                   || previousTokens[0] == JetTokens.LPAR && previousTokens[1] == JetTokens.FOR_KEYWORD
+            return previousTokens.firstOrNull() == JetTokens.VAL_KEYWORD
+                   || previousTokens.firstOrNull() == JetTokens.VAR_KEYWORD
+                   || previousTokens.size() == 2 && previousTokens[0] == JetTokens.LPAR && previousTokens[1] == JetTokens.FOR_KEYWORD
         }
 
         val tokenType = myDelegate.getTokenType()
