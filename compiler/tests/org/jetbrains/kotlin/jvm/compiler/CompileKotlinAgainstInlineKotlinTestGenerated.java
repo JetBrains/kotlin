@@ -383,6 +383,27 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/modifiers")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Modifiers extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInModifiers() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/modifiers"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("packagePrivateMembers.1.kt")
+        public void testPackagePrivateMembers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/modifiers/packagePrivateMembers.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("propertyModifiers.1.kt")
+        public void testPropertyModifiers() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/modifiers/propertyModifiers.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/noInline")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -793,12 +814,6 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("params.1.kt")
         public void testParams() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/params.1.kt");
-            doBoxTestWithInlineCheck(fileName);
-        }
-
-        @TestMetadata("propertyModifiers.1.kt")
-        public void testPropertyModifiers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/simple/propertyModifiers.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
 
