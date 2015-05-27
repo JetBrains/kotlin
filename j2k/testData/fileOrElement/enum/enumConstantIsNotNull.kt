@@ -1,5 +1,5 @@
 enum class E {
-    FOO
+    FOO;
 
     fun foo() {
         FOO.toString()

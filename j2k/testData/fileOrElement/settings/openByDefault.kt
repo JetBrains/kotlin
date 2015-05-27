@@ -30,6 +30,7 @@ open class D : I {
 }
 
 enum class E {
+    ;
     fun foo(): Int {
         return 0
     }

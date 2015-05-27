@@ -1,7 +1,7 @@
 class A {
     enum class E {
-        A
-        B
+        A,
+        B,
         C
     }
 }

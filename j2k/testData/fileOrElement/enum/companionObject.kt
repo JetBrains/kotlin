@@ -1,6 +1,7 @@
 public enum class TestEnum {
-    A
-    B
+    A,
+    B;
+
 
     companion object {
 

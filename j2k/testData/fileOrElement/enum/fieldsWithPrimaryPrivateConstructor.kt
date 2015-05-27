@@ -1,7 +1,7 @@
 enum class Color private constructor(public val code: Int) {
-    WHITE : Color(21)
-    BLACK : Color(22)
-    RED : Color(23)
-    YELLOW : Color(24)
-    BLUE : Color(25)
+    WHITE(21),
+    BLACK(22),
+    RED(23),
+    YELLOW(24),
+    BLUE(25)
 }

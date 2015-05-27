@@ -2,7 +2,7 @@
 annotation class Anon(public val value: String) {
 
     public enum class E {
-        A
+        A,
         B
     }
 

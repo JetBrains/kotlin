@@ -93,7 +93,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
                 }
             }
 
-            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace)
+            return ClassBody(null, null, convertedMembers.values().toList(), emptyList(), lBrace, rBrace, false)
         }
 
         val useCompanionObject = shouldGenerateCompanionObject(convertedMembers)
@@ -120,15 +120,15 @@ class ClassBodyConverter(private val psiClass: PsiClass,
         }
 
         if (primaryConstructorSignature != null
-            && primaryConstructorSignature!!.annotations.isEmpty
-            && primaryConstructorSignature!!.accessModifier == null
-            && primaryConstructorSignature!!.parameterList.parameters.isEmpty()
+            && primaryConstructorSignature.annotations.isEmpty
+            && primaryConstructorSignature.accessModifier == null
+            && primaryConstructorSignature.parameterList.parameters.isEmpty()
             && members.none { it is SecondaryConstructor }
         ) {
             primaryConstructorSignature = null // no "()" after class name is needed in this case
         }
 
-        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace)
+        return ClassBody(primaryConstructorSignature, constructorConverter?.baseClassParams, members, companionObjectMembers, lBrace, rBrace, psiClass.isEnum())
     }
 
     private fun Converter.convertMember(member: PsiMember,
