@@ -22,21 +22,17 @@ import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-import java.util.Collections
+public class JetObjectDeclaration : JetClassOrObject {
+    public constructor(node: ASTNode) : super(node)
+    public constructor(stub: KotlinObjectStub) : super(stub, JetStubElementTypes.OBJECT_DECLARATION)
 
-public class JetObjectDeclaration : JetNamedDeclarationStub<KotlinObjectStub>, JetClassOrObject {
-    public constructor(node: ASTNode) : super(node) {
-    }
-
-    public constructor(stub: KotlinObjectStub) : super(stub, JetStubElementTypes.OBJECT_DECLARATION) {
-    }
+    override fun getStub(): KotlinObjectStub? = super.getStub() as? KotlinObjectStub
 
     override fun getName(): String? {
         val stub = getStub()
@@ -50,15 +46,6 @@ public class JetObjectDeclaration : JetNamedDeclarationStub<KotlinObjectStub>, J
             return SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.toString()
         }
         return nameAsDeclaration?.getName()
-    }
-
-    override fun isTopLevel(): Boolean {
-        val stub = getStub()
-        if (stub != null) {
-            return stub.isTopLevel()
-        }
-
-        return getParent() is JetFile
     }
 
     override fun getNameIdentifier(): PsiElement? {
@@ -81,48 +68,12 @@ public class JetObjectDeclaration : JetNamedDeclarationStub<KotlinObjectStub>, J
         }
     }
 
-    override fun getNameAsDeclaration(): JetObjectDeclarationName? {
-        return findChildByType<PsiElement>(JetNodeTypes.OBJECT_DECLARATION_NAME) as JetObjectDeclarationName
-    }
-
     public fun isCompanion(): Boolean {
         val stub = getStub()
         if (stub != null) {
             return stub.isCompanion()
         }
         return hasModifier(JetTokens.COMPANION_KEYWORD)
-    }
-
-    override fun hasModifier(modifier: JetModifierKeywordToken): Boolean {
-        val modifierList = getModifierList()
-        return modifierList != null && modifierList.hasModifier(modifier)
-    }
-
-    override fun getDelegationSpecifierList(): JetDelegationSpecifierList? {
-        return getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST)
-    }
-
-    override fun getDelegationSpecifiers(): List<JetDelegationSpecifier> {
-        val list = getDelegationSpecifierList()
-        return if (list != null) list.getDelegationSpecifiers() else emptyList<JetDelegationSpecifier>()
-    }
-
-    override fun getAnonymousInitializers(): List<JetClassInitializer> {
-        val body = getBody() ?: return emptyList<JetClassInitializer>()
-
-        return body.getAnonymousInitializers()
-    }
-
-    override fun getBody(): JetClassBody? {
-        return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY)
-    }
-
-    override fun isLocal(): Boolean {
-        val stub = getStub()
-        if (stub != null) {
-            return stub.isLocal()
-        }
-        return JetPsiUtil.isLocal(this)
     }
 
     override fun getTextOffset(): Int {
@@ -133,12 +84,6 @@ public class JetObjectDeclaration : JetNamedDeclarationStub<KotlinObjectStub>, J
         else {
             return getObjectKeyword().getTextRange().getStartOffset()
         }
-    }
-
-    override fun getDeclarations(): List<JetDeclaration> {
-        val body = getBody() ?: return emptyList<JetDeclaration>()
-
-        return body.getDeclarations()
     }
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
@@ -155,9 +100,5 @@ public class JetObjectDeclaration : JetNamedDeclarationStub<KotlinObjectStub>, J
 
     public fun getObjectKeyword(): PsiElement {
         return findChildByType(JetTokens.OBJECT_KEYWORD)
-    }
-
-    override fun getPresentation(): ItemPresentation? {
-        return ItemPresentationProviders.getItemPresentation(this)
     }
 }

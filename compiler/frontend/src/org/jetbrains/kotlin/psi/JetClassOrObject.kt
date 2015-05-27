@@ -16,25 +16,35 @@
 
 package org.jetbrains.kotlin.psi
 
-import com.intellij.psi.PsiNameIdentifierOwner
-import org.jetbrains.kotlin.name.Name
+import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.IStubElementType
+import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-public interface JetClassOrObject : PsiNameIdentifierOwner, JetDeclarationContainer, JetElement, JetModifierListOwner, JetNamedDeclaration {
-    public fun getDelegationSpecifierList(): JetDelegationSpecifierList?
+abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinClassOrObjectStub<out JetClassOrObject>>, JetDeclarationContainer, JetNamedDeclaration {
+    public constructor(node: ASTNode) : super(node)
+    public constructor(stub: KotlinClassOrObjectStub<out JetClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
-    public fun getDelegationSpecifiers(): List<JetDelegationSpecifier>
+    public fun getDelegationSpecifierList(): JetDelegationSpecifierList? = getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST)
+    open public fun getDelegationSpecifiers(): List<JetDelegationSpecifier> = getDelegationSpecifierList()?.getDelegationSpecifiers().orEmpty()
 
-    public fun getAnonymousInitializers(): List<JetClassInitializer>
+    public fun getAnonymousInitializers(): List<JetClassInitializer> = getBody()?.getAnonymousInitializers().orEmpty()
 
-    override fun getNameAsName(): Name?
+    public fun getNameAsDeclaration(): JetObjectDeclarationName? =
+            findChildByType<PsiElement>(JetNodeTypes.OBJECT_DECLARATION_NAME) as JetObjectDeclarationName?
 
-    override fun getModifierList(): JetModifierList?
+    public fun getBody(): JetClassBody? = getStubOrPsiChild(JetStubElementTypes.CLASS_BODY)
 
-    public fun getNameAsDeclaration(): JetObjectDeclarationName?
+    public fun isTopLevel(): Boolean = getStub()?.isTopLevel() ?: (getParent() is JetFile)
 
-    public fun getBody(): JetClassBody?
+    public fun isLocal(): Boolean = getStub()?.isLocal() ?: JetPsiUtil.isLocal(this)
+    
+    override fun getDeclarations() = getBody()?.getDeclarations().orEmpty()
 
-    public fun isTopLevel(): Boolean
-
-    public fun isLocal(): Boolean
+    override fun getPresentation(): ItemPresentation? = ItemPresentationProviders.getItemPresentation(this)
 }

@@ -21,32 +21,19 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
-
 import java.util.ArrayList
 import java.util.Collections
 
-public open class JetClass : JetTypeParameterListOwnerStub<KotlinClassStub>, JetClassOrObject {
+public open class JetClass : JetClassOrObject {
+    public constructor(node: ASTNode) : super(node)
+    public constructor(stub: KotlinClassStub) : super(stub, JetStubElementTypes.CLASS)
 
-    public constructor(node: ASTNode) : super(node) {
-    }
-
-    public constructor(stub: KotlinClassStub) : super(stub, JetStubElementTypes.CLASS) {
-    }
-
-    override fun getDeclarations(): List<JetDeclaration> {
-        val body = getBody() ?: return emptyList<JetDeclaration>()
-
-        return body.getDeclarations()
-    }
+    override fun getStub(): KotlinClassStub? = super.getStub() as? KotlinClassStub
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
         return visitor.visitClass(this, data)
@@ -82,36 +69,13 @@ public open class JetClass : JetTypeParameterListOwnerStub<KotlinClassStub>, Jet
         return constructor.add(JetPsiFactory(getProject()).createParameterList("()")) as JetParameterList
     }
 
-    override fun getDelegationSpecifierList(): JetDelegationSpecifierList? {
-        return getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST)
-    }
-
-    override fun getDelegationSpecifiers(): List<JetDelegationSpecifier> {
-        val list = getDelegationSpecifierList()
-        return if (list != null) list.getDelegationSpecifiers() else emptyList<JetDelegationSpecifier>()
-    }
-
     public fun getPrimaryConstructorModifierList(): JetModifierList? {
         val primaryConstructor = getPrimaryConstructor()
         return primaryConstructor?.getModifierList()
     }
 
-    override fun getAnonymousInitializers(): List<JetClassInitializer> {
-        val body = getBody() ?: return emptyList<JetClassInitializer>()
-
-        return body.getAnonymousInitializers()
-    }
-
     public fun hasExplicitPrimaryConstructor(): Boolean {
         return getPrimaryConstructor() != null
-    }
-
-    override fun getNameAsDeclaration(): JetObjectDeclarationName? {
-        return findChildByType<PsiElement>(JetNodeTypes.OBJECT_DECLARATION_NAME) as JetObjectDeclarationName
-    }
-
-    override fun getBody(): JetClassBody? {
-        return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY)
     }
 
     public fun getColon(): PsiElement? {
@@ -146,7 +110,7 @@ public open class JetClass : JetTypeParameterListOwnerStub<KotlinClassStub>, Jet
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        if (super<JetTypeParameterListOwnerStub>.isEquivalentTo(another)) {
+        if (super.isEquivalentTo(another)) {
             return true
         }
         if (another is JetClass) {
@@ -178,22 +142,6 @@ public open class JetClass : JetTypeParameterListOwnerStub<KotlinClassStub>, Jet
         }
         Collections.reverse(parts)
         return StringUtil.join(parts, ".")
-    }
-
-    override fun getPresentation(): ItemPresentation? {
-        return ItemPresentationProviders.getItemPresentation(this)
-    }
-
-    override fun isTopLevel(): Boolean {
-        return getContainingFile() == getParent()
-    }
-
-    override fun isLocal(): Boolean {
-        val stub = getStub()
-        if (stub != null) {
-            return stub.isLocal()
-        }
-        return JetPsiUtil.isLocal(this)
     }
 
     public fun getCompanionObjects(): List<JetObjectDeclaration> {

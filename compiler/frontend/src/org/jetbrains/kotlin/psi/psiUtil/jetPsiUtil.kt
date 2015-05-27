@@ -193,7 +193,7 @@ public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetToke
  *
  * @return the list of possible superclass names
  */
-public fun <T: JetClassOrObject> StubBasedPsiElementBase<out KotlinClassOrObjectStub<T>>.getSuperNames(): List<String> {
+public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out JetClassOrObject>>.getSuperNames(): List<String> {
     fun addSuperName(result: MutableList<String>, referencedName: String): Unit {
         result.add(referencedName)
 
