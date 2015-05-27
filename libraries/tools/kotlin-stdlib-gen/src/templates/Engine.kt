@@ -75,6 +75,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     val buildPrimitives = LinkedHashSet(defaultPrimitives.toList())
 
     val deprecate = FamilyProperty<String>()
+    val deprecateReplacement = FamilyProperty<String>()
     val doc = FamilyProperty<String>()
     val platformName = PrimitiveProperty<String>()
     val inline = FamilyProperty<Boolean>()
@@ -287,7 +288,8 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
         }
 
         deprecate[f]?.let { deprecated ->
-            builder.append("deprecated(\"$deprecated\")\n")
+            val replacement = deprecateReplacement[f]?.let { ", ReplaceWith(\"$it\")" } ?: ""
+            builder.append("deprecated(\"$deprecated\"$replacement)\n")
         }
 
         if (!f.isPrimitiveSpecialization && primitive != null) {
