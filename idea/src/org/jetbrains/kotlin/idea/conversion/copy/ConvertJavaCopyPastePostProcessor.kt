@@ -30,16 +30,20 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import java.awt.datatransfer.Transferable
+import java.util.LinkedHashSet
 
 public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPastePostProcessor")
@@ -73,34 +77,44 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         val document = editor.getDocument()
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? JetFile ?: return
 
-        fun doConversion(): Pair<String?, Collection<KotlinReferenceData>> {
+        @data class Result(val text: String?, val referenceData: Collection<KotlinReferenceData>, val explicitImports: Set<FqName>)
+
+        fun doConversion(): Result {
             val dataForConversion = DataForConversion.prepare(data, project)
             val result = convertCopiedCodeToKotlin(dataForConversion.elementsAndTexts, project)
             val referenceData = buildReferenceData(result.text, result.parseContext, dataForConversion.importsAndPackage, targetFile)
-            return (if (result.textChanged) result.text else null) to referenceData
+            val text = if (result.textChanged) result.text else null
+            return Result(text, referenceData, result.importsToAdd)
         }
 
-        fun insertImports(bounds: TextRange, referenceData: Collection<KotlinReferenceData>): TextRange? {
-            if (referenceData.isEmpty()) return bounds
+        fun insertImports(bounds: TextRange, referenceData: Collection<KotlinReferenceData>, explicitImports: Collection<FqName>): TextRange? {
+            if (referenceData.isEmpty() && explicitImports.isEmpty()) return bounds
+
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
 
             val rangeMarker = document.createRangeMarker(bounds)
             rangeMarker.setGreedyToLeft(true)
             rangeMarker.setGreedyToRight(true)
+
+            explicitImports.forEach { fqName ->
+                targetFile.getResolutionFacade().resolveImportReference(targetFile, fqName).firstOrNull()?.let {
+                    ImportInsertHelper.getInstance(project).importDescriptor(targetFile, it)
+                }
+            }
 
             KotlinCopyPasteReferenceProcessor().processReferenceData(project, targetFile, bounds.start, referenceData.copyToArray())
 
             return rangeMarker.range
         }
 
-        var conversionResult: Pair<String?, Collection<KotlinReferenceData>>? = null
+        var conversionResult: Result? = null
 
         fun doConversionAndInsertImportsIfUnchanged(): Boolean {
             conversionResult = doConversion()
 
-            val text = conversionResult!!.first
-            if (text != null) return false
+            if (conversionResult!!.text != null) return false
 
-            insertImports(bounds.range ?: return true, conversionResult!!.second)
+            insertImports(bounds.range ?: return true, conversionResult!!.referenceData, conversionResult!!.explicitImports)
             return true
         }
 
@@ -114,7 +128,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             if (conversionResult == null) {
                 if (doConversionAndInsertImportsIfUnchanged()) return
             }
-            val (text, referenceData) = conversionResult!!
+            val (text, referenceData, explicitImports) = conversionResult!!
             text!! // otherwise we should get true from doConversionAndInsertImportsIfUnchanged and return above
 
             runWriteAction {
@@ -124,7 +138,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
                 val endOffsetAfterCopy = startOffset + text.length()
                 editor.getCaretModel().moveToOffset(endOffsetAfterCopy)
 
-                var newBounds = insertImports(TextRange(startOffset, endOffsetAfterCopy), referenceData)
+                var newBounds = insertImports(TextRange(startOffset, endOffsetAfterCopy), referenceData, explicitImports)
 
                 PsiDocumentManager.getInstance(project).commitAllDocuments()
                 AfterConversionPass(project, J2kPostProcessor(formatCode = true)).run(targetFile, newBounds)
@@ -137,6 +151,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
     private class ConversionResult(
             val text: String,
             val parseContext: ParseContext,
+            val importsToAdd: Set<FqName>,
             val textChanged: Boolean
     )
 
@@ -150,6 +165,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
         val inputElements = elementsAndTexts.filterIsInstance<PsiElement>()
         val results = converter.elementsToKotlin(inputElements).results
+        val importsToAdd = LinkedHashSet<FqName>()
 
         var resultIndex = 0
         val convertedCodeBuilder = StringBuilder()
@@ -162,12 +178,11 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
                 val result = results[resultIndex++]
                 if (result != null) {
-                    //TODO: insert imports
-
                     convertedCodeBuilder.append(result.text)
                     if (parseContext == null) { // use parse context of the first converted element as parse context for the whole text
                         parseContext = result.parseContext
                     }
+                    importsToAdd.addAll(result.importsToAdd)
                 }
                 else { // failed to convert element to Kotlin, insert "as is"
                     convertedCodeBuilder.append(originalText)
@@ -181,7 +196,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
         val convertedCode = convertedCodeBuilder.toString()
         val originalCode = originalCodeBuilder.toString()
-        return ConversionResult(convertedCode, parseContext ?: ParseContext.TOP_LEVEL, convertedCode != originalCode)
+        return ConversionResult(convertedCode, parseContext ?: ParseContext.TOP_LEVEL, importsToAdd, convertedCode != originalCode)
     }
 
     private fun buildReferenceData(text: String, parseContext: ParseContext, importsAndPackage: String, targetFile: JetFile): Collection<KotlinReferenceData> {
@@ -225,7 +240,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
     }
 
     companion object {
-        [TestOnly]
+        @TestOnly
         public var conversionPerformed: Boolean = false
     }
 }

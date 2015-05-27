@@ -84,7 +84,7 @@ class Converter private(
 
     public data class Result(
             val text: String,
-            val importsToAdd: Collection<FqName>
+            val importsToAdd: Set<FqName>
     )
 
     public fun convert(): IntermediateResult? {

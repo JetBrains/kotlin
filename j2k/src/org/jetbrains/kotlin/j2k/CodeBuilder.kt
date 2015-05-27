@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.j2k.ast.CommentsAndSpacesInheritance
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import java.util.ArrayList
-import java.util.HashSet
+import java.util.*
 import kotlin.platform.platformName
 
 fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
@@ -56,7 +55,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
     private val commentsAndSpacesUsed = HashSet<PsiElement>()
 
-    private val imports = ArrayList<FqName>()
+    private val imports = LinkedHashSet<FqName>()
 
     public fun append(text: String): CodeBuilder
             = append(text, false)
@@ -93,7 +92,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
     public val resultText: String
         get() = builder.toString()
 
-    public val importsToAdd: Collection<FqName>
+    public val importsToAdd: Set<FqName>
         get() = imports
 
     public fun append(element: Element): CodeBuilder {

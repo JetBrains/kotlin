@@ -89,7 +89,7 @@ public class JavaToKotlinConverter(
         public fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit
     }
 
-    public data class ElementResult(val text: String, val importsToAdd: Collection<FqName>, val parseContext: ParseContext)
+    public data class ElementResult(val text: String, val importsToAdd: Set<FqName>, val parseContext: ParseContext)
 
     public data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ExternalCodeProcessing?)
 
