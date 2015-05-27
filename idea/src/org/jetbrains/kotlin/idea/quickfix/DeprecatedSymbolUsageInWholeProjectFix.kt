@@ -18,14 +18,12 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.find.findUsages.FindUsagesOptions
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.ex.MessagesEx
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
@@ -146,10 +144,6 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                         }
                     }
                 }
-            }
-
-            if (!ApplicationManager.getApplication().isUnitTestMode()) {
-                MessagesEx.showInfoMessage(null, "$replacedCount usages found and replaced", getText())
             }
         }
     }
