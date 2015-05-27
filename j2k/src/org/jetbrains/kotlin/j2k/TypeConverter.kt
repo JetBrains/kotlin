@@ -38,10 +38,15 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 
 class TypeConverter(val converter: Converter) {
-    public fun convertType(type: PsiType?, nullability: Nullability = Nullability.Default, mutability: Mutability = Mutability.Default): Type {
+    public fun convertType(
+            type: PsiType?,
+            nullability: Nullability = Nullability.Default,
+            mutability: Mutability = Mutability.Default,
+            inAnnotationType: Boolean = false
+    ): Type {
         if (type == null) return ErrorType().assignNoPrototype()
 
-        val result = type.accept<Type>(TypeVisitor(converter, type, mutability))!!.assignNoPrototype()
+        val result = type.accept<Type>(TypeVisitor(converter, type, mutability, inAnnotationType))!!.assignNoPrototype()
         return when (nullability) {
             Nullability.NotNull -> result.toNotNullType()
             Nullability.Nullable -> result.toNullableType()

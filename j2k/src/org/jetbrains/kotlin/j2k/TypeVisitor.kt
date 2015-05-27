@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.PsiClassReferenceType
 import org.jetbrains.kotlin.j2k.ast.*
-import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 
 private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName() }
@@ -27,7 +28,8 @@ private val PRIMITIVE_TYPES_NAMES = JvmPrimitiveType.values().map { it.getName()
 class TypeVisitor(
         private val converter: Converter,
         private val topLevelType: PsiType,
-        private val topLevelTypeMutability: Mutability
+        private val topLevelTypeMutability: Mutability,
+        private val inAnnotationType: Boolean
 ) : PsiTypeVisitor<Type>() {
 
     private val typeConverter: TypeConverter = converter.typeConverter
@@ -49,7 +51,7 @@ class TypeVisitor(
     }
 
     override fun visitArrayType(arrayType: PsiArrayType): Type {
-        return ArrayType(typeConverter.convertType(arrayType.getComponentType()), Nullability.Default, converter.settings)
+        return ArrayType(typeConverter.convertType(arrayType.getComponentType(), inAnnotationType = inAnnotationType), Nullability.Default, converter.settings)
     }
 
     override fun visitClassType(classType: PsiClassType): Type {
@@ -69,6 +71,12 @@ class TypeVisitor(
             if (kotlinClassName != null) {
                 return ReferenceElement(Identifier(getShortName(kotlinClassName)).assignNoPrototype(), typeArgs).assignNoPrototype()
             }
+
+            if (inAnnotationType && javaClassName == "java.lang.Class") {
+                val fqName = FqName("kotlin.reflect.KClass")
+                val identifier = Identifier(fqName.shortName().getIdentifier(), imports = listOf(fqName)).assignNoPrototype()
+                return ReferenceElement(identifier, typeArgs).assignNoPrototype()
+            }
         }
 
         if (classType is PsiClassReferenceType) {
@@ -78,8 +86,7 @@ class TypeVisitor(
         return ReferenceElement(Identifier(classType.getClassName() ?: "").assignNoPrototype(), typeArgs).assignNoPrototype()
     }
 
-    private fun getPackageName(className: String): String = className.substring(0, className.lastIndexOf('.'))
-    private fun getShortName(className: String): String = className.substring(className.lastIndexOf('.') + 1)
+    private fun getShortName(className: String): String = className.substringAfterLast('.', className)
 
     private fun convertTypeArgs(classType: PsiClassType): List<Type> {
         if (classType.getParameterCount() == 0) {
@@ -112,7 +119,7 @@ class TypeVisitor(
     }
 
     override fun visitEllipsisType(ellipsisType: PsiEllipsisType): Type {
-        return VarArgType(typeConverter.convertType(ellipsisType.getComponentType()))
+        return VarArgType(typeConverter.convertType(ellipsisType.getComponentType(), inAnnotationType = inAnnotationType))
     }
 
     companion object {

@@ -121,7 +121,18 @@ class AnnotationConverter(private val converter: Converter) {
 
     private fun convertAttributeValue(value: PsiAnnotationMemberValue?, expectedType: PsiType?, isVararg: Boolean, isUnnamed: Boolean): List<(CodeConverter) -> Expression> {
         when (value) {
-            is PsiExpression -> return listOf({ codeConverter -> codeConverter.convertExpression(value, expectedType).assignPrototype(value) })
+            is PsiExpression -> {
+                return listOf({ codeConverter ->
+                                  val expression = if (value is PsiClassObjectAccessExpression) {
+                                      val typeElement = converter.convertTypeElement(value.getOperand())
+                                      ClassLiteralExpression(typeElement.type.toNotNullType())
+                                  }
+                                  else {
+                                      codeConverter.convertExpression(value, expectedType)
+                                  }
+                                  expression.assignPrototype(value)
+                              })
+            }
 
             is PsiArrayInitializerMemberValue -> {
                 val componentType = (expectedType as? PsiArrayType)?.getComponentType()

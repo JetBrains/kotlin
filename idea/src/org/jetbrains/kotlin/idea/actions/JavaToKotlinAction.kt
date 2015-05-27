@@ -47,12 +47,10 @@ public class JavaToKotlinAction : AnAction() {
         val javaFiles = selectedJavaFiles(e).toList()
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
 
-        var converterResult: JavaToKotlinConverter.Result? = null
+        var converterResult: JavaToKotlinConverter.FilesResult? = null
         fun convert() {
-            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings,
-                                                  IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = true))
-            val inputElements = javaFiles.map { JavaToKotlinConverter.InputElement(it, it) }
-            converterResult = converter.elementsToKotlin(inputElements, ProgressManager.getInstance().getProgressIndicator())
+            val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaReferenceSearcher, IdeaResolverForConverter)
+            converterResult = converter.filesToKotlin(javaFiles, J2kPostProcessor(formatCode = true), ProgressManager.getInstance().getProgressIndicator())
         }
 
         val title = "Convert Java to Kotlin"
@@ -85,7 +83,7 @@ public class JavaToKotlinAction : AnAction() {
         project.executeWriteCommand("Convert files from Java to Kotlin") {
             CommandProcessor.getInstance().markCurrentCommandAsGlobal(project)
 
-            val newFiles = saveResults(javaFiles, converterResult!!.results.map { it!!.text /*conversion of a file always succeeds*/ })
+            val newFiles = saveResults(javaFiles, converterResult!!.results)
 
             externalCodeUpdate?.invoke()
 

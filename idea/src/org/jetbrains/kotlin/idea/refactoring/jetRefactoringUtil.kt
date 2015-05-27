@@ -558,16 +558,14 @@ fun createJavaClass(klass: JetClass, targetClass: PsiClass): PsiMember {
     return javaClass
 }
 
-fun PsiExpression.j2k(postProcessingContext: PsiElement): JetExpression? {
+fun PsiExpression.j2k(): JetExpression? {
     if (getLanguage() != JavaLanguage.INSTANCE) return null
 
     val project = getProject()
     val j2kConverter = JavaToKotlinConverter(project,
                                              ConverterSettings.defaultSettings,
                                              IdeaReferenceSearcher,
-                                             IdeaResolverForConverter,
-                                             J2kPostProcessor(true))
-    val inputElements = Collections.singletonList(JavaToKotlinConverter.InputElement(this, postProcessingContext))
-    val text = j2kConverter.elementsToKotlin(inputElements).results.singleOrNull()?.text ?: return null
+                                             IdeaResolverForConverter)
+    val text = j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
     return JetPsiFactory(getProject()).createExpression(text)
 }

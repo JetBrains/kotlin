@@ -54,10 +54,8 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
             assert(psiFile is PsiJavaFile || psiFile is JetFile)
         }
 
-        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings,
-                                              IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = true))
-        val inputElements = psiFilesToConvert.map { JavaToKotlinConverter.InputElement(it, it) }
-        val (results, externalCodeProcessor) = converter.elementsToKotlin(inputElements)
+        val converter = JavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaReferenceSearcher, IdeaResolverForConverter)
+        val (results, externalCodeProcessor) = converter.filesToKotlin(psiFilesToConvert, J2kPostProcessor(formatCode = true))
 
         val process = externalCodeProcessor?.prepareWriteOperation(EmptyProgressIndicator())
         project.executeWriteCommand("") { process?.invoke() }
@@ -67,7 +65,7 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
         val resultFiles = ArrayList<JetFile>()
         for ((i, javaFile) in psiFilesToConvert.withIndex()) {
             deleteFile(javaFile.getVirtualFile())
-            val virtualFile = addFile(results.map { it!!.text }[i], expectedResultFile(i).getName(), "test")
+            val virtualFile = addFile(results[i], expectedResultFile(i).getName(), "test")
             resultFiles.add(psiManager.findFile(virtualFile) as JetFile)
         }
 

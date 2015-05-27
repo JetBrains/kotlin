@@ -76,7 +76,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         data.getParametersToRemove().toNativeArray().toList().sortDescending().forEach { changeInfo.removeParameter(it) }
 
         // Temporarily assume that the new parameter is of Any type. Actual type is substituted during the signature update phase
-        val defaultValueForCall = (data.getParameterInitializer().getExpression()!! as? PsiExpression)?.let { it.j2k(it) }
+        val defaultValueForCall = (data.getParameterInitializer().getExpression()!! as? PsiExpression)?.let { it.j2k() }
         changeInfo.addParameter(JetParameterInfo(functionDescriptor = psiMethodDescriptor,
                                                  name = data.getParameterName(),
                                                  type = KotlinBuiltIns.getInstance().getAnyType(),

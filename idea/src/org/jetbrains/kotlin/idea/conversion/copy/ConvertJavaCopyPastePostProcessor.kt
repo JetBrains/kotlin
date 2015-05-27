@@ -145,11 +145,10 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
                 project,
                 ConverterSettings.defaultSettings,
                 IdeaReferenceSearcher,
-                IdeaResolverForConverter,
-                null
+                IdeaResolverForConverter
         )
 
-        val inputElements = elementsAndTexts.filterIsInstance<PsiElement>().map { JavaToKotlinConverter.InputElement(it, null) }
+        val inputElements = elementsAndTexts.filterIsInstance<PsiElement>()
         val results = converter.elementsToKotlin(inputElements).results
 
         var resultIndex = 0
@@ -163,6 +162,8 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
                 val result = results[resultIndex++]
                 if (result != null) {
+                    //TODO: insert imports
+
                     convertedCodeBuilder.append(result.text)
                     if (parseContext == null) { // use parse context of the first converted element as parse context for the whole text
                         parseContext = result.parseContext

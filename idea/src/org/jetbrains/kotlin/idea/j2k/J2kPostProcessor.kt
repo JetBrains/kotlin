@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.I
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions.IfThenToSafeAccessIntention
 import org.jetbrains.kotlin.idea.quickfix.RemoveModifierFix
 import org.jetbrains.kotlin.idea.quickfix.RemoveRightPartOfBinaryExpressionFix
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.j2k.PostProcessor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -47,6 +49,11 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             file.elementsInRange(range).filterIsInstance<JetElement>()
         }
         return file.getResolutionFacade().analyzeFullyAndGetResult(elements).bindingContext
+    }
+
+    override fun insertImport(file: JetFile, fqName: FqName) {
+        val descriptors = file.getResolutionFacade().resolveImportReference(file, fqName)
+        descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.getProject()).importDescriptor(file, it) }
     }
 
     override fun fixForProblem(problem: Diagnostic): (() -> Unit)? {

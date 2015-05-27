@@ -21,6 +21,7 @@ import com.intellij.psi.*
 import com.intellij.psi.javadoc.PsiDocComment
 import org.jetbrains.kotlin.j2k.ast.CommentsAndSpacesInheritance
 import org.jetbrains.kotlin.j2k.ast.Element
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.ArrayList
 import java.util.HashSet
@@ -55,8 +56,14 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
     private val commentsAndSpacesUsed = HashSet<PsiElement>()
 
+    private val imports = ArrayList<FqName>()
+
     public fun append(text: String): CodeBuilder
             = append(text, false)
+
+    public fun addImport(fqName: FqName) {
+        imports.add(fqName)
+    }
 
     private fun appendCommentOrWhiteSpace(element: PsiElement) {
         if (element is PsiDocComment) {
@@ -83,8 +90,11 @@ class CodeBuilder(private val topElement: PsiElement?) {
         return this
     }
 
-    public val result: String
+    public val resultText: String
         get() = builder.toString()
+
+    public val importsToAdd: Collection<FqName>
+        get() = imports
 
     public fun append(element: Element): CodeBuilder {
         if (element.isEmpty) return this // do not insert comment and spaces for empty elements to avoid multiple blank lines

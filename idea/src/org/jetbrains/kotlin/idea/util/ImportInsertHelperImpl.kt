@@ -18,41 +18,37 @@ package org.jetbrains.kotlin.util
 
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.actions.OptimizeImportsProcessor
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.PsiModificationTrackerImpl
+import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
+import org.jetbrains.kotlin.idea.imports.getImportableTargets
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper.ImportDescriptorResult
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
-import java.util.*
-import org.jetbrains.kotlin.idea.imports.*
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.util.ArrayList
+import java.util.Comparator
+import java.util.LinkedHashSet
 
 public class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper() {
 
@@ -70,6 +66,11 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
     }
 
     private fun addImport(file: JetFile, importPath: ImportPath): JetImportDirective {
+        //TODO: it's a temporary hack for JetCodeFragment's and non-physical files
+        // We should increment modification tracker after inserting import to invalidate resolve caches.
+        // Without this modification references with new import won't be resolved.
+        (PsiModificationTracker.SERVICE.getInstance(project) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
+
         val psiFactory = JetPsiFactory(project)
         if (file is JetCodeFragment) {
             val newDirective = psiFactory.createImportDirective(importPath)

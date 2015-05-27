@@ -108,9 +108,8 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
     private fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {
         val file = createJavaFile(text)
         val converter = JavaToKotlinConverter(project, settings,
-                                              IdeaReferenceSearcher, IdeaResolverForConverter, J2kPostProcessor(formatCode = false))
-        val inputElements = listOf(JavaToKotlinConverter.InputElement(file, file))
-        return converter.elementsToKotlin(inputElements).results.single()!!.text
+                                              IdeaReferenceSearcher, IdeaResolverForConverter)
+        return converter.filesToKotlin(listOf(file), J2kPostProcessor(formatCode = true)).results.single()
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {

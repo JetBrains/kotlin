@@ -301,7 +301,7 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
         val defaultValueExpr = if (getLanguage().`is`(JavaLanguage.INSTANCE) && !defaultValueText.isNullOrEmpty()) {
             PsiElementFactory.SERVICE.getInstance(method.getProject())
                     .createExpressionFromText(defaultValueText!!, null)
-                    .j2k(originalChangeSignatureDescriptor.baseDeclaration)
+                    .j2k()
         }
         else null
 

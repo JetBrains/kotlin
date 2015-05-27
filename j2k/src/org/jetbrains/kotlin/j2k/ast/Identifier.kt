@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.CodeBuilder
 import com.intellij.psi.PsiNameIdentifierOwner
+import org.jetbrains.kotlin.j2k.CodeBuilder
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.FqName
 
 fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
     val name = getName()
@@ -29,7 +30,8 @@ fun PsiNameIdentifierOwner.declarationIdentifier(): Identifier {
 class Identifier(
         val name: String,
         override val isNullable: Boolean = true,
-        private val quotingNeeded: Boolean = true
+        private val quotingNeeded: Boolean = true,
+        private val imports: Collection<FqName> = emptyList()
 ) : Expression() {
 
     override val isEmpty: Boolean
@@ -45,6 +47,8 @@ class Identifier(
 
     override fun generateCode(builder: CodeBuilder) {
         builder.append(toKotlin())
+
+        imports.forEach { builder.addImport(it) }
     }
 
     private fun quote(str: String): String = "`" + str + "`"

@@ -53,7 +53,7 @@ data class CommentsAndSpacesInheritance(val blankLinesBefore: Boolean = true,
 fun Element.canonicalCode(): String {
     val builder = CodeBuilder(null)
     builder.append(this)
-    return builder.result
+    return builder.resultText
 }
 
 abstract class Element {

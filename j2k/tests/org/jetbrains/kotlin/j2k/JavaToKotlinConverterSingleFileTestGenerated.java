@@ -73,6 +73,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("javaClassArgument.java")
+        public void testJavaClassArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/javaClassArgument.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaClassArrayArgument.java")
+        public void testJavaClassArrayArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/javaClassArrayArgument.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("jetbrainsNotNull.java")
         public void testJetbrainsNotNull() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNotNull.java");

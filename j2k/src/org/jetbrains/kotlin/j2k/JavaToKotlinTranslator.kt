@@ -70,8 +70,8 @@ public object JavaToKotlinTranslator {
     public fun generateKotlinCode(javaCode: String, project: Project): String {
         val file = createFile(javaCode, project)
         if (file is PsiJavaFile) {
-            val converter = JavaToKotlinConverter(file.getProject(), ConverterSettings.defaultSettings, EmptyReferenceSearcher, EmptyResolverForConverter, null)
-            return prettify(converter.elementsToKotlin(listOf(JavaToKotlinConverter.InputElement(file, null))).results.single()!!.text)
+            val converter = JavaToKotlinConverter(file.getProject(), ConverterSettings.defaultSettings, EmptyReferenceSearcher, EmptyResolverForConverter)
+            return prettify(converter.elementsToKotlin(listOf(file)).results.single()!!.text) //TODO: imports
         }
         return ""
     }

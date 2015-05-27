@@ -26,16 +26,14 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiNamedElement
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
 import com.intellij.psi.impl.source.DummyHolder
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -45,8 +43,10 @@ import java.util.Comparator
 import java.util.LinkedHashMap
 import kotlin.properties.Delegates
 
-public trait PostProcessor {
+public interface PostProcessor {
     public fun analyzeFile(file: JetFile, range: TextRange?): BindingContext
+
+    public fun insertImport(file: JetFile, fqName: FqName)
 
     public open fun fixForProblem(problem: Diagnostic): (() -> Unit)? {
         val psiElement = problem.getPsiElement()
@@ -77,30 +77,57 @@ public enum class ParseContext {
     CODE_BLOCK
 }
 
-public class JavaToKotlinConverter(private val project: Project,
-                                   private val settings: ConverterSettings,
-                                   private val referenceSearcher: ReferenceSearcher,
-                                   private val resolverForConverter: ResolverForConverter,
-                                   private val postProcessor: PostProcessor?) {
+public class JavaToKotlinConverter(
+        private val project: Project,
+        private val settings: ConverterSettings,
+        private val referenceSearcher: ReferenceSearcher,
+        private val resolverForConverter: ResolverForConverter
+) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
-    public data class InputElement(
-            val element: PsiElement,
-            val postProcessingContext: PsiElement?
-    )
-
-    public data class ElementResult(val text: String,  val parseContext: ParseContext)
-
-    public trait ExternalCodeProcessing {
+    public interface ExternalCodeProcessing {
         public fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit
     }
 
+    public data class ElementResult(val text: String, val importsToAdd: Collection<FqName>, val parseContext: ParseContext)
+
     public data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ExternalCodeProcessing?)
 
-    public fun elementsToKotlin(
-            inputElements: List<InputElement>,
-            progress: ProgressIndicator = EmptyProgressIndicator()
-    ): Result {
+    public data class FilesResult(val results: List<String>, val externalCodeProcessing: ExternalCodeProcessing?)
+
+    public fun filesToKotlin(files: List<PsiJavaFile>, postProcessor: PostProcessor, progress: ProgressIndicator = EmptyProgressIndicator()): FilesResult {
+        val withProgressProcessor = WithProgressProcessor(progress, files)
+
+        val (results, externalCodeProcessing) = elementsToKotlin(files, withProgressProcessor)
+
+        val texts = withProgressProcessor.processItems(0.5, results.withIndex()) { pair ->
+            val (i, result) = pair
+            try {
+                val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result!!.text, files[i])
+
+                result.importsToAdd.forEach { postProcessor.insertImport(kotlinFile, it) }
+
+                AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
+
+                kotlinFile.getText()
+            }
+            catch(e: ProcessCanceledException) {
+                throw e
+            }
+            catch(t: Throwable) {
+                LOG.error(t)
+                result!!.text
+            }
+        }
+
+        return FilesResult(texts, externalCodeProcessing)
+    }
+
+    public fun elementsToKotlin(inputElements: List<PsiElement>): Result {
+        return elementsToKotlin(inputElements, WithProgressProcessor.DEFAULT)
+    }
+
+    private  fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         try {
             val usageProcessings = LinkedHashMap<PsiElement, MutableCollection<UsageProcessing>>()
             val usageProcessingCollector: (UsageProcessing) -> Unit = {
@@ -108,87 +135,25 @@ public class JavaToKotlinConverter(private val project: Project,
             }
 
             fun inConversionScope(element: PsiElement)
-                    = inputElements.any { it.element.isAncestor(element, strict = false) }
+                    = inputElements.any { it.isAncestor(element, strict = false) }
 
-            val progressText = "Converting Java to Kotlin"
-            val elementCount = inputElements.size()
-            val fileCountText = elementCount.toString() + " " + if (elementCount > 1) "files" else "file"
-            var fraction = 0.0
-            var pass = 1
 
-            fun processFilesWithProgress<TInputItem, TOutputItem>(
-                    fractionPortion: Double,
-                    inputItems: Iterable<TInputItem>,
-                    processItem: (TInputItem) -> TOutputItem
-            ): List<TOutputItem> {
-                val outputItems = ArrayList<TOutputItem>(elementCount)
-                // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
-                ProgressManager.getInstance().runProcess(
-                        {
-                            progress.setText("$progressText ($fileCountText) - pass $pass of 3")
-
-                            for ((i, item) in inputItems.withIndex()) {
-                                progress.checkCanceled()
-                                progress.setFraction(fraction + fractionPortion * i / elementCount)
-
-                                val psiFile = inputElements[i].element as? PsiFile
-                                if (psiFile != null) {
-                                    progress.setText2(psiFile.getVirtualFile().getPresentableUrl())
-                                }
-
-                                outputItems.add(processItem(item))
-                            }
-
-                            pass++
-                            fraction += fractionPortion
-                        },
-                        EmptyProgressIndicator())
-                return outputItems
-            }
-
-            val intermediateResults = processFilesWithProgress(0.25, inputElements) { inputElement ->
-                Converter.create(inputElement.element, settings, ::inConversionScope, referenceSearcher, resolverForConverter, usageProcessingCollector).convert()
+            val intermediateResults = processor.processItems(0.25, inputElements) { inputElement ->
+                Converter.create(inputElement, settings, ::inConversionScope, referenceSearcher, resolverForConverter, usageProcessingCollector).convert()
             }.toArrayList()
 
-            val results = processFilesWithProgress(0.25, intermediateResults.withIndex()) { pair ->
+            val results = processor.processItems(0.25, intermediateResults.withIndex()) { pair ->
                 val (i, result) = pair
                 intermediateResults[i] = null // to not hold unused objects in the heap
-                if (result != null)
-                    ElementResult(result.codeGenerator(usageProcessings), result.parseContext)
-                else
-                    null
+                result?.let {
+                    val (text, importsToAdd) = it.codeGenerator(usageProcessings)
+                    ElementResult(text, importsToAdd, it.parseContext)
+                }
             }
 
             val externalCodeProcessing = buildExternalCodeProcessing(usageProcessings, ::inConversionScope)
 
-            if (postProcessor == null) {
-                assert(progress is EmptyProgressIndicator, "Progress indicator not supported for postProcessor == null")
-                return Result(results, externalCodeProcessing)
-            }
-
-            val finalResults = processFilesWithProgress(0.5, results.withIndex()) { pair ->
-                val (i, result) = pair
-                if (result != null) {
-                    try {
-                        //TODO: post processing does not work correctly for ParseContext different from TOP_LEVEL
-                        val kotlinFile = JetPsiFactory(project).createAnalyzableFile("dummy.kt", result.text, inputElements[i].postProcessingContext!!)
-                        AfterConversionPass(project, postProcessor).run(kotlinFile, range = null)
-                        ElementResult(kotlinFile.getText(), result.parseContext)
-                    }
-                    catch(e: ProcessCanceledException) {
-                        throw e
-                    }
-                    catch(t: Throwable) {
-                        LOG.error(t)
-                        result
-                    }
-                }
-                else {
-                    null
-                }
-            }
-
-            return Result(finalResults, externalCodeProcessing)
+            return Result(results, externalCodeProcessing)
         }
         catch(e: ElementCreationStackTraceRequiredException) {
             // if we got this exception then we need to turn element creation stack traces on to get better diagnostic
@@ -202,7 +167,7 @@ public class JavaToKotlinConverter(private val project: Project,
         }
     }
 
-    data class ReferenceInfo(
+    private data class ReferenceInfo(
             val reference: PsiReference,
             val target: PsiElement,
             val file: PsiFile,
@@ -292,6 +257,45 @@ public class JavaToKotlinConverter(private val project: Project,
 
             // process elements with the same parent from right to left so that right-side of assignments is not invalidated by processing of the left one
             return -element1.getStartOffsetInParent().compareTo(element2.getStartOffsetInParent())
+        }
+    }
+
+    private class WithProgressProcessor(private val progress: ProgressIndicator?, private val files: List<PsiJavaFile>?) {
+        public companion object {
+            val DEFAULT = WithProgressProcessor(null, null)
+        }
+
+        private val progressText = "Converting Java to Kotlin"
+        private val fileCount = files?.size() ?: 0
+        private val fileCountText = fileCount.toString() + " " + if (fileCount > 1) "files" else "file"
+        private var fraction = 0.0
+        private var pass = 1
+
+        fun processItems<TInputItem, TOutputItem>(
+                fractionPortion: Double,
+                inputItems: Iterable<TInputItem>,
+                processItem: (TInputItem) -> TOutputItem
+        ): List<TOutputItem> {
+            val outputItems = ArrayList<TOutputItem>()
+            // we use special process with EmptyProgressIndicator to avoid changing text in our progress by inheritors search inside etc
+            ProgressManager.getInstance().runProcess(
+                    {
+                        progress?.setText("$progressText ($fileCountText) - pass $pass of 3")
+
+                        for ((i, item) in inputItems.withIndex()) {
+                            progress?.checkCanceled()
+                            progress?.setFraction(fraction + fractionPortion * i / fileCount)
+
+                            progress?.setText2(files!![i].getVirtualFile().getPresentableUrl())
+
+                            outputItems.add(processItem(item))
+                        }
+
+                        pass++
+                        fraction += fractionPortion
+                    },
+                    EmptyProgressIndicator())
+            return outputItems
         }
     }
 

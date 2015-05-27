@@ -102,12 +102,6 @@ public abstract class JetCodeFragment(
 
     override fun addImportsFromString(imports: String?) {
         if (imports == null || imports.isEmpty()) return
-
-        // We should increment modification tracker after inserting import in code fragment to invalidate resolve caches.
-        // Without this modification references with new import won't be resolved without any modification in code fragment.
-        // Also shorten references won't work.
-        (PsiModificationTracker.SERVICE.getInstance(getProject()) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
-
         myImports.addAll(imports.split(IMPORT_SEPARATOR))
     }
 

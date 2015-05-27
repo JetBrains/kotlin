@@ -39,10 +39,16 @@ public class AfterConversionPass(val project: Project, val postProcessor: PostPr
                 }
                 .filterNotNull()
 
-        val document = kotlinFile.getViewProvider().getDocument()!!
-        val rangeMarker = if (range != null) document.createRangeMarker(range.getStartOffset(), range.getEndOffset()) else null
-        rangeMarker?.setGreedyToLeft(true)
-        rangeMarker?.setGreedyToRight(true)
+        val rangeMarker = if (range != null) {
+            val document = kotlinFile.getViewProvider().getDocument()!!
+            val marker = document.createRangeMarker(range.getStartOffset(), range.getEndOffset())
+            marker.setGreedyToLeft(true)
+            marker.setGreedyToRight(true)
+            marker
+        }
+        else {
+            null
+        }
 
         for ((psiElement, fix) in fixes) {
             if (psiElement.isValid()) {

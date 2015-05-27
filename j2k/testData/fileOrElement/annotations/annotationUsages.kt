@@ -6,8 +6,8 @@ Anon3(e = E.A, stringArray = array(), value = *array("a", "b"))
 Anon4("x", "y")
 Anon5(1)
 Anon6("x", "y")
-Anon7(javaClass<String>(), javaClass<StringBuilder>())
-Anon8(classes = array(javaClass<String>(), javaClass<StringBuilder>()))
+Anon7(String::class, StringBuilder::class)
+Anon8(classes = array(String::class, StringBuilder::class))
 class C {
     Anon5(1) deprecated("") private val field1 = 0
 

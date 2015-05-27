@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.j2k.ast.Object
 import org.jetbrains.kotlin.j2k.usageProcessing.FieldToPropertyProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessing
 import org.jetbrains.kotlin.j2k.usageProcessing.UsageProcessingExpressionConverter
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import java.util.ArrayList
 import java.util.HashMap
@@ -77,8 +78,13 @@ class Converter private(
     private fun createDefaultCodeConverter() = CodeConverter(this, DefaultExpressionConverter(), DefaultStatementConverter(), null)
 
     public data class IntermediateResult(
-            val codeGenerator: (Map<PsiElement, Collection<UsageProcessing>>) -> String,
+            val codeGenerator: (Map<PsiElement, Collection<UsageProcessing>>) -> Result,
             val parseContext: ParseContext
+    )
+
+    public data class Result(
+            val text: String,
+            val importsToAdd: Collection<FqName>
     )
 
     public fun convert(): IntermediateResult? {
@@ -93,7 +99,7 @@ class Converter private(
 
                     val builder = CodeBuilder(elementToConvert)
                     builder.append(element)
-                    builder.result
+                    Result(builder.resultText, builder.importsToAdd)
                 },
                 parseContext)
     }
@@ -253,24 +259,24 @@ class Converter private(
                       annotationConverter.convertAnnotationMethodDefault(method)).assignPrototype(method, noBlankLinesInheritance)
         }
 
+        fun convertType(psiType: PsiType?): Type {
+            return typeConverter.convertType(psiType, Nullability.NotNull, inAnnotationType = true)
+        }
+
         val parameters =
                 // Argument named `value` comes first if it exists
                 // Convert it as vararg if it's array
-                methodsNamedValue.
-                map { method ->
+                methodsNamedValue.map { method ->
                     val returnType = method.getReturnType()
                     val typeConverted = if (returnType is PsiArrayType)
-                        VarArgType(typeConverter.convertType(returnType.getComponentType(), Nullability.NotNull))
+                        VarArgType(convertType(returnType.getComponentType()))
                     else
-                        typeConverter.convertType(returnType, Nullability.NotNull)
+                        convertType(returnType)
 
                     createParameter(typeConverted, method)
                 } +
-                otherMethods
-                .map { method ->
-                    val typeConverted = typeConverter.convertType(method.getReturnType(), Nullability.NotNull)
-                    createParameter(typeConverted, method)
-                }
+                otherMethods.map { method -> createParameter(convertType(method.getReturnType()), method) }
+
         val parameterList = ParameterList(parameters).assignNoPrototype()
         val constructorSignature = if (parameterList.parameters.isNotEmpty())
             PrimaryConstructorSignature(Annotations.Empty, Modifiers.Empty, parameterList).assignNoPrototype()
