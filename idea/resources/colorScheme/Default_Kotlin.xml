@@ -56,4 +56,10 @@
       <option name="ERROR_STRIPE_COLOR" value="ff0000"/>
     </value>
   </option>
+  <option name="KOTLIN_ANNOTATION">
+    <value>
+      <option name="FOREGROUND" value="80"/>
+      <option name="FONT_TYPE" value="0" />
+    </value>
+  </option>
 </list>
