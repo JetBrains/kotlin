@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import kotlin.properties.Delegates
 
 public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -37,6 +38,7 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                 val receiverTypeReference = callableDeclaration.getReceiverTypeReference()
                 if (receiverTypeReference == null) return
                 if (callableDeclaration.isOverridable() || callableDeclaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
+                if (callableDeclaration is JetProperty && callableDeclaration.hasDelegateExpression()) return
 
                 val callable = callableDeclaration.descriptor
 
