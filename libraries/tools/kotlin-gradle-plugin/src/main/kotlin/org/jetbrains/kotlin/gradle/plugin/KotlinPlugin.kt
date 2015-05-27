@@ -436,7 +436,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             javaTask.dependsOn(kotlinTaskName)
 
-            val kaptManager = if (javaTask is JavaCompile) {
+            val kaptManager = if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
                 val manager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
                         aptFiles.toSet(), aptOutputDir, aptWorkingDir)
                 kotlinTask.storeKaptAnnotationsFile(manager)
