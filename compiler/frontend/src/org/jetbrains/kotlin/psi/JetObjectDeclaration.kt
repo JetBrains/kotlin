@@ -14,176 +14,150 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.JetNodeTypes;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.name.SpecialNames;
-import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.psi.PsiElement
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.JetNodeTypes
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Collections
 
-public class JetObjectDeclaration extends JetNamedDeclarationStub<KotlinObjectStub> implements JetClassOrObject  {
-    public JetObjectDeclaration(@NotNull ASTNode node) {
-        super(node);
+public class JetObjectDeclaration : JetNamedDeclarationStub<KotlinObjectStub>, JetClassOrObject {
+    public constructor(node: ASTNode) : super(node) {
     }
 
-    public JetObjectDeclaration(@NotNull KotlinObjectStub stub) {
-        super(stub, JetStubElementTypes.OBJECT_DECLARATION);
+    public constructor(stub: KotlinObjectStub) : super(stub, JetStubElementTypes.OBJECT_DECLARATION) {
     }
 
-    @Override
-    public String getName() {
-        KotlinObjectStub stub = getStub();
+    override fun getName(): String? {
+        val stub = getStub()
         if (stub != null) {
-            return stub.getName();
+            return stub.getName()
         }
 
-        JetObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
+        val nameAsDeclaration = getNameAsDeclaration()
         if (nameAsDeclaration == null && isCompanion()) {
-           //NOTE: a hack in PSI that simplifies writing frontend code
-            return SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.toString();
+            //NOTE: a hack in PSI that simplifies writing frontend code
+            return SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT.toString()
         }
-        return nameAsDeclaration == null ? null : nameAsDeclaration.getName();
+        return nameAsDeclaration?.getName()
     }
 
-    @Override
-    public boolean isTopLevel() {
-        KotlinObjectStub stub = getStub();
+    override fun isTopLevel(): Boolean {
+        val stub = getStub()
         if (stub != null) {
-            return stub.isTopLevel();
+            return stub.isTopLevel()
         }
 
-        return getParent() instanceof JetFile;
+        return getParent() is JetFile
     }
 
-    @Override
-    public PsiElement getNameIdentifier() {
-        JetObjectDeclarationName nameAsDeclaration = getNameAsDeclaration();
-        return nameAsDeclaration == null ? null : nameAsDeclaration.getNameIdentifier();
+    override fun getNameIdentifier(): PsiElement? {
+        val nameAsDeclaration = getNameAsDeclaration()
+        return nameAsDeclaration?.getNameIdentifier()
     }
 
-    @Override
-    public PsiElement setName(@NonNls @NotNull String name) throws IncorrectOperationException {
-        JetObjectDeclarationName declarationName = getNameAsDeclaration();
+    throws(IncorrectOperationException::class)
+    override fun setName(NonNls name: String): PsiElement {
+        val declarationName = getNameAsDeclaration()
         if (declarationName == null) {
-            JetPsiFactory psiFactory = new JetPsiFactory(getProject());
-            PsiElement result = addAfter(psiFactory.createObjectDeclarationName(name), getObjectKeyword());
-            addAfter(psiFactory.createWhiteSpace(), getObjectKeyword());
+            val psiFactory = JetPsiFactory(getProject())
+            val result = addAfter(psiFactory.createObjectDeclarationName(name), getObjectKeyword())
+            addAfter(psiFactory.createWhiteSpace(), getObjectKeyword())
 
-            return result;
-        } else {
-            return declarationName.setName(name);
-        }
-    }
-
-    @Override
-    @Nullable
-    public JetObjectDeclarationName getNameAsDeclaration() {
-        return (JetObjectDeclarationName) findChildByType(JetNodeTypes.OBJECT_DECLARATION_NAME);
-    }
-
-    public boolean isCompanion() {
-        KotlinObjectStub stub = getStub();
-        if (stub != null) {
-            return stub.isCompanion();
-        }
-        return hasModifier(JetTokens.COMPANION_KEYWORD);
-    }
-
-    @Override
-    public boolean hasModifier(@NotNull JetModifierKeywordToken modifier) {
-        JetModifierList modifierList = getModifierList();
-        return modifierList != null && modifierList.hasModifier(modifier);
-    }
-
-    @Override
-    @Nullable
-    public JetDelegationSpecifierList getDelegationSpecifierList() {
-        return getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST);
-    }
-
-    @Override
-    @NotNull
-    public List<JetDelegationSpecifier> getDelegationSpecifiers() {
-        JetDelegationSpecifierList list = getDelegationSpecifierList();
-        return list != null ? list.getDelegationSpecifiers() : Collections.<JetDelegationSpecifier>emptyList();
-    }
-
-    @Override
-    @NotNull
-    public List<JetClassInitializer> getAnonymousInitializers() {
-        JetClassBody body = getBody();
-        if (body == null) return Collections.emptyList();
-
-        return body.getAnonymousInitializers();
-    }
-
-    @Override
-    public JetClassBody getBody() {
-        return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY);
-    }
-
-    @Override
-    public boolean isLocal() {
-        KotlinObjectStub stub = getStub();
-        if (stub != null) {
-            return stub.isLocal();
-        }
-        return JetPsiUtil.isLocal(this);
-    }
-
-    @Override
-    public int getTextOffset() {
-        PsiElement nameIdentifier = getNameIdentifier();
-        if (nameIdentifier != null) {
-            return nameIdentifier.getTextRange().getStartOffset();
+            return result
         }
         else {
-            return getObjectKeyword().getTextRange().getStartOffset();
+            return declarationName.setName(name)
         }
     }
 
-    @Override
-    @NotNull
-    public List<JetDeclaration> getDeclarations() {
-        JetClassBody body = getBody();
-        if (body == null) return Collections.emptyList();
-
-        return body.getDeclarations();
+    override fun getNameAsDeclaration(): JetObjectDeclarationName? {
+        return findChildByType<PsiElement>(JetNodeTypes.OBJECT_DECLARATION_NAME) as JetObjectDeclarationName
     }
 
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitObjectDeclaration(this, data);
-    }
-
-    public boolean isObjectLiteral() {
-        KotlinObjectStub stub = getStub();
+    public fun isCompanion(): Boolean {
+        val stub = getStub()
         if (stub != null) {
-            return stub.isObjectLiteral();
+            return stub.isCompanion()
         }
-        return getParent() instanceof JetObjectLiteralExpression;
+        return hasModifier(JetTokens.COMPANION_KEYWORD)
     }
 
-    @NotNull
-    public PsiElement getObjectKeyword() {
-        return findChildByType(JetTokens.OBJECT_KEYWORD);
+    override fun hasModifier(modifier: JetModifierKeywordToken): Boolean {
+        val modifierList = getModifierList()
+        return modifierList != null && modifierList.hasModifier(modifier)
     }
 
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
+    override fun getDelegationSpecifierList(): JetDelegationSpecifierList? {
+        return getStubOrPsiChild(JetStubElementTypes.DELEGATION_SPECIFIER_LIST)
+    }
+
+    override fun getDelegationSpecifiers(): List<JetDelegationSpecifier> {
+        val list = getDelegationSpecifierList()
+        return if (list != null) list.getDelegationSpecifiers() else emptyList<JetDelegationSpecifier>()
+    }
+
+    override fun getAnonymousInitializers(): List<JetClassInitializer> {
+        val body = getBody() ?: return emptyList<JetClassInitializer>()
+
+        return body.getAnonymousInitializers()
+    }
+
+    override fun getBody(): JetClassBody? {
+        return getStubOrPsiChild(JetStubElementTypes.CLASS_BODY)
+    }
+
+    override fun isLocal(): Boolean {
+        val stub = getStub()
+        if (stub != null) {
+            return stub.isLocal()
+        }
+        return JetPsiUtil.isLocal(this)
+    }
+
+    override fun getTextOffset(): Int {
+        val nameIdentifier = getNameIdentifier()
+        if (nameIdentifier != null) {
+            return nameIdentifier.getTextRange().getStartOffset()
+        }
+        else {
+            return getObjectKeyword().getTextRange().getStartOffset()
+        }
+    }
+
+    override fun getDeclarations(): List<JetDeclaration> {
+        val body = getBody() ?: return emptyList<JetDeclaration>()
+
+        return body.getDeclarations()
+    }
+
+    override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D): R {
+        return visitor.visitObjectDeclaration(this, data)
+    }
+
+    public fun isObjectLiteral(): Boolean {
+        val stub = getStub()
+        if (stub != null) {
+            return stub.isObjectLiteral()
+        }
+        return getParent() is JetObjectLiteralExpression
+    }
+
+    public fun getObjectKeyword(): PsiElement {
+        return findChildByType(JetTokens.OBJECT_KEYWORD)
+    }
+
+    override fun getPresentation(): ItemPresentation? {
+        return ItemPresentationProviders.getItemPresentation(this)
     }
 }
