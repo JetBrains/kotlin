@@ -76,7 +76,8 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.UNNECESSARY_NOT_NULL_ASSERTION,
             Errors.UNNECESSARY_SAFE_CALL,
             Errors.USELESS_CAST,
-            Errors.USELESS_ELVIS
+            Errors.USELESS_ELVIS,
+            ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {

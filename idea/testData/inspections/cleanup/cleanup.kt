@@ -42,3 +42,5 @@ fun unnecessaryExclExcl(x: String) {
 fun unnecessaryCast(x: String) = x as String
 
 fun unnecessaryElvis(x: String) = x ?: ""
+
+JavaAnn(1, "abc", arrayOf(javaClass<Array<Int>>()), javaClass<String>()) class MyClass

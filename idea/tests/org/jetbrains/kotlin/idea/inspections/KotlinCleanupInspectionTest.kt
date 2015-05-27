@@ -33,7 +33,7 @@ class KotlinCleanupInspectionTest(): JetLightCodeInsightFixtureTestCase() {
 
     public fun testCleanup() {
         myFixture.enableInspections(javaClass<KotlinCleanupInspection>())
-        myFixture.configureByFile("cleanup.kt")
+        myFixture.configureByFiles("cleanup.kt", "JavaAnn.java")
 
         val project = myFixture.getProject()
         val managerEx = InspectionManager.getInstance(project)

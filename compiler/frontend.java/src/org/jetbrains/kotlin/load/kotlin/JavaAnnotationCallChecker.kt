@@ -60,12 +60,7 @@ public class JavaAnnotationCallChecker : CallChecker {
             resolvedCall: ResolvedCall<*>,
             context: BasicCallResolutionContext
     ) {
-        resolvedCall.getValueArguments().filter {
-            p ->
-            p.key.getName() != JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME &&
-            p.value is ExpressionValueArgument &&
-            !((p.value as ExpressionValueArgument).getValueArgument()?.isNamed() ?: true)
-        }.forEach {
+        getJavaAnnotationCallValueArgumentsThatShouldBeNamed(resolvedCall).forEach {
             reportOnValueArgument(context, it, ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION)
         }
     }
