@@ -153,11 +153,6 @@ class CodeConverter(
     private fun PsiPrefixExpression.isLiteralWithSign()
             = getOperand() is PsiLiteralExpression && getOperationTokenType() in setOf(JavaTokenType.PLUS, JavaTokenType.MINUS)
 
-    public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
-        return AnonymousClassBody(ClassBodyConverter(anonymousClass, converter, isOpenClass = false, isObject = false).convertBody(),
-                                  anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
-    }
-
     private fun needConversion(actual: PsiType, expected: PsiType): Boolean {
         val expectedStr = expected.getCanonicalText()
         val actualStr = actual.getCanonicalText()

@@ -327,7 +327,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             result = NewClassExpression(classRefConverted,
                                       convertArguments(expression),
                                       codeConverter.convertExpression(qualifier),
-                                      if (anonymousClass != null) codeConverter.convertAnonymousClassBody(anonymousClass) else null)
+                                      if (anonymousClass != null) converter.convertAnonymousClassBody(anonymousClass) else null)
         }
     }
 

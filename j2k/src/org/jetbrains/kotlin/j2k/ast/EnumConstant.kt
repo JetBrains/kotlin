@@ -22,15 +22,19 @@ class EnumConstant(
         val identifier: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,
-        val params: DeferredElement<ExpressionList>
+        val params: DeferredElement<ExpressionList>,
+        val body: AnonymousClassBody?
 ) : Member(annotations, modifiers) {
 
     override fun generateCode(builder: CodeBuilder) {
-        if (params.isEmpty) {
-            builder append annotations append identifier
-            return
+        builder append annotations append identifier
+
+        if (!params.isEmpty) {
+            builder append "(" append params append ")"
         }
 
-        builder append annotations append identifier append "(" append params append ")"
+        if (body != null) {
+            builder append body
+        }
     }
 }

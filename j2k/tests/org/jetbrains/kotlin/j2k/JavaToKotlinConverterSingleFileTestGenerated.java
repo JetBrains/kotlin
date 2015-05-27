@@ -1612,6 +1612,18 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("constantsWithBody1.java")
+        public void testConstantsWithBody1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/constantsWithBody1.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constantsWithBody2.java")
+        public void testConstantsWithBody2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/constantsWithBody2.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyEnum.java")
         public void testEmptyEnum() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/enum/emptyEnum.java");

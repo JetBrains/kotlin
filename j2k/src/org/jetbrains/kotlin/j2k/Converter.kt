@@ -176,7 +176,9 @@ class Converter private(
             }
 
             psiClass.isEnum() -> {
-                val classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
+                modifiers = modifiers.without(Modifier.ABSTRACT)
+                val hasInheritors = psiClass.getFields().any { it is PsiEnumConstant && it.getInitializingClass() != null }
+                val classBody = ClassBodyConverter(psiClass, this, isOpenClass = hasInheritors, isObject = false).convertBody()
                 Enum(name, annotations, modifiers, typeParameters, implementsTypes, classBody)
             }
 
@@ -307,10 +309,11 @@ class Converter private(
         val name = correction?.identifier ?: field.declarationIdentifier()
         val converted = if (field is PsiEnumConstant) {
             val argumentList = field.getArgumentList()
-            EnumConstant(name,
-                         annotations,
-                         modifiers,
-                         deferredElement { codeConverter -> ExpressionList(codeConverter.convertExpressions(argumentList?.getExpressions() ?: arrayOf<PsiExpression>())).assignPrototype(argumentList) })
+            val params = deferredElement { codeConverter ->
+                ExpressionList(codeConverter.convertExpressions(argumentList?.getExpressions() ?: arrayOf<PsiExpression>())).assignPrototype(argumentList)
+            }
+            val body = field.getInitializingClass()?.let { convertAnonymousClassBody(it) }
+            EnumConstant(name, annotations, modifiers, params, body)
         }
         else {
             val isVal = isVal(referenceSearcher, field)
@@ -549,6 +552,11 @@ class Converter private(
     public fun convertModifiers(owner: PsiModifierListOwner): Modifiers {
         return Modifiers(MODIFIERS_MAP.filter { owner.hasModifierProperty(it.first) }.map { it.second })
                 .assignPrototype(owner.getModifierList(), CommentsAndSpacesInheritance(blankLinesBefore = false))
+    }
+
+    public fun convertAnonymousClassBody(anonymousClass: PsiAnonymousClass): AnonymousClassBody {
+        return AnonymousClassBody(ClassBodyConverter(anonymousClass, this, isOpenClass = false, isObject = false).convertBody(),
+                                  anonymousClass.getBaseClassType().resolve()?.isInterface() ?: false).assignPrototype(anonymousClass)
     }
 
     private val MODIFIERS_MAP = listOf(

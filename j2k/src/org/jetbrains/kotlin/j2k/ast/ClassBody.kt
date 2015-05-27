@@ -33,7 +33,7 @@ class ClassBody (
         val rBrace: RBrace,
         val isEnumBody: Boolean) {
 
-    fun append(builder: CodeBuilder) {
+    fun appendTo(builder: CodeBuilder) {
         val membersFiltered = members.filter { !it.isEmpty }
         if (membersFiltered.isEmpty() && companionObjectMembers.isEmpty()) return
 

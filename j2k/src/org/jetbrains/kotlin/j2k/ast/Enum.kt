@@ -38,6 +38,6 @@ class Enum(
 
         appendBaseTypes(builder)
 
-        body.append(builder)
+        body.appendTo(builder)
     }
 }
