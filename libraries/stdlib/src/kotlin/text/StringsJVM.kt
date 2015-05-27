@@ -87,7 +87,7 @@ public fun String.replaceFirstLiteral(oldValue: String, newValue: String, ignore
  * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
  * with the given [replacement].
  */
-deprecated("Use String.replace(Regex, String) instead. You can convert regex parameter with .toRegex() extension function.")
+deprecated("Use String.replace(Regex, String) instead. You can convert regex parameter with .toRegex() extension function.", ReplaceWith("replace(regex.toRegex(), replacement)"))
 public fun String.replaceAll(regex: String, replacement: String): String = (this as java.lang.String).replaceAll(regex, replacement)
 
 /**
@@ -130,13 +130,13 @@ public fun String.split(regex: Pattern, limit: Int = 0): List<String>
 /**
  * Splits this string around matches of the given regular expression.
  */
-deprecated("Convert String argument to regex with toRegex or use splitBy instead.")
+deprecated("Convert String argument to regex with toRegex or use splitBy instead. Please note the change of return type and empty elements handling.")
 public fun String.split(regex: String): Array<String> = (this as java.lang.String).split(regex)
 
 /**
  * Splits this string into at most [limit] chunks around matches of the given regular expression.
  */
-deprecated("Convert String argument to regex with toRegex or use splitBy instead.")
+deprecated("Convert String argument to regex with toRegex or use splitBy instead. Please note the change of return type and limit parameter restrictions.")
 public fun String.split(regex: String, limit: Int): Array<String> = (this as java.lang.String).split(regex, limit)
 
 /**
@@ -259,7 +259,7 @@ public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.St
 /**
  * Replaces the first substring of this string that matches the given regular expression with the given replacement.
  */
-deprecated("Use replaceFirst(Regex, String) or replaceFirstLiteral(String, String) instead.")
+deprecated("Use replaceFirst(Regex, String) or replaceFirstLiteral(String, String) instead.", ReplaceWith("replaceFirst(regex.toRegex(), replacement)"))
 public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
 
 /**
@@ -280,7 +280,7 @@ public fun String.codePointCount(beginIndex: Int, endIndex: Int): Int = (this as
 /**
  * Compares two strings lexicographically, ignoring case differences.
  */
-deprecated("Use compareTo with true passed to ignoreCase parameter.")
+deprecated("Use compareTo with true passed to ignoreCase parameter.", ReplaceWith("compareTo(str, ignoreCase = true)"))
 public fun String.compareToIgnoreCase(str: String): Int = (this as java.lang.String).compareToIgnoreCase(str)
 
 /**
@@ -331,7 +331,7 @@ public fun String.isBlank(): Boolean = length() == 0 || all { it.isWhitespace() 
 /**
  * Returns `true` if this string matches the given regular expression.
  */
-deprecated("Use String.matches(Regex) instead. You can convert regex parameter with .toRegex() extension function.")
+deprecated("Use String.matches(Regex) instead. You can convert regex parameter with .toRegex() extension function.", ReplaceWith("matches(regex.toRegex())"))
 public fun String.matches(regex: String): Boolean = (this as java.lang.String).matches(regex)
 
 /**
@@ -347,7 +347,7 @@ public fun String.offsetByCodePoints(index: Int, codePointOffset: Int): Int = (t
  * @param ooffset the start offset in the other string of the substring to compare.
  * @param len the length of the substring to compare.
  */
-deprecated("Use regionMatches overload with ignoreCase as optional last parameter.")
+deprecated("Use regionMatches overload with ignoreCase as optional last parameter.", ReplaceWith("regionMatches(toffset, other, ooffset, len, ignoreCase)"))
 public fun String.regionMatches(ignoreCase: Boolean, toffset: Int, other: String, ooffset: Int, len: Int): Boolean = (this as java.lang.String).regionMatches(ignoreCase, toffset, other, ooffset, len)
 
 /**
@@ -431,13 +431,13 @@ public fun String.toByteArray(charset: String): ByteArray = (this as java.lang.S
  */
 public fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArray = (this as java.lang.String).getBytes(charset)
 
-deprecated("Use toByteArray() instead to emphasize copy behaviour")
+deprecated("Use toByteArray() instead to emphasize copy behaviour", ReplaceWith("toByteArray()"))
 public fun String.getBytes(): ByteArray = (this as java.lang.String).getBytes()
 
-deprecated("Use toByteArray(charset) instead to emphasize copy behaviour")
+deprecated("Use toByteArray(charset) instead to emphasize copy behaviour", ReplaceWith("toByteArray(charset)"))
 public fun String.getBytes(charset: Charset): ByteArray = (this as java.lang.String).getBytes(charset)
 
-deprecated("Use toByteArray(charset) instead to emphasize copy behaviour")
+deprecated("Use toByteArray(charset) instead to emphasize copy behaviour", ReplaceWith("toByteArray(charset)"))
 public fun String.getBytes(charset: String): ByteArray = (this as java.lang.String).getBytes(charset)
 
 /**

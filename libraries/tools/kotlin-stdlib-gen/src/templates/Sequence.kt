@@ -10,6 +10,7 @@ fun sequences(): List<GenericFunction> {
         exclude(Sequences)
         deprecate { "Use asSequence() instead" }
         doc { "Returns a sequence from the given collection" }
+        deprecateReplacement { "asSequence()" }
         returns("Stream<T>")
         body {
             """
@@ -28,6 +29,7 @@ fun sequences(): List<GenericFunction> {
         include(Maps)
         exclude(Sequences)
         deprecate { "Use asSequence() instead" }
+        deprecateReplacement { "asSequence()" }
         doc { "Returns a sequence from the given collection" }
         returns("Sequence<T>")
         body {

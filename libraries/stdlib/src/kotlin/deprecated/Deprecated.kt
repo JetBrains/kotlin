@@ -8,23 +8,23 @@ public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? = firstOr
 deprecated("Use firstOrNull function instead.", ReplaceWith("firstOrNull(predicate)"))
 public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? = firstOrNull(predicate)
 
-deprecated("Use listOf(...) or arrayListOf(...) instead")
+deprecated("Use listOf(...) or arrayListOf(...) instead", ReplaceWith("arrayListOf(*values)"))
 public fun arrayList<T>(vararg values: T): ArrayList<T> = arrayListOf(*values)
 
-deprecated("Use setOf(...) or hashSetOf(...) instead")
+deprecated("Use setOf(...) or hashSetOf(...) instead", ReplaceWith("hashSetOf(*values)"))
 public fun hashSet<T>(vararg values: T): HashSet<T> = hashSetOf(*values)
 
-deprecated("Use mapOf(...) or hashMapOf(...) instead")
+deprecated("Use mapOf(...) or hashMapOf(...) instead", ReplaceWith("hashMapOf(*values)"))
 public fun <K, V> hashMap(vararg values: Pair<K, V>): HashMap<K, V> = hashMapOf(*values)
 
-deprecated("Use listOf(...) or linkedListOf(...) instead")
+deprecated("Use listOf(...) or linkedListOf(...) instead", ReplaceWith("linkedListOf(*values)"))
 public fun linkedList<T>(vararg values: T): LinkedList<T> = linkedListOf(*values)
 
 deprecated("Use linkedMapOf(...) instead", ReplaceWith("linkedMapOf(*values)"))
 public fun <K, V> linkedMap(vararg values: Pair<K, V>): LinkedHashMap<K, V> = linkedMapOf(*values)
 
 /** Copies all characters into a [[Collection] */
-deprecated("Use toList() instead.")
+deprecated("Use toList() instead.", ReplaceWith("toList()"))
 public fun String.toCollection(): Collection<Char> = toCollection(ArrayList<Char>(this.length()))
 
 /**
@@ -32,7 +32,7 @@ public fun String.toCollection(): Collection<Char> = toCollection(ArrayList<Char
  *
  * @includeFunctionBody ../../test/text/StringTest.kt find
  */
-deprecated("Use firstOrNull instead")
+deprecated("Use firstOrNull instead", ReplaceWith("firstOrNull(predicate)"))
 public inline fun String.find(predicate: (Char) -> Boolean): Char? {
     for (c in this) if (predicate(c)) return c
     return null
@@ -43,7 +43,7 @@ public inline fun String.find(predicate: (Char) -> Boolean): Char? {
  *
  * @includeFunctionBody ../../test/text/StringTest.kt findNot
  */
-deprecated("Use firstOrNull instead")
+deprecated("Use firstOrNull instead with negated predicate")
 public inline fun String.findNot(predicate: (Char) -> Boolean): Char? {
     for (c in this) if (!predicate(c)) return c
     return null
@@ -122,7 +122,7 @@ public val <T> List<T>.first: T?
  *
  * @includeFunctionBody ../../test/collections/ListSpecificTest.kt last
  */
-deprecated("Use lastOrNull() function instead")
+deprecated("Use lastOrNull() function instead", ReplaceWith("this.lastOrNull()"))
 public val <T> List<T>.last: T?
     get() {
         val s = this.size()
