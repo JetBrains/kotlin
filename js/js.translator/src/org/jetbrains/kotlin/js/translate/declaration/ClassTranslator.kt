@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWi
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
 import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
+import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
@@ -269,6 +270,18 @@ public class ClassTranslator private constructor(
     }
 
     companion object {
+        public fun translate(classDeclaration: JetClass, context: TranslationContext): List<JsPropertyInitializer> {
+            val result = arrayListOf<JsPropertyInitializer>()
+
+            val classDescriptor = getClassDescriptor(context.bindingContext(), classDeclaration)
+            val classNameRef = context.getNameForDescriptor(classDescriptor).makeRef()
+            val classCreation = generateClassCreation(classDeclaration, context)
+
+            result.add(JsPropertyInitializer(classNameRef, classCreation))
+
+            return result
+        }
+
         platformStatic
         public fun generateClassCreation(classDeclaration: JetClassOrObject, context: TranslationContext): JsInvocation {
             return ClassTranslator(classDeclaration, context).translate()

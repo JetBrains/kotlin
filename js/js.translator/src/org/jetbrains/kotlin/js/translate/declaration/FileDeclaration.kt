@@ -15,21 +15,22 @@
  */
 package org.jetbrains.kotlin.js.translate.declaration
 
-import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
-import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
-import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.psi.JetClassInitializer
-import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.psi.JetProperty
-import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils
-import org.jetbrains.kotlin.psi.JetObjectDeclaration
-import org.jetbrains.kotlin.psi.JetClass
 import com.google.dart.compiler.backend.js.ast.JsFunction
-import org.jetbrains.kotlin.js.translate.utils.BindingUtils.*
-import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.*
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import com.google.dart.compiler.backend.js.ast.JsPropertyInitializer
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.js.translate.context.TranslationContext
+import org.jetbrains.kotlin.js.translate.general.Translation
+import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils
+import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForDelegate
+import org.jetbrains.kotlin.js.translate.initializer.InitializerUtils.generateInitializerForProperty
+import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
+import org.jetbrains.kotlin.psi.JetClass
+import org.jetbrains.kotlin.psi.JetClassInitializer
+import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetProperty
 
 class FileDeclarationVisitor(
         val context: TranslationContext,
@@ -50,10 +51,7 @@ class FileDeclarationVisitor(
     }
 
     public override fun visitClass(expression: JetClass, context: TranslationContext?): Void? {
-        val classDescriptor = getClassDescriptor(context!!.bindingContext(), expression)
-        val value = ClassTranslator.generateClassCreation(expression, context)
-        val entry = JsPropertyInitializer(context.getNameForDescriptor(classDescriptor).makeRef(), value)
-        result.add(entry)
+        result.addAll(ClassTranslator.translate(expression, context!!))
         return null
     }
 
@@ -84,5 +82,4 @@ class FileDeclarationVisitor(
         expression.accept(initializerVisitor, initializerContext)
         return null
     }
-
 }
