@@ -28,7 +28,7 @@ val x = fun(x: String) { }
 fun foo() {
     loop@
     for (i in 1..100) {
-        val v = oldFun2(i as Int)
+        val v = bar(i + 2)
         /* comment */
         continue@loop
     }

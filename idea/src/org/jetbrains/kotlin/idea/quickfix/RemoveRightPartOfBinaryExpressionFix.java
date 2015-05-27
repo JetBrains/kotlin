@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
@@ -89,6 +90,13 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
                 return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpression>(expression, JetBundle.message("remove.elvis.operator"));
             }
         };
+    }
+
+    // TODO: drop it when converted to Kotlin
+    @Nullable
+    @Override
+    public PsiElement elementToBeInvalidated() {
+        return null;
     }
 }
 

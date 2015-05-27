@@ -20,10 +20,11 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -48,6 +49,19 @@ public class DeprecatedSymbolUsageFix(
 
         val offset = (result.getCalleeExpressionIfAny() ?: result).getTextOffset()
         editor?.moveCaret(offset)
+    }
+
+    override fun elementToBeInvalidated(): PsiElement? {
+        val parent = element.getParent()
+        return when (parent) {
+            is JetCallExpression -> {
+                val qualified = parent.getParent() as? JetQualifiedExpression
+                if (parent == qualified?.getSelectorExpression()) qualified else parent
+            }
+            is JetQualifiedExpression -> if (element == parent.getSelectorExpression()) parent else element
+            is JetOperationExpression -> if (element == parent.getOperationReference()) parent else element
+            else -> element
+        }
     }
 
     companion object : JetSingleIntentionActionFactory() {
