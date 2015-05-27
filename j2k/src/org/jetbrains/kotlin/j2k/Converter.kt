@@ -172,7 +172,7 @@ class Converter private(
         return when {
             psiClass.isInterface() -> {
                 val classBody = ClassBodyConverter(psiClass, this, isOpenClass = false, isObject = false).convertBody()
-                Trait(name, annotations, modifiers, typeParameters, extendsTypes, implementsTypes, classBody)
+                Interface(name, annotations, modifiers, typeParameters, extendsTypes, implementsTypes, classBody)
             }
 
             psiClass.isEnum() -> {

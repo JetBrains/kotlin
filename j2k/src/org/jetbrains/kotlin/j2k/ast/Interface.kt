@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-class Trait(
+class Interface(
         name: Identifier,
         annotations: Annotations,
         modifiers: Modifiers,

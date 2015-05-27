@@ -33,12 +33,12 @@ class Function(
         val typeParameterList: TypeParameterList,
         parameterList: ParameterList,
         body: DeferredElement<Block>?,
-        val isInTrait: Boolean
+        val isInInterface: Boolean
 ) : FunctionLike(annotations, modifiers, parameterList, body) {
 
     private fun presentationModifiers(): Modifiers {
         var modifiers = this.modifiers
-        if (isInTrait) {
+        if (isInInterface) {
             modifiers = modifiers.without(Modifier.ABSTRACT)
         }
 

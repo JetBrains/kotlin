@@ -38,7 +38,7 @@ class NewClassExpression(
             builder.append(name)
         }
 
-        if (anonymousClass == null || !anonymousClass.extendsTrait) {
+        if (anonymousClass == null || !anonymousClass.extendsInterface) {
             builder.append("(").append(arguments, ", ").append(")")
         }
 
