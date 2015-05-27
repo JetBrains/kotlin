@@ -1,1 +1,1 @@
-val a = array(1.0f, 2f, 3f)
+val a = arrayOf(1.0f, 2f, 3f)

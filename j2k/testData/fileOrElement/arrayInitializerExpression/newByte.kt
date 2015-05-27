@@ -1,1 +1,1 @@
-val a = byteArray(1, 2, 3)
+val a = byteArrayOf(1, 2, 3)

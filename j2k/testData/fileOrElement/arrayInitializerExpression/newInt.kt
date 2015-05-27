@@ -1,1 +1,1 @@
-intArray(1, 2, 3)
+intArrayOf(1, 2, 3)

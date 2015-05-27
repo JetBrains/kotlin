@@ -9,5 +9,5 @@ interface I2
 Anon("c", "d", x = 1)
 interface I3
 
-Anon(value = *array("c", "d"))
+Anon(value = *arrayOf("c", "d"))
 interface I4

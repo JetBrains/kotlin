@@ -1,4 +1,4 @@
-annotation class Anon(public val s: String = "a", public val stringArray: Array<String> = array("a", "b"), public val intArray: IntArray)
+annotation class Anon(public val s: String = "a", public val stringArray: Array<String> = arrayOf("a", "b"), public val intArray: IntArray)
 
-Anon(intArray = intArray(1, 2))
+Anon(intArray = intArrayOf(1, 2))
 class A

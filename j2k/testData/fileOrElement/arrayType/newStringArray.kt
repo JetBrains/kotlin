@@ -1,1 +1,1 @@
-val a = array("abc")
+val a = arrayOf("abc")

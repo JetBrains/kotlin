@@ -1,1 +1,1 @@
-val a = intArray(1, 2, 3)
+val a = intArrayOf(1, 2, 3)

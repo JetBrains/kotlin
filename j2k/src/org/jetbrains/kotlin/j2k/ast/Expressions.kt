@@ -173,10 +173,10 @@ class ClassLiteralExpression(val type: Type): Expression() {
 fun createArrayInitializerExpression(arrayType: ArrayType, initializers: List<Expression>, needExplicitType: Boolean = true) : MethodCallExpression {
     val elementType = arrayType.elementType
     val createArrayFunction = if (elementType is PrimitiveType)
-            (elementType.toNotNullType().canonicalCode() + "Array").decapitalize()
+            (elementType.toNotNullType().canonicalCode() + "ArrayOf").decapitalize()
         else if (needExplicitType)
-            arrayType.toNotNullType().canonicalCode().decapitalize()
+            "arrayOf<" + arrayType.elementType.canonicalCode() + ">"
         else
-            "array"
+            "arrayOf"
     return MethodCallExpression.buildNotNull(null, createArrayFunction, initializers)
 }

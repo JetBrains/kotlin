@@ -1,1 +1,1 @@
-val a = longArray(1, 2, 3)
+val a = longArrayOf(1, 2, 3)
