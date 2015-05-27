@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.*
 import org.jetbrains.kotlin.js.inline.util.rewriters.ReturnReplacingVisitor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.newVar
-import org.jetbrains.kotlin.js.translate.utils.ast.*
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
 import kotlin.platform.platformStatic
 

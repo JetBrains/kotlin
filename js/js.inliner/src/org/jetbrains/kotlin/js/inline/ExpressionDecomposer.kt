@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline.util
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.*
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
-import org.jetbrains.kotlin.js.translate.utils.ast.*
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
 import kotlin.platform.platformStatic
 import kotlin.properties.Delegates

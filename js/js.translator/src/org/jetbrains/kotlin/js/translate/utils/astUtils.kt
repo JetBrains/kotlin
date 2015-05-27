@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.js.translate.utils.ast
+package org.jetbrains.kotlin.js.translate.utils.jsAstUtils
 
 import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.js.inline.util.IdentitySet

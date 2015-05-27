@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline.util
 import com.google.dart.compiler.backend.js.ast.JsLiteral.*
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
-import org.jetbrains.kotlin.js.translate.utils.ast.any
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.any
 
 public fun JsExpression.canHaveSideEffect(): Boolean =
         any { it is JsExpression && it.canHaveOwnSideEffect() }
