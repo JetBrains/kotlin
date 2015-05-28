@@ -56,6 +56,7 @@
 
     <path id="classpath">
         <file file="${bootstrap.runtime}"/>
+        <file file="${bootstrap.reflect}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <pathelement location="${protobuf.jar}"/>
 
@@ -525,6 +526,7 @@
             <!-- TODO: don't include both to the jar: it's impossible to test changes to core in the local maven build without bootstrap -->
             <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
             <zipfileset src="${bootstrap.runtime}" includes="**" excludes="META-INF/**"/>
+            <zipfileset src="${bootstrap.reflect}" includes="**" excludes="META-INF/**"/>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
@@ -549,6 +551,7 @@
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 <pathelement path="${bootstrap.runtime}"/>
+                <pathelement path="${bootstrap.reflect}"/>
             </classpath>
         </kotlinc>
 
@@ -573,6 +576,7 @@
             <compilerarg value="-Xlint:all"/>
             <classpath>
                 <file file="${bootstrap.runtime}"/>
+                <file file="${bootstrap.reflect}"/>
                 <pathelement location="${dependencies.dir}/ant-1.7/lib/ant.jar"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
             </classpath>
