@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.copied
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 
 public object BranchedUnfoldingUtils {

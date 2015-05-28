@@ -14,32 +14,44 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.util.psiModificationUtil
+package org.jetbrains.kotlin.idea.core
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
-fun JetFunctionLiteralArgument.moveInsideParentheses(bindingContext: BindingContext): JetCallExpression {
+@suppress("UNCHECKED_CAST")
+public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
+    val result = replace(newElement)
+    return if (result is T)
+        result
+    else
+        (result as JetParenthesizedExpression).getExpression() as T
+}
+
+@suppress("UNCHECKED_CAST")
+public fun <T: PsiElement> T.copied(): T = copy() as T
+
+public fun JetFunctionLiteralArgument.moveInsideParentheses(bindingContext: BindingContext): JetCallExpression {
     return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
 }
 
-fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): String? {
+public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): String? {
     val callExpression = getParent() as JetCallExpression
     val resolvedCall = callExpression.getResolvedCall(bindingContext)
     return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()?.toString()
 }
 
-fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
+public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
         replacement: JetExpression,
         bindingContext: BindingContext
 ): JetCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getFunctionLiteralArgumentName(bindingContext))
 
-fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
+public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
         replacement: JetExpression,
         functionLiteralArgumentName: String?
 ): JetCallExpression {
@@ -69,7 +81,7 @@ fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
     return oldCallExpression.replace(newCallExpression) as JetCallExpression
 }
 
-fun JetCallExpression.moveFunctionLiteralOutsideParentheses() {
+public fun JetCallExpression.moveFunctionLiteralOutsideParentheses() {
     assert(getFunctionLiteralArguments().isEmpty())
     val argumentList = getValueArgumentList()!!
     val argument = argumentList.getArguments().last()
@@ -85,4 +97,16 @@ fun JetCallExpression.moveFunctionLiteralOutsideParentheses() {
     else {
         argumentList.delete()
     }
+}
+
+public fun JetBlockExpression.appendElement(element: JetElement): JetElement {
+    val rBrace = getRBrace()
+    val anchor = if (rBrace == null) {
+        val lastChild = getLastChild()
+        if (lastChild !is PsiWhiteSpace) addAfter(JetPsiFactory(this).createNewLine(), lastChild)!! else lastChild
+    }
+    else {
+        rBrace.getPrevSibling()!!
+    }
+    return addAfter(element, anchor)!! as JetElement
 }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import java.util.regex.*
 import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
-import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.idea.core.replaced
 
 public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
     override fun isApplicableTo(element: JetBlockStringTemplateEntry): Boolean {

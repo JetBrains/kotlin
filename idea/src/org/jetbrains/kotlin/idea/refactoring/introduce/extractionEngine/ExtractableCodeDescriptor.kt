@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import kotlin.properties.Delegates
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable

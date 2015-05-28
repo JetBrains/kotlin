@@ -57,41 +57,11 @@ public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
 
 public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 
-@suppress("UNCHECKED_CAST")
-public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T {
-    val result = replace(newElement)
-    return if (result is T)
-        result
-    else
-        (result as JetParenthesizedExpression).getExpression() as T
-}
-
-@suppress("UNCHECKED_CAST")
-public fun <T: PsiElement> T.copied(): T = copy() as T
-
 public fun JetElement.blockExpressionsOrSingle(): Sequence<JetElement> =
         if (this is JetBlockExpression) getStatements().asSequence() else sequenceOf(this)
 
 public fun JetExpression.lastBlockStatementOrThis(): JetExpression
         = (this as? JetBlockExpression)?.getStatements()?.lastIsInstanceOrNull<JetExpression>() ?: this
-
-public fun JetBlockExpression.appendElement(element: JetElement): JetElement {
-    val rBrace = getRBrace()
-    val anchor = if (rBrace == null) {
-        val lastChild = getLastChild()
-        if (lastChild !is PsiWhiteSpace) addAfter(JetPsiFactory(this).createNewLine(), lastChild)!! else lastChild
-    }
-    else {
-        rBrace.getPrevSibling()!!
-    }
-    return addAfter(element, anchor)!! as JetElement
-}
-
-public fun JetElement.wrapInBlock(): JetBlockExpression {
-    val block = JetPsiFactory(this).createEmptyBody()
-    block.appendElement(this)
-    return block
-}
 
 /**
  * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported

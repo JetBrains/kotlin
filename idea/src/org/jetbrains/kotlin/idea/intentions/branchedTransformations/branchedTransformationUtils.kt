@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.idea.core.replaced
 
 fun JetWhenCondition.toExpression(subject: JetExpression?): JetExpression {
     val factory = JetPsiFactory(this)

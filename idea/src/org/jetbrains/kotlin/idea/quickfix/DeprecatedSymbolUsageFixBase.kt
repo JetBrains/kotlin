@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveFunctionLiteralOutsideParentheses
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName

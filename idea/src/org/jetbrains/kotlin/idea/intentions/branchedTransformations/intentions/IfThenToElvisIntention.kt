@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentInt
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.idea.core.replaced
 
 public class IfThenToElvisInspection : IntentionBasedInspection<JetIfExpression>(IfThenToElvisIntention())
 

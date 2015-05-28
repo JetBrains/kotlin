@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
-import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 
 fun getFunctionForExtractedFragment(
