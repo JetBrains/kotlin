@@ -2,7 +2,12 @@
     <!-- Generates the standard library documentation using Dokka. -->
     <typedef resource="dokka-antlib.xml">
         <classpath>
-            <pathelement path="${dokka.path}/dokka.jar"/>
+            <fileset dir="${dokka.path}/lib">
+                <include name="*.jar"/>
+            </fileset>
+
+            <!-- used for running locally -->
+            <pathelement path="${dokka.path}/out/artifacts/dokka.jar"/>
         </classpath>
     </typedef>
 
