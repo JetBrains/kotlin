@@ -140,6 +140,7 @@ public fun JetDeclaration.isExtensionDeclaration(): Boolean {
 
 public fun JetClassOrObject.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()
 
+//TODO: strange method, and not only Kotlin specific (also Java)
 public fun PsiElement.parameterIndex(): Int {
     val parent = getParent()
     return when {
