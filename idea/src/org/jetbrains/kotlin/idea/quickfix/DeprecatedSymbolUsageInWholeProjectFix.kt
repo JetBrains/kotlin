@@ -127,17 +127,16 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
 
     private fun replaceUsages(project: Project, usages: Collection<JetSimpleNameExpression>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {
         UIUtil.invokeLaterIfNeeded {
-            var replacedCount = 0
             project.executeCommand(getText()) {
                 runWriteAction {
                     for (usage in usages) {
                         try {
                             if (!usage.isValid()) continue // TODO: nested calls
                             val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
-                            val resolvedCall = element.getResolvedCall(bindingContext) ?: continue
+                            val resolvedCall = usage.getResolvedCall(bindingContext) ?: continue
                             if (!resolvedCall.getStatus().isSuccess()) continue
-                            DeprecatedSymbolUsageFixBase.performReplacement(usage, bindingContext, resolvedCall, replacement)
-                            replacedCount++
+                            // copy replacement expression because it is modified by performReplacement
+                            DeprecatedSymbolUsageFixBase.performReplacement(usage, bindingContext, resolvedCall, replacement.copy())
                         }
                         catch (e: Throwable) {
                             LOG.error(e)

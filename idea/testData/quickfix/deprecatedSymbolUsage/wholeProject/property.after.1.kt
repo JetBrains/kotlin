@@ -1,3 +1,8 @@
+import pack.newProp
+
 fun x() {
-    pack.bar(pack.newProp)
+    pack.bar(newProp)
 }
+
+val v1 = newProp
+val v2 = newProp

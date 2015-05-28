@@ -26,16 +26,14 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.asExpression
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -54,11 +52,14 @@ import java.util.LinkedHashSet
 data class ReplaceWith(val expression: String, vararg val imports: String)
 
 object ReplaceWithAnnotationAnalyzer {
+    public val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
+
     public data class ReplacementExpression(
             val expression: JetExpression,
-            val descriptorsToImport: Collection<DeclarationDescriptor>,
-            val parameterUsages: Map<ValueParameterDescriptor, Collection<JetExpression>>
-    )
+            val descriptorsToImport: Collection<DeclarationDescriptor>
+    ) {
+        fun copy() = ReplacementExpression(expression.copied(), descriptorsToImport)
+    }
 
     public fun analyze(
             annotation: ReplaceWith,
@@ -99,8 +100,6 @@ object ReplaceWithAnnotationAnalyzer {
 
         val receiversToAdd = ArrayList<Pair<JetExpression, JetExpression>>()
 
-        val parameterUsageKey = Key<ValueParameterDescriptor>("parameterUsageKey")
-
         expression.forEachDescendantOfType<JetSimpleNameExpression> { expression ->
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
@@ -110,7 +109,7 @@ object ReplaceWithAnnotationAnalyzer {
 
             if (expression.getReceiverExpression() == null) {
                 if (target is ValueParameterDescriptor && target.getContainingDeclaration() == symbolDescriptor) {
-                    expression.putCopyableUserData(parameterUsageKey, target)
+                    expression.putCopyableUserData(PARAMETER_USAGE_KEY, target.getName())
                 }
 
                 val resolvedCall = expression.getResolvedCall(bindingContext)
@@ -138,15 +137,7 @@ object ReplaceWithAnnotationAnalyzer {
             }
         }
 
-        val parameterUsages = symbolDescriptor.getValueParameters()
-                .map { parameter -> parameter to expression.collectDescendantsOfType<JetExpression> { it.getCopyableUserData(parameterUsageKey) == parameter } }
-                .toMap()
-
-        expression.forEachDescendantOfType<JetExpression> {
-            it.putCopyableUserData(parameterUsageKey, null)
-        }
-
-        return ReplacementExpression(expression, descriptorsToImport, parameterUsages)
+        return ReplacementExpression(expression, descriptorsToImport)
     }
 
     private fun getResolutionScope(descriptor: DeclarationDescriptor): JetScope {

@@ -152,10 +152,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             receiver?.mark(RECEIVER_VALUE_KEY)
 
-            for ((parameter, usages) in replacement.parameterUsages.entrySet()) {
-                usages.forEach { it.put(PARAMETER_USAGE_KEY, parameter) }
-            }
-
             //TODO: this@
             for (thisExpression in replacement.expression.collectDescendantsOfType<JetThisExpression>()) {
                 if (receiver != null) {
@@ -179,8 +175,10 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
                 argument.expression.put(PARAMETER_VALUE_KEY, parameter)
 
-                val originalParameter = parameter.getOriginal()
-                val usages = replacement.expression.collectDescendantsOfType<JetExpression> { it[PARAMETER_USAGE_KEY] == originalParameter }
+                val parameterName = parameter.getName()
+                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
+                    it[ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY] == parameterName
+                }
                 usages.forEach {
                     if (argument.isNamed) {
                         (it.getParent() as? JetValueArgument)?.mark(MAKE_ARGUMENT_NAMED_KEY)
@@ -293,7 +291,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 val expression: JetExpression,
                 val wrapped: JetExpression,
                 val expressionType: JetType?,
-                val isDefaultValue: Boolean = false,
                 val isNamed: Boolean = false)
 
         private fun argumentForParameter(
@@ -320,7 +317,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     val (expression, parameterUsages) = defaultValue
 
                     for ((param, usages) in parameterUsages) {
-                        usages.forEach { it.put(PARAMETER_USAGE_KEY, param) }
+                        usages.forEach { it.put(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY, param.getName()) }
                     }
 
                     // we temporary wrap default values into parenthesis so that we can safely mark them with DEFAULT_PARAMETER_VALUE_KEY
@@ -328,9 +325,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     wrapped.mark(DEFAULT_PARAMETER_VALUE_KEY)
 
                     // clean up user data in original
-                    expression.forEachDescendantOfType<JetExpression> { it.clear(PARAMETER_USAGE_KEY) }
+                    expression.forEachDescendantOfType<JetExpression> { it.clear(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY) }
 
-                    return Argument(wrapped.getExpression()!!, wrapped, null/*TODO*/, isDefaultValue = true)
+                    return Argument(wrapped.getExpression()!!, wrapped, null/*TODO*/)
                 }
 
                 is VarargValueArgument -> {
@@ -397,7 +394,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 // clean up user data
                 it.forEachDescendantOfType<JetExpression> {
                     it.clear(USER_CODE_KEY)
-                    it.clear(PARAMETER_USAGE_KEY)
+                    it.clear(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY)
                     it.clear(PARAMETER_VALUE_KEY)
                     it.clear(RECEIVER_VALUE_KEY)
                     it.clear(DEFAULT_PARAMETER_VALUE_KEY)
@@ -589,7 +586,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
         // keys below are used on expressions
         private val USER_CODE_KEY = Key<Unit>("USER_CODE")
-        private val PARAMETER_USAGE_KEY = Key<ValueParameterDescriptor>("PARAMETER_USAGE")
         private val PARAMETER_VALUE_KEY = Key<ValueParameterDescriptor>("PARAMETER_VALUE")
         private val RECEIVER_VALUE_KEY = Key<Unit>("RECEIVER_VALUE")
         private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
