@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
+import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.storage.StorageManager
@@ -50,11 +52,11 @@ public class FunctionClassDescriptor(
         val arity: Int
 ) : AbstractClassDescriptor(storageManager, functionKind.numberedClassName(arity)) {
 
-    public enum class Kind(val classNamePrefix: String) {
-        Function("Function"),
-        KFunction("KFunction"),
-        KMemberFunction("KMemberFunction"),
-        KExtensionFunction("KExtensionFunction");
+    public enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
+        Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
+        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction"),
+        KMemberFunction(KOTLIN_REFLECT_FQ_NAME, "KMemberFunction"),
+        KExtensionFunction(KOTLIN_REFLECT_FQ_NAME, "KExtensionFunction");
         // TODO: KMemberExtensionFunction
 
         fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
@@ -64,7 +66,13 @@ public class FunctionClassDescriptor(
 
     public object Kinds {
         val Functions = EnumSet.of(Kind.Function)
-        val KFunctions = EnumSet.of(Kind.KFunction, Kind.KMemberFunction, Kind.KExtensionFunction)
+        val KFunctions = EnumSet.complementOf(Functions)
+
+        fun byPackage(fqName: FqName) = when (fqName) {
+            BUILT_INS_PACKAGE_FQ_NAME -> Functions
+            KOTLIN_REFLECT_FQ_NAME -> KFunctions
+            else -> error(fqName)
+        }
     }
 
     private val staticScope = StaticScopeForKotlinClass(this)
