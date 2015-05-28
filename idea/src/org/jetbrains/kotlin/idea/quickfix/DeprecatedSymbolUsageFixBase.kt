@@ -221,7 +221,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
             //TODO: drop import of old function (if not needed anymore)?
 
             val file = result.getContainingJetFile()
-            replacement.descriptorsToImport.forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
+            replacement.fqNamesToImport
+                    .flatMap { file.getResolutionFacade().resolveImportReference(file, it) }
+                    .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
             result = postProcessInsertedExpression(result, wrapper.addedStatements)
 

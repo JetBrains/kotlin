@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.asExpression
 import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
@@ -56,9 +57,9 @@ object ReplaceWithAnnotationAnalyzer {
 
     public data class ReplacementExpression(
             val expression: JetExpression,
-            val descriptorsToImport: Collection<DeclarationDescriptor>
+            val fqNamesToImport: Collection<FqName>
     ) {
-        fun copy() = ReplacementExpression(expression.copied(), descriptorsToImport)
+        fun copy() = ReplacementExpression(expression.copied(), fqNamesToImport)
     }
 
     public fun analyze(
@@ -85,13 +86,13 @@ object ReplaceWithAnnotationAnalyzer {
         val psiFactory = JetPsiFactory(project)
         var expression = psiFactory.createExpression(annotation.expression)
 
-        val explicitlyImportedSymbols = annotation.imports
+        val importFqNames = annotation.imports
                 .filter { FqNameUnsafe.isValid(it) }
                 .map { FqNameUnsafe(it) }
                 .filter { it.isSafe() }
                 .mapTo(LinkedHashSet<FqName>()) { it.toSafe() }
-                .flatMap { resolutionFacade.resolveImportReference(file, it) }
-        val descriptorsToImport = explicitlyImportedSymbols.toArrayList()
+
+        val explicitlyImportedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(file, it) }
 
         val symbolScope = getResolutionScope(symbolDescriptor)
         val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)
@@ -104,7 +105,7 @@ object ReplaceWithAnnotationAnalyzer {
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
             if (target.canBeReferencedViaImport() && (target.isExtension || expression.getReceiverExpression() == null)) {
-                descriptorsToImport.addIfNotNull(target)
+                importFqNames.addIfNotNull(target.importableFqName)
             }
 
             if (expression.getReceiverExpression() == null) {
@@ -137,7 +138,7 @@ object ReplaceWithAnnotationAnalyzer {
             }
         }
 
-        return ReplacementExpression(expression, descriptorsToImport)
+        return ReplacementExpression(expression, importFqNames)
     }
 
     private fun getResolutionScope(descriptor: DeclarationDescriptor): JetScope {
