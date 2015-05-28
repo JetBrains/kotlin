@@ -20,15 +20,16 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getTextWithLocation
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CALL
 import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.utils.sure
 
 // resolved call
@@ -176,6 +177,18 @@ public fun JetExpression.getFunctionResolvedCallWithAssert(context: BindingConte
     assert(resolvedCall.getResultingDescriptor() is FunctionDescriptor) {
         "ResolvedCall for this expression must be ResolvedCall<? extends FunctionDescriptor>: ${this.getTextWithLocation()}"
     }
-    [suppress("UNCHECKED_CAST")]
+    @suppress("UNCHECKED_CAST")
     return resolvedCall as ResolvedCall<out FunctionDescriptor>
 }
+
+public fun Call.isSafeCall(): Boolean {
+    if (this is CallTransformer.CallForImplicitInvoke) {
+        //implicit safe 'invoke'
+        if (getOuterCall().isExplicitSafeCall()) {
+            return true
+        }
+    }
+    return isExplicitSafeCall()
+}
+
+public fun Call.isExplicitSafeCall(): Boolean = getCallOperationNode()?.getElementType() == JetTokens.SAFE_ACCESS

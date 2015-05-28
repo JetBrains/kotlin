@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.Call;
 import org.jetbrains.kotlin.psi.ValueArgument;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
@@ -288,7 +288,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @Override
     public boolean isSafeCall() {
-        return PsiUtilPackage.isSafeCall(call);
+        return CallUtilPackage.isSafeCall(call);
     }
 
     @NotNull
