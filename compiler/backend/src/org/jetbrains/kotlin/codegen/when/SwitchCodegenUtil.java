@@ -47,7 +47,7 @@ public class SwitchCodegenUtil {
                 // ensure that expression is constant
                 JetExpression patternExpression = ((JetWhenConditionWithExpression) condition).getExpression();
 
-                assert patternExpression != null : "expression in when should not be null";
+                if (patternExpression == null) return false;
 
                 CompileTimeConstant constant = ExpressionCodegen.getCompileTimeConstant(patternExpression, bindingContext);
                 if (constant == null || !predicate.invoke(constant)) {
