@@ -8,7 +8,8 @@ interface X {
 }
 
 fun foo(x: X) {
-    x.newFun(1,
+    x.newFun(
+            1,
             2,
             0)
 }
