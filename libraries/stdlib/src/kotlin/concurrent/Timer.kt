@@ -1,8 +1,8 @@
 package kotlin.concurrent
 
+import java.util.Date
 import java.util.Timer
 import java.util.TimerTask
-import java.util.Date
 
 /**
  * Schedules an [action] to be executed after the specified [delay] (expressed in milliseconds).

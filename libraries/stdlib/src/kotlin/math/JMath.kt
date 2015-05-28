@@ -1,7 +1,7 @@
 package kotlin.math
 
-import java.math.BigInteger
 import java.math.BigDecimal
+import java.math.BigInteger
 
 /**
  * Enables the use of the `+` operator for [BigInteger] instances.

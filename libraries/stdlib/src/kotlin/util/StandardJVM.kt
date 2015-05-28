@@ -1,7 +1,7 @@
 package kotlin
 
-import java.io.PrintWriter
 import java.io.PrintStream
+import java.io.PrintWriter
 
 /**
  * Allows a stack trace to be printed from Kotlin's [Throwable].

@@ -2,9 +2,9 @@ package kotlin
 
 import java.util.Comparator
 import java.util.LinkedHashMap
+import java.util.Properties
 import java.util.SortedMap
 import java.util.TreeMap
-import java.util.Properties
 
 /**
  * Allows to use the index operator for storing values in a mutable map.
