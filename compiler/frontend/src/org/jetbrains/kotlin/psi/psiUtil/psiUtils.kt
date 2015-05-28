@@ -38,10 +38,11 @@ public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = tr
     return if (withItself) sequence else sequence.drop(1)
 }
 
-public fun PsiElement.parents(withItself: Boolean = true): Sequence<PsiElement> {
-    val sequence = sequence(this) { if (it is PsiFile) null else it.getParent() }
-    return if (withItself) sequence else sequence.drop(1)
-}
+public val PsiElement.parentsWithSelf: Sequence<PsiElement>
+    get() = sequence(this) { if (it is PsiFile) null else it.getParent() }
+
+public val PsiElement.parents: Sequence<PsiElement>
+    get() = parentsWithSelf.drop(1)
 
 public fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement?
         = PsiTreeUtil.prevLeaf(this, skipEmptyElements)
@@ -216,7 +217,7 @@ public fun PsiFile.elementsInRange(range: TextRange): List<PsiElement> {
         val leaf = findFirstLeafWhollyInRange(this, currentRange) ?: break
 
         val element = leaf
-                .parents(withItself = true)
+                .parentsWithSelf
                 .first {
                     val parent = it.getParent()
                     it is PsiFile || parent.getTextRange() !in currentRange

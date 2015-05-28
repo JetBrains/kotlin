@@ -151,7 +151,7 @@ public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<J
 
 public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<JetElement> {
     fun getEnclosingDeclaration(element: PsiElement, strict: Boolean): PsiElement? {
-        return element.parents(!strict)
+        return (if (strict) element.parents else element.parentsWithSelf)
                 .filter {
                     (it is JetDeclarationWithBody && it !is JetFunctionLiteral)
                     || it is JetClassInitializer

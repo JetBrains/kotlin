@@ -584,7 +584,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         // Ascend to the level of targetSibling
         val targetParent = targetSibling.getParent()
-        marginalCandidate.parents().first { it.getParent() == targetParent }
+        marginalCandidate.parentsWithSelf.first { it.getParent() == targetParent }
     }
 
     val shouldInsert = !(generatorOptions.inTempFile || generatorOptions.target == ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION)

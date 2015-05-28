@@ -57,7 +57,7 @@ public class AddLoopLabelFix(loop: JetLoopExpression, val jumpExpression: JetEle
                 usedLabels.add(expression.getLabelName())
             }
         })
-        element.parents(false).forEach {
+        element.parents.forEach {
             if (it is JetLabeledExpression) {
                 usedLabels.add(it.getLabelName())
             }

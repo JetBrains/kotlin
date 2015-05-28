@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import kotlin.properties.Delegates
 
@@ -64,7 +65,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         val diagnostics = analysisResult.bindingContext.getDiagnostics()
 
         class ProblemData(val problemDescriptor: ProblemDescriptor, elementToBeInvalidated: PsiElement) {
-            val depth = elementToBeInvalidated.parents(withItself = true).takeWhile { it !is PsiFile }.count()
+            val depth = elementToBeInvalidated.parentsWithSelf.takeWhile { it !is PsiFile }.count()
         }
 
         val problems = arrayListOf<ProblemData>()

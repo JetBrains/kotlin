@@ -207,7 +207,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
                 val token = original.findElementAt(element.getStartOffsetIn(createdElement) + rangeInOriginal.getStartOffset())
                 if (token != null) {
                     val elementLength = element.getTextLength()
-                    for (originalElement in token.parents()) {
+                    for (originalElement in token.parentsWithSelf) {
                         val length = originalElement.getTextLength()
                         if (length < elementLength) continue
                         if (length == elementLength) {
@@ -396,7 +396,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
     }
 
     private fun PsiElement.anchorToAddCommentOrSpace(before: Boolean): PsiElement {
-        return parents()
+        return parentsWithSelf
                 .dropWhile { it.getParent() !is PsiFile && (if (before) it.getPrevSibling() else it.getNextSibling()) == null }
                 .first()
     }

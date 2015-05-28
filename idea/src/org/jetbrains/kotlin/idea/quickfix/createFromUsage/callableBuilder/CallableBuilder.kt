@@ -531,7 +531,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 fun addNextToOriginalElementContainer(addBefore: Boolean): JetNamedDeclaration {
                     val actualContainer = (containingElement as? JetClassOrObject)?.getBody() ?: containingElement
-                    val sibling = config.originalElement.parents().first { it.getParent() == actualContainer }
+                    val sibling = config.originalElement.parentsWithSelf.first { it.getParent() == actualContainer }
                     return if (addBefore) {
                         actualContainer.addBefore(declaration, sibling)
                     }
