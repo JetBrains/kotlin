@@ -26,6 +26,7 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.ui.PopupHandler;
 import org.jetbrains.annotations.NotNull;
@@ -74,6 +75,7 @@ public class KotlinCallHierarchyBrowser extends CallHierarchyBrowserBase {
 
     @Override
     protected boolean isApplicableElement(@NotNull PsiElement element) {
+        if (element instanceof PsiClass) return false; // PsiClass is not allowed at the hierarchy root
         return HierarchyUtils.IS_CALL_HIERARCHY_ELEMENT.invoke(element);
     }
 
