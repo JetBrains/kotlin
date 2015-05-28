@@ -13728,6 +13728,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NonExhaustiveWarning.kt")
+            public void testNonExhaustiveWarning() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveWarning.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NonExhaustiveWarningElse.kt")
+            public void testNonExhaustiveWarningElse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveWarningElse.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NonExhaustiveWarningFalse.kt")
+            public void testNonExhaustiveWarningFalse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveWarningFalse.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NonExhaustiveWarningNull.kt")
+            public void testNonExhaustiveWarningNull() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("PropertyNotInitialized.kt")
             public void testPropertyNotInitialized() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/PropertyNotInitialized.kt");

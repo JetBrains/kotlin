@@ -387,6 +387,7 @@ public class DefaultErrorMessages {
         MAP.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a when-expression");
 
         MAP.put(NO_ELSE_IN_WHEN, "'when' expression must contain 'else' branch");
+        MAP.put(NON_EXHAUSTIVE_WHEN, "'when' expression contains only some variants and no 'else' branch");
 
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");
         MAP.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type");

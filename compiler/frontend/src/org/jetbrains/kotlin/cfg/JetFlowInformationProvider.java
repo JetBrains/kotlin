@@ -759,10 +759,19 @@ public class JetFlowInformationProvider {
                                             ? ((InstructionWithValue) instruction).getOutputValue()
                                             : null;
                         for (JetElement element : instruction.getOwner().getValueElements(value)) {
-                            if (element instanceof JetWhenExpression) {
-                                JetWhenExpression whenExpression = (JetWhenExpression) element;
-                                if (whenExpression.getElseExpression() == null && WhenChecker.mustHaveElse(whenExpression, trace)) {
-                                    trace.report(NO_ELSE_IN_WHEN.on(whenExpression));
+                            if (!(element instanceof JetWhenExpression)) continue;
+                            JetWhenExpression whenExpression = (JetWhenExpression) element;
+                            if (whenExpression.getElseExpression() != null) continue;
+
+                            if (WhenChecker.mustHaveElse(whenExpression, trace)) {
+                                trace.report(NO_ELSE_IN_WHEN.on(whenExpression));
+                            }
+                            else if (whenExpression.getSubjectExpression() != null) {
+                                ClassDescriptor enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(
+                                        trace.getType(whenExpression.getSubjectExpression()));
+                                if (enumClassDescriptor != null
+                                    && !WhenChecker.isWhenOnEnumExhaustive(whenExpression, trace, enumClassDescriptor)) {
+                                    trace.report(NON_EXHAUSTIVE_WHEN.on(whenExpression));
                                 }
                             }
                         }
