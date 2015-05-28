@@ -55,6 +55,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             doTest(fileName);
         }
 
+        @TestMetadata("AnnotationInAnnotationArguments.kt")
+        public void testAnnotationInAnnotationArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInAnnotationArguments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("EnumArgumentWithCustomToString.kt")
         public void testEnumArgumentWithCustomToString() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");
