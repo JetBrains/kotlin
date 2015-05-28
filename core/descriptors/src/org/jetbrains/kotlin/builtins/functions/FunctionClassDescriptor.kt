@@ -99,7 +99,9 @@ public class FunctionClassDescriptor(
     override fun getSource() = SourceElement.NO_SOURCE
 
     private inner class FunctionTypeConstructor : AbstractClassTypeConstructor() {
-        private val parameters = storageManager.createLazyValue {
+        private val parameters: List<TypeParameterDescriptor>
+
+        init {
             val result = ArrayList<TypeParameterDescriptor>()
 
             fun typeParameter(variance: Variance, name: String) {
@@ -121,26 +123,33 @@ public class FunctionClassDescriptor(
 
             typeParameter(Variance.OUT_VARIANCE, "R")
 
-            result.toReadOnlyList()
+            parameters = result.toReadOnlyList()
         }
 
         private val supertypes = storageManager.createLazyValue {
             val result = ArrayList<JetType>(2)
 
-            fun add(packageFragment: PackageFragmentDescriptor, name: Name, annotations: Annotations) {
+            fun add(
+                    packageFragment: PackageFragmentDescriptor,
+                    name: Name,
+                    annotations: Annotations,
+                    supertypeArguments: (superParameters: List<TypeParameterDescriptor>) -> List<TypeProjection>
+            ) {
                 val descriptor = packageFragment.getMemberScope().getClassifier(name) as? ClassDescriptor
                                  ?: error("Class $name not found in $packageFragment")
 
-                // Substitute K type parameters of the super class with our last K type parameters
                 val typeConstructor = descriptor.getTypeConstructor()
-                val superParameters = typeConstructor.getParameters()
-                val arguments = getParameters().takeLast(superParameters.size()).map { TypeProjectionImpl(it.getDefaultType()) }
+                val arguments = supertypeArguments(typeConstructor.getParameters())
 
                 result.add(JetTypeImpl(annotations, typeConstructor, false, arguments, descriptor.getMemberScope(arguments)))
             }
 
             // Add unnumbered base class, e.g. KMemberFunction for KMemberFunction5, or Function for Function0
-            add(containingDeclaration, Name.identifier(functionKind.classNamePrefix), Annotations.EMPTY)
+            add(containingDeclaration, Name.identifier(functionKind.classNamePrefix), Annotations.EMPTY) { superParameters ->
+                // Substitute type parameters of the super class with our type parameters with the same names
+                val parametersByName = getParameters().toMap { it.getName() }
+                superParameters.map { TypeProjectionImpl(parametersByName[it.getName()]!!.getDefaultType()) }
+            }
 
             // For K*Functions, add corresponding numbered Function class, e.g. Function2 for KMemberFunction1
             if (functionKind in Kinds.KFunctions) {
@@ -158,13 +167,16 @@ public class FunctionClassDescriptor(
                             AnnotationsImpl(listOf(KotlinBuiltIns.getInstance().createExtensionAnnotation()))
                         else Annotations.EMPTY
 
-                add(kotlinPackageFragment, Kind.Function.numberedClassName(functionArity), annotations)
+                add(kotlinPackageFragment, Kind.Function.numberedClassName(functionArity), annotations) {
+                    // Substitute all type parameters of the super class with all our type parameters
+                    getParameters().map { TypeProjectionImpl(it.getDefaultType()) }
+                }
             }
 
             result.toReadOnlyList()
         }
 
-        override fun getParameters() = parameters()
+        override fun getParameters() = parameters
 
         override fun getSupertypes(): Collection<JetType> = supertypes()
 

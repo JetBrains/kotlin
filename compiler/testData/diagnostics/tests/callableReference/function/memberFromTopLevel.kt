@@ -16,4 +16,8 @@ fun main() {
     checkSubtype<KMemberFunction0<A, Unit>>(x)
     checkSubtype<KMemberFunction1<A, Int, Unit>>(y)
     checkSubtype<KMemberFunction0<A, String>>(z)
+
+    checkSubtype<KMemberFunction<A, Unit>>(x)
+    checkSubtype<KMemberFunction<A, Unit>>(y)
+    checkSubtype<KMemberFunction<A, String>>(z)
 }
