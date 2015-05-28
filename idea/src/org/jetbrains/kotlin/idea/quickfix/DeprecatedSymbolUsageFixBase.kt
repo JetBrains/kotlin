@@ -132,7 +132,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val descriptor = resolvedCall.getResultingDescriptor()
 
             val callExpression = resolvedCall.getCall().getCallElement() as JetExpression
-            val qualifiedExpression = callExpression.getParent() as? JetQualifiedExpression
+            val parent = callExpression.getParent()
+            val qualifiedExpression = if (parent is JetQualifiedExpression && callExpression == parent.getSelectorExpression()) parent else null
             val expressionToBeReplaced = qualifiedExpression ?: callExpression
 
             val commentSaver = CommentSaver(expressionToBeReplaced)
