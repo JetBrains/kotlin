@@ -255,22 +255,6 @@ public fun JetElement.getQualifiedElementSelector(): JetElement? {
     }
 }
 
-/**
- * Returns outermost qualified element ([[JetQualifiedExpression]] or [[JetUserType]]) in the non-interleaving chain
- * of qualified elements which enclose given expression
- * If there is no such elements original expression is returned
- */
-public fun JetSimpleNameExpression.getOutermostNonInterleavingQualifiedElement(): JetElement {
-    var element = ((getParent() as? JetCallExpression) ?: this).getParent()
-    if (element !is JetQualifiedExpression && element !is JetUserType) return this
-
-    while (true) {
-        val parent = element!!.getParent()
-        if (parent !is JetQualifiedExpression && parent !is JetUserType) return element as JetElement
-        element = parent
-    }
-}
-
 public fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
 
 public fun JetModifierListOwner.isPrivate(): Boolean = hasModifier(JetTokens.PRIVATE_KEYWORD)
