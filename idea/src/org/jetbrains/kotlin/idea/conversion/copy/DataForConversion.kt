@@ -168,7 +168,7 @@ data class DataForConversion private(
         }
 
         private fun tryClipLeftSide(element: PsiElement, leftBound: Int)
-                = tryClipSide(element, leftBound, { range }, { getFirstChild().siblings() })
+                = tryClipSide(element, leftBound, { range }, { allChildren })
 
         private fun tryClipRightSide(element: PsiElement, rightBound: Int): Int? {
             fun Int.transform() = Int.MAX_VALUE - this

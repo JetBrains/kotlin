@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.PsiComment
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 
 fun findDocComment(declaration: JetDeclaration): KDoc? {
-    return declaration.getFirstChild().siblings()
+    return declaration.allChildren
             .dropWhile { it !is KDoc && (it is PsiWhiteSpace || it is PsiComment) }
             .first() as? KDoc
 }
