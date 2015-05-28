@@ -132,13 +132,13 @@ public class ClassBuilderFactories {
 
         @Override
         protected String getCommonSuperClass(@NotNull String type1, @NotNull String type2) {
-            try {
-                return super.getCommonSuperClass(type1, type2);
-            }
-            catch (Throwable t) {
-                // @todo we might need at some point do more sophisticated handling
-                return "java/lang/Object";
-            }
+            // This method is needed to generate StackFrameMap: bytecode metadata for JVM verification. For bytecode version 50.0 (JDK 6)
+            // these maps can be invalid: in this case, JVM would generate them itself (potentially slowing class loading),
+            // for bytecode 51.0+ (JDK 7+) JVM would crash with VerifyError.
+            // It seems that for bytecode emitted by Kotlin compiler, it is safe to return "Object" here, because there will
+            // be "checkcast" generated before making a call, anyway.
+
+            return "java/lang/Object";
         }
     }
 
