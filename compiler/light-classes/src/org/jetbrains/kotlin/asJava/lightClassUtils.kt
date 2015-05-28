@@ -70,7 +70,7 @@ public fun JetParameter.toPsiParameter(): PsiParameter? {
 
     val paramIndex = paramList.getParameters().indexOf(this)
     val owner = paramList.getParent()
-    val lightParamIndex = if (owner != null && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
+    val lightParamIndex = if (owner is JetDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
     val method: PsiMethod? = when (owner) {
         is JetFunction -> LightClassUtil.getLightClassMethod(owner)

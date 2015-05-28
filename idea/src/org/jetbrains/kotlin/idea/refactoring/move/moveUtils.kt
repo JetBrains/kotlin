@@ -166,7 +166,7 @@ fun createMoveUsageInfoIfPossible(
     val endOffset = range.getEndOffset()
 
     if (reference is JetReference
-        && referencedElement.namedUnwrappedElement!!.isExtensionDeclaration()
+        && (referencedElement.namedUnwrappedElement as? JetDeclaration)?.isExtensionDeclaration() ?: false
         && element.getNonStrictParentOfType<JetImportDirective>() == null) {
         return MoveRenameUsageInfoForExtension(
                 element, reference, startOffset, endOffset, referencedElement, element.getContainingFile()!!, addImportToOriginalFile

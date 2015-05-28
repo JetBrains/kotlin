@@ -129,7 +129,7 @@ public fun JetDeclaration.isOverridable(): Boolean {
         hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
 }
 
-public fun PsiElement.isExtensionDeclaration(): Boolean {
+public fun JetDeclaration.isExtensionDeclaration(): Boolean {
     val callable: JetCallableDeclaration? = when (this) {
         is JetNamedFunction, is JetProperty -> this as JetCallableDeclaration
         is JetPropertyAccessor -> getNonStrictParentOfType<JetProperty>()
@@ -139,7 +139,7 @@ public fun PsiElement.isExtensionDeclaration(): Boolean {
     return callable?.getReceiverTypeReference() != null
 }
 
-public fun PsiElement.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()
+public fun JetClassOrObject.isObjectLiteral(): Boolean = this is JetObjectDeclaration && isObjectLiteral()
 
 //TODO: git rid of this method
 public fun PsiElement.deleteElementAndCleanParent() {
