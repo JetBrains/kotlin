@@ -21,6 +21,8 @@ import java.util.NoSuchElementException
 
 public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
 
+public fun <T> T.singletonList(): List<T> = Collections.singletonList(this)
+
 public fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
 
 public inline fun <reified T : Any> Stream<*>.firstIsInstanceOrNull(): T? {
