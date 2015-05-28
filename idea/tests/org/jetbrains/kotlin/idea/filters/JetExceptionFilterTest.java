@@ -75,7 +75,7 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
     }
 
     @NotNull
-    private static String createStackTraceElementLine(@NotNull String fileName, @NotNull String className, int lineNumber) {
+    private static String createStackTraceElementLine(@NotNull String prefix, @NotNull String fileName, @NotNull String className, int lineNumber) {
         // Method name doesn't matter
         String methodName = "foo";
 
@@ -83,10 +83,14 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
         String fileLastName = new File(fileName).getName();
 
         StackTraceElement element = new StackTraceElement(className, methodName, fileLastName, lineNumber);
-        return "\tat " + element + "\n";
+        return prefix + element + "\n";
     }
 
     private void doTest(@NotNull String fileName, int lineNumber, @NotNull Function1<VirtualFile, String> className) {
+        doTest("\tat ", fileName, lineNumber, className);
+    }
+
+    private void doTest(@NotNull String linePrefix, @NotNull String fileName, int lineNumber, @NotNull Function1<VirtualFile, String> className) {
         if (rootDir == null) {
             configure();
         }
@@ -97,7 +101,7 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
         VirtualFile expectedFile = VfsUtilCore.findRelativeFile(fileName, rootDir);
         assertNotNull(expectedFile);
 
-        String line = createStackTraceElementLine(fileName, className.invoke(expectedFile), lineNumber);
+        String line = createStackTraceElementLine(linePrefix, fileName, className.invoke(expectedFile), lineNumber);
         Filter.Result result = filter.applyFilter(line, 0);
 
         assertNotNull(result);
@@ -113,6 +117,15 @@ public class JetExceptionFilterTest extends MultiFileTestCase {
         assertNotNull(document);
         int expectedOffset = document.getLineStartOffset(lineNumber - 1);
         assertEquals(expectedOffset, descriptor.getOffset());
+    }
+
+    public void testBreakpointReachedAt() {
+        doTest("Breakpoint reached at ", "breakpointReachedAt.kt", 2, new Function1<VirtualFile, String>() {
+            @Override
+            public String invoke(VirtualFile file) {
+                return getPackageClassName(FqName.ROOT);
+            }
+        });
     }
 
     public void testSimple() {
