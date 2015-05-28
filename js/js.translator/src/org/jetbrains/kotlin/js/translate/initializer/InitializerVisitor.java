@@ -78,4 +78,9 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
         }
         return null;
     }
+
+    @Override
+    public Void visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, TranslationContext data) {
+        return null;
+    }
 }

@@ -211,7 +211,12 @@ object ConstructorCallCase : FunctionCallCase {
 
         val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
 
-        return JsNew(functionRef, argumentsInfo.translateArguments)
+        if((callableDescriptor as ConstructorDescriptor).isPrimary()) {
+            return JsNew(functionRef, argumentsInfo.translateArguments)
+        }
+        else {
+            return JsInvocation(functionRef, listOf(JsLiteral.UNDEFINED) + argumentsInfo.translateArguments)
+        }
     }
 }
 

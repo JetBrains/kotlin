@@ -16,16 +16,13 @@
 
 package org.jetbrains.kotlin.js.descriptorUtils
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeProjection
-
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.types.JetType
 
 public val JetType.nameIfStandardType: Name?
     get() {
@@ -57,3 +54,5 @@ public fun JetType.getJetTypeFqName(printTypeArguments: Boolean): String {
 
     return DescriptorUtils.getFqName(declaration).asString() + typeArgumentsAsString
 }
+
+public fun ClassDescriptor.hasPrimaryConstructor(): Boolean = getUnsubstitutedPrimaryConstructor() != null

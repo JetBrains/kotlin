@@ -20,11 +20,11 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.MemberDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.translate.intrinsic.Intrinsics;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,6 +127,12 @@ public class TranslationContext {
     public TranslationContext newDeclaration(@NotNull DeclarationDescriptor descriptor, @Nullable DefinitionPlace place) {
         DynamicContext dynamicContext = DynamicContext.newContext(getScopeForDescriptor(descriptor), getBlockForDescriptor(descriptor));
         return new TranslationContext(this, staticContext, dynamicContext, aliasingContext, usageTracker, place);
+    }
+
+    @NotNull
+    public TranslationContext newDeclarationWithScope(@NotNull DeclarationDescriptor descriptor, @NotNull JsScope scope) {
+        DynamicContext dynamicContext = DynamicContext.newContext(scope, getBlockForDescriptor(descriptor));
+        return new TranslationContext(this, staticContext, dynamicContext, aliasingContext, usageTracker, this.getDefinitionPlace());
     }
 
     @NotNull

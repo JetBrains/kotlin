@@ -86,6 +86,7 @@ public final class Namer {
     private static final String ROOT_PACKAGE = "_";
 
     private static final String RECEIVER_PARAMETER_NAME = "$receiver";
+    public static final String ANOTHER_THIS_PARAMETER_NAME = "$this";
 
     private static final String THROW_NPE_FUN_NAME = "throwNPE";
     private static final String COMPANION_OBJECT_GETTER = "object";
@@ -97,6 +98,9 @@ public final class Namer {
 
     @NotNull
     public static final JsExpression UNDEFINED_EXPRESSION = new JsPrefixOperation(JsUnaryOperator.VOID, JsNumberLiteral.ZERO);
+
+    private static final JsNameRef JS_OBJECT = new JsNameRef("Object");
+    private static final JsNameRef JS_OBJECT_CREATE_FUNCTION = new JsNameRef("create", JS_OBJECT);
 
     public static boolean isUndefined(@NotNull JsExpression expr) {
         if (expr instanceof JsPrefixOperation) {
@@ -214,6 +218,11 @@ public final class Namer {
     @NotNull
     public static JsNameRef getFunctionApplyRef(@NotNull JsExpression functionExpression) {
         return new JsNameRef(APPLY_FUNCTION, functionExpression);
+    }
+
+    @NotNull
+    public static JsInvocation createObjectWithPrototypeFrom(JsNameRef referenceToClass) {
+        return new JsInvocation(JS_OBJECT_CREATE_FUNCTION, getRefToPrototype(referenceToClass));
     }
 
     @NotNull

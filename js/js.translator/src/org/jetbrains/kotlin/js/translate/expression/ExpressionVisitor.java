@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.js.translate.expression;
 
 import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
 import org.jetbrains.kotlin.js.translate.expression.loopTranslator.LoopTranslatorPackage;
@@ -135,6 +137,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     public JsNode visitReturnExpression(@NotNull JetReturnExpression jetReturnExpression,
             @NotNull TranslationContext context) {
         JetExpression returned = jetReturnExpression.getReturnedExpression();
+
+        // TODO: add related descriptor to context and use it here
+        JetDeclarationWithBody parent = PsiTreeUtil.getParentOfType(jetReturnExpression, JetDeclarationWithBody.class);
+        if (parent instanceof JetSecondaryConstructor) {
+            return new JsReturn(new JsNameRef(Namer.ANOTHER_THIS_PARAMETER_NAME)).source(jetReturnExpression);
+        }
         if (returned == null) {
             return new JsReturn(null).source(jetReturnExpression);
         }

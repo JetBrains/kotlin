@@ -126,4 +126,9 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
         // parsed it in initializer visitor => no additional actions are needed
         return null;
     }
+
+    @Override
+    public Void visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, TranslationContext data) {
+        return null;
+    }
 }

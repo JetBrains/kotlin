@@ -22,30 +22,32 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.bridges.Bridge
 import org.jetbrains.kotlin.backend.common.bridges.generateBridgesForFunctionDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.descriptorUtils.hasPrimaryConstructor
+import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.DefinitionPlace
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.declaration.propertyTranslator.translateAccessors
+import org.jetbrains.kotlin.js.translate.expression.FunctionTranslator
 import org.jetbrains.kotlin.js.translate.expression.withCapturedParameters
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.initializer.ClassInitializerTranslator
 import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator.translateAsFQReference
+import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getClassDescriptor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptorForConstructorParameter
-import org.jetbrains.kotlin.js.translate.utils.ID
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getReceiverParameterForDeclaration
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSupertypesWithoutFakes
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getPrimaryConstructorParameters
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunction
-import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
+import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.toInvocationWith
+import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClass
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetObjectDeclaration
+import org.jetbrains.kotlin.psi.JetSecondaryConstructor
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -71,7 +73,7 @@ public class ClassTranslator private constructor(
         return translateObjectInsideClass(context())
     }
 
-    public fun translate(declarationContext: TranslationContext = context()): JsInvocation {
+    private fun translate(declarationContext: TranslationContext = context()): JsInvocation {
         return JsInvocation(context().namer().classCreateInvocation(descriptor), getClassCreateInvocationArguments(declarationContext))
     }
 
@@ -279,6 +281,10 @@ public class ClassTranslator private constructor(
 
             result.add(JsPropertyInitializer(classNameRef, classCreation))
 
+            classDeclaration.getSecondaryConstructors().forEach {
+                result.add(generateSecondaryConstructor(it, context))
+            }
+
             return result
         }
 
@@ -290,6 +296,55 @@ public class ClassTranslator private constructor(
         platformStatic
         public fun generateObjectLiteral(objectDeclaration: JetObjectDeclaration, context: TranslationContext): JsExpression {
             return ClassTranslator(objectDeclaration, context).translateObjectLiteralExpression()
+        }
+
+        private fun generateSecondaryConstructor(constructor: JetSecondaryConstructor, context: TranslationContext): JsPropertyInitializer {
+            val constructorDescriptor = BindingUtils.getDescriptorForElement(context.bindingContext(), constructor) as ConstructorDescriptor
+            val classDescriptor = constructorDescriptor.getContainingDeclaration()
+
+            val constructorScope = context.getScopeForDescriptor(constructorDescriptor)
+            val thisName = constructorScope.declareName(Namer.ANOTHER_THIS_PARAMETER_NAME)
+            val thisNameRef = thisName.makeRef()
+            val receiverDescriptor = JsDescriptorUtils.getReceiverParameterForDeclaration(classDescriptor)
+            val translationContext = context.innerContextWithAliased(receiverDescriptor, thisNameRef)
+
+            val constructorInitializer = FunctionTranslator.newInstance(constructor, translationContext).translateAsMethod()
+            val constructorFunction = constructorInitializer.getValueExpr() as JsFunction
+
+            constructorFunction.getParameters().add(0, JsParameter(thisName))
+
+            val referenceToClass = context.getQualifiedReference(classDescriptor)
+
+            val forAddToBeginning: List<JsStatement> =
+                    with(arrayListOf<JsStatement>()) {
+                        addAll(FunctionBodyTranslator.setDefaultValueForArguments(constructorDescriptor, context))
+
+                        val createInstance = Namer.createObjectWithPrototypeFrom(referenceToClass)
+                        val instanceVar = JsAstUtils.assignment(thisNameRef, JsAstUtils.or(thisNameRef, createInstance)).makeStmt()
+                        add(instanceVar)
+
+                        val resolvedCall = BindingContextUtils.getDelegationConstructorCall(context.bindingContext(), constructorDescriptor)
+                        val delegationClassDescriptor = resolvedCall?.getResultingDescriptor()?.getContainingDeclaration()
+
+                        if (resolvedCall != null && !KotlinBuiltIns.isAny(delegationClassDescriptor!!)) {
+                            val superCall = CallTranslator.translate(context, resolvedCall)
+                            add(superCall.toInvocationWith(thisNameRef).makeStmt())
+                        }
+
+                        val delegationCtorInTheSameClass = delegationClassDescriptor == classDescriptor
+                        if (!delegationCtorInTheSameClass && !classDescriptor.hasPrimaryConstructor()) {
+                            add(JsInvocation(Namer.getFunctionCallRef(referenceToClass), thisNameRef).makeStmt())
+                        }
+
+                        this
+                    }
+
+            with(constructorFunction.getBody().getStatements()) {
+                addAll(0, forAddToBeginning)
+                add(JsReturn(thisNameRef))
+            }
+
+            return constructorInitializer
         }
     }
 }

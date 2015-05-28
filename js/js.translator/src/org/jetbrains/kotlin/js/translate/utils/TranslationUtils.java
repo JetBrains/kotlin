@@ -146,7 +146,17 @@ public final class TranslationUtils {
             }
             backingFieldName = context.declarePropertyOrPropertyAccessorName(descriptor, backingFieldMangledName, false);
         }
-        return new JsNameRef(backingFieldName, JsLiteral.THIS);
+
+        DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
+        JsExpression receiver;
+        if (containingDescriptor instanceof PackageFragmentDescriptor) {
+            // used inside package initializer
+            receiver = JsLiteral.THIS;
+        }
+        else {
+            receiver = context.getDispatchReceiver(JsDescriptorUtils.getReceiverParameterForDeclaration(containingDescriptor));
+        }
+        return new JsNameRef(backingFieldName, receiver);
     }
 
     @NotNull

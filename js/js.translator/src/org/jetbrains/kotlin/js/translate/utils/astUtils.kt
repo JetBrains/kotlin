@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.js.translate.utils.jsAstUtils
 
 import com.google.dart.compiler.backend.js.ast.*
-import org.jetbrains.kotlin.js.inline.util.IdentitySet
+import org.jetbrains.kotlin.js.translate.context.Namer
 
 public fun JsFunction.addStatement(stmt: JsStatement) {
     getBody().getStatements().add(stmt)
@@ -54,6 +54,25 @@ public fun JsNode.any(predicate: (JsNode) -> Boolean): Boolean {
 
     visitor.accept(this)
     return visitor.matched
+}
+
+fun JsExpression.toInvocationWith(thisExpr: JsExpression): JsExpression {
+    val qualifier: JsExpression
+    val arguments: MutableList<JsExpression>
+
+    when (this) {
+        is JsNew -> {
+            qualifier = Namer.getFunctionCallRef(getConstructorExpression())
+            arguments = getArguments()
+        }
+        is JsInvocation -> {
+            qualifier = getQualifier()
+            arguments = with(getArguments()) { subList(1, size()) }
+        }
+        else -> throw IllegalStateException("Unexpected node type: " + javaClass)
+    }
+
+    return JsInvocation(qualifier, listOf(thisExpr) + arguments)
 }
 
 public var JsNameRef.qualifier: JsExpression?

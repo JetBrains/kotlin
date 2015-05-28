@@ -118,6 +118,7 @@ public final class JsDescriptorUtils {
                                                 ", receiverParameter = " + receiverParameter);
     }
 
+    @NotNull
     public static ReceiverParameterDescriptor getReceiverParameterForDeclaration(DeclarationDescriptor declarationDescriptor) {
         if (declarationDescriptor instanceof ClassDescriptor) {
             return ((ClassDescriptor) declarationDescriptor).getThisAsReceiverParameter();

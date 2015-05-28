@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.psi.JetDeclarationWithBody;
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +114,7 @@ public final class FunctionTranslator extends AbstractTranslator {
 
     private void translateBody() {
         if (!functionDeclaration.hasBody()) {
-            assert descriptor.getModality().equals(Modality.ABSTRACT);
+            assert descriptor instanceof ConstructorDescriptor || descriptor.getModality().equals(Modality.ABSTRACT);
             return;
         }
         functionObject.getBody().getStatements().addAll(translateFunctionBody(descriptor, functionDeclaration, functionBodyContext).getStatements());

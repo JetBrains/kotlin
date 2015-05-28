@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Factory;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.ReflectionTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.config.Config;
 import org.jetbrains.kotlin.js.config.EcmaVersion;
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.tasks.TasksPackage;
-import org.jetbrains.kotlin.builtins.ReflectionTypes;
 
 import java.util.Map;
 
@@ -267,7 +267,9 @@ public final class StaticContext {
             Rule<JsName> constructorOrCompanionObjectHasTheSameNameAsTheClass = new Rule<JsName>() {
                 @Override
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
-                    if (descriptor instanceof ConstructorDescriptor || (DescriptorUtils.isCompanionObject(descriptor))) {
+                    if (descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary() ||
+                        DescriptorUtils.isCompanionObject(descriptor)
+                    ) {
                         //noinspection ConstantConditions
                         return getNameForDescriptor(descriptor.getContainingDeclaration());
                     }

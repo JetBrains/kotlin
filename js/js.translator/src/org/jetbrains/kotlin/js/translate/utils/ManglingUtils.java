@@ -19,9 +19,13 @@ package org.jetbrains.kotlin.js.translate.utils;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -31,12 +35,13 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import java.util.*;
 
 import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getJetTypeFqName;
+import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.hasPrimaryConstructor;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class ManglingUtils {
     private ManglingUtils() {}
 
-    public static final Comparator<CallableMemberDescriptor> OVERLOADED_MEMBER_COMPARATOR = new OverloadedMemberComparator();
+    public static final Comparator<CallableDescriptor> CALLABLE_COMPARATOR = new CallableComparator();
 
     @NotNull
     public static String getMangledName(@NotNull PropertyDescriptor descriptor, @NotNull String suggestedName) {
@@ -131,30 +136,66 @@ public class ManglingUtils {
 
     @NotNull
     private static String getStableMangledName(@NotNull CallableDescriptor descriptor) {
-        return getStableMangledName(descriptor.getName().asString(), getArgumentTypesAsString(descriptor));
+        String suggestedName = getSuggestedName(descriptor);
+        return getStableMangledName(suggestedName, getArgumentTypesAsString(descriptor));
     }
 
     @NotNull
-    private static String getSimpleMangledName(@NotNull final CallableMemberDescriptor descriptor) {
-        DeclarationDescriptor declaration = descriptor.getContainingDeclaration();
+    private static String getSuggestedName(@NotNull CallableDescriptor descriptor) {
+        if (descriptor instanceof ConstructorDescriptor && !((ConstructorDescriptor) descriptor).isPrimary()) {
+            DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
+            assert classDescriptor != null;
+            return classDescriptor.getName().asString();
+        }
+        else {
+            return descriptor.getName().asString();
+        }
+    }
+
+    @NotNull
+    private static String getSimpleMangledName(@NotNull CallableMemberDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
 
         JetScope jetScope = null;
-        if (declaration instanceof PackageFragmentDescriptor) {
-            jetScope = ((PackageFragmentDescriptor) declaration).getMemberScope();
+
+        String nameToCompare = descriptor.getName().asString();
+
+        if (containingDeclaration != null && descriptor instanceof ConstructorDescriptor) {
+            nameToCompare = containingDeclaration.getName().asString();
+            containingDeclaration = containingDeclaration.getContainingDeclaration();
         }
-        else if (declaration instanceof ClassDescriptor) {
-            jetScope = ((ClassDescriptor) declaration).getDefaultType().getMemberScope();
+
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            jetScope = ((PackageFragmentDescriptor) containingDeclaration).getMemberScope();
+        }
+        else if (containingDeclaration instanceof ClassDescriptor) {
+            jetScope = ((ClassDescriptor) containingDeclaration).getDefaultType().getMemberScope();
         }
 
         int counter = 0;
 
         if (jetScope != null) {
+            final String finalNameToCompare = nameToCompare;
+
             Collection<DeclarationDescriptor> declarations = jetScope.getDescriptors(DescriptorKindFilter.CALLABLES, JetScope.ALL_NAME_FILTER);
-            List<CallableMemberDescriptor>
-                    overloadedFunctions = ContainerUtil.mapNotNull(declarations, new Function<DeclarationDescriptor, CallableMemberDescriptor>() {
+            List<CallableDescriptor> overloadedFunctions =
+                    KotlinPackage.flatMap(declarations, new Function1<DeclarationDescriptor, Iterable<? extends CallableDescriptor>>() {
                 @Override
-                public CallableMemberDescriptor fun(DeclarationDescriptor declarationDescriptor) {
-                    if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return null;
+                public Iterable<? extends CallableDescriptor> invoke(DeclarationDescriptor declarationDescriptor) {
+                    if (declarationDescriptor instanceof ClassDescriptor && finalNameToCompare.equals(declarationDescriptor.getName().asString())) {
+                        ClassDescriptor classDescriptor = (ClassDescriptor) declarationDescriptor;
+                        Collection<ConstructorDescriptor> constructors = classDescriptor.getConstructors();
+
+                        if (!hasPrimaryConstructor(classDescriptor)) {
+                            ConstructorDescriptorImpl fakePrimaryConstructor =
+                                    ConstructorDescriptorImpl.create(classDescriptor, Annotations.EMPTY, true, SourceElement.NO_SOURCE);
+                            return KotlinPackage.plus(constructors, fakePrimaryConstructor);
+                        }
+
+                        return constructors;
+                    }
+
+                    if (!(declarationDescriptor instanceof CallableMemberDescriptor)) return Collections.emptyList();
 
                     CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) declarationDescriptor;
 
@@ -163,24 +204,26 @@ public class ManglingUtils {
                     // when name == null it's mean that it's not native.
                     if (name == null) {
                         // skip functions without arguments, because we don't use mangling for them
-                        if (needsStableMangling(callableMemberDescriptor) && !callableMemberDescriptor.getValueParameters().isEmpty()) return null;
+                        if (needsStableMangling(callableMemberDescriptor) && !callableMemberDescriptor.getValueParameters().isEmpty()) return Collections.emptyList();
 
                         // TODO add prefix for property: get_$name and set_$name
                         name = callableMemberDescriptor.getName().asString();
                     }
 
-                    return descriptor.getName().asString().equals(name) ? callableMemberDescriptor : null;
+                    if (finalNameToCompare.equals(name)) return Collections.singletonList(callableMemberDescriptor);
+
+                    return Collections.emptyList();
                 }
             });
 
             if (overloadedFunctions.size() > 1) {
-                Collections.sort(overloadedFunctions, OVERLOADED_MEMBER_COMPARATOR);
+                Collections.sort(overloadedFunctions, CALLABLE_COMPARATOR);
                 counter = ContainerUtil.indexOfIdentity(overloadedFunctions, descriptor);
                 assert counter >= 0;
             }
         }
 
-        String name = descriptor.getName().asString();
+        String name = getSuggestedName(descriptor);
         return counter == 0 ? name : name + '_' + counter;
     }
 
@@ -206,13 +249,21 @@ public class ManglingUtils {
     public static String getStableMangledNameForDescriptor(@NotNull ClassDescriptor descriptor, @NotNull String functionName) {
         Collection<FunctionDescriptor> functions = descriptor.getDefaultType().getMemberScope().getFunctions(Name.identifier(functionName));
         assert functions.size() == 1 : "Can't select a single function: " + functionName + " in " + descriptor;
-        return getSuggestedName(functions.iterator().next());
+        return getSuggestedName((DeclarationDescriptor) functions.iterator().next());
     }
 
-    private static class OverloadedMemberComparator implements Comparator<CallableMemberDescriptor> {
+    private static class CallableComparator implements Comparator<CallableDescriptor> {
         @Override
-        public int compare(@NotNull CallableMemberDescriptor a, @NotNull CallableMemberDescriptor b) {
-            // native functions first
+        public int compare(@NotNull CallableDescriptor a, @NotNull CallableDescriptor b) {
+            // primary constructors
+            if (a instanceof ConstructorDescriptor && ((ConstructorDescriptor) a).isPrimary()) {
+                if (!(b instanceof ConstructorDescriptor) || !((ConstructorDescriptor) b).isPrimary()) return -1;
+            }
+            else if (b instanceof ConstructorDescriptor && ((ConstructorDescriptor) b).isPrimary()) {
+                return 1;
+            }
+
+            // native functions
             if (isNativeOrOverrideNative(a)) {
                 if (!isNativeOrOverrideNative(b)) return -1;
             }
@@ -238,14 +289,16 @@ public class ManglingUtils {
             return aArguments.compareTo(bArguments);
         }
 
-        private static int arity(CallableMemberDescriptor descriptor) {
+        private static int arity(CallableDescriptor descriptor) {
             return descriptor.getValueParameters().size() + (descriptor.getExtensionReceiverParameter() == null ? 0 : 1);
         }
 
-        private static boolean isNativeOrOverrideNative(CallableMemberDescriptor descriptor) {
+        private static boolean isNativeOrOverrideNative(CallableDescriptor descriptor) {
+            if (!(descriptor instanceof CallableMemberDescriptor)) return false;
+
             if (AnnotationsUtils.isNativeObject(descriptor)) return true;
 
-            Set<CallableMemberDescriptor> declarations = DescriptorUtils.getAllOverriddenDeclarations(descriptor);
+            Set<CallableMemberDescriptor> declarations = DescriptorUtils.getAllOverriddenDeclarations((CallableMemberDescriptor) descriptor);
             for (CallableMemberDescriptor memberDescriptor : declarations) {
                 if (AnnotationsUtils.isNativeObject(memberDescriptor)) return true;
             }
