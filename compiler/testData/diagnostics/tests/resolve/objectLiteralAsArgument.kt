@@ -1,5 +1,3 @@
-// !DIAGNOSTICS: -PARAMETER_NAME_CHANGED_ON_OVERRIDE
-
 //If this test hangs, it means something is broken.
 object A {
     val iii = 42

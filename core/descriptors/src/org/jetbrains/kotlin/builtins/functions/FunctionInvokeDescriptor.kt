@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-// TODO: make parameter names synthetic / non-stable
 public class FunctionInvokeDescriptor private constructor(
         private val container: DeclarationDescriptor,
         private val original: FunctionInvokeDescriptor?,
@@ -36,6 +35,9 @@ public class FunctionInvokeDescriptor private constructor(
         callableKind,
         SourceElement.NO_SOURCE
 ) {
+    // "p0", "p1", etc. should not be baked into the language
+    override fun hasStableParameterNames(): Boolean = false
+
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             original: FunctionDescriptor?,

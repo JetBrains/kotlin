@@ -16,34 +16,38 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import com.intellij.util.containers.MultiMap
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
+import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import kotlin.properties.Delegates
-import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
+import org.jetbrains.kotlin.idea.references.JetSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.util.isUnit
-import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import java.util.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import java.util.Collections
+import kotlin.properties.Delegates
 
 trait Parameter {
     val argumentText: String
@@ -76,7 +80,6 @@ trait ParameterReplacement : Replacement {
 class RenameReplacement(override val parameter: Parameter): ParameterReplacement {
     override fun copy(parameter: Parameter) = RenameReplacement(parameter)
 
-    [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun invoke(e: JetElement): JetElement {
         var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).getQualifiedExpressionForSelectorOrThis()
         val psiFactory = JetPsiFactory(e)
@@ -94,7 +97,6 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
 class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacement {
     override fun copy(parameter: Parameter) = AddPrefixReplacement(parameter)
 
-    [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun invoke(e: JetElement): JetElement {
         val selector = (e.getParent() as? JetCallExpression) ?: e
         val newExpr = selector.replace(JetPsiFactory(e).createExpression("${parameter.nameForRef}.${selector.getText()}")
@@ -105,7 +107,6 @@ class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacem
 }
 
 class FqNameReplacement(val fqName: FqName): Replacement {
-    [suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")]
     override fun invoke(e: JetElement): JetElement {
         val thisExpr = e.getParent() as? JetThisExpression
         if (thisExpr != null) {
