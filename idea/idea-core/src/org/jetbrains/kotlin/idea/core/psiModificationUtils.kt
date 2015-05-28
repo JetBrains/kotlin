@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
@@ -109,4 +111,41 @@ public fun JetBlockExpression.appendElement(element: JetElement): JetElement {
         rBrace.getPrevSibling()!!
     }
     return addAfter(element, anchor)!! as JetElement
+}
+
+//TODO: git rid of this method
+public fun PsiElement.deleteElementAndCleanParent() {
+    val parent = getParent()
+
+    deleteElementWithDelimiters(this)
+    deleteChildlessElement(parent, this.javaClass)
+}
+
+// Delete element if it doesn't contain children of a given type
+private fun <T : PsiElement> deleteChildlessElement(element: PsiElement, childClass: Class<T>) {
+    if (PsiTreeUtil.getChildrenOfType<T>(element, childClass) == null) {
+        element.delete()
+    }
+}
+
+// Delete given element and all the elements separating it from the neighboring elements of the same class
+private fun deleteElementWithDelimiters(element: PsiElement) {
+    val paramBefore = PsiTreeUtil.getPrevSiblingOfType<PsiElement>(element, element.javaClass)
+
+    val from: PsiElement
+    val to: PsiElement
+    if (paramBefore != null) {
+        from = paramBefore.getNextSibling()
+        to = element
+    }
+    else {
+        val paramAfter = PsiTreeUtil.getNextSiblingOfType<PsiElement>(element, element.javaClass)
+
+        from = element
+        to = if (paramAfter != null) paramAfter.getPrevSibling() else element
+    }
+
+    val parent = element.getParent()
+
+    parent.deleteChildRange(from, to)
 }
