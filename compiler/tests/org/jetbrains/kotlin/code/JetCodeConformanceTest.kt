@@ -14,120 +14,96 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.code;
+package org.jetbrains.kotlin.code
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import junit.framework.TestCase;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import junit.framework.TestCase
+import org.junit.Assert
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File
+import java.io.IOException
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
-public class JetCodeConformanceTest extends TestCase {
-    private static final Pattern JAVA_FILE_PATTERN = Pattern.compile(".+\\.java");
-    private static final Pattern SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)");
-    private static final List<File> EXCLUDED_FILES_AND_DIRS = Arrays.asList(
-            new File("android.tests.dependencies"),
-            new File("core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections"),
-            new File("libraries/tools/kotlin-reflect/target/copied-sources"),
-            new File("dependencies"),
-            new File("js/js.translator/qunit/qunit.js"),
-            new File("libraries/tools/kotlin-js-tests/src/test/web/qunit.js"),
-            new File("out"),
-            new File("dist"),
-            new File("ideaSDK"),
-            new File("libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp"),
-            new File("libraries/tools/kotlin-maven-plugin/target/generated-sources"),
-            new File("compiler/testData/psi/kdoc"),
-            new File("compiler/tests/org/jetbrains/kotlin/parsing/JetCodeConformanceTest.java")
-    );
-    public static final Pattern AUTHOR_JAVADOC_PATTERN = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL);
+public class JetCodeConformanceTest : TestCase() {
 
-    public void testParserCode() throws Exception {
-        for (File sourceFile : FileUtil.findFilesByMask(JAVA_FILE_PATTERN, new File("compiler/frontend/src/org/jetbrains/kotlin/parsing"))) {
-            String source = FileUtil.loadFile(sourceFile, true);
+    throws(Exception::class)
+    public fun testParserCode() {
+        for (sourceFile in FileUtil.findFilesByMask(JAVA_FILE_PATTERN, File("compiler/frontend/src/org/jetbrains/kotlin/parsing"))) {
+            val source = FileUtil.loadFile(sourceFile, true)
 
-            Pattern atPattern = Pattern.compile("assert.*?\\b[^_]at.*?$", Pattern.MULTILINE);
-            Matcher matcher = atPattern.matcher(source);
+            val atPattern = Pattern.compile("assert.*?\\b[^_]at.*?$", Pattern.MULTILINE)
+            val matcher = atPattern.matcher(source)
 
             if (matcher.find()) {
-                fail("An at-method with side-effects is used inside assert: " + matcher.group() + "\nin file: " + sourceFile);
+                TestCase.fail("An at-method with side-effects is used inside assert: " + matcher.group() + "\nin file: " + sourceFile)
             }
         }
     }
 
-    public void testForAuthorJavadoc() throws IOException {
-        List<File> filesWithAuthorJavadoc = filterSourceFiles(new Function1<String, Boolean>() {
-            @Override
-            public Boolean invoke(String source) {
+    throws(IOException::class)
+    public fun testForAuthorJavadoc() {
+        val filesWithAuthorJavadoc = filterSourceFiles(object : Function1<String, Boolean> {
+            override fun invoke(source: String): Boolean? {
                 // .contains() is invoked for optimization
-                return source.contains("@author") && AUTHOR_JAVADOC_PATTERN.matcher(source).find();
+                return source.contains("@author") && AUTHOR_JAVADOC_PATTERN.matcher(source).find()
             }
-        });
+        })
 
         if (!filesWithAuthorJavadoc.isEmpty()) {
-            fail(String.format("%d source files contain @author javadoc tag. Please remove them or exclude in this test:\n%s",
-                               filesWithAuthorJavadoc.size(), StringUtil.join(filesWithAuthorJavadoc, "\n")));
+            TestCase.fail(String.format("%d source files contain @author javadoc tag. Please remove them or exclude in this test:\n%s", filesWithAuthorJavadoc.size(), StringUtil.join(filesWithAuthorJavadoc, "\n")))
         }
     }
 
-    public void testNoJCommanderInternalImports() throws IOException {
-        List<File> filesWithJCommander = filterSourceFiles(new Function1<String, Boolean>() {
-            @Override
-            public Boolean invoke(String source) {
-                return source.contains("com.beust.jcommander.internal");
+    throws(IOException::class)
+    public fun testNoJCommanderInternalImports() {
+        val filesWithJCommander = filterSourceFiles(object : Function1<String, Boolean> {
+            override fun invoke(source: String): Boolean? {
+                return source.contains("com.beust.jcommander.internal")
             }
-        });
+        })
 
-        Assert.assertTrue(
-                "It seems that you've used something from com.beust.jcommander.internal package. This code won't work when there's " +
-                "no TestNG in the classpath of our IDEA plugin, because there's only an optional dependency on testng.jar.\n" +
-                "Most probably you meant to use Guava's Lists, Maps or Sets instead. Please change references in these files to " +
-                "com.google.common.collect: " + filesWithJCommander,
-                filesWithJCommander.isEmpty()
-        );
+        Assert.assertTrue("It seems that you've used something from com.beust.jcommander.internal package. This code won't work when there's " + "no TestNG in the classpath of our IDEA plugin, because there's only an optional dependency on testng.jar.\n" + "Most probably you meant to use Guava's Lists, Maps or Sets instead. Please change references in these files to " + "com.google.common.collect: " + filesWithJCommander, filesWithJCommander.isEmpty())
     }
 
-    public void testNoOrgJetbrainsJet() throws IOException {
-        List<File> filesWithOrgJetbrainsJet = filterSourceFiles(new Function1<String, Boolean>() {
-            @Override
-            public Boolean invoke(String source) {
-                return source.contains("org.jetbrains.jet");
+    throws(IOException::class)
+    public fun testNoOrgJetbrainsJet() {
+        val filesWithOrgJetbrainsJet = filterSourceFiles(object : Function1<String, Boolean> {
+            override fun invoke(source: String): Boolean? {
+                return source.contains("org.jetbrains.jet")
             }
-        });
+        })
 
-        Assert.assertTrue(
-                "Package org.jetbrains.jet is deprecated now in favor of org.jetbrains.kotlin. " +
-                "Please consider changing the package in these files: " + filesWithOrgJetbrainsJet,
-                filesWithOrgJetbrainsJet.isEmpty()
-        );
+        Assert.assertTrue("Package org.jetbrains.jet is deprecated now in favor of org.jetbrains.kotlin. " + "Please consider changing the package in these files: " + filesWithOrgJetbrainsJet, filesWithOrgJetbrainsJet.isEmpty())
     }
 
-    @NotNull
-    private static List<File> filterSourceFiles(@NotNull Function1<String, Boolean> predicate) throws IOException {
-        List<File> result = new ArrayList<File>();
-        for (File sourceFile : FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, new File("."))) {
-            if (!excludeFile(sourceFile) && predicate.invoke(FileUtil.loadFile(sourceFile, true))) {
-                result.add(sourceFile);
+    companion object {
+        private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
+        private val SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)")
+        private val EXCLUDED_FILES_AND_DIRS = Arrays.asList<File>(File("android.tests.dependencies"), File("core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections"), File("libraries/tools/kotlin-reflect/target/copied-sources"), File("dependencies"), File("js/js.translator/qunit/qunit.js"), File("libraries/tools/kotlin-js-tests/src/test/web/qunit.js"), File("out"), File("dist"), File("ideaSDK"), File("libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp"), File("libraries/tools/kotlin-maven-plugin/target/generated-sources"), File("compiler/testData/psi/kdoc"), File("compiler/tests/org/jetbrains/kotlin/parsing/JetCodeConformanceTest.java"))
+        public val AUTHOR_JAVADOC_PATTERN: Pattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
+
+        throws(IOException::class)
+        private fun filterSourceFiles(predicate: Function1<String, Boolean>): List<File> {
+            val result = ArrayList<File>()
+            for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, File("."))) {
+                if (!excludeFile(sourceFile) && predicate.invoke(FileUtil.loadFile(sourceFile, true))) {
+                    result.add(sourceFile)
+                }
             }
+            return result
         }
-        return result;
-    }
 
-    private static boolean excludeFile(@NotNull File file) {
-        for (File excludedFileOrDir : EXCLUDED_FILES_AND_DIRS) {
-            if (FileUtil.isAncestor(excludedFileOrDir, file, false)) {
-                return true;
+        private fun excludeFile(file: File): Boolean {
+            for (excludedFileOrDir in EXCLUDED_FILES_AND_DIRS) {
+                if (FileUtil.isAncestor(excludedFileOrDir, file, false)) {
+                    return true
+                }
             }
+            return false
         }
-        return false;
     }
 }
