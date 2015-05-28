@@ -11,8 +11,8 @@
     <packaging>pom</packaging>
 
     <name>Kotlin</name>
-    <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScrip</description>
-    <url>http://kotlin.jetbrains.org/</url>
+    <description>Kotlin is a statically typed programming language that compiles to JVM byte codes and JavaScript</description>
+    <url>http://kotlinlang.org/</url>
 
     <licenses>
         <license>
