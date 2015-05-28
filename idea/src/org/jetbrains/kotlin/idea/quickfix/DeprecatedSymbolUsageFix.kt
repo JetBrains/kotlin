@@ -68,7 +68,7 @@ public class DeprecatedSymbolUsageFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val nameExpression = diagnostic.getPsiElement() as? JetSimpleNameExpression ?: return null
             val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(diagnostic).getA()
-            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor) ?: return null
+            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.getProject()) ?: return null
             return DeprecatedSymbolUsageFix(nameExpression, replacement)
         }
 

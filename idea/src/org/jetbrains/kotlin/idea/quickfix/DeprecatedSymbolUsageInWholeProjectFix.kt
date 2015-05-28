@@ -164,7 +164,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val nameExpression = diagnostic.getPsiElement() as? JetSimpleNameExpression ?: return null
             val descriptor = Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.cast(diagnostic).getA()
-            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor) ?: return null
+            val replacement = DeprecatedSymbolUsageFixBase.replaceWithPattern(descriptor, nameExpression.getProject()) ?: return null
             val descriptorName = RENDERER.render(descriptor)
             return DeprecatedSymbolUsageInWholeProjectFix(nameExpression, replacement, "Replace usages of '$descriptorName' in whole project")
         }
