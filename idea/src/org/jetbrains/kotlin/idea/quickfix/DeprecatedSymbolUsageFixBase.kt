@@ -76,7 +76,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
         if (!resolvedCall.getStatus().isSuccess()) return false
         val descriptor = resolvedCall.getResultingDescriptor()
-        if (replaceWithPattern(descriptor) != replaceWith) return false
+        if (replaceWithPattern(descriptor, project) != replaceWith) return false
 
         try {
             JetPsiFactory(project).createExpression(replaceWith.expression)
@@ -105,7 +105,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             editor: Editor?)
 
     companion object {
-        public fun replaceWithPattern(descriptor: DeclarationDescriptor): ReplaceWith? {
+        public fun replaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
             val annotationClass = descriptor.builtIns.getDeprecatedAnnotation()
             val annotation = descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
             //TODO: code duplication
@@ -118,6 +118,11 @@ public abstract class DeprecatedSymbolUsageFixBase(
             if (pattern.isEmpty()) return null
             val argument = replaceWithValue.getAllValueArguments().entrySet().singleOrNull { it.key.getName().asString() == "imports"/*TODO*/ }?.value
             val imports = (argument?.getValue() as? List<CompileTimeConstant<String>>)?.map { it.getValue() } ?: emptyList()
+
+            // should not be available for descriptors with optional parameters if we cannot fetch default values for them (currently for library with no sources)
+            if (descriptor is CallableDescriptor &&
+                descriptor.getValueParameters().any { it.hasDefaultValue() && OptionalParametersHelper.defaultParameterValue(it, project) == null }) return null
+
             return ReplaceWith(pattern, *imports.toTypedArray())
         }
 
