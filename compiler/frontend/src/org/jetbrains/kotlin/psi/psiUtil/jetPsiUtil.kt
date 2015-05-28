@@ -47,71 +47,6 @@ public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     }
 }
 
-public fun PsiElement.getParentOfTypesAndPredicate<T: PsiElement>(
-        strict : Boolean = false, vararg parentClasses : Class<T>, predicate: (T) -> Boolean
-) : T? {
-    var element = if (strict) getParent() else this
-    while (element != null) {
-        @suppress("UNCHECKED_CAST")
-        when {
-            (parentClasses.isEmpty() || parentClasses.any {parentClass -> parentClass.isInstance(element)}) && predicate(element!! as T) ->
-                return element as T
-            element is PsiFile ->
-                return null
-            else ->
-                element = element!!.getParent()
-        }
-    }
-
-    return null
-}
-
-public fun PsiElement.getNonStrictParentOfType<T: PsiElement>(parentClass : Class<T>) : T? {
-    return PsiTreeUtil.getParentOfType(this, parentClass, false)
-}
-
-inline public fun PsiElement.getParentOfType<reified T: PsiElement>(strict: Boolean): T? {
-    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), strict)
-}
-
-inline public fun PsiElement.getStrictParentOfType<reified T: PsiElement>(): T? {
-    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), true)
-}
-
-inline public fun PsiElement.getNonStrictParentOfType<reified T: PsiElement>(): T? {
-    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), false)
-}
-
-inline public fun PsiElement.getChildOfType<reified T: PsiElement>(): T? {
-    return PsiTreeUtil.getChildOfType(this, javaClass<T>())
-}
-
-inline public fun PsiElement.getChildrenOfType<reified T: PsiElement>(): Array<T> {
-    return PsiTreeUtil.getChildrenOfType(this, javaClass<T>()) ?: arrayOf()
-}
-
-public fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(): PsiElement? {
-    var current = this
-    do {
-        current = current.getNextSibling()
-        if (current == null) return null
-    }
-    while (current is PsiComment || current is PsiWhiteSpace)
-    return current
-}
-
-public fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false): Boolean {
-    return PsiTreeUtil.isAncestor(this, element, strict)
-}
-
-public fun <T: PsiElement> T.getIfChildIsInBranch(element: PsiElement, branch: T.() -> PsiElement?): T? {
-    return if (branch().isAncestor(element)) this else null
-}
-
-inline public fun PsiElement.getParentOfTypeAndBranch<reified T: PsiElement>(strict: Boolean = false, noinline branch: T.() -> PsiElement?) : T? {
-    return getParentOfType<T>(strict)?.getIfChildIsInBranch(this, branch)
-}
-
 public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
         when(this) {
             is JetClass ->
@@ -206,8 +141,6 @@ public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out JetClassOrObj
 
     return result
 }
-
-public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
 public fun JetClass.isInheritable(): Boolean {
     return isInterface() || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)
@@ -342,13 +275,6 @@ public fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInst
 
 public fun JetModifierListOwner.isPrivate(): Boolean = hasModifier(JetTokens.PRIVATE_KEYWORD)
 
-public fun PsiElement.isInsideOf(elements: Iterable<PsiElement>): Boolean = elements.any { it.isAncestor(this) }
-
-public tailRecursive fun PsiElement.getOutermostParentContainedIn(container: PsiElement): PsiElement? {
-    val parent = getParent()
-    return if (parent == container) this else parent?.getOutermostParentContainedIn(container)
-}
-
 public fun JetSimpleNameExpression.getReceiverExpression(): JetExpression? {
     val parent = getParent()
     when {
@@ -407,53 +333,9 @@ public fun JetExpression.isFunctionLiteralOutsideParentheses(): Boolean {
     }
 }
 
-public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = true): Sequence<PsiElement> {
-    val stepFun = if (forward) { e: PsiElement -> e.getNextSibling() } else { e: PsiElement -> e.getPrevSibling() }
-    val sequence = sequence(this, stepFun)
-    return if (withItself) sequence else sequence.drop(1)
-}
-
-public fun ASTNode.siblings(forward: Boolean = true, withItself: Boolean = true): Sequence<ASTNode> {
-    val stepFun = if (forward) { node: ASTNode -> node.getTreeNext() } else { e: ASTNode -> e.getTreeNext() }
-    val sequence = sequence(this, stepFun)
-    return if (withItself) sequence else sequence.drop(1)
-}
-
-public fun PsiElement.parents(withItself: Boolean = true): Sequence<PsiElement> {
-    val sequence = sequence(this) { if (it is PsiFile) null else it.getParent() }
-    return if (withItself) sequence else sequence.drop(1)
-}
-
-public fun ASTNode.parents(withItself: Boolean = true): Sequence<ASTNode> {
-    val sequence = sequence(this) { it.getTreeParent() }
-    return if (withItself) sequence else sequence.drop(1)
-}
-
 public fun JetExpression.getAssignmentByLHS(): JetBinaryExpression? {
     val parent = getParent() as? JetBinaryExpression ?: return null
     return if (JetPsiUtil.isAssignment(parent) && parent.getLeft() == this) parent else null
-}
-
-public fun PsiElement.prevLeaf(skipEmptyElements: Boolean = false): PsiElement?
-        = PsiTreeUtil.prevLeaf(this, skipEmptyElements)
-
-public fun PsiElement.nextLeaf(skipEmptyElements: Boolean = false): PsiElement?
-        = PsiTreeUtil.nextLeaf(this, skipEmptyElements)
-
-public fun PsiElement.prevLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
-    var leaf = prevLeaf()
-    while (leaf != null && !filter(leaf)) {
-        leaf = leaf.prevLeaf()
-    }
-    return leaf
-}
-
-public fun PsiElement.nextLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
-    var leaf = nextLeaf()
-    while (leaf != null && !filter(leaf)) {
-        leaf = leaf.nextLeaf()
-    }
-    return leaf
 }
 
 public fun JetExpression.isDotReceiver(): Boolean =
@@ -481,67 +363,16 @@ public fun JetStringTemplateExpression.getContentRange(): TextRange {
 public fun JetStringTemplateExpression.isSingleQuoted(): Boolean
         = getNode().getFirstChildNode().getTextLength() == 1
 
-public fun PsiFile.elementsInRange(range: TextRange): List<PsiElement> {
-    var offset = range.getStartOffset()
-    val result = ArrayList<PsiElement>()
-    while (offset < range.getEndOffset()) {
-        val currentRange = TextRange(offset, range.getEndOffset())
-        val leaf = findFirstLeafWhollyInRange(this, currentRange) ?: break
-
-        val element = leaf
-                .parents(withItself = true)
-                .first {
-                    val parent = it.getParent()
-                    it is PsiFile || parent.getTextRange() !in currentRange
-                }
-        result.add(element)
-
-        offset = element.endOffset
-    }
-    return result
-}
-
-private fun findFirstLeafWhollyInRange(file: PsiFile, range: TextRange): PsiElement? {
-    var element = file.findElementAt(range.getStartOffset()) ?: return null
-    var elementRange = element.getTextRange()
-    if (elementRange.getStartOffset() < range.getStartOffset()) {
-        element = element.nextLeaf(skipEmptyElements = true) ?: return null
-        elementRange = element.getTextRange()
-    }
-    assert(elementRange.getStartOffset() >= range.getStartOffset())
-    return if (elementRange.getEndOffset() <= range.getEndOffset()) element else null
-}
-
-fun JetNamedDeclaration.getValueParameters(): List<JetParameter> {
+public fun JetNamedDeclaration.getValueParameters(): List<JetParameter> {
     return getValueParameterList()?.getParameters() ?: Collections.emptyList()
 }
 
-fun JetNamedDeclaration.getValueParameterList(): JetParameterList? {
+public fun JetNamedDeclaration.getValueParameterList(): JetParameterList? {
     return when (this) {
         is JetCallableDeclaration -> getValueParameterList()
         is JetClass -> getPrimaryConstructorParameterList()
         else -> null
     }
-}
-
-public fun PsiElement.getElementTextWithContext(): String {
-    if (this is PsiFile) {
-        return getContainingFile().getText()
-    }
-
-    // Find parent for element among file children
-    val topLevelElement = PsiTreeUtil.findFirstParent(this, { it.getParent() is PsiFile }) ?:
-        throw AssertionError("For non-file element we should always be able to find parent in file children")
-
-    val startContextOffset = topLevelElement.startOffset
-    val elementContextOffset = getTextRange().getStartOffset()
-
-    val inFileParentOffset = elementContextOffset - startContextOffset
-
-    return StringBuilder(topLevelElement.getText())
-            .insert(inFileParentOffset, "<caret>")
-            .insert(0, "File name: ${getContainingFile().getName()}\n")
-            .toString()
 }
 
 // Calls `block` on each descendant of T type
@@ -559,46 +390,6 @@ public inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(noinli
 
 public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): JetVisitorVoid {
     return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
-}
-
-public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {
-    this.accept(object : PsiRecursiveElementVisitor(){
-        override fun visitElement(element: PsiElement) {
-            super.visitElement(element)
-            if (element is T) {
-                action(element)
-            }
-        }
-    })
-}
-
-public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean = { true }): Boolean {
-    return findDescendantOfType(predicate) != null
-}
-
-public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean = { true }): T? {
-    var result: T? = null
-    this.accept(object : PsiRecursiveElementVisitor(){
-        override fun visitElement(element: PsiElement) {
-            if (result != null) return
-            if (element is T && predicate(element)) {
-                result = element
-                return
-            }
-            super.visitElement(element)
-        }
-    })
-    return result
-}
-
-public inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
-    val result = ArrayList<T>()
-    forEachDescendantOfType<T> {
-        if (predicate(it)) {
-            result.add(it)
-        }
-    }
-    return result
 }
 
 public fun PsiFile.getFqNameByDirectory(): FqName {
