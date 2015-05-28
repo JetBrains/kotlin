@@ -397,7 +397,12 @@ public interface Errors {
     DiagnosticFactory0<JetReferenceExpression> ARGUMENT_PASSED_TWICE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetReferenceExpression, JetReferenceExpression> NAMED_PARAMETER_NOT_FOUND =
             DiagnosticFactory1.create(ERROR, FOR_UNRESOLVED_REFERENCE);
-    DiagnosticFactory0<PsiElement> NAMED_ARGUMENTS_NOT_ALLOWED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, BadNamedArgumentsTarget> NAMED_ARGUMENTS_NOT_ALLOWED = DiagnosticFactory1.create(ERROR);
+
+    enum BadNamedArgumentsTarget {
+        NON_KOTLIN_FUNCTION,
+        INVOKE_ON_FUNCTION_TYPE
+    }
 
     DiagnosticFactory0<JetExpression> VARARG_OUTSIDE_PARENTHESES = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<LeafPsiElement> NON_VARARG_SPREAD = DiagnosticFactory0.create(ERROR);

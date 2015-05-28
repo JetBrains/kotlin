@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiModifier
+import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.move.MoveCallback
@@ -43,7 +45,6 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.core.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -65,7 +66,6 @@ import java.util.HashSet
 
 trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetNamedDeclaration {
     object Default: Mover {
-        @suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
         override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration {
             val newElement = targetFile.add(originalElement) as JetNamedDeclaration
             originalElement.delete()
@@ -74,7 +74,6 @@ trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetN
     }
 
     object Idle: Mover {
-        @suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
         override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile) = originalElement
     }
 }

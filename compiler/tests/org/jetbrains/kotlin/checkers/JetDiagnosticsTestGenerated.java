@@ -9425,6 +9425,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("invokeInFunctionClass.kt")
+                public void testInvokeInFunctionClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/parameterNames/invokeInFunctionClass.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("jjkHierarchy.kt")
                 public void testJjkHierarchy() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/parameterNames/jjkHierarchy.kt");
