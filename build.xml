@@ -827,6 +827,14 @@
                 <fileset dir="${output}/core.src" includes="**/*"/>
             </jar-content>
         </pack-runtime-jar>
+
+        <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-reflect-sources-for-maven.jar"
+                          implementation-title="${manifest.impl.title.kotlin.jvm.reflect.sources}">
+            <jar-content>
+                <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
+                <fileset dir="${output}/core.src" includes="**/*"/>
+            </jar-content>
+        </pack-runtime-jar>
     </target>
 
     <target name="runtime"
