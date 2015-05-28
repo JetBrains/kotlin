@@ -392,8 +392,8 @@ public fun <T, R, V> Stream<T>.merge(stream: Stream<R>, transform: (T, R) -> V):
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
@@ -410,8 +410,8 @@ public inline fun <T> Array<out T>.partition(predicate: (T) -> Boolean): Pair<Li
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<List<Boolean>, List<Boolean>> {
     val first = ArrayList<Boolean>()
@@ -428,8 +428,8 @@ public inline fun BooleanArray.partition(predicate: (Boolean) -> Boolean): Pair<
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<Byte>, List<Byte>> {
     val first = ArrayList<Byte>()
@@ -446,8 +446,8 @@ public inline fun ByteArray.partition(predicate: (Byte) -> Boolean): Pair<List<B
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<Char>, List<Char>> {
     val first = ArrayList<Char>()
@@ -464,8 +464,8 @@ public inline fun CharArray.partition(predicate: (Char) -> Boolean): Pair<List<C
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<List<Double>, List<Double>> {
     val first = ArrayList<Double>()
@@ -482,8 +482,8 @@ public inline fun DoubleArray.partition(predicate: (Double) -> Boolean): Pair<Li
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List<Float>, List<Float>> {
     val first = ArrayList<Float>()
@@ -500,8 +500,8 @@ public inline fun FloatArray.partition(predicate: (Float) -> Boolean): Pair<List
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int>, List<Int>> {
     val first = ArrayList<Int>()
@@ -518,8 +518,8 @@ public inline fun IntArray.partition(predicate: (Int) -> Boolean): Pair<List<Int
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<Long>, List<Long>> {
     val first = ArrayList<Long>()
@@ -536,8 +536,8 @@ public inline fun LongArray.partition(predicate: (Long) -> Boolean): Pair<List<L
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List<Short>, List<Short>> {
     val first = ArrayList<Short>()
@@ -554,8 +554,8 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
@@ -572,8 +572,8 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
@@ -592,8 +592,8 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 deprecated("Migrate to using Sequence<T> and respective functions")
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun <T> Stream<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
@@ -610,8 +610,8 @@ public inline fun <T> Stream<T>.partition(predicate: (T) -> Boolean): Pair<List<
 
 /**
  * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded [true],
- * while *second* collection contains elements for which [predicate] yielded [false].
+ * where *first* collection contains elements for which [predicate] yielded `true`,
+ * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, String> {
     val first = StringBuilder()
@@ -627,7 +627,7 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun <T> Array<out T>.plus(array: Array<out T>): List<T> {
     val answer = ArrayList<T>(size() + array.size())
@@ -637,7 +637,7 @@ public fun <T> Array<out T>.plus(array: Array<out T>): List<T> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun BooleanArray.plus(array: Array<out Boolean>): List<Boolean> {
     val answer = ArrayList<Boolean>(size() + array.size())
@@ -647,7 +647,7 @@ public fun BooleanArray.plus(array: Array<out Boolean>): List<Boolean> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun ByteArray.plus(array: Array<out Byte>): List<Byte> {
     val answer = ArrayList<Byte>(size() + array.size())
@@ -657,7 +657,7 @@ public fun ByteArray.plus(array: Array<out Byte>): List<Byte> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun CharArray.plus(array: Array<out Char>): List<Char> {
     val answer = ArrayList<Char>(size() + array.size())
@@ -667,7 +667,7 @@ public fun CharArray.plus(array: Array<out Char>): List<Char> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun DoubleArray.plus(array: Array<out Double>): List<Double> {
     val answer = ArrayList<Double>(size() + array.size())
@@ -677,7 +677,7 @@ public fun DoubleArray.plus(array: Array<out Double>): List<Double> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun FloatArray.plus(array: Array<out Float>): List<Float> {
     val answer = ArrayList<Float>(size() + array.size())
@@ -687,7 +687,7 @@ public fun FloatArray.plus(array: Array<out Float>): List<Float> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun IntArray.plus(array: Array<out Int>): List<Int> {
     val answer = ArrayList<Int>(size() + array.size())
@@ -697,7 +697,7 @@ public fun IntArray.plus(array: Array<out Int>): List<Int> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun LongArray.plus(array: Array<out Long>): List<Long> {
     val answer = ArrayList<Long>(size() + array.size())
@@ -707,7 +707,7 @@ public fun LongArray.plus(array: Array<out Long>): List<Long> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun ShortArray.plus(array: Array<out Short>): List<Short> {
     val answer = ArrayList<Short>(size() + array.size())
@@ -717,7 +717,7 @@ public fun ShortArray.plus(array: Array<out Short>): List<Short> {
 }
 
 /**
- * Returns a list containing all elements of original collection and then all elements of the given [collection].
+ * Returns a list containing all elements of original collection and then all elements of the given [array].
  */
 public fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
     val answer = ArrayList<T>(collectionSizeOrDefault(10) + array.size())

@@ -60,7 +60,7 @@ fun generators(): List<GenericFunction> {
 
     templates add f("plus(array: Array<out T>)") {
         exclude(Strings, Sequences)
-        doc { "Returns a list containing all elements of original collection and then all elements of the given [collection]." }
+        doc { "Returns a list containing all elements of original collection and then all elements of the given [array]." }
         returns("List<T>")
         body {
             """
@@ -108,8 +108,8 @@ fun generators(): List<GenericFunction> {
         doc {
             """
             Splits original collection into pair of collections,
-            where *first* collection contains elements for which [predicate] yielded [true],
-            while *second* collection contains elements for which [predicate] yielded [false].
+            where *first* collection contains elements for which [predicate] yielded `true`,
+            while *second* collection contains elements for which [predicate] yielded `false`.
             """
         }
         // TODO: Sequence variant

@@ -71,7 +71,7 @@ public fun Element?.childElements(name: String): List<Element> {
     return children().filter<Node>{ it.nodeType == Node.ELEMENT_NODE && it.nodeName == name }.map { it as Element }
 }
 
-/** The descendent elements of this document */
+/** The descendant elements of this document */
 public val Document?.elements: List<Element>
     get() = this?.getElementsByTagName("*").toElementList()
 
@@ -233,7 +233,7 @@ private class ElementListAsList(private val nodeList: NodeList) : AbstractList<E
 
 }
 
-/** Returns an [[Iterator]] over the next siblings of this node */
+/** Returns an [Iterator] over the next siblings of this node */
 public fun Node.nextSiblings(): Iterable<Node> = NextSiblings(this)
 
 private class NextSiblings(private var node: Node) : Iterable<Node> {
@@ -250,7 +250,7 @@ private class NextSiblings(private var node: Node) : Iterable<Node> {
     }
 }
 
-/** Returns an [[Iterator]] over the next siblings of this node */
+/** Returns an [Iterator] over the next siblings of this node */
 public fun Node.previousSiblings(): Iterable<Node> = PreviousSiblings(this)
 
 private class PreviousSiblings(private var node: Node) : Iterable<Node> {

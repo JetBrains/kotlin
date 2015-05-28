@@ -60,6 +60,10 @@ Java reflection.
 
 Functions for writing tests.
 
+# Package kotlin.text
+
+Functions for working with text and regular expressions.
+
 # Package kotlin.util
 
 Utility functions.
