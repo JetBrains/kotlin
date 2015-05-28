@@ -95,7 +95,6 @@ public class MagicInstruction(
         element: JetElement,
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>,
-        val expectedTypes: Map<PseudoValue, TypePredicate>,
         val kind: MagicKind
 ) : OperationInstruction(element, lexicalScope, inputValues) {
     public constructor (
@@ -103,10 +102,9 @@ public class MagicInstruction(
             valueElement: JetElement?,
             lexicalScope: LexicalScope,
             inputValues: List<PseudoValue>,
-            expectedTypes: Map<PseudoValue, TypePredicate>,
             kind: MagicKind,
             factory: PseudoValueFactory
-    ): this(element, lexicalScope, inputValues, expectedTypes, kind) {
+    ): this(element, lexicalScope, inputValues, kind) {
         setResult(factory, valueElement)
     }
 
@@ -120,7 +118,7 @@ public class MagicInstruction(
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitMagic(this)
 
     override fun createCopy() =
-            MagicInstruction(element, lexicalScope, inputValues, expectedTypes, kind).setResult(resultValue)
+            MagicInstruction(element, lexicalScope, inputValues, kind).setResult(resultValue)
 
     override fun toString() = renderInstruction("magic[$kind]", render(element))
 }

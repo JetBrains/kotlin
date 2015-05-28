@@ -20,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
-import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.*;
@@ -120,7 +119,6 @@ public interface JetControlFlowBuilder {
             @NotNull JetElement instructionElement,
             @Nullable JetElement valueElement,
             @NotNull List<PseudoValue> inputValues,
-            @NotNull Map<PseudoValue, TypePredicate> expectedTypes,
             @NotNull MagicKind kind
     );
 
