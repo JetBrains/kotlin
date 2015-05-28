@@ -82,13 +82,13 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
                     "kotlin.reflect.KMemberFunction",
                     "kotlin.reflect.KExtensionFunction"
             )) {
-                addKotlinToJava(ClassId.topLevel(new FqName(kFun)), new FqNameUnsafe(kFun + i));
+                addKotlinToJava(new FqNameUnsafe(kFun + i), ClassId.topLevel(new FqName(kFun)));
             }
         }
 
         addJavaToKotlin(classId(Deprecated.class), builtIns.getDeprecatedAnnotation());
 
-        addKotlinToJava(classId(Void.class), builtIns.getNothing());
+        addKotlinToJava(builtIns.getNothing(), classId(Void.class));
     }
 
     /**
@@ -130,7 +130,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         ClassId javaClassId = classId(javaClass);
 
         add(javaClassId, kotlinDescriptor);
-        addKotlinToJava(javaClassId, kotlinMutableDescriptor);
+        addKotlinToJava(kotlinMutableDescriptor, javaClassId);
 
         mutableToReadOnly.put(kotlinMutableDescriptor, kotlinDescriptor);
         readOnlyToMutable.put(kotlinDescriptor, kotlinMutableDescriptor);
@@ -138,7 +138,7 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
 
     private void add(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
         addJavaToKotlin(javaClassId, kotlinDescriptor);
-        addKotlinToJava(javaClassId, kotlinDescriptor);
+        addKotlinToJava(kotlinDescriptor, javaClassId);
     }
 
     private void add(@NotNull Class<?> javaClass, @NotNull ClassDescriptor kotlinDescriptor) {
@@ -149,11 +149,11 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         javaToKotlin.put(javaClassId.asSingleFqName(), kotlinDescriptor);
     }
 
-    private void addKotlinToJava(@NotNull ClassId javaClassId, @NotNull ClassDescriptor kotlinDescriptor) {
-        addKotlinToJava(javaClassId, DescriptorUtils.getFqName(kotlinDescriptor));
+    private void addKotlinToJava(@NotNull ClassDescriptor kotlinDescriptor, @NotNull ClassId javaClassId) {
+        addKotlinToJava(DescriptorUtils.getFqName(kotlinDescriptor), javaClassId);
     }
 
-    private void addKotlinToJava(@NotNull ClassId javaClassId, @NotNull FqNameUnsafe kotlinFqName) {
+    private void addKotlinToJava(@NotNull FqNameUnsafe kotlinFqName, @NotNull ClassId javaClassId) {
         kotlinToJava.put(kotlinFqName, javaClassId);
     }
 
