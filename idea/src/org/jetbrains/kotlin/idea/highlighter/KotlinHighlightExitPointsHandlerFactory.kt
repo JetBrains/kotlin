@@ -83,7 +83,7 @@ private fun JetExpression.getRelevantFunction(): JetFunction? {
     if (this is JetReturnExpression) {
         (this.getTargetLabel()?.getReference()?.resolve() as? JetFunction)?.let { return it }
     }
-    for (parent in parents(false)) {
+    for (parent in parents) {
         if (InlineUtil.canBeInlineArgument(parent) && !InlineUtil.isInlinedArgument(parent as JetFunction, parent.analyze(), false)) {
             return parent as JetFunction
         }

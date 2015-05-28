@@ -104,7 +104,7 @@ public abstract class AbstractPartialBodyResolveTest : JetLightCodeInsightFixtur
         builder.append("----------------------------------------------\n")
 
         val skippedStatements = set
-                .filter { !it.parents(withItself = false).any { it in set } } // do not include skipped statements which are inside other skipped statement
+                .filter { !it.parents.any { it in set } } // do not include skipped statements which are inside other skipped statement
                 .sortBy { it.getTextOffset() }
 
         myFixture.getProject().executeWriteCommand("") {

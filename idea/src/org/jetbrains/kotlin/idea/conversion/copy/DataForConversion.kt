@@ -22,10 +22,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.ArrayList
 
 data class DataForConversion private(
@@ -132,8 +129,8 @@ data class DataForConversion private(
         }
 
         private fun PsiElement.maximalParentToClip(range: TextRange): PsiElement? {
-            val firstNotInRange = parents().takeWhile { it !is PsiDirectory }.firstOrNull { it.range !in range } ?: return null
-            return firstNotInRange.parents().lastOrNull { it.minimizedTextRange() in range }
+            val firstNotInRange = parentsWithSelf.takeWhile { it !is PsiDirectory }.firstOrNull { it.range !in range } ?: return null
+            return firstNotInRange.parentsWithSelf.lastOrNull { it.minimizedTextRange() in range }
         }
 
         private fun PsiElement.minimizedTextRange(): TextRange {

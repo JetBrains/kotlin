@@ -43,10 +43,7 @@ import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -96,7 +93,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         }
     }
 
-    protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parents().firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
+    protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
     protected val inDescriptor: DeclarationDescriptor? = expression?.let { bindingContext.get(BindingContext.RESOLUTION_SCOPE, it)?.getContainingDeclaration() }
 
     private val kotlinIdentifierStartPattern: ElementPattern<Char>

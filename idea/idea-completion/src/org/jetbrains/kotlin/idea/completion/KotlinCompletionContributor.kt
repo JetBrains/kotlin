@@ -138,13 +138,13 @@ public class KotlinCompletionContributor : CompletionContributor() {
     }
 
     private fun isInFunctionLiteralParameterList(tokenBefore: PsiElement?): Boolean {
-        val parameterList = tokenBefore?.parents(false)?.firstOrNull { it is JetParameterList } ?: return false
+        val parameterList = tokenBefore?.parents?.firstOrNull { it is JetParameterList } ?: return false
         val parent = parameterList.getParent()
         return parent is JetFunctionLiteral && parent.getValueParameterList() == parameterList
     }
 
     private fun isInClassHeader(tokenBefore: PsiElement?): Boolean {
-        val classOrObject = tokenBefore?.parents(false)?.firstIsInstanceOrNull<JetClassOrObject>() ?: return false
+        val classOrObject = tokenBefore?.parents?.firstIsInstanceOrNull<JetClassOrObject>() ?: return false
         val name = classOrObject.getNameIdentifier() ?: return false
         val body = classOrObject.getBody() ?: return false
         val offset = tokenBefore!!.startOffset

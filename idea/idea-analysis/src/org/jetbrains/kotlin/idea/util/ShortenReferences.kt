@@ -183,7 +183,7 @@ public class ShortenReferences(val options: (JetElement) -> Options = { Options.
         val elementSet = elements.toSet()
         val newElements = LinkedHashSet<JetElement>(elementSet.size())
         for (element in elementSet) {
-            if (!element.parents(withItself = false).any { it in elementSet }) {
+            if (!element.parents.any { it in elementSet }) {
                 newElements.add(element)
             }
         }
