@@ -27,10 +27,24 @@ public annotation class data
 /**
  * Marks the annotated class, function or property as deprecated.
  * @property value the message explaining the deprecation and recommending an alternative API to use.
+ * @property replaceWith if present, specifies a code fragment which should be used as a replacement for
+ *     the deprecated API usage.
  */
 public annotation class deprecated(val value: String, val replaceWith: ReplaceWith = ReplaceWith(""))
 
-//TODO: doc-comment
+/**
+ * Specifies a code fragment that can be used to replace a deprecated function or property. Tools such
+ * as IDEs can automatically apply the replacements specified through this annotation.
+ *
+ * @property expression the replacement expression. The replacement expression is interpreted in the context
+ *     of the function or property being called, and can reference members of enclosing classes etc.
+ *     For function calls, the replacement expression may contain argument names of the deprecated function,
+ *     which will be substituted with actual parameters used in the call being updated. The imports used in the file
+ *     containing the deprecated function or property are NOT accessible; if the replacement expression refers
+ *     on any of those imports, they need to be specified explicitly in the [imports] parmeter.
+ * @property imports the qualified names that need to be imported in order for the references in the
+ *     replacement expression to be resolved correctly.
+ */
 public annotation class ReplaceWith(val expression: String, vararg val imports: String)
 
 /**
