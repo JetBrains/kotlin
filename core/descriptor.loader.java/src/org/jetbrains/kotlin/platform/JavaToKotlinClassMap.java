@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -77,11 +78,8 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         for (int i = 0; i < 23; i++) {
             add(ClassId.topLevel(new FqName("kotlin.jvm.functions.Function" + i)), builtIns.getFunction(i));
 
-            for (String kFun : Arrays.asList(
-                    "kotlin.reflect.KFunction",
-                    "kotlin.reflect.KMemberFunction",
-                    "kotlin.reflect.KExtensionFunction"
-            )) {
+            for (FunctionClassDescriptor.Kind kind : FunctionClassDescriptor.Kinds.KFunctions) {
+                String kFun = kind.getPackageFqName() + "." + kind.getClassNamePrefix();
                 addKotlinToJava(new FqNameUnsafe(kFun + i), ClassId.topLevel(new FqName(kFun)));
             }
         }

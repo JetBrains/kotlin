@@ -21,7 +21,6 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl;
@@ -771,10 +770,8 @@ public class KotlinBuiltIns {
 
         if (!BUILT_INS_PACKAGE_NAME.equals(first(segments))) return false;
 
-        return BuiltInFictitiousFunctionClassFactory.parseClassName(
-                last(segments).asString(),
-                FunctionClassDescriptor.Kinds.Functions
-        ) != null;
+        String shortName = last(segments).asString();
+        return BuiltInFictitiousFunctionClassFactory.parseClassName(shortName, BUILT_INS_PACKAGE_FQ_NAME) != null;
     }
 
     @Nullable
