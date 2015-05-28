@@ -87,6 +87,16 @@ public class JetCodeConformanceTest : TestCase() {
                         { source ->
                             "org.jetbrains.jet" in source
                         }
+                ),
+                TestData(
+                        "%d source files contain references to package kotlin.reflect.jvm.internal.impl.\n" +
+                        "This package contains internal reflection implementation and is a result of a " +
+                        "post-processing of kotlin-reflect.jar by jarjar.\n" +
+                        "Most probably you meant to use classes from org.jetbrains.kotlin.** or com.google.protobuf.**.\n" +
+                        "Please change references in these files or exclude them in this test:\n%s",
+                        { source ->
+                            "kotlin.reflect.jvm.internal.impl" in source
+                        }
                 )
         )
 
