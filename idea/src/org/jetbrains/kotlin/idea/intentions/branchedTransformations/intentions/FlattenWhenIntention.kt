@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.replaced
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 public class FlattenWhenIntention : JetSelfTargetingIntention<JetWhenExpression>(javaClass(), "Flatten 'when' expression") {

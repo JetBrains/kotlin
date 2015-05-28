@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
+import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
@@ -53,7 +54,6 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier;
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.PatternMatchingPackage;
-import org.jetbrains.kotlin.idea.util.psiModificationUtil.PsiModificationUtilPackage;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
@@ -449,7 +449,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                 if (PsiUtilPackage.isFunctionLiteralOutsideParentheses(replace)) {
                     JetFunctionLiteralArgument functionLiteralArgument =
                             PsiTreeUtil.getParentOfType(replace, JetFunctionLiteralArgument.class);
-                    JetCallExpression newCallExpression = PsiModificationUtilPackage
+                    JetCallExpression newCallExpression = CorePackage
                             .moveInsideParenthesesAndReplaceWith(functionLiteralArgument, replacement, bindingContext);
                     result = KotlinPackage.last(newCallExpression.getValueArguments()).getArgumentExpression();
                 }
