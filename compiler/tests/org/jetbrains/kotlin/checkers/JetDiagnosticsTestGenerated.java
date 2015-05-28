@@ -13620,6 +13620,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("EmptyConditionWithExpression.kt")
+            public void testEmptyConditionWithExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/EmptyConditionWithExpression.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("EmptyConditionWithExpressionEnum.kt")
+            public void testEmptyConditionWithExpressionEnum() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/EmptyConditionWithExpressionEnum.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExhaustiveBoolean.kt")
             public void testExhaustiveBoolean() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveBoolean.kt");
