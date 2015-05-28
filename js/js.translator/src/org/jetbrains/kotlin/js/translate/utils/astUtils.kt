@@ -64,15 +64,17 @@ fun JsExpression.toInvocationWith(thisExpr: JsExpression): JsExpression {
         is JsNew -> {
             qualifier = Namer.getFunctionCallRef(getConstructorExpression())
             arguments = getArguments()
+            // `new A(a, b, c)` -> `A.call($this, a, b, c)`
+            return JsInvocation(qualifier, listOf(thisExpr) + arguments)
         }
         is JsInvocation -> {
             qualifier = getQualifier()
-            arguments = with(getArguments()) { subList(1, size()) }
+            arguments = getArguments()
+            // `A(a, b, c)` -> `A(a, b, c, $this)`
+            return JsInvocation(qualifier, arguments + thisExpr)
         }
         else -> throw IllegalStateException("Unexpected node type: " + javaClass)
     }
-
-    return JsInvocation(qualifier, listOf(thisExpr) + arguments)
 }
 
 public var JsNameRef.qualifier: JsExpression?

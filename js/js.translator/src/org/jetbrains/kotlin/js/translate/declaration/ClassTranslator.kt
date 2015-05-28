@@ -311,7 +311,7 @@ public class ClassTranslator private constructor(
             val constructorInitializer = FunctionTranslator.newInstance(constructor, translationContext).translateAsMethod()
             val constructorFunction = constructorInitializer.getValueExpr() as JsFunction
 
-            constructorFunction.getParameters().add(0, JsParameter(thisName))
+            constructorFunction.getParameters().add(JsParameter(thisName))
 
             val referenceToClass = context.getQualifiedReference(classDescriptor)
 

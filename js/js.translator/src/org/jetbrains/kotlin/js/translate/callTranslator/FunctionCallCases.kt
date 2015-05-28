@@ -215,7 +215,7 @@ object ConstructorCallCase : FunctionCallCase {
             return JsNew(functionRef, argumentsInfo.translateArguments)
         }
         else {
-            return JsInvocation(functionRef, listOf(JsLiteral.UNDEFINED) + argumentsInfo.translateArguments)
+            return JsInvocation(functionRef, argumentsInfo.translateArguments)
         }
     }
 }

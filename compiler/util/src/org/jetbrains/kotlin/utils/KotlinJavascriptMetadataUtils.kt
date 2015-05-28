@@ -38,7 +38,7 @@ public object KotlinJavascriptMetadataUtils {
      * Matches string like <name>.kotlin_module_metadata(<abi version>, <module name>, <base64 data>)
      */
     private val METADATA_PATTERN = "(?m)\\w+\\.$KOTLIN_JAVASCRIPT_METHOD_NAME\\((\\d+),\\s*(['\"])([^'\"]*)\\2,\\s*(['\"])([^'\"]*)\\4\\)".toRegex()
-    private val ABI_VERSION = 2
+    private val ABI_VERSION = 3
 
     public fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
 
