@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.context.ModuleContext;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.di.InjectorForTopDownAnalyzerForJvm;
@@ -36,10 +37,8 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap;
 import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.ImportPath;
-import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
+import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 
 import java.util.ArrayList;
@@ -148,7 +147,18 @@ public enum TopDownAnalyzerFacadeForJVM {
             additionalProviders.add(injector.getJavaDescriptorResolver().getPackageFragmentProvider());
 
             injector.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisMode, allFiles, additionalProviders);
-            return AnalysisResult.success(trace.getBindingContext(), moduleContext.getModule());
+
+            BindingContext bindingContext = trace.getBindingContext();
+            ModuleDescriptor module = moduleContext.getModule();
+
+            Collection<AnalysisCompletedHandlerExtension> analysisCompletedHandlerExtensions =
+                    AnalysisCompletedHandlerExtension.Companion.getInstances(moduleContext.getProject());
+
+            for (AnalysisCompletedHandlerExtension extension : analysisCompletedHandlerExtensions) {
+                extension.analysisCompleted(project, module, bindingContext, files);
+            }
+
+            return AnalysisResult.success(bindingContext, module);
         }
         finally {
             injector.destroy();
