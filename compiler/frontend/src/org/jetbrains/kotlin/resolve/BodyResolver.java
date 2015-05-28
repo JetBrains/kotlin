@@ -429,6 +429,8 @@ public class BodyResolver {
 
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
             if (classDescriptor != null) {
+                if (ErrorUtils.isError(classDescriptor)) continue;
+
                 if (classDescriptor.getKind() != ClassKind.INTERFACE) {
                     if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS) {
                         trace.report(CLASS_IN_SUPERTYPE_FOR_ENUM.on(typeReference));

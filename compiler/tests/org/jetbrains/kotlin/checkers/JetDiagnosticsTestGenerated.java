@@ -12929,6 +12929,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/topLevelAnonymousObjects.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("unresolvedSupertype.kt")
+            public void testUnresolvedSupertype() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/unresolvedSupertype.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/suppress")
