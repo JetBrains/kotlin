@@ -17,25 +17,24 @@
 package org.jetbrains.kotlin.psi.psiUtil
 
 import com.intellij.extapi.psi.StubBasedPsiElementBase
-import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
-import com.intellij.psi.search.PsiSearchScopeUtil
-import com.intellij.psi.search.SearchScope
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiParameter
+import com.intellij.psi.PsiParameterList
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
-import org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 import java.util.ArrayList
 import java.util.Collections
 import kotlin.test.assertTrue
+
+// NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
 
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression() ?: return null
@@ -252,18 +251,6 @@ public fun JetExpression.getAssignmentByLHS(): JetBinaryExpression? {
 
 public fun JetExpression.isDotReceiver(): Boolean =
         (getParent() as? JetDotQualifiedExpression)?.getReceiverExpression() == this
-
-public fun Call.isSafeCall(): Boolean {
-    if (this is CallForImplicitInvoke) {
-        //implicit safe 'invoke'
-        if (getOuterCall().isExplicitSafeCall()) {
-            return true
-        }
-    }
-    return isExplicitSafeCall()
-}
-
-public fun Call.isExplicitSafeCall(): Boolean = getCallOperationNode()?.getElementType() == JetTokens.SAFE_ACCESS
 
 public fun JetStringTemplateExpression.getContentRange(): TextRange {
     val start = getNode().getFirstChildNode().getTextLength()
