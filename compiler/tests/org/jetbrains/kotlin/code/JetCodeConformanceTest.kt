@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.code
 
 import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
-import org.junit.Assert.assertTrue
 import java.io.File
+import java.util.ArrayList
 import java.util.regex.Pattern
 import kotlin.test.fail
 
@@ -55,43 +55,60 @@ public class JetCodeConformanceTest : TestCase() {
         }
     }
 
-    public fun testForAuthorJavadoc() {
-        val pattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
-
-        val found = filterSourceFiles { source ->
-            // substring check is an optimization
-            "@author" in source && pattern.matcher(source).find()
+    public fun testNoBadSubstringsInProjectCode() {
+        class TestData(val message: String, val filter: (String) -> Boolean) {
+            val result: MutableList<File> = ArrayList()
         }
 
-        assertTrue("%d source files contain @author javadoc tag. " +
-                   "Please remove them or exclude in this test:\n%s".format(found.size(), found.joinToString("\n")), found.isEmpty())
-    }
+        val atAuthorPattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
 
-    public fun testNoJCommanderInternalImports() {
-        val found = filterSourceFiles { source ->
-            "com.beust.jcommander.internal" in source
+        val tests = listOf(
+                TestData(
+                        "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s",
+                        { source ->
+                            // substring check is an optimization
+                            "@author" in source && atAuthorPattern.matcher(source).find()
+                        }
+                ),
+                TestData(
+                        "%d source files use something from com.beust.jcommander.internal package.\n" +
+                        "This code won't work when there's no TestNG in the classpath of our IDEA plugin, " +
+                        "because there's only an optional dependency on testng.jar.\n" +
+                        "Most probably you meant to use Guava's Lists, Maps or Sets instead. " +
+                        "Please change references in these files to com.google.common.collect:\n%s",
+                        { source ->
+                            "com.beust.jcommander.internal" in source
+                        }
+                ),
+                TestData(
+                        "%d source files contain references to package org.jetbrains.jet.\n" +
+                        "Package org.jetbrains.jet is deprecated now in favor of org.jetbrains.kotlin. " +
+                        "Please consider changing the package in these files:\n%s",
+                        { source ->
+                            "org.jetbrains.jet" in source
+                        }
+                )
+        )
+
+        for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, File("."))) {
+            if (EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
+
+            val source = sourceFile.readText()
+            for (test in tests) {
+                if (test.filter(source)) test.result.add(sourceFile)
+            }
         }
 
-        assertTrue("It seems that you've used something from com.beust.jcommander.internal package. " +
-                   "This code won't work when there's no TestNG in the classpath of our IDEA plugin, " +
-                   "because there's only an optional dependency on testng.jar.\n" +
-                   "Most probably you meant to use Guava's Lists, Maps or Sets instead. " +
-                   "Please change references in these files to com.google.common.collect: $found", found.isEmpty())
-    }
-
-    public fun testNoOrgJetbrainsJet() {
-        val found = filterSourceFiles { source ->
-            "org.jetbrains.jet" in source
-        }
-
-        assertTrue("Package org.jetbrains.jet is deprecated now in favor of org.jetbrains.kotlin. " +
-                   "Please consider changing the package in these files: $found", found.isEmpty())
-    }
-
-    private fun filterSourceFiles(predicate: (String) -> Boolean): List<File> {
-        return FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, File(".")).filter { sourceFile ->
-            EXCLUDED_FILES_AND_DIRS.none { FileUtil.isAncestor(it, sourceFile, false) } &&
-            predicate(sourceFile.readText())
+        if (tests.flatMap { it.result }.isNotEmpty()) {
+            fail(StringBuilder {
+                for (test in tests) {
+                    if (test.result.isNotEmpty()) {
+                        append(test.message.format(test.result.size(), test.result.joinToString("\n")))
+                        appendln()
+                        appendln()
+                    }
+                }
+            }.toString())
         }
     }
 }
