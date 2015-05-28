@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.maven;
 
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
+import com.intellij.util.Processor;
 import com.sampullara.cli.Args;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -109,22 +111,9 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         LOG.info("Kotlin Compiler version " + KotlinVersion.VERSION);
 
-        // Check sources
-        List<String> sources = getSources();
-        if (sources != null && sources.size() > 0) {
-            boolean sourcesExists = false;
-
-            for (String source : sources) {
-                if (new File(source).exists()) {
-                    sourcesExists = true;
-                    break;
-                }
-            }
-
-            if (!sourcesExists) {
-                LOG.warn("No sources found skipping Kotlin compile");
-                return;
-            }
+        if (!hasKotlinFilesInSources()) {
+            LOG.warn("No sources found skipping Kotlin compile");
+            return;
         }
 
         A arguments = createCompilerArguments();
@@ -162,6 +151,26 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 throw new MojoExecutionException("Internal compiler error. See log for more details");
             default:
         }
+    }
+
+    private boolean hasKotlinFilesInSources() throws MojoExecutionException {
+        List<String> sources = getSources();
+        if (sources == null || sources.isEmpty()) return false;
+
+        for (String source : sources) {
+            File root = new File(source);
+            if (root.exists()) {
+                boolean sourcesExists = !FileUtil.processFilesRecursively(root, new Processor<File>() {
+                    @Override
+                    public boolean process(File file) {
+                        return !file.getName().endsWith(".kt");
+                    }
+                });
+                if (sourcesExists) return true;
+            }
+        }
+
+        return false;
     }
 
     private void printCompilerArgumentsIfDebugEnabled(@NotNull A arguments, @NotNull CLICompiler<A> compiler) {

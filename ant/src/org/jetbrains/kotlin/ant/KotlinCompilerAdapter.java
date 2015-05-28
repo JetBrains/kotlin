@@ -87,16 +87,26 @@ public class KotlinCompilerAdapter extends Javac13 {
 
         kotlinc.getAdditionalArguments().addAll(additionalArguments);
 
-        kotlinc.execute();
-        if (!Integer.valueOf(0).equals(kotlinc.getExitCode())) {
-            // Don't run javac if failOnError = false and there were errors on Kotlin sources
-            return false;
+        // Javac13#execute passes everything in compileList to javac, which doesn't recognize .kt files
+        File[] compileListForJavac = filterOutKotlinSources(compileList);
+
+        boolean hasKotlinFilesInSources = compileListForJavac.length < compileList.length;
+
+        if (hasKotlinFilesInSources) {
+            kotlinc.execute();
+            if (!Integer.valueOf(0).equals(kotlinc.getExitCode())) {
+                // Don't run javac if failOnError = false and there were errors on Kotlin sources
+                return false;
+            }
+        }
+        else {
+            // This is needed for addRuntimeToJavacClasspath, where kotlinc arguments will be used.
+            kotlinc.fillArguments();
         }
 
         javac.log("Running javac...");
 
-        // Javac13#execute passes everything in compileList to javac, which doesn't recognize .kt files
-        compileList = filterOutKotlinSources(compileList);
+        compileList = compileListForJavac;
 
         addRuntimeToJavacClasspath(kotlinc);
 

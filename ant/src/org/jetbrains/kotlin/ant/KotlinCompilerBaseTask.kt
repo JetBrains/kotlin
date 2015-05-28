@@ -65,7 +65,7 @@ public abstract class KotlinCompilerBaseTask : Task() {
 
     abstract fun fillSpecificArguments()
 
-    private fun fillArguments() {
+    public fun fillArguments() {
         val sourcePaths = src ?: throw BuildException("\"src\" should be specified")
         args.addAll(sourcePaths.list().map { File(it).canonicalPath })
 
