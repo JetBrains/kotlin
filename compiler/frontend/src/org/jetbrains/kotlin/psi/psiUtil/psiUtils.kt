@@ -30,7 +30,7 @@ public val PsiElement.endOffset: Int
 public fun PsiElement.getStartOffsetIn(ancestor: PsiElement): Int {
     var offset = 0
     var parent = this
-    while (parent != this) {
+    while (parent != ancestor) {
         offset += parent.getStartOffsetInParent()
         parent = parent.getParent()
     }
