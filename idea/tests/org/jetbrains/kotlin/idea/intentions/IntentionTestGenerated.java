@@ -5671,6 +5671,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeExplicitType"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("notOnParameterOfFunctionType.kt")
+        public void testNotOnParameterOfFunctionType() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnParameterOfFunctionType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notOnPublic.kt")
         public void testNotOnPublic() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitType/notOnPublic.kt");
