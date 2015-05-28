@@ -16,7 +16,7 @@
     <buildFile url="file://$PROJECT_DIR$/libraries/build-docs.xml">
       <maximumHeapSize value="1024" />
       <properties>
-        <property name="dokka.path" value="../../dokka/out/artifacts" />
+        <property name="dokka.path" value="../../dokka" />
       </properties>
     </buildFile>
   </component>

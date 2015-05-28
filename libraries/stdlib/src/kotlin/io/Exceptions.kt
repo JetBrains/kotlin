@@ -16,6 +16,9 @@ private fun constructMessage(file: File, other: File?, reason: String?): String 
 
 /**
  * A base exception class for file system exceptions.
+ * @property file the file on which the failed operation was performed.
+ * @property other the second file involved in the operation, if any (for example, the target of a copy or move)
+ * @property reason the description of the error
  */
 open public class FileSystemException(public val file: File,
                                       public val other: File? = null,

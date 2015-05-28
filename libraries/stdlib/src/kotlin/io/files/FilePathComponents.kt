@@ -77,9 +77,23 @@ public val File.root: File?
         return if (name.length() > 0) File(name) else null
     }
 
+/**
+ * Represents the path to a file as a collection of directories.
+ *
+ * @property rootName the name of the root of the path (for example, `/` or `C:`).
+ * @property fileList the list of [File] objects representing every directory in the path to the file,
+ *     up to an including the file itself.
+ */
 public data class FilePathComponents(public val rootName: String, public val fileList: List<File>) {
+    /**
+     * Returns the number of elements in the path to the file.
+     */
     public fun size(): Int = fileList.size()
 
+    /**
+     * Returns a sub-path of the path, starting with the directory at the specified [beginIndex] and up
+     * to the specified [endIndex].
+     */
     public fun subPath(beginIndex: Int, endIndex: Int): File {
         if (beginIndex < 0 || beginIndex > endIndex || endIndex > size())
             throw IllegalArgumentException()
@@ -88,6 +102,10 @@ public data class FilePathComponents(public val rootName: String, public val fil
     }
 }
 
+/**
+ * Splits the file into path components (the names of containing directories and the name of the file
+ * itself) and returns the resulting collection of components.
+ */
 public fun File.filePathComponents(): FilePathComponents {
     val path = separatorsToSystem()
     val rootName = path.getRootName()

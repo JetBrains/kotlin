@@ -19,6 +19,9 @@ public interface Stream<out T> {
  */
 public interface Sequence<out T> : Stream<T>
 
+/**
+ * Converts a stream to a sequence.
+ */
 public fun<T> Stream<T>.toSequence(): Sequence<T> = object : Sequence<T> {
     override fun iterator(): Iterator<T> = this@toSequence.iterator()
 }
