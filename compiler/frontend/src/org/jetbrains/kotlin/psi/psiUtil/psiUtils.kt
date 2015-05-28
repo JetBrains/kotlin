@@ -21,6 +21,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import java.util.ArrayList
 
 // NOTE: in this file we collect only LANGUAGE INDEPENDENT methods working with PSI and not modifying it
@@ -255,6 +256,8 @@ public fun PsiElement.getElementTextWithContext(): String {
             .insert(0, "File name: ${getContainingFile().getName()}\n")
             .toString()
 }
+
+public fun PsiElement.getTextWithLocation(): String = "'${this.getText()}' at ${DiagnosticUtils.atLocation(this)}"
 
 // -----------------------------------------------------------------------------------------------------------------------------------------
 
