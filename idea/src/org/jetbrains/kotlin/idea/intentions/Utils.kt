@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -74,10 +73,11 @@ fun isAutoCreatedItUsage(expression: JetSimpleNameExpression): Boolean {
 }
 
 fun JetCallableDeclaration.canRemoveTypeSpecificationByVisibility(): Boolean {
-    val descriptor = resolveToDescriptor()
     val isOverride = getModifierList()?.hasModifier(JetTokens.OVERRIDE_KEYWORD) ?: false
-    if (!isOverride && (descriptor as? DeclarationDescriptorWithVisibility)?.getVisibility()?.isPublicAPI() ?: false) return false
-    return true
+    if (isOverride) return true
+
+    val descriptor = analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+    return descriptor !is DeclarationDescriptorWithVisibility || !descriptor.getVisibility().isPublicAPI()
 }
 
 // returns assignment which replaces initializer
