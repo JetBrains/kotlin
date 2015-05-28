@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetModifierListOwner
 import org.jetbrains.kotlin.psi.JetNamedDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate

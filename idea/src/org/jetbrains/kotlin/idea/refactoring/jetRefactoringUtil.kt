@@ -21,7 +21,7 @@ import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.ConflictsUtil
 import com.intellij.psi.PsiFileFactory
-import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.openapi.project.Project
 import java.io.File

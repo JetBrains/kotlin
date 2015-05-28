@@ -187,8 +187,6 @@ public fun JetElement.getQualifiedElementSelector(): JetElement? {
     }
 }
 
-public fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
-
 public fun JetModifierListOwner.isPrivate(): Boolean = hasModifier(JetTokens.PRIVATE_KEYWORD)
 
 public fun JetSimpleNameExpression.getReceiverExpression(): JetExpression? {
@@ -307,13 +305,6 @@ public inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(noinli
 public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): JetVisitorVoid {
     return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
 }
-
-public fun PsiFile.getFqNameByDirectory(): FqName {
-    val qualifiedNameByDirectory = getParent()?.getPackage()?.getQualifiedName()
-    return qualifiedNameByDirectory?.let { FqName(it) } ?: FqName.ROOT
-}
-
-public fun JetFile.packageMatchesDirectory(): Boolean = getPackageFqName() == getFqNameByDirectory()
 
 public fun JetAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<JetAnnotationEntry> =
     when (this) {
