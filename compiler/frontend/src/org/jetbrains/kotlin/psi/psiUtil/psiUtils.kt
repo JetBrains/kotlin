@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi.psiUtil
 
-import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.search.PsiSearchScopeUtil
@@ -39,19 +38,8 @@ public fun PsiElement.siblings(forward: Boolean = true, withItself: Boolean = tr
     return if (withItself) sequence else sequence.drop(1)
 }
 
-public fun ASTNode.siblings(forward: Boolean = true, withItself: Boolean = true): Sequence<ASTNode> {
-    val stepFun = if (forward) { node: ASTNode -> node.getTreeNext() } else { e: ASTNode -> e.getTreeNext() }
-    val sequence = sequence(this, stepFun)
-    return if (withItself) sequence else sequence.drop(1)
-}
-
 public fun PsiElement.parents(withItself: Boolean = true): Sequence<PsiElement> {
     val sequence = sequence(this) { if (it is PsiFile) null else it.getParent() }
-    return if (withItself) sequence else sequence.drop(1)
-}
-
-public fun ASTNode.parents(withItself: Boolean = true): Sequence<ASTNode> {
-    val sequence = sequence(this) { it.getTreeParent() }
     return if (withItself) sequence else sequence.drop(1)
 }
 
