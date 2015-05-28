@@ -110,13 +110,7 @@ inline public fun PsiElement.getChildrenOfType<reified T: PsiElement>(): Array<T
 }
 
 public fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(): PsiElement? {
-    var current = this
-    do {
-        current = current.getNextSibling()
-        if (current == null) return null
-    }
-    while (current is PsiComment || current is PsiWhiteSpace)
-    return current
+    return siblings(withItself = false).filter { it !is PsiWhiteSpace && it !is PsiComment }.firstOrNull()
 }
 
 public fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false): Boolean {
