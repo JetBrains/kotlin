@@ -44,6 +44,6 @@ public class ConvertToForEachFunctionCallIntention : JetSelfTargetingIntention<J
                 "$0.forEach{$1->$2}", element.getLoopRange()!!, loopParameter, functionBodyArgument)
         val result = element.replace(foreachExpression)
 
-        commentSaver.restoreComments(result)
+        commentSaver.restore(result)
     }
 }

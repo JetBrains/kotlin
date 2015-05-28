@@ -43,7 +43,7 @@ public class ConvertForEachToForLoopIntention : JetSelfTargetingOffsetIndependen
         val loop = generateLoop(functionLiteral, receiver)
         val result = expressionToReplace.replace(loop)
 
-        commentSaver.restoreComments(result)
+        commentSaver.restore(result)
     }
 
     private data class Data(

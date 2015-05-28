@@ -77,7 +77,7 @@ public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependen
         declaration.addBefore(JetPsiFactory(declaration).createEQ(), body)
         val newBody = body.replace(value)
 
-        commentSaver.restoreComments(newBody)
+        commentSaver.restore(newBody)
 
         if (omitType) {
             onFinish(declaration as JetCallableDeclaration)

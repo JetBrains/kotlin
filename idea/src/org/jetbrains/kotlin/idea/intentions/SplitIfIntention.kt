@@ -69,7 +69,7 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaCla
                     val secondIf = container.addAfter(innerIf, ifExpression)
                     container.addAfter(psiFactory.createNewLine(), ifExpression)
                     val firstIf = ifExpression.replace(psiFactory.createIf(leftExpression, thenBranch))
-                    commentSaver.restoreComments(PsiChildRange(firstIf, secondIf))
+                    commentSaver.restore(PsiChildRange(firstIf, secondIf))
                     return
                 }
                 else {
@@ -81,7 +81,7 @@ public class SplitIfIntention : JetSelfTargetingIntention<JetExpression>(javaCla
         }
 
         val result = ifExpression.replace(newIf)
-        commentSaver.restoreComments(result)
+        commentSaver.restore(result)
     }
 
     private fun getRight(element: JetBinaryExpression, condition: JetExpression, commentSaver: CommentSaver): JetExpression {

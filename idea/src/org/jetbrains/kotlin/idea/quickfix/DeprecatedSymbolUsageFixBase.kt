@@ -136,7 +136,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val qualifiedExpression = if (parent is JetQualifiedExpression && callExpression == parent.getSelectorExpression()) parent else null
             val expressionToBeReplaced = qualifiedExpression ?: callExpression
 
-            val commentSaver = CommentSaver(expressionToBeReplaced)
+            val commentSaver = CommentSaver(expressionToBeReplaced, saveLineBreaks = true)
 
             var receiver = element.getReceiverExpression()?.marked(USER_CODE_KEY)
             var receiverType = if (receiver != null) bindingContext.getType(receiver) else null
@@ -231,7 +231,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 PsiChildRange.singleElement(result)
             else
                 PsiChildRange(wrapper.addedStatements.first(), result)
-            commentSaver.restoreComments(resultRange)
+            commentSaver.restore(resultRange)
 
             return result
         }
