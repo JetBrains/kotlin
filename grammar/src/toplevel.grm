@@ -45,7 +45,7 @@ toplevelObject
   : object
   : function
   : property
-  : typeAlias
+//  : typeAlias
   ;
 
 package
@@ -59,6 +59,8 @@ package
 See [Packages](packages.html)
 */
 
+/*
 typeAlias
   : modifiers "typealias" SimpleName (typeParameters typeConstraints)? "=" type
   ;
+*/

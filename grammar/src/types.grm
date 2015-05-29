@@ -19,7 +19,7 @@ type
 // IF YOU CHANGE THIS, please, update TYPE_FIRST in JetParsing
 typeDescriptor
   : "(" typeDescriptor ")"
-  : selfType
+//  : selfType
   : functionType
   : userType
   : nullableType
@@ -29,9 +29,11 @@ typeDescriptor
 nullableType
   : typeDescriptor "?"
 
+/*
 selfType
   : "This"
   ;
+*/
 
 userType
   : ("package" ".")? simpleUserType{"."}

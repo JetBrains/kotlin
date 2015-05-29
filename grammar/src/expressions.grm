@@ -167,7 +167,7 @@ declaration
   : function
   : property
   : class
-  : typeAlias
+//  : typeAlias
   : object
   ;
 
@@ -289,3 +289,4 @@ objectLiteralMember
 factoryMethod
   : accessModifier? SimpleName typeParameters? functionParameters functionBody
   ;
+*/

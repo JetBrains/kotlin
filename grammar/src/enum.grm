@@ -5,7 +5,7 @@ See [Enum classes](enum-classes.html)
 */
 
 enumClassBody
-  : "{" enumEntries members "}"
+  : "{" enumEntries (";" members)? "}"
   ;
 
 enumEntries

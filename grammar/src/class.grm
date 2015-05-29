@@ -15,7 +15,7 @@ internal class Example<X, T : Comparable<X>>(protected val x : Foo<X, T>, y : So
 */
 
 class
-  : modifiers ("class" | "trait") SimpleName
+  : modifiers ("class" | "interface") SimpleName
       typeParameters?
       (modifiers "constructor")? ("(" functionParameter{","} ")")?
       (":" annotations delegationSpecifier{","})?
@@ -60,7 +60,6 @@ typeConstraints
 
 typeConstraint
   : annotations SimpleName ":" type
-  : annotations "class" "object" SimpleName ":" type
   ;
 /**
 See [Generic constraints](generics.html#generic-constraints)

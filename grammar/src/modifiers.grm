@@ -15,7 +15,6 @@ modifierKeyword
   : accessModifier
   : varianceAnnotation
   : memberModifier
-  : parameterKind
   : annotations
   ;
 
@@ -24,7 +23,7 @@ classModifier
   : "final"
   : "enum"
   : "open"
-  : "attribute"
+  : "annotation"
   ;
 
 memberModifier
@@ -44,10 +43,4 @@ accessModifier
 varianceAnnotation
   : "in"
   : "out"
-  ;
-
-parameterKind
-  : "lazy"
-  : "out"
-  : "ref"
   ;
