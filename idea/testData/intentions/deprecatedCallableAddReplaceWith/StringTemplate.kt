@@ -1,6 +1,6 @@
 <caret>@deprecated("")
 fun foo(p: Int) {
-    bar("\"\"\n1\r2\t3")
+    bar("$p ${p + 1} $0")
 }
 
 fun bar(s: String){}

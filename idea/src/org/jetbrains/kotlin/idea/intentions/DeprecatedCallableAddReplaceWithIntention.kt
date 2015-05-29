@@ -62,11 +62,27 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         val annotationEntry = element.deprecatedAnnotationWithNoReplaceWith()!!
         val psiFactory = JetPsiFactory(element)
 
-        val escapedText = replaceWith.expression
+        var escapedText = replaceWith.expression
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
 
-        //TODO: escape $!
+        // escape '$' if it's followed by a letter or '{'
+        if (escapedText.contains('$')) {
+            escapedText = StringBuilder {
+                var i = 0
+                val length = escapedText.length()
+                while (i < length) {
+                    val c = escapedText[i++]
+                    if (c == '$' && i < length) {
+                        val c1 = escapedText[i]
+                        if (c1.isJavaIdentifierStart() || c1 == '{') {
+                            append('\\')
+                        }
+                    }
+                    append(c)
+                }
+            }.toString()
+        }
 
         val argumentText = StringBuilder {
             append("kotlin.ReplaceWith(\"")
