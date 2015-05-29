@@ -130,12 +130,6 @@ public class TranslationContext {
     }
 
     @NotNull
-    public TranslationContext newDeclarationWithScope(@NotNull DeclarationDescriptor descriptor, @NotNull JsScope scope) {
-        DynamicContext dynamicContext = DynamicContext.newContext(scope, getBlockForDescriptor(descriptor));
-        return new TranslationContext(this, staticContext, dynamicContext, aliasingContext, usageTracker, this.getDefinitionPlace());
-    }
-
-    @NotNull
     private TranslationContext innerWithAliasingContext(AliasingContext aliasingContext) {
         return new TranslationContext(this, this.staticContext, this.dynamicContext, aliasingContext, this.usageTracker, null);
     }
