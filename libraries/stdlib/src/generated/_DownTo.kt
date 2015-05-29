@@ -20,6 +20,7 @@ public fun Byte.downTo(to: Byte): ByteProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Byte.downTo(to: Char): CharProgression {
     return CharProgression(this.toChar(), to, -1)
 }
@@ -74,6 +75,7 @@ public fun Byte.downTo(to: Double): DoubleProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Char.downTo(to: Byte): CharProgression {
     return CharProgression(this, to.toChar(), -1)
 }
@@ -92,6 +94,7 @@ public fun Char.downTo(to: Char): CharProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Char.downTo(to: Short): ShortProgression {
     return ShortProgression(this.toShort(), to, -1)
 }
@@ -101,6 +104,7 @@ public fun Char.downTo(to: Short): ShortProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Char.downTo(to: Int): IntProgression {
     return IntProgression(this.toInt(), to, -1)
 }
@@ -110,6 +114,7 @@ public fun Char.downTo(to: Int): IntProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Char.downTo(to: Long): LongProgression {
     return LongProgression(this.toLong(), to, -1.toLong())
 }
@@ -119,6 +124,7 @@ public fun Char.downTo(to: Long): LongProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Char.downTo(to: Float): FloatProgression {
     return FloatProgression(this.toFloat(), to, -1.toFloat())
 }
@@ -128,6 +134,7 @@ public fun Char.downTo(to: Float): FloatProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Char.downTo(to: Double): DoubleProgression {
     return DoubleProgression(this.toDouble(), to, -1.0)
 }
@@ -146,6 +153,7 @@ public fun Short.downTo(to: Byte): ShortProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Short.downTo(to: Char): ShortProgression {
     return ShortProgression(this, to.toShort(), -1)
 }
@@ -209,6 +217,7 @@ public fun Int.downTo(to: Byte): IntProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Int.downTo(to: Char): IntProgression {
     return IntProgression(this, to.toInt(), -1)
 }
@@ -272,6 +281,7 @@ public fun Long.downTo(to: Byte): LongProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Long.downTo(to: Char): LongProgression {
     return LongProgression(this, to.toLong(), -1.toLong())
 }
@@ -335,6 +345,7 @@ public fun Float.downTo(to: Byte): FloatProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Float.downTo(to: Char): FloatProgression {
     return FloatProgression(this, to.toFloat(), -1.toFloat())
 }
@@ -398,6 +409,7 @@ public fun Double.downTo(to: Byte): DoubleProgression {
  *
  * The [to] value has to be less than this value.
  */
+deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int or other operand to Char.")
 public fun Double.downTo(to: Char): DoubleProgression {
     return DoubleProgression(this, to.toDouble(), -1.0)
 }
