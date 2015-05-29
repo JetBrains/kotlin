@@ -754,7 +754,6 @@ public class JetParsing extends AbstractJetParsing {
         boolean typeParametersDeclared = parseTypeParameterList(TYPE_PARAMETER_GT_RECOVERY_SET);
         typeParamsMarker.error("Type parameters are not allowed for objects");
 
-        OptionalMarker constructorModifiersMarker = new OptionalMarker(object);
         PsiBuilder.Marker beforeConstructorModifiers = mark();
         PsiBuilder.Marker primaryConstructorMarker = mark();
         boolean hasConstructorModifiers = parseModifierList(
@@ -764,7 +763,6 @@ public class JetParsing extends AbstractJetParsing {
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
         if ((object && at(CONSTRUCTOR_KEYWORD)) || (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD))) {
             beforeConstructorModifiers.rollbackTo();
-            constructorModifiersMarker.drop();
             return object ? OBJECT_DECLARATION : CLASS;
         }
 
@@ -796,7 +794,6 @@ public class JetParsing extends AbstractJetParsing {
         else {
             primaryConstructorMarker.drop();
         }
-        constructorModifiersMarker.error("Constructors are not allowed for objects");
 
         if (at(COLON)) {
             advance(); // COLON

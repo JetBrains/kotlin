@@ -11,11 +11,10 @@ JetFile: EmptyParentheses.kt
     OBJECT_LITERAL
       OBJECT_DECLARATION
         PsiElement(object)('object')
-        PsiErrorElement:Constructors are not allowed for objects
-          PRIMARY_CONSTRUCTOR
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
+        PRIMARY_CONSTRUCTOR
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         CLASS_BODY
           PsiElement(LBRACE)('{')
@@ -31,11 +30,10 @@ JetFile: EmptyParentheses.kt
     OBJECT_LITERAL
       OBJECT_DECLARATION
         PsiElement(object)('object')
-        PsiErrorElement:Constructors are not allowed for objects
-          PRIMARY_CONSTRUCTOR
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
+        PRIMARY_CONSTRUCTOR
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
@@ -61,11 +59,10 @@ JetFile: EmptyParentheses.kt
     OBJECT_LITERAL
       OBJECT_DECLARATION
         PsiElement(object)('object')
-        PsiErrorElement:Constructors are not allowed for objects
-          PRIMARY_CONSTRUCTOR
-            VALUE_PARAMETER_LIST
-              PsiElement(LPAR)('(')
-              PsiElement(RPAR)(')')
+        PRIMARY_CONSTRUCTOR
+          VALUE_PARAMETER_LIST
+            PsiElement(LPAR)('(')
+            PsiElement(RPAR)(')')
         CLASS_BODY
           PsiErrorElement:Expecting a class body
             <empty list>
