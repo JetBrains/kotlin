@@ -36,6 +36,8 @@ import kotlin.test.assertTrue
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
 
+// ----------- Calls and qualified expressions ---------------------------------------------------------------------------------------------
+
 public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     val calleeExpression = getCalleeExpression() ?: return null
 
@@ -46,21 +48,144 @@ public fun JetCallElement.getCallNameExpression(): JetSimpleNameExpression? {
     }
 }
 
-public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> =
-        when(this) {
-            is JetClass ->
-                getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVarNode() }
-            else ->
-                getDeclarations()
-        }
+/**
+ * Returns enclosing qualifying element for given [[JetSimpleNameExpression]]
+ * ([[JetQualifiedExpression]] or [[JetUserType]] or original expression)
+ */
+public fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
+    val baseExpression: JetElement = (getParent() as? JetCallExpression) ?: this
+    val parent = baseExpression.getParent()
+    return when (parent) {
+        is JetQualifiedExpression -> if (parent.getSelectorExpression().isAncestor(baseExpression)) parent else baseExpression
+        is JetUserType -> if (parent.getReferenceExpression().isAncestor(baseExpression)) parent else baseExpression
+        else -> baseExpression
+    }
+}
 
-public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+public fun JetSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): JetQualifiedExpression? {
+    return sequence<JetExpression>(this) {
+        val parentQualified = it.getParent() as? JetQualifiedExpression
+        if (parentQualified?.getSelectorExpression() == it) parentQualified else null
+    }.last() as? JetQualifiedExpression
+}
+
+/**
+ * Returns rightmost selector of the qualified element (null if there is no such selector)
+ */
+public fun JetElement.getQualifiedElementSelector(): JetElement? {
+    return when (this) {
+        is JetSimpleNameExpression -> this
+        is JetCallExpression -> getCalleeExpression()
+        is JetQualifiedExpression -> {
+            val selector = getSelectorExpression()
+            if (selector is JetCallExpression) selector.getCalleeExpression() else selector
+        }
+        is JetUserType -> getReferenceExpression()
+        else -> null
+    }
+}
+
+public fun JetSimpleNameExpression.getReceiverExpression(): JetExpression? {
+    val parent = getParent()
+    when {
+        parent is JetQualifiedExpression && !isImportDirectiveExpression() -> {
+            val receiverExpression = parent.getReceiverExpression()
+            // Name expression can't be receiver for itself
+            if (receiverExpression != this) {
+                return receiverExpression
+            }
+        }
+        parent is JetCallExpression -> {
+            //This is in case `a().b()`
+            val callExpression = parent
+            val grandParent = callExpression.getParent()
+            if (grandParent is JetQualifiedExpression) {
+                val parentsReceiver = grandParent.getReceiverExpression()
+                if (parentsReceiver != callExpression) {
+                    return parentsReceiver
+                }
+            }
+        }
+        parent is JetBinaryExpression && parent.getOperationReference() == this -> {
+            return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.getRight() else parent.getLeft()
+        }
+        parent is JetUnaryExpression && parent.getOperationReference() == this -> {
+            return parent.getBaseExpression()!!
+        }
+        parent is JetUserType -> {
+            val qualifier = parent.getQualifier()
+            if (qualifier != null) {
+                return qualifier.getReferenceExpression()!!
+            }
+        }
+    }
+    return null
+}
+
+public fun JetElement.getQualifiedExpressionForSelector(): JetQualifiedExpression? {
+    val parent = getParent()
+    return if (parent is JetQualifiedExpression && parent.getSelectorExpression() == this) parent else null
+}
+
+public fun JetElement.getQualifiedExpressionForSelectorOrThis(): JetElement {
+    return getQualifiedExpressionForSelector() ?: this
+}
+
+public fun JetExpression.isDotReceiver(): Boolean =
+        (getParent() as? JetDotQualifiedExpression)?.getReceiverExpression() == this
+
+public fun JetElement.getCalleeHighlightingRange(): TextRange {
+    val annotationEntry: JetAnnotationEntry =
+            PsiTreeUtil.getParentOfType<JetAnnotationEntry>(
+                    this, javaClass<JetAnnotationEntry>(), /* strict = */false, javaClass<JetValueArgumentList>()
+            ) ?: return getTextRange()
+
+    val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
+                      ?: annotationEntry.getCalleeExpression().startOffset
+
+    return TextRange(startOffset, annotationEntry.getCalleeExpression().endOffset)
+}
+
+// ---------- Block expression -------------------------------------------------------------------------------------------------------------
 
 public fun JetElement.blockExpressionsOrSingle(): Sequence<JetElement> =
         if (this is JetBlockExpression) getStatements().asSequence() else sequenceOf(this)
 
 public fun JetExpression.lastBlockStatementOrThis(): JetExpression
         = (this as? JetBlockExpression)?.getStatements()?.lastIsInstanceOrNull<JetExpression>() ?: this
+
+public fun JetBlockExpression.contentRange(): PsiChildRange {
+    val first = (getLBrace()?.getNextSibling() ?: getFirstChild())
+            ?.siblings(withItself = false)
+            ?.firstOrNull { it !is PsiWhiteSpace }
+    val rBrace = getRBrace()
+    if (first == rBrace) return PsiChildRange.EMPTY
+    val last = rBrace!!
+            .siblings(forward = false, withItself = false)
+            .first { it !is PsiWhiteSpace }
+    return PsiChildRange(first, last)
+}
+
+// ----------- Inheritance -----------------------------------------------------------------------------------------------------------------
+
+public fun JetClass.isInheritable(): Boolean {
+    return isInterface() || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+}
+
+public fun JetDeclaration.isOverridable(): Boolean {
+    val parent = getParent()
+    if (!(parent is JetClassBody || parent is JetParameterList)) return false
+
+    val klass = parent.getParent()
+    if (!(klass is JetClass && klass.isInheritable())) return false
+
+    if (hasModifier(JetTokens.FINAL_KEYWORD) || hasModifier(JetTokens.PRIVATE_KEYWORD)) return false
+
+    return klass.isInterface() ||
+           hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
+}
+
+public fun JetClass.isAbstract(): Boolean = isInterface() || hasModifier(JetTokens.ABSTRACT_KEYWORD)
 
 /**
  * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported
@@ -111,21 +236,72 @@ public fun <T: JetClassOrObject> StubBasedPsiElementBase<out KotlinClassOrObject
     return result
 }
 
-public fun JetClass.isInheritable(): Boolean {
-    return isInterface() || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.ABSTRACT_KEYWORD)
+// ------------ Annotations ----------------------------------------------------------------------------------------------------------------
+
+// Annotations on labeled expression lies on it's base expression
+public fun JetExpression.getAnnotationEntries(): List<JetAnnotationEntry> {
+    val parent = getParent()
+    return when (parent) {
+        is JetAnnotatedExpression -> parent.getAnnotationEntries()
+        is JetLabeledExpression -> parent.getAnnotationEntries()
+        else -> emptyList<JetAnnotationEntry>()
+    }
 }
 
-public fun JetDeclaration.isOverridable(): Boolean {
-    val parent = getParent()
-    if (!(parent is JetClassBody || parent is JetParameterList)) return false
+public fun JetAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<JetAnnotationEntry> {
+    return when (this) {
+        is StubBasedPsiElementBase<*> -> getStub()?.collectAnnotationEntriesFromStubElement() ?: collectAnnotationEntriesFromPsi()
+        else -> collectAnnotationEntriesFromPsi()
+    }
+}
 
-    val klass = parent.getParent()
-    if (!(klass is JetClass && klass.isInheritable())) return false
+private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<JetAnnotationEntry> {
+    return getChildrenStubs().flatMap {
+        child ->
+        when (child.getStubType()) {
+            JetNodeTypes.ANNOTATION_ENTRY -> listOf(child.getPsi() as JetAnnotationEntry)
+            JetNodeTypes.ANNOTATION -> (child.getPsi() as JetAnnotation).getEntries()
+            else -> emptyList<JetAnnotationEntry>()
+        }
+    }
+}
 
-    if (hasModifier(JetTokens.FINAL_KEYWORD) || hasModifier(JetTokens.PRIVATE_KEYWORD)) return false
+private fun JetAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<JetAnnotationEntry> {
+    return getChildren().flatMap { child ->
+        when (child) {
+            is JetAnnotationEntry -> listOf(child)
+            is JetAnnotation -> child.getEntries()
+            else -> emptyList<JetAnnotationEntry>()
+        }
+    }
+}
 
-    return klass.isInterface() ||
-        hasModifier(JetTokens.ABSTRACT_KEYWORD) || hasModifier(JetTokens.OPEN_KEYWORD) || hasModifier(JetTokens.OVERRIDE_KEYWORD)
+// -------- Recursive tree visiting --------------------------------------------------------------------------------------------------------
+
+// Calls `block` on each descendant of T type
+// Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
+public inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): JetVisitorVoid {
+    return object : JetTreeVisitorVoid() {
+        override fun visitJetElement(element: JetElement) {
+            super.visitJetElement(element)
+            if (element is T) {
+                block(element)
+            }
+        }
+    }
+}
+
+public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): JetVisitorVoid {
+    return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
+}
+
+// ----------- Other -----------------------------------------------------------------------------------------------------------------------
+
+public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> {
+    return when(this) {
+        is JetClass -> getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVarNode() }
+        else -> getDeclarations()
+    }
 }
 
 public fun JetDeclaration.isExtensionDeclaration(): Boolean {
@@ -150,81 +326,7 @@ public fun PsiElement.parameterIndex(): Int {
     }
 }
 
-/**
- * Returns enclosing qualifying element for given [[JetSimpleNameExpression]]
- * ([[JetQualifiedExpression]] or [[JetUserType]] or original expression)
- */
-public fun JetSimpleNameExpression.getQualifiedElement(): JetElement {
-    val baseExpression: JetElement = (getParent() as? JetCallExpression) ?: this
-    val parent = baseExpression.getParent()
-    return when (parent) {
-        is JetQualifiedExpression -> if (parent.getSelectorExpression().isAncestor(baseExpression)) parent else baseExpression
-        is JetUserType -> if (parent.getReferenceExpression().isAncestor(baseExpression)) parent else baseExpression
-        else -> baseExpression
-    }
-}
-
-public fun JetSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): JetQualifiedExpression? {
-    return sequence<JetExpression>(this) {
-        val parentQualified = it.getParent() as? JetQualifiedExpression
-        if (parentQualified?.getSelectorExpression() == it) parentQualified else null
-    }.last() as? JetQualifiedExpression
-}
-
-/**
- * Returns rightmost selector of the qualified element (null if there is no such selector)
- */
-public fun JetElement.getQualifiedElementSelector(): JetElement? {
-    return when (this) {
-        is JetSimpleNameExpression -> this
-        is JetCallExpression -> getCalleeExpression()
-        is JetQualifiedExpression -> {
-            val selector = getSelectorExpression()
-            if (selector is JetCallExpression) selector.getCalleeExpression() else selector
-        }
-        is JetUserType -> getReferenceExpression()
-        else -> null
-    }
-}
-
 public fun JetModifierListOwner.isPrivate(): Boolean = hasModifier(JetTokens.PRIVATE_KEYWORD)
-
-public fun JetSimpleNameExpression.getReceiverExpression(): JetExpression? {
-    val parent = getParent()
-    when {
-        parent is JetQualifiedExpression && !isImportDirectiveExpression() -> {
-            val receiverExpression = parent.getReceiverExpression()
-            // Name expression can't be receiver for itself
-            if (receiverExpression != this) {
-                return receiverExpression
-            }
-        }
-        parent is JetCallExpression -> {
-            //This is in case `a().b()`
-            val callExpression = parent
-            val grandParent = callExpression.getParent()
-            if (grandParent is JetQualifiedExpression) {
-                val parentsReceiver = grandParent.getReceiverExpression()
-                if (parentsReceiver != callExpression) {
-                    return parentsReceiver
-                }
-            }
-        }
-        parent is JetBinaryExpression && parent.getOperationReference() == this -> {
-            return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.getRight() else parent.getLeft()
-        }
-        parent is JetUnaryExpression && parent.getOperationReference() == this -> {
-            return parent.getBaseExpression()!!
-        }
-        parent is JetUserType -> {
-            val qualifier = parent.getQualifier()
-            if (qualifier != null) {
-                return qualifier.getReferenceExpression()!!
-            }
-        }
-    }
-    return null
-}
 
 public fun JetSimpleNameExpression.isImportDirectiveExpression(): Boolean {
     val parent = getParent()
@@ -250,9 +352,6 @@ public fun JetExpression.getAssignmentByLHS(): JetBinaryExpression? {
     return if (JetPsiUtil.isAssignment(parent) && parent.getLeft() == this) parent else null
 }
 
-public fun JetExpression.isDotReceiver(): Boolean =
-        (getParent() as? JetDotQualifiedExpression)?.getReceiverExpression() == this
-
 public fun JetStringTemplateExpression.getContentRange(): TextRange {
     val start = getNode().getFirstChildNode().getTextLength()
     val lastChild = getNode().getLastChildNode()
@@ -273,90 +372,4 @@ public fun JetNamedDeclaration.getValueParameterList(): JetParameterList? {
         is JetClass -> getPrimaryConstructorParameterList()
         else -> null
     }
-}
-
-// Calls `block` on each descendant of T type
-// Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
-public inline fun <reified T : JetElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): JetVisitorVoid {
-    return object : JetTreeVisitorVoid() {
-        override fun visitJetElement(element: JetElement) {
-            super.visitJetElement(element)
-            if (element is T) {
-                block(element)
-            }
-        }
-    }
-}
-
-public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): JetVisitorVoid {
-    return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
-}
-
-public fun JetAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<JetAnnotationEntry> =
-    when (this) {
-        is StubBasedPsiElementBase<*> -> getStub()?.collectAnnotationEntriesFromStubElement() ?: collectAnnotationEntriesFromPsi()
-        else -> collectAnnotationEntriesFromPsi()
-    }
-
-private fun StubElement<*>.collectAnnotationEntriesFromStubElement() =
-    getChildrenStubs().flatMap {
-        child ->
-        when (child.getStubType()) {
-            JetNodeTypes.ANNOTATION_ENTRY -> listOf(child.getPsi() as JetAnnotationEntry)
-            JetNodeTypes.ANNOTATION -> (child.getPsi() as JetAnnotation).getEntries()
-            else -> emptyList<JetAnnotationEntry>()
-        }
-    }
-
-private fun JetAnnotationsContainer.collectAnnotationEntriesFromPsi() =
-    getChildren().flatMap {
-        child ->
-        when (child) {
-            is JetAnnotationEntry -> listOf(child)
-            is JetAnnotation -> child.getEntries()
-            else -> emptyList<JetAnnotationEntry>()
-        }
-    }
-
-public fun JetElement.getCalleeHighlightingRange(): TextRange {
-    val annotationEntry: JetAnnotationEntry =
-            PsiTreeUtil.getParentOfType<JetAnnotationEntry>(
-                    this, javaClass<JetAnnotationEntry>(), /* strict = */false, javaClass<JetValueArgumentList>()
-            ) ?: return getTextRange()
-
-    val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
-                      ?: annotationEntry.getCalleeExpression().startOffset
-
-    return TextRange(startOffset, annotationEntry.getCalleeExpression().endOffset)
-}
-
-public fun JetBlockExpression.contentRange(): PsiChildRange {
-    val first = (getLBrace()?.getNextSibling() ?: getFirstChild())
-                        ?.siblings(withItself = false)
-                        ?.firstOrNull { it !is PsiWhiteSpace }
-    val rBrace = getRBrace()
-    if (first == rBrace) return PsiChildRange.EMPTY
-    val last = rBrace!!
-            .siblings(forward = false, withItself = false)
-            .first { it !is PsiWhiteSpace }
-    return PsiChildRange(first, last)
-}
-
-// Annotations on labeled expression lies on it's base expression
-public fun JetExpression.getAnnotationEntries(): List<JetAnnotationEntry> {
-    val parent = getParent()
-    return when (parent) {
-        is JetAnnotatedExpression -> parent.getAnnotationEntries()
-        is JetLabeledExpression -> parent.getAnnotationEntries()
-        else -> emptyList<JetAnnotationEntry>()
-    }
-}
-
-public fun JetElement.getQualifiedExpressionForSelector(): JetQualifiedExpression? {
-    val parent = getParent()
-    return if (parent is JetQualifiedExpression && parent.getSelectorExpression() == this) parent else null
-}
-
-public fun JetElement.getQualifiedExpressionForSelectorOrThis(): JetElement {
-    return getQualifiedExpressionForSelector() ?: this
 }
