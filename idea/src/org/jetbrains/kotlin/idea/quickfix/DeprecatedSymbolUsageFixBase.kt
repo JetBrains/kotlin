@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -109,15 +110,11 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val annotationClass = descriptor.builtIns.getDeprecatedAnnotation()
             val annotation = descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
             //TODO: code duplication
-            val replaceWithValue = annotation.getAllValueArguments().entrySet()
-                                           .singleOrNull { it.key.getName().asString() == "replaceWith"/*TODO*/ }
-                                           ?.value?.getValue() as? AnnotationDescriptor ?: return null
-            val pattern = replaceWithValue.getAllValueArguments().entrySet()
-                                  .singleOrNull { it.key.getName().asString() == "expression"/*TODO*/ }
-                                  ?.value?.getValue() as? String ?: return null
+            val replaceWithValue = annotation.argumentValue("replaceWith"/*TODO*/) as? AnnotationDescriptor ?: return null
+            val pattern = replaceWithValue.argumentValue("expression"/*TODO*/) as? String ?: return null
             if (pattern.isEmpty()) return null
-            val argument = replaceWithValue.getAllValueArguments().entrySet().singleOrNull { it.key.getName().asString() == "imports"/*TODO*/ }?.value
-            val imports = (argument?.getValue() as? List<CompileTimeConstant<String>>)?.map { it.getValue() } ?: emptyList()
+            val imports = (replaceWithValue.argumentValue("imports"/*TODO*/) as? List<CompileTimeConstant<String>>)
+                                  ?.map { it.getValue() } ?: emptyList()
 
             // should not be available for descriptors with optional parameters if we cannot fetch default values for them (currently for library with no sources)
             if (descriptor is CallableDescriptor &&

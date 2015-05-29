@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.resolve.annotations
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 public fun DeclarationDescriptor.hasInlineAnnotation(): Boolean {
@@ -49,3 +51,12 @@ private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescrip
             }
             else -> predicate(getContainingDeclaration()) && hasPlatformStaticAnnotation()
         }
+
+public fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
+    return getAllValueArguments().entrySet()
+            .singleOrNull { it.key.getName().asString() == parameterName }
+            ?.value?.getValue()
+}
+
+public fun AnnotationDescriptor.deprecatedAnnotationMessage(): String?
+        = argumentValue("value") as? String
