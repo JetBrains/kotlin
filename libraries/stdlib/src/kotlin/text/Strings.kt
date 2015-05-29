@@ -6,11 +6,11 @@ import kotlin.text.MatchResult
 import kotlin.text.Regex
 
 /** Returns the string with leading and trailing text matching the given string removed */
-deprecated("Use removeSurrounding(text, text) or removePrefix(text).removeSuffix(text)")
+deprecated("Use removeSurrounding(text)", ReplaceWith("removeSurrounding(text)"))
 public fun String.trim(text: String): String = removePrefix(text).removeSuffix(text)
 
 /** Returns the string with the prefix and postfix text trimmed */
-deprecated("Use removeSurrounding(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)")
+deprecated("Use removeSurrounding(prefix, suffix) or removePrefix(prefix).removeSuffix(suffix)", ReplaceWith("removeSurrounding(prefix, postfix)"))
 public fun String.trim(prefix: String, postfix: String): String = removePrefix(prefix).removeSuffix(postfix)
 
 /**
