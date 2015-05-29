@@ -25,11 +25,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -133,7 +135,10 @@ fun IntroduceParameterDescriptor.performRefactoring() {
 
             override fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = true
         }
-        if (runChangeSignature(callable.getProject(), callableDescriptor, config, callable.analyze(), callable, INTRODUCE_PARAMETER)) {
+
+        val project = callable.getProject();
+        val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable.analyze(), callable, INTRODUCE_PARAMETER) }
+        changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
             occurrencesToReplace.forEach { occurrenceReplacer(it) }
         }
     }
@@ -208,10 +213,6 @@ public open class KotlinIntroduceParameterHandler(
 
         val parametersUsages = findInternalParameterUsages(targetParent)
 
-        val psiFactory = JetPsiFactory(project)
-        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(replacementType)
-        val newParameter = psiFactory.createParameter("${suggestedNames.first()}: $renderedType")
-
         val forbiddenRanges =
                 if (targetParent is JetClass) {
                     targetParent.getDeclarations().filter { isObjectOrNonInnerClass(it) }.map { it.getTextRange() }
@@ -243,24 +244,16 @@ public open class KotlinIntroduceParameterHandler(
                     val isTestMode = ApplicationManager.getApplication().isUnitTestMode()
                     val inplaceIsAvailable = editor.getSettings().isVariableInplaceRenameEnabled() && !isTestMode
 
-                    val addedParameter = if (inplaceIsAvailable) {
-                        runWriteAction {
-                            val parameterList = targetParent.getValueParameterList()
-                                                ?: (targetParent as JetClass).createPrimaryConstructorParameterListIfAbsent()
-                            parameterList.addParameter(newParameter)
-                        }
-                    }
-                    else newParameter
-
                     val originalExpression = JetPsiUtil.safeDeparenthesize(expression)
+                    val psiFactory = JetPsiFactory(project)
                     val introduceParameterDescriptor =
                             helper.configure(
                                     IntroduceParameterDescriptor(
                                             originalRange = originalExpression.toRange(),
                                             callable = targetParent,
                                             callableDescriptor = functionDescriptor,
-                                            newParameterName = addedParameter.getName()!!,
-                                            newParameterTypeText = renderedType,
+                                            newParameterName = suggestedNames.first(),
+                                            newParameterTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(replacementType),
                                             newArgumentValue = originalExpression,
                                             withDefaultValue = false,
                                             parametersUsages = parametersUsages,
@@ -282,11 +275,11 @@ public open class KotlinIntroduceParameterHandler(
                         }
 
                         val introducer = KotlinInplaceParameterIntroducer(introduceParameterDescriptor,
-                                                                          addedParameter,
                                                                           replacementType,
-                                                                          editor,
-                                                                          project)
-                        if (introducer.startRefactoring(suggestedNames)) return
+                                                                          suggestedNames.toTypedArray(),
+                                                                          project,
+                                                                          editor)
+                        if (introducer.startInplaceIntroduceTemplate()) return
                     }
 
                     KotlinIntroduceParameterDialog(project,
@@ -300,7 +293,7 @@ public open class KotlinIntroduceParameterHandler(
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        (KotlinInplaceVariableIntroducer.getActiveInstance(editor) as? KotlinInplaceParameterIntroducer)?.let {
+        (AbstractInplaceIntroducer.getActiveIntroducer(editor) as? KotlinInplaceParameterIntroducer)?.let {
             it.switchToDialogUI()
             return
         }

@@ -79,6 +79,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
 import com.intellij.psi.*
+import com.intellij.refactoring.listeners.RefactoringEventData
+import com.intellij.refactoring.listeners.RefactoringEventListener
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
@@ -568,4 +570,38 @@ fun PsiExpression.j2k(): JetExpression? {
                                              IdeaResolverForConverter)
     val text = j2kConverter.elementsToKotlin(listOf(this)).results.single()?.text ?: return null //TODO: insert imports
     return JetPsiFactory(getProject()).createExpression(text)
+}
+
+public fun (() -> Any).runRefactoringWithPostprocessing(
+        project: Project,
+        targetRefactoringId: String,
+        finishAction: () -> Unit
+) {
+    val connection = project.getMessageBus().connect()
+    connection.subscribe(RefactoringEventListener.REFACTORING_EVENT_TOPIC,
+                         object: RefactoringEventListener {
+                             override fun undoRefactoring(refactoringId: String) {
+
+                             }
+
+                             override fun refactoringStarted(refactoringId: String, beforeData: RefactoringEventData?) {
+
+                             }
+
+                             override fun conflictsDetected(refactoringId: String, conflictsData: RefactoringEventData) {
+
+                             }
+
+                             override fun refactoringDone(refactoringId: String, afterData: RefactoringEventData?) {
+                                 if (refactoringId == targetRefactoringId) {
+                                     try {
+                                         finishAction()
+                                     }
+                                     finally {
+                                         connection.disconnect()
+                                     }
+                                 }
+                             }
+                         })
+    this()
 }

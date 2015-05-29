@@ -19,11 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.editor.colors.EditorColors
-import com.intellij.openapi.editor.event.DocumentAdapter
-import com.intellij.openapi.editor.event.DocumentEvent
-import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
@@ -31,50 +27,47 @@ import com.intellij.openapi.editor.markup.MarkupModel
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
-import com.intellij.ui.DottedBorder
+import com.intellij.psi.PsiAnchor
+import com.intellij.psi.PsiFile
+import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
 import com.intellij.ui.JBColor
 import com.intellij.ui.NonFocusableCheckBox
+import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.util.supertypes
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetParameter
-import org.jetbrains.kotlin.psi.JetParameterList
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.awt.BorderLayout
 import java.awt.Color
 import java.util.ArrayList
 import java.util.Collections
-import java.util.LinkedHashSet
-import javax.swing.BorderFactory
-import javax.swing.JPanel
-import javax.swing.border.EmptyBorder
-import javax.swing.border.LineBorder
+import javax.swing.JCheckBox
 
 public class KotlinInplaceParameterIntroducer(
         val originalDescriptor: IntroduceParameterDescriptor,
-        val addedParameter: JetParameter,
         val parameterType: JetType,
-        editor: Editor,
-        project: Project
-): KotlinInplaceVariableIntroducer<JetParameter>(
-        addedParameter,
-        editor,
+        val suggestedNames: Array<out String>,
+        project: Project,
+        editor: Editor
+): AbstractInplaceIntroducer<JetParameter, JetExpression>(
         project,
-        INTRODUCE_PARAMETER,
-        JetExpression.EMPTY_ARRAY,
+        editor,
+        originalDescriptor.originalRange.elements.single() as JetExpression,
         null,
-        false,
-        addedParameter,
-        false,
-        true,
-        parameterType,
-        false
+        originalDescriptor.occurrencesToReplace
+                .map { it.elements.single() as JetExpression }
+                .filterNotNull()
+                .toTypedArray(),
+        INTRODUCE_PARAMETER,
+        JetFileType.INSTANCE
 ) {
     companion object {
         private val LOG = Logger.getInstance(javaClass<KotlinInplaceParameterIntroducer>())
@@ -110,9 +103,98 @@ public class KotlinInplaceParameterIntroducer(
     }
 
     private var descriptor = originalDescriptor
-    private var previewer: EditorEx? = null
+    private var replaceAllCheckBox: JCheckBox? = null
 
-    private fun updatePreview(currentName: String?, currentType: String?) {
+    init {
+        val panel = with(FormBuilder.createFormBuilder()) {
+            addComponent(getPreviewComponent())
+
+            val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
+            defaultValueCheckBox.setSelected(descriptor.withDefaultValue)
+            defaultValueCheckBox.setMnemonic('d')
+            defaultValueCheckBox.addActionListener {
+                descriptor = descriptor.copy(withDefaultValue = defaultValueCheckBox.isSelected())
+                updateTitle(getVariable())
+            }
+            addComponent(defaultValueCheckBox)
+
+            val occurrenceCount = descriptor.occurrencesToReplace.size()
+            if (occurrenceCount > 1) {
+                val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
+                replaceAllCheckBox.setSelected(true)
+                replaceAllCheckBox.setMnemonic('R')
+                addComponent(replaceAllCheckBox)
+                this@KotlinInplaceParameterIntroducer.replaceAllCheckBox = replaceAllCheckBox
+            }
+
+            getPanel()
+        }
+
+        myWholePanel.setLayout(BorderLayout())
+        myWholePanel.add(panel, BorderLayout.CENTER)
+    }
+
+    override fun getActionName() = "IntroduceParameter"
+
+    override fun checkLocalScope() = descriptor.callable
+
+    override fun getVariable() = originalDescriptor.callable.getValueParameters().lastOrNull()
+
+    override fun suggestNames(replaceAll: Boolean, variable: JetParameter?) = suggestedNames
+
+    override fun createFieldToStartTemplateOn(replaceAll: Boolean, names: Array<out String>): JetParameter? {
+        return runWriteAction {
+            with(descriptor) {
+                val parameterList = callable.getValueParameterList()
+                                    ?: (callable as JetClass).createPrimaryConstructorParameterListIfAbsent()
+                val parameter = JetPsiFactory(myProject).createParameter("${newParameterName}: ${newParameterTypeText}")
+                parameterList.addParameter(parameter)
+            }
+        }
+    }
+
+    override fun deleteTemplateField(psiField: JetParameter) {
+        if (psiField.isValid()) {
+            (psiField.getParent() as? JetParameterList)?.removeParameter(psiField)
+        }
+    }
+
+    override fun restoreExpression(
+            containingFile: PsiFile,
+            parameter: JetParameter,
+            marker: RangeMarker,
+            exprText: String
+    ): JetExpression? {
+        if (!parameter.isValid()) return null
+
+        val refExpr = containingFile.findElementAt(marker.getStartOffset())?.getNonStrictParentOfType<JetSimpleNameExpression>()
+                      ?: return null
+        val refName = refExpr.getReferencedName()
+        if (refExpr.getReference()?.resolve() == parameter || parameter.getName() == refName || exprText == refName) {
+            return refExpr.replaced(JetPsiFactory(myProject).createExpression(exprText))
+        }
+
+        return null
+    }
+
+    override fun isReplaceAllOccurrences() = replaceAllCheckBox?.isSelected() ?: true
+
+    override fun setReplaceAllOccurrences(allOccurrences: Boolean) {
+        replaceAllCheckBox?.setSelected(allOccurrences)
+    }
+
+    override fun getComponent() = myWholePanel
+
+    override fun updateTitle(parameter: JetParameter?) = updateTitle(parameter, null)
+
+    override fun updateTitle(addedParameter: JetParameter?, currentName: String?) {
+        val templateState = TemplateManagerImpl.getTemplateState(myEditor)
+        if (templateState == null || templateState.getTemplate() == null) return
+
+        val currentType = templateState
+                .getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)
+                ?.getText()
+
         with (descriptor) {
             val rangesToRemove = ArrayList<TextRange>()
             var addedRange: TextRange? = null
@@ -128,6 +210,7 @@ public class KotlinInplaceParameterIntroducer(
                 val parameterText = if (parameter == addedParameter){
                     val parameterName = currentName ?: parameter.getName()
                     val parameterType = currentType ?: parameter.getTypeReference()!!.getText()
+                    descriptor = descriptor.copy(newParameterName = parameterName, newParameterTypeText = parameterType)
                     val modifier = if (valVar != JetValVar.None) "${valVar.name} " else ""
                     val defaultValue = if (withDefaultValue) " = ${newArgumentValue.getText()}" else ""
 
@@ -155,7 +238,7 @@ public class KotlinInplaceParameterIntroducer(
                 LOG.error("Added parameter not found: ${callable.getElementTextWithContext()}")
             }
 
-            val document = previewer!!.getDocument()
+            val document = getPreviewEditor().getDocument()
             runWriteAction { document.setText(builder.toString()) }
 
             val markupModel = DocumentMarkupModel.forDocument(document, myProject, true)
@@ -166,145 +249,29 @@ public class KotlinInplaceParameterIntroducer(
         revalidate()
     }
 
-    override fun getAdvertisementActionId() = "IntroduceParameter"
+    override fun saveSettings(variable: JetParameter?) {
 
-    override fun initPanelControls() {
-        addPanelControl {
-            val previewer = EditorFactory.getInstance().createEditor(EditorFactory.getInstance().createDocument(""),
-                                                                     myProject,
-                                                                     JetFileType.INSTANCE,
-                                                                     true) as EditorEx
-            this.previewer = previewer
-            previewer.setOneLineMode(true)
-
-            with(previewer.getSettings()) {
-                setAdditionalLinesCount(0)
-                setAdditionalColumnsCount(1)
-                setRightMarginShown(false)
-                setFoldingOutlineShown(false)
-                setLineNumbersShown(false)
-                setLineMarkerAreaShown(false)
-                setIndentGuidesShown(false)
-                setVirtualSpace(false)
-                setLineCursorWidth(1)
-            }
-
-            previewer.setHorizontalScrollbarVisible(false)
-            previewer.setVerticalScrollbarVisible(false)
-            previewer.setCaretEnabled(false)
-
-
-            val bg = previewer.getColorsScheme().getColor(EditorColors.CARET_ROW_COLOR)
-            previewer.setBackgroundColor(bg)
-            previewer.setBorder(BorderFactory.createCompoundBorder(DottedBorder(Color.gray), LineBorder(bg, 2)))
-
-            updatePreview(null, null)
-
-            val previewerPanel = JPanel(BorderLayout())
-            previewerPanel.add(previewer.getComponent(), BorderLayout.CENTER)
-            previewerPanel.setBorder(EmptyBorder(2, 2, 6, 2))
-
-            previewerPanel
-        }
-
-        addPanelControl {
-            val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
-            defaultValueCheckBox.setSelected(descriptor.withDefaultValue)
-            defaultValueCheckBox.setMnemonic('d')
-            defaultValueCheckBox.addActionListener {
-                descriptor = descriptor.copy(withDefaultValue = defaultValueCheckBox.isSelected())
-                updatePreview(null, null)
-            }
-            defaultValueCheckBox
-        }
-
-        val occurrenceCount = descriptor.occurrencesToReplace.size()
-        if (occurrenceCount > 1) {
-            addPanelControl {
-                val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
-                replaceAllCheckBox.setSelected(true)
-                replaceAllCheckBox.setMnemonic('R')
-                replaceAllCheckBox.addActionListener {
-                    descriptor = descriptor.copy(
-                            occurrencesToReplace = with(originalDescriptor) {
-                                if (replaceAllCheckBox.isSelected()) {
-                                    occurrencesToReplace
-                                }
-                                else {
-                                    Collections.singletonList(originalOccurrence)
-                                }
-                            }
-                    )
-                    updatePreview(null, null)
-                }
-                replaceAllCheckBox
-            }
-        }
     }
 
-    private var myDocumentAdapter: DocumentAdapter? = null
-
-    fun startRefactoring(suggestedNames: LinkedHashSet<String>): Boolean {
-        if (!performInplaceRefactoring(suggestedNames)) return false
-
-        myDocumentAdapter = object : DocumentAdapter() {
-            override fun documentChanged(e: DocumentEvent?) {
-                if (previewer == null) return
-                val templateState = TemplateManagerImpl.getTemplateState(myEditor)
-                if (templateState != null) {
-                    val name = templateState.getVariableValue(KotlinInplaceVariableIntroducer.PRIMARY_VARIABLE_NAME)?.getText()
-                    val typeRefText = templateState.getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)?.getText()
-                    updatePreview(name, typeRefText)
-                    descriptor = descriptor.copy(newParameterName = name ?: descriptor.newParameterName,
-                                                 newParameterTypeText = typeRefText ?: descriptor.newParameterTypeText)
-                }
-            }
-        }
-        myEditor.getDocument().addDocumentListener(myDocumentAdapter!!)
-
-        return true
+    override fun performIntroduce() {
+        getDescriptorToRefactor(isReplaceAllOccurrences()).performRefactoring()
     }
 
-    override fun finish(success: Boolean) {
-        super.finish(success)
-        myDocumentAdapter?.let { myEditor.getDocument().removeDocumentListener(it) }
-    }
-
-    override fun checkLocalScope(): PsiElement? {
-        return descriptor.callable
-    }
-
-    private fun removeAddedParameter() {
-        runWriteAction { (addedParameter.getParent() as JetParameterList).removeParameter(addedParameter) }
-    }
-
-    override fun performRefactoring(): Boolean {
-        removeAddedParameter()
-        descriptor.performRefactoring()
-        return true
-    }
-
-    override fun performCleanup() {
-        removeAddedParameter()
-    }
-
-    override fun releaseResources() {
-        super.releaseResources()
-        previewer?.let {
-            EditorFactory.getInstance().releaseEditor(it)
-            previewer = null
-        }
+    private fun getDescriptorToRefactor(replaceAll: Boolean): IntroduceParameterDescriptor {
+        val originalRange = getExpr().toRange()
+        return descriptor.copy(
+                originalRange = originalRange,
+                occurrencesToReplace = if (replaceAll) getOccurrences().map { it.toRange() } else originalRange.singletonList()
+        )
     }
 
     fun switchToDialogUI() {
-        stopIntroduce()
-        with (originalDescriptor) {
-            KotlinIntroduceParameterDialog(myProject,
-                                           myEditor,
-                                           this,
-                                           myNameSuggestions.copyToArray(),
-                                           listOf(parameterType) + parameterType.supertypes(),
-                                           KotlinIntroduceParameterHelper.Default).show()
-        }
+        stopIntroduce(myEditor)
+        KotlinIntroduceParameterDialog(myProject,
+                                       myEditor,
+                                       getDescriptorToRefactor(true),
+                                       myNameSuggestions.toTypedArray(),
+                                       listOf(parameterType) + parameterType.supertypes(),
+                                       KotlinIntroduceParameterHelper.Default).show()
     }
 }
