@@ -37,9 +37,24 @@ public abstract class JetExpressionImpl(node: ASTNode) : JetElementImpl(node), J
     companion object {
         fun replaceExpression(expression: JetExpression, newElement: PsiElement, rawReplaceHandler: (PsiElement) -> PsiElement): PsiElement {
             val parent = expression.getParent()
-            if (parent is JetExpression && newElement is JetExpression && JetPsiUtil.areParenthesesNecessary(newElement, expression, parent)) {
-                return rawReplaceHandler(JetPsiFactory(expression).createExpressionByPattern("($0)", newElement))
+
+            if (newElement is JetExpression) {
+                when (parent) {
+                    is JetExpression -> {
+                        if (JetPsiUtil.areParenthesesNecessary(newElement, expression, parent)) {
+                            return rawReplaceHandler(JetPsiFactory(expression).createExpressionByPattern("($0)", newElement))
+                        }
+                    }
+
+                    is JetSimpleNameStringTemplateEntry -> {
+                        if (newElement !is JetSimpleNameExpression) {
+                            val newEntry = parent.replace(JetPsiFactory(expression).createBlockStringTemplateEntry(newElement)) as JetBlockStringTemplateEntry
+                            return newEntry.getExpression()!!
+                        }
+                    }
+                }
             }
+
             return rawReplaceHandler(newElement)
         }
     }
