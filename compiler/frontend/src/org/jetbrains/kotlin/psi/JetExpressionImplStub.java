@@ -21,10 +21,8 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.IncorrectOperationException;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-
-import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
-import static org.jetbrains.kotlin.psi.PsiPackage.createExpressionByPattern;
 
 public abstract class JetExpressionImplStub<T extends StubElement> extends JetElementImplStub<T> implements JetExpression {
     public JetExpressionImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
@@ -40,15 +38,19 @@ public abstract class JetExpressionImplStub<T extends StubElement> extends JetEl
         return visitor.visitExpression(this, data);
     }
 
-    //NOTE: duplicate with JetExpressionImpl
     @NotNull
     @Override
     public PsiElement replace(@NotNull PsiElement newElement) throws IncorrectOperationException {
-        PsiElement parent = getParent();
-        if (parent instanceof JetExpression && newElement instanceof JetExpression &&
-            JetPsiUtil.areParenthesesNecessary((JetExpression) newElement, this, (JetExpression) parent)) {
-            return super.replace(createExpressionByPattern(JetPsiFactory(this), "($0)", newElement));
-        }
+        return JetExpressionImpl.Companion.replaceExpression(this, newElement, new Function1<PsiElement, PsiElement>() {
+            @Override
+            public PsiElement invoke(PsiElement element) {
+                return rawReplace(element);
+            }
+        });
+    }
+
+    @NotNull
+    private PsiElement rawReplace(@NotNull PsiElement newElement) {
         return super.replace(newElement);
     }
 }
