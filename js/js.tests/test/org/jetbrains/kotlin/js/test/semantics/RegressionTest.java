@@ -27,4 +27,8 @@ public final class RegressionTest extends SingleFileTranslationTest {
     public void testKt2470() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testTmpInsidePrimaryConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

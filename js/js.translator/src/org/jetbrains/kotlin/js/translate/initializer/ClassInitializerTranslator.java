@@ -48,43 +48,58 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     private final JetClassOrObject classDeclaration;
     @NotNull
     private final List<JsStatement> initializerStatements = new SmartList<JsStatement>();
+    private final JsFunction initFunction;
+    private final TranslationContext context;
 
     public ClassInitializerTranslator(
             @NotNull JetClassOrObject classDeclaration,
             @NotNull TranslationContext context
     ) {
-        super(context.newDeclarationWithScope(
-                getClassDescriptor(context.bindingContext(), classDeclaration),
-                new JsFunctionScope(context.scope(), "scope for primary/default constructor")));
+        super(context);
         this.classDeclaration = classDeclaration;
+        this.initFunction = createInitFunction(classDeclaration, context);
+        this.context = context.contextWithScope(initFunction);
+    }
+
+    @NotNull
+    @Override
+    protected TranslationContext context() {
+        return context;
+    }
+
+    @NotNull
+    private static JsFunction createInitFunction(JetClassOrObject declaration, TranslationContext context) {
+        //TODO: it's inconsistent that we have scope for class and function for constructor, currently have problems implementing better way
+        ClassDescriptor classDescriptor = getClassDescriptor(context.bindingContext(), declaration);
+        ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
+
+        if (primaryConstructor != null) {
+            return context.getFunctionObject(primaryConstructor);
+        }
+        else {
+            return new JsFunction(context.scope(), new JsBlock(), "fake constructor for " + classDescriptor.getName().asString());
+        }
     }
 
     @NotNull
     public JsFunction generateInitializeMethod(DelegationTranslator delegationTranslator) {
-        //TODO: it's inconsistent that we have scope for class and function for constructor, currently have problems implementing better way
         ClassDescriptor classDescriptor = getClassDescriptor(bindingContext(), classDeclaration);
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
 
-        JsFunction result;
         if (primaryConstructor != null) {
-            result = context().getFunctionObject(primaryConstructor);
-
-            result.getBody().getStatements().addAll(setDefaultValueForArguments(primaryConstructor, context()));
+            initFunction.getBody().getStatements().addAll(setDefaultValueForArguments(primaryConstructor, context()));
 
             //NOTE: while we translate constructor parameters we also add property initializer statements
             // for properties declared as constructor parameters
-            result.getParameters().addAll(translatePrimaryConstructorParameters());
+            initFunction.getParameters().addAll(translatePrimaryConstructorParameters());
 
-            mayBeAddCallToSuperMethod(result);
-        }
-        else {
-            result = new JsFunction(context().scope(), new JsBlock(), "fake constructor for " + classDescriptor.getName().asString());
+            mayBeAddCallToSuperMethod(initFunction);
         }
 
         delegationTranslator.addInitCode(initializerStatements);
         new InitializerVisitor(initializerStatements).traverseContainer(classDeclaration, context());
 
-        List<JsStatement> statements = result.getBody().getStatements();
+        List<JsStatement> statements = initFunction.getBody().getStatements();
 
         for (JsStatement statement : initializerStatements) {
             if (statement instanceof JsBlock) {
@@ -95,7 +110,7 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
             }
         }
 
-        return result;
+        return initFunction;
     }
 
     @NotNull
