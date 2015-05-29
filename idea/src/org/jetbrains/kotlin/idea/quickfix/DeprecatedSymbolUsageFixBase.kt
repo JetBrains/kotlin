@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.CommentSaver
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.asExpression
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -113,8 +113,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val replaceWithValue = annotation.argumentValue("replaceWith"/*TODO*/) as? AnnotationDescriptor ?: return null
             val pattern = replaceWithValue.argumentValue("expression"/*TODO*/) as? String ?: return null
             if (pattern.isEmpty()) return null
-            val imports = (replaceWithValue.argumentValue("imports"/*TODO*/) as? List<CompileTimeConstant<String>>)
-                                  ?.map { it.getValue() } ?: emptyList()
+            val importValues = replaceWithValue.argumentValue("imports"/*TODO*/) as? List<*> ?: return null
+            if (importValues.any { it !is StringValue }) return null
+            val imports = importValues.map { (it as StringValue).getValue() }
 
             // should not be available for descriptors with optional parameters if we cannot fetch default values for them (currently for library with no sources)
             if (descriptor is CallableDescriptor &&

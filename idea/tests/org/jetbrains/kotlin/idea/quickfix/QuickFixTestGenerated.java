@@ -2938,6 +2938,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("incorrectArgs.kt")
+        public void testIncorrectArgs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/incorrectArgs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("incorrectReplacement.kt")
         public void testIncorrectReplacement() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/incorrectReplacement.kt");
