@@ -1,0 +1,16 @@
+package test
+
+internal interface Test {
+
+    internal companion object Companion {
+        private constructor Companion()
+        public final val valProp: kotlin.Int
+    }
+}
+
+public/*package*/ open class staticTraitProperty {
+    public/*package*/ constructor staticTraitProperty()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}

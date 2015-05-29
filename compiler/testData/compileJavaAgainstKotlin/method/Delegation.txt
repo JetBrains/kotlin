@@ -1,0 +1,25 @@
+package test
+
+internal final class Impl : test.Trait {
+    public constructor Impl()
+    internal open val bar: kotlin.Int
+    internal open fun foo(): kotlin.Unit
+}
+
+public/*package*/ open class JavaClass {
+    public/*package*/ constructor JavaClass()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}
+
+internal final class Test : test.Trait {
+    public constructor Test()
+    internal open /*delegation*/ val bar: kotlin.Int
+    internal open /*delegation*/ fun foo(): kotlin.Unit
+}
+
+internal interface Trait {
+    internal abstract val bar: kotlin.Int
+    internal abstract fun foo(): kotlin.Unit
+}

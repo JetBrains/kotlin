@@ -1,0 +1,12 @@
+package test
+
+internal final class A {
+    public constructor A(/*0*/ kotlin.Int = ..., /*1*/ kotlin.String = ...)
+    internal final val a: kotlin.Int
+    internal final val b: kotlin.String
+}
+
+public/*package*/ open class Simple {
+    public/*package*/ constructor Simple()
+    public/*package*/ open fun foo(): kotlin.Unit
+}
