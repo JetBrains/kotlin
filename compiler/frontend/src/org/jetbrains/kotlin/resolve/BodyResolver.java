@@ -339,9 +339,6 @@ public class BodyResolver {
                     recordSupertype(typeReference, supertype);
                     ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
                     if (classDescriptor != null) {
-                        if (classDescriptor.getKind() == ClassKind.INTERFACE) {
-                            trace.report(CONSTRUCTOR_IN_TRAIT.on(elementToMark));
-                        }
                         // allow only one delegating constructor
                         if (primaryConstructorDelegationCall[0] == null) {
                             primaryConstructorDelegationCall[0] = results.getResultingCall();
