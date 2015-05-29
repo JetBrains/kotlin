@@ -3124,9 +3124,9 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("classObjectInEnum.kt")
-        public void testClassObjectInEnum() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/classObjectInEnum.kt");
+        @TestMetadata("companionObjectInEnum.kt")
+        public void testCompanionObjectInEnum() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/enum/companionObjectInEnum.kt");
             doTest(fileName);
         }
 
