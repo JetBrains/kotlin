@@ -6350,6 +6350,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
             }
 
+            @TestMetadata("localInGetter.kt")
+            public void testLocalInGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/localInGetter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("valOverrideVar.kt")
             public void testValOverrideVar() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/valOverrideVar.kt");
