@@ -17,12 +17,15 @@ internal class Example<X, T : Comparable<X>>(protected val x : Foo<X, T>, y : So
 class
   : modifiers ("class" | "trait") SimpleName
       typeParameters?
-      (modifiers "constructor")? ("(" functionParameter{","} ")")?
+      primaryConstructor?
       (":" annotations delegationSpecifier{","})?
       typeConstraints
       (classBody? | enumClassBody)
   ;
 
+primaryConstructor
+  : (modifiers "constructor")? ("(" functionParameter{","} ")")
+  ;
 
 classBody
   : ("{" members "}")?

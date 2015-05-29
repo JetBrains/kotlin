@@ -705,14 +705,18 @@ public class JetParsing extends AbstractJetParsing {
      * class
      *   : modifiers ("class" | "interface") SimpleName
      *       typeParameters?
-     *         modifiers ("(" primaryConstructorParameter{","} ")")?
+     *       primaryConstructor?
      *       (":" annotations delegationSpecifier{","})?
      *       typeConstraints
      *       (classBody? | enumClassBody)
      *   ;
      *
+     * primaryConstructor
+     *   : (modifiers "constructor")? ("(" functionParameter{","} ")")
+     *   ;
+     *
      * object
-     *   : "object" SimpleName? ":" delegationSpecifier{","}? classBody?
+     *   : "object" SimpleName? primaryConstructor? ":" delegationSpecifier{","}? classBody?
      *   ;
      */
     IElementType parseClassOrObject(
@@ -761,7 +765,7 @@ public class JetParsing extends AbstractJetParsing {
         );
 
         // Some modifiers found, but no parentheses following: class has already ended, and we are looking at something else
-        if ((object && at(CONSTRUCTOR_KEYWORD)) || (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD))) {
+        if (hasConstructorModifiers && !atSet(LPAR, LBRACE, COLON, CONSTRUCTOR_KEYWORD)) {
             beforeConstructorModifiers.rollbackTo();
             return object ? OBJECT_DECLARATION : CLASS;
         }

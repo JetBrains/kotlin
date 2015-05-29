@@ -419,6 +419,7 @@ JetFile: validDeclarations.kt
         PsiWhiteSpace(' ')
         OBJECT_DECLARATION_NAME
           PsiElement(IDENTIFIER)('B')
+      PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
       SECONDARY_CONSTRUCTOR
         MODIFIER_LIST
