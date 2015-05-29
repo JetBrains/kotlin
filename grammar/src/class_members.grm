@@ -39,11 +39,10 @@ memberDeclaration
 
 anonymousInitializer
   : "init" block
-  : block
   ;
 
 companionObject
-  : modifiers "class" object
+  : modifiers "companion" "object"
   ;
 
 valueParameters
