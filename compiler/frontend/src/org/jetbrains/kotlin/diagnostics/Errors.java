@@ -165,7 +165,7 @@ public interface Errors {
 
     DiagnosticFactory0<JetConstructorDelegationReferenceExpression> CYCLIC_CONSTRUCTOR_DELEGATION_CALL = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetSecondaryConstructor> SECONDARY_CONSTRUCTOR_IN_OBJECT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_OBJECT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<JetDelegatorToSuperCall> SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<JetConstructorDelegationCall> PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED =
@@ -188,7 +188,7 @@ public interface Errors {
             .create(WARNING, modifierSetPosition(JetTokens.OPEN_KEYWORD));
     DiagnosticFactory0<JetModifierListOwner> TRAIT_CAN_NOT_BE_FINAL = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
 
-    DiagnosticFactory0<PsiElement> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<JetDeclaration> CONSTRUCTOR_IN_TRAIT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<PsiElement> SUPERTYPE_INITIALIZED_IN_TRAIT = DiagnosticFactory0.create(ERROR);
 
