@@ -16,7 +16,12 @@
 
 package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.name.FqNameBase
+import org.jetbrains.kotlin.name.Name
 
 public fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String {
     val nameString = DescriptorRenderer.COMPACT.renderName(descriptor.getName())
@@ -30,3 +35,7 @@ private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (de
     else -> null
 }
 
+
+public fun Name.render(): String = DescriptorRenderer.COMPACT.renderName(this)
+
+public fun FqNameBase.render(): String = DescriptorRenderer.COMPACT.renderFqName(this)

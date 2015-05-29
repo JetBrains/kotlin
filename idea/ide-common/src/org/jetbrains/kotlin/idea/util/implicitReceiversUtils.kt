@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -60,7 +60,7 @@ public fun JetScope.getImplicitReceiversWithInstanceToExpression(): Map<Receiver
     for ((index, receiver) in receivers.withIndex()) {
         val owner = receiver.getContainingDeclaration()
         val (expressionText, isImmediateThis) = if (owner in outerDeclarationsWithInstance) {
-            val thisWithLabel = thisQualifierName(receiver)?.let { "this@${it.renderName()}" }
+            val thisWithLabel = thisQualifierName(receiver)?.let { "this@${it.render()}" }
             if (index == 0)
                 (thisWithLabel ?: "this") to true
             else

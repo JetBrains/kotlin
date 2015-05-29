@@ -25,8 +25,8 @@ import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.renderer.render
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.LinkedHashMap
@@ -82,7 +82,7 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
         PsiElementArgumentType<JetExpression>(javaClass()),
         PsiElementArgumentType<JetTypeReference>(javaClass()),
         PlainTextArgumentType<String>(javaClass(), toPlainText = { it }),
-        PlainTextArgumentType<Name>(javaClass(), toPlainText = { it.renderName() }),
+        PlainTextArgumentType<Name>(javaClass(), toPlainText = { it.render() }),
         PsiChildRangeArgumentType
 )
 

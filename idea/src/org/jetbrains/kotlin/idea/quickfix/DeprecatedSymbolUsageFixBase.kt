@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -621,7 +621,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             assert(usages.all { expression.isAncestor(it, strict = true) })
 
             fun replaceUsages(name: Name) {
-                val nameInCode = psiFactory.createExpression(name.renderName())
+                val nameInCode = psiFactory.createExpression(name.render())
                 for (usage in usages) {
                     usage.replace(nameInCode)
                 }

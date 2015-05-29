@@ -32,11 +32,11 @@ import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.findLabelAndCall
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -266,7 +266,7 @@ private fun createKeywordWithLabelElement(keyword: String, label: Name?, addSpac
 }
 
 private fun createKeywordWithLabelElement(keyword: String, label: Name?): LookupElementBuilder {
-    val labelInCode = label?.renderName()
+    val labelInCode = label?.render()
     var element = LookupElementBuilder.create(KeywordLookupObject, if (label == null) keyword else "$keyword@$labelInCode")
     element = element.withPresentableText(keyword)
     element = element.withBoldness(true)

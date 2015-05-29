@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.name
 
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-
 public fun FqName.isSubpackageOf(packageName: FqName): Boolean {
     return when {
         this == packageName -> true
@@ -78,5 +76,3 @@ public fun isValidJavaFqName(qualifiedName: String?): Boolean {
 
     return state != State.AFTER_DOT
 }
-
-public fun Name.renderName(): String = DescriptorRenderer.COMPACT.renderName(this)

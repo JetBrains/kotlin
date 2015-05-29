@@ -25,12 +25,17 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.NameShortness;
+import org.jetbrains.kotlin.renderer.RendererPackage;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import javax.swing.*;
 
@@ -42,10 +47,26 @@ public class DescriptorClassMember extends MemberChooserObjectBase implements Cl
     @NotNull
     private final PsiElement myPsiElement;
 
+    private static final DescriptorRenderer MEMBER_RENDERER = new DescriptorRendererBuilder()
+            .setWithDefinedIn(false)
+            .setModifiers()
+            .setStartFromName(true)
+            .setNameShortness(NameShortness.SHORT)
+            .build();
+
     public DescriptorClassMember(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor) {
-        super(DescriptorRenderer.STARTS_FROM_NAME.render(descriptor), getIcon(element, descriptor));
+        super(getText(descriptor), getIcon(element, descriptor));
         myPsiElement = element;
         myDescriptor = descriptor;
+    }
+
+    private static String getText(DeclarationDescriptor descriptor) {
+        if (descriptor instanceof ClassDescriptor) {
+            return RendererPackage.render(DescriptorUtils.getFqNameSafe(descriptor));
+        }
+        else {
+            return MEMBER_RENDERER.render(descriptor);
+        }
     }
 
     private static Icon getIcon(PsiElement element, DeclarationDescriptor declarationDescriptor) {
