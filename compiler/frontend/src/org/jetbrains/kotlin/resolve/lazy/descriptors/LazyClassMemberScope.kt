@@ -275,15 +275,12 @@ public open class LazyClassMemberScope(
 
     protected open fun resolvePrimaryConstructor(): ConstructorDescriptor? {
         val ownerInfo = declarationProvider.getOwnerInfo()
-        val classOrObject = ownerInfo.getCorrespondingClassOrObject()
-        if (!thisDescriptor.getKind().isSingleton() && !classOrObject.isObjectLiteral()) {
-            assert(classOrObject is JetClass) { "No JetClass for $thisDescriptor" }
-            classOrObject as JetClass
+        val classOrObject = ownerInfo.getCorrespondingClassOrObject() ?: return null
 
-            if (DescriptorUtils.isTrait(thisDescriptor) && declarationProvider.getOwnerInfo().getPrimaryConstructorParameters().isEmpty()) {
-                return null
-            }
+        val hasPrimaryConstructor = classOrObject.hasExplicitPrimaryConstructor()
+        if (DescriptorUtils.isTrait(thisDescriptor) && !hasPrimaryConstructor) return null
 
+        if (DescriptorUtils.canHaveDeclaredConstructors(thisDescriptor) || hasPrimaryConstructor) {
             val constructor = c.functionDescriptorResolver.resolvePrimaryConstructorDescriptor(
                     thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, classOrObject, trace)
             constructor ?: return null
@@ -298,10 +295,7 @@ public open class LazyClassMemberScope(
     }
 
     private fun resolveSecondaryConstructors(): Collection<ConstructorDescriptor> {
-        val classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject()
-        if (!DescriptorUtils.canHaveSecondaryConstructors(thisDescriptor)) return emptyList()
-        // Script classes have usual class descriptors but do not have conventional class body
-        if (classOrObject !is JetClass) return emptyList()
+        val classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject() ?: return emptyList()
 
         return classOrObject.getSecondaryConstructors().map { constructor ->
             val descriptor = c.functionDescriptorResolver.resolveSecondaryConstructorDescriptor(

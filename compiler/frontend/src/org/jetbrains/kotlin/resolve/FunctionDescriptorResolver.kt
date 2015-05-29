@@ -210,7 +210,7 @@ class FunctionDescriptorResolver(
     public fun resolvePrimaryConstructorDescriptor(
             scope: JetScope,
             classDescriptor: ClassDescriptor,
-            classElement: JetClass,
+            classElement: JetClassOrObject,
             trace: BindingTrace
     ): ConstructorDescriptorImpl? {
         if (classDescriptor.getKind() == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null

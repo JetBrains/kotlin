@@ -89,9 +89,21 @@ public class DescriptorRendererTestGenerated extends AbstractDescriptorRendererT
         doTest(fileName);
     }
 
+    @TestMetadata("ObjectWithConstructor.kt")
+    public void testObjectWithConstructor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/ObjectWithConstructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("StarProjection.kt")
     public void testStarProjection() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/StarProjection.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("TraitWithConstructor.kt")
+    public void testTraitWithConstructor() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/renderer/TraitWithConstructor.kt");
         doTest(fileName);
     }
 

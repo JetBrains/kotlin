@@ -325,6 +325,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ObjectWithConstructor.kt")
+        public void testObjectWithConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ObjectWithConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OverrideFunctionWithParamDefaultValue.kt")
         public void testOverrideFunctionWithParamDefaultValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/OverrideFunctionWithParamDefaultValue.kt");

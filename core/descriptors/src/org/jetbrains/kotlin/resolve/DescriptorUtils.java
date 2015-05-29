@@ -506,7 +506,7 @@ public class DescriptorUtils {
         return classDescriptor.getKind().isSingleton() || isAnonymousObject(classDescriptor);
     }
 
-    public static boolean canHaveSecondaryConstructors(@NotNull ClassDescriptor classDescriptor) {
+    public static boolean canHaveDeclaredConstructors(@NotNull ClassDescriptor classDescriptor) {
         return !isSingletonOrAnonymousObject(classDescriptor) && !isTrait(classDescriptor);
     }
 
