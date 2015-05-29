@@ -87,6 +87,8 @@ public class DeclarationsChecker {
                 checkObject((JetObjectDeclaration) classOrObject, classDescriptor);
             }
 
+            checkPrimaryConstructor(classOrObject, classDescriptor);
+
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
         }
 
@@ -244,7 +246,6 @@ public class DeclarationsChecker {
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
         AnnotationResolver.reportDeprecatedAnnotationSyntax(aClass.getAnnotations(), trace);
         checkOpenMembers(classDescriptor);
-        checkPrimaryConstructor(aClass, classDescriptor);
         checkTypeParameters(aClass);
 
         if (aClass.isInterface()) {
@@ -271,9 +272,9 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkPrimaryConstructor(JetClass aClass, ClassDescriptor classDescriptor) {
+    private void checkPrimaryConstructor(JetClassOrObject classOrObject, ClassDescriptor classDescriptor) {
         ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-        JetPrimaryConstructor declaration = aClass.getPrimaryConstructor();
+        JetPrimaryConstructor declaration = classOrObject.getPrimaryConstructor();
         if (primaryConstructor == null || declaration == null) return;
 
         for (JetParameter parameter : declaration.getValueParameters()) {
@@ -285,6 +286,10 @@ public class DeclarationsChecker {
 
         if (declaration.getModifierList() != null && !declaration.hasConstructorKeyword()) {
             trace.report(MISSING_CONSTRUCTOR_KEYWORD.on(declaration.getModifierList()));
+        }
+
+        if (!(classOrObject instanceof JetClass)) {
+            trace.report(CONSTRUCTOR_IN_OBJECT.on(declaration));
         }
 
         checkConstructorDeclaration(primaryConstructor, declaration);

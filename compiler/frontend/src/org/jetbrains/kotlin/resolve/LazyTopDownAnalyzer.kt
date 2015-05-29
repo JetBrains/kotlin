@@ -199,10 +199,6 @@ public class LazyTopDownAnalyzer {
                 }
 
                 override fun visitSecondaryConstructor(constructor: JetSecondaryConstructor) {
-                    val classDescriptor = lazyDeclarationResolver!!.resolveToDescriptor(constructor.getClassOrObject()) as ClassDescriptor
-                    if (!DescriptorUtils.canHaveSecondaryConstructors(classDescriptor)) {
-                        return
-                    }
                     c.getSecondaryConstructors().put(constructor, lazyDeclarationResolver!!.resolveToDescriptor(constructor) as ConstructorDescriptor)
                     registerScope(c, constructor)
                 }

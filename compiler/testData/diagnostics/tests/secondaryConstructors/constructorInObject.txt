@@ -4,6 +4,7 @@ internal val anonObject: kotlin.Any
 
 internal object A {
     private constructor A()
+    private constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -11,6 +12,7 @@ internal object A {
 
 internal final enum class B : kotlin.Enum<B> {
     public enum entry X : B {
+        private constructor X()
         private constructor X()
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: B): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -40,6 +42,7 @@ internal final class C {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     internal companion object Companion {
+        private constructor Companion()
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
