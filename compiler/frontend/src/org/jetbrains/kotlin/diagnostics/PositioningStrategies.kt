@@ -156,6 +156,11 @@ public object PositioningStrategies {
                 is JetObjectDeclaration -> {
                     return DECLARATION_NAME.mark(element)
                 }
+                is JetPrimaryConstructor -> {
+                    val begin = element.getConstructorKeyword() ?: element.getValueParameterList() ?: return markElement(element)
+                    val end = element.getValueParameterList() ?: element.getConstructorKeyword()
+                    return markRange(begin, end)
+                }
                 is JetSecondaryConstructor -> {
                     return markRange(element.getConstructorKeyword(), element.getValueParameterList() ?: element.getConstructorKeyword())
                 }

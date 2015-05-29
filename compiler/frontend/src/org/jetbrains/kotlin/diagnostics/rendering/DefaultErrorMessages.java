@@ -402,7 +402,7 @@ public class DefaultErrorMessages {
         MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");
 
         MAP.put(CYCLIC_CONSTRUCTOR_DELEGATION_CALL, "There's a cycle in the delegation calls chain");
-        MAP.put(SECONDARY_CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects");
+        MAP.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects");
         MAP.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without primary constructor");
         MAP.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, "Primary constructor call expected");
         MAP.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Call to super is not allowed in enum constructor");

@@ -303,9 +303,9 @@ public class DeclarationsChecker {
     }
 
     private void checkConstructorInTrait(JetClass klass) {
-        JetParameterList primaryConstructorParameterList = klass.getPrimaryConstructorParameterList();
-        if (primaryConstructorParameterList != null) {
-            trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructorParameterList));
+        JetPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
+        if (primaryConstructor != null) {
+            trace.report(CONSTRUCTOR_IN_TRAIT.on(primaryConstructor));
         }
     }
 
