@@ -12,7 +12,7 @@ PsiJetFileStubImpl[package=a]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[public]
           VALUE_PARAMETER_LIST:
-            VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c]
+            VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c]
               TYPE_REFERENCE:
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -332,13 +332,13 @@ PsiJetFileStubImpl[package=a]
                         REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
                       REFERENCE_EXPRESSION:[referencedName=E]
                 VALUE_PARAMETER_LIST:
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -360,13 +360,13 @@ PsiJetFileStubImpl[package=a]
             TYPE_REFERENCE:
               FUNCTION_TYPE:
                 VALUE_PARAMETER_LIST:
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=null]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         USER_TYPE:[isAbsoluteInRootPackage=false]

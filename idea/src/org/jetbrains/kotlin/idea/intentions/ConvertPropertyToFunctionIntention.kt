@@ -58,7 +58,7 @@ public class ConvertPropertyToFunctionIntention : JetSelfTargetingIntention<JetP
 
             val sampleFunction = psiFactory.createFunction("fun foo() {\n\n}");
 
-            property.getValOrVarNode().getPsi().replace(sampleFunction.getFunKeyword()!!);
+            property.getValOrVarKeyword().replace(sampleFunction.getFunKeyword()!!);
             property.addAfter(psiFactory.createParameterList("()"), property.getNameIdentifier());
             if (property.getInitializer() == null) {
                 if (getter != null) {

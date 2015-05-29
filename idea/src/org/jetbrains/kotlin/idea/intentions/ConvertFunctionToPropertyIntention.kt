@@ -71,7 +71,7 @@ public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetN
                 originalFunction.typeFqNameToAdd?.let { function.setTypeReference(psiFactory.createType(it)) }
             }
 
-            function.getFunKeyword()!!.replace(propertySample.getValOrVarNode().getPsi())
+            function.getFunKeyword()!!.replace(propertySample.getValOrVarKeyword())
             function.getValueParameterList()?.delete()
             val insertAfter = (function.getEqualsToken() ?: function.getBodyExpression())
                     ?.siblings(forward = false, withItself = false)

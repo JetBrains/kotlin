@@ -6,7 +6,7 @@ PsiJetFileStubImpl[package=test]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
-        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
           TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
               USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -23,7 +23,7 @@ PsiJetFileStubImpl[package=test]
                     REFERENCE_EXPRESSION:[referencedName=test]
                   REFERENCE_EXPRESSION:[referencedName=anno]
         VALUE_PARAMETER_LIST:
-          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -32,7 +32,7 @@ PsiJetFileStubImpl[package=test]
       SECONDARY_CONSTRUCTOR:
         MODIFIER_LIST:[private]
         VALUE_PARAMETER_LIST:
-          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -65,11 +65,11 @@ PsiJetFileStubImpl[package=test]
           SECONDARY_CONSTRUCTOR:
             MODIFIER_LIST:[public]
             VALUE_PARAMETER_LIST:
-              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=x]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     REFERENCE_EXPRESSION:[referencedName=T]
-              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=g]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=g]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     REFERENCE_EXPRESSION:[referencedName=G]
@@ -86,7 +86,7 @@ PsiJetFileStubImpl[package=test]
                         REFERENCE_EXPRESSION:[referencedName=test]
                       REFERENCE_EXPRESSION:[referencedName=anno]
             VALUE_PARAMETER_LIST:
-              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=z]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=z]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]

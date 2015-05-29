@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -1193,9 +1192,9 @@ public class DescriptorResolver {
             @NotNull JetParameter parameter,
             @NotNull DiagnosticFactory1<PsiElement, JetKeywordToken> diagnosticFactory
     ) {
-        ASTNode valOrVarNode = parameter.getValOrVarNode();
-        if (valOrVarNode != null) {
-            trace.report(diagnosticFactory.on(valOrVarNode.getPsi(), ((JetKeywordToken) valOrVarNode.getElementType())));
+        PsiElement valOrVar = parameter.getValOrVarKeyword();
+        if (valOrVar != null) {
+            trace.report(diagnosticFactory.on(valOrVar, ((JetKeywordToken) valOrVar.getNode().getElementType())));
         }
     }
 

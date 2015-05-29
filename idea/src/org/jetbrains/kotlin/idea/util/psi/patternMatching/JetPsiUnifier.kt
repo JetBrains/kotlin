@@ -538,7 +538,7 @@ public class JetPsiUnifier(
         }
 
         private fun JetDeclaration.isNameRelevant(): Boolean {
-            if (this is JetParameter && hasValOrVarNode()) return true
+            if (this is JetParameter && hasValOrVar()) return true
 
             val parent = getParent()
             return parent is JetClassBody || parent is JetFile

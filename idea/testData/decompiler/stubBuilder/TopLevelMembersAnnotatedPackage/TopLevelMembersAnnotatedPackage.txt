@@ -61,7 +61,7 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
                 REFERENCE_EXPRESSION:[referencedName=f]
               REFERENCE_EXPRESSION:[referencedName=b]
     VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
         MODIFIER_LIST:[]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
             CONSTRUCTOR_CALLEE:

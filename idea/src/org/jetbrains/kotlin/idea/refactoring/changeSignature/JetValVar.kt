@@ -16,22 +16,31 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.JetPsiFactory
 
 public enum class JetValVar(val name: String) {
-    None("none"),
-    Val("val"),
-    Var("var");
+    None("none") {
+        override fun createKeyword(factory: JetPsiFactory) = null
+    },
+    Val("val") {
+        override fun createKeyword(factory: JetPsiFactory) = factory.createValKeyword()
+    },
+    Var("var"){
+        override fun createKeyword(factory: JetPsiFactory) = factory.createVarKeyword()
+    };
 
     override fun toString(): String = name
+
+    abstract fun createKeyword(factory: JetPsiFactory): PsiElement?
 }
 
-fun ASTNode?.toValVar(): JetValVar {
+fun PsiElement?.toValVar(): JetValVar {
     return when {
         this == null -> JetValVar.None
-        getElementType() == JetTokens.VAL_KEYWORD -> JetValVar.Val
-        getElementType() == JetTokens.VAR_KEYWORD -> JetValVar.Var
+        getNode().getElementType() == JetTokens.VAL_KEYWORD -> JetValVar.Val
+        getNode().getElementType() == JetTokens.VAR_KEYWORD -> JetValVar.Var
         else -> throw IllegalArgumentException("Unknown val/var token: " + getText())
     }
 }

@@ -259,12 +259,12 @@ public class KotlinInplaceVariableIntroducer<D extends JetCallableDeclaration> e
                                 PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument());
 
                                 JetPsiFactory psiFactory = new JetPsiFactory(myProject);
-                                ASTNode node = varCheckbox.isSelected() ? psiFactory.createVarNode() : psiFactory.createValNode();
+                                PsiElement keyword = varCheckbox.isSelected() ? psiFactory.createVarKeyword() : psiFactory.createValKeyword();
 
-                                ASTNode valOrVarNode = myDeclaration instanceof JetProperty
-                                                       ? ((JetProperty) myDeclaration).getValOrVarNode()
-                                                       : ((JetParameter) myDeclaration).getValOrVarNode();
-                                valOrVarNode.getPsi().replace(node.getPsi());
+                                PsiElement valOrVar = myDeclaration instanceof JetProperty
+                                                       ? ((JetProperty) myDeclaration).getValOrVarKeyword()
+                                                       : ((JetParameter) myDeclaration).getValOrVarKeyword();
+                                valOrVar.replace(keyword);
                             }
                         }.execute();
                     }

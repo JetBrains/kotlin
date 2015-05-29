@@ -33,7 +33,7 @@ public class PsiBasedClassMemberDeclarationProvider(
         }
 
         for (parameter in classInfo.getPrimaryConstructorParameters()) {
-            if (parameter.hasValOrVarNode()) {
+            if (parameter.hasValOrVar()) {
                 index.putToIndex(parameter)
             }
         }

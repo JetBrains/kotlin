@@ -299,7 +299,7 @@ public inline fun <reified T : JetElement, R> flatMapDescendantsOfTypeVisitor(ac
 
 public fun JetClassOrObject.effectiveDeclarations(): List<JetDeclaration> {
     return when(this) {
-        is JetClass -> getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVarNode() }
+        is JetClass -> getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVar() }
         else -> getDeclarations()
     }
 }

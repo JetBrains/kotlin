@@ -6,7 +6,7 @@ PsiJetFileStubImpl[package=]
     MODIFIER_LIST:[annotation]
     PRIMARY_CONSTRUCTOR:
       VALUE_PARAMETER_LIST:
-        VALUE_PARAMETER:[fqName=b.e, hasDefaultValue=false, hasValOrVarNode=true, isMutable=false, name=e]
+        VALUE_PARAMETER:[fqName=b.e, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=e]
           TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=E]
@@ -17,7 +17,7 @@ PsiJetFileStubImpl[package=]
       ENUM_ENTRY:[fqName=E.E2, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=E2, superNames=[]]
   FUN:[fqName=types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=types]
     VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=param]
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param]
         TYPE_REFERENCE:
           ANNOTATION:
             ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]

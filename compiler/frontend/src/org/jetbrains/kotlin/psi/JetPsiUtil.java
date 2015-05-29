@@ -448,7 +448,7 @@ public class JetPsiUtil {
 
     @Nullable
     public static JetClass getClassIfParameterIsProperty(@NotNull JetParameter jetParameter) {
-        if (jetParameter.hasValOrVarNode()) {
+        if (jetParameter.hasValOrVar()) {
             PsiElement grandParent = jetParameter.getParent().getParent();
             if (grandParent instanceof JetPrimaryConstructor) {
                 return ((JetPrimaryConstructor) grandParent).getContainingClassOrNull();
@@ -767,7 +767,7 @@ public class JetPsiUtil {
             PsiElement parent = declaration.getParent();
 
             // val/var parameter of primary constructor should not be considered as local
-            if (((JetParameter) declaration).getValOrVarNode() != null && parent != null && parent.getParent() instanceof JetPrimaryConstructor) {
+            if (((JetParameter) declaration).hasValOrVar() && parent != null && parent.getParent() instanceof JetPrimaryConstructor) {
                 return null;
             }
 

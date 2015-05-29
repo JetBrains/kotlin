@@ -62,7 +62,7 @@ public interface PostProcessor {
                 val property = (psiElement as? JetSimpleNameExpression)?.getReference()?.resolve() as? JetProperty
                 if (property != null && !property.isVar()) {
                     val factory = JetPsiFactory(psiElement.getProject())
-                    property.getValOrVarNode().getPsi()!!.replace(factory.createVarNode().getPsi()!!)
+                    property.getValOrVarKeyword().replace(factory.createVarKeyword())
                 }
             }
 

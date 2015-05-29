@@ -76,8 +76,8 @@ public class JetDeclarationMover extends AbstractJetUpDownMover {
 
                     @Override
                     public void visitProperty(@NotNull JetProperty property) {
-                        PsiElement valOrVarNode = property.getValOrVarNode().getPsi();
-                        if (valOrVarNode != null) memberSuspects.add(valOrVarNode);
+                        PsiElement valOrVarKeyword = property.getValOrVarKeyword();
+                        if (valOrVarKeyword != null) memberSuspects.add(valOrVarKeyword);
 
                         JetTypeParameterList typeParameterList = property.getTypeParameterList();
                         if (typeParameterList != null) memberSuspects.add(typeParameterList);

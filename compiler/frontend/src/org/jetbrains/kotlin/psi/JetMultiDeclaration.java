@@ -54,8 +54,8 @@ public class JetMultiDeclaration extends JetDeclarationImpl {
     }
 
     @Nullable
-    public ASTNode getValOrVarNode() {
-        return getNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+    public PsiElement getValOrVarKeyword() {
+        return findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
     }
 
     @Nullable

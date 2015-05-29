@@ -194,7 +194,7 @@ fun PsiReference.isUsageInContainingDeclaration(declaration: JetNamedDeclaration
 
 fun PsiReference.isCallableOverrideUsage(declaration: JetNamedDeclaration): Boolean {
     val decl2Desc = { declaration: JetDeclaration ->
-        if (declaration is JetParameter && declaration.hasValOrVarNode()) declaration.propertyDescriptor else declaration.descriptor
+        if (declaration is JetParameter && declaration.hasValOrVar()) declaration.propertyDescriptor else declaration.descriptor
     }
 
     return checkUsageVsOriginalDescriptor(declaration, decl2Desc) { usageDescriptor, targetDescriptor ->

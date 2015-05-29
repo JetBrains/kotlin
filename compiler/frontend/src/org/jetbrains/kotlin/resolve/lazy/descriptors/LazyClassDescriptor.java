@@ -316,7 +316,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         WritableScopeImpl scope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, primaryConstructor, RedeclarationHandler.DO_NOTHING, "Scope with constructor parameters in " + getName());
         for (int i = 0; i < originalClassInfo.getPrimaryConstructorParameters().size(); i++) {
             JetParameter jetParameter = originalClassInfo.getPrimaryConstructorParameters().get(i);
-            if (!jetParameter.hasValOrVarNode()) {
+            if (!jetParameter.hasValOrVar()) {
                 scope.addVariableDescriptor(primaryConstructor.getValueParameters().get(i));
             }
         }

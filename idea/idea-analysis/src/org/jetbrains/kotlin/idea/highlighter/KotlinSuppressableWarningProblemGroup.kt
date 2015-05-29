@@ -87,9 +87,9 @@ private object DeclarationKindDetector : JetVisitor<AnnotationHostKind?, Unit?>(
 
     override fun visitNamedFunction(d: JetNamedFunction, _: Unit?) = detect(d, "fun")
 
-    override fun visitProperty(d: JetProperty, _: Unit?) = detect(d, d.getValOrVarNode().getText()!!)
+    override fun visitProperty(d: JetProperty, _: Unit?) = detect(d, d.getValOrVarKeyword().getText()!!)
 
-    override fun visitMultiDeclaration(d: JetMultiDeclaration, _: Unit?) = detect(d, d.getValOrVarNode()?.getText() ?: "val",
+    override fun visitMultiDeclaration(d: JetMultiDeclaration, _: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
                                                                                   name = d.getEntries().map { it.getName() }.join(", ", "(", ")"))
 
     override fun visitTypeParameter(d: JetTypeParameter, _: Unit?) = detect(d, "type parameter", newLineNeeded = false)

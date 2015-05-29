@@ -127,8 +127,10 @@ public class JetMultiDeclarationEntry extends JetNamedDeclarationNotStubbed impl
     }
 
     @Override
-    public ASTNode getValOrVarNode() {
-        return getParentNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+    public PsiElement getValOrVarKeyword() {
+        ASTNode node = getParentNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
+        if (node == null) return null;
+        return node.getPsi();
     }
 
     @Nullable

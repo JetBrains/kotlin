@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.JetPsiFactory.CallableBuilder.Target
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.io.PrintWriter
@@ -46,18 +45,14 @@ public var JetFile.moduleInfo: ModuleInfo? by UserDataProperty(Key.create("MODUL
 
 public class JetPsiFactory(private val project: Project) {
 
-    public fun createValNode(): ASTNode {
+    public fun createValKeyword(): PsiElement {
         val property = createProperty("val x = 1")
-        return property.getValOrVarNode()
+        return property.getValOrVarKeyword()
     }
 
-    public fun createVarNode(): ASTNode {
+    public fun createVarKeyword(): PsiElement {
         val property = createProperty("var x = 1")
-        return property.getValOrVarNode()
-    }
-
-    public fun createValOrVarNode(text: String): ASTNode {
-        return createParameterList("($text int x)").getParameters().first().getValOrVarNode()!!
+        return property.getValOrVarKeyword()
     }
 
     public fun createSafeCallNode(): ASTNode {

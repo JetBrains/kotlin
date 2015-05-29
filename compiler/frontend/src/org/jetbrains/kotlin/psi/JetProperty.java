@@ -268,11 +268,13 @@ public class JetProperty extends JetTypeParameterListOwnerStub<KotlinPropertyStu
 
     @Override
     @NotNull
-    public ASTNode getValOrVarNode() {
-        ASTNode node = getNode().findChildByType(TokenSet.create(VAL_KEYWORD, VAR_KEYWORD));
-        assert node != null : "Val or var should always exist for property";
-        return node;
+    public PsiElement getValOrVarKeyword() {
+        PsiElement element = findChildByType(VAL_VAR_TOKEN_SET);
+        assert element != null : "Val or var should always exist for property";
+        return element;
     }
+
+    private static final TokenSet VAL_VAR_TOKEN_SET = TokenSet.create(JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD);
 
     @Override
     public ItemPresentation getPresentation() {

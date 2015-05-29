@@ -39,7 +39,9 @@ public class ChangeVariableMutabilityFix(element: JetProperty, private val makeV
     }
 
     override fun invoke(project: Project, editor: Editor?, file: JetFile) {
-        element.getValOrVarNode().getPsi().replace(JetPsiFactory(project).createValOrVarNode(if (makeVar) "var" else "val").getPsi())
+        val factory = JetPsiFactory(project)
+        val newKeyword = if (makeVar) factory.createVarKeyword() else factory.createValKeyword()
+        element.getValOrVarKeyword().replace(newKeyword)
     }
 
     companion object {

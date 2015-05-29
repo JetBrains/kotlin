@@ -108,12 +108,12 @@ public open class ChangeVisibilityModifierIntention protected constructor(
         if (JetPsiUtil.isLocal(declaration)) return null
         return when (declaration) {
             is JetNamedFunction -> declaration.getFunKeyword()?.getTextRange()
-            is JetProperty -> declaration.getValOrVarNode().getTextRange()
+            is JetProperty -> declaration.getValOrVarKeyword().getTextRange()
             is JetClass -> declaration.getClassOrInterfaceKeyword()?.getTextRange()
             is JetObjectDeclaration -> declaration.getObjectKeyword().getTextRange()
             is JetPrimaryConstructor -> declaration.getValueParameterList()?.let { TextRange.from(it.startOffset, 0) } //TODO: use constructor keyword if exist
             is JetSecondaryConstructor -> declaration.getConstructorKeyword().getTextRange()
-            is JetParameter -> declaration.getValOrVarNode()?.getTextRange()
+            is JetParameter -> declaration.getValOrVarKeyword()?.getTextRange()
             else -> null
         }
     }

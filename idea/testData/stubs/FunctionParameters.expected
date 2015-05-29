@@ -2,11 +2,11 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
   FUN:[fqName=some, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=some]
     VALUE_PARAMETER_LIST:
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=t]
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=t]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=Int]
-      VALUE_PARAMETER:[fqName=null, hasDefaultValue=true, hasValOrVarNode=false, isMutable=false, name=other]
+      VALUE_PARAMETER:[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=other]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=String]

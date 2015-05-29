@@ -134,7 +134,7 @@ public class JetSourceNavigationHelper {
         // property constructor parameters
         List<JetParameter> constructorParameters = containingClass.getPrimaryConstructorParameters();
         for (JetParameter constructorParameter : constructorParameters) {
-            if (memberName.equals(constructorParameter.getNameAsName()) && constructorParameter.hasValOrVarNode()) {
+            if (memberName.equals(constructorParameter.getNameAsName()) && constructorParameter.hasValOrVar()) {
                 return constructorParameter;
             }
         }

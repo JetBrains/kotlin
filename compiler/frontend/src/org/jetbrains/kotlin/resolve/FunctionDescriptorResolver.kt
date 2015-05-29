@@ -348,7 +348,7 @@ class FunctionDescriptorResolver(
 
     private fun checkConstructorParameterHasNoModifier(trace: BindingTrace, parameter: JetParameter) {
         // If is not a property, then it must have no modifier
-        if (!parameter.hasValOrVarNode()) {
+        if (!parameter.hasValOrVar()) {
             DescriptorResolver.checkParameterHasNoModifier(trace, parameter)
         }
     }

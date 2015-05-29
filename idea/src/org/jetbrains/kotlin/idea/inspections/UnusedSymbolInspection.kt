@@ -106,7 +106,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (declaration is JetEnumEntry) return
                 if (declaration.hasModifier(JetTokens.OVERRIDE_KEYWORD)) return
                 if (declaration is JetProperty && declaration.isLocal()) return
-                if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetPrimaryConstructor || !declaration.hasValOrVarNode())) return
+                if (declaration is JetParameter && (declaration.getParent()?.getParent() !is JetPrimaryConstructor || !declaration.hasValOrVar())) return
                 if (declaration is JetNamedFunction && isConventionalName(declaration)) return
 
                 // More expensive, resolve-based checks

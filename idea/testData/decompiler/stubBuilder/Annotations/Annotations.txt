@@ -16,7 +16,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=a]
       VALUE_PARAMETER_LIST:
-        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c1]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c1]
           MODIFIER_LIST:[]
             ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE:
@@ -28,7 +28,7 @@ PsiJetFileStubImpl[package=]
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=Int]
-        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=c2]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=c2]
           MODIFIER_LIST:[]
             ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
               CONSTRUCTOR_CALLEE:
@@ -95,7 +95,7 @@ PsiJetFileStubImpl[package=]
       FUN:[fqName=Annotations.annotationWithVararg, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=annotationWithVararg]
         MODIFIER_LIST:[private final]
         VALUE_PARAMETER_LIST:
-          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=i]
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
             MODIFIER_LIST:[vararg]
               ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE:
@@ -138,7 +138,7 @@ PsiJetFileStubImpl[package=]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=b]
         VALUE_PARAMETER_LIST:
-          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             MODIFIER_LIST:[]
               ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE:
@@ -156,7 +156,7 @@ PsiJetFileStubImpl[package=]
       FUN:[fqName=Annotations.types, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=types]
         MODIFIER_LIST:[internal final]
         VALUE_PARAMETER_LIST:
-          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=param]
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=param]
             TYPE_REFERENCE:
               ANNOTATION:
                 ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]

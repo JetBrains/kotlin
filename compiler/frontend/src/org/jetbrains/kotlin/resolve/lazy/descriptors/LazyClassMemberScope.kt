@@ -145,7 +145,7 @@ public open class LazyClassMemberScope(
 
             for (parameter in constructor.getValueParameters()) {
                 if (parameter.getType().isError()) continue
-                if (!primaryConstructorParameters.get(parameter.getIndex()).hasValOrVarNode()) continue
+                if (!primaryConstructorParameters.get(parameter.getIndex()).hasValOrVar()) continue
 
                 val properties = getProperties(parameter.getName())
                 if (properties.isEmpty()) continue
@@ -220,7 +220,7 @@ public open class LazyClassMemberScope(
             if (name != valueParameterDescriptor.getName()) continue
 
             val parameter = primaryConstructorParameters.get(valueParameterDescriptor.getIndex())
-            if (parameter.hasValOrVarNode()) {
+            if (parameter.hasValOrVar()) {
                 val propertyDescriptor = c.descriptorResolver.resolvePrimaryConstructorParameterToAProperty(
                         thisDescriptor, valueParameterDescriptor, thisDescriptor.getScopeForClassHeaderResolution(), parameter, trace)
                 result.add(propertyDescriptor)

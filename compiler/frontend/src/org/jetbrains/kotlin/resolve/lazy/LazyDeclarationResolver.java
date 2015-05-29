@@ -146,7 +146,7 @@ public class LazyDeclarationResolver {
                     JetClass jetClass = ((JetPrimaryConstructor) grandFather).getContainingClass();
                     // This is a primary constructor parameter
                     ClassDescriptor classDescriptor = getClassDescriptor(jetClass);
-                    if (parameter.hasValOrVarNode()) {
+                    if (parameter.hasValOrVar()) {
                         classDescriptor.getDefaultType().getMemberScope().getProperties(parameter.getNameAsSafeName());
                         return getBindingContext().get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
                     }

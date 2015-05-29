@@ -21,6 +21,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.SearchScope;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -105,25 +106,24 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
         return modifierList != null && modifierList.hasModifier(JetTokens.VARARG_KEYWORD);
     }
 
-    public boolean hasValOrVarNode() {
+    public boolean hasValOrVar() {
         KotlinParameterStub stub = getStub();
         if (stub != null) {
-            return stub.hasValOrVarNode();
+            return stub.hasValOrVar();
         }
-        return getValOrVarNode() != null;
+        return getValOrVarKeyword() != null;
     }
 
     @Nullable
-    public ASTNode getValOrVarNode() {
+    public PsiElement getValOrVarKeyword() {
         KotlinParameterStub stub = getStub();
-        if (stub != null && !stub.hasValOrVarNode()) {
+        if (stub != null && !stub.hasValOrVar()) {
             return null;
         }
-        ASTNode val = getNode().findChildByType(JetTokens.VAL_KEYWORD);
-        if (val != null) return val;
-
-        return getNode().findChildByType(JetTokens.VAR_KEYWORD);
+        return findChildByType(VAL_VAR_TOKEN_SET);
     }
+
+    private static final TokenSet VAL_VAR_TOKEN_SET = TokenSet.create(JetTokens.VAL_KEYWORD, JetTokens.VAR_KEYWORD);
 
     @Override
     public ItemPresentation getPresentation() {

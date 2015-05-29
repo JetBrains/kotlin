@@ -125,7 +125,7 @@ public abstract class DataClassMethodGenerator {
     private List<PropertyDescriptor> getDataProperties() {
         List<PropertyDescriptor> result = Lists.newArrayList();
         for (JetParameter parameter : getPrimaryConstructorParameters()) {
-            if (parameter.hasValOrVarNode()) {
+            if (parameter.hasValOrVar()) {
                 result.add(bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter));
             }
         }

@@ -129,7 +129,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeArgumentsWithoutReceiverAndReturnType
                 = typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size() - 1)
         typeArgumentsWithoutReceiverAndReturnType.forEach { argument ->
-            val parameter = KotlinParameterStubImpl(parameterList, fqName = null, name = null, isMutable = false, hasValOrVarNode = false, hasDefaultValue = false)
+            val parameter = KotlinParameterStubImpl(parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false)
             createTypeReferenceStub(parameter, argument.getType())
         }
 
@@ -150,7 +150,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                     name = name.ref(),
                     fqName = null,
                     hasDefaultValue = false,
-                    hasValOrVarNode = false,
+                    hasValOrVar = false,
                     isMutable = false
             )
             val isVararg = valueParameterProto.hasVarargElementType()

@@ -39,14 +39,14 @@ public class JetParameterElementType extends JetStubElementType<KotlinParameterS
         FqName fqName = psi.getFqName();
         StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
         return new KotlinParameterStubImpl(parentStub, fqNameRef, StringRef.fromString(psi.getName()),
-                                           psi.isMutable(), psi.hasValOrVarNode(), psi.hasDefaultValue());
+                                           psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue());
     }
 
     @Override
     public void serialize(@NotNull KotlinParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isMutable());
-        dataStream.writeBoolean(stub.hasValOrVarNode());
+        dataStream.writeBoolean(stub.hasValOrVar());
         dataStream.writeBoolean(stub.hasDefaultValue());
         FqName name = stub.getFqName();
         dataStream.writeName(name != null ? name.asString() : null);

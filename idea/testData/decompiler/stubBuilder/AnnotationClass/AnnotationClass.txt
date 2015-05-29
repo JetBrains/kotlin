@@ -8,13 +8,13 @@ PsiJetFileStubImpl[package=test.a]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
-        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=i]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
           TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
               REFERENCE_EXPRESSION:[referencedName=Int]
-        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=j]
+        VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=j]
           TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
               USER_TYPE:[isAbsoluteInRootPackage=false]

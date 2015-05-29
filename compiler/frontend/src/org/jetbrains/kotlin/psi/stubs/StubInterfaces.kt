@@ -83,7 +83,7 @@ public trait KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<JetE
 
 public trait KotlinParameterStub : KotlinStubWithFqName<JetParameter> {
     public fun isMutable(): Boolean
-    public fun hasValOrVarNode(): Boolean
+    public fun hasValOrVar(): Boolean
     public fun hasDefaultValue(): Boolean
 }
 

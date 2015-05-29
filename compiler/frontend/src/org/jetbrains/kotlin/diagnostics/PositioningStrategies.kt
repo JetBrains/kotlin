@@ -317,7 +317,7 @@ public object PositioningStrategies {
 
     public val VAL_OR_VAR_NODE: PositioningStrategy<JetProperty> = object : PositioningStrategy<JetProperty>() {
         override fun mark(element: JetProperty): List<TextRange> {
-            return markNode(element.getValOrVarNode())
+            return markElement(element.getValOrVarKeyword())
         }
     }
 

@@ -324,7 +324,7 @@ public open class KotlinIntroduceParameterHandler(
 
 private fun findInternalParameterUsages(targetParent: JetNamedDeclaration): Map<JetParameter, List<PsiReference>> {
     return targetParent.getValueParameters()
-            .filter { !it.hasValOrVarNode() }
+            .filter { !it.hasValOrVar() }
             .map {
                 it to DefaultSearchHelper<JetParameter>()
                         .newRequest(UsagesSearchTarget(element = it))

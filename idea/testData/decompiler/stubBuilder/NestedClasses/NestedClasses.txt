@@ -38,7 +38,7 @@ PsiJetFileStubImpl[package=test]
           FUN:[fqName=test.NestedClasses.Inner.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
             MODIFIER_LIST:[internal final]
             VALUE_PARAMETER_LIST:
-              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     REFERENCE_EXPRESSION:[referencedName=TI]
@@ -58,11 +58,11 @@ PsiJetFileStubImpl[package=test]
               FUN:[fqName=test.NestedClasses.Inner.II.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         REFERENCE_EXPRESSION:[referencedName=TII]
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p2]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -84,7 +84,7 @@ PsiJetFileStubImpl[package=test]
                                     TYPE_REFERENCE:
                                       USER_TYPE:[isAbsoluteInRootPackage=false]
                                         REFERENCE_EXPRESSION:[referencedName=TOuter]
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p3]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p3]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         REFERENCE_EXPRESSION:[referencedName=TOuter]
@@ -111,7 +111,7 @@ PsiJetFileStubImpl[package=test]
           FUN:[fqName=test.NestedClasses.Nested.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
             MODIFIER_LIST:[internal final]
             VALUE_PARAMETER_LIST:
-              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
+              VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     REFERENCE_EXPRESSION:[referencedName=TN]
@@ -134,11 +134,11 @@ PsiJetFileStubImpl[package=test]
               FUN:[fqName=test.NestedClasses.Nested.NI.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         REFERENCE_EXPRESSION:[referencedName=TN]
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p2]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p2]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         REFERENCE_EXPRESSION:[referencedName=TNI]
@@ -165,7 +165,7 @@ PsiJetFileStubImpl[package=test]
               FUN:[fqName=test.NestedClasses.Nested.NN.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=f]
                 MODIFIER_LIST:[internal final]
                 VALUE_PARAMETER_LIST:
-                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVarNode=false, isMutable=false, name=p1]
+                  VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
                     TYPE_REFERENCE:
                       USER_TYPE:[isAbsoluteInRootPackage=false]
                         REFERENCE_EXPRESSION:[referencedName=TNN]

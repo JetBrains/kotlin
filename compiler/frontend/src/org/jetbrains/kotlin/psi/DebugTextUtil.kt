@@ -245,7 +245,7 @@ private object DebugTextBuildingVisitor : JetVisitor<String, Unit>() {
 
     override fun visitParameter(parameter: JetParameter, data: Unit?): String? {
         return buildText {
-            if (parameter.hasValOrVarNode()) {
+            if (parameter.hasValOrVar()) {
                 if (parameter.isMutable()) append("var ") else append("val ")
             }
             val name = parameter.getNameAsName()

@@ -59,7 +59,7 @@ fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean
         is JetProperty ->
             return LightClassUtil.getLightClassPropertyMethods(this).toNameList()
         is JetParameter ->
-            if (hasValOrVarNode()) {
+            if (hasValOrVar()) {
                 return LightClassUtil.getLightClassPropertyMethods(this).toNameList()
             }
     }
@@ -90,7 +90,7 @@ public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
 }
 
 fun JetParameter.dataClassComponentFunctionName(): Name? {
-    if (!hasValOrVarNode()) return null
+    if (!hasValOrVar()) return null
 
     // Forcing full resolve of owner class: otherwise DATA_CLASS_COMPONENT_FUNCTION won't be calculated.
     // This is a hack, but better solution would need refactoring of data class component function resolution: they need to be resolved

@@ -332,7 +332,7 @@ public class DeclarationsChecker {
 
     private void checkValOnAnnotationParameter(JetClass aClass) {
         for (JetParameter parameter : aClass.getPrimaryConstructorParameters()) {
-            if (!parameter.hasValOrVarNode()) {
+            if (!parameter.hasValOrVar()) {
                 trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter));
             }
         }

@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.idea.quickfix;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.lang.ASTNode;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.TokenType;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +34,7 @@ public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParamete
 
     public RemoveValVarFromParameterFix(@NotNull JetParameter element) {
         super(element);
-        ASTNode valOrVarNode = element.getValOrVarNode();
+        PsiElement valOrVarNode = element.getValOrVarKeyword();
         assert valOrVarNode != null : "Val or var node not found for " + PsiUtilPackage.getElementTextWithContext(element);
         varOrVal = valOrVarNode.getText();
     }
@@ -54,12 +53,9 @@ public class RemoveValVarFromParameterFix extends JetIntentionAction<JetParamete
 
     @Override
     protected void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        ASTNode valOrVarNode = element.getValOrVarNode();
-        if (valOrVarNode == null) return;
-
-        ASTNode next = valOrVarNode.getTreeNext();
-        ASTNode firstNodeToKeep = next.getElementType() == TokenType.WHITE_SPACE ? next.getTreeNext() : next;
-        element.getNode().removeRange(valOrVarNode, firstNodeToKeep);
+        PsiElement keyword = element.getValOrVarKeyword();
+        if (keyword == null) return;
+        keyword.delete();
     }
 
 

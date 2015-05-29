@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.psi;
 
-import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.Nullable;
 
 public interface JetVariableDeclaration extends JetCallableDeclaration, JetWithExpressionInitializer {
     boolean isVar();
 
     @Nullable
-    ASTNode getValOrVarNode();
+    PsiElement getValOrVarKeyword();
 }

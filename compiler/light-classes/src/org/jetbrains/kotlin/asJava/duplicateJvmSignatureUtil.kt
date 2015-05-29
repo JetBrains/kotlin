@@ -44,7 +44,7 @@ public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Dia
         if (element is JetPropertyAccessor) {
             parent = parent?.getParent()
         }
-        if (element is JetParameter && element.getValOrVarNode() != null) {
+        if (element is JetParameter && element.hasValOrVar()) {
             // property declared in constructor
             val parentClass = (parent?.getParent()?.getParent() as? JetClass)
             if (parentClass != null) {

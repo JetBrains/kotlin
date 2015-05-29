@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.usages;
 
-import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
@@ -26,11 +25,21 @@ import kotlin.KotlinPackage;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
+import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
+import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -38,16 +47,6 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
-import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.ChangeSignaturePackage;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 
 import java.util.List;
 
@@ -351,22 +350,22 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     private void changeParameter(int parameterIndex, JetParameter parameter, JetParameterInfo parameterInfo) {
-        ASTNode valOrVarAstNode = parameter.getValOrVarNode();
-        PsiElement valOrVarNode = valOrVarAstNode != null ? valOrVarAstNode.getPsi() : null;
+        PsiElement valOrVarKeyword = parameter.getValOrVarKeyword();
         JetValVar valOrVar = parameterInfo.getValOrVar();
 
         JetPsiFactory psiFactory = JetPsiFactory(getProject());
-        if (valOrVarNode != null) {
-            if (valOrVar == JetValVar.None) {
-                valOrVarNode.delete();
+        if (valOrVarKeyword != null) {
+            PsiElement newKeyword = valOrVar.createKeyword(psiFactory);
+            if (newKeyword != null) {
+                valOrVarKeyword.replace(newKeyword);
             }
             else {
-                valOrVarNode.replace(psiFactory.createValOrVarNode(valOrVar.toString()).getPsi());
+                valOrVarKeyword.delete();
             }
         }
         else if (valOrVar != JetValVar.None) {
             PsiElement firstChild = parameter.getFirstChild();
-            parameter.addBefore(psiFactory.createValOrVarNode(valOrVar.toString()).getPsi(), firstChild);
+            parameter.addBefore(valOrVar.createKeyword(psiFactory), firstChild);
             parameter.addBefore(psiFactory.createWhiteSpace(), firstChild);
         }
 

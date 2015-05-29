@@ -756,7 +756,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
         private fun setupValVarTemplate(builder: TemplateBuilder, property: JetProperty) {
             if (!(callableInfo as PropertyInfo).writable) {
-                builder.replaceElement(property.getValOrVarNode().getPsi()!!, ValVarExpression)
+                builder.replaceElement(property.getValOrVarKeyword(), ValVarExpression)
             }
         }
 
