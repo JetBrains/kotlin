@@ -4588,6 +4588,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("StringTemplate.kt")
+        public void testStringTemplate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/StringTemplate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TwoStatements.kt")
         public void testTwoStatements() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/TwoStatements.kt");
