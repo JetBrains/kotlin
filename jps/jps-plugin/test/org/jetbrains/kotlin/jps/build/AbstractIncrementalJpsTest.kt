@@ -219,10 +219,6 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     }
 
     protected fun doTest(testDataPath: String) {
-        if (!IncrementalCompilation.ENABLED) {
-            return
-        }
-
         testDataDir = File(testDataPath)
         workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "jps-build", null)
 

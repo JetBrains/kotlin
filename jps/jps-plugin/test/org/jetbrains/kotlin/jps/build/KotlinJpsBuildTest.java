@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.io.ZipUtil;
 import kotlin.KotlinPackage;
@@ -303,12 +304,16 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
         checkWhen(touch("src/Bar.kt"),
-                  new String[] {"src/Bar.kt", "src/boo.kt", "src/main.kt"},
+                  new String[] {"src/Bar.kt"},
                   new String[] {klass("kotlinProject", "foo.Bar")});
 
         checkWhen(del("src/main.kt"),
                   new String[] {"src/Bar.kt", "src/boo.kt"},
-                  packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
+                  mergeArrays(
+                      packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"),
+                      packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"),
+                      new String[]{ klass("kotlinProject", "foo.Bar") }
+                  ));
         assertFilesExistInOutput(module, "boo/BooPackage.class", "foo/Bar.class");
         assertFilesNotExistInOutput(module, "foo/FooPackage.class");
 
@@ -325,7 +330,7 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
         checkWhen(touch("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
         checkWhen(touch("src/Bar.kt"),
-                  new String[] {"src/Bar.kt", "src/boo.kt", "src/main.kt"},
+                  new String[] {"src/Bar.kt"},
                   new String[] {
                           klass("kotlinProject", "foo.Bar"),
                           klass("kotlinProject", "foo.FooPackage"),
@@ -333,7 +338,12 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         checkWhen(del("src/main.kt"),
                   new String[] {"src/Bar.kt", "src/boo.kt"},
-                  packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"));
+                  mergeArrays(
+                          packageClasses("kotlinProject", "src/main.kt", "foo.FooPackage"),
+                          packageClasses("kotlinProject", "src/Bar.kt", "foo.FooPackage"),
+                          packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"),
+                          new String[] {klass("kotlinProject", "foo.Bar")}
+                  ));
         assertFilesExistInOutput(module, "foo/FooPackage.class", "boo/BooPackage.class", "foo/Bar.class");
 
         checkWhen(touch("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooPackage"));
@@ -616,6 +626,14 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
 
         FqName packagePartFqName = PackagePartClassUtils.getPackagePartFqName(new FqName(packageClassFqName), fakeVirtualFile);
         return klass(moduleName, AsmUtil.internalNameByFqNameWithoutInnerClasses(packagePartFqName));
+    }
+
+    public static String[] mergeArrays(String[]... stringArrays) {
+        Set<String> result = new HashSet<String>();
+        for (String[] array : stringArrays) {
+            result.addAll(Arrays.asList(array));
+        }
+        return ArrayUtil.toStringArray(result);
     }
 
     private enum Operation {
