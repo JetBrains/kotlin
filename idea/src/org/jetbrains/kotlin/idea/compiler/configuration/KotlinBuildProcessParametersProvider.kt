@@ -21,8 +21,8 @@ import com.intellij.compiler.server.BuildProcessParametersProvider
 public class KotlinBuildProcessParametersProvider(private val compilerWorkspaceSettings: KotlinCompilerWorkspaceSettings): BuildProcessParametersProvider() {
     override fun getVMArguments(): MutableList<String> {
         return if (compilerWorkspaceSettings.incrementalCompilationEnabled)
-            arrayListOf("-Dkotlin.incremental.compilation=true")
-        else
             arrayListOf()
+        else
+            arrayListOf("-Dkotlin.incremental.compilation=false")
     }
 }
