@@ -81,6 +81,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.enumEntryNeedSubclass;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
+import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
@@ -225,6 +226,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         AnnotationCodegen.forClass(v.getVisitor(), typeMapper).genAnnotations(descriptor, null);
 
         generateReflectionObjectFieldIfNeeded();
+
+        generateEnumEntries();
     }
 
     @Override
@@ -360,7 +363,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateSyntheticAccessors();
 
-        generateEnumMethodsAndConstInitializers();
+        generateEnumMethods();
 
         generateFunctionsForDataClasses();
 
@@ -764,11 +767,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         return constructor;
     }
 
-    private void generateEnumMethodsAndConstInitializers() {
+    private void generateEnumMethods() {
         if (isEnumClass(descriptor)) {
             generateEnumValuesMethod();
             generateEnumValueOfMethod();
-            initializeEnumConstants();
         }
     }
 
@@ -1615,24 +1617,22 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    @Override
-    protected void generateDeclaration(JetDeclaration declaration) {
-        if (declaration instanceof JetEnumEntry) {
-            String name = declaration.getName();
-            assert name != null : "Enum entry has no name: " + declaration.getText();
-            ClassDescriptor entryDescriptor = bindingContext.get(BindingContext.CLASS, declaration);
-            FieldVisitor fv = v.newField(OtherOrigin(declaration, entryDescriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL,
-                                         name, classAsmType.getDescriptor(), null, null);
-            AnnotationCodegen.forField(fv, typeMapper).genAnnotations(entryDescriptor, null);
-            myEnumConstants.add((JetEnumEntry) declaration);
+    private void generateEnumEntries() {
+        if (descriptor.getKind() != ClassKind.ENUM_CLASS) return;
+
+        List<JetEnumEntry> enumEntries = KotlinPackage.filterIsInstance(element.getDeclarations(), JetEnumEntry.class);
+
+        for (JetEnumEntry enumEntry : enumEntries) {
+            ClassDescriptor descriptor = getNotNull(bindingContext, BindingContext.CLASS, enumEntry);
+            FieldVisitor fv = v.newField(OtherOrigin(enumEntry, descriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL,
+                                         descriptor.getName().asString(), classAsmType.getDescriptor(), null, null);
+            AnnotationCodegen.forField(fv, typeMapper).genAnnotations(descriptor, null);
         }
 
-        super.generateDeclaration(declaration);
+        initializeEnumConstants(enumEntries);
     }
 
-    private final List<JetEnumEntry> myEnumConstants = new ArrayList<JetEnumEntry>();
-
-    private void initializeEnumConstants() {
+    private void initializeEnumConstants(@NotNull List<JetEnumEntry> enumEntries) {
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         ExpressionCodegen codegen = createOrGetClInitCodegen();
@@ -1642,48 +1642,39 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         v.newField(OtherOrigin(myClass), ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, ENUM_VALUES_FIELD_NAME,
                    arrayAsmType.getDescriptor(), null, null);
 
-        iv.iconst(myEnumConstants.size());
+        iv.iconst(enumEntries.size());
         iv.newarray(classAsmType);
 
-        if (!myEnumConstants.isEmpty()) {
+        if (!enumEntries.isEmpty()) {
             iv.dup();
-            for (int ordinal = 0, size = myEnumConstants.size(); ordinal < size; ordinal++) {
-                initializeEnumConstant(codegen, ordinal);
+            for (int ordinal = 0, size = enumEntries.size(); ordinal < size; ordinal++) {
+                initializeEnumConstant(enumEntries, ordinal);
             }
         }
 
         iv.putstatic(classAsmType.getInternalName(), ENUM_VALUES_FIELD_NAME, arrayAsmType.getDescriptor());
     }
 
-    private void initializeEnumConstant(@NotNull ExpressionCodegen codegen, int ordinal) {
+    private void initializeEnumConstant(@NotNull List<JetEnumEntry> enumEntries, int ordinal) {
+        ExpressionCodegen codegen = createOrGetClInitCodegen();
         InstructionAdapter iv = codegen.v;
-        JetEnumEntry enumConstant = myEnumConstants.get(ordinal);
+        JetEnumEntry enumEntry = enumEntries.get(ordinal);
 
         iv.dup();
         iv.iconst(ordinal);
 
-        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, enumConstant);
-        assert classDescriptor != null;
+        ClassDescriptor classDescriptor = getNotNull(bindingContext, BindingContext.CLASS, enumEntry);
         Type implClass = typeMapper.mapClass(classDescriptor);
-
-        List<JetDelegationSpecifier> delegationSpecifiers = enumConstant.getDelegationSpecifiers();
-        if (delegationSpecifiers.size() > 1) {
-            throw new UnsupportedOperationException("multiple delegation specifiers for enum constant not supported");
-        }
 
         iv.anew(implClass);
         iv.dup();
 
-        iv.aconst(enumConstant.getName());
+        iv.aconst(enumEntry.getName());
         iv.iconst(ordinal);
 
-        if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(bindingContext, enumConstant)) {
-            JetDelegationSpecifier specifier = delegationSpecifiers.get(0);
-            if (!(specifier instanceof JetDelegatorToSuperCall)) {
-                throw new UnsupportedOperationException("unsupported type of enum constant initializer: " + specifier);
-            }
-
-            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(specifier, bindingContext);
+        List<JetDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
+        if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(bindingContext, enumEntry)) {
+            ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCallWithAssert(delegationSpecifiers.get(0), bindingContext);
 
             CallableMethod method = typeMapper.mapToCallableMethod((ConstructorDescriptor) resolvedCall.getResultingDescriptor());
 
@@ -1694,7 +1685,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         iv.dup();
-        iv.putstatic(classAsmType.getInternalName(), enumConstant.getName(), classAsmType.getDescriptor());
+        iv.putstatic(classAsmType.getInternalName(), enumEntry.getName(), classAsmType.getDescriptor());
         iv.astore(OBJECT_TYPE);
     }
 
