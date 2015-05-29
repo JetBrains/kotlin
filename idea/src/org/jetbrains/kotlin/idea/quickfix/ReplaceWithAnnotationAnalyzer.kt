@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.ArrayList
 import java.util.LinkedHashSet
 
-//TODO: use ReplaceWith from package kotlin
 data class ReplaceWith(val expression: String, vararg val imports: String)
 
 object ReplaceWithAnnotationAnalyzer {

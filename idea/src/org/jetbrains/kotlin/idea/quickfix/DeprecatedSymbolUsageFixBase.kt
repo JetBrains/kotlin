@@ -109,11 +109,10 @@ public abstract class DeprecatedSymbolUsageFixBase(
         public fun replaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
             val annotationClass = descriptor.builtIns.getDeprecatedAnnotation()
             val annotation = descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
-            //TODO: code duplication
-            val replaceWithValue = annotation.argumentValue("replaceWith"/*TODO*/) as? AnnotationDescriptor ?: return null
-            val pattern = replaceWithValue.argumentValue("expression"/*TODO*/) as? String ?: return null
+            val replaceWithValue = annotation.argumentValue("replaceWith"/*TODO: kotlin.deprecated::replaceWith.name*/) as? AnnotationDescriptor ?: return null
+            val pattern = replaceWithValue.argumentValue("expression"/*TODO: kotlin.ReplaceWith::expression.name*/) as? String ?: return null
             if (pattern.isEmpty()) return null
-            val importValues = replaceWithValue.argumentValue("imports"/*TODO*/) as? List<*> ?: return null
+            val importValues = replaceWithValue.argumentValue("imports"/*TODO: kotlin.ReplaceWith::imports.name*/) as? List<*> ?: return null
             if (importValues.any { it !is StringValue }) return null
             val imports = importValues.map { (it as StringValue).getValue() }
 
@@ -303,8 +302,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 resolvedCall: ResolvedCall<out CallableDescriptor>,
                 bindingContext: BindingContext,
                 project: Project): Argument? {
-            //TODO: named parameters - keep named form if makes sense
-            //TODO: keep functional literal argument form
             val resolvedArgument = resolvedCall.getValueArguments()[parameter]!!
             when (resolvedArgument) {
                 is ExpressionValueArgument -> {
@@ -550,7 +547,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
         }
 
-        //TODO: do this before processing of optional parameters
         private fun restoreFunctionLiteralArguments(expression: JetExpression) {
             val callExpressions = ArrayList<JetCallExpression>()
 
