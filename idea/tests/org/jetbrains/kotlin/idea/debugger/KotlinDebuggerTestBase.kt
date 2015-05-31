@@ -240,9 +240,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     private fun createBreakpoint(fileName: String, lineMarker: String) {
         val project = getProject()!!
-        val sourceFiles = FilenameIndex.getAllFilesByExt(project, "kt").filter {
-            it.getName().contains(fileName) &&
-            it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
+        val sourceFiles = runReadAction {
+            FilenameIndex.getAllFilesByExt(project, "kt").filter {
+                it.getName().contains(fileName) &&
+                it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
+            }
         }
 
         assert(sourceFiles.size() == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
