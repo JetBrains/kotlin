@@ -8,8 +8,6 @@
 /ideaSDK
 /android-studio/sdk
 out
-/pluginPublisher/idea*
-/pluginPublisher/plugin-verifier.jar
 tmp
 workspace.xml
 *.versionsBackup
