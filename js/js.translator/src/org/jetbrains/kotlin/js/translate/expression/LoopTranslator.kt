@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getIteratorFunction
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getNextFunction
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeForExpression
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
-import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopBody
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopParameter
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getLoopRange
 import org.jetbrains.kotlin.js.translate.utils.TemporariesUtils.temporariesInitialization
@@ -127,8 +126,8 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
 
     val parameterName: JsName = declareParameter()
 
-    fun translateBody(itemValue: JsExpression?): JsStatement {
-        val realBody = Translation.translateAsStatementAndMergeInBlockIfNeeded(getLoopBody(expression), context)
+    fun translateBody(itemValue: JsExpression?): JsStatement? {
+        val realBody = expression.getBody()?.let { Translation.translateAsStatementAndMergeInBlockIfNeeded(it, context) }
         if (itemValue == null && multiParameter == null) {
             return realBody
         }
@@ -138,6 +137,9 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
                     newVar(parameterName, itemValue)
                 else
                     MultiDeclarationTranslator.translate(multiParameter, parameterName, itemValue, context)
+
+            if (realBody == null) return JsBlock(currentVarInit)
+
             val block = convertToBlock(realBody)
             block.getStatements().add(0, currentVarInit)
             return block
@@ -230,7 +232,9 @@ public fun translateForExpression(expression: JetForExpression, context: Transla
         }
 
         context.addStatementToCurrentBlock(iteratorVar.assignmentExpression().makeStmt())
-        return JsWhile(hasNextMethodInvocation(), translateBody(nextMethodInvocation()))
+        val nextInvoke = nextMethodInvocation()
+        val body = translateBody(nextInvoke)
+        return JsWhile(hasNextMethodInvocation(), body ?: nextInvoke.makeStmt())
     }
 
     return when {
