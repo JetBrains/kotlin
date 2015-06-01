@@ -32,7 +32,6 @@ public class SDKDownloader {
     private final String systemImages;
     private final String platformToolsZipPath;
     private final String toolsZipPath;
-    private final String antZipPath;
 
     private final PathManager pathManager;
 
@@ -42,7 +41,6 @@ public class SDKDownloader {
         this.systemImages = pathManager.getRootForDownload() + "/system-images.zip";
         this.platformToolsZipPath = pathManager.getRootForDownload() + "/platform-tools.zip";
         this.toolsZipPath = pathManager.getRootForDownload() + "/tools.zip";
-        this.antZipPath = pathManager.getRootForDownload() + "/apache-ant-1.8.0.zip";
     }
 
     public void downloadPlatform() {
@@ -87,16 +85,11 @@ public class SDKDownloader {
         download(downloadURL, toolsZipPath);
     }
 
-    public void downloadAnt() {
-        download("http://archive.apache.org/dist/ant/binaries/apache-ant-1.8.0-bin.zip", antZipPath);
-    }
-
     public void downloadAll() {
         downloadTools();
         downloadAbi();
         downloadPlatform();
         downloadPlatformTools();
-        downloadAnt();
     }
 
 
@@ -105,14 +98,12 @@ public class SDKDownloader {
         unzip(systemImages, pathManager.getAndroidSdkRoot() + "/system-images/android-16/");
         unzip(platformToolsZipPath, pathManager.getAndroidSdkRoot());
         unzip(toolsZipPath, pathManager.getAndroidSdkRoot());
-        unzip(antZipPath, pathManager.getDependenciesRoot());
     }
 
     public void deleteAll() {
         delete(platformZipPath);
         delete(platformToolsZipPath);
         delete(toolsZipPath);
-        delete(antZipPath);
     }
 
     private static void download(String urlString, String output) {

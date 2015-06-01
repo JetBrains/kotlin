@@ -75,7 +75,7 @@ public class PathManager {
     }
 
     public String getAntBinDirectory() {
-        return getDependenciesRoot() + "/apache-ant-1.8.0/bin";
+        return rootFolder + "/dependencies/ant-1.8/bin";
     }
 
     public String getAndroidModuleRoot() {
