@@ -122,6 +122,21 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         }
     }
 
+    @TestMetadata("compiler/testData/compileJavaAgainstKotlin/enum")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Enum extends AbstractCompileJavaAgainstKotlinTest {
+        public void testAllFilesPresentInEnum() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/enum"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("DefaultArgumentInEnumConstructor.kt")
+        public void testDefaultArgumentInEnumConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/enum/DefaultArgumentInEnumConstructor.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/method")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
