@@ -9,6 +9,7 @@ import org.gradle.api.internal.DefaultDomainObjectSet
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.util.PatternFilterable
 import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 class AndroidGradleWrapper {
   static def getRuntimeJars(BasePlugin basePlugin, BaseExtension baseExtension) {
@@ -44,9 +45,15 @@ class AndroidGradleWrapper {
     return variant.getBuildType().getName()
   }
 
-  @NotNull
+  @Nullable
   static def AbstractCompile getJavaCompile(Object baseVariantData) {
-    return baseVariantData.javaCompileTask
+    if (baseVariantData.getMetaClass().getMetaProperty("javaCompileTask")) {
+      return baseVariantData.javaCompileTask
+    }
+    else if (baseVariantData.getMetaClass().getMetaProperty("javaCompilerTask")) {
+      return baseVariantData.javaCompilerTask
+    }
+    return null
   }
 
   @NotNull
