@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -117,7 +116,7 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetMultiDeclarationEntry entry = ChangeFunctionReturnTypeFix.getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
-                BindingContext context = ResolvePackage.analyzeFully(entry.getContainingJetFile());
+                BindingContext context = ResolvePackage.analyze(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
                 JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
@@ -139,17 +138,11 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
 
                 if (diagnostic.getPsiElement() instanceof JetProperty) {
                     JetProperty property = (JetProperty) diagnostic.getPsiElement();
-                    BindingContext context = ResolvePackage.analyzeFully(property.getContainingJetFile());
-                    JetType lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, property);
-
-                    DeclarationDescriptor descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property);
-                    if (!(descriptor instanceof PropertyDescriptor)) {
-                        // Probably can happen in incomplete code.
-                        LOG.error("Property descriptor is expected: " + PsiUtilPackage.getElementTextWithContext(property));
-                        return actions;
-                    }
-
+                    DeclarationDescriptor descriptor = ResolvePackage.resolveToDescriptor(property);
+                    if (!(descriptor instanceof PropertyDescriptor)) return actions;
                     PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
+
+                    JetType lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(propertyDescriptor);
 
                     JetType propertyType = propertyDescriptor.getReturnType();
                     assert propertyType != null : "Property type cannot be null if it mismatch something";

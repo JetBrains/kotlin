@@ -27,7 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
@@ -138,7 +137,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetMultiDeclarationEntry entry = getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
-                BindingContext context = ResolvePackage.analyzeFully((JetFile) entry.getContainingFile().getContainingFile());
+                BindingContext context = ResolvePackage.analyze(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;
                 JetFunction componentFunction = (JetFunction) DescriptorToSourceUtils
@@ -160,7 +159,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetExpression.class);
                 assert expression != null : "HAS_NEXT_FUNCTION_TYPE_MISMATCH reported on element that is not within any expression";
-                BindingContext context = ResolvePackage.analyzeFully(expression.getContainingJetFile());
+                BindingContext context = ResolvePackage.analyze(expression);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL, expression);
                 if (resolvedCall == null) return null;
                 JetFunction hasNextFunction = (JetFunction) DescriptorToSourceUtils
@@ -181,7 +180,7 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
                 assert expression != null : "COMPARE_TO_TYPE_MISMATCH reported on element that is not within any expression";
-                BindingContext context = ResolvePackage.analyzeFully(expression.getContainingJetFile());
+                BindingContext context = ResolvePackage.analyze(expression);
                 ResolvedCall<?> resolvedCall = CallUtilPackage.getResolvedCall(expression, context);
                 if (resolvedCall == null) return null;
                 PsiElement compareTo = DescriptorToSourceUtils.descriptorToDeclaration(resolvedCall.getCandidateDescriptor());
@@ -201,14 +200,13 @@ public class ChangeFunctionReturnTypeFix extends JetIntentionAction<JetFunction>
 
                 JetFunction function = QuickFixUtil.getParentElementOfType(diagnostic, JetFunction.class);
                 if (function != null) {
-                    BindingContext context = ResolvePackage.analyzeFully(function);
-                    JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, function);
+                    FunctionDescriptor descriptor = (FunctionDescriptor)ResolvePackage.resolveToDescriptor(function);
+
+                    JetType matchingReturnType = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(descriptor);
                     if (matchingReturnType != null) {
                         actions.add(new ChangeFunctionReturnTypeFix(function, matchingReturnType));
                     }
 
-                    SimpleFunctionDescriptor descriptor = context.get(BindingContext.FUNCTION, function);
-                    if (descriptor == null) return actions;
                     JetType functionType = descriptor.getReturnType();
                     if (functionType == null) return actions;
 

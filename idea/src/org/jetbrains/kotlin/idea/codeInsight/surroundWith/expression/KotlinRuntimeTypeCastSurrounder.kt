@@ -29,20 +29,16 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.util.ProgressWindowWithNotification
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetCodeFragment
+import org.jetbrains.kotlin.idea.JetBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinRuntimeTypeEvaluator
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.psi.JetParenthesizedExpression
-import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.idea.JetBundle
 
 public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
 
@@ -51,9 +47,7 @@ public class KotlinRuntimeTypeCastSurrounder: KotlinExpressionSurrounder() {
         val file = expression.getContainingFile()
         if (file !is JetCodeFragment) return false
 
-        val context = file.analyzeFully()
-        val type = context.getType(expression)
-        if (type == null) return false
+        val type = expression.analyze(BodyResolveMode.PARTIAL).getType(expression) ?: return false
 
         return TypeUtils.canHaveSubtypes(JetTypeChecker.DEFAULT, type)
     }

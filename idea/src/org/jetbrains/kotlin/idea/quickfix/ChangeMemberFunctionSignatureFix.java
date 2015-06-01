@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
 import org.jetbrains.kotlin.renderer.NameShortness;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil;
 import org.jetbrains.kotlin.resolve.VisibilityUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -118,9 +117,7 @@ public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunc
             return Collections.emptyList();
         }
 
-        BindingContext context = ResolvePackage.analyzeFully(functionElement);
-        FunctionDescriptor functionDescriptor = context.get(BindingContext.FUNCTION, functionElement);
-        if (functionDescriptor == null) return Lists.newArrayList();
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor(functionElement);
         List<FunctionDescriptor> superFunctions = getPossibleSuperFunctionsDescriptors(functionDescriptor);
         final Map<String, FunctionDescriptor> possibleSignatures = Maps.newHashMap();
         for (FunctionDescriptor superFunction : superFunctions) {

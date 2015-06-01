@@ -23,7 +23,8 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.JetClass
@@ -43,9 +44,8 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
     override fun invoke(project: Project, editor: Editor?, file: JetFile?) {
         val newDelegationCall = element.replaceImplicitDelegationCallWithExplicit(isThis)
 
-        val context = element.analyzeFully()
-        val resolvedCall = newDelegationCall.getResolvedCall(context)
-        val descriptor = element.descriptor
+        val resolvedCall = newDelegationCall.getResolvedCall(newDelegationCall.analyze())
+        val descriptor = element.resolveToDescriptor()
 
         // if empty call is ok and it's resolved to another constructor, do not move caret
         if (resolvedCall?.getStatus()?.isSuccess() ?: false && resolvedCall!!.getCandidateDescriptor().getOriginal() != descriptor) return

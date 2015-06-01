@@ -49,7 +49,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends JetIntentionActio
             return false;
         }
 
-        BindingContext context = ResolvePackage.analyzeFully(parameter);
+        BindingContext context = ResolvePackage.analyze(parameter);
         VariableDescriptor parameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, parameter);
         if (parameterDescriptor == null) {
             return false;

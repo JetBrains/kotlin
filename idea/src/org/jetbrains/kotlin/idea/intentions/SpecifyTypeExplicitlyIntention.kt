@@ -63,8 +63,8 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
     }
 
     private fun hasPublicMemberDiagnostic(declaration: JetNamedDeclaration): Boolean {
-        return declaration.getContainingJetFile().analyzeFully().getDiagnostics()
-                .any { Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE == it.getFactory() && declaration == it.getPsiElement() }
+        return declaration.analyze().getDiagnostics().forElement(declaration)
+                .any { it.getFactory() == Errors.PUBLIC_MEMBER_SHOULD_SPECIFY_TYPE }
     }
 
     override fun applyTo(element: JetCallableDeclaration, editor: Editor) {

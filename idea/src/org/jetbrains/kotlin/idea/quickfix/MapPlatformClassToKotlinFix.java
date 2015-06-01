@@ -194,10 +194,7 @@ public class MapPlatformClassToKotlinFix extends JetIntentionAction<JetReference
                 JetReferenceExpression typeExpr = getImportOrUsageFromDiagnostic(diagnostic);
                 if (typeExpr == null) return null;
 
-                PsiFile psiFile = diagnostic.getPsiFile();
-                if (!(psiFile instanceof JetFile)) return null;
-
-                BindingContext context = ResolvePackage.analyzeFully((JetFile) psiFile);
+                BindingContext context = ResolvePackage.analyze(typeExpr);
                 ClassDescriptor platformClass = resolveToClass(typeExpr, context);
                 if (platformClass == null) return null;
 

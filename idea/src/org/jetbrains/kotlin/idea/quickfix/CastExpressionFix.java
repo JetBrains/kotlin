@@ -28,10 +28,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
+import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
@@ -64,8 +63,7 @@ public class CastExpressionFix extends JetIntentionAction<JetExpression> {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         if (!super.isAvailable(project, editor, file)) return false;
-        BindingContext context = ResolvePackage.analyzeFully((JetFile) file);
-        JetType expressionType = context.getType(element);
+        JetType expressionType = ResolvePackage.analyze(element).getType(element);
         return expressionType != null && JetTypeChecker.DEFAULT.isSubtypeOf(type, expressionType);
     }
 
