@@ -151,4 +151,8 @@ public final class NativeInteropTest extends SingleFileTranslationTest {
     public void testTypeof() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testSecondaryConstructor() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
