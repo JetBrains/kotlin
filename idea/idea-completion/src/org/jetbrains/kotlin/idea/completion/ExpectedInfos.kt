@@ -130,7 +130,9 @@ class ExpectedInfos(
 
     public fun calculateForArgument(call: Call, argument: ValueArgument): Collection<ExpectedInfo>? {
         val argumentIndex = call.getValueArguments().indexOf(argument)
-        assert(argumentIndex >= 0)
+        assert(argumentIndex >= 0) {
+            "Could not find argument '$argument' among arguments of call: $call"
+        }
         val argumentName = argument.getArgumentName()?.getReferenceExpression()?.getReferencedName()
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
         val argumentPosition = ArgumentPosition(argumentIndex, argumentName, isFunctionLiteralArgument)
