@@ -10224,6 +10224,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("itselfAsUpperBound.kt")
+            public void testItselfAsUpperBound() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/itselfAsUpperBound.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("itselfAsUpperBoundLocal.kt")
+            public void testItselfAsUpperBoundLocal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/itselfAsUpperBoundLocal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("itselfAsUpperBoundMember.kt")
+            public void testItselfAsUpperBoundMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/itselfAsUpperBoundMember.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("itselfAsUpperBoundNotNull.kt")
+            public void testItselfAsUpperBoundNotNull() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/itselfAsUpperBoundNotNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Jet11.kt")
             public void testJet11() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/Jet11.kt");

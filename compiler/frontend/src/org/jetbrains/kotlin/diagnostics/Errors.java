@@ -249,6 +249,8 @@ public interface Errors {
     DiagnosticFactory0<JetDeclaration> TYPE_PARAMETERS_NOT_ALLOWED
             = DiagnosticFactory0.create(ERROR, TYPE_PARAMETERS_OR_DECLARATION_SIGNATURE);
 
+    DiagnosticFactory0<PsiElement> CYCLIC_GENERIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
+
     // Members
 
     DiagnosticFactory0<JetModifierListOwner> PACKAGE_MEMBER_CANNOT_BE_PROTECTED =

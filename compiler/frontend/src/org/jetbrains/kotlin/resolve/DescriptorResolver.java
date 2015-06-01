@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
@@ -476,6 +477,10 @@ public class DescriptorResolver {
             JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
             if (extendsBound != null) {
                 JetType type = typeResolver.resolveType(scope, extendsBound, trace, false);
+                if (type.getConstructor().equals(typeParameterDescriptor.getTypeConstructor())) {
+                    trace.report(Errors.CYCLIC_GENERIC_UPPER_BOUND.on(extendsBound));
+                    type = ErrorUtils.createErrorType("Cyclic upper bound: " + type);
+                }
                 typeParameterDescriptor.addUpperBound(type);
                 deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type));
             }

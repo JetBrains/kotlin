@@ -1,0 +1,5 @@
+// !DIAGNOSTICS: -MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+class My {
+    fun <T: <!CYCLIC_GENERIC_UPPER_BOUND!>T?<!>> foo() {}
+    val <T: <!CYCLIC_GENERIC_UPPER_BOUND!>T?<!>> prop: T
+}

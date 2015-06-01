@@ -1,0 +1,4 @@
+package
+
+internal val </*0*/ T : [ERROR : Cyclic upper bound: T?]> prop: [ERROR : ?]
+internal fun </*0*/ T : [ERROR : Cyclic upper bound: T]> foo(): kotlin.Unit
