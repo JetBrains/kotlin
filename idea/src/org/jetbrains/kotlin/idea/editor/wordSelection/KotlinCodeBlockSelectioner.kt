@@ -27,6 +27,9 @@ import org.jetbrains.kotlin.lexer.JetTokens
 
 import java.util.ArrayList
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 /**
  * Originally from IDEA platform: CodeBlockOrInitializerSelectioner
@@ -38,9 +41,8 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         val result = ArrayList<TextRange>()
 
-        val node = e.getNode()!!
-        val start = findBlockContentStart(node)
-        val end = findBlockContentEnd(node)
+        val start = findBlockContentStart(e)
+        val end = findBlockContentEnd(e)
         if (end > start) {
             result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
         }
@@ -50,24 +52,24 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
         return result
     }
 
-    private fun findBlockContentStart(blockNode: ASTNode): Int {
-        val node = blockNode.getChildren(null)
-                .stream()
-                .dropWhile { it.getElementType() != JetTokens.LBRACE } // search for '{'
-                .drop(1) // skip it
-                .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
-                .firstOrNull() ?: blockNode
-        return node.getTextRange()!!.getStartOffset()
+    private fun findBlockContentStart(block: PsiElement): Int {
+        val element = block.allChildren
+                              .dropWhile { it.getNode().getElementType() != JetTokens.LBRACE } // search for '{'
+                              .drop(1) // skip it
+                              .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
+                              .firstOrNull() ?: block
+        return element.startOffset
     }
 
-    private fun findBlockContentEnd(blockNode: ASTNode): Int {
-        val node = blockNode.getChildren(null)
+    private fun findBlockContentEnd(block: PsiElement): Int {
+        val element = block.allChildren
+                           .toList()
                            .reverse()
-                           .stream()
-                           .dropWhile { it.getElementType() != JetTokens.RBRACE } // search for '}'
+                           .asSequence()
+                           .dropWhile { it.getNode().getElementType() != JetTokens.RBRACE } // search for '}'
                            .drop(1) // skip it
                            .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
-                           .firstOrNull() ?: blockNode
-        return node.getTextRange()!!.getEndOffset()
+                           .firstOrNull() ?: block
+        return element.endOffset
     }
 }
