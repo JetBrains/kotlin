@@ -18,29 +18,23 @@ package org.jetbrains.kotlin.idea.resolve;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.intellij.ide.startup.impl.StartupManagerImpl;
-import com.intellij.openapi.startup.StartupManager;
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiManagerEx;
-import com.intellij.psi.impl.file.impl.FileManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.psi.PsiReference;
+import com.intellij.psi.ResolveResult;
 import com.intellij.testFramework.LightProjectDescriptor;
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
-import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.test.ReferenceUtils;
 import org.jetbrains.kotlin.test.util.UtilPackage;
 import org.junit.Assert;
 
 import java.util.List;
-import java.util.Set;
 
-public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsightFixtureTestCase {
+public abstract class AbstractReferenceResolveTest extends KotlinLightPlatformCodeInsightFixtureTestCase {
     public static class ExpectedResolveData {
         private final Boolean shouldBeUnresolved;
         private final String referenceToString;
@@ -61,30 +55,6 @@ public abstract class AbstractReferenceResolveTest extends LightPlatformCodeInsi
 
     public static final String MULTIRESOLVE = "MULTIRESOLVE";
     public static final String REF_EMPTY = "REF_EMPTY";
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-        VfsRootAccess.allowRootAccess(JetTestUtils.getHomeDirectory());
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
-
-        Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
-        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
-
-        super.tearDown();
-
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (JetFile source : builtInsSources) {
-            FileViewProvider provider = source.getViewProvider();
-            fileManager.setViewProvider(provider.getVirtualFile(), provider);
-        }
-    }
 
     protected void doTest(@NotNull String path) {
         assert path.endsWith(".kt") : path;

@@ -28,6 +28,7 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.psi.impl.file.impl.FileManager
+import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
@@ -57,16 +58,8 @@ public abstract class JetLightCodeInsightFixtureTestCase : LightCodeInsightFixtu
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory())
 
-        val builtInsSources = getProject().getComponent<BuiltInsReferenceResolver>(javaClass<BuiltInsReferenceResolver>()).getBuiltInsSources()
-        val fileManager = (PsiManager.getInstance(getProject()) as PsiManagerEx).getFileManager()
-
-        super.tearDown()
-
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (source in builtInsSources) {
-            val provider = source.getViewProvider()
-            fileManager.setViewProvider(provider.getVirtualFile(), provider)
+        unInvalidateBuiltins(getProject()) {
+            super.tearDown()
         }
     }
 
