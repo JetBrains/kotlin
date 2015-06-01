@@ -49,6 +49,7 @@ import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.incremental.BuilderRegistry
 import org.jetbrains.jps.api.CanceledStatus
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
+import org.jetbrains.kotlin.jps.build.classFilesComparison.assertEqualDirectories
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     companion object {

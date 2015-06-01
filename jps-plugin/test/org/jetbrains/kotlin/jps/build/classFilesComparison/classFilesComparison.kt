@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.build
+package org.jetbrains.kotlin.jps.build.classFilesComparison
 
 import java.io.File
 import org.junit.Assert.*
