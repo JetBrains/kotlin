@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.jps.build.classFilesComparison.ClassFilesComparisonP
 import java.io.File;
 import java.io.IOException;
 
-public class KAnnotatorJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
+public class KannotatorJpsTest extends AbstractKotlinJpsBuildTestCase {
     private static final String JDK_NAME = "1.6";
 
     @Override
