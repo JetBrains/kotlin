@@ -22,8 +22,10 @@ import org.jetbrains.jps.builders.BuildResult;
 import org.jetbrains.jps.model.module.JpsModule;
 import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.kotlin.jps.build.AbstractKotlinJpsBuildTestCase;
+import org.jetbrains.kotlin.jps.build.classFilesComparison.ClassFilesComparisonPackage;
 
 import java.io.File;
+import java.io.IOException;
 
 public class KAnnotatorJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
     private static final String JDK_NAME = "1.6";
@@ -35,41 +37,50 @@ public class KAnnotatorJpsBuildTestCase extends AbstractKotlinJpsBuildTestCase {
         workDir = copyTestDataToTmpDir(sourceFilesRoot);
     }
 
-    public void testMakeKannotator() {
-        doTest(false);
-    }
-
-    public void testRebuildKannotator() {
-        doTest(true);
-    }
-
-    private void doTest(boolean rebuildBeforeMake) {
+    public void testMakeKannotator() throws IOException {
         initProject();
         rebuildAll();
+        FileUtil.copyDir(getOutDir(), getOutDirAfterRebuild());
         for (JpsModule module : myProject.getModules()) {
             for (JpsModuleSourceRoot sourceRoot : module.getSourceRoots()) {
-                processFile(sourceRoot.getFile(), rebuildBeforeMake);
+                processFile(sourceRoot.getFile());
             }
         }
     }
 
-    private void processFile(File root, boolean rebuildBeforeMake) {
+    @NotNull
+    private File getOutDir() {
+        return new File(workDir, "out");
+    }
+
+    @NotNull
+    private File getOutDirAfterRebuild() {
+        return new File(workDir, "out-after-rebuild");
+    }
+
+    private void processFile(File root) {
         if (root.isDirectory()) {
             File[] files = root.listFiles();
             if (files == null) return;
             for (File file : files) {
-                processFile(file, rebuildBeforeMake);
+                processFile(file);
             }
         }
         else if (root.getName().endsWith(".kt")) {
             System.out.println("Test started. File: " + root.getName());
             String path = root.getAbsolutePath();
-            if (rebuildBeforeMake) {
-                rebuildAll();
-            }
             System.out.println("Change file: " + path);
             change(path);
             makeAll().assertSuccessful();
+            System.out.println("Make successful");
+
+            System.out.println("Checking output directories after make and rebuild");
+
+            ClassFilesComparisonPackage
+                    .assertEqualDirectories(new File(getOutDirAfterRebuild(), "production"), new File(getOutDir(), "production"), false);
+            ClassFilesComparisonPackage
+                    .assertEqualDirectories(new File(getOutDirAfterRebuild(), "test"), new File(getOutDir(), "test"), false);
+
             System.out.println("Test successfully finished. File: " + root.getName());
             System.out.println("-----");
         }
