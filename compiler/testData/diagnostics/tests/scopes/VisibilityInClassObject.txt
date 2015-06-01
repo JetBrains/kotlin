@@ -10,7 +10,7 @@ internal open class A {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         internal final val internal_val: kotlin.Int = 1
         private final val private_val: kotlin.Int = 3

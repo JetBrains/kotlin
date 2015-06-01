@@ -1998,6 +1998,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("companionObjectOfPrivateClassVisibility.kt")
+            public void testCompanionObjectOfPrivateClassVisibility() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/companionObjectOfPrivateClassVisibility.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("importClassInClassObject.kt")
             public void testImportClassInClassObject() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/classObjects/importClassInClassObject.kt");
