@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
@@ -27,28 +26,24 @@ import com.intellij.openapi.editor.markup.MarkupModel
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiAnchor
-import com.intellij.psi.PsiFile
-import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
 import com.intellij.ui.JBColor
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.ui.FormBuilder
-import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar
+import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.util.supertypes
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
+import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.awt.BorderLayout
 import java.awt.Color
 import java.util.ArrayList
-import java.util.Collections
 import javax.swing.JCheckBox
 
 public class KotlinInplaceParameterIntroducer(
@@ -57,17 +52,15 @@ public class KotlinInplaceParameterIntroducer(
         val suggestedNames: Array<out String>,
         project: Project,
         editor: Editor
-): AbstractInplaceIntroducer<JetParameter, JetExpression>(
-        project,
-        editor,
+): AbstractKotlinInplaceIntroducer<JetParameter>(
         originalDescriptor.originalRange.elements.single() as JetExpression,
-        null,
         originalDescriptor.occurrencesToReplace
                 .map { it.elements.single() as JetExpression }
                 .filterNotNull()
                 .toTypedArray(),
         INTRODUCE_PARAMETER,
-        JetFileType.INSTANCE
+        project,
+        editor
 ) {
     companion object {
         private val LOG = Logger.getInstance(javaClass<KotlinInplaceParameterIntroducer>())
@@ -106,7 +99,7 @@ public class KotlinInplaceParameterIntroducer(
     private var replaceAllCheckBox: JCheckBox? = null
 
     init {
-        val panel = with(FormBuilder.createFormBuilder()) {
+        initFormComponents {
             addComponent(getPreviewComponent())
 
             val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
@@ -126,12 +119,7 @@ public class KotlinInplaceParameterIntroducer(
                 addComponent(replaceAllCheckBox)
                 this@KotlinInplaceParameterIntroducer.replaceAllCheckBox = replaceAllCheckBox
             }
-
-            getPanel()
         }
-
-        myWholePanel.setLayout(BorderLayout())
-        myWholePanel.add(panel, BorderLayout.CENTER)
     }
 
     override fun getActionName() = "IntroduceParameter"
@@ -159,24 +147,6 @@ public class KotlinInplaceParameterIntroducer(
         }
     }
 
-    override fun restoreExpression(
-            containingFile: PsiFile,
-            parameter: JetParameter,
-            marker: RangeMarker,
-            exprText: String
-    ): JetExpression? {
-        if (!parameter.isValid()) return null
-
-        val refExpr = containingFile.findElementAt(marker.getStartOffset())?.getNonStrictParentOfType<JetSimpleNameExpression>()
-                      ?: return null
-        val refName = refExpr.getReferencedName()
-        if (refExpr.getReference()?.resolve() == parameter || parameter.getName() == refName || exprText == refName) {
-            return refExpr.replaced(JetPsiFactory(myProject).createExpression(exprText))
-        }
-
-        return null
-    }
-
     override fun isReplaceAllOccurrences() = replaceAllCheckBox?.isSelected() ?: true
 
     override fun setReplaceAllOccurrences(allOccurrences: Boolean) {
@@ -184,8 +154,6 @@ public class KotlinInplaceParameterIntroducer(
     }
 
     override fun getComponent() = myWholePanel
-
-    override fun updateTitle(parameter: JetParameter?) = updateTitle(parameter, null)
 
     override fun updateTitle(addedParameter: JetParameter?, currentName: String?) {
         val templateState = TemplateManagerImpl.getTemplateState(myEditor)
@@ -247,10 +215,6 @@ public class KotlinInplaceParameterIntroducer(
             addedRange?.let { PreviewDecorator.FOR_ADD.applyToRange(it, markupModel) }
         }
         revalidate()
-    }
-
-    override fun saveSettings(variable: JetParameter?) {
-
     }
 
     override fun performIntroduce() {

@@ -73,7 +73,7 @@ import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
 public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
-    private static final String INTRODUCE_VARIABLE = JetRefactoringBundle.message("introduce.variable");
+    public static final String INTRODUCE_VARIABLE = JetRefactoringBundle.message("introduce.variable");
 
     @Override
     public void invoke(@NotNull final Project project, @NotNull final Editor editor, @NotNull PsiFile file, DataContext dataContext) {
@@ -198,9 +198,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         calculateAnchor(commonParent, commonContainer, allReplaces),
                         JetNameValidatorImpl.Target.PROPERTIES
                 );
-                String[] suggestedNames = JetNameSuggester.suggestNames(expression, validator, "value");
-                final LinkedHashSet<String> suggestedNamesSet = new LinkedHashSet<String>();
-                Collections.addAll(suggestedNamesSet, suggestedNames);
+                final String[] suggestedNames = JetNameSuggester.suggestNames(expression, validator, "value");
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
@@ -222,13 +220,18 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                                     PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
                                     PsiDocumentManager.getInstance(project).
                                             doPostponedOperationsAndUnblockDocument(editor.getDocument());
-                                    KotlinInplaceVariableIntroducer<JetProperty> variableIntroducer =
-                                            new KotlinInplaceVariableIntroducer<JetProperty>(property, editor, project, INTRODUCE_VARIABLE,
-                                                                                             references.toArray(new JetExpression[references.size()]),
-                                                                                             reference.get(), finalReplaceOccurrence,
-                                                                                             property, /*todo*/false, /*todo*/false,
-                                                                                             expressionType, finalNoTypeInference);
-                                    variableIntroducer.performInplaceRefactoring(suggestedNamesSet);
+                                    KotlinVariableInplaceIntroducer variableIntroducer =
+                                            new KotlinVariableInplaceIntroducer(property,
+                                                                                reference.get(),
+                                                                                references.toArray(new JetExpression[references.size()]),
+                                                                                suggestedNames,
+                                                                                /*todo*/ false,
+                                                                                /*todo*/ false,
+                                                                                expressionType,
+                                                                                finalNoTypeInference,
+                                                                                project,
+                                                                                editor);
+                                    variableIntroducer.startInplaceIntroduceTemplate();
                                 }
                             }
                             else if (onNonInteractiveFinish != null) {
