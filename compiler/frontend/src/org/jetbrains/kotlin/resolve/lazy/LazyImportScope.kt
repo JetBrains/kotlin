@@ -29,9 +29,6 @@ import org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil
-import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameMultiSelector
-import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.ScopeByNameSelector
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.utils.Printer
 import java.util.HashSet
@@ -146,8 +143,7 @@ class LazyImportResolver(
         val importedReference = importDirective.getImportedReference()
         if (importedReference == null || resolvedTo == null) return
 
-        val aliasName = JetPsiUtil.getAliasName(importDirective)
-        if (aliasName == null) return
+        val aliasName = JetPsiUtil.getAliasName(importDirective) ?: return
 
         if (resolvedTo.size() != 1) return
 
@@ -169,7 +165,7 @@ class LazyImportResolver(
     public fun <D : DeclarationDescriptor> selectSingleFromImports(
             name: Name,
             lookupMode: LookupMode,
-            descriptorSelector: ScopeByNameSelector<D>
+            descriptorSelector: (JetScope, Name) -> D?
     ): D? {
         fun compute(): D? {
             val imports = indexedImports.importsForName(name)
@@ -180,7 +176,7 @@ class LazyImportResolver(
 
             var target: D? = null
             for (directive in imports) {
-                val resolved = descriptorSelector.get(getImportScope(directive, lookupMode), name) ?: continue
+                val resolved = descriptorSelector(getImportScope(directive, lookupMode), name) ?: continue
                 if (target != null && target != resolved) return null // ambiguity
                 target = resolved
             }
@@ -192,7 +188,7 @@ class LazyImportResolver(
     public fun <D : DeclarationDescriptor> collectFromImports(
             name: Name,
             lookupMode: LookupMode,
-            descriptorsSelector: ScopeByNameMultiSelector<D>
+            descriptorsSelector: (JetScope, Name) -> Collection<D>
     ): Collection<D> {
         return resolveSession.getStorageManager().compute {
             val descriptors = HashSet<D>()
@@ -202,7 +198,7 @@ class LazyImportResolver(
                     throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
                 }
 
-                descriptors.addAll(descriptorsSelector.get(getImportScope(directive, lookupMode), name))
+                descriptors.addAll(descriptorsSelector(getImportScope(directive, lookupMode), name))
             }
 
             descriptors
@@ -231,40 +227,36 @@ class LazyImportScope(
         INVISIBLE_CLASSES
     }
 
-    private val classifierDescriptorSelector = object : ScopeByNameSelector<ClassifierDescriptor> {
-        override fun get(scope: JetScope, name: Name): ClassifierDescriptor? {
-            val descriptor = JetScopeSelectorUtil.CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR.get(scope, name)
-            return if (descriptor != null && filter(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
-        }
-
-        private fun filter(descriptor: ClassDescriptor): Boolean {
-            if (filteringKind == FilteringKind.ALL) return true
-            val visibility = descriptor.getVisibility()
-            val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
-            if (!visibility.mustCheckInImports()) return includeVisible
-            return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.packageView) == includeVisible
-        }
+    fun isClassVisible(descriptor: ClassDescriptor): Boolean {
+        if (filteringKind == FilteringKind.ALL) return true
+        val visibility = descriptor.getVisibility()
+        val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
+        if (!visibility.mustCheckInImports()) return includeVisible
+        return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.packageView) == includeVisible
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? {
-        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, classifierDescriptorSelector)
+        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES) { scope, name ->
+            val descriptor = scope.getClassifier(name)
+            if (descriptor != null && isClassVisible(descriptor as ClassDescriptor/*no type parameter can be imported*/)) descriptor else null
+        }
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return null
-        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES, JetScopeSelectorUtil.PACKAGE_SCOPE_SELECTOR)
+        return importResolver.selectSingleFromImports(name, LookupMode.ONLY_CLASSES_AND_PACKAGES) { scope, name -> scope.getPackage(name) }
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_PROPERTIES_SCOPE_SELECTOR)
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getProperties(name) }
     }
 
     override fun getLocalVariable(name: Name) = null
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name, LookupMode.EVERYTHING, JetScopeSelectorUtil.NAMED_FUNCTION_SCOPE_SELECTOR)
+        return importResolver.collectFromImports(name, LookupMode.EVERYTHING) { scope, name -> scope.getFunctions(name) }
     }
 
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = listOf()

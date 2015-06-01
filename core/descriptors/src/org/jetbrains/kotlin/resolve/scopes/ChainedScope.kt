@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
-import org.jetbrains.kotlin.resolve.scopes.JetScopeSelectorUtil.*
 
 public open class ChainedScope(
         private val containingDeclaration: DeclarationDescriptor?/* it's nullable as a hack for TypeUtils.intersect() */,
@@ -30,20 +29,42 @@ public open class ChainedScope(
     private val scopeChain = scopes.clone()
     private var implicitReceiverHierarchy: List<ReceiverParameterDescriptor>? = null
 
+    private inline fun getFirstMatch<T>(callback: (JetScope) -> T): T {
+        // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
+        for (scope in scopeChain) {
+            val result = callback(scope)
+            if (result != null) return result
+        }
+        return null
+    }
+
+    private inline fun getFromAllScopes<T>(callback: (JetScope) -> Collection<T>): Set<T> {
+        if (scopeChain.isEmpty()) return emptySet()
+        var result: MutableSet<T>? = null
+        for (scope in scopeChain) {
+            val fromScope = callback(scope)
+            if (result == null) {
+                result = LinkedHashSet<T>()
+            }
+            result.addAll(fromScope)
+        }
+        return result ?: emptySet()
+    }
+
     override fun getClassifier(name: Name): ClassifierDescriptor?
-            = getFirstMatch(scopeChain, name, CLASSIFIER_DESCRIPTOR_SCOPE_SELECTOR)
+            = getFirstMatch { it.getClassifier(name) }
 
     override fun getPackage(name: Name): PackageViewDescriptor?
-            = getFirstMatch(scopeChain, name, PACKAGE_SCOPE_SELECTOR)
+            = getFirstMatch { it.getPackage(name) }
 
     override fun getProperties(name: Name): Set<VariableDescriptor>
-            = getFromAllScopes(scopeChain, name, NAMED_PROPERTIES_SCOPE_SELECTOR)
+            = getFromAllScopes { it.getProperties(name) }
 
     override fun getLocalVariable(name: Name): VariableDescriptor?
-            = getFirstMatch(scopeChain, name, VARIABLE_DESCRIPTOR_SCOPE_SELECTOR)
+            = getFirstMatch { it.getLocalVariable(name) }
 
     override fun getFunctions(name: Name): Set<FunctionDescriptor>
-            = getFromAllScopes(scopeChain, name, NAMED_FUNCTION_SCOPE_SELECTOR)
+            = getFromAllScopes { it.getFunctions(name) }
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
         if (implicitReceiverHierarchy == null) {
