@@ -169,7 +169,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         var expression = try {
             JetPsiFactory(this).createExpression(text.replace('\n', ' '))
         }
-        catch(e: Exception) { // does not parse in one line
+        catch(e: Throwable) { // does not parse in one line
             return null
         }
         expression = CodeStyleManager.getInstance(getProject()).reformat(expression, true) as JetExpression
