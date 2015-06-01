@@ -52,8 +52,9 @@ class AliasImportsIndexed(allImports: Collection<JetImportDirective>) : IndexedI
         val builder = ImmutableListMultimap.builder<Name, JetImportDirective>()
 
         for (directive in imports) {
-            val path = directive.getImportPath() ?: continue // can be some parse errors
-            builder.put(path.getImportedName()!!, directive)
+            val path = directive.getImportPath() ?: continue // parse error
+            val importedName = path.getImportedName() ?: continue // parse error
+            builder.put(importedName, directive)
         }
 
         builder.build()
