@@ -122,7 +122,7 @@ class ReadWriteTest {
         test fun manualClose() {
             val reader = sample().buffered()
             try {
-                val list = reader.lines().toArrayList()
+                val list = reader.lineSequence().toArrayList()
                 assertEquals(arrayListOf("Hello", "World"), list)
             } finally {
                 reader.close()
@@ -131,19 +131,19 @@ class ReadWriteTest {
 
         test fun boundaryConditions() {
             var reader = StringReader("").buffered()
-            assertEquals(ArrayList<String>(), reader.lines().toArrayList())
+            assertEquals(ArrayList<String>(), reader.lineSequence().toArrayList())
             reader.close()
 
             reader = StringReader(" ").buffered()
-            assertEquals(arrayListOf(" "), reader.lines().toArrayList())
+            assertEquals(arrayListOf(" "), reader.lineSequence().toArrayList())
             reader.close()
 
             reader = StringReader(" \n").buffered()
-            assertEquals(arrayListOf(" "), reader.lines().toArrayList())
+            assertEquals(arrayListOf(" "), reader.lineSequence().toArrayList())
             reader.close()
 
             reader = StringReader(" \n ").buffered()
-            assertEquals(arrayListOf(" ", " "), reader.lines().toArrayList())
+            assertEquals(arrayListOf(" ", " "), reader.lineSequence().toArrayList())
             reader.close()
         }
     }
