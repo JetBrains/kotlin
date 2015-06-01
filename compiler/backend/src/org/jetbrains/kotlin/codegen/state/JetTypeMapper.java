@@ -77,10 +77,10 @@ import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationCons
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class JetTypeMapper {
-    private static final String DEFAULT_CONSTRUCTOR_MARKER_INTERNAL_CLASS_NAME = "kotlin/jvm/internal/DefaultConstructorMarker";
     private final BindingContext bindingContext;
     private final ClassBuilderMode classBuilderMode;
 
@@ -780,7 +780,7 @@ public class JetTypeMapper {
         int maskArgumentsCount = (argumentsCount + Integer.SIZE - 1) / Integer.SIZE;
         String additionalArgs = StringUtil.repeat(Type.INT_TYPE.getDescriptor(), maskArgumentsCount);
         if (isConstructor(method)) {
-            additionalArgs += Type.getObjectType(DEFAULT_CONSTRUCTOR_MARKER_INTERNAL_CLASS_NAME).getDescriptor();
+            additionalArgs += DEFAULT_CONSTRUCTOR_MARKER.getDescriptor();
         }
         String result = descriptor.replace(")", additionalArgs + ")");
         if (dispatchReceiverDescriptor != null && !isConstructor(method)) {
