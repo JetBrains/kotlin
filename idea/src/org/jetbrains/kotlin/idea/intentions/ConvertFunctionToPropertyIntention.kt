@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
@@ -51,7 +52,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.ArrayList
 
-public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(javaClass(), "Convert function to property") {
+public class ConvertFunctionToPropertyIntention : JetSelfTargetingIntention<JetNamedFunction>(javaClass(), "Convert function to property"), LowPriorityAction {
     private var JetNamedFunction.typeFqNameToAdd: String? by UserDataProperty(Key.create("TYPE_FQ_NAME_TO_ADD"))
 
     private inner class Converter(
