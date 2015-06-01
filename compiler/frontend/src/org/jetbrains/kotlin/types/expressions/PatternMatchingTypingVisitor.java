@@ -89,6 +89,11 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             JetTypeInfo typeInfo = facade.safeGetTypeInfo(subjectExpression, context);
             loopBreakContinuePossible = typeInfo.getJumpOutPossible();
             subjectType = typeInfo.getType();
+            assert subjectType != null;
+            if (TypeUtils.isNullableType(subjectType) && !WhenChecker.containsNullCase(expression, context.trace)) {
+                ExpressionTypingContext subjectContext = context.replaceExpectedType(TypeUtils.makeNotNullable(subjectType));
+                DataFlowUtils.checkPossibleCast(subjectType, JetPsiUtil.safeDeparenthesize(subjectExpression, false), subjectContext);
+            }
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
         DataFlowValue subjectDataFlowValue = subjectExpression != null
@@ -138,8 +143,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
         return TypeInfoFactoryPackage.createTypeInfo(expressionTypes.isEmpty() ? null : DataFlowUtils.checkType(
                                                              DataFlowUtils.checkImplicitCast(
-                                                                    CommonSupertypes.commonSupertype(expressionTypes), expression,
-                                                                    contextWithExpectedType, isStatement),
+                                                                     CommonSupertypes.commonSupertype(expressionTypes), expression,
+                                                                     contextWithExpectedType, isStatement),
                                                              expression, contextWithExpectedType),
                                                      commonDataFlowInfo,
                                                      loopBreakContinuePossible,

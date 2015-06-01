@@ -13668,6 +13668,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExhaustiveWithNullabilityCheck.kt")
+            public void testExhaustiveWithNullabilityCheck() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheck.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveWithNullabilityCheckBefore.kt")
+            public void testExhaustiveWithNullabilityCheckBefore() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBefore.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveWithNullabilityCheckBoolean.kt")
+            public void testExhaustiveWithNullabilityCheckBoolean() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckBoolean.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveWithNullabilityCheckElse.kt")
+            public void testExhaustiveWithNullabilityCheckElse() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheckElse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt4434.kt")
             public void testKt4434() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/kt4434.kt");
@@ -13749,6 +13773,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("NonExhaustiveWarningNull.kt")
             public void testNonExhaustiveWarningNull() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveWarningNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NonExhaustiveWithNullabilityCheck.kt")
+            public void testNonExhaustiveWithNullabilityCheck() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/NonExhaustiveWithNullabilityCheck.kt");
                 doTest(fileName);
             }
 

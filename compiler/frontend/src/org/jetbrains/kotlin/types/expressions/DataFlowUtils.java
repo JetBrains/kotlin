@@ -191,6 +191,20 @@ public class DataFlowUtils {
             return expressionType;
         }
 
+        JetType possibleType = checkPossibleCast(expressionType, expression, c);
+        if (possibleType != null) return possibleType;
+
+        c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
+        if (hasError != null) hasError.set(true);
+        return expressionType;
+    }
+
+    @Nullable
+    public static JetType checkPossibleCast(
+            @NotNull JetType expressionType,
+            @NotNull JetExpression expression,
+            @NotNull ResolutionContext c
+    ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
         for (JetType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
@@ -199,9 +213,8 @@ public class DataFlowUtils {
                 return possibleType;
             }
         }
-        c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
-        if (hasError != null) hasError.set(true);
-        return expressionType;
+
+        return null;
     }
 
     public static void recordExpectedType(@NotNull BindingTrace trace, @NotNull JetExpression expression, @NotNull JetType expectedType) {

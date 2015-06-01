@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
@@ -96,6 +98,27 @@ public final class WhenChecker {
         return notEmpty;
     }
 
+    /**
+     * It's assumed that function is called for a final type. In this case the only possible smart cast is to not nullable type.
+     * @return true if type is nullable, and cannot be smart casted
+     */
+    private static boolean isNullableTypeWithoutPossibleSmartCast(
+            @Nullable JetExpression expression,
+            @NotNull JetType type,
+            @NotNull BindingContext context
+    ) {
+        if (expression == null) return false; // Normally should not happen
+        if (!TypeUtils.isNullableType(type)) return false;
+        // We cannot read data flow information here due to lack of inputs (module descriptor is necessary)
+        if (context.get(BindingContext.SMARTCAST, expression) != null) {
+            // We have smart cast from enum or boolean to something
+            // Not very nice but we *can* decide it was smart cast to not-null
+            // because both enum and boolean are final
+            return false;
+        }
+        return true;
+    }
+
     public static boolean isWhenExhaustive(@NotNull JetWhenExpression expression, @NotNull BindingTrace trace) {
         JetType type = whenSubjectType(expression, trace.getBindingContext());
         if (type == null) return false;
@@ -115,10 +138,11 @@ public final class WhenChecker {
             exhaustive = isWhenOnEnumExhaustive(expression, trace, enumClassDescriptor);
         }
         if (exhaustive) {
-            if (!TypeUtils.isNullableType(type)
+            if (// Flexible (nullable) enum types are also counted as exhaustive
+                (enumClassDescriptor != null && isFlexible(type))
                 || containsNullCase(expression, trace)
-                // Flexible (nullable) enum types are also counted as exhaustive
-                || (enumClassDescriptor != null && isFlexible(type))) {
+                || !isNullableTypeWithoutPossibleSmartCast(expression.getSubjectExpression(), type, trace.getBindingContext())) {
+
                 trace.record(BindingContext.EXHAUSTIVE_WHEN, expression);
                 return true;
             }

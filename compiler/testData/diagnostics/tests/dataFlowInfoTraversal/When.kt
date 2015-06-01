@@ -4,7 +4,7 @@ fun foo() {
     val x: Int? = null
 
     if (x != null) {
-        when (x) {
+        when (<!DEBUG_INFO_SMARTCAST!>x<!>) {
             0 -> bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
             else -> {}
         }
