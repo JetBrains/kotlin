@@ -370,6 +370,10 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             logger.kotlinDebug("Process variant [$variantDataName]")
 
             val javaTask = AndroidGradleWrapper.getJavaCompile(variantData)
+            if (javaTask == null) {
+                logger.info("KOTLIN: javaTask is missing for $variantDataName, so Kotlin files won't be compiled for it")
+                continue
+            }
 
             val kotlinTaskName = "compile${variantDataName.capitalize()}Kotlin"
             val kotlinTask = tasksProvider.createKotlinJVMTask(project, kotlinTaskName)
