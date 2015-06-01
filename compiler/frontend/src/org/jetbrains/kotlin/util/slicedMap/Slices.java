@@ -47,17 +47,6 @@ public class Slices {
     private Slices() {
     }
 
-    public interface KeyNormalizer<K> {
-        KeyNormalizer DO_NOTHING = new KeyNormalizer<Object>() {
-            @Override
-            public Object normalize(Object key) {
-                return key;
-            }
-        };
-
-        K normalize(K key);
-    }
-
     public static <K, V> SliceBuilder<K, V> sliceBuilder() {
         return new SliceBuilder<K, V>(ONLY_REWRITE_TO_EQUAL);
     }
@@ -86,7 +75,6 @@ public class Slices {
         private V defaultValue = null;
         private List<ReadOnlySlice<K, V>> furtherLookupSlices = null;
         private WritableSlice<? super V, ? super K> opposite = null;
-        private KeyNormalizer<K> keyNormalizer = null;
 
         private final RewritePolicy rewritePolicy;
 
@@ -116,11 +104,6 @@ public class Slices {
             return this;
         }
 
-        public SliceBuilder<K, V> setKeyNormalizer(KeyNormalizer<K> keyNormalizer) {
-            this.keyNormalizer = keyNormalizer;
-            return this;
-        }
-
         public RemovableSlice<K, V>  build() {
             SliceWithOpposite<K, V> result = doBuild();
             if (debugName != null) {
@@ -131,7 +114,7 @@ public class Slices {
 
         private SliceWithOpposite<K, V> doBuild() {
             if (defaultValue != null) {
-                return new SliceWithOpposite<K, V>(rewritePolicy, opposite, keyNormalizer) {
+                return new SliceWithOpposite<K, V>(rewritePolicy, opposite) {
                     @Override
                     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) return defaultValue;
@@ -140,7 +123,7 @@ public class Slices {
                 };
             }
             if (furtherLookupSlices != null) {
-                return new SliceWithOpposite<K, V>(rewritePolicy, opposite, keyNormalizer) {
+                return new SliceWithOpposite<K, V>(rewritePolicy, opposite) {
                     @Override
                     public V computeValue(SlicedMap map, K key, V value, boolean valueNotFound) {
                         if (valueNotFound) {
@@ -156,7 +139,7 @@ public class Slices {
                     }
                 };
             }
-            return new SliceWithOpposite<K, V>(rewritePolicy, opposite, keyNormalizer);
+            return new SliceWithOpposite<K, V>(rewritePolicy, opposite);
         }
     }
 
@@ -172,12 +155,10 @@ public class Slices {
 
     public static class SliceWithOpposite<K, V> extends BasicRemovableSlice<K, V> {
         private final WritableSlice<? super V, ? super K> opposite;
-        private final KeyNormalizer<K> keyNormalizer;
 
-        public SliceWithOpposite(RewritePolicy rewritePolicy, WritableSlice<? super V, ? super K> opposite, KeyNormalizer<K> keyNormalizer) {
+        public SliceWithOpposite(RewritePolicy rewritePolicy, WritableSlice<? super V, ? super K> opposite) {
             super(rewritePolicy);
             this.opposite = opposite;
-            this.keyNormalizer = keyNormalizer;
         }
 
         @Override
