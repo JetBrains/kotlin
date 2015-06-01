@@ -37,15 +37,7 @@ public open class ChangeVisibilityModifierIntention protected constructor(
         val modifierList = element.getModifierList()
         if (modifierList?.hasModifier(modifier) ?: false) return null
 
-//        val descriptor = element.resolveToDescriptor() as? DeclarationDescriptorWithVisibility ?: return null
-        val bindingContext = element.analyze()
-        var descriptor = (if (element is JetPrimaryConstructor) //TODO: temporary code
-            (element.getContainingClassOrObject().resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor()
-        else
-            bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element]) as? DeclarationDescriptorWithVisibility ?: return null
-        if (descriptor is ValueParameterDescriptor) {
-            descriptor = bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor] ?: return null
-        }
+        var descriptor = element.toDescriptor() as? DeclarationDescriptorWithVisibility ?: return null
         val targetVisibility = modifier.toVisibility()
         if (descriptor.getVisibility() == targetVisibility) return null
 
@@ -74,6 +66,20 @@ public open class ChangeVisibilityModifierIntention protected constructor(
             TextRange(modifierList.startOffset, defaultRange.getEndOffset()) //TODO: smaller range? now it includes annotations too
         else
             defaultRange
+    }
+
+    private fun JetDeclaration.toDescriptor(): DeclarationDescriptor? {
+        val bindingContext = analyze()
+        // TODO: temporary code
+        if (this is JetPrimaryConstructor) {
+            return (this.getContainingClassOrObject().resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor()
+        }
+
+        val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
+        if (descriptor is ValueParameterDescriptor) {
+            return bindingContext[BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor]
+        }
+        return descriptor
     }
 
     override fun applyTo(element: JetDeclaration, editor: Editor) {
