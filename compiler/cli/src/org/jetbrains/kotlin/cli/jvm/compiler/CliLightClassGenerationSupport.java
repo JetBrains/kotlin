@@ -254,11 +254,10 @@ public class CliLightClassGenerationSupport extends LightClassGenerationSupport 
                         JetDeclaration jetDeclaration = (JetDeclaration) key;
                         if (!JetPsiUtil.isLocal(jetDeclaration)) {
                             kotlinCodeAnalyzer.resolveToDescriptor(jetDeclaration);
+                            return super.get(slice, key);
                         }
                     }
                 }
-
-                return super.get(slice, key);
             }
 
             return value;
