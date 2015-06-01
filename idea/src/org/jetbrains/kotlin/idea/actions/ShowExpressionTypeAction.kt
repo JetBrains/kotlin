@@ -23,48 +23,59 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.JetLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.conversion.copy.end
-import org.jetbrains.kotlin.idea.conversion.copy.start
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.JetType
 
 public class ShowExpressionTypeAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
         val editor = e.getData<Editor>(CommonDataKeys.EDITOR)!!
         val psiFile = e.getData<PsiFile>(CommonDataKeys.PSI_FILE)!!
 
-        var expression: JetExpression?
-        var bindingContext: BindingContext
-        if (editor.getSelectionModel().hasSelection()) {
+        val type = if (editor.getSelectionModel().hasSelection()) {
             val startOffset = editor.getSelectionModel().getSelectionStart()
             val endOffset = editor.getSelectionModel().getSelectionEnd()
-            expression = CodeInsightUtilCore.findElementInRange<JetExpression>(psiFile, startOffset, endOffset, javaClass<JetExpression>(), JetLanguage.INSTANCE)
-            bindingContext = expression.analyze()
+            val expression = CodeInsightUtilCore.findElementInRange<JetExpression>(psiFile, startOffset, endOffset, javaClass<JetExpression>(), JetLanguage.INSTANCE) ?: return
+            typeByExpression(expression)
         }
         else {
             val offset = editor.getCaretModel().getOffset()
-            expression = psiFile.findElementAt(offset)?.getParentOfType<JetExpression>(true) ?: return
-            bindingContext = expression.analyze()
-            while (bindingContext.getType(expression!!) == null) {
-                expression = expression.getParentOfType<JetExpression>(true) ?: return
-                bindingContext = expression.analyze()
-            }
+            val token = psiFile.findElementAt(offset) ?: return
+            val pair = token.parents
+                               .filterIsInstance<JetExpression>()
+                               .map { it to typeByExpression(it) }
+                               .firstOrNull { it.second != null } ?: return
+            val (expression, type) = pair
             editor.getSelectionModel().setSelection(expression.startOffset, expression.endOffset)
+            type
         }
 
-        if (expression != null) {
-            val type = bindingContext.getType(expression)
-            if (type != null) {
-                HintManager.getInstance().showInformationHint(editor, "<html>" + DescriptorRenderer.HTML.renderType(type) + "</html>")
+        if (type != null) {
+            HintManager.getInstance().showInformationHint(editor, "<html>" + DescriptorRenderer.HTML.renderType(type) + "</html>")
+        }
+    }
+
+    private fun typeByExpression(expression: JetExpression): JetType? {
+        val bindingContext = expression.analyze()
+
+        if (expression is JetCallableDeclaration) {
+            val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, expression] as? CallableDescriptor
+            if (descriptor != null) {
+                return descriptor.getReturnType()
             }
         }
+
+        return bindingContext.getType(expression)
     }
 
     override fun update(e: AnActionEvent) {
