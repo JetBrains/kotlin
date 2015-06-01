@@ -487,6 +487,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("NonTypeBeforeDotInBaseClass.kt")
+        public void testNonTypeBeforeDotInBaseClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/NonTypeBeforeDotInBaseClass.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("NotIsAndNotIn.kt")
         public void testNotIsAndNotIn() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/NotIsAndNotIn.kt");

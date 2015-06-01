@@ -1844,6 +1844,7 @@ public class JetParsing extends AbstractJetParsing {
 
         IElementType lookahead = lookahead(1);
         IElementType lookahead2 = lookahead(2);
+        boolean typeBeforeDot = true;
         if (at(IDENTIFIER) && !(lookahead == DOT && lookahead2 == IDENTIFIER) && lookahead != LT && at(DYNAMIC_KEYWORD)) {
             PsiBuilder.Marker dynamicType = mark();
             advance(); // DYNAMIC_KEYWORD
@@ -1892,12 +1893,14 @@ public class JetParsing extends AbstractJetParsing {
         else {
             errorWithRecovery("Type expected",
                     TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
-                                   TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON), extraRecoverySet));
+                                   TokenSet.create(EQ, COMMA, GT, RBRACKET, DOT, RPAR, RBRACE, LBRACE, SEMICOLON),
+                                   extraRecoverySet));
+            typeBeforeDot = false;
         }
 
         typeRefMarker = parseNullableTypeSuffix(typeRefMarker);
 
-        if (at(DOT)) {
+        if (typeBeforeDot && at(DOT)) {
             // This is a receiver for a function type
             //  A.(B) -> C
             //   ^

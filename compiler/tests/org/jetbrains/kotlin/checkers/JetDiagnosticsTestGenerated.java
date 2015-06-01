@@ -10212,6 +10212,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ea65509.kt")
+            public void testEa65509() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ea65509.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ea66984.kt")
             public void testEa66984() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ea66984.kt");
