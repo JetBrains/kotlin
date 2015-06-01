@@ -273,6 +273,14 @@ class CollectionTest {
         assertEquals(listOf("bar", "abc"), coll.dropWhile { it.startsWith("f") })
     }
 
+    test fun dropLastWhile() {
+        val coll = listOf("Foo", "bare", "abc" )
+        assertEquals(coll, coll.dropLastWhile { false })
+        assertEquals(listOf<String>(), coll.dropLastWhile { true })
+        assertEquals(listOf("Foo", "bare"), coll.dropLastWhile { it.length() < 4 })
+        assertEquals(listOf("Foo"), coll.dropLastWhile { it.all { it in 'a'..'z' } })
+    }
+
     test fun take() {
         val coll = listOf("foo", "bar", "abc")
         assertEquals(listOf("foo"), coll.take(1))

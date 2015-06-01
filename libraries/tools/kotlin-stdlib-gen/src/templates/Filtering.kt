@@ -170,11 +170,7 @@ fun filtering(): List<GenericFunction> {
         returns(Strings) { "String" }
         body(Strings) {
             """
-            for (index in 0..length - 1)
-                if (!predicate(get(index))) {
-                    return substring(index)
-                }
-            return ""
+            return trimStart(predicate)
             """
         }
 
@@ -224,6 +220,32 @@ fun filtering(): List<GenericFunction> {
         body(Sequences) {
             """
             return TakeWhileSequence(this, predicate)
+            """
+        }
+    }
+
+    templates add f("dropLastWhile(predicate: (T) -> Boolean)") {
+        inline(true)
+        only(Lists, ArraysOfObjects, ArraysOfPrimitives, Strings)
+        doc { "Returns a list containing all elements except last elements that satisfy the given [predicate]." }
+        returns("List<T>")
+
+        body {
+            """
+            for (index in lastIndex downTo 0) {
+                if (!predicate(this[index])) {
+                    return take(index + 1)
+                }
+            }
+            return emptyList()
+            """
+        }
+
+        doc(Strings) { "Returns a string containing all characters except last characters that satisfy the given [predicate]." }
+        returns("String", Strings)
+        body(Strings) {
+            """
+            return trimEnd(predicate)
             """
         }
     }
