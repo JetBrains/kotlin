@@ -59,6 +59,8 @@ public class AsmTypes {
     public static final String REF_TYPE_PREFIX = "kotlin/jvm/internal/Ref$";
     public static final Type OBJECT_REF_TYPE = Type.getObjectType(REF_TYPE_PREFIX + "ObjectRef");
 
+    public static final Type DEFAULT_CONSTRUCTOR_MARKER = Type.getObjectType("kotlin/jvm/internal/DefaultConstructorMarker");
+
     @NotNull
     private static Type reflect(@NotNull String className) {
         return Type.getObjectType("kotlin/reflect/" + className);
