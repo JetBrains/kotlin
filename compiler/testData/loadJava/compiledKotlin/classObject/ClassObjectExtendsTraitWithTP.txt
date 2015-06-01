@@ -6,7 +6,7 @@ internal interface Bbb</*0*/ P> {
 internal final class ClassObjectExtendsTraitWithTP {
     /*primary*/ public constructor ClassObjectExtendsTraitWithTP()
 
-    internal companion object Companion : test.Bbb<kotlin.String> {
+    public companion object Companion : test.Bbb<kotlin.String> {
         /*primary*/ private constructor Companion()
     }
 }

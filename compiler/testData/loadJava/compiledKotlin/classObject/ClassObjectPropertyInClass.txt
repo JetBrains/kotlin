@@ -5,7 +5,7 @@ internal final class A {
     internal final val other: kotlin.Int = 1
         internal final fun <get-other>(): kotlin.Int
 
-    internal companion object Companion {
+    public companion object Companion {
         /*primary*/ private constructor Companion()
         internal final val some: kotlin.Int = 1
             internal final fun <get-some>(): kotlin.Int

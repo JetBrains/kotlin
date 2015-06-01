@@ -58,7 +58,7 @@ public interface TwoUpperBounds<T> where T : Number, T : Any
 //public constructor InternalClass() defined in rendererTest.InternalClass
 //internal interface TheTrait defined in rendererTest
 //internal abstract fun abstractFun(): kotlin.Unit defined in rendererTest.TheTrait
-//internal companion object : rendererTest.TheClass<kotlin.Int, kotlin.Int> defined in rendererTest.TheTrait
+//public companion object : rendererTest.TheClass<kotlin.Int, kotlin.Int> defined in rendererTest.TheTrait
 //private constructor Companion() defined in rendererTest.TheTrait.Companion
 //internal final fun classObjectFunction(): kotlin.Int defined in rendererTest.TheTrait.Companion
 //public final class WithReified<reified A, reified out B> defined in rendererTest

@@ -23,7 +23,7 @@ internal final class A {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         internal final val C: kotlin.Int = 3
         internal final val prop: kotlin.Int = 2

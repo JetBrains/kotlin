@@ -3,7 +3,7 @@ package test
 kotlin.deprecated(value = "Class": kotlin.String) internal final class Class {
     /*primary*/ public constructor Class()
 
-    kotlin.deprecated(value = "companion object": kotlin.String) internal companion object Companion {
+    kotlin.deprecated(value = "companion object": kotlin.String) public companion object Companion {
         /*primary*/ private constructor Companion()
     }
 

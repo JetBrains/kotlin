@@ -27,7 +27,7 @@ internal final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    internal companion object Companion : A {
+    public companion object Companion : A {
         private constructor Companion()
         kotlin.platform.platformStatic() internal open override /*1*/ fun a(): kotlin.Unit
         kotlin.platform.platformStatic() internal open override /*1*/ fun b(): kotlin.Unit

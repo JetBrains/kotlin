@@ -4,7 +4,7 @@
 package test
 
 internal final class ClassWithClassObject public constructor() {
-    internal companion object {
+    public companion object {
         internal final val a: test.A /* compiled code */
 
         public final var b: test.B /* compiled code */

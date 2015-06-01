@@ -3,7 +3,7 @@ package test
 internal final class ClassA {
     public constructor ClassA()
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         internal final val stat: kotlin.Int
 
