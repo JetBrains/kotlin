@@ -6059,6 +6059,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nonCommutativeRepeat.kt")
+        public void testNonCommutativeRepeat() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/nonCommutativeRepeat.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nonRepeatingAssignment.kt")
         public void testNonRepeatingAssignment() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/replaceWithOperatorAssignment/nonRepeatingAssignment.kt");

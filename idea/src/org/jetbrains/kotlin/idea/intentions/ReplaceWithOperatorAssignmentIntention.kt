@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -49,17 +50,20 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
         val operationToken = expression.getOperationToken()
         setText("Replace with ${expression.getOperationReference().getText()}= expression")
 
+        val expressionLeft = expression.getLeft()
+        val expressionRight = expression.getRight()
         return when {
-            variableExpression.matches(expression.getLeft()) -> {
-                operationToken == JetTokens.PLUS || operationToken == JetTokens.MINUS || operationToken == JetTokens.MUL || operationToken == JetTokens.DIV || operationToken == JetTokens.PERC
+            variableExpression.matches(expressionLeft) -> {
+                isArithmeticOperation(operationToken)
             }
 
-            variableExpression.matches(expression.getRight()) -> {
-                isPrimitiveOperation && (operationToken == JetTokens.PLUS || operationToken == JetTokens.MUL)
+            variableExpression.matches(expressionRight) -> {
+                isPrimitiveOperation && isCommutative(operationToken)
             }
 
-            expression.getLeft() is JetBinaryExpression -> {
-                isPrimitiveOperation && checkExpressionRepeat(variableExpression, expression.getLeft() as JetBinaryExpression)
+            expressionLeft is JetBinaryExpression -> {
+                val sameCommutativeOperation = expressionLeft.getOperationToken() == operationToken && isCommutative(operationToken)
+                isPrimitiveOperation && sameCommutativeOperation && checkExpressionRepeat(variableExpression, expressionLeft)
             }
 
             else -> {
@@ -67,6 +71,13 @@ public class ReplaceWithOperatorAssignmentIntention : JetSelfTargetingOffsetInde
             }
         }
     }
+
+    private fun isCommutative(operationToken: IElementType) = operationToken == JetTokens.PLUS || operationToken == JetTokens.MUL
+    private fun isArithmeticOperation(operationToken: IElementType) = operationToken == JetTokens.PLUS ||
+                                                                       operationToken == JetTokens.MINUS ||
+                                                                       operationToken == JetTokens.MUL ||
+                                                                       operationToken == JetTokens.DIV ||
+                                                                       operationToken == JetTokens.PERC
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
         val replacement = buildOperatorAssignmentText(
