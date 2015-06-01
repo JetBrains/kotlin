@@ -24,4 +24,14 @@ public abstract class FunctionReference
                    KMemberFunction,
                    KTopLevelExtensionFunction,
                    KLocalFunction {
+    private final int arity;
+
+    public FunctionReference(int arity) {
+        this.arity = arity;
+    }
+
+    @Override
+    public int getArity() {
+        return arity;
+    }
 }
