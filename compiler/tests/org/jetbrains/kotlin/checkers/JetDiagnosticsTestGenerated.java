@@ -2844,6 +2844,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("repeatedProperties.kt")
+            public void testRepeatedProperties() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/repeatedProperties.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("secondParamIsVal.kt")
             public void testSecondParamIsVal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/secondParamIsVal.kt");

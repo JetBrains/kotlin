@@ -1,0 +1,41 @@
+package 
+
+kotlin.data() internal final class A1 {
+    public constructor A1(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String, /*2*/ x: kotlin.Int)
+    internal final val x: kotlin.Int
+    internal final val x: kotlin.Int
+    internal final val y: kotlin.String
+    internal final val z: kotlin.String = ""
+    internal final /*synthesized*/ fun component1(): kotlin.Int
+    internal final /*synthesized*/ fun component2(): kotlin.String
+    internal final /*synthesized*/ fun component3(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ..., /*2*/ x: kotlin.Int = ...): A1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.data() internal final class A2 {
+    public constructor A2(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)
+    internal final val x: kotlin.Int
+    internal final val x: kotlin.String = ""
+    internal final val y: kotlin.String
+    internal final /*synthesized*/ fun component1(): kotlin.String
+    internal final /*synthesized*/ fun component2(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...): A2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+kotlin.data() internal final class A3 {
+    public constructor A3(/*0*/ <no name provided>: kotlin.Int, /*1*/ <no name provided>: kotlin.Int)
+    internal final val <no name provided>: kotlin.Int
+    internal final val <no name provided>: kotlin.Int
+    internal final /*synthesized*/ fun component1(): kotlin.Int
+    internal final /*synthesized*/ fun component2(): kotlin.Int
+    public final /*synthesized*/ fun copy(/*0*/ <no name provided>: kotlin.Int = ..., /*1*/ <no name provided>: kotlin.Int = ...): A3
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
