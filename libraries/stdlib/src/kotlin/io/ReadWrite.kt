@@ -235,7 +235,7 @@ public fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { it.for
  * @return the value returned by [block].
  */
 public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
-        buffered().use { block(it.lines()) }
+        buffered().use { block(it.lineSequence()) }
 
 /**
  * Returns a sequence of corresponding file lines.
@@ -248,10 +248,13 @@ public inline fun <T> Reader.useLines(block: (Sequence<String>) -> T): T =
  *
  * @return a sequence of corresponding file lines. The sequence returned can be iterated only once.
  */
-public fun BufferedReader.lines(): Sequence<String> = LinesSequence(this).constrainOnce()
+public fun BufferedReader.lineSequence(): Sequence<String> = LinesSequence(this).constrainOnce()
 
-deprecated("Use lines() function which returns Sequence<String>")
-public fun BufferedReader.lineIterator(): Iterator<String> = lines().iterator()
+deprecated("Use lineSequence() instead to avoid conflict with JDK8 lines() method.", ReplaceWith("lineSequence()"))
+public fun BufferedReader.lines(): Sequence<String> = lineSequence()
+
+deprecated("Use lineSequence() function which returns Sequence<String>")
+public fun BufferedReader.lineIterator(): Iterator<String> = lineSequence().iterator()
 
 private class LinesSequence(private val reader: BufferedReader) : Sequence<String> {
     override public fun iterator(): Iterator<String> {
