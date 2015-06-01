@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="ant">
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/annotations" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dependencies/ant-1.8/lib/ant.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/dependencies/apache-ant-1.8.2-src.zip!/apache-ant-1.8.2/src/main" />
+    </SOURCES>
+  </library>
+</component>
