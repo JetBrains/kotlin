@@ -233,6 +233,24 @@ class ArraysJVMTest {
         }
     }
 
+    test fun dropLast() {
+        expect(listOf(), { intArrayOf().dropLast(1) })
+        expect(listOf(), { intArrayOf(1).dropLast(1) })
+        expect(listOf(1), { intArrayOf(1).dropLast(0) })
+        expect(listOf(2), { intArrayOf(2, 3).dropLast(1) })
+        expect(listOf(3000000000000), { longArrayOf(3000000000000, 2000000000000).dropLast(1) })
+        expect(listOf(2.toByte()), { byteArrayOf(2, 3).dropLast(1) })
+        expect(listOf(2.toShort()), { shortArrayOf(2, 3).dropLast(1) })
+        expect(listOf(2.0f), { floatArrayOf(2f, 3f).dropLast(1) })
+        expect(listOf(2.0), { doubleArrayOf(2.0, 3.0).dropLast(1) })
+        expect(listOf(true), { booleanArrayOf(true, false).dropLast(1) })
+        expect(listOf('a'), { charArrayOf('a', 'b').dropLast(1) })
+        expect(listOf("a"), { arrayOf("a", "b").dropLast(1) })
+        fails {
+            listOf(1).dropLast(-1)
+        }
+    }
+
     test fun dropWhile() {
         expect(listOf(), { intArrayOf().dropWhile { it < 3 } })
         expect(listOf(), { intArrayOf(1).dropWhile { it < 3 } })
@@ -245,6 +263,20 @@ class ArraysJVMTest {
         expect(listOf(false, true), { booleanArrayOf(true, false, true).dropWhile { it } })
         expect(listOf('b', 'a'), { charArrayOf('a', 'b', 'a').dropWhile { it < 'b' } })
         expect(listOf("b", "a"), { arrayOf("a", "b", "a").dropWhile { it < "b" } })
+    }
+
+    test fun dropLastWhile() {
+        expect(listOf(), { intArrayOf().dropLastWhile { it < 3 } })
+        expect(listOf(), { intArrayOf(1).dropLastWhile { it < 3 } })
+        expect(listOf(2, 3), { intArrayOf(2, 3, 1).dropLastWhile { it < 3 } })
+        expect(listOf(3000000000000), { longArrayOf(3000000000000, 2000000000000).dropLastWhile { it < 3000000000000 } })
+        expect(listOf(2.toByte(), 3.toByte()), { byteArrayOf(2, 3, 1).dropLastWhile { it < 3 } })
+        expect(listOf(2.toShort(), 3.toShort()), { shortArrayOf(2, 3, 1).dropLastWhile { it < 3 } })
+        expect(listOf(2f, 3f), { floatArrayOf(2f, 3f, 1f).dropLastWhile { it < 3 } })
+        expect(listOf(2.0, 3.0), { doubleArrayOf(2.0, 3.0, 1.0).dropLastWhile { it < 3 } })
+        expect(listOf(true, false), { booleanArrayOf(true, false, true).dropLastWhile { it } })
+        expect(listOf('a', 'b'), { charArrayOf('a', 'b', 'a').dropLastWhile { it < 'b' } })
+        expect(listOf("a", "b"), { arrayOf("a", "b", "a").dropLastWhile { it < "b" } })
     }
 
     test fun take() {
@@ -293,8 +325,22 @@ class ArraysJVMTest {
         expect(listOf(2f), { floatArrayOf(2f, 3f, 1f).takeWhile { it < 3 } })
         expect(listOf(2.0), { doubleArrayOf(2.0, 3.0, 1.0).takeWhile { it < 3 } })
         expect(listOf(true), { booleanArrayOf(true, false, true).takeWhile { it } })
-        expect(listOf('a'), { charArrayOf('a', 'b', 'a').takeWhile { it < 'b' } })
-        expect(listOf("a"), { arrayOf("a", "b", "a").takeWhile { it < "b" } })
+        expect(listOf('a'), { charArrayOf('a', 'c', 'b').takeWhile { it < 'c' } })
+        expect(listOf("a"), { arrayOf("a", "c", "b").takeWhile { it < "c" } })
+    }
+
+    test fun takeLastWhile() {
+        expect(listOf(), { intArrayOf().takeLastWhile { it < 3 } })
+        expect(listOf(1), { intArrayOf(1).takeLastWhile { it < 3 } })
+        expect(listOf(1), { intArrayOf(2, 3, 1).takeLastWhile { it < 3 } })
+        expect(listOf(2000000000000), { longArrayOf(3000000000000, 2000000000000).takeLastWhile { it < 3000000000000 } })
+        expect(listOf(1.toByte()), { byteArrayOf(2, 3, 1).takeLastWhile { it < 3 } })
+        expect(listOf(1.toShort()), { shortArrayOf(2, 3, 1).takeLastWhile { it < 3 } })
+        expect(listOf(1f), { floatArrayOf(2f, 3f, 1f).takeLastWhile { it < 3 } })
+        expect(listOf(1.0), { doubleArrayOf(2.0, 3.0, 1.0).takeLastWhile { it < 3 } })
+        expect(listOf(true), { booleanArrayOf(true, false, true).takeLastWhile { it } })
+        expect(listOf('b'), { charArrayOf('a', 'c', 'b').takeLastWhile { it < 'c' } })
+        expect(listOf("b"), { arrayOf("a", "c", "b").takeLastWhile { it < "c" } })
     }
 
     test fun filter() {

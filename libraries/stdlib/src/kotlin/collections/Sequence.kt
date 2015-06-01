@@ -70,6 +70,9 @@ public fun <T> sequenceOf(progression: Progression<T>): Sequence<T> = object : S
  */
 public fun <T> emptySequence(): Sequence<T> = EmptySequence
 
+deprecated("Remove in M13 with streams.")
+private fun <T> emptyStream(): Stream<T> = EmptySequence
+
 private object EmptySequence : Sequence<Nothing> {
     override fun iterator(): Iterator<Nothing> = EmptyIterator
 }

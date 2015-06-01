@@ -273,6 +273,17 @@ class CollectionTest {
         assertEquals(listOf("bar", "abc"), coll.dropWhile { it.startsWith("f") })
     }
 
+    test fun dropLast() {
+        val coll = listOf("foo", "bar", "abc")
+        assertEquals(coll, coll.dropLast(0))
+        assertEquals(emptyList<String>(), coll.dropLast(coll.size()))
+        assertEquals(emptyList<String>(), coll.dropLast(coll.size() + 1))
+        assertEquals(listOf("foo", "bar"), coll.dropLast(1))
+        assertEquals(listOf("foo"), coll.dropLast(2))
+
+        fails { coll.dropLast(-1) }
+    }
+
     test fun dropLastWhile() {
         val coll = listOf("Foo", "bare", "abc" )
         assertEquals(coll, coll.dropLastWhile { false })
@@ -283,14 +294,41 @@ class CollectionTest {
 
     test fun take() {
         val coll = listOf("foo", "bar", "abc")
+        assertEquals(emptyList<String>(), coll.take(0))
         assertEquals(listOf("foo"), coll.take(1))
         assertEquals(listOf("foo", "bar"), coll.take(2))
+        assertEquals(coll, coll.take(coll.size()))
+        assertEquals(coll, coll.take(coll.size() + 1))
+
+        fails { coll.take(-1) }
     }
 
     test fun takeWhile() {
         val coll = listOf("foo", "bar", "abc")
+        assertEquals(emptyList<String>(), coll.takeWhile { false })
+        assertEquals(coll, coll.takeWhile { true })
         assertEquals(listOf("foo"), coll.takeWhile { it.startsWith("f") })
         assertEquals(listOf("foo", "bar", "abc"), coll.takeWhile { it.length() == 3 })
+    }
+
+    test fun takeLast() {
+        val coll = listOf("foo", "bar", "abc")
+
+        assertEquals(emptyList<String>(), coll.takeLast(0))
+        assertEquals(listOf("abc"), coll.takeLast(1))
+        assertEquals(listOf("bar", "abc"), coll.takeLast(2))
+        assertEquals(coll, coll.takeLast(coll.size()))
+        assertEquals(coll, coll.takeLast(coll.size() + 1))
+
+        fails { coll.takeLast(-1) }
+    }
+
+    test fun takeLastWhile() {
+        val coll = listOf("foo", "bar", "abc")
+        assertEquals(emptyList<String>(), coll.takeLastWhile { false })
+        assertEquals(coll, coll.takeLastWhile { true })
+        assertEquals(listOf("abc"), coll.takeLastWhile { it.startsWith("a") })
+        assertEquals(listOf("bar", "abc"), coll.takeLastWhile { it[0] < 'c' })
     }
 
     test fun copyToArray() {
