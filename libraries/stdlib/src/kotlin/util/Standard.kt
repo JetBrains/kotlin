@@ -23,6 +23,8 @@ public inline fun <T, R> T.run(f: T.() -> R): R = f()
  */
 public inline fun <T, R> with(receiver: T, f: T.() -> R): R = receiver.f()
 
+public inline fun <T> T.apply(f: T.() -> Unit): T { f(); return this }
+
 /**
  * Converts receiver to body parameter
  */
