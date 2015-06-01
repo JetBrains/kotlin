@@ -780,6 +780,26 @@ class FilesTest {
         srcFile.delete()
     }
 
+    test fun copyToNameWithoutParent() {
+        val currentDir = File("").getAbsoluteFile()!!
+        val srcFile = createTempFile()
+        val dstFile = createTempFile(directory = currentDir)
+        try {
+            srcFile.writeText("Hello, World!", "UTF8")
+            dstFile.delete()
+
+            val dstRelative = File(dstFile.name)
+
+            srcFile.copyTo(dstRelative)
+
+            assertEquals(srcFile.readText(), dstFile.readText())
+        }
+        finally {
+            dstFile.delete()
+            srcFile.delete()
+        }
+    }
+
     test fun deleteRecursively() {
         val dir = createTempDir()
         dir.delete()

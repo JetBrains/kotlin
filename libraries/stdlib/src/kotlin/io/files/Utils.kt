@@ -218,7 +218,7 @@ public fun File.copyTo(dst: File, overwrite: Boolean = false, bufferSize: Int = 
             return copyTo(dst.resolve(name), overwrite, bufferSize)
         }
     }
-    dst.getParentFile().mkdirs()
+    dst.getParentFile()?.mkdirs()
     dst.delete()
     val input = FileInputStream(this)
     return input.use<FileInputStream, Long> {
