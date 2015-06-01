@@ -23,37 +23,42 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiFile
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.JetLanguage
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.conversion.copy.end
+import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.JetType
 
 public class ShowExpressionTypeAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val editor = e.getData<Editor>(CommonDataKeys.EDITOR)
-        val psiFile = e.getData<PsiFile>(CommonDataKeys.PSI_FILE)
-        assert(editor != null && psiFile != null)
+        val editor = e.getData<Editor>(CommonDataKeys.EDITOR)!!
+        val psiFile = e.getData<PsiFile>(CommonDataKeys.PSI_FILE)!!
+
         var expression: JetExpression?
-        val bindingContext = (psiFile as JetFile).analyzeFully()
-        if (editor!!.getSelectionModel().hasSelection()) {
+        var bindingContext: BindingContext
+        if (editor.getSelectionModel().hasSelection()) {
             val startOffset = editor.getSelectionModel().getSelectionStart()
             val endOffset = editor.getSelectionModel().getSelectionEnd()
             expression = CodeInsightUtilCore.findElementInRange<JetExpression>(psiFile, startOffset, endOffset, javaClass<JetExpression>(), JetLanguage.INSTANCE)
+            bindingContext = expression.analyze()
         }
         else {
             val offset = editor.getCaretModel().getOffset()
-            expression = PsiTreeUtil.getParentOfType<JetExpression>(psiFile.findElementAt(offset), javaClass<JetExpression>())
-            while (expression != null && bindingContext.getType(expression) == null) {
-                expression = PsiTreeUtil.getParentOfType<JetExpression>(expression, javaClass<JetExpression>())
+            expression = psiFile.findElementAt(offset)?.getParentOfType<JetExpression>(true) ?: return
+            bindingContext = expression.analyze()
+            while (bindingContext.getType(expression!!) == null) {
+                expression = expression.getParentOfType<JetExpression>(true) ?: return
+                bindingContext = expression.analyze()
             }
-            if (expression != null) {
-                editor.getSelectionModel().setSelection(expression.getTextRange().getStartOffset(), expression.getTextRange().getEndOffset())
-            }
+            editor.getSelectionModel().setSelection(expression.startOffset, expression.endOffset)
         }
+
         if (expression != null) {
             val type = bindingContext.getType(expression)
             if (type != null) {
@@ -62,8 +67,8 @@ public class ShowExpressionTypeAction : AnAction() {
         }
     }
 
-    override fun update(e: AnActionEvent?) {
-        val editor = e!!.getData<Editor>(CommonDataKeys.EDITOR)
+    override fun update(e: AnActionEvent) {
+        val editor = e.getData<Editor>(CommonDataKeys.EDITOR)
         val psiFile = e.getData<PsiFile>(CommonDataKeys.PSI_FILE)
         e.getPresentation().setEnabled(editor != null && psiFile is JetFile)
     }
