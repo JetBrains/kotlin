@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetFile
@@ -31,6 +32,11 @@ public fun JetElement.getResolutionFacade(): ResolutionFacade {
 
 public fun JetDeclaration.resolveToDescriptor(): DeclarationDescriptor {
     return getResolutionFacade().resolveToDescriptor(this)
+}
+
+public fun JetFile.resolveImportReference(fqName: FqName, isDefaultImport: Boolean = false): Collection<DeclarationDescriptor> {
+    val facade = getResolutionFacade()
+    return facade.resolveImportReference(facade.findModuleDescriptor(this), fqName, isDefaultImport)
 }
 
 //NOTE: the difference between analyze and analyzeFully is 'intentionally' unclear

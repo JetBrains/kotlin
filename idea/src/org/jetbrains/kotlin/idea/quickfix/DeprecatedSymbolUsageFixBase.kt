@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
@@ -90,7 +91,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
         val resolvedCall = element.getResolvedCall(bindingContext)!!
         val descriptor = resolvedCall.getResultingDescriptor()
 
-        val replacement = ReplaceWithAnnotationAnalyzer.analyze(replaceWith, descriptor, element.getResolutionFacade(), file, project)
+        val replacement = ReplaceWithAnnotationAnalyzer.analyze(replaceWith, descriptor, element.getResolutionFacade(), project)
 
         invoke(resolvedCall, bindingContext, replacement, project, editor)
     }
@@ -223,7 +224,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             val file = result.getContainingJetFile()
             replacement.fqNamesToImport
-                    .flatMap { file.getResolutionFacade().resolveImportReference(file, it) }
+                    .flatMap { file.resolveImportReference(it) }
                     .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
             result = postProcessInsertedExpression(result, wrapper.addedStatements)

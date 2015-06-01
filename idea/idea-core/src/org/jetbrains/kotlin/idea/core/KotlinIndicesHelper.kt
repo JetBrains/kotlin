@@ -57,7 +57,7 @@ public class KotlinIndicesHelper(
         declarations.addTopLevelNonExtensionCallablesByName(JetPropertyShortNameIndex.getInstance(), name)
         return declarations.flatMap {
             if (it.getContainingJetFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
-                analyzeImportReference(it.getFqName()!!).filterIsInstance<CallableDescriptor>()
+                resolutionFacade.resolveImportReference(moduleDescriptor, it.getFqName()!!).filterIsInstance<CallableDescriptor>()
             }
             else {
                 (resolutionFacade.resolveToDescriptor(it) as? CallableDescriptor).singletonOrEmptyList()
@@ -158,7 +158,7 @@ public class KotlinIndicesHelper(
         for (declaration in declarations) {
             if (declaration.getContainingJetFile().isCompiled()) {
                 //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
-                for (descriptor in analyzeImportReference(declaration.getFqName()!!)) {
+                for (descriptor in resolutionFacade.resolveImportReference(moduleDescriptor, declaration.getFqName()!!)) {
                     if (descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null) {
                         processDescriptor(descriptor)
                     }
@@ -194,16 +194,8 @@ public class KotlinIndicesHelper(
     }
 
     private fun findTopLevelCallables(fqName: FqName): Collection<CallableDescriptor> {
-        return analyzeImportReference(fqName)
+        return resolutionFacade.resolveImportReference(moduleDescriptor, fqName)
                 .filterIsInstance<CallableDescriptor>()
                 .filter { it.getExtensionReceiverParameter() == null }
-    }
-
-    private fun analyzeImportReference(fqName: FqName): Collection<DeclarationDescriptor> {
-        val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
-        val scope = JetModuleUtil.getSubpackagesOfRootScope(moduleDescriptor)
-        val qualifiedExpressionResolver = QualifiedExpressionResolver()
-        qualifiedExpressionResolver.setSymbolUsageValidator(SymbolUsageValidator.Empty)
-        return qualifiedExpressionResolver.processImportReference(importDirective, scope, scope, BindingTraceContext(), LookupMode.EVERYTHING).getAllDescriptors()
     }
 }

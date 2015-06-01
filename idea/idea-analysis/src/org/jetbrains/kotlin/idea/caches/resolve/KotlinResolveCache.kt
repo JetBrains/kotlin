@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.di.InjectorForLazyBodyResolve
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
@@ -65,6 +66,10 @@ private class KotlinResolveCache(
 
     public fun getLazyResolveSession(element: JetElement): ResolveSessionForBodies {
         return moduleResolverProvider.resolveSessionForBodiesByModule(element.getModuleInfo())
+    }
+
+    public fun getLazyResolveSession(moduleDescriptor: ModuleDescriptor): ResolveSessionForBodies {
+        return moduleResolverProvider.resolveSessionForBodiesByDescriptor(moduleDescriptor)
     }
 
     public fun <T> get(extension: CacheExtension<T>): T {

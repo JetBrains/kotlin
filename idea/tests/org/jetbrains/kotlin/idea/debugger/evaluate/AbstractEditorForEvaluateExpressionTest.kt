@@ -24,7 +24,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.checkers.AbstractJetPsiCheckerTest
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest
@@ -51,7 +51,7 @@ public abstract class AbstractCodeFragmentHighlightingTest : AbstractJetPsiCheck
             val fileText = FileUtil.loadFile(File(filePath), true)
             val file = myFixture.getFile() as JetFile
             InTextDirectivesUtils.findListWithPrefixes(fileText, "// IMPORT: ").forEach {
-                val descriptor = file.getResolutionFacade().resolveImportReference(file, FqName(it)).singleOrNull()
+                val descriptor = file.resolveImportReference(FqName(it)).singleOrNull()
                                             ?: error("Could not resolve descriptor to import: $it")
                 ImportInsertHelper.getInstance(getProject()).importDescriptor(file, descriptor)
             }

@@ -30,7 +30,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.KotlinCopyPasteReferenceProcessor
 import org.jetbrains.kotlin.idea.codeInsight.KotlinReferenceData
 import org.jetbrains.kotlin.idea.editor.JetEditorOptions
@@ -97,7 +97,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             rangeMarker.setGreedyToRight(true)
 
             explicitImports.forEach { fqName ->
-                targetFile.getResolutionFacade().resolveImportReference(targetFile, fqName).firstOrNull()?.let {
+                targetFile.resolveImportReference(fqName).firstOrNull()?.let {
                     ImportInsertHelper.getInstance(project).importDescriptor(targetFile, it)
                 }
             }

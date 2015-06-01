@@ -37,8 +37,7 @@ public trait ResolutionFacade {
 
     public fun getFileTopLevelScope(file: JetFile): JetScope
 
-    //TODO: better pass ModuleDescriptor here
-    public fun resolveImportReference(file: JetFile, fqName: FqName, isDefaultImport: Boolean = false): Collection<DeclarationDescriptor>
+    public fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName, isDefaultImport: Boolean = false): Collection<DeclarationDescriptor>
 
     public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
 

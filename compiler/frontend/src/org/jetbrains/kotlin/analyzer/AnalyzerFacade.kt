@@ -36,13 +36,15 @@ public trait ResolverForModule {
 }
 
 public trait ResolverForProject<M : ModuleInfo,out R : ResolverForModule> {
-    public fun resolverForModule(moduleInfo: M): R
+    public fun resolverForModule(moduleInfo: M): R = resolverForModuleDescriptor(descriptorForModule(moduleInfo))
     public fun descriptorForModule(moduleInfo: M): ModuleDescriptor
+    public fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): R
+
     val allModules: Collection<M>
 }
 
 public class EmptyResolverForProject<M : ModuleInfo, R : ResolverForModule> : ResolverForProject<M, R> {
-    override fun resolverForModule(moduleInfo: M): R = throw IllegalStateException("Should not be called for $moduleInfo")
+    override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): R = throw IllegalStateException("$descriptor is not contained in this resolver")
     override fun descriptorForModule(moduleInfo: M) = throw IllegalStateException("Should not be called for $moduleInfo")
     override val allModules: Collection<M> = listOf()
 }
@@ -63,10 +65,8 @@ public class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
         }
     }
 
-    override fun resolverForModule(moduleInfo: M): R {
-        assertCorrectModuleInfo(moduleInfo)
-        val descriptor = descriptorByModule[moduleInfo] ?: return delegateResolver.resolverForModule(moduleInfo)
-        return resolverByModuleDescriptor[descriptor]!!
+    override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): R {
+        return resolverByModuleDescriptor[descriptor] ?: return delegateResolver.resolverForModuleDescriptor(descriptor)
     }
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {

@@ -24,6 +24,7 @@ import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.context.withProject
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -69,14 +70,15 @@ fun createModuleResolverProvider(
 
     val resolverForProject = createResolverForProject()
 
-    val moduleToBodiesResolveSession = modulesToCreateResolversFor.keysToMap {
-        module ->
-        val analyzer = resolverForProject.resolverForModule(module)
+    val moduleDescriptors = modulesToCreateResolversFor.map { resolverForProject.descriptorForModule(it) }
+    val resolveSessionsForBodyByDescriptor = moduleDescriptors.keysToMap {
+        descriptor ->
+        val analyzer = resolverForProject.resolverForModuleDescriptor(descriptor)
         ResolveSessionForBodies(project, analyzer.lazyResolveSession)
     }
     return ModuleResolverProviderImpl(
             resolverForProject,
-            moduleToBodiesResolveSession,
+            resolveSessionsForBodyByDescriptor,
             globalContext,
             delegateProvider
     )
@@ -110,7 +112,12 @@ private fun collectAllModuleInfosFromIdeaModel(project: Project): List<IdeaModul
 trait ModuleResolverProvider {
     val exceptionTracker: ExceptionTracker
     fun resolverByModule(module: IdeaModuleInfo): ResolverForModule = resolverForProject.resolverForModule(module)
-    fun resolveSessionForBodiesByModule(module: IdeaModuleInfo): ResolveSessionForBodies
+
+    fun resolveSessionForBodiesByModule(module: IdeaModuleInfo): ResolveSessionForBodies {
+        return resolveSessionForBodiesByDescriptor(resolverForProject.descriptorForModule(module))
+    }
+
+    fun resolveSessionForBodiesByDescriptor(descriptor: ModuleDescriptor): ResolveSessionForBodies
     val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule>
 }
 
@@ -118,22 +125,23 @@ object EmptyModuleResolverProvider: ModuleResolverProvider {
     override val exceptionTracker: ExceptionTracker
         get() = throw IllegalStateException("Should not be called")
 
-    override fun resolveSessionForBodiesByModule(module: IdeaModuleInfo): ResolveSessionForBodies
-            = throw IllegalStateException("Trying to obtain resolve session for unknown $module")
-
     override val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule> = EmptyResolverForProject()
 
+    override fun resolveSessionForBodiesByDescriptor(descriptor: ModuleDescriptor): ResolveSessionForBodies {
+        throw IllegalStateException("Trying to obtain resolve session for $descriptor not present in this resolver")
+    }
 }
 
 class ModuleResolverProviderImpl(
         override val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule>,
-        private val bodiesResolveByModule: Map<IdeaModuleInfo, ResolveSessionForBodies>,
+        private val bodiesResolveByDescriptor: Map<ModuleDescriptor, ResolveSessionForBodies>,
         val globalContext: GlobalContextImpl,
         val delegateProvider: ModuleResolverProvider = EmptyModuleResolverProvider
 ): ModuleResolverProvider {
     override val exceptionTracker: ExceptionTracker = globalContext.exceptionTracker
 
-    override fun resolveSessionForBodiesByModule(module: IdeaModuleInfo): ResolveSessionForBodies =
-            bodiesResolveByModule[module] ?:
-            delegateProvider.resolveSessionForBodiesByModule(module)
+    override fun resolveSessionForBodiesByDescriptor(descriptor: ModuleDescriptor): ResolveSessionForBodies {
+        return bodiesResolveByDescriptor[descriptor] ?: delegateProvider.resolveSessionForBodiesByDescriptor(descriptor)
+    }
+
 }

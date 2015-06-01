@@ -20,7 +20,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.AbstractImportsTest
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetFile
@@ -38,7 +38,7 @@ public abstract class AbstractAddImportTest : AbstractImportsTest() {
             descriptorName = descriptorName.substring("class:".length()).trim()
         }
 
-        val descriptors = file.getResolutionFacade().resolveImportReference(file, FqName(descriptorName)).filter(filter)
+        val descriptors = file.resolveImportReference(FqName(descriptorName)).filter(filter)
 
         when {
             descriptors.isEmpty() ->

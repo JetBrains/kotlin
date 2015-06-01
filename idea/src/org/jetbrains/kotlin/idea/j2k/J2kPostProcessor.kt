@@ -25,6 +25,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
@@ -52,7 +53,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
     }
 
     override fun insertImport(file: JetFile, fqName: FqName) {
-        val descriptors = file.getResolutionFacade().resolveImportReference(file, fqName)
+        val descriptors = file.resolveImportReference(fqName)
         descriptors.firstOrNull()?.let { ImportInsertHelper.getInstance(file.getProject()).importDescriptor(file, it) }
     }
 
