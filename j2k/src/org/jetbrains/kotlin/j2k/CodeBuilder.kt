@@ -110,7 +110,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
             }
         }
 
-        if (topElement == null || element.prototypes!!.isEmpty()) {
+        if (topElement == null || topElement is PsiCompiledElement || element.prototypes!!.isEmpty()) {
             element.generateCode(this)
             element.postGenerateCode(this)
             return this
