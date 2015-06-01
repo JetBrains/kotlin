@@ -49,41 +49,10 @@ public class KotlinCacheService(val project: Project) {
     }
 
     public fun getResolutionFacade(elements: List<JetElement>): ResolutionFacade {
-        val cache = getCacheToAnalyzeFiles(elements.map { it.getContainingJetFile() })
-        return object : ResolutionFacade {
-            override fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
-                return cache.getLazyResolveSession(element).resolveToElement(element, bodyResolveMode)
-            }
-
-            override fun findModuleDescriptor(element: JetElement): ModuleDescriptor {
-                return cache.getLazyResolveSession(element).getModuleDescriptor()
-            }
-
-            override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
-                return cache.getLazyResolveSession(declaration).resolveToDescriptor(declaration)
-            }
-
-            override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
-                return cache.getAnalysisResultsForElements(elements)
-            }
-
-            override fun getFileTopLevelScope(file: JetFile): JetScope {
-                return cache.getLazyResolveSession(file).getScopeProvider().getFileScope(file)
-            }
-
-            override fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName, isDefaultImport: Boolean): Collection<DeclarationDescriptor> {
-                val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
-                val resolveSession = cache.getLazyResolveSession(moduleDescriptor)
-                val scope = JetModuleUtil.getImportsResolutionScope(moduleDescriptor, !isDefaultImport)
-                val resolver = resolveSession.getQualifiedExpressionResolver()
-                return resolver.processImportReference(
-                        importDirective, scope, scope, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
-            }
-
-            override fun <T> get(extension: CacheExtension<T>): T {
-                return cache[extension]
-            }
-        }
+        return ResolutionFacadeImpl(
+                project,
+                getCacheToAnalyzeFiles(elements.map { it.getContainingJetFile() })
+        )
     }
 
     fun globalResolveSessionProvider(
@@ -225,5 +194,40 @@ public class KotlinCacheService(val project: Project) {
 
     public fun <T> get(extension: CacheExtension<T>): T {
         return getGlobalCache(extension.platform)[extension]
+    }
+}
+
+private class ResolutionFacadeImpl(private val project: Project, private val cache: KotlinResolveCache) : ResolutionFacade {
+    override fun analyze(element: JetElement, bodyResolveMode: BodyResolveMode): BindingContext {
+        return cache.getLazyResolveSession(element).resolveToElement(element, bodyResolveMode)
+    }
+
+    override fun findModuleDescriptor(element: JetElement): ModuleDescriptor {
+        return cache.getLazyResolveSession(element).getModuleDescriptor()
+    }
+
+    override fun resolveToDescriptor(declaration: JetDeclaration): DeclarationDescriptor {
+        return cache.getLazyResolveSession(declaration).resolveToDescriptor(declaration)
+    }
+
+    override fun analyzeFullyAndGetResult(elements: Collection<JetElement>): AnalysisResult {
+        return cache.getAnalysisResultsForElements(elements)
+    }
+
+    override fun getFileTopLevelScope(file: JetFile): JetScope {
+        return cache.getLazyResolveSession(file).getScopeProvider().getFileScope(file)
+    }
+
+    override fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName, isDefaultImport: Boolean): Collection<DeclarationDescriptor> {
+        val importDirective = JetPsiFactory(project).createImportDirective(ImportPath(fqName, false))
+        val resolveSession = cache.getLazyResolveSession(moduleDescriptor)
+        val scope = JetModuleUtil.getImportsResolutionScope(moduleDescriptor, !isDefaultImport)
+        val resolver = resolveSession.getQualifiedExpressionResolver()
+        return resolver.processImportReference(
+                importDirective, scope, scope, BindingTraceContext(), QualifiedExpressionResolver.LookupMode.EVERYTHING).getAllDescriptors()
+    }
+
+    override fun <T> get(extension: CacheExtension<T>): T {
+        return cache[extension]
     }
 }
