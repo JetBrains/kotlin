@@ -85,8 +85,7 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends JetExpression> exten
         return new JetSingleIntentionActionFactory() {
             @Override
             public JetIntentionAction<JetBinaryExpression> createAction(Diagnostic diagnostic) {
-                JetBinaryExpression expression = QuickFixUtil.getParentElementOfType(diagnostic, JetBinaryExpression.class);
-                if (expression == null) return null;
+                JetBinaryExpression expression = (JetBinaryExpression) diagnostic.getPsiElement();
                 return new RemoveRightPartOfBinaryExpressionFix<JetBinaryExpression>(expression, JetBundle.message("remove.elvis.operator"));
             }
         };

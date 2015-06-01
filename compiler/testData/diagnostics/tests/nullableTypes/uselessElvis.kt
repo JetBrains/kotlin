@@ -5,12 +5,12 @@ fun <T: Any?> test1(t: Any?): Any {
 }
 
 fun <T: Any> test2(t: Any?): Any {
-    return <!UNCHECKED_CAST, USELESS_ELVIS!>t as T<!> ?: ""
+    return <!UNCHECKED_CAST!>t as T<!> <!USELESS_ELVIS!>?: ""<!>
 }
 
 fun <T: Any?> test3(t: Any?): Any {
     if (t != null) {
-      return <!USELESS_ELVIS!>t<!> ?: ""
+      return t <!USELESS_ELVIS!>?: ""<!>
     }
 
     return 1

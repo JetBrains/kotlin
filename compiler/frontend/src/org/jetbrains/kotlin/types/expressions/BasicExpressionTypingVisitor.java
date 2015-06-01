@@ -1276,7 +1276,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;
         JetType leftType = leftTypeInfo.getType();
         if (leftType != null && isKnownToBeNotNull(left, leftType, context)) {
-            context.trace.report(USELESS_ELVIS.on(left, leftType));
+            context.trace.report(USELESS_ELVIS.on(expression, leftType));
         }
         JetTypeInfo rightTypeInfo = BindingContextUtils.getRecordedTypeInfo(right, context.trace.getBindingContext());
         assert rightTypeInfo != null : "Right expression was not processed: " + expression;

@@ -25,21 +25,21 @@ fun test() {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    val v0 = platformNN <!USELESS_ELVIS!>?:<!> J()
-    platformNN <!USELESS_ELVIS!>?:<!> J()
+    val v0 = platformNN <!USELESS_ELVIS!>?: J()<!>
+    platformNN <!USELESS_ELVIS!>?: J()<!>
     platformN ?: J()
     platformJ ?: J()
 
     if (platformNN != null) {
-        <!USELESS_ELVIS!>platformNN<!> ?: J()
+        platformNN <!USELESS_ELVIS!>?: J()<!>
     }
 
     if (platformN != null) {
-        <!USELESS_ELVIS!>platformN<!> ?: J()
+        platformN <!USELESS_ELVIS!>?: J()<!>
     }
 
     if (platformJ != null) {
-        <!USELESS_ELVIS!>platformJ<!> ?: J()
+        platformJ <!USELESS_ELVIS!>?: J()<!>
     }
 }
 

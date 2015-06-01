@@ -447,4 +447,10 @@ public object PositioningStrategies {
             return listOf(TextRange(element.getLeft()!!.startOffset, element.getOperationReference().endOffset))
         }
     }
+
+    public val USELESS_ELVIS: PositioningStrategy<JetBinaryExpression> = object: PositioningStrategy<JetBinaryExpression>() {
+        override fun mark(element: JetBinaryExpression): List<TextRange> {
+            return listOf(TextRange(element.getOperationReference().startOffset, element.endOffset))
+        }
+    }
 }

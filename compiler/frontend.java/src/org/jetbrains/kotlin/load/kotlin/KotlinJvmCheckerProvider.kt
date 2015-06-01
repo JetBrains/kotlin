@@ -268,7 +268,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                                 DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
                                 c
                         ) {
-                            c.trace.report(Errors.USELESS_ELVIS.on(expression.getOperationReference(), baseExpressionType))
+                            c.trace.report(Errors.USELESS_ELVIS.on(expression, baseExpressionType))
                         }
                     }
                     JetTokens.EQEQ,

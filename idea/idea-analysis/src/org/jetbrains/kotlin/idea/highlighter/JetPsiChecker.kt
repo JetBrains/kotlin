@@ -96,7 +96,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
             assert(diagnostic.getPsiElement() == element)
 
-            var textRanges = diagnostic.getTextRanges()
+            val textRanges = diagnostic.getTextRanges()
             val factory = diagnostic.getFactory()
             when (diagnostic.getSeverity()) {
                 Severity.ERROR -> {

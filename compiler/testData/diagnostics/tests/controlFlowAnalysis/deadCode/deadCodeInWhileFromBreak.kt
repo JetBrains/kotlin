@@ -50,6 +50,6 @@ fun test(arr: Array<Int>) {
     }
 
     while (true) {
-        <!USELESS_ELVIS!>break<!> <!UNREACHABLE_CODE!>?: null<!>
+        break <!USELESS_ELVIS, UNREACHABLE_CODE!>?: null<!>
     }
 }
