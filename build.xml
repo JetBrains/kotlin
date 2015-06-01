@@ -577,7 +577,7 @@
             <classpath>
                 <file file="${bootstrap.runtime}"/>
                 <file file="${bootstrap.reflect}"/>
-                <pathelement location="${dependencies.dir}/ant-1.7/lib/ant.jar"/>
+                <pathelement location="${dependencies.dir}/ant-1.8/lib/ant.jar"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
             </classpath>
         </javac2>
