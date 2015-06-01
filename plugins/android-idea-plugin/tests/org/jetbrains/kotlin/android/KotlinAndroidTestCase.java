@@ -18,10 +18,6 @@ package org.jetbrains.kotlin.android;
 
 import com.android.SdkConstants;
 import com.android.ide.common.rendering.RenderSecurityManager;
-import com.intellij.analysis.AnalysisScope;
-import com.intellij.codeInspection.InspectionManager;
-import com.intellij.codeInspection.ex.GlobalInspectionToolWrapper;
-import com.intellij.codeInspection.ex.InspectionManagerEx;
 import com.intellij.facet.FacetManager;
 import com.intellij.facet.ModifiableFacetModel;
 import com.intellij.ide.startup.impl.StartupManagerImpl;
@@ -33,21 +29,15 @@ import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.impl.PsiManagerEx;
-import com.intellij.psi.impl.file.impl.FileManager;
-import com.intellij.testFramework.InspectionTestUtil;
 import com.intellij.testFramework.builders.JavaModuleFixtureBuilder;
-import com.intellij.testFramework.fixtures.*;
-import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
-import com.intellij.testFramework.fixtures.impl.GlobalInspectionContextForTests;
+import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
+import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
+import com.intellij.testFramework.fixtures.JavaTestFixtureFactory;
+import com.intellij.testFramework.fixtures.TestFixtureBuilder;
 import org.jetbrains.android.facet.AndroidFacet;
 import org.jetbrains.android.facet.AndroidRootUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode;
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
-import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -55,7 +45,6 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors"})
@@ -220,8 +209,7 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         KotlinInternalMode.Instance.setEnabled(kotlinInternalModeOriginalValue);
         VfsRootAccess.disallowRootAccess(JetTestUtils.getHomeDirectory());
 
-        Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
-        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
+        super.tearDown();
 
         myModule = null;
         myAdditionalModules = null;
@@ -230,15 +218,6 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
         myFacet = null;
         if (RenderSecurityManager.RESTRICT_READS) {
             RenderSecurityManager.sEnabled = true;
-        }
-
-        super.tearDown();
-
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (JetFile source : builtInsSources) {
-            FileViewProvider provider = source.getViewProvider();
-            fileManager.setViewProvider(provider.getVirtualFile(), provider);
         }
     }
 

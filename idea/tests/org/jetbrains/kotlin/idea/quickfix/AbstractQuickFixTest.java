@@ -69,21 +69,6 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        Set<JetFile> builtInsSources = getProject().getComponent(BuiltInsReferenceResolver.class).getBuiltInsSources();
-        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
-
-        super.tearDown();
-
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (JetFile source : builtInsSources) {
-            FileViewProvider provider = source.getViewProvider();
-            fileManager.setViewProvider(provider.getVirtualFile(), provider);
-        }
-    }
-
     @Nullable
     private static File findInspectionFile(@NotNull File startDir) {
         File currentDir = startDir;
