@@ -10,7 +10,7 @@
 
     <property name="max.heap.size.for.forked.jvm" value="1024m"/>
 
-    <property name="bootstrap.home" value="dependencies/bootstrap-compiler"/>
+    <property name="bootstrap.home" value="${basedir}/dependencies/bootstrap-compiler"/>
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
     <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
@@ -517,7 +517,7 @@
                 <available property="jssejar" value="${java.home}/lib/jsse.jar" file="${java.home}/lib/jsse.jar"/>
                 <available property="jssejar" value="${java.home}/../Classes/jsse.jar" file="${java.home}/../Classes/jsse.jar"/>
 
-                <proguard configuration="compiler.pro"/>
+                <proguard configuration="${basedir}/compiler/compiler.pro"/>
             </else>
         </if>
 
