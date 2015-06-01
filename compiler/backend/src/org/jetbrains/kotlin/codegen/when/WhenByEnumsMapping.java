@@ -20,14 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.resolve.constants.EnumValue;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class WhenByEnumsMapping {
     private static final String MAPPING_ARRAY_FIELD_PREFIX = "$EnumSwitchMapping$";
     private static final String MAPPINGS_CLASS_NAME_POSTFIX = "$WhenMappings";
 
-    private final Map<EnumValue, Integer> map = new HashMap<EnumValue, Integer>();
+    private final Map<EnumValue, Integer> map = new LinkedHashMap<EnumValue, Integer>();
     private final ClassDescriptor enumClassDescriptor;
     private final String outerClassInternalNameForExpression;
     private final String mappingsClassInternalName;
