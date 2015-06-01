@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
-import com.google.common.collect.Maps;
+import com.intellij.util.SmartFMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
-import java.util.Map;
 
 public class ObservableBindingTrace implements BindingTrace {
     public interface RecordHandler<K, V> {
@@ -36,7 +35,7 @@ public class ObservableBindingTrace implements BindingTrace {
 
     private final BindingTrace originalTrace;
 
-    private Map<WritableSlice, RecordHandler> handlers = Maps.newHashMap();
+    private SmartFMap<WritableSlice, RecordHandler> handlers = SmartFMap.emptyMap();
 
     public ObservableBindingTrace(BindingTrace originalTrace) {
         this.originalTrace = originalTrace;
@@ -89,7 +88,7 @@ public class ObservableBindingTrace implements BindingTrace {
     }
 
     public <K, V> ObservableBindingTrace addHandler(@NotNull WritableSlice<K, V> slice, @NotNull RecordHandler<K, V> handler) {
-        handlers.put(slice, handler);
+        handlers = handlers.plus(slice, handler);
         return this;
     }
     
