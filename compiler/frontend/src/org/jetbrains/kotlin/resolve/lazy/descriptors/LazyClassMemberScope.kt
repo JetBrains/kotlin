@@ -134,8 +134,7 @@ public open class LazyClassMemberScope(
     private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name) {
         if (!KotlinBuiltIns.isData(thisDescriptor)) return
 
-        val constructor = getPrimaryConstructor()
-        if (constructor == null) return
+        val constructor = getPrimaryConstructor() ?: return
 
         val primaryConstructorParameters = declarationProvider.getOwnerInfo().getPrimaryConstructorParameters()
         assert(constructor.getValueParameters().size() == primaryConstructorParameters.size()) { "From descriptor: " + constructor.getValueParameters().size() + " but from PSI: " + primaryConstructorParameters.size() }
@@ -149,8 +148,6 @@ public open class LazyClassMemberScope(
 
                 val properties = getProperties(parameter.getName())
                 if (properties.isEmpty()) continue
-
-                assert(properties.size() == 1) { "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter }
 
                 val property = properties.iterator().next() as PropertyDescriptor
 
