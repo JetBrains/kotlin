@@ -42,7 +42,12 @@ public class KotlinCompilerAdapter extends DefaultCompilerAdapter {
 
         Kotlin2JvmTask kotlinTask = new Kotlin2JvmTask();
         kotlinTask.setOutput(javac.getDestdir());
-        kotlinTask.setClasspath(javac.getClasspath());
+
+        Path classpath = javac.getClasspath();
+        if (classpath != null) {
+            kotlinTask.setClasspath(classpath);
+        }
+
         kotlinTask.setSrc(javac.getSrcdir());
         kotlinTask.setExternalAnnotations(externalAnnotations);
 
