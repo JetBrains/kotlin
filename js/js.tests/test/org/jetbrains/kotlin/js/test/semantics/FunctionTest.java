@@ -154,4 +154,8 @@ public class FunctionTest extends AbstractExpressionTest {
     public void testLambdaOrLocalFunInsideEnumMethod() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testManglingClashFunctionsAndClasses() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
