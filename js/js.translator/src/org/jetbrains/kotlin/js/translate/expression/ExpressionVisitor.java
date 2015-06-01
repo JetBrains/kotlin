@@ -215,12 +215,12 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         boolean isKotlinExpression = BindingContextUtilPackage.isUsedAsExpression(expression, context.bindingContext());
 
         JetExpression thenExpression = expression.getThen();
-        assert thenExpression != null : "then expression should not be null: " + expression.getText();
         JetExpression elseExpression = expression.getElse();
 
-        JsStatement thenStatement = Translation.translateAsStatementAndMergeInBlockIfNeeded(thenExpression, context);
-        JsStatement elseStatement = (elseExpression != null) ? Translation.translateAsStatementAndMergeInBlockIfNeeded(elseExpression,
-                                                                                                                       context) : null;
+        JsStatement thenStatement =
+                thenExpression != null ? Translation.translateAsStatementAndMergeInBlockIfNeeded(thenExpression, context) : null;
+        JsStatement elseStatement =
+                elseExpression != null ? Translation.translateAsStatementAndMergeInBlockIfNeeded(elseExpression, context) : null;
 
         if (isKotlinExpression) {
             JsExpression jsThenExpression = JsAstUtils.extractExpressionFromStatement(thenStatement);
