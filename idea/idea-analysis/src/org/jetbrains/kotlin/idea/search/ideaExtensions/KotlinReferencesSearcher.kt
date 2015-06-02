@@ -18,12 +18,17 @@ package org.jetbrains.kotlin.idea.search.ideaExtensions
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.QueryExecutorBase
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Computable
 import com.intellij.psi.*
+import com.intellij.psi.search.RequestResultProcessor
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.idea.references.matchesTarget
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -37,14 +42,29 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         val unwrappedElement = element.namedUnwrappedElement
         if (unwrappedElement == null || !ProjectRootsUtil.isInProjectOrLibSource(unwrappedElement)) return
 
-        ApplicationManager.getApplication().runReadAction(object : Runnable {
-            override fun run() {
-                val searchHelper = KotlinPsiSearchHelper(queryParameters.getElementToSearch().getProject())
-                val searchTarget = UsagesSearchTarget(unwrappedElement, queryParameters.getEffectiveSearchScope(), UsagesSearchLocation.EVERYWHERE, false)
-                val requestItem = UsagesSearchRequestItem(searchTarget, unwrappedElement.getSpecialNamesToSearch(), isTargetUsage, null)
-                searchHelper.processFilesWithText(requestItem, consumer)
+        val words = unwrappedElement.getSpecialNamesToSearch()
+
+        val resultProcessor = object : RequestResultProcessor() {
+            private val referenceService = PsiReferenceService.getService()
+
+            override fun processTextOccurrence(element: PsiElement, offsetInElement: Int, consumer: Processor<PsiReference>): Boolean {
+                return referenceService.getReferences(element, PsiReferenceService.Hints.NO_HINTS).all { ref ->
+                    ProgressManager.checkCanceled()
+
+                    when {
+                        !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
+                        !ref.matchesTarget(unwrappedElement) -> true
+                        else -> consumer.process(ref)
+                    }
+                }
             }
-        })
+        }
+
+        words.forEach { word ->
+            queryParameters.getOptimizer().searchWord(word, queryParameters.getEffectiveSearchScope(),
+                                                      UsagesSearchLocation.EVERYWHERE.searchContext, true, unwrappedElement,
+                                                      resultProcessor)
+        }
 
         searchLightElements(queryParameters, element)
     }
