@@ -170,7 +170,7 @@ public class PropertyCodegen {
     public void generateConstructorPropertyAsMethodForAnnotationClass(JetParameter p, PropertyDescriptor descriptor) {
         JvmMethodSignature signature = typeMapper.mapAnnotationParameterSignature(descriptor);
         String name = p.getName();
-        assert name != null : "Annotation parameter has no name: " + p.getText();
+        if (name == null) return;
         MethodVisitor mv = v.newMethod(
                 OtherOrigin(p, descriptor), ACC_PUBLIC | ACC_ABSTRACT, name,
                 signature.getAsmMethod().getDescriptor(),
