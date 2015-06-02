@@ -137,8 +137,8 @@ public class ChangeVariableTypeFix extends JetIntentionAction<JetVariableDeclara
             protected List<IntentionAction> doCreateActions(@NotNull Diagnostic diagnostic) {
                 List<IntentionAction> actions = new LinkedList<IntentionAction>();
 
-                JetProperty property = QuickFixUtil.getParentElementOfType(diagnostic, JetProperty.class);
-                if (property != null) {
+                if (diagnostic.getPsiElement() instanceof JetProperty) {
+                    JetProperty property = (JetProperty) diagnostic.getPsiElement();
                     BindingContext context = ResolvePackage.analyzeFully(property.getContainingJetFile());
                     JetType lowerBoundOfOverriddenPropertiesTypes = QuickFixUtil.findLowerBoundOfOverriddenCallablesReturnTypes(context, property);
 
