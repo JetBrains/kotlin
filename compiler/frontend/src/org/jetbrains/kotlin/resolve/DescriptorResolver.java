@@ -352,15 +352,6 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    public ValueParameterDescriptorImpl resolveValueParameterDescriptorWithAnnotationArguments(
-            JetScope scope, DeclarationDescriptor declarationDescriptor,
-            JetParameter valueParameter, int index, JetType type, BindingTrace trace
-    ) {
-        return resolveValueParameterDescriptor(declarationDescriptor, valueParameter, index, type, trace,
-                annotationResolver.resolveAnnotationsWithArguments(scope, valueParameter.getModifierList(), trace));
-    }
-
-    @NotNull
     private ValueParameterDescriptorImpl resolveValueParameterDescriptor(
             DeclarationDescriptor declarationDescriptor,
             JetParameter valueParameter, int index, JetType type, BindingTrace trace,

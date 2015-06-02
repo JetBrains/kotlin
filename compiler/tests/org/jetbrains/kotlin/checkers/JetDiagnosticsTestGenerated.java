@@ -597,6 +597,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("AnnotatedConstructor.kt")
+            public void testAnnotatedConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AnnotatedConstructorParams.kt")
             public void testAnnotatedConstructorParams() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedConstructorParams.kt");
@@ -765,6 +771,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("MutuallyRecursivelyAnnotatedGlobalFunction.kt")
+            public void testMutuallyRecursivelyAnnotatedGlobalFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/MutuallyRecursivelyAnnotatedGlobalFunction.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noNameProperty.kt")
             public void testNoNameProperty() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/noNameProperty.kt");
@@ -810,6 +822,54 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("onMultiDeclaration.kt")
             public void testOnMultiDeclaration() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/onMultiDeclaration.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RecursivelyAnnotated.kt")
+            public void testRecursivelyAnnotated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RecursivelyAnnotatedFunctionParameter.kt")
+            public void testRecursivelyAnnotatedFunctionParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotatedFunctionParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RecursivelyAnnotatedGlobalFunction.kt")
+            public void testRecursivelyAnnotatedGlobalFunction() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotatedGlobalFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RecursivelyAnnotatedGlobalProperty.kt")
+            public void testRecursivelyAnnotatedGlobalProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotatedGlobalProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RecursivelyAnnotatedParameter.kt")
+            public void testRecursivelyAnnotatedParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotatedParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RecursivelyAnnotatedParameterWithAt.kt")
+            public void testRecursivelyAnnotatedParameterWithAt() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotatedParameterWithAt.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RecursivelyAnnotatedProperty.kt")
+            public void testRecursivelyAnnotatedProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotatedProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("RecursivelyIncorrectlyAnnotatedParameter.kt")
+            public void testRecursivelyIncorrectlyAnnotatedParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyIncorrectlyAnnotatedParameter.kt");
                 doTest(fileName);
             }
 
@@ -10119,6 +10179,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("ea53340.kt")
             public void testEa53340() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ea53340.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ea66984.kt")
+            public void testEa66984() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/ea66984.kt");
                 doTest(fileName);
             }
 
