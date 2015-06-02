@@ -4769,6 +4769,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("namedFunctionReturnOverrideInsideVariableInitializer.kt")
+            public void testNamedFunctionReturnOverrideInsideVariableInitializer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/typeMismatchOnOverride/namedFunctionReturnOverrideInsideVariableInitializer.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("objectInsideBody.kt")
             public void testObjectInsideBody() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/typeMismatchOnOverride/objectInsideBody.kt");
