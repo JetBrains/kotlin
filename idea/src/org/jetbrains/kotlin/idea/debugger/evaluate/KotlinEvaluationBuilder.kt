@@ -96,6 +96,10 @@ object KotlinEvaluationBuilder: EvaluatorBuilder {
             throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression in non-kotlin context")
         }
 
+        if (position.getLine() < 0) {
+            throw EvaluateExceptionUtil.createEvaluateException("Couldn't evaluate kotlin expression at $position")
+        }
+
         if (codeFragment.getContext() !is JetElement) {
             val attachments = arrayOf(attachmentByPsiFile(position.getFile()),
                                       attachmentByPsiFile(codeFragment),
