@@ -799,7 +799,7 @@ public class BodyResolver {
 
     private void computeDeferredTypes() {
         Collection<Box<DeferredType>> deferredTypes = trace.getKeys(DEFERRED_TYPE);
-        if (deferredTypes != null) {
+        if (!deferredTypes.isEmpty()) {
             // +1 is a work around agains new Queue(0).addLast(...) bug // stepan.koltsov@ 2011-11-21
             final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size() + 1);
             trace.addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<Box<DeferredType>, Boolean>() {
