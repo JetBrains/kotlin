@@ -257,12 +257,8 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
                 val locals = Lists.newArrayList<ResolutionCandidate<D>>()
                 splitLexicallyLocalDescriptors(members, c.scope.getContainingDeclaration(), locals, nonlocals)
 
-                if (locals.isNotEmpty()) {
-                    localsList.add(locals)
-                }
-                if (nonlocals.isNotEmpty()) {
-                    nonlocalsList.add(nonlocals)
-                }
+                localsList.add(locals)
+                nonlocalsList.add(nonlocals)
             }
         }
 

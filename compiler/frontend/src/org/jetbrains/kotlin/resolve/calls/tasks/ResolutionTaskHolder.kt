@@ -40,7 +40,9 @@ public class ResolutionTaskHolder<D : CallableDescriptor, F : D>(
     public fun addCandidates(candidatesList: List<Collection<ResolutionCandidate<D>>>) {
         assertNotFinished()
         for (candidates in candidatesList) {
-            addCandidates { candidates }
+            if (candidates.isNotEmpty()) {
+                addCandidates { candidates }
+            }
         }
     }
 
