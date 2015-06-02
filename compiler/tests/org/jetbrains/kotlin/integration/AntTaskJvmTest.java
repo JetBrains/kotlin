@@ -72,6 +72,11 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     }
 
     @Test
+    public void doNotFailOnError() throws Exception {
+        doJvmAntTest();
+    }
+
+    @Test
     public void jvmClasspath() throws Exception {
         doJvmAntTest();
     }

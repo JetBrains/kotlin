@@ -1,0 +1,21 @@
+OUT:
+Buildfile: [TestData]/build.xml
+
+build:
+    [javac] Compiling 2 source files to [Temp]
+    [javac] Compiling [[TestData]] => [[Temp]]
+    [javac] ERROR: [TestData]/incorrectKotlinCode.kt: (4, 1) Parameter name expected
+    [javac] ERROR: [TestData]/incorrectKotlinCode.kt: (4, 1) Expecting comma or ')'
+    [javac] ERROR: [TestData]/incorrectKotlinCode.kt: (4, 1) Expecting ')'
+  [kotlinc] Compiling [[TestData]] => [[Temp]]
+  [kotlinc] ERROR: [TestData]/incorrectKotlinCode.kt: (4, 1) Parameter name expected
+  [kotlinc] ERROR: [TestData]/incorrectKotlinCode.kt: (4, 1) Expecting comma or ')'
+  [kotlinc] ERROR: [TestData]/incorrectKotlinCode.kt: (4, 1) Expecting ')'
+
+BUILD SUCCESSFUL
+Total time: [time]
+
+ERR:
+    [javac] Compile failed; see the compiler error output for details.
+
+Return code: 0
