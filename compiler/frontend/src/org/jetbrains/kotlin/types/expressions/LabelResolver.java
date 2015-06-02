@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.types.expressions;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.LABEL_NAME_CLASH;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNRESOLVED_REFERENCE;
@@ -41,8 +44,8 @@ public class LabelResolver {
     private LabelResolver() {}
 
     @NotNull
-    private List<JetElement> getElementsByLabelName(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression) {
-        List<JetElement> elements = Lists.newArrayList();
+    private Set<JetElement> getElementsByLabelName(@NotNull Name labelName, @NotNull JetSimpleNameExpression labelExpression) {
+        Set<JetElement> elements = Sets.newLinkedHashSet();
         PsiElement parent = labelExpression.getParent();
         while (parent != null) {
             Name name = getLabelNameIfAny(parent);
@@ -55,22 +58,33 @@ public class LabelResolver {
     }
 
     @Nullable
-    private Name getLabelNameIfAny(@NotNull PsiElement element) {
+    public Name getLabelNameIfAny(@NotNull PsiElement element) {
         if (element instanceof JetLabeledExpression) {
-            Name labelName = ((JetLabeledExpression) element).getLabelNameAsName();
-            if (labelName != null) {
-                return labelName;
-            }
+            return ((JetLabeledExpression) element).getLabelNameAsName();
         }
+
+        if (element instanceof JetFunctionLiteral) {
+            return getLabelNameIfAny(element.getParent());
+        }
+
         if (element instanceof JetFunctionLiteralExpression) {
-            return getCallerName((JetFunctionLiteralExpression) element);
+            return getLabelForFunctionalExpression((JetExpression) element);
         }
+
         if (element instanceof JetNamedFunction) {
             Name name = ((JetNamedFunction) element).getNameAsName();
             if (name != null) return name;
-            return getCallerName((JetNamedFunction) element);
+            return getLabelForFunctionalExpression((JetExpression) element);
         }
+
         return null;
+    }
+
+    private Name getLabelForFunctionalExpression(@NotNull JetExpression element) {
+        if (element.getParent() instanceof JetLabeledExpression) {
+            return getLabelNameIfAny(element.getParent());
+        }
+        return getCallerName(element);
     }
 
     @NotNull
@@ -160,14 +174,14 @@ public class LabelResolver {
             @NotNull JetSimpleNameExpression labelExpression, 
             @NotNull BindingTrace trace
     ) {
-        List<JetElement> list = getElementsByLabelName(labelName, labelExpression);
+        Set<JetElement> list = getElementsByLabelName(labelName, labelExpression);
         if (list.isEmpty()) return null;
 
         if (list.size() > 1) {
             trace.report(LABEL_NAME_CLASH.on(labelExpression));
         }
 
-        JetElement result = list.get(0);
+        JetElement result = list.iterator().next();
         trace.record(LABEL_TARGET, labelExpression, result);
         return result;
     }

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.name.ClassId;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor;
+import org.jetbrains.kotlin.types.expressions.LabelResolver;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -551,14 +553,14 @@ public class InlineCodegen extends CallGenerator {
     @NotNull
     protected static Set<String> getDeclarationLabels(@Nullable PsiElement lambdaOrFun, @NotNull DeclarationDescriptor descriptor) {
         Set<String> result = new HashSet<String>();
+
         if (lambdaOrFun != null) {
-            PsiElement parent = lambdaOrFun.getParent();
-            if (parent instanceof JetLabeledExpression) {
-                String labelName = ((JetLabeledExpression) parent).getLabelName();
-                assert labelName != null : "Labeled expression should have not nul label " + parent.getText();
-                result.add(labelName);
+            Name label = LabelResolver.INSTANCE.getLabelNameIfAny(lambdaOrFun);
+            if (label != null) {
+                result.add(label.asString());
             }
         }
+
         if (!isFunctionLiteral(descriptor)) {
             if (!descriptor.getName().isSpecial()) {
                 result.add(descriptor.getName().asString());
