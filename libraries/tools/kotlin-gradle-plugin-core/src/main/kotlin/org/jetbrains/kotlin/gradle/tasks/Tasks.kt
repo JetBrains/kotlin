@@ -138,6 +138,11 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
         }
 
+        val kaptClassFileStubsDir = extraProperties.getOrNull<File>("stubsDir")
+        if (kaptClassFileStubsDir != null) {
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
+        }
+
         args.pluginOptions = pluginOptions.toTypedArray()
         getLogger().kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
 
@@ -338,7 +343,8 @@ private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
     try {
         @suppress("UNCHECKED_CAST")
         return get(id) as? T
-    } catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
+    }
+    catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
         return null
     }
 }
