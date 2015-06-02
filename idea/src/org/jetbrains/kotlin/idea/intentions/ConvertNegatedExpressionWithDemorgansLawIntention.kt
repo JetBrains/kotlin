@@ -21,7 +21,7 @@ import com.intellij.psi.impl.source.tree.PsiErrorElementImpl
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.LinkedList
+import java.util.*
 
 public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetingOffsetIndependentIntention<JetPrefixExpression>(javaClass(), "DeMorgan Law") {
 
@@ -38,8 +38,7 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
             else -> return false
         }
 
-        val elements = splitBooleanSequence(baseExpression) ?: return false
-        return elements.none { it is PsiErrorElementImpl }
+        return splitBooleanSequence(baseExpression) != null
     }
 
     override fun applyTo(element: JetPrefixExpression, editor: Editor) {
@@ -67,24 +66,23 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
     }
 
     private fun splitBooleanSequence(expression: JetBinaryExpression): List<JetExpression>? {
-        val result = LinkedList<JetExpression>()
+        val result = ArrayList<JetExpression>()
         val firstOperator = expression.getOperationToken()
 
-        var currentItem: JetExpression? = expression
-        while (currentItem as? JetBinaryExpression != null) {
-            val remainingExpression = currentItem as JetBinaryExpression
+        var remainingExpression: JetExpression = expression
+        while (true) {
+            if (remainingExpression !is JetBinaryExpression) break
+
             val operation = remainingExpression.getOperationToken()
-            if (!(operation == JetTokens.ANDAND || operation == JetTokens.OROR)) break
+            if (operation != JetTokens.ANDAND && operation != JetTokens.OROR) break
 
             if (operation != firstOperator) return null //Boolean sequence must be homogenous
 
-            val leftChild = remainingExpression.getLeft()
-            val rightChild = remainingExpression.getRight()
-            result.add(rightChild)
-            currentItem = leftChild
+            result.add(remainingExpression.getRight() ?: return null)
+            remainingExpression = remainingExpression.getLeft() ?: return null
         }
 
-        result.addIfNotNull(currentItem)
+        result.add(remainingExpression)
         return result
     }
 
