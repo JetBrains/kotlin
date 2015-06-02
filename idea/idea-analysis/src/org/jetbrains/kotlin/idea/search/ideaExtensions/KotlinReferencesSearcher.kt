@@ -14,136 +14,108 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.search.ideaExtensions;
+package org.jetbrains.kotlin.idea.search.ideaExtensions
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.QueryExecutorBase;
-import com.intellij.openapi.util.Computable;
-import com.intellij.psi.*;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.Processor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.asJava.*;
-import org.jetbrains.kotlin.idea.search.usagesSearch.*;
-import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.QueryExecutorBase
+import com.intellij.openapi.util.Computable
+import com.intellij.psi.*
+import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.Processor
+import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.idea.search.usagesSearch.*
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.*
 
-public class KotlinReferencesSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
-    public static void processJetClassOrObject(
-            final @NotNull JetClassOrObject element, @NotNull ReferencesSearch.SearchParameters queryParameters
-    ) {
-        String className = element.getName();
-        if (className != null) {
-            PsiClass lightClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
-                @Override
-                public PsiClass compute() {
-                    return LightClassUtil.getPsiClass(element);
-                }
-            });
-            if (lightClass != null) {
-                searchNamedElement(queryParameters, lightClass, className);
+public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
 
-                if (element instanceof JetObjectDeclaration && ((JetObjectDeclaration) element).isCompanion()) {
-                    PsiField fieldForCompanionObject = ApplicationManager.getApplication().runReadAction(new Computable<PsiField>() {
-                        @Override
-                        public PsiField compute() {
-                            return LightClassUtil.getLightFieldForCompanionObject(element);
+    override fun processQuery(queryParameters: ReferencesSearch.SearchParameters, consumer: Processor<PsiReference>) {
+        val element = queryParameters.getElementToSearch()
+
+        val unwrappedElement = element.namedUnwrappedElement
+        if (unwrappedElement == null || !ProjectRootsUtil.isInProjectOrLibSource(unwrappedElement)) return
+
+        ApplicationManager.getApplication().runReadAction(object : Runnable {
+            override fun run() {
+                val searchHelper = KotlinPsiSearchHelper(queryParameters.getElementToSearch().getProject())
+                val searchTarget = UsagesSearchTarget(unwrappedElement, queryParameters.getEffectiveSearchScope(), UsagesSearchLocation.EVERYWHERE, false)
+                val requestItem = UsagesSearchRequestItem(searchTarget, unwrappedElement.getSpecialNamesToSearch(), isTargetUsage, null)
+                searchHelper.processFilesWithText(requestItem, consumer)
+            }
+        })
+
+        searchLightElements(queryParameters, element)
+    }
+
+    companion object {
+        public fun processJetClassOrObject(element: JetClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
+            val className = element.getName()
+            if (className != null) {
+                val lightClass = ApplicationManager.getApplication().runReadAction<PsiClass>(object : Computable<PsiClass?> {
+                    override fun compute(): PsiClass? {
+                        return LightClassUtil.getPsiClass(element)
+                    }
+                })
+                if (lightClass != null) {
+                    searchNamedElement(queryParameters, lightClass, className)
+
+                    if (element is JetObjectDeclaration && element.isCompanion()) {
+                        val fieldForCompanionObject = ApplicationManager.getApplication().runReadAction<PsiField>(object : Computable<PsiField?> {
+                            override fun compute(): PsiField? {
+                                return LightClassUtil.getLightFieldForCompanionObject(element)
+                            }
+                        })
+                        if (fieldForCompanionObject != null) {
+                            searchNamedElement(queryParameters, fieldForCompanionObject)
                         }
-                    });
-                    if (fieldForCompanionObject != null) {
-                        searchNamedElement(queryParameters, fieldForCompanionObject);
                     }
                 }
             }
         }
-    }
 
-    @Override
-    public void processQuery(
-            @NotNull final ReferencesSearch.SearchParameters queryParameters,
-            @NotNull final Processor<PsiReference> consumer
-    ) {
-        PsiElement element = queryParameters.getElementToSearch();
-
-        final PsiNamedElement unwrappedElement = AsJavaPackage.getNamedUnwrappedElement(element);
-        if (unwrappedElement == null || !ProjectRootsUtil.isInProjectOrLibSource(unwrappedElement)) return;
-
-        ApplicationManager.getApplication().runReadAction(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        KotlinPsiSearchHelper searchHelper = new KotlinPsiSearchHelper(queryParameters.getElementToSearch().getProject());
-                        UsagesSearchTarget<PsiNamedElement> searchTarget = new UsagesSearchTarget<PsiNamedElement>(
-                                unwrappedElement,
-                                queryParameters.getEffectiveSearchScope(),
-                                UsagesSearchLocation.EVERYWHERE,
-                                false
-                        );
-                        UsagesSearchRequestItem requestItem = new UsagesSearchRequestItem(
-                                searchTarget,
-                                UsagesSearchPackage.getSpecialNamesToSearch(unwrappedElement),
-                                UsagesSearchPackage.getIsTargetUsage(),
-                                null
-                        );
-                        searchHelper.processFilesWithText(requestItem, consumer);
-                    }
+        private fun searchLightElements(queryParameters: ReferencesSearch.SearchParameters, element: PsiElement) {
+            if (element is JetClassOrObject) {
+                processJetClassOrObject(element, queryParameters)
+            }
+            else if (element is JetNamedFunction || element is JetSecondaryConstructor) {
+                val function = element as JetFunction
+                val name = function.getName()
+                if (name != null) {
+                    val method = ApplicationManager.getApplication().runReadAction<PsiMethod>(object : Computable<PsiMethod?> {
+                        override fun compute(): PsiMethod? {
+                            return LightClassUtil.getLightClassMethod(function)
+                        }
+                    })
+                    searchNamedElement(queryParameters, method)
                 }
-        );
+            }
+            else if (element is JetProperty) {
+                val propertyMethods = ApplicationManager.getApplication().runReadAction<LightClassUtil.PropertyAccessorsPsiMethods>(object : Computable<LightClassUtil.PropertyAccessorsPsiMethods> {
+                    override fun compute(): LightClassUtil.PropertyAccessorsPsiMethods {
+                        return LightClassUtil.getLightClassPropertyMethods(element)
+                    }
+                })
 
-        searchLightElements(queryParameters, element);
-    }
-
-    private static void searchLightElements(ReferencesSearch.SearchParameters queryParameters, PsiElement element) {
-        if (element instanceof JetClassOrObject) {
-            processJetClassOrObject((JetClassOrObject) element, queryParameters);
+                searchNamedElement(queryParameters, propertyMethods.getGetter())
+                searchNamedElement(queryParameters, propertyMethods.getSetter())
+            }
+            else if (element is KotlinLightMethod) {
+                val declaration = element.getOrigin()
+                if (declaration is JetProperty || (declaration is JetParameter && declaration.hasValOrVar())) {
+                    searchNamedElement(queryParameters, declaration as PsiNamedElement)
+                }
+                else if (declaration is JetPropertyAccessor) {
+                    searchNamedElement(queryParameters, PsiTreeUtil.getParentOfType<JetProperty>(declaration, javaClass<JetProperty>()))
+                }
+            }
         }
-        else if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
-            final JetFunction function = (JetFunction) element;
-            String name = function.getName();
+
+        private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters, element: PsiNamedElement,
+                                       name: String? = element.getName()) {
             if (name != null) {
-                PsiMethod method = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
-                    @Override
-                    public PsiMethod compute() {
-                        return LightClassUtil.getLightClassMethod(function);
-                    }
-                });
-                searchNamedElement(queryParameters, method);
+                queryParameters.getOptimizer().searchWord(name, queryParameters.getEffectiveSearchScope(), true, element)
             }
-        }
-        else if (element instanceof JetProperty) {
-            final JetProperty property = (JetProperty) element;
-            LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                    ApplicationManager.getApplication().runReadAction(new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
-                        @Override
-                        public LightClassUtil.PropertyAccessorsPsiMethods compute() {
-                            return LightClassUtil.getLightClassPropertyMethods(property);
-                        }
-                    });
-
-            searchNamedElement(queryParameters, propertyMethods.getGetter());
-            searchNamedElement(queryParameters, propertyMethods.getSetter());
-        }
-        else if (element instanceof KotlinLightMethod) {
-            JetDeclaration declaration = ((KotlinLightMethod) element).getOrigin();
-            if (declaration instanceof JetProperty
-                || (declaration instanceof JetParameter && ((JetParameter) declaration).hasValOrVar())) {
-                searchNamedElement(queryParameters, (PsiNamedElement) declaration);
-            }
-            else if (declaration instanceof JetPropertyAccessor) {
-                searchNamedElement(queryParameters, PsiTreeUtil.getParentOfType(declaration, JetProperty.class));
-            }
-        }
-    }
-
-    private static void searchNamedElement(ReferencesSearch.SearchParameters queryParameters, PsiNamedElement element) {
-        searchNamedElement(queryParameters, element, element != null ? element.getName() : null);
-    }
-
-    private static void searchNamedElement(ReferencesSearch.SearchParameters queryParameters, PsiNamedElement element, @Nullable String name) {
-        if (name != null) {
-            queryParameters.getOptimizer().searchWord(name, queryParameters.getEffectiveSearchScope(), true, element);
         }
     }
 }
