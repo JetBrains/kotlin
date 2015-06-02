@@ -377,8 +377,8 @@ class SmartCompletion(
         val expectedInfosGrouped: Map<JetType, List<ExpectedInfo>> = expectedInfos.groupBy { it.type.makeNotNullable() }
 
         val items = ArrayList<LookupElement>()
-        for ((jetType, infos) in expectedInfosGrouped) {
-            val lookupElement = lookupElementForType(jetType) ?: continue
+        for ((type, infos) in expectedInfosGrouped) {
+            val lookupElement = lookupElementForType(type) ?: continue
             items.add(lookupElement.addTailAndNameSimilarity(infos))
         }
         return Result(null, items, null)
@@ -446,16 +446,13 @@ class SmartCompletion(
         return Result(::filterDeclaration, listOf(), null)
     }
 
-    private fun lookupElementForType(jetType: JetType): LookupElement? {
-        if (jetType.isError()) return null
-        val classifier = jetType.getConstructor().getDeclarationDescriptor() ?: return null
+    private fun lookupElementForType(type: JetType): LookupElement? {
+        if (type.isError()) return null
+        val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
 
         val lookupElement = lookupElementFactory.createLookupElement(classifier, bindingContext, false)
-        val lookupString = lookupElement.getLookupString()
-
-        val typeArgs = jetType.getArguments()
-        var itemText = lookupString + IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderTypeArguments(typeArgs)
-        val typeText = DescriptorUtils.getFqName(classifier).toString() + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgs)
+        var itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
 
         val insertHandler: InsertHandler<LookupElement> = object : InsertHandler<LookupElement> {
             override fun handleInsert(context: InsertionContext, item: LookupElement) {
