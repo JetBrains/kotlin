@@ -58,6 +58,7 @@ public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
                 it.startsWith("// STEP_INTO") -> repeat("// STEP_INTO: ") { stepInto() }
                 it.startsWith("// STEP_OUT") -> repeat("// STEP_OUT: ") { stepOut() }
                 it.startsWith("// SMART_STEP_INTO") -> repeat("// SMART_STEP_INTO: ") { smartStepInto() }
+                it.startsWith("// RESUME") -> repeat("// RESUME: ") { resume(this) }
             }
         }
 
