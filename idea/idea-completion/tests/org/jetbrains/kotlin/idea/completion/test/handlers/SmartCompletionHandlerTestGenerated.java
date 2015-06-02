@@ -719,6 +719,12 @@ public class SmartCompletionHandlerTestGenerated extends AbstractSmartCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("TypeParameterAfterAs.kt")
+    public void testTypeParameterAfterAs() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/TypeParameterAfterAs.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Vararg1.kt")
     public void testVararg1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/smart/Vararg1.kt");
