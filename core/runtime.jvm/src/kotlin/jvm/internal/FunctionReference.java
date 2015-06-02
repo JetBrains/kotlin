@@ -30,6 +30,11 @@ public abstract class FunctionReference
         this.arity = arity;
     }
 
+    @Deprecated // preserved for binary compatibility with M12 release
+    public FunctionReference() {
+        this.arity = 0;
+    }
+
     @Override
     public int getArity() {
         return arity;
