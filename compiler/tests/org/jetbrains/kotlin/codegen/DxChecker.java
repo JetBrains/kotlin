@@ -21,6 +21,7 @@ import com.android.dx.cf.direct.StdAttributeFactory;
 import com.android.dx.command.dexer.Main;
 import com.android.dx.dex.cf.CfTranslator;
 import com.android.dx.dex.file.DexFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.junit.Assert;
 
@@ -46,20 +47,32 @@ public class DxChecker {
         for (OutputFile file : outputFiles.asList()) {
             try {
                 byte[] bytes = file.asByteArray();
-                DirectClassFile cf = new DirectClassFile(bytes, file.getRelativePath(), true);
-                cf.setAttributeFactory(StdAttributeFactory.THE_ONE);
-                CfTranslator.translate(
-                        cf,
-                        bytes,
-                        arguments.cfOptions,
-                        arguments.dexOptions,
-                        new DexFile(arguments.dexOptions)
-                );
+                checkFileWithDx(bytes, file.getRelativePath(), arguments);
             }
             catch (Throwable e) {
                 Assert.fail(generateExceptionMessage(e));
             }
         }
+    }
+
+    public static void checkFileWithDx(byte[] bytes, @NotNull String relativePath) {
+        Main.Arguments arguments = new Main.Arguments();
+        String[] array = new String[1];
+        array[0] = "testArgs";
+        arguments.parse(array);
+        checkFileWithDx(bytes, relativePath, arguments);
+    }
+
+    private static void checkFileWithDx(byte[] bytes, @NotNull String relativePath, @NotNull Main.Arguments arguments) {
+        DirectClassFile cf = new DirectClassFile(bytes, relativePath, true);
+        cf.setAttributeFactory(StdAttributeFactory.THE_ONE);
+        CfTranslator.translate(
+                cf,
+                bytes,
+                arguments.cfOptions,
+                arguments.dexOptions,
+                new DexFile(arguments.dexOptions)
+        );
     }
 
     private static String generateExceptionMessage(Throwable e) {
