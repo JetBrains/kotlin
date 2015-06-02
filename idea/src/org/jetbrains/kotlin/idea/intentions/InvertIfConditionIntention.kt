@@ -40,7 +40,7 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
     }
 
     override fun applyTo(element: JetIfExpression, editor: Editor) {
-        val newCondition = negate(element.getCondition()!!)
+        val newCondition = element.getCondition()!!.negate()
 
         val newIf = handleSpecialCases(element, newCondition)
                     ?: handleStandardCase(element, newCondition)
@@ -199,66 +199,5 @@ public class InvertIfConditionIntention : JetSelfTargetingIntention<JetIfExpress
             }
         }
         return null
-    }
-
-    companion object {
-        private val NEGATABLE_OPERATORS = setOf(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ,
-                JetTokens.EXCLEQEQEQ, JetTokens.IS_KEYWORD, JetTokens.NOT_IS, JetTokens.IN_KEYWORD,
-                JetTokens.NOT_IN, JetTokens.LT, JetTokens.LTEQ, JetTokens.GT, JetTokens.GTEQ)
-
-        private fun getNegatedOperatorText(token: IElementType): String {
-            return when(token) {
-                JetTokens.EQEQ -> JetTokens.EXCLEQ.getValue()
-                JetTokens.EXCLEQ -> JetTokens.EQEQ.getValue()
-                JetTokens.EQEQEQ -> JetTokens.EXCLEQEQEQ.getValue()
-                JetTokens.EXCLEQEQEQ -> JetTokens.EQEQEQ.getValue()
-                JetTokens.IS_KEYWORD -> JetTokens.NOT_IS.getValue()
-                JetTokens.NOT_IS -> JetTokens.IS_KEYWORD.getValue()
-                JetTokens.IN_KEYWORD -> JetTokens.NOT_IN.getValue()
-                JetTokens.NOT_IN -> JetTokens.IN_KEYWORD.getValue()
-                JetTokens.LT -> JetTokens.GTEQ.getValue()
-                JetTokens.LTEQ -> JetTokens.GT.getValue()
-                JetTokens.GT -> JetTokens.LTEQ.getValue()
-                JetTokens.GTEQ -> JetTokens.LT.getValue()
-                else -> throw IllegalArgumentException("The token $token does not have a negated equivalent.")
-            }
-        }
-
-        private fun negate(expression: JetExpression): JetExpression {
-            val specialNegation = specialNegationText(expression)
-            if (specialNegation != null) return specialNegation
-            return JetPsiFactory(expression).createExpressionByPattern("!$0", expression)
-        }
-
-        private fun specialNegationText(expression: JetExpression): JetExpression? {
-            val factory = JetPsiFactory(expression)
-            when (expression) {
-                is JetPrefixExpression -> {
-                    if (expression.getOperationReference().getReferencedName() == "!") {
-                        val baseExpression = expression.getBaseExpression()
-                        if (baseExpression != null) {
-                            return JetPsiUtil.safeDeparenthesize(baseExpression)
-                        }
-                    }
-                }
-
-                is JetBinaryExpression -> {
-                    val operator = expression.getOperationToken()
-                    if (operator !in NEGATABLE_OPERATORS) return null
-                    val left = expression.getLeft() ?: return null
-                    val right = expression.getRight() ?: return null
-                    return factory.createExpressionByPattern("$0 $1 $2", left, getNegatedOperatorText(operator), right)
-                }
-
-                is JetConstantExpression -> {
-                    return when (expression.getText()) {
-                        "true" -> factory.createExpression("false")
-                        "false" -> factory.createExpression("true")
-                        else -> null
-                    }
-                }
-            }
-            return null
-        }
     }
 }
