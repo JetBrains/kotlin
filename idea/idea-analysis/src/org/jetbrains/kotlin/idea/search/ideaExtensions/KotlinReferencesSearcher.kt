@@ -26,6 +26,7 @@ import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.idea.search.usagesSearch.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 
 public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters>() {
@@ -75,45 +76,36 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         }
 
         private fun searchLightElements(queryParameters: ReferencesSearch.SearchParameters, element: PsiElement) {
-            if (element is JetClassOrObject) {
-                processJetClassOrObject(element, queryParameters)
-            }
-            else if (element is JetNamedFunction || element is JetSecondaryConstructor) {
-                val function = element as JetFunction
-                val name = function.getName()
-                if (name != null) {
-                    val method = ApplicationManager.getApplication().runReadAction<PsiMethod>(object : Computable<PsiMethod?> {
-                        override fun compute(): PsiMethod? {
-                            return LightClassUtil.getLightClassMethod(function)
-                        }
-                    })
-                    searchNamedElement(queryParameters, method)
-                }
-            }
-            else if (element is JetProperty) {
-                val propertyMethods = ApplicationManager.getApplication().runReadAction<LightClassUtil.PropertyAccessorsPsiMethods>(object : Computable<LightClassUtil.PropertyAccessorsPsiMethods> {
-                    override fun compute(): LightClassUtil.PropertyAccessorsPsiMethods {
-                        return LightClassUtil.getLightClassPropertyMethods(element)
+            when (element) {
+                is JetClassOrObject -> processJetClassOrObject(element, queryParameters)
+                is JetNamedFunction, is JetSecondaryConstructor -> {
+                    val function = element as JetFunction
+                    val name = function.getName()
+                    if (name != null) {
+                        val method = runReadAction { LightClassUtil.getLightClassMethod(function) }
+                        searchNamedElement(queryParameters, method)
                     }
-                })
-
-                searchNamedElement(queryParameters, propertyMethods.getGetter())
-                searchNamedElement(queryParameters, propertyMethods.getSetter())
-            }
-            else if (element is KotlinLightMethod) {
-                val declaration = element.getOrigin()
-                if (declaration is JetProperty || (declaration is JetParameter && declaration.hasValOrVar())) {
-                    searchNamedElement(queryParameters, declaration as PsiNamedElement)
                 }
-                else if (declaration is JetPropertyAccessor) {
-                    searchNamedElement(queryParameters, PsiTreeUtil.getParentOfType<JetProperty>(declaration, javaClass<JetProperty>()))
+                is JetProperty -> {
+                    val propertyMethods = runReadAction { LightClassUtil.getLightClassPropertyMethods(element) }
+                    searchNamedElement(queryParameters, propertyMethods.getGetter())
+                    searchNamedElement(queryParameters, propertyMethods.getSetter())
+                }
+                is KotlinLightMethod -> {
+                    val declaration = element.getOrigin()
+                    if (declaration is JetProperty || (declaration is JetParameter && declaration.hasValOrVar())) {
+                        searchNamedElement(queryParameters, declaration as PsiNamedElement)
+                    }
+                    else if (declaration is JetPropertyAccessor) {
+                        searchNamedElement(queryParameters, PsiTreeUtil.getParentOfType<JetProperty>(declaration, javaClass<JetProperty>()))
+                    }
                 }
             }
         }
 
-        private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters, element: PsiNamedElement,
-                                       name: String? = element.getName()) {
-            if (name != null) {
+        private fun searchNamedElement(queryParameters: ReferencesSearch.SearchParameters, element: PsiNamedElement?,
+                                       name: String? = element?.getName()) {
+            if (name != null && element != null) {
                 queryParameters.getOptimizer().searchWord(name, queryParameters.getEffectiveSearchScope(), true, element)
             }
         }
