@@ -126,9 +126,9 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         getLogger().kotlinDebug("args.destination = ${args.destination}")
 
         val extraProperties = getExtensions().getExtraProperties()
-        args.pluginClasspaths = extraProperties.get("compilerPluginClasspaths") as? Array<String>
+        args.pluginClasspaths = extraProperties.getOrNull<Array<String>>("compilerPluginClasspaths") ?: arrayOf()
         getLogger().kotlinDebug("args.pluginClasspaths = ${args.pluginClasspaths.joinToString(File.pathSeparator)}")
-        val basePluginOptions = (extraProperties.get("compilerPluginArguments") as? Array<String>) ?: array()
+        val basePluginOptions = extraProperties.getOrNull<Array<String>>("compilerPluginArguments") ?: arrayOf()
 
         val pluginOptions = arrayListOf(*basePluginOptions)
 
@@ -334,9 +334,10 @@ public open class KDoc() : SourceTask() {
     }
 }
 
-private inline fun <reified T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
+private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
     try {
-        return get(id) as T
+        @suppress("UNCHECKED_CAST")
+        return get(id) as? T
     } catch (e: ExtraPropertiesExtension.UnknownPropertyException) {
         return null
     }
