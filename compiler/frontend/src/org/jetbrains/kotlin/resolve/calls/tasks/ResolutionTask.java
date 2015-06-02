@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.JetReferenceExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.StatementFilter;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
@@ -87,19 +86,6 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
              context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
     }
 
-    public ResolutionTask(
-            @NotNull final Collection<ResolutionCandidate<D>> candidates,
-            @NotNull JetReferenceExpression reference,
-            @NotNull BasicCallResolutionContext context
-    ) {
-        this(context, TracingStrategyImpl.create(reference, context.call), new Function0<Collection<ResolutionCandidate<D>>>() {
-            @Override
-            public Collection<ResolutionCandidate<D>> invoke() {
-                return candidates;
-            }
-        });
-    }
-
     @NotNull
     public Collection<ResolutionCandidate<D>> getCandidates() {
         return lazyCandidates.invoke();
@@ -132,23 +118,6 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
                 callChecker, symbolUsageValidator, additionalTypeChecker,
                 statementFilter, resolvedCalls,
                 isAnnotationContext, collectAllCandidates, insideSafeCallChain);
-    }
-
-    public ResolutionTask<D, F> replaceContext(@NotNull BasicCallResolutionContext newContext) {
-        return new ResolutionTask<D, F>(newContext, tracing, lazyCandidates);
-    }
-
-    public ResolutionTask<D, F> replaceCall(@NotNull Call newCall) {
-        return new ResolutionTask<D, F>(
-                lazyCandidates, tracing, trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments,
-                resolutionResultsCache, dataFlowInfoForArguments,
-                callChecker, symbolUsageValidator, additionalTypeChecker,
-                statementFilter, resolvedCalls,
-                isAnnotationContext, collectAllCandidates, insideCallChain);
-    }
-
-    public interface DescriptorCheckStrategy {
-        <D extends CallableDescriptor> boolean performAdvancedChecks(D descriptor, BindingTrace trace, TracingStrategy tracing);
     }
 
     @Override
