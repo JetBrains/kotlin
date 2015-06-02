@@ -3247,6 +3247,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("dontAddRedundantParenthesis.kt")
+        public void testDontAddRedundantParenthesis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/dontAddRedundantParenthesis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("doubleNegation.kt")
         public void testDoubleNegation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/doubleNegation.kt");

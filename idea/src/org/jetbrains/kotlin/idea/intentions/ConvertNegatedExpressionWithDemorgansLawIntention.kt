@@ -52,21 +52,22 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
             else -> throw IllegalArgumentException()
         }
 
-        val text = splitBooleanSequence(baseExpression)!!
-                .map { negatedExpressionText(it) }
-                .reverse()
-                .joinToString(operatorText)
+        val operands = splitBooleanSequence(baseExpression)!!.reverse()
 
-        val newExpression = JetPsiFactory(element).createExpression(text)
+        val newExpression = JetPsiFactory(element).buildExpression {
+            for ((i, operand) in operands.withIndex()) {
+                if (i > 0) {
+                    appendFixedText(operatorText)
+                }
+                appendExpression(operand.negated())
+            }
+        }
+
         element.replace(newExpression)
     }
 
-    private fun negatedExpressionText(expression: JetExpression): String {
-        val text = expression.getText()
-        return when (expression) {
-            is JetSimpleNameExpression, is JetConstantExpression, is JetPrefixExpression, is JetParenthesizedExpression -> "!$text"
-            else -> "!($text)"
-        }
+    private fun JetExpression.negated(): JetExpression {
+        return JetPsiFactory(this).createExpressionByPattern("!$0", this)
     }
 
     private fun splitBooleanSequence(expression: JetBinaryExpression): List<JetExpression>? {
