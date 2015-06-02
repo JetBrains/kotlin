@@ -70,6 +70,7 @@ public class TypeCheckingProcedure {
     }
 
     public boolean equalTypes(@NotNull JetType type1, @NotNull JetType type2) {
+        if (type1 == type2) return true;
         if (TypesPackage.isFlexible(type1)) {
             if (TypesPackage.isFlexible(type2)) {
                 return !type1.isError() && !type2.isError() && isSubtypeOf(type1, type2) && isSubtypeOf(type2, type1);
