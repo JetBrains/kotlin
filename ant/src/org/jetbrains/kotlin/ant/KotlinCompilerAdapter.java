@@ -19,14 +19,18 @@ package org.jetbrains.kotlin.ant;
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.compilers.Javac13;
+import org.apache.tools.ant.taskdefs.condition.AntVersion;
 import org.apache.tools.ant.types.Path;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.apache.tools.ant.Project.MSG_WARN;
 
 public class KotlinCompilerAdapter extends Javac13 {
     private static final List<String> KOTLIN_EXTENSIONS = Arrays.asList("kt", "kts");
@@ -55,6 +59,8 @@ public class KotlinCompilerAdapter extends Javac13 {
     public boolean execute() throws BuildException {
         Javac javac = getJavac();
 
+        checkAntVersion();
+
         Kotlin2JvmTask kotlinc = new Kotlin2JvmTask();
         kotlinc.setFailOnError(javac.getFailonerror());
         kotlinc.setOutput(javac.getDestdir());
@@ -82,6 +88,17 @@ public class KotlinCompilerAdapter extends Javac13 {
         compileList = filterOutKotlinSources(compileList);
 
         return compileList.length == 0 || super.execute();
+    }
+
+    private void checkAntVersion() {
+        AntVersion checkVersion = new AntVersion();
+        checkVersion.setAtLeast("1.8.2");
+        if (!checkVersion.eval()) {
+            getJavac().log("<withKotlin> task requires Ant of version at least 1.8.2 to operate reliably. " +
+                           "Please upgrade or, as a workaround, make sure you have at least one Java source and " +
+                           "the output directory is clean before running this task. " +
+                           "You have: " + getProject().getProperty(MagicNames.ANT_VERSION), MSG_WARN);
+        }
     }
 
     @NotNull
