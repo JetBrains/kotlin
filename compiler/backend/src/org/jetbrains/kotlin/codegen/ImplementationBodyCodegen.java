@@ -1406,7 +1406,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateDelegationToTraitImpl(@NotNull final FunctionDescriptor traitFun, @NotNull FunctionDescriptor inheritedFun) {
+    private void generateDelegationToTraitImpl(@NotNull final FunctionDescriptor traitFun, @NotNull final FunctionDescriptor inheritedFun) {
         functionCodegen.generateMethod(
                 DelegationToTraitImpl(descriptorToDeclaration(traitFun), traitFun),
                 inheritedFun,
@@ -1415,6 +1415,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                         DeclarationDescriptor containingDeclaration = traitFun.getContainingDeclaration();
                         if (!DescriptorUtils.isTrait(containingDeclaration)) return;
+
+                        DeclarationDescriptor declarationInheritedFun = inheritedFun.getContainingDeclaration();
+                        PsiElement classForInheritedFun = descriptorToDeclaration(declarationInheritedFun);
+                        if (classForInheritedFun instanceof JetDeclaration) {
+                            codegen.markLineNumber((JetElement) classForInheritedFun, false);
+                        }
+
                         ClassDescriptor containingTrait = (ClassDescriptor) containingDeclaration;
                         Type traitImplType = typeMapper.mapTraitImpl(containingTrait);
 

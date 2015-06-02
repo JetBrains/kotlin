@@ -1,0 +1,45 @@
+LineBreakpoint created at traits.kt:5
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! traits.TraitsPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+traits.kt:5
+traits.kt:6
+traits.kt:41
+traits.kt:27
+traits.kt:41
+traits.kt:6
+traits.kt:7
+traits.kt:41
+traits.kt:31
+traits.kt:41
+traits.kt:7
+traits.kt:8
+traits.kt:43
+traits.kt:8
+traits.kt:9
+traits.kt:47
+traits.kt:9
+traits.kt:11
+traits.kt:19
+traits.kt:11
+traits.kt:27
+traits.kt:11
+traits.kt:19
+traits.kt:20
+traits.kt:11
+traits.kt:31
+traits.kt:11
+traits.kt:20
+traits.kt:21
+traits.kt:13
+traits.kt:34
+traits.kt:13
+traits.kt:21
+traits.kt:22
+traits.kt:17
+traits.kt:38
+traits.kt:17
+traits.kt:22
+traits.kt:23
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

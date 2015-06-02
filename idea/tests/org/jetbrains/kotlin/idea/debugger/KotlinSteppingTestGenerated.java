@@ -265,6 +265,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("traits.kt")
+        public void testTraits() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/traits.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("whenExpr.kt")
         public void testWhenExpr() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/whenExpr.kt");
