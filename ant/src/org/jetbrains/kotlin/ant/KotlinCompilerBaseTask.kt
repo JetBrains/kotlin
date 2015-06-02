@@ -16,45 +16,13 @@
 
 package org.jetbrains.kotlin.ant
 
-import org.apache.tools.ant.AntClassLoader
 import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Task
 import org.apache.tools.ant.types.Commandline
 import org.apache.tools.ant.types.Path
 import org.apache.tools.ant.types.Reference
-import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import java.io.File
 import java.io.PrintStream
-import java.lang.ref.SoftReference
-import java.net.JarURLConnection
-
-object CompilerClassLoaderHolder {
-    private var classLoaderRef = SoftReference<ClassLoader?>(null)
-
-    synchronized fun getOrCreateClassLoader(): ClassLoader {
-        val cached = classLoaderRef.get()
-        if (cached != null) return cached
-
-        val myLoader = javaClass.getClassLoader()
-        if (myLoader !is AntClassLoader) return myLoader
-
-        // Find path of kotlin-ant.jar in the filesystem and find kotlin-compiler.jar in the same directory
-        val resourcePath = "/" + javaClass.getName().replace('.', '/') + ".class"
-        val jarConnection = javaClass.getResource(resourcePath).openConnection() as? JarURLConnection
-                            ?: throw UnsupportedOperationException("Kotlin compiler Ant task should be loaded from the JAR file")
-        val antTaskJarPath = File(jarConnection.getJarFileURL().toURI())
-
-        val compilerJarPath = File(antTaskJarPath.getParent(), "kotlin-compiler.jar")
-        if (!compilerJarPath.exists()) {
-            throw IllegalStateException("kotlin-compiler.jar is not found in the directory of Kotlin Ant task")
-        }
-
-        val classLoader = ClassPreloadingUtils.preloadClasses(listOf(compilerJarPath), 4096, myLoader, null)
-        classLoaderRef = SoftReference(classLoader)
-
-        return classLoader
-    }
-}
 
 public abstract class KotlinCompilerBaseTask : Task() {
     protected abstract val compilerFqName: String
@@ -115,7 +83,7 @@ public abstract class KotlinCompilerBaseTask : Task() {
     final override fun execute() {
         fillArguments()
 
-        val compilerClass = CompilerClassLoaderHolder.getOrCreateClassLoader().loadClass(compilerFqName)
+        val compilerClass = KotlinAntTaskUtil.getOrCreateClassLoader().loadClass(compilerFqName)
         val compiler = compilerClass.newInstance()
         val exec = compilerClass.getMethod("execFullPathsInMessages", javaClass<PrintStream>(), javaClass<Array<String>>())
 
