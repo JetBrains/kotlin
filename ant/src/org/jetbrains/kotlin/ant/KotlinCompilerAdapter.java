@@ -56,6 +56,7 @@ public class KotlinCompilerAdapter extends Javac13 {
         Javac javac = getJavac();
 
         Kotlin2JvmTask kotlinc = new Kotlin2JvmTask();
+        kotlinc.setFailOnError(javac.getFailonerror());
         kotlinc.setOutput(javac.getDestdir());
 
         Path classpath = javac.getClasspath();
@@ -70,6 +71,10 @@ public class KotlinCompilerAdapter extends Javac13 {
         kotlinc.setExternalAnnotations(externalAnnotations);
 
         kotlinc.execute();
+        if (!Integer.valueOf(0).equals(kotlinc.getExitCode())) {
+            // Don't run javac if failOnError = false and there were errors on Kotlin sources
+            return false;
+        }
 
         javac.log("Running javac...");
 

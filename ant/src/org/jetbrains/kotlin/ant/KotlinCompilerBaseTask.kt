@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.ant
 
+import org.apache.tools.ant.AntClassLoader
+import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Task
+import org.apache.tools.ant.types.Commandline
 import org.apache.tools.ant.types.Path
 import org.apache.tools.ant.types.Reference
-import java.io.File
-import org.apache.tools.ant.BuildException
-import org.apache.tools.ant.types.Commandline
-import java.io.PrintStream
-import org.apache.tools.ant.AntClassLoader
-import java.lang.ref.SoftReference
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
+import java.io.File
+import java.io.PrintStream
+import java.lang.ref.SoftReference
 import java.net.JarURLConnection
 
 object CompilerClassLoaderHolder {
@@ -66,10 +66,13 @@ public abstract class KotlinCompilerBaseTask : Task() {
     public var nowarn: Boolean = false
     public var verbose: Boolean = false
     public var printVersion: Boolean = false
+    public var failOnError: Boolean = false
 
     public var noStdlib: Boolean = false
 
     public val additionalArguments: MutableList<Commandline.Argument> = arrayListOf()
+
+    internal var exitCode: Int? = null
 
     public fun createSrc(): Path {
         val srcPath = src
@@ -118,10 +121,10 @@ public abstract class KotlinCompilerBaseTask : Task() {
 
         log("Compiling ${src!!.list().toList()} => [${output!!.canonicalPath}]");
 
-        val exitCode = exec(compiler, System.err, args.copyToArray())
+        val result = exec(compiler, System.err, args.toTypedArray())
+        exitCode = (result as Enum<*>).ordinal()
 
-        // TODO: support failOnError attribute of javac
-        if ((exitCode as Enum<*>).ordinal() != 0) {
+        if (failOnError && exitCode != 0) {
             throw BuildException("Compile failed; see the compiler error output for details.")
         }
     }

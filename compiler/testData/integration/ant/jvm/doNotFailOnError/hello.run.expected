@@ -1,0 +1,12 @@
+
+ERR:
+Exception in thread "main" java.lang.NoClassDefFoundError: hello/HelloPackage
+Caused by: java.lang.ClassNotFoundException: hello.HelloPackage
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:202)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:190)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:306)
+	at sun.misc.Launcher$AppClassLoader.loadClass(Launcher.java:301)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:247)
+
+Return code: 1
