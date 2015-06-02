@@ -105,3 +105,7 @@ public class FileObjectKotlinAnnotationProvider(val annotationsFileObject: FileO
     override val serializedAnnotations: String
         get() = annotationsFileObject.getCharContent(false).toString()
 }
+
+public class EmptyKotlinAnnotationsProvider : KotlinAnnotationProvider() {
+    override val serializedAnnotations = ""
+}
