@@ -765,6 +765,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("noNameProperty.kt")
+            public void testNoNameProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/noNameProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NonAnnotationClass.kt")
             public void testNonAnnotationClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/NonAnnotationClass.kt");
