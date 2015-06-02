@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -128,3 +129,61 @@ fun JetQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
     return analyze().getType(receiver) != null
 }
 
+public fun JetExpression.negate(): JetExpression {
+    val specialNegation = specialNegation()
+    if (specialNegation != null) return specialNegation
+    return JetPsiFactory(this).createExpressionByPattern("!$0", this)
+}
+
+private fun JetExpression.specialNegation(): JetExpression? {
+    val factory = JetPsiFactory(this)
+    when (this) {
+        is JetPrefixExpression -> {
+            if (getOperationReference().getReferencedName() == "!") {
+                val baseExpression = getBaseExpression()
+                if (baseExpression != null) {
+                    return JetPsiUtil.safeDeparenthesize(baseExpression)
+                }
+            }
+        }
+
+        is JetBinaryExpression -> {
+            val operator = getOperationToken()
+            if (operator !in NEGATABLE_OPERATORS) return null
+            val left = getLeft() ?: return null
+            val right = getRight() ?: return null
+            return factory.createExpressionByPattern("$0 $1 $2", left, getNegatedOperatorText(operator), right)
+        }
+
+        is JetConstantExpression -> {
+            return when (getText()) {
+                "true" -> factory.createExpression("false")
+                "false" -> factory.createExpression("true")
+                else -> null
+            }
+        }
+    }
+    return null
+}
+
+private val NEGATABLE_OPERATORS = setOf(JetTokens.EQEQ, JetTokens.EXCLEQ, JetTokens.EQEQEQ,
+                                        JetTokens.EXCLEQEQEQ, JetTokens.IS_KEYWORD, JetTokens.NOT_IS, JetTokens.IN_KEYWORD,
+                                        JetTokens.NOT_IN, JetTokens.LT, JetTokens.LTEQ, JetTokens.GT, JetTokens.GTEQ)
+
+private fun getNegatedOperatorText(token: IElementType): String {
+    return when(token) {
+        JetTokens.EQEQ -> JetTokens.EXCLEQ.getValue()
+        JetTokens.EXCLEQ -> JetTokens.EQEQ.getValue()
+        JetTokens.EQEQEQ -> JetTokens.EXCLEQEQEQ.getValue()
+        JetTokens.EXCLEQEQEQ -> JetTokens.EQEQEQ.getValue()
+        JetTokens.IS_KEYWORD -> JetTokens.NOT_IS.getValue()
+        JetTokens.NOT_IS -> JetTokens.IS_KEYWORD.getValue()
+        JetTokens.IN_KEYWORD -> JetTokens.NOT_IN.getValue()
+        JetTokens.NOT_IN -> JetTokens.IN_KEYWORD.getValue()
+        JetTokens.LT -> JetTokens.GTEQ.getValue()
+        JetTokens.LTEQ -> JetTokens.GT.getValue()
+        JetTokens.GT -> JetTokens.LTEQ.getValue()
+        JetTokens.GTEQ -> JetTokens.LT.getValue()
+        else -> throw IllegalArgumentException("The token $token does not have a negated equivalent.")
+    }
+}

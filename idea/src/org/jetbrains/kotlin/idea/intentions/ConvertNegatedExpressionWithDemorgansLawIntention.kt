@@ -59,15 +59,11 @@ public class ConvertNegatedExpressionWithDemorgansLawIntention : JetSelfTargetin
                 if (i > 0) {
                     appendFixedText(operatorText)
                 }
-                appendExpression(operand.negated())
+                appendExpression(operand.negate())
             }
         }
 
         element.replace(newExpression)
-    }
-
-    private fun JetExpression.negated(): JetExpression {
-        return JetPsiFactory(this).createExpressionByPattern("!$0", this)
     }
 
     private fun splitBooleanSequence(expression: JetBinaryExpression): List<JetExpression>? {
