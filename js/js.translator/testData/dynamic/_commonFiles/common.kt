@@ -16,11 +16,3 @@ object t {
 object n {
     fun valueOf() = 42
 }
-
-fun testTrue(f: () -> Boolean) {
-    assertTrue(f(), f.toString())
-}
-
-fun testFalse(f: () -> Boolean) {
-    assertFalse(f(), f.toString())
-}
