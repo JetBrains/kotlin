@@ -827,7 +827,9 @@ public class KotlinBuiltIns {
 
     private static boolean isConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null && fqName.equals(getFqName(descriptor));
+        return descriptor != null &&
+               /* quick check to avoid creation of full FqName instance */ descriptor.getName().equals(fqName.shortName()) &&
+               fqName.equals(getFqName(descriptor));
     }
 
     private static boolean isNotNullConstructedFromGivenClass(@NotNull JetType type, @NotNull FqNameUnsafe fqName) {
