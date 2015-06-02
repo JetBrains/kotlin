@@ -23,9 +23,16 @@ import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 public abstract class AbstractClassTypeConstructor implements TypeConstructor {
+    private boolean hashCodeComputed;
+    private int hashCode;
+
     @Override
     public final int hashCode() {
-        return hashCode(this);
+        if (!hashCodeComputed) {
+            hashCodeComputed = true;
+            hashCode = hashCode(this);
+        }
+        return hashCode;
     }
 
     @Override
