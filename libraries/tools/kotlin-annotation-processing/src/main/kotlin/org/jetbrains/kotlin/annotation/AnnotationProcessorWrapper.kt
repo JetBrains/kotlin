@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.annotation
 
+import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.AnnotationMirror
@@ -75,8 +76,12 @@ public abstract class AnnotationProcessorWrapper(
             return
         }
 
-        val annotationsTxt = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "annotations.$taskQualifier.txt")
-        kotlinAnnotationsProvider = FileObjectKotlinAnnotationProvider(annotationsTxt)
+        try {
+            val annotationsTxt = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "annotations.$taskQualifier.txt")
+            kotlinAnnotationsProvider = FileObjectKotlinAnnotationProvider(annotationsTxt)
+        } catch (e: IOException) {
+            kotlinAnnotationsProvider = EmptyKotlinAnnotationsProvider()
+        }
 
         processor.init(processingEnv)
     }
