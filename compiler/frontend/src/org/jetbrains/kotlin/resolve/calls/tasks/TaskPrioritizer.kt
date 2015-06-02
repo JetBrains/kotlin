@@ -70,7 +70,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
         val taskPrioritizerContext = TaskPrioritizerContext(name, result, context, context.scope, callableDescriptorCollectors)
 
         if (explicitReceiver is QualifierReceiver) {
-            val qualifierReceiver = explicitReceiver : QualifierReceiver
+            val qualifierReceiver: QualifierReceiver = explicitReceiver
             doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(qualifierReceiver.getNestedClassesAndPackageMembersScope()))
             computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
         }
@@ -252,13 +252,14 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
                     c.context.call
             )
 
-            val nonlocals = Lists.newArrayList<ResolutionCandidate<D>>()
-            val locals = Lists.newArrayList<ResolutionCandidate<D>>()
-            //noinspection unchecked,RedundantTypeArguments
-            splitLexicallyLocalDescriptors(members, c.scope.getContainingDeclaration(), locals, nonlocals)
+            if (members.isNotEmpty()) {
+                val nonlocals = Lists.newArrayList<ResolutionCandidate<D>>()
+                val locals = Lists.newArrayList<ResolutionCandidate<D>>()
+                splitLexicallyLocalDescriptors(members, c.scope.getContainingDeclaration(), locals, nonlocals)
 
-            localsList.add(locals)
-            nonlocalsList.add(nonlocals)
+                localsList.add(locals)
+                nonlocalsList.add(nonlocals)
+            }
         }
 
         //locals
