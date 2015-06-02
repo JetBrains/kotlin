@@ -57,6 +57,3 @@ public fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
             .singleOrNull { it.key.getName().asString() == parameterName }
             ?.value?.getValue()
 }
-
-public fun AnnotationDescriptor.deprecatedAnnotationMessage(): String?
-        = argumentValue("value") as? String
