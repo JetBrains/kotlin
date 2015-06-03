@@ -376,18 +376,6 @@ public class QualifiedExpressionResolver {
             descriptors.addAll(lookupResult.descriptors);
         }
 
-        Collection<JetScope> possibleResolutionScopes = Lists.newArrayList();
-        for (LookupResult lookupResult : lookupResults) {
-            if (!lookupResult.descriptors.isEmpty()) {
-                possibleResolutionScopes.add(lookupResult.resolutionScope);
-            }
-        }
-        if (possibleResolutionScopes.isEmpty()) {
-            for (LookupResult lookupResult : lookupResults) {
-                possibleResolutionScopes.add(lookupResult.resolutionScope);
-            }
-        }
-
         Collection<DeclarationDescriptor> filteredDescriptors;
         if (lookupMode == LookupMode.ONLY_CLASSES_AND_PACKAGES) {
             filteredDescriptors = Collections2.filter(descriptors, CLASSIFIERS_AND_PACKAGE_VIEWS);
@@ -406,6 +394,18 @@ public class QualifiedExpressionResolver {
         }
 
         if (storeResult) {
+            Collection<JetScope> possibleResolutionScopes = Lists.newArrayList();
+            for (LookupResult lookupResult : lookupResults) {
+                if (!lookupResult.descriptors.isEmpty()) {
+                    possibleResolutionScopes.add(lookupResult.resolutionScope);
+                }
+            }
+            if (possibleResolutionScopes.isEmpty()) {
+                for (LookupResult lookupResult : lookupResults) {
+                    possibleResolutionScopes.add(lookupResult.resolutionScope);
+                }
+            }
+
             storeResolutionResult(descriptors, filteredDescriptors, referenceExpression, possibleResolutionScopes, trace,
                                   scopeToCheckVisibility);
         }
