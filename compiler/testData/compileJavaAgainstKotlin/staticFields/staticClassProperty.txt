@@ -3,7 +3,7 @@ package test
 internal final class Test {
     public constructor Test()
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         public final val valProp: kotlin.Int
         public final var varProp: kotlin.Int
