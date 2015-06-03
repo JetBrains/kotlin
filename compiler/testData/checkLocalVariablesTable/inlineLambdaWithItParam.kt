@@ -6,6 +6,7 @@ class A {
     fun foo() {
         inlineFun ({
                        var zzz = it;
+                       zzz++
                    })
     }
 }

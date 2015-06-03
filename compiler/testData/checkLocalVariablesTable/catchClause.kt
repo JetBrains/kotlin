@@ -1,7 +1,8 @@
 class A {
     fun foo() {
         try {
-            val a = 1
+            var a = 1
+            a++
         }
         catch(e : Throwable) {
 
