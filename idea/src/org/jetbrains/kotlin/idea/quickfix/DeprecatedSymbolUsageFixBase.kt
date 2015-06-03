@@ -163,61 +163,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
-            @data class IntroduceValueForParameter(
-                    val parameter: ValueParameterDescriptor,
-                    val value: JetExpression,
-                    val valueType: JetType?)
+            val introduceValuesForParameters = processValueParameterUsages(resolvedCall, replacement, bindingContext, project)
 
-            val introduceValuesForParameters = ArrayList<IntroduceValueForParameter>()
-
-            // process parameters in reverse order because default values can use previous parameters
-            for (parameter in descriptor.getValueParameters().reverse()) {
-                val argument = argumentForParameter(parameter, resolvedCall, bindingContext, project) ?: continue
-
-                argument.expression.put(PARAMETER_VALUE_KEY, parameter)
-
-                val parameterName = parameter.getName()
-                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
-                    it[ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY] == parameterName
-                }
-                usages.forEach {
-                    val usageArgument = it.getParent() as? JetValueArgument
-                    if (argument.isNamed) {
-                        usageArgument?.mark(MAKE_ARGUMENT_NAMED_KEY)
-                    }
-                    if (argument.isDefaultValue) {
-                        usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
-                    }
-                    it.replace(argument.expression)
-                }
-
-                //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
-
-                if (argument.expression.shouldKeepValue(usages.size())) {
-                    introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
-                }
-            }
-
-            for (typeParameter in descriptor.getOriginal().getTypeParameters()) {
-                val parameterName = typeParameter.getName()
-                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
-                    it[ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY] == parameterName
-                }
-
-                val type = resolvedCall.getTypeArguments()[typeParameter]!!
-                val typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
-
-                for (usage in usages) {
-                    val parent = usage.getParent()
-                    if (parent is JetUserType) {
-                        val typeReference = psiFactory.createType(typeString)
-                        parent.replace(typeReference.getTypeElement()!!)
-                    }
-                    else { //TODO: tests for this?
-                        usage.replace(psiFactory.createExpression(typeString))
-                    }
-                }
-            }
+            processTypeParameterUsages(resolvedCall, replacement)
 
             val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToBeReplaced, bindingContext)
 
@@ -259,6 +207,76 @@ public abstract class DeprecatedSymbolUsageFixBase(
             commentSaver.restore(resultRange)
 
             return resultRange.last as JetExpression
+        }
+
+        private fun processValueParameterUsages(
+                resolvedCall: ResolvedCall<out CallableDescriptor>,
+                replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression,
+                bindingContext: BindingContext,
+                project: Project
+        ): Collection<IntroduceValueForParameter> {
+            val introduceValuesForParameters = ArrayList<IntroduceValueForParameter>()
+
+            // process parameters in reverse order because default values can use previous parameters
+            val parameters = resolvedCall.getResultingDescriptor().getValueParameters()
+            for (parameter in parameters.reverse()) {
+                val argument = argumentForParameter(parameter, resolvedCall, bindingContext, project) ?: continue
+
+                argument.expression.put(PARAMETER_VALUE_KEY, parameter)
+
+                val parameterName = parameter.getName()
+                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
+                    it[ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY] == parameterName
+                }
+                usages.forEach {
+                    val usageArgument = it.getParent() as? JetValueArgument
+                    if (argument.isNamed) {
+                        usageArgument?.mark(MAKE_ARGUMENT_NAMED_KEY)
+                    }
+                    if (argument.isDefaultValue) {
+                        usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
+                    }
+                    it.replace(argument.expression)
+                }
+
+                //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
+
+                if (argument.expression.shouldKeepValue(usages.size())) {
+                    introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
+                }
+            }
+
+            return introduceValuesForParameters
+        }
+
+        private data class IntroduceValueForParameter(
+                val parameter: ValueParameterDescriptor,
+                val value: JetExpression,
+                val valueType: JetType?)
+
+        private fun processTypeParameterUsages(resolvedCall: ResolvedCall<out CallableDescriptor>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {
+            val descriptor = resolvedCall.getResultingDescriptor().getOriginal()
+            for (typeParameter in descriptor.getTypeParameters()) {
+                val parameterName = typeParameter.getName()
+                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
+                    it[ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY] == parameterName
+                }
+
+                val type = resolvedCall.getTypeArguments()[typeParameter]!!
+                val typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+
+                for (usage in usages) {
+                    val parent = usage.getParent()
+                    if (parent is JetUserType) {
+                        val typeReference = JetPsiFactory(usage).createType(typeString)
+                        parent.replace(typeReference.getTypeElement()!!)
+                    }
+                    else {
+                        //TODO: tests for this?
+                        usage.replace(JetPsiFactory(usage).createExpression(typeString))
+                    }
+                }
+            }
         }
 
         private fun ConstructedExpressionWrapper.wrapExpressionForSafeCall(receiver: JetExpression, receiverType: JetType?) {
