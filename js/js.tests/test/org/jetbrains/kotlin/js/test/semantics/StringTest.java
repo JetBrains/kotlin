@@ -16,12 +16,6 @@
 
 package org.jetbrains.kotlin.js.test.semantics;
 
-import com.intellij.openapi.util.io.FileUtil;
-import org.jetbrains.kotlin.js.config.EcmaVersion;
-
-import java.io.File;
-import java.io.IOException;
-
 public final class StringTest extends AbstractExpressionTest {
 
     public StringTest() {
@@ -37,18 +31,15 @@ public final class StringTest extends AbstractExpressionTest {
     }
 
     public void testIntInTemplate() throws Exception {
-        fooBoxIsValue("my age is 3");
-        checkHasNoToStringCalls();
+        checkFooBoxIsOk();
     }
 
     public void testStringInTemplate() throws Exception {
-        fooBoxIsValue("oHelloo");
-        checkHasNoToStringCalls();
+        checkFooBoxIsOk();
     }
 
     public void testMultipleExpressionsInTemplate() throws Exception {
-        fooBoxIsValue("left = 3\nright = 2\nsum = 5\n");
-        checkHasNoToStringCalls();
+        checkFooBoxIsOk();
     }
 
     public void testObjectToStringCallInTemplate() throws Exception {
@@ -69,14 +60,6 @@ public final class StringTest extends AbstractExpressionTest {
 
     public void testNumbersInTemplate() throws Exception {
         fooBoxIsValue("2354");
-    }
-
-    private void checkHasNoToStringCalls() throws IOException {
-        for (EcmaVersion ecmaVersion : DEFAULT_ECMA_VERSIONS) {
-            String filePath = getOutputFilePath(getTestName(true), ecmaVersion);
-            String text = FileUtil.loadFile(new File(filePath), /*convertLineSeparators = */ true);
-            assertFalse(filePath + " should not contain toString calls", text.contains("toString"));
-        }
     }
 
     public void testStringSplit() throws Exception {

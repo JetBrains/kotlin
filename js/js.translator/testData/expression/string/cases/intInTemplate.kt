@@ -1,7 +1,10 @@
+// CHECK_NOT_CALLED_IN_SCOPE: scope=box function=toString
+
 package foo
 
 fun box(): String {
     var number = 3
-    return ("my age is $number");
+    assertEquals("my age is 3", "my age is $number")
+    return "OK"
 }
 
