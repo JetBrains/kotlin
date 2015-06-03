@@ -38,8 +38,8 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
         return new File(new File(ANT_TASK_TEST_DATA_BASE_DIR, "jvm"), name.getMethodName());
     }
 
-    private void doJvmAntTest(String... extraJavaArgs) throws Exception {
-        doAntTest(SUCCESSFUL, extraJavaArgs);
+    private void doJvmAntTest() throws Exception {
+        doAntTest(SUCCESSFUL);
 
         String classpath = UtilsPackage.join(Arrays.asList(
                 getOutputFileByName(JVM_OUT_FILE).getAbsolutePath(),
@@ -48,17 +48,6 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
         ), File.pathSeparator);
 
         runJava("hello.run", "-cp", classpath, "hello.HelloPackage");
-    }
-
-    private static String getClassPathForAnt() {
-        return UtilsPackage.join(Arrays.asList(
-                getCompilerLib() + File.separator + "kotlin-compiler.jar",
-                getCompilerLib() + File.separator + "kotlin-ant.jar"
-        ), File.pathSeparator);
-    }
-
-    private static String getIdeaSdkHome() {
-        return getKotlinProjectHome().getAbsolutePath() + File.separator + "ideaSDK";
     }
 
     @Test
@@ -112,22 +101,7 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     }
 
     @Test
-    public void javacCompiler() throws Exception {
-        doJvmAntTest("-cp", getClassPathForAnt(),
-                     "-Dkotlin.home", getCompilerLib().getAbsolutePath());
-    }
-
-    @Test
     public void externalAnnotations() throws Exception {
-        doJvmAntTest("-cp", getClassPathForAnt(),
-                     "-Didea.sdk", getIdeaSdkHome(),
-                     "-Dkotlin.home", getCompilerLib().getAbsolutePath());
-    }
-
-    @Test
-    public void kotlinCompiler() throws Exception {
-        doJvmAntTest("-cp", getClassPathForAnt(),
-                     "-Didea.sdk", getIdeaSdkHome(),
-                     "-Dkotlin.home", getCompilerLib().getAbsolutePath());
+        doJvmAntTest();
     }
 }

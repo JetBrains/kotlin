@@ -16,14 +16,10 @@
 
 package org.jetbrains.kotlin.integration;
 
-import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.CliBaseTest;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -33,8 +29,8 @@ public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
     protected static final int SUCCESSFUL = 0;
     protected static final int FAILED = 1;
 
-    protected void doAntTest(int expectedExitCode, String... extraArgs) throws Exception {
-        assertEquals("Compilation failed", expectedExitCode, runAnt("build.log", "build.xml", extraArgs));
+    protected void doAntTest(int expectedExitCode) throws Exception {
+        assertEquals("Compilation failed", expectedExitCode, runAnt("build.log", "build.xml"));
     }
 
     @Override
@@ -43,20 +39,18 @@ public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
                 .replaceAll("Total time: .+\n", "Total time: [time]\n");
     }
 
-    private int runAnt(String logName, String scriptName, String... extraArgs) throws Exception {
-        String[] basicArgs = {
+    private int runAnt(@NotNull String logName, @NotNull String scriptName) throws Exception {
+        return runJava(
+                logName,
                 "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
                 "-Dkotlin.lib=" + getCompilerLib(),
                 "-Dtest.data=" + getTestDataDir(),
                 "-Dtemp=" + tmpdir.getTmpDir(),
                 "-f", scriptName
-        };
-        List<String> strings = new ArrayList<String>();
-        strings.addAll(Arrays.asList(basicArgs));
-        strings.addAll(Arrays.asList(extraArgs));
-        return runJava(logName, ArrayUtil.toStringArray(strings));
+        );
     }
 
+    @NotNull
     private static String getAntHome() {
         return getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant-1.8";
     }

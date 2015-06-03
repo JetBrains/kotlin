@@ -87,6 +87,11 @@ public class KotlinCompilerAdapter extends Javac13 {
         // Javac13#execute passes everything in compileList to javac, which doesn't recognize .kt files
         compileList = filterOutKotlinSources(compileList);
 
+        if (compileClasspath == null) {
+            compileClasspath = new Path(getProject());
+        }
+        compileClasspath.add(new Path(getProject(), KotlinAntTaskUtil.INSTANCE$.getRuntimeJar().getAbsolutePath()));
+
         return compileList.length == 0 || super.execute();
     }
 
