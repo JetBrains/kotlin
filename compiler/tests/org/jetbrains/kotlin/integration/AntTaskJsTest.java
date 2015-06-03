@@ -48,7 +48,7 @@ public class AntTaskJsTest extends AntTaskBaseTest {
     }
 
     private void doJsAntTest(String... jsFiles) throws Exception {
-        doAntTest(SUCCESSFUL);
+        doAntTest();
 
         List<String> fileNames = new ArrayList<String>(Arrays.asList(jsFiles));
         fileNames.add(JS_OUT_FILE);
@@ -179,12 +179,12 @@ public class AntTaskJsTest extends AntTaskBaseTest {
 
     @Test
     public void noSrcParam() throws Exception {
-        doAntTest(FAILED);
+        doAntTest();
     }
 
     @Test
     public void noOutputParam() throws Exception {
-        doAntTest(FAILED);
+        doAntTest();
     }
 
     @Test
