@@ -127,7 +127,7 @@ public class ClassPreloadingUtils {
             FileInputStream fileInputStream = new FileInputStream(jarFile);
             try {
                 byte[] buffer = new byte[10 * 1024];
-                ZipInputStream stream = new ZipInputStream(new BufferedInputStream(fileInputStream));
+                ZipInputStream stream = new ZipInputStream(new BufferedInputStream(fileInputStream, 1 << 19));
                 while (true) {
                     ZipEntry entry = stream.getNextEntry();
                     if (entry == null) break;
