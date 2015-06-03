@@ -42,7 +42,7 @@ test.AString(value = "Test": kotlin.String) test.AChar(value = \u0063 ('c'): kot
 internal final class Test {
     public constructor Test()
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         internal final val vbyte: kotlin.Byte
         internal final val vchar: kotlin.Char

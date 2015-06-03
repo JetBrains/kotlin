@@ -5,7 +5,7 @@ internal fun main(/*0*/ kotlin.Array<kotlin.String>): kotlin.Unit
 internal final class A {
     public constructor A()
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         kotlin.platform.platformStatic() internal final val b: kotlin.String
         internal final var test.A.c: kotlin.String

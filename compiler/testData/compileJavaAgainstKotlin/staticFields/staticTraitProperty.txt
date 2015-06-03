@@ -2,7 +2,7 @@ package test
 
 internal interface Test {
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         public final val valProp: kotlin.Int
     }
