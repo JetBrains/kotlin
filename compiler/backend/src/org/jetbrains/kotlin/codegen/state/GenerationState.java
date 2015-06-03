@@ -74,73 +74,35 @@ public class GenerationState {
 
     private boolean used = false;
 
-    @NotNull
     private final Progress progress;
-
-    @NotNull
     private final List<JetFile> files;
-
-    @NotNull
     private final ClassBuilderMode classBuilderMode;
-
-    @NotNull
     private final BindingContext bindingContext;
-
-    @NotNull
     private final ClassFileFactory classFileFactory;
-
-    @NotNull
     private final Project project;
-
-    @NotNull
     private final IntrinsicMethods intrinsics;
-
-    @NotNull
     private final SamWrapperClasses samWrapperClasses = new SamWrapperClasses(this);
-
-    @NotNull
     private final InlineCycleReporter inlineCycleReporter;
-
-    @NotNull
     private final MappingsClassesForWhenByEnum mappingsClassesForWhenByEnum = new MappingsClassesForWhenByEnum(this);
-
-    @NotNull
     private final BindingTrace bindingTrace;
-
-    @NotNull
     private final JetTypeMapper typeMapper;
-
     private final boolean disableCallAssertions;
-
     private final boolean disableParamAssertions;
-
     private final GenerateClassFilter generateClassFilter;
-
     private final boolean disableInline;
-
-    @Nullable
     private List<ScriptDescriptor> earlierScriptsForReplInterpreter;
-
     private final ReflectionTypes reflectionTypes;
-
     private final JvmRuntimeTypes runtimeTypes;
-
-    @NotNull
     private final ModuleDescriptor module;
-
     private final DiagnosticSink diagnostics;
-
-    @NotNull
     private final Collection<FqName> packagesWithObsoleteParts;
+    private final ClassBuilderFactory interceptedBuilderFactory;
 
     @Nullable
     private final String moduleId; // for PackageCodegen in incremental compilation mode
 
     @Nullable
     private final File outDirectory; // TODO: temporary hack, see JetTypeMapperWithOutDirectory state for details
-
-    @NotNull
-    private final ClassBuilderFactory interceptedBuilderFactory;
 
     public GenerationState(
             @NotNull Project project,
