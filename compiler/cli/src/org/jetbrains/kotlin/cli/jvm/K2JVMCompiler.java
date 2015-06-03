@@ -220,7 +220,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
     private KotlinCoreEnvironment createCoreEnvironment(
             @NotNull Disposable rootDisposable,
-            CompilerConfiguration configuration) {
+            @NotNull CompilerConfiguration configuration) {
         KotlinCoreEnvironment result = KotlinCoreEnvironment.createForProduction(
                 rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 

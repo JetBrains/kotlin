@@ -20,8 +20,39 @@ import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
 public class PerformanceCounter jvmOverloads constructor (val name: String, val reenterable: Boolean = false) {
-    public var count: Int = 0
-    public var totalTimeNanos: Long = 0
+    companion object {
+        private val threadMxBean = ManagementFactory.getThreadMXBean()
+        private val allCounters = arrayListOf<PerformanceCounter>()
+
+        private val enteredCounters = ThreadLocal<MutableSet<PerformanceCounter>>()
+
+        init {
+            threadMxBean.setThreadCpuTimeEnabled(true)
+        }
+
+        private fun enterCounter(counter: PerformanceCounter): Boolean {
+            var enteredCountersInThread = enteredCounters.get()
+            if (enteredCountersInThread == null) {
+                enteredCountersInThread = hashSetOf(counter)
+                enteredCounters.set(enteredCountersInThread)
+                return true
+            }
+            return enteredCountersInThread.add(counter)
+        }
+
+        private fun leaveCounter(counter: PerformanceCounter) {
+            enteredCounters.get()?.remove(counter)
+        }
+
+        public fun currentThreadCpuTime(): Long = threadMxBean.getCurrentThreadUserTime()
+
+        public fun report(consumer: (String) -> Unit) {
+            allCounters.forEach { it.report(consumer) }
+        }
+    }
+
+    private var count: Int = 0
+    private var totalTimeNanos: Long = 0
 
     init {
         allCounters.add(this)
@@ -53,38 +84,6 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
         else {
             val millis = TimeUnit.NANOSECONDS.toMillis(totalTimeNanos)
             consumer("$name performed $count times, total time $millis ms")
-        }
-    }
-
-    companion object {
-        val threadMxBean = ManagementFactory.getThreadMXBean()
-        val allCounters = arrayListOf<PerformanceCounter>()
-
-        val enteredCounters = ThreadLocal<MutableSet<PerformanceCounter>>()
-
-        fun enterCounter(counter: PerformanceCounter): Boolean {
-            var enteredCountersInThread = enteredCounters.get()
-            if (enteredCountersInThread == null) {
-                enteredCountersInThread = hashSetOf(counter)
-                enteredCounters.set(enteredCountersInThread)
-                return true
-            } else {
-                return enteredCountersInThread.add(counter)
-            }
-        }
-
-        fun leaveCounter(counter: PerformanceCounter) {
-            enteredCounters.get()?.remove(counter)
-        }
-
-        init {
-            threadMxBean.setThreadCpuTimeEnabled(true)
-        }
-
-        public fun currentThreadCpuTime(): Long = threadMxBean.getCurrentThreadUserTime()
-
-        fun report(consumer: (String) -> Unit) {
-            allCounters.forEach { it.report(consumer) }
         }
     }
 }

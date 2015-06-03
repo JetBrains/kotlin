@@ -77,8 +77,9 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
             }
             if (result.isEmpty()) {
                 super<CoreJavaFileManager>.findClasses(qName, scope)
-            } else {
-                result.toArray<PsiClass>(arrayOfNulls<PsiClass>(result.size()))
+            }
+            else {
+                result.toTypedArray()
             }
         }
     }

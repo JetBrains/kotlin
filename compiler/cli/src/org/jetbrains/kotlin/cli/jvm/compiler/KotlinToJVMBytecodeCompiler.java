@@ -111,7 +111,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileModules(
-            KotlinCoreEnvironment environment,
+            @NotNull KotlinCoreEnvironment environment,
             @NotNull CompilerConfiguration configuration,
             @NotNull List<Module> chunk,
             @NotNull File directory,
