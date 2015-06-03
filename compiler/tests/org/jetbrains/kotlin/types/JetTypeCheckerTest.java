@@ -625,7 +625,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         }
         scopeChain.add(module.getPackage(FqName.ROOT).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        return new ChainedScope(scope.getContainingDeclaration(), "", scopeChain.toArray(new JetScope[scopeChain.size()]));
+        return new ChainedScope(scope.getContainingDeclaration(), "JetTypeCheckerTest.addImports scope with imports", scopeChain.toArray(new JetScope[scopeChain.size()]));
     }
 
     private JetType makeType(String typeStr) {

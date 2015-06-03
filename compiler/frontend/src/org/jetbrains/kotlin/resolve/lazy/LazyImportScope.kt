@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.util.collectionUtils.concat
 import java.util.HashSet
 import java.util.LinkedHashSet
 import kotlin.properties.Delegates
@@ -192,17 +193,18 @@ class LazyImportResolver(
             descriptorsSelector: (JetScope, Name) -> Collection<D>
     ): Collection<D> {
         return resolveSession.getStorageManager().compute {
-            val descriptors = HashSet<D>()
+            var descriptors: Collection<D>? = null
             for (directive in indexedImports.importsForName(name)) {
                 if (directive == directiveUnderResolve) {
                     // This is the recursion in imports analysis
                     throw IllegalStateException("Recursion while resolving many imports: " + directive.getText())
                 }
 
-                descriptors.addAll(descriptorsSelector(getImportScope(directive, lookupMode), name))
+                val descriptorsForImport = descriptorsSelector(getImportScope(directive, lookupMode), name)
+                descriptors = descriptors.concat(descriptorsForImport)
             }
 
-            descriptors
+            descriptors ?: emptySet<D>()
         }
     }
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.util.collectionUtils.concat
 import java.util.*
 
 public open class ChainedScope(
@@ -38,15 +39,11 @@ public open class ChainedScope(
         return null
     }
 
-    private inline fun getFromAllScopes<T>(callback: (JetScope) -> Collection<T>): Set<T> {
+    private inline fun getFromAllScopes<T>(callback: (JetScope) -> Collection<T>): Collection<T> {
         if (scopeChain.isEmpty()) return emptySet()
-        var result: MutableSet<T>? = null
+        var result: Collection<T>? = null
         for (scope in scopeChain) {
-            val fromScope = callback(scope)
-            if (result == null) {
-                result = LinkedHashSet<T>()
-            }
-            result.addAll(fromScope)
+            result = result.concat(callback(scope))
         }
         return result ?: emptySet()
     }
@@ -57,13 +54,13 @@ public open class ChainedScope(
     override fun getPackage(name: Name): PackageViewDescriptor?
             = getFirstMatch { it.getPackage(name) }
 
-    override fun getProperties(name: Name): Set<VariableDescriptor>
+    override fun getProperties(name: Name): Collection<VariableDescriptor>
             = getFromAllScopes { it.getProperties(name) }
 
     override fun getLocalVariable(name: Name): VariableDescriptor?
             = getFirstMatch { it.getLocalVariable(name) }
 
-    override fun getFunctions(name: Name): Set<FunctionDescriptor>
+    override fun getFunctions(name: Name): Collection<FunctionDescriptor>
             = getFromAllScopes { it.getFunctions(name) }
 
     override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {

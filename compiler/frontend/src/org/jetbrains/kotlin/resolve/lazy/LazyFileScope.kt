@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import java.util.ArrayList
 
-class LazyFileScope private(
-        private val scopeChain: List<JetScope>,
+class LazyFileScope private constructor(
+        scopeChain: List<JetScope>,
         private val aliasImportResolver: LazyImportResolver,
         private val allUnderImportResolver: LazyImportResolver,
         containingDeclaration: PackageFragmentDescriptor,
         debugName: String
-) : ChainedScope(containingDeclaration, debugName, *scopeChain.copyToArray()) {
+) : ChainedScope(containingDeclaration, debugName, *scopeChain.toTypedArray()) {
 
     public fun forceResolveAllImports() {
         aliasImportResolver.forceResolveAllContents()

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.utils.Printer
 
 import java.util.*
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
 
 // Reads from:
 // 1. Maps
@@ -110,12 +111,8 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
         val labelsToDescriptors = getLabelsToDescriptors()
         val name = descriptor.getName()
-        var declarationDescriptors = labelsToDescriptors[name]
-        if (declarationDescriptors == null) {
-            declarationDescriptors = ArrayList()
-            labelsToDescriptors.put(name, declarationDescriptors!!)
-        }
-        declarationDescriptors!!.add(descriptor)
+        var declarationDescriptors = labelsToDescriptors.getOrPut(name) { ArrayList() }
+        declarationDescriptors.add(descriptor)
     }
 
     private fun getVariableOrClassDescriptors(): MutableMap<Name, DeclarationDescriptor> {
@@ -123,13 +120,6 @@ public class WritableScopeImpl(override val workerScope: JetScope,
             variableOrClassDescriptors = HashMap()
         }
         return variableOrClassDescriptors!!
-    }
-
-    private fun getPackageAliases(): MutableMap<Name, PackageViewDescriptor> {
-        if (packageAliases == null) {
-            packageAliases = HashMap()
-        }
-        return packageAliases!!
     }
 
     override fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
@@ -157,17 +147,14 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         checkMayRead()
 
         val propertyGroupsByName = propertyGroups?.get(name) ?: return workerScope.getProperties(name)
-
-        val result = Sets.newLinkedHashSet(propertyGroupsByName)
-        result.addAll(workerScope.getProperties(name))
-        return result
+        return concatInOrder(propertyGroupsByName, workerScope.getProperties(name))
     }
 
     override fun getLocalVariable(name: Name): VariableDescriptor? {
         checkMayRead()
 
-        val descriptor = getVariableOrClassDescriptors()[name]
-        if (descriptor is VariableDescriptor && !getPropertyGroups()[name].contains(descriptor)) {
+        val descriptor = variableOrClassDescriptors?.get(name)
+        if (descriptor is VariableDescriptor && propertyGroups?.get(name)?.contains(descriptor) != true) {
             return descriptor
         }
 
@@ -198,11 +185,8 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
         checkMayRead()
 
-        val functionGroupByName = functionGroups?.get(name) ?: return workerScope.getFunctions(name)
-
-        val result = Sets.newLinkedHashSet(functionGroupByName)
-        result.addAll(workerScope.getFunctions(name))
-        return result
+        val functionGroupByName = functionGroups?.get(name)
+        return concatInOrder(functionGroupByName, workerScope.getFunctions(name))
     }
 
     override fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
@@ -238,14 +222,14 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     override fun getClassifier(name: Name): ClassifierDescriptor? {
         checkMayRead()
 
-        return getVariableOrClassDescriptors()[name] as? ClassifierDescriptor
+        return variableOrClassDescriptors?.get(name) as? ClassifierDescriptor
                ?: workerScope.getClassifier(name)
     }
 
     override fun getPackage(name: Name): PackageViewDescriptor? {
         checkMayRead()
 
-        return getPackageAliases().get(name)
+        return packageAliases?.get(name)
                ?: workerScope.getPackage(name)
     }
 
