@@ -4633,6 +4633,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("returnInElvis.kt")
+        public void testReturnInElvis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/returnInElvis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SimpleVals.kt")
         public void testSimpleVals() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/multiDecl/SimpleVals.kt");
