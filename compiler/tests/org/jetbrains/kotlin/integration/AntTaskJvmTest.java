@@ -39,7 +39,7 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
     }
 
     private void doJvmAntTest() throws Exception {
-        doAntTest(SUCCESSFUL);
+        doAntTest();
 
         String classpath = UtilsPackage.join(Arrays.asList(
                 getOutputFileByName(JVM_OUT_FILE).getAbsolutePath(),

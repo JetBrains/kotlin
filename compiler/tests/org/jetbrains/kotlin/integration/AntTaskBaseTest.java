@@ -20,32 +20,23 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-import static org.junit.Assert.assertEquals;
-
 public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
     protected static final File ANT_TASK_TEST_DATA_BASE_DIR = new File(INTEGRATION_TEST_DATA_BASE_DIR, "ant");
 
-    protected static final int SUCCESSFUL = 0;
-    protected static final int FAILED = 1;
-
-    protected void doAntTest(int expectedExitCode) throws Exception {
-        assertEquals("Compilation failed", expectedExitCode, runAnt("build.log", "build.xml"));
+    protected void doAntTest() throws Exception {
+        runJava(
+                "build.log",
+                "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
+                "-Dkotlin.lib=" + getCompilerLib(),
+                "-Dtest.data=" + getTestDataDir(),
+                "-Dtemp=" + tmpdir.getTmpDir(),
+                "-f", "build.xml"
+        );
     }
 
     @Override
     protected String normalizeOutput(String content) {
         return super.normalizeOutput(content).replaceAll("Total time: .+\n", "Total time: [time]\n");
-    }
-
-    private int runAnt(@NotNull String logName, @NotNull String scriptName) throws Exception {
-        return runJava(
-                logName,
-                "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
-                "-Dkotlin.lib=" + getCompilerLib(),
-                "-Dtest.data=" + getTestDataDir(),
-                "-Dtemp=" + tmpdir.getTmpDir(),
-                "-f", scriptName
-        );
     }
 
     @NotNull
