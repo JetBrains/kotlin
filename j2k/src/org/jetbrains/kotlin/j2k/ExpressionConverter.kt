@@ -428,11 +428,14 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val operandType = operand?.getType()
         val typeText = castType.getType().getCanonicalText()
         val typeConversion = PRIMITIVE_TYPE_CONVERSIONS[typeText]
+        val operandConverted = codeConverter.convertExpression(operand)
         if (operandType is PsiPrimitiveType && typeConversion != null) {
-            result = MethodCallExpression.buildNotNull(codeConverter.convertExpression(operand), typeConversion)
+            result = MethodCallExpression.buildNotNull(operandConverted, typeConversion)
         }
         else {
-            result = TypeCastExpression(typeConverter.convertType(castType.getType()), codeConverter.convertExpression(operand))
+            val typeConverted = typeConverter.convertType(castType.getType(),
+                                                          if (operandConverted.isNullable) Nullability.Nullable else Nullability.NotNull)
+            result = TypeCastExpression(typeConverted, operandConverted)
         }
     }
 
