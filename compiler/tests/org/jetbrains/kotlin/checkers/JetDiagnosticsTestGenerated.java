@@ -4104,6 +4104,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/deparenthesize"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("annotatedSafeCall.kt")
+            public void testAnnotatedSafeCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deparenthesize/annotatedSafeCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ArrayAccessAssignment.kt")
             public void testArrayAccessAssignment() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deparenthesize/ArrayAccessAssignment.kt");
@@ -4113,6 +4119,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("checkDeparenthesizedType.kt")
             public void testCheckDeparenthesizedType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deparenthesize/checkDeparenthesizedType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("labeledSafeCall.kt")
+            public void testLabeledSafeCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deparenthesize/labeledSafeCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multiParenthesizedSafeCall.kt")
+            public void testMultiParenthesizedSafeCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deparenthesize/multiParenthesizedSafeCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("parenthesizedSafeCall.kt")
+            public void testParenthesizedSafeCall() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/deparenthesize/parenthesizedSafeCall.kt");
                 doTest(fileName);
             }
 

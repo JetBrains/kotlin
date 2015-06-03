@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext.CONSTRAINT_SYSTEM_COMPLETER
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
-import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -39,13 +39,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.types.expressions.DataFlowUtils
-import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.psi.JetPsiUtil
-import org.jetbrains.kotlin.psi.JetSafeQualifiedExpression
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.psi.JetQualifiedExpression
 import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -123,9 +119,9 @@ public class CallCompleter(
         }
 
         resolvedCall.completeConstraintSystem(context.expectedType, context.trace)
-        
+
         completeArguments(context, results)
-        
+
         resolvedCall.updateResolutionStatusFromConstraintSystem(context, tracing)
         resolvedCall.markCallAsCompleted()
     }
@@ -304,9 +300,13 @@ public class CallCompleter(
             expressions.add(expression)
             expression = deparenthesizeOrGetSelector(expression)
         }
-        expressions.forEach { expression ->
-            BindingContextUtils.updateRecordedType(
-                    updatedType, expression, trace, /* shouldBeMadeNullable = */ hasNecessarySafeCall(expression, trace))
+
+        var shouldBeMadeNullable: Boolean = false
+        expressions.reverse().forEach { expression ->
+            if (!(expression is JetParenthesizedExpression || expression is JetLabeledExpression || expression is JetAnnotatedExpression)) {
+                shouldBeMadeNullable = hasNecessarySafeCall(expression, trace)
+            }
+            BindingContextUtils.updateRecordedType(updatedType, expression, trace, shouldBeMadeNullable)
         }
         return trace.getType(argumentExpression)
     }
@@ -321,5 +321,5 @@ public class CallCompleter(
         //If a receiver type is not null, then this safe expression is useless, and we don't need to make the result type nullable.
         val expressionType = trace.getType(expression.getReceiverExpression())
         return expressionType != null && TypeUtils.isNullableType(expressionType)
-    }    
+    }
 }
