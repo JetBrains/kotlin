@@ -1,17 +1,10 @@
 <project name="Ant Task Test" default="build">
-
-    <path id="classpath">
-        <fileset dir="${idea.sdk}/lib" includes="annotations.jar"/>
-        <fileset dir="${kotlin.home}" includes="kotlin-runtime.jar"/>
-    </path>
-
-    <typedef name="withKotlin" classname="org.jetbrains.kotlin.ant.KotlinCompilerAdapter"/>
+    <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
 
     <target name="build">
         <delete dir="${temp}/classes" failonerror="false"/>
         <mkdir dir="${temp}/classes"/>
         <javac destdir="${temp}/classes" includeAntRuntime="false" srcdir="${test.data}/root1">
-            <classpath refid="classpath"/>
             <withKotlin externalannotations="${test.data}/root1/b/">
                 <externalannotations path="${test.data}/root1/a/"/>
             </withKotlin>

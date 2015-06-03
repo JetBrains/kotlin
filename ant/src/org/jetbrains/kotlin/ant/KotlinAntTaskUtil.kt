@@ -21,9 +21,35 @@ import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import java.io.File
 import java.lang.ref.SoftReference
 import java.net.JarURLConnection
+import kotlin.properties.Delegates
 
 object KotlinAntTaskUtil {
     private var classLoaderRef = SoftReference<ClassLoader?>(null)
+
+    private val libPath: File by Delegates.lazy {
+        // Find path of kotlin-ant.jar in the filesystem and find kotlin-compiler.jar in the same directory
+        val resourcePath = "/" + javaClass.getName().replace('.', '/') + ".class"
+        val jarConnection = javaClass.getResource(resourcePath).openConnection() as? JarURLConnection
+                            ?: throw UnsupportedOperationException("Kotlin compiler Ant task should be loaded from the JAR file")
+        val antTaskJarPath = File(jarConnection.getJarFileURL().toURI())
+
+        antTaskJarPath.getParentFile()
+    }
+
+    val compilerJar: File by Delegates.lazy {
+        File(libPath, "kotlin-compiler.jar").assertExists()
+    }
+
+    val runtimeJar: File by Delegates.lazy {
+        File(libPath, "kotlin-runtime.jar").assertExists()
+    }
+
+    private fun File.assertExists(): File {
+        if (!this.exists()) {
+            throw IllegalStateException("${getName()} is not found in the directory of Kotlin Ant task")
+        }
+        return this
+    }
 
     synchronized fun getOrCreateClassLoader(): ClassLoader {
         val cached = classLoaderRef.get()
@@ -32,18 +58,7 @@ object KotlinAntTaskUtil {
         val myLoader = javaClass.getClassLoader()
         if (myLoader !is AntClassLoader) return myLoader
 
-        // Find path of kotlin-ant.jar in the filesystem and find kotlin-compiler.jar in the same directory
-        val resourcePath = "/" + javaClass.getName().replace('.', '/') + ".class"
-        val jarConnection = javaClass.getResource(resourcePath).openConnection() as? JarURLConnection
-                            ?: throw UnsupportedOperationException("Kotlin compiler Ant task should be loaded from the JAR file")
-        val antTaskJarPath = File(jarConnection.getJarFileURL().toURI())
-
-        val compilerJarPath = File(antTaskJarPath.getParent(), "kotlin-compiler.jar")
-        if (!compilerJarPath.exists()) {
-            throw IllegalStateException("kotlin-compiler.jar is not found in the directory of Kotlin Ant task")
-        }
-
-        val classLoader = ClassPreloadingUtils.preloadClasses(listOf(compilerJarPath), 4096, myLoader, null)
+        val classLoader = ClassPreloadingUtils.preloadClasses(listOf(compilerJar), 4096, myLoader, null)
         classLoaderRef = SoftReference(classLoader)
 
         return classLoader
