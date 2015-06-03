@@ -28,7 +28,7 @@ val AbstractInsnNode.isMeaningful : Boolean get() =
         else -> true
     }
 
-class InsnStream(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Stream<AbstractInsnNode> {
+class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequence<AbstractInsnNode> {
     override fun iterator(): Iterator<AbstractInsnNode> {
         return object : Iterator<AbstractInsnNode> {
             var current: AbstractInsnNode? = from
@@ -44,14 +44,14 @@ class InsnStream(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Stream
 
 fun MethodNode.prepareForEmitting() {
     tryCatchBlocks = tryCatchBlocks.filter { tcb ->
-        InsnStream(tcb.start, tcb.end).any { insn ->
+        InsnSequence(tcb.start, tcb.end).any { insn ->
             insn.isMeaningful
         }
     }
 
     // local variables with live ranges starting after last meaningful instruction lead to VerifyError
     localVariables = localVariables.filter { lv ->
-        InsnStream(lv.start, instructions.getLast()).any { insn ->
+        InsnSequence(lv.start, instructions.getLast()).any { insn ->
             insn.isMeaningful
         }
     }
