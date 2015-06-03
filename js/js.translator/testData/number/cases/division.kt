@@ -40,5 +40,5 @@ fun box(): Any? {
     if ((f3 / f4 - 2.5.toFloat()) > 0.01) {
         return "9"
     }
-    return "SUCCESS"
+    return "OK"
 }

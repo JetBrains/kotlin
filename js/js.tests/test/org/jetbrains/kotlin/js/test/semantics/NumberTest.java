@@ -42,7 +42,7 @@ public final class NumberTest extends SingleFileTranslationTest {
     }
 
     public void testDivision() throws Exception {
-        fooBoxIsValue("SUCCESS");
+        checkFooBoxIsOk();
     }
 
     // KT-2342 Type mismatch on Int division (JavaScript back-end)

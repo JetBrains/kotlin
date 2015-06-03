@@ -43,7 +43,7 @@ public final class PropertyAccessTest extends SingleFileTranslationTest {
     }
 
     public void testSetter() throws Exception {
-        fooBoxIsValue(99.0);
+        checkFooBoxIsOk();
     }
 
 

@@ -5,5 +5,6 @@ fun MyController(`$scope`: String): String {
 }
 
 fun box(): String {
-    return MyController("world")
+    assertEquals("Hello world!", MyController("world"))
+    return "OK"
 }
