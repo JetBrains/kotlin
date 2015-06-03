@@ -149,7 +149,7 @@ public fun String.padEnd(length: Int, padChar: Char = ' '): String {
 }
 
 /** Returns `true` if the string is not `null` and not empty */
-deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.")
+deprecated("Use !isNullOrEmpty() or isNullOrEmpty().not() for nullable strings.", ReplaceWith("this != null && this.isNotEmpty()"))
 platformName("isNotEmptyNullable")
 public fun String?.isNotEmpty(): Boolean = this != null && this.length() > 0
 

@@ -52,14 +52,8 @@ public inline fun String.findNot(predicate: (Char) -> Boolean): Char? {
 /**
  * A helper method for creating a [[Runnable]] from a function
  */
-deprecated("Use SAM constructor: Runnable(...)")
-public /*inline*/ fun runnable(action: () -> Unit): Runnable {
-    return object: Runnable {
-        public override fun run() {
-            action()
-        }
-    }
-}
+deprecated("Use SAM constructor: Runnable(...)", ReplaceWith("Runnable(action)"))
+public /*inline*/ fun runnable(action: () -> Unit): Runnable = Runnable(action)
 
 deprecated("Use forEachIndexed instead.", ReplaceWith("forEachIndexed(operation)"))
 public inline fun <T> List<T>.forEachWithIndex(operation: (Int, T) -> Unit): Unit = forEachIndexed(operation)
