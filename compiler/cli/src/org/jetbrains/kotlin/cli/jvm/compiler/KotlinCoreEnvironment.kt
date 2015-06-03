@@ -37,6 +37,7 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
@@ -86,6 +87,7 @@ import java.io.File
 import java.util.ArrayList
 import java.util.Comparator
 import kotlin.platform.platformStatic
+import kotlin.properties.Delegates
 
 public class KotlinCoreEnvironment private(
         parentDisposable: Disposable, 
@@ -156,6 +158,14 @@ public class KotlinCoreEnvironment private(
 
     public val project: Project
         get() = projectEnvironment.getProject()
+
+    public val sourceLinesOfCode: Int by Delegates.lazy { countLinesOfCode(sourceFiles) }
+
+    public fun countLinesOfCode(sourceFiles: List<JetFile>): Int  =
+            sourceFiles.sumBy {
+                val text = it.getText()
+                StringUtil.getLineBreakCount(it.getText()) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
+            }
 
     private fun addExternalAnnotationsRoot(path: File) {
         if (!path.exists()) {

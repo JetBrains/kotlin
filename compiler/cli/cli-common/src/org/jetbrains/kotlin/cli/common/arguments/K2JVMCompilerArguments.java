@@ -66,6 +66,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xno-optimize", description = "Disable optimizations")
     public boolean noOptimize;
 
+    @Argument(value = "Xreport-perf", description = "Report detailed performance statistics")
+    public boolean reportPerf;
+
     @Override
     @NotNull
     public String executableScriptFileName() {

@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.cli.jvm;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLICompiler;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir;
 import org.jetbrains.kotlin.utils.PathUtil;
@@ -44,14 +47,17 @@ import org.jetbrains.kotlin.utils.PathUtil;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Predicates.in;
 import static org.jetbrains.kotlin.cli.common.ExitCode.*;
-import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJavaSourceRoot;
+import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.addJvmClasspathRoots;
 import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoot;
 
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
+    private final long initStartNanos = System.nanoTime();
 
     public static void main(String... args) {
         doMain(new K2JVMCompiler(), args);
@@ -72,7 +78,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         messageCollector.report(CompilerMessageSeverity.LOGGING,
                                 "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION);
 
-        CompilerConfiguration configuration = new CompilerConfiguration();
+        final CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
         IncrementalCacheProvider incrementalCacheProvider = services.get(IncrementalCacheProvider.class);
@@ -163,6 +169,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 jar = null;
                 outputDir = null;
             }
+            final KotlinCoreEnvironment environment;
 
             if (arguments.module != null) {
                 MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
@@ -175,20 +182,32 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 }
 
                 File directory = new File(arguments.module).getAbsoluteFile().getParentFile();
+
+                CompilerConfiguration compilerConfiguration = KotlinToJVMBytecodeCompiler
+                        .createCompilerConfiguration(configuration, moduleScript.getModules(), directory);
+                environment = createCoreEnvironment(rootDisposable, compilerConfiguration);
+
                 KotlinToJVMBytecodeCompiler.compileModules(
-                        configuration, moduleScript.getModules(), directory, jar, arguments.includeRuntime
-                );
+                        environment, configuration, moduleScript.getModules(), directory, jar, arguments.includeRuntime);
             }
             else if (arguments.script) {
                 List<String> scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size());
-                KotlinCoreEnvironment environment =
-                        KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                environment = createCoreEnvironment(rootDisposable, configuration);
                 KotlinToJVMBytecodeCompiler.compileAndExecuteScript(configuration, paths, environment, scriptArgs);
             }
             else {
-                KotlinCoreEnvironment environment =
-                        KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+                environment = createCoreEnvironment(rootDisposable, configuration);
                 KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
+            }
+
+            if (arguments.reportPerf) {
+                PerformanceCounter.Companion.report(new Function1<String, Unit>() {
+                    @Override
+                    public Unit invoke(String s) {
+                        reportPerf(environment.getConfiguration(), s);
+                        return Unit.INSTANCE$;
+                    }
+                });
             }
             return OK;
         }
@@ -197,6 +216,23 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                                     MessageUtil.psiElementToMessageLocation(e.getElement()));
             return INTERNAL_ERROR;
         }
+    }
+
+    private KotlinCoreEnvironment createCoreEnvironment(
+            @NotNull Disposable rootDisposable,
+            @NotNull CompilerConfiguration configuration) {
+        KotlinCoreEnvironment result = KotlinCoreEnvironment.createForProduction(
+                rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+
+        long initNanos = System.nanoTime() - initStartNanos;
+        reportPerf(configuration, "Compiler initialized in " + TimeUnit.NANOSECONDS.toMillis(initNanos) + " ms");
+        return result;
+    }
+
+    public static void reportPerf(CompilerConfiguration configuration, String message) {
+        MessageCollector collector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+        assert collector != null;
+        collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION);
     }
 
     private static void putAdvancedOptions(@NotNull CompilerConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {

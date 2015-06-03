@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.util.ArrayUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -35,6 +33,7 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.Module;
 import org.jetbrains.kotlin.cli.common.output.outputUtils.OutputUtilsPackage;
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -55,6 +54,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
 import java.io.File;
@@ -64,6 +64,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.jetbrains.kotlin.cli.jvm.config.ConfigPackage.*;
 import static org.jetbrains.kotlin.config.ConfigPackage.addKotlinSourceRoots;
@@ -110,6 +111,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     public static boolean compileModules(
+            @NotNull KotlinCoreEnvironment environment,
             @NotNull CompilerConfiguration configuration,
             @NotNull List<Module> chunk,
             @NotNull File directory,
@@ -118,39 +120,25 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         Map<Module, ClassFileFactory> outputFiles = Maps.newHashMap();
 
-        CompilerConfiguration compilerConfiguration = createCompilerConfiguration(configuration, chunk, directory);
-
-        Disposable parentDisposable = Disposer.newDisposable();
-        KotlinCoreEnvironment environment = null;
-        try {
-            environment = KotlinCoreEnvironment
-                    .createForProduction(parentDisposable, compilerConfiguration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
-
-            AnalysisResult result = analyze(environment);
-            if (result == null) {
-                return false;
-            }
-
-            result.throwIfError();
-
-            for (Module module : chunk) {
-                List<JetFile> jetFiles = CompileEnvironmentUtil.getJetFiles(
-                        environment.getProject(), getAbsolutePaths(directory, module), new Function1<String, Unit>() {
-                            @Override
-                            public Unit invoke(String s) {
-                                throw new IllegalStateException("Should have been checked before: " + s);
-                            }
-                        }
-                );
-                GenerationState generationState =
-                        generate(environment, result, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()));
-                outputFiles.put(module, generationState.getFactory());
-            }
+        AnalysisResult result = analyze(environment);
+        if (result == null) {
+            return false;
         }
-        finally {
-            if (environment != null) {
-                Disposer.dispose(parentDisposable);
-            }
+
+        result.throwIfError();
+
+        for (Module module : chunk) {
+            List<JetFile> jetFiles = CompileEnvironmentUtil.getJetFiles(
+                    environment.getProject(), getAbsolutePaths(directory, module), new Function1<String, Unit>() {
+                        @Override
+                        public Unit invoke(String s) {
+                            throw new IllegalStateException("Should have been checked before: " + s);
+                        }
+                    }
+            );
+            GenerationState generationState =
+                    generate(environment, result, jetFiles, module.getModuleName(), new File(module.getOutputDirectory()));
+            outputFiles.put(module, generationState.getFactory());
         }
 
         for (Module module : chunk) {
@@ -160,7 +148,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @NotNull
-    private static CompilerConfiguration createCompilerConfiguration(
+    public static CompilerConfiguration createCompilerConfiguration(
             @NotNull CompilerConfiguration base,
             @NotNull List<Module> chunk,
             @NotNull File directory
@@ -309,6 +297,7 @@ public class KotlinToJVMBytecodeCompiler {
         MessageCollector collector = environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
         assert collector != null;
 
+        long analysisStart = PerformanceCounter.Companion.currentThreadCpuTime();
         AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(collector);
         analyzerWithCompilerReport.analyzeAndReport(
                 environment.getSourceFiles(), new Function0<AnalysisResult>() {
@@ -328,6 +317,10 @@ public class KotlinToJVMBytecodeCompiler {
                     }
                 }
         );
+        long analysisNanos = PerformanceCounter.Companion.currentThreadCpuTime() - analysisStart;
+        String message = "Analyzed " + environment.getSourceFiles().size() + " files (" +
+                         environment.getSourceLinesOfCode() + " lines) in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms";
+        K2JVMCompiler.reportPerf(environment.getConfiguration(), message);
 
         AnalysisResult result = analyzerWithCompilerReport.getAnalysisResult();
         assert result != null : "AnalysisResult should be non-null, compiling: " + environment.getSourceFiles();
@@ -381,7 +374,15 @@ public class KotlinToJVMBytecodeCompiler {
                 diagnosticHolder,
                 outputDirectory
         );
+        long generationStart = PerformanceCounter.Companion.currentThreadCpuTime();
+
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
+
+        long generationNanos = PerformanceCounter.Companion.currentThreadCpuTime() - generationStart;
+        String message = "Generated " + sourceFiles.size() + " files (" +
+                         environment.countLinesOfCode(sourceFiles) + " lines) in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
+        K2JVMCompiler.reportPerf(environment.getConfiguration(), message);
+
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(
                         diagnosticHolder.getBindingContext().getDiagnostics(),

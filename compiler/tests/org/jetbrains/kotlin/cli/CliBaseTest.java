@@ -73,7 +73,11 @@ public class CliBaseTest {
                 .replace("expected ABI version is " + Integer.toString(JvmAbi.VERSION), "expected ABI version is $ABI_VERSION$")
                 .replace("\\", "/");
 
-        return normalizedOutputWithoutExitCode + exitCode;
+        return removePerfOutput(normalizedOutputWithoutExitCode) + exitCode;
+    }
+
+    public static String removePerfOutput(String output) {
+        return output.replaceAll("INFO: PERF:.+\n", "");
     }
 
     private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {

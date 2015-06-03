@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.integration;
 
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.CliBaseTest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
 
     @Override
     protected String normalizeOutput(String content) {
-        return super.normalizeOutput(content).replaceAll("Total time: .+\n", "Total time: [time]\n");
+        return CliBaseTest.removePerfOutput(super.normalizeOutput(content))
+                .replaceAll("Total time: .+\n", "Total time: [time]\n");
     }
 
     private int runAnt(String logName, String scriptName, String... extraArgs) throws Exception {
