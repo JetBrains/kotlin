@@ -5776,6 +5776,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("mapGet.kt")
+        public void testMapGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/mapGet.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nestedCall-KT-5028.kt")
         public void testNestedCall_KT_5028() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/nestedCall-KT-5028.kt");

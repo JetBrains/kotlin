@@ -124,4 +124,13 @@
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
+
+  <problem>
+    <file>mapGet.kt</file>
+    <line>9</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="temp:///src/mapGet.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
 </problems>
