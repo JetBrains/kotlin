@@ -23,6 +23,6 @@ public final class DollarParameterTest extends AbstractExpressionTest {
     }
 
     public void testDollarParameter() throws Exception {
-        fooBoxIsValue("Hello world!");
+        checkFooBoxIsOk();
     }
 }

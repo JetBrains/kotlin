@@ -50,7 +50,7 @@ public abstract class SingleFileTranslationTest extends BasicTest {
         runFunctionOutputTestByPath(ecmaVersions, getInputFilePath(kotlinFilename), packageName, functionName, expectedResult);
     }
 
-    protected void runFunctionOutputTestByPath(
+    private void runFunctionOutputTestByPath(
             @NotNull Iterable<EcmaVersion> ecmaVersions,
             @NotNull String kotlinFilePath,
             @NotNull String packageName,
@@ -71,14 +71,6 @@ public abstract class SingleFileTranslationTest extends BasicTest {
 
     protected void fooBoxTest() throws Exception {
         checkFooBoxIsTrue(getTestName(true) + ".kt", DEFAULT_ECMA_VERSIONS);
-    }
-
-    protected void fooBoxIsValue(Object expected) throws Exception {
-        runFunctionOutputTest(DEFAULT_ECMA_VERSIONS, getTestName(true) + ".kt", TEST_PACKAGE, TEST_FUNCTION, expected);
-    }
-
-    protected void fooBoxTest(@NotNull Iterable<EcmaVersion> ecmaVersions) throws Exception {
-        checkFooBoxIsTrue(getTestName(true) + ".kt", ecmaVersions);
     }
 
     protected void checkFooBoxIsOk() throws Exception {

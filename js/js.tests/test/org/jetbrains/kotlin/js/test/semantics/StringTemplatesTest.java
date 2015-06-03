@@ -23,7 +23,7 @@ public final class StringTemplatesTest extends AbstractExpressionTest {
     }
 
     public void testObjectWithToString() throws Exception {
-        fooBoxIsValue("a = abcS, b = defS");
+        checkFooBoxIsOk();
     }
 
     public void testStringValues() throws Exception {

@@ -59,7 +59,7 @@ public final class StringTest extends AbstractExpressionTest {
     }
 
     public void testNumbersInTemplate() throws Exception {
-        fooBoxIsValue("2354");
+        checkFooBoxIsOk();
     }
 
     public void testStringSplit() throws Exception {

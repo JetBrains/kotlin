@@ -10,5 +10,6 @@ fun box(): String {
     val a = Foo("abc")
     val b = Foo("def")
     val message = "a = $a, b = $b"
-    return message
+    assertEquals("a = abcS, b = defS", message)
+    return "OK"
 }
