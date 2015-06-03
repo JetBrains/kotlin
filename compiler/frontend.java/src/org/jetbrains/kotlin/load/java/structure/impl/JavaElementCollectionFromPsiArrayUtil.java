@@ -183,7 +183,7 @@ public class JavaElementCollectionFromPsiArrayUtil {
     }
 
     @NotNull
-    public static Collection<JavaField> fields(@NotNull PsiField[] fields) {
+    public static Collection<JavaField> fields(@NotNull Iterable<PsiField> fields) {
         return convert(fields, Factories.FIELDS);
     }
 
