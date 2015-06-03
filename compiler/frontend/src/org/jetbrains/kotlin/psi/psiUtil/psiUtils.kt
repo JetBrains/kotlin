@@ -136,9 +136,16 @@ public fun PsiElement.isInsideOf(elements: Iterable<PsiElement>): Boolean = elem
 // -------------------- Recursive tree visiting --------------------------------------------------------------------------------------------
 
 public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(noinline action: (T) -> Unit) {
+    forEachDescendantOfType<T>({true}, action)
+}
+
+public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) canGoInside: (PsiElement) -> Boolean, noinline action: (T) -> Unit) {
     this.accept(object : PsiRecursiveElementVisitor(){
         override fun visitElement(element: PsiElement) {
-            super.visitElement(element)
+            if (canGoInside(element)) {
+                super.visitElement(element)
+            }
+
             if (element is T) {
                 action(element)
             }
@@ -147,27 +154,43 @@ public inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(no
 }
 
 public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(noinline predicate: (T) -> Boolean = { true }): Boolean {
-    return findDescendantOfType(predicate) != null
+    return findDescendantOfType<T>(predicate) != null
+}
+
+public inline fun <reified T : PsiElement> PsiElement.anyDescendantOfType(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): Boolean {
+    return findDescendantOfType<T>(canGoInside, predicate) != null
 }
 
 public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(noinline predicate: (T) -> Boolean = { true }): T? {
+    return findDescendantOfType<T>({ true}, predicate)
+}
+
+public inline fun <reified T : PsiElement> PsiElement.findDescendantOfType(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): T? {
     var result: T? = null
     this.accept(object : PsiRecursiveElementVisitor(){
         override fun visitElement(element: PsiElement) {
             if (result != null) return
+
             if (element is T && predicate(element)) {
                 result = element
                 return
             }
-            super.visitElement(element)
+
+            if (canGoInside(element)) {
+                super.visitElement(element)
+            }
         }
     })
     return result
 }
 
 public inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
+    return collectDescendantsOfType<T>({ true }, predicate)
+}
+
+public inline fun <reified T : PsiElement> PsiElement.collectDescendantsOfType(inlineOptions(InlineOption.ONLY_LOCAL_RETURN) canGoInside: (PsiElement) -> Boolean, noinline predicate: (T) -> Boolean = { true }): List<T> {
     val result = ArrayList<T>()
-    forEachDescendantOfType<T> {
+    forEachDescendantOfType<T>(canGoInside) {
         if (predicate(it)) {
             result.add(it)
         }

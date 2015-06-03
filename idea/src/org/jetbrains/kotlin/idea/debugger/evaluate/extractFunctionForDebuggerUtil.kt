@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -251,7 +252,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
 private fun replaceByRunFunction(expression: JetExpression): JetCallExpression {
     val callExpression = JetPsiFactory(expression).createExpression("run { \n${expression.getText()} \n}") as JetCallExpression
     val replaced = expression.replaced(callExpression)
-    val typeArguments = InsertExplicitTypeArguments.createTypeArguments(replaced)
+    val typeArguments = InsertExplicitTypeArguments.createTypeArguments(replaced, replaced.analyze())
     if (typeArguments?.getArguments()?.isNotEmpty() ?: false) {
         val calleeExpression = replaced.getCalleeExpression()
         replaced.addAfter(typeArguments!!, calleeExpression)
