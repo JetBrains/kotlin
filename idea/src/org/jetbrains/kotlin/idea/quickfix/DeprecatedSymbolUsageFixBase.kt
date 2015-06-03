@@ -255,25 +255,37 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 val valueType: JetType?)
 
         private fun processTypeParameterUsages(resolvedCall: ResolvedCall<out CallableDescriptor>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {
-            val descriptor = resolvedCall.getResultingDescriptor().getOriginal()
-            for (typeParameter in descriptor.getTypeParameters()) {
+            val typeParameters = resolvedCall.getResultingDescriptor().getOriginal().getTypeParameters()
+
+            val callElement = resolvedCall.getCall().getCallElement()
+            val callExpression = callElement as? JetCallExpression
+            val explicitTypeArgs = callExpression?.getTypeArgumentList()?.getArguments()
+            if (explicitTypeArgs != null && explicitTypeArgs.size() != typeParameters.size()) return
+
+            for ((index, typeParameter) in typeParameters.withIndex()) {
                 val parameterName = typeParameter.getName()
                 val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
                     it[ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY] == parameterName
                 }
 
-                val type = resolvedCall.getTypeArguments()[typeParameter]!!
-                val typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+                val factory = JetPsiFactory(callElement)
+                val typeElement = if (explicitTypeArgs != null) { // we use explicit type arguments if available to avoid shortening
+                    val _typeElement = explicitTypeArgs[index].getTypeReference()?.getTypeElement() ?: continue
+                    _typeElement.marked(USER_CODE_KEY)
+                }
+                else {
+                    val type = resolvedCall.getTypeArguments()[typeParameter]!!
+                    factory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)).getTypeElement()!!
+                }
 
                 for (usage in usages) {
                     val parent = usage.getParent()
                     if (parent is JetUserType) {
-                        val typeReference = JetPsiFactory(usage).createType(typeString)
-                        parent.replace(typeReference.getTypeElement()!!)
+                        parent.replace(typeElement)
                     }
                     else {
                         //TODO: tests for this?
-                        usage.replace(JetPsiFactory(usage).createExpression(typeString))
+                        usage.replace(JetPsiFactory(usage).createExpression(typeElement.getText()))
                     }
                 }
             }
