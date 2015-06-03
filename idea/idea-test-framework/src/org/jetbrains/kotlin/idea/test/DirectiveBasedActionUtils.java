@@ -95,7 +95,7 @@ public class DirectiveBasedActionUtils {
             @Override
             public boolean apply(String input) {
                 for (String prefix : IRRELEVANT_ACTION_PREFIXES) {
-                    if (input.startsWith(prefix)) {
+                    if (input.startsWith(prefix) || input.isEmpty()) {
                         return false;
                     }
                 }
