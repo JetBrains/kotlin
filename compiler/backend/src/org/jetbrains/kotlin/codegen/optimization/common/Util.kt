@@ -51,7 +51,7 @@ fun MethodNode.prepareForEmitting() {
 
     // local variables with live ranges starting after last meaningful instruction lead to VerifyError
     localVariables = localVariables.filter { lv ->
-        InsnSequence(lv.start, instructions.getLast()).any { insn ->
+        InsnSequence(lv.start, lv.end).any { insn ->
             insn.isMeaningful
         }
     }
