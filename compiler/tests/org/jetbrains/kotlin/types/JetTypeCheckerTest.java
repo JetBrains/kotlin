@@ -591,7 +591,7 @@ public class JetTypeCheckerTest extends JetLiteFixture {
         assertEquals(expectedType, type);
     }
 
-    private WritableScope getDeclarationsScope(String path) throws IOException {
+    private JetScope getDeclarationsScope(String path) throws IOException {
         ModuleDescriptor moduleDescriptor = LazyResolveTestUtil.resolve(
                 getProject(),
                 Collections.singletonList(JetTestUtils.loadJetFile(getProject(), new File(path)))
@@ -604,15 +604,18 @@ public class JetTypeCheckerTest extends JetLiteFixture {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private WritableScopeImpl addImports(JetScope scope) {
+    private JetScope addImports(JetScope scope) {
         WritableScopeImpl writableScope = new WritableScopeImpl(
                 scope, scope.getContainingDeclaration(), RedeclarationHandler.DO_NOTHING, "JetTypeCheckerTest.addImports"
         );
+        List<JetScope> scopeChain = new ArrayList<JetScope>();
+        scopeChain.add(writableScope);
+
         ModuleDescriptor module = LazyResolveTestUtil.resolveProject(getProject());
         for (ImportPath defaultImport : module.getDefaultImports()) {
             FqName fqName = defaultImport.fqnPart();
             if (defaultImport.isAllUnder()) {
-                writableScope.importScope(module.getPackage(fqName).getMemberScope());
+                scopeChain.add(module.getPackage(fqName).getMemberScope());
             }
             else {
                 Name shortName = fqName.shortName();
@@ -620,9 +623,9 @@ public class JetTypeCheckerTest extends JetLiteFixture {
                 writableScope.addClassifierDescriptor(module.getPackage(fqName.parent()).getMemberScope().getClassifier(shortName));
             }
         }
-        writableScope.importScope(module.getPackage(FqName.ROOT).getMemberScope());
+        scopeChain.add(module.getPackage(FqName.ROOT).getMemberScope());
         writableScope.changeLockLevel(WritableScope.LockLevel.BOTH);
-        return writableScope;
+        return new ChainedScope(scope.getContainingDeclaration(), "", scopeChain.toArray(new JetScope[scopeChain.size()]));
     }
 
     private JetType makeType(String typeStr) {

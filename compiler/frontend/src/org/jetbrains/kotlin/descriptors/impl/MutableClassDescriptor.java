@@ -48,7 +48,8 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private final Set<PropertyDescriptor> properties = Sets.newLinkedHashSet();
     private final Set<SimpleFunctionDescriptor> functions = Sets.newLinkedHashSet();
 
-    private final WritableScope scopeForMemberResolution;
+    private final WritableScope writableScopeForMemberResolution;
+    private final JetScope scopeForMemberResolution;
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
     private WritableScope scopeForInitializers; //contains members + primary constructor value parameters + map for backing fields
@@ -75,15 +76,15 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
                                         .changeLockLevel(WritableScope.LockLevel.BOTH));
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler, "SupertypeResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.scopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler, "MemberResolution")
+        this.writableScopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler, "MemberResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
 
         if (kind == ClassKind.INTERFACE) {
             setUpScopeForInitializers(this);
         }
 
-        scopeForMemberResolution.importScope(staticScope);
-        scopeForMemberResolution.addLabeledDeclaration(this);
+        this.scopeForMemberResolution = new ChainedScope(this, "MemberResolutionWithStatic", writableScopeForMemberResolution, staticScope);
+        writableScopeForMemberResolution.addLabeledDeclaration(this);
     }
 
     @Nullable
@@ -227,7 +228,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         for (FunctionDescriptor functionDescriptor : getConstructors()) {
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }
-        scopeForMemberResolution.setImplicitReceiver(getThisAsReceiverParameter());
+        writableScopeForMemberResolution.setImplicitReceiver(getThisAsReceiverParameter());
     }
 
     @Override

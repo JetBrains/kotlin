@@ -37,8 +37,6 @@ public trait WritableScope : JetScope {
 
     public fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor)
 
-    public fun importScope(imported: JetScope)
-
     public fun setImplicitReceiver(implicitReceiver: ReceiverParameterDescriptor)
 }
 
