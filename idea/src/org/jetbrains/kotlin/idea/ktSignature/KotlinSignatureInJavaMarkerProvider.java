@@ -20,7 +20,6 @@ import com.intellij.codeHighlighting.Pass;
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler;
 import com.intellij.codeInsight.daemon.LineMarkerInfo;
 import com.intellij.codeInsight.daemon.LineMarkerProvider;
-import com.intellij.diagnostic.LogMessageEx;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.util.PropertiesComponent;
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.idea.JetIcons;
 import org.jetbrains.kotlin.idea.caches.resolve.JavaResolveExtension;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
-import org.jetbrains.kotlin.idea.util.attachment.AttachmentPackage;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
@@ -109,11 +107,7 @@ public class KotlinSignatureInJavaMarkerProvider implements LineMarkerProvider {
             }
         }
         catch (AssertionError error) {
-            LOG.error(LogMessageEx.createEvent(
-                    "Exception while collecting KotlinSignature markers",
-                    ExceptionUtil.getThrowableText(error),
-                    AttachmentPackage.attachmentByPsiFileAsArray(psiFile)
-            ));
+            LOG.warn("Exception while collecting KotlinSignature markers:\n" + ExceptionUtil.getThrowableText(error));
         }
     }
 
