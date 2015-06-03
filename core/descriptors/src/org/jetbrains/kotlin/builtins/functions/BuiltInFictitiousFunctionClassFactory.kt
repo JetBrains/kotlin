@@ -43,18 +43,23 @@ public class BuiltInFictitiousFunctionClassFactory(
                 val prefix = kind.classNamePrefix
                 if (!className.startsWith(prefix)) continue
 
-                val arity = try {
-                    className.substring(prefix.length()).toInt()
-                }
-                catch (e: NumberFormatException) {
-                    continue
-                }
+                val arity = toInt(className.substring(prefix.length())) ?: continue
 
                 // TODO: validate arity, should be <= 255 for functions, <= 254 for members/extensions
                 return KindWithArity(kind, arity)
             }
 
             return null
+        }
+
+        private fun toInt(s: String): Int? {
+            var result = 0
+            for (c in s) {
+                val d = c - '0'
+                if (d !in 0..9) return null
+                result = result * 10 + d
+            }
+            return result
         }
     }
 
