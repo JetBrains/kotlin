@@ -71,6 +71,7 @@ public class CliBaseTest {
         String normalizedOutputWithoutExitCode = pureOutput
                 .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
                 .replace("expected ABI version is " + Integer.toString(JvmAbi.VERSION), "expected ABI version is $ABI_VERSION$")
+                .replaceAll("INFO: PERF:.+\n", "")
                 .replace("\\", "/");
 
         return normalizedOutputWithoutExitCode + exitCode;

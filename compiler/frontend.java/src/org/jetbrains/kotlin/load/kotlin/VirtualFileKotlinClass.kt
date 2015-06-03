@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.load.kotlin
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.utils.*
-
-import java.io.IOException
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.utils.rethrow
 import java.io.FileNotFoundException
+import java.io.IOException
 
 public class VirtualFileKotlinClass private(
         public val file: VirtualFile,
@@ -51,28 +51,30 @@ public class VirtualFileKotlinClass private(
 
     companion object Factory {
         private val LOG = Logger.getInstance(javaClass<VirtualFileKotlinClass>())
+        private val perfCounter = PerformanceCounter("Binary class from Kotlin file")
 
         deprecated("Use KotlinBinaryClassCache")
         fun create(file: VirtualFile): VirtualFileKotlinClass? {
-            assert(file.getFileType() == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
+            return perfCounter.time {
+                assert(file.getFileType() == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
-            try {
-                val byteContent = file.contentsToByteArray()
-                if (byteContent.isEmpty()) return null
-
-                return FileBasedKotlinClass.create(byteContent) {
-                    name, header, innerClasses ->
-                    VirtualFileKotlinClass(file, name, header, innerClasses)
+                try {
+                    val byteContent = file.contentsToByteArray()
+                    if (!byteContent.isEmpty()) {
+                        return@time FileBasedKotlinClass.create(byteContent) {
+                            name, header, innerClasses ->
+                            VirtualFileKotlinClass(file, name, header, innerClasses)
+                        }
+                    }
                 }
+                catch (e: FileNotFoundException) {
+                    // Valid situation. User can delete jar file.
+                }
+                catch (e: Throwable) {
+                    LOG.warn(renderFileReadingErrorMessage(file))
+                }
+                null
             }
-            catch (e: FileNotFoundException) {
-                // Valid situation. User can delete jar file.
-            }
-            catch (e: Throwable) {
-                LOG.warn(renderFileReadingErrorMessage(file))
-            }
-
-            return null
         }
 
         private fun renderFileReadingErrorMessage(file: VirtualFile): String =

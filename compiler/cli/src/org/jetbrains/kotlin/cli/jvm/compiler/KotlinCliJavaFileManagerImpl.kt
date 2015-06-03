@@ -29,12 +29,14 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
+import org.jetbrains.kotlin.util.PerformanceCounter
 import java.util.ArrayList
 import kotlin.properties.Delegates
 
 public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
 : CoreJavaFileManager(myPsiManager), KotlinCliJavaFileManager {
 
+    private val perfCounter = PerformanceCounter("Find Java class")
     private var index: JvmDependenciesIndex by Delegates.notNull()
 
     public fun initIndex(packagesCache: JvmDependenciesIndex) {
@@ -42,9 +44,11 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
     }
 
     public override fun findClass(classId: ClassId, searchScope: GlobalSearchScope): PsiClass? {
-        val classNameWithInnerClasses = classId.getRelativeClassName().asString()
-        return index.findClass(classId) { dir, type ->
-            findClassGivenPackage(searchScope, dir, classNameWithInnerClasses, type)
+        return perfCounter.time {
+            val classNameWithInnerClasses = classId.getRelativeClassName().asString()
+            index.findClass(classId) { dir, type ->
+                findClassGivenPackage(searchScope, dir, classNameWithInnerClasses, type)
+            }
         }
     }
 
@@ -58,22 +62,25 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
     }
 
     override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> {
-        val classIdAsTopLevelClass = qName.toSafeTopLevelClassId() ?: return super<CoreJavaFileManager>.findClasses(qName, scope)
+        return perfCounter.time {
+            val classIdAsTopLevelClass = qName.toSafeTopLevelClassId() ?: return@time super<CoreJavaFileManager>.findClasses(qName, scope)
 
-        val result = ArrayList<PsiClass>()
-        val classNameWithInnerClasses = classIdAsTopLevelClass.getRelativeClassName().asString()
-        index.traverseDirectoriesInPackage(classIdAsTopLevelClass.getPackageFqName()) { dir, rootType ->
-            val psiClass = findClassGivenPackage(scope, dir, classNameWithInnerClasses, rootType)
-            if (psiClass != null) {
-                result.add(psiClass)
+            val result = ArrayList<PsiClass>()
+            val classNameWithInnerClasses = classIdAsTopLevelClass.getRelativeClassName().asString()
+            index.traverseDirectoriesInPackage(classIdAsTopLevelClass.getPackageFqName()) { dir, rootType ->
+                val psiClass = findClassGivenPackage(scope, dir, classNameWithInnerClasses, rootType)
+                if (psiClass != null) {
+                    result.add(psiClass)
+                }
+                // traverse all
+                true
             }
-            // traverse all
-            true
+            if (result.isEmpty()) {
+                super<CoreJavaFileManager>.findClasses(qName, scope)
+            } else {
+                result.toArray<PsiClass>(arrayOfNulls<PsiClass>(result.size()))
+            }
         }
-        if (result.isEmpty()) {
-            return super<CoreJavaFileManager>.findClasses(qName, scope)
-        }
-        return result.toArray<PsiClass>(arrayOfNulls<PsiClass>(result.size()))
     }
 
     override fun findPackage(packageName: String): PsiPackage? {
