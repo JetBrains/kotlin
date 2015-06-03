@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -53,6 +54,7 @@ data class ReplaceWith(val expression: String, vararg val imports: String)
 
 object ReplaceWithAnnotationAnalyzer {
     public val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
+    public val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")
 
     public data class ReplacementExpression(
             val expression: JetExpression,
@@ -94,7 +96,23 @@ object ReplaceWithAnnotationAnalyzer {
         val symbolScope = getResolutionScope(symbolDescriptor)
         val scope = ChainedScope(symbolDescriptor, "ReplaceWith resolution scope", ExplicitImportsScope(explicitlyImportedSymbols), symbolScope)
 
-        val bindingContext = expression.analyzeInContext(scope)
+        var bindingContext = expression.analyzeInContext(scope)
+
+        val typeArgsToAdd = ArrayList<Pair<JetCallExpression, JetTypeArgumentList>>()
+        expression.forEachDescendantOfType<JetCallExpression> {
+            if (InsertExplicitTypeArguments.isApplicableTo(it, bindingContext)) {
+                typeArgsToAdd.add(it to InsertExplicitTypeArguments.createTypeArguments(it, bindingContext)!!)
+            }
+        }
+
+        if (typeArgsToAdd.isNotEmpty()) {
+            for ((callExpr, typeArgs) in typeArgsToAdd) {
+                callExpr.addAfter(typeArgs, callExpr.getCalleeExpression())
+            }
+
+            // reanalyze expression - new usages of type parameters may be added
+            bindingContext = expression.analyzeInContext(scope)
+        }
 
         val receiversToAdd = ArrayList<Pair<JetExpression, JetExpression>>()
 
@@ -108,6 +126,9 @@ object ReplaceWithAnnotationAnalyzer {
             if (expression.getReceiverExpression() == null) {
                 if (target is ValueParameterDescriptor && target.getContainingDeclaration() == symbolDescriptor) {
                     expression.putCopyableUserData(PARAMETER_USAGE_KEY, target.getName())
+                }
+                else if (target is TypeParameterDescriptor && target.getContainingDeclaration() == symbolDescriptor) {
+                    expression.putCopyableUserData(TYPE_PARAMETER_USAGE_KEY, target.getName())
                 }
 
                 val resolvedCall = expression.getResolvedCall(bindingContext)

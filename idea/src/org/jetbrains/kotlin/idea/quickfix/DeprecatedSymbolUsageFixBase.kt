@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -197,6 +198,27 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
+            for (typeParameter in descriptor.getOriginal().getTypeParameters()) {
+                val parameterName = typeParameter.getName()
+                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
+                    it[ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY] == parameterName
+                }
+
+                val type = resolvedCall.getTypeArguments()[typeParameter]!!
+                val typeString = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+
+                for (usage in usages) {
+                    val parent = usage.getParent()
+                    if (parent is JetUserType) {
+                        val typeReference = psiFactory.createType(typeString)
+                        parent.replace(typeReference.getTypeElement()!!)
+                    }
+                    else { //TODO: tests for this?
+                        usage.replace(psiFactory.createExpression(typeString))
+                    }
+                }
+            }
+
             val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToBeReplaced, bindingContext)
 
             if (qualifiedExpression is JetSafeQualifiedExpression) {
@@ -227,15 +249,16 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     .flatMap { file.resolveImportReference(it) }
                     .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
-            result = postProcessInsertedExpression(result, wrapper.addedStatements)
-
-            val resultRange = if (wrapper.addedStatements.isEmpty())
+            var resultRange = if (wrapper.addedStatements.isEmpty())
                 PsiChildRange.singleElement(result)
             else
                 PsiChildRange(wrapper.addedStatements.first(), result)
+
+            resultRange = postProcessInsertedExpression(resultRange)
+
             commentSaver.restore(resultRange)
 
-            return result
+            return resultRange.last as JetExpression
         }
 
         private fun ConstructedExpressionWrapper.wrapExpressionForSafeCall(receiver: JetExpression, receiverType: JetType?) {
@@ -358,16 +381,20 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
         }
 
-        private fun postProcessInsertedExpression(result: JetExpression, additionalStatements: Collection<JetExpression>): JetExpression {
-            var allExpressions = listOf(result) + additionalStatements
+        private fun postProcessInsertedExpression(range: PsiChildRange): PsiChildRange {
+            val expressions = range.filterIsInstance<JetExpression>().toList()
 
-            allExpressions.forEach {
+            expressions.forEach {
                 introduceNamedArguments(it)
 
                 restoreFunctionLiteralArguments(it)
 
                 //TODO: do this earlier
                 dropArgumentsForDefaultValues(it)
+
+                simplifySpreadArrayOfArguments(it)
+
+                removeExplicitTypeArguments(it)
             }
 
 
@@ -384,17 +411,16 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
-            allExpressions = allExpressions.map {
+            val newExpressions = expressions.map {
                 ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(it, shortenFilter) as JetExpression
             }
 
-            allExpressions.forEach {
-                simplifySpreadArrayOfArguments(it)
-
+            newExpressions.forEach {
                 // clean up user data
                 it.forEachDescendantOfType<JetExpression> {
                     it.clear(USER_CODE_KEY)
                     it.clear(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY)
+                    it.clear(ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY)
                     it.clear(PARAMETER_VALUE_KEY)
                     it.clear(RECEIVER_VALUE_KEY)
                     it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
@@ -405,7 +431,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
-            return allExpressions.first()
+            return PsiChildRange(newExpressions.first(), newExpressions.last())
         }
 
         private fun introduceNamedArguments(result: JetExpression) {
@@ -484,32 +510,27 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
         }
 
+        private fun removeExplicitTypeArguments(result: JetExpression) {
+            val intention = RemoveExplicitTypeArgumentsIntention()
+            result.collectDescendantsOfType<JetTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] }) { intention.isApplicableTo(it) }
+                    .forEach { it.delete() }
+        }
+
         private fun simplifySpreadArrayOfArguments(expression: JetExpression) {
             //TODO: test for nested
 
             val argumentsToExpand = ArrayList<Pair<JetValueArgument, Collection<JetValueArgument>>>()
 
-            expression.accept(object : JetTreeVisitorVoid() {
-                override fun visitArgument(argument: JetValueArgument) {
-                    super.visitArgument(argument)
-
-                    if (argument.getSpreadElement() != null && !argument.isNamed()) {
-                        val call = argument.getArgumentExpression() as? JetCallExpression
-                        if (call != null) {
-                            val resolvedCall = call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL))
-                            if (resolvedCall != null && CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
-                                argumentsToExpand.add(argument to call.getValueArguments())
-                            }
-                        }
+            expression.forEachDescendantOfType<JetValueArgument>(canGoInside = { !it[USER_CODE_KEY] }) { argument ->
+                if (argument.getSpreadElement() != null && !argument.isNamed()) {
+                    val argumentExpression = argument.getArgumentExpression() ?: return@forEachDescendantOfType
+                    val resolvedCall = argumentExpression.getResolvedCall(argumentExpression.analyze(BodyResolveMode.PARTIAL)) ?: return@forEachDescendantOfType
+                    val callExpression = resolvedCall.getCall().getCallElement() as? JetCallExpression ?: return@forEachDescendantOfType
+                    if (CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
+                        argumentsToExpand.add(argument to callExpression.getValueArguments())
                     }
                 }
-
-                override fun visitJetElement(element: JetElement) {
-                    if (!element[USER_CODE_KEY]) { // do not go inside original user's code
-                        super.visitJetElement(element)
-                    }
-                }
-            })
+            }
 
             for ((argument, replacements) in argumentsToExpand) {
                 argument.replaceByMultiple(replacements)
