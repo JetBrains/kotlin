@@ -64,34 +64,36 @@ public object SuperClassNotInitialized : JetIntentionActionsFactory() {
         fixes.add(AddParenthesisFix(delegator, putCaretIntoParenthesis = constructors.singleOrNull()?.getValueParameters()?.isNotEmpty() ?: true))
 
         if (classOrObjectDeclaration is JetClass) {
-            val superType = classDescriptor.getTypeConstructor().getSupertypes().first { it.getConstructor().getDeclarationDescriptor() == superClass }
-            val typeArgsMap = superClass.getTypeConstructor().getParameters().zip(superType.getArguments()).toMap()
-            val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
+            val superType = classDescriptor.getTypeConstructor().getSupertypes().firstOrNull { it.getConstructor().getDeclarationDescriptor() == superClass }
+            if (superType != null) {
+                val typeArgsMap = superClass.getTypeConstructor().getParameters().zip(superType.getArguments()).toMap()
+                val substitutor = TypeUtils.makeSubstitutorForTypeParametersMap(typeArgsMap)
 
-            val substitutedConstructors = constructors
-                    .filter { it.getValueParameters().isNotEmpty() }
-                    .map { it.substitute(substitutor) as ConstructorDescriptor }
+                val substitutedConstructors = constructors
+                        .filter { it.getValueParameters().isNotEmpty() }
+                        .map { it.substitute(substitutor) as ConstructorDescriptor }
 
-            if (substitutedConstructors.isNotEmpty()) {
-                val parameterTypes: List<List<JetType>> = substitutedConstructors.map {
-                    it.getValueParameters().map { it.getType() }
-                }
+                if (substitutedConstructors.isNotEmpty()) {
+                    val parameterTypes: List<List<JetType>> = substitutedConstructors.map {
+                        it.getValueParameters().map { it.getType() }
+                    }
 
-                fun canRenderOnlyFirstParameters(n: Int) = parameterTypes.map { it.take(n) }.toSet().size() == parameterTypes.size()
+                    fun canRenderOnlyFirstParameters(n: Int) = parameterTypes.map { it.take(n) }.toSet().size() == parameterTypes.size()
 
-                val maxParams = parameterTypes.map { it.size() }.max()!!
-                val maxParamsToDisplay = if (maxParams <= DISPLAY_MAX_PARAMS) {
-                    maxParams
-                }
-                else {
-                    (DISPLAY_MAX_PARAMS..maxParams-1).firstOrNull(::canRenderOnlyFirstParameters) ?: maxParams
-                }
+                    val maxParams = parameterTypes.map { it.size() }.max()!!
+                    val maxParamsToDisplay = if (maxParams <= DISPLAY_MAX_PARAMS) {
+                        maxParams
+                    }
+                    else {
+                        (DISPLAY_MAX_PARAMS..maxParams-1).firstOrNull(::canRenderOnlyFirstParameters) ?: maxParams
+                    }
 
-                for ((constructor, types) in substitutedConstructors.zip(parameterTypes)) {
-                    val typesRendered = types.take(maxParamsToDisplay).map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }
-                    val parameterString = typesRendered.joinToString(", ", "(", if (types.size() <= maxParamsToDisplay) ")" else ",...)")
-                    val text = "Add constructor parameters from " + superClass.getName().asString() + parameterString
-                    fixes.add(AddParametersFix(delegator, classOrObjectDeclaration, constructor, text))
+                    for ((constructor, types) in substitutedConstructors.zip(parameterTypes)) {
+                        val typesRendered = types.take(maxParamsToDisplay).map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }
+                        val parameterString = typesRendered.joinToString(", ", "(", if (types.size() <= maxParamsToDisplay) ")" else ",...)")
+                        val text = "Add constructor parameters from " + superClass.getName().asString() + parameterString
+                        fixes.add(AddParametersFix(delegator, classOrObjectDeclaration, constructor, text))
+                    }
                 }
             }
         }
