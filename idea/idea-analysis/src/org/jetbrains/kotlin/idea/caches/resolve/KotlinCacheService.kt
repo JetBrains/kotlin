@@ -104,6 +104,10 @@ public class KotlinCacheService(val project: Project) {
             // we assume that all files come from the same module
             val targetPlatform = files.map { TargetPlatformDetector.getPlatform(it) }.toSet().single()
             val syntheticFileModule = files.map { it.getModuleInfo() }.toSet().single()
+            val dependenciesForSyntheticFileCache = listOf(
+                    PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
+                    KotlinOutOfBlockCompletionModificationTracker.getInstance(project)
+            )
             return when {
                 syntheticFileModule is ModuleSourceInfo -> {
                     val dependentModules = syntheticFileModule.getDependentModules()
@@ -114,7 +118,7 @@ public class KotlinCacheService(val project: Project) {
                                     syntheticFiles = files,
                                     reuseDataFromCache = getGlobalCache(targetPlatform),
                                     moduleFilter = { it in dependentModules },
-                                    dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                                    dependencies = dependenciesForSyntheticFileCache
                             )
                     )
                 }
@@ -127,7 +131,7 @@ public class KotlinCacheService(val project: Project) {
                                     syntheticFiles = files,
                                     reuseDataFromCache = getGlobalLibrariesCache(targetPlatform),
                                     moduleFilter = { it == syntheticFileModule },
-                                    dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                                    dependencies = dependenciesForSyntheticFileCache
                             )
                     )
                 }
@@ -143,7 +147,7 @@ public class KotlinCacheService(val project: Project) {
                                     targetPlatform,
                                     syntheticFiles = files,
                                     moduleFilter = { true },
-                                    dependencies = listOf(PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                                    dependencies = dependenciesForSyntheticFileCache
                             )
                     )
                 }
