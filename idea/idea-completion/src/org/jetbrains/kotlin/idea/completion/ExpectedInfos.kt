@@ -218,9 +218,7 @@ class ExpectedInfos(
                         expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
                     }
 
-                    if (argumentIndex == parameters.indexOf(parameter)) {
-                        expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, starOptions))
-                    }
+                    expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, starOptions))
                 }
                 else {
                     if (!alreadyHasStar) {

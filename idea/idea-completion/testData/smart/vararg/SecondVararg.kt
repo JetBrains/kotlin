@@ -4,6 +4,7 @@ fun bar(c: Char, pInt: Int) {
     foo(*intArrayOf(), <caret>)
 }
 
-// EXIST: c
-// ABSENT: pInt
-// EXIST: { lookupString: "charArrayOf", itemText: "*charArrayOf" }
+// ABSENT: c
+// ABSENT: { lookupString: "charArrayOf", itemText: "*charArrayOf" }
+// EXIST: pInt
+// EXIST: { lookupString: "intArrayOf", itemText: "*intArrayOf" }

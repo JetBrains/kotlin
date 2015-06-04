@@ -5,5 +5,5 @@ fun bar(s: String, arr: Array<String>){
 }
 
 // EXIST: s
-// ABSENT: arr
-// ABSENT: *arr
+// ABSENT: { itemText: "arr" }
+// EXIST: { lookupString: "arr", itemText: "*arr" }
