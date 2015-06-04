@@ -772,7 +772,8 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"foo\""), JetValVar.None, null));
+                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"foo\""),
+                                     JetValVar.None, null));
         doTest(changeInfo);
     }
 
@@ -907,6 +908,13 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetParameterInfo[] newParameters = changeInfo.getNewParameters();
         changeInfo.setNewParameter(0, newParameters[1]);
         changeInfo.setNewParameter(1, newParameters[0]);
+        doTest(changeInfo);
+    }
+
+    public void testConvertToExtensionAndRename() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
+        changeInfo.setNewName("foo1");
         doTest(changeInfo);
     }
 
