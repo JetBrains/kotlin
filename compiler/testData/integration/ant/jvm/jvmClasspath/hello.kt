@@ -8,7 +8,7 @@ import sun.nio.ByteBuffered
 
 fun main(args : Array<String>) {
     val a = Big5() // charsets.jar
-    val c = DNSNameService() // dnsns.ajr
+    val c = DNSNameService() // dnsns.jar
     val e : Cipher? = null // jce.jar
     val f : SunJCE? = null // sunjce_provider.jar
     val j : ByteBuffered? = null // rt.jar

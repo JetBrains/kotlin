@@ -17,18 +17,13 @@
 package org.jetbrains.kotlin.integration;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
-import org.jetbrains.kotlin.utils.UtilsPackage;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class AntTaskJvmTest extends AntTaskBaseTest {
-    private static final String JVM_OUT_FILE = "hello.jar";
-
     @Rule
     public final TestName name = new TestName();
 
@@ -40,14 +35,6 @@ public class AntTaskJvmTest extends AntTaskBaseTest {
 
     private void doJvmAntTest() throws Exception {
         doAntTest();
-
-        String classpath = UtilsPackage.join(Arrays.asList(
-                getOutputFileByName(JVM_OUT_FILE).getAbsolutePath(),
-                ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
-                ForTestCompileRuntime.reflectJarForTests().getAbsolutePath()
-        ), File.pathSeparator);
-
-        runJava("hello.run", "-cp", classpath, "hello.HelloPackage");
     }
 
     @Test
