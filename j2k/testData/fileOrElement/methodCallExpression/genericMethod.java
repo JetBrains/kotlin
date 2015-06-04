@@ -8,6 +8,6 @@ class Map {
 class U {
   void test() {
     Map m = new Map();
-    m.<String, int>put(null, 10);
+    m.<String, Integer>put(null, 10);
   }
 }
