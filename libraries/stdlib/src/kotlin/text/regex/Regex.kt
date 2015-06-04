@@ -16,15 +16,24 @@
 
 package kotlin.text
 
-/** Represents a collection of captured groups in a single match. */
+/**
+ * Represents a collection of captured groups in a single match of a regular expression.
+ *
+ * Groups are indexed from 1 to the count of groups in the regular expression.
+ * The first group (with the index 0) corresponds to the entire match.
+ *
+ * An element of the collection at the particular index can be `null`,
+ * if the corresponding group in the regular expression is optional and
+ * there was not match captured by that group.
+ */
 public interface MatchGroupCollection : Collection<MatchGroup?> {
 
     /** Returns a group with the specified [index].
      *
      * @return An instance of [MatchGroup] if the group with the specified [index] was matched or `null` otherwise.
      *
-     * The groups are indexed from 1 to the count of groups in regular expression. The group with zero index
-     * represents the entire match.
+     * Groups are indexed from 1 to the count of groups in the regular expression. A group with the index 0
+     * corresponds to the entire match.
      */
     public fun get(index: Int): MatchGroup?
 
