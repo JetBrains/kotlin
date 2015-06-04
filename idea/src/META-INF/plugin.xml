@@ -235,6 +235,7 @@
     <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.caches.JetGotoSymbolContributor"/>
     <gotoClassContributor implementation="org.jetbrains.kotlin.idea.caches.JetGotoClassContributor"/>
     <lang.importOptimizer language="jet" implementationClass="org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer"/>
+    <lang.namesValidator language="jet" implementationClass="org.jetbrains.kotlin.idea.core.refactoring.KotlinNamesValidator"/>
 
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.JetFileFactory"/>
     <fileTypeFactory implementation="org.jetbrains.kotlin.idea.KotlinJavaScriptMetaFileTypeFactory"/>
