@@ -292,7 +292,7 @@ public fun <T> List<T>.dropLast(n: Int): List<T> {
  * Returns a string with the last [n] characters removed.
  */
 public fun String.dropLast(n: Int): String {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0, { "Requested character count $n is less than zero." })
     return take((length() - n).coerceAtLeast(0))
 }
 
@@ -1384,7 +1384,7 @@ public fun <T> Stream<T>.take(n: Int): Stream<T> {
  * Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter.
  */
 public fun String.take(n: Int): String {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0, { "Requested character count $n is less than zero." })
     return substring(0, Math.min(n, length()))
 }
 
@@ -1532,7 +1532,7 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
  * Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter.
  */
 public fun String.takeLast(n: Int): String {
-    require(n >= 0, { "Requested element count $n is less than zero." })
+    require(n >= 0, { "Requested character count $n is less than zero." })
     val length = length()
     return substring(length - Math.min(n, length), length)
 }

@@ -91,7 +91,7 @@ fun filtering(): List<GenericFunction> {
         doc(Strings) { "Returns a string containing the first [n] characters from this string, or the entire string if this string is shorter."}
         body(Strings) {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0, { "Requested character count $n is less than zero." })
             return substring(0, Math.min(n, length()))
             """
         }
@@ -140,7 +140,7 @@ fun filtering(): List<GenericFunction> {
         returns("String", Strings)
         body(Strings) {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0, { "Requested character count $n is less than zero." })
             return take((length() - n).coerceAtLeast(0))
             """
         }
@@ -155,7 +155,7 @@ fun filtering(): List<GenericFunction> {
         doc(Strings) { "Returns a string containing the last [n] characters from this string, or the entire string if this string is shorter."}
         body(Strings) {
             """
-            require(n >= 0, { "Requested element count $n is less than zero." })
+            require(n >= 0, { "Requested character count $n is less than zero." })
             val length = length()
             return substring(length - Math.min(n, length), length)
             """
