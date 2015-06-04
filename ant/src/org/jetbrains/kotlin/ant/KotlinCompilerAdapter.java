@@ -23,10 +23,12 @@ import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.taskdefs.Javac;
 import org.apache.tools.ant.taskdefs.compilers.Javac13;
 import org.apache.tools.ant.taskdefs.condition.AntVersion;
+import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Path;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +38,7 @@ public class KotlinCompilerAdapter extends Javac13 {
     private static final List<String> KOTLIN_EXTENSIONS = Arrays.asList("kt", "kts");
 
     private Path externalAnnotations;
+    public List<Commandline.Argument> additionalArguments = new ArrayList<Commandline.Argument>(0);
 
     public void setExternalAnnotations(Path externalAnnotations) {
         this.externalAnnotations = externalAnnotations;
@@ -46,6 +49,12 @@ public class KotlinCompilerAdapter extends Javac13 {
             externalAnnotations = new Path(getProject());
         }
         return externalAnnotations.createPath();
+    }
+
+    public Commandline.Argument createCompilerArg() {
+        Commandline.Argument argument = new Commandline.Argument();
+        additionalArguments.add(argument);
+        return argument;
     }
 
     @Override
@@ -75,6 +84,8 @@ public class KotlinCompilerAdapter extends Javac13 {
         kotlinc.setSrc(javac.getSrcdir());
 
         kotlinc.setExternalAnnotations(externalAnnotations);
+
+        kotlinc.getAdditionalArguments().addAll(additionalArguments);
 
         kotlinc.execute();
         if (!Integer.valueOf(0).equals(kotlinc.getExitCode())) {

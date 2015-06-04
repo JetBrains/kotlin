@@ -3,6 +3,10 @@ Buildfile: [TestData]/build.xml
 
 build:
   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
+    [javac] Compiling 1 source file to [Temp]
+    [javac] Compiling [[TestData]] => [[Temp]]
+    [javac] INFO: Kotlin Compiler version [KotlinVersion]
+    [javac] Running javac...
 
 BUILD SUCCESSFUL
 Total time: [time]
