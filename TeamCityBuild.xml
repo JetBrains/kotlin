@@ -170,9 +170,45 @@
         <print-file-size-statistic path="${output}" file-name="stdlib.meta.js"/>
     </target>
 
-    <target name="post_build" depends="zipArtifacts, revertTemplateFiles, printStatistics"/>
+    <target name="post_build" depends="zipArtifacts, revertTemplateFiles, printStatistics, remove_internal_artifacts"/>
 
     <target name="none">
         <fail message="Either specify pre_build or post_build"/>
+    </target>
+
+    <property name="teamcity.build.branch" value=""/>
+
+    <condition property="need.remove.artifacts" value="true">
+        <and>
+            <matches pattern="rr/.*" string="${teamcity.build.branch}"/>
+            <not>
+                <matches pattern="rr/internal/.*" string="${teamcity.build.branch}"/>
+            </not>
+        </and>
+    </condition>
+
+    <target name="remove_internal_artifacts" description="Remove internal artifacts for rr/* branches, but store them for rr/internal/*">
+        <if>
+            <istrue value="${need.remove.artifacts}"/>
+            <then>
+                <echo message="Remove internal artifacts" />
+
+                <delete failonerror="false" verbose="true">
+                    <fileset dir="dist">
+                        <include name="kotlin-compiler-before-shrink.jar"/>
+                        <include name="kotlin-for-upsource.jar"/>
+                        <include name="kotlin-for-upsource-sources.jar"/>
+                        <include name="kotlin-test-data.zip"/>
+                    </fileset>
+                    <fileset dir="out/artifacts/internal">
+                        <include name="injector-generator.jar"/>
+                        <include name="kotlin-ide-common.jar"/>
+                    </fileset>
+                </delete>
+            </then>
+            <else>
+                <echo message="Internal artifacts left untouched"/>
+            </else>
+        </if>
     </target>
 </project>
