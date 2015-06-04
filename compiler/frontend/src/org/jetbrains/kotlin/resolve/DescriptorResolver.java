@@ -440,7 +440,8 @@ public class DescriptorResolver {
         ConstructorDescriptorImpl constructorDescriptor =
                 DescriptorFactory.createPrimaryConstructorForObject(classDescriptor, toSourceElement(object));
         if (object != null) {
-            trace.record(CONSTRUCTOR, object, constructorDescriptor);
+            JetPrimaryConstructor primaryConstructor = object.getPrimaryConstructor();
+            trace.record(CONSTRUCTOR, primaryConstructor != null ? primaryConstructor : object, constructorDescriptor);
         }
         return constructorDescriptor;
     }

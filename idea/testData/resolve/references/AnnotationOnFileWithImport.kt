@@ -4,4 +4,4 @@ package foo
 
 import kotlin.deprecated as D
 
-// REF: (kotlin).deprecated
+// REF: (in kotlin.deprecated).deprecated(kotlin.String,kotlin.ReplaceWith)

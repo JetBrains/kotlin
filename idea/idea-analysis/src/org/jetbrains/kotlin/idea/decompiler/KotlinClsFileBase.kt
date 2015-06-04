@@ -21,11 +21,13 @@ import com.intellij.psi.FileViewProvider
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.descriptorToKey
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
@@ -40,6 +42,11 @@ public abstract class KotlinClsFileBase(provider: FileViewProvider) : JetFile(pr
             val callable = original.getContainingDeclaration() as? CallableDescriptor ?: return null
             val callableDeclaration = getDeclarationForDescriptor(callable) as? JetCallableDeclaration ?: return null
             return callableDeclaration.getValueParameters()[original.getIndex()]
+        }
+
+        if (original is ConstructorDescriptor && original.isPrimary()) {
+            val classOrObject = getDeclarationForDescriptor(original.getContainingDeclaration()) as? JetClassOrObject
+            return classOrObject?.getPrimaryConstructor() ?: classOrObject
         }
 
         val key = descriptorToKey(original)

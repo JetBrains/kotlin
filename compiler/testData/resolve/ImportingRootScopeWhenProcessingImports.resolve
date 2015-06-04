@@ -1,7 +1,7 @@
 // FILE: base.kt
 class java {
     class lang {
-        class ~Fake~Fake()
+        class ~Fake~Fake~Fake()~()
     }
 }
 
@@ -9,13 +9,13 @@ class java {
 import java.lang.* // will import Fake
 
 fun foo() {
-    `Fake`Fake()
+    `Fake()`Fake()
 }
 
 // FILE: root2.kt
 fun foo() {
     `!`Fake() // not imported within "java.lang.*" default import
-    java.lang.`Fake`Fake() // we all are in same (root) package, so it works
+    java.lang.`Fake()`Fake() // we all are in same (root) package, so it works
 }
 
 
@@ -24,6 +24,6 @@ package nonRoot
 import java.lang.* // will import Fake
 
 fun foo() {
-    `Fake`Fake()
+    `Fake()`Fake()
     java.lang.`!`Fake() // qualified access to root package's class does not work
 }

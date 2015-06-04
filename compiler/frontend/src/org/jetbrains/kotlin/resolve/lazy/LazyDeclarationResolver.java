@@ -184,9 +184,8 @@ public class LazyDeclarationResolver {
 
             @Override
             public DeclarationDescriptor visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, Void data) {
-                JetClassOrObject klass = constructor.getContainingClassOrObject();
-                getClassDescriptor(klass).getConstructors();
-                return getBindingContext().get(BindingContext.CONSTRUCTOR, klass);
+                getClassDescriptor(constructor.getContainingClassOrObject()).getConstructors();
+                return getBindingContext().get(BindingContext.CONSTRUCTOR, constructor);
             }
 
             @Override

@@ -224,7 +224,7 @@ class FunctionDescriptorResolver(
                 classDescriptor,
                 true,
                 classElement.getPrimaryConstructorModifierList(),
-                classElement,
+                classElement.getPrimaryConstructor() ?: classElement,
                 classDescriptor.getTypeConstructor().getParameters(),
                 classElement.getPrimaryConstructorParameters(),
                 trace
