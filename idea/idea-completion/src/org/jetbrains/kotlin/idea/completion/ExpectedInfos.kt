@@ -203,26 +203,36 @@ class ExpectedInfos(
                 namedArgumentTail(argumentToParameter, argumentName, descriptor)
             }
 
+            val alreadyHasStar = argument.getSpreadElement() != null
+
             val varargElementType = parameter.getVarargElementType()
             if (varargElementType != null) {
                 if (isFunctionLiteralArgument) continue
 
+                val starOptions = if (!alreadyHasStar) ItemOptions.STAR_PREFIX else ItemOptions.DEFAULT
                 if (argumentName == null) {
                     // even if it's the last parameter, there can be more arguments for the same parameter
                     val varargTail = if (tail == Tail.RPARENTH) null else tail
 
-                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
+                    if (!alreadyHasStar) {
+                        expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
+                    }
 
                     if (argumentIndex == parameters.indexOf(parameter)) {
-                        expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, ItemOptions.STAR_PREFIX))
+                        expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, starOptions))
                     }
                 }
                 else {
-                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), tail, descriptor, argumentPosition))
-                    expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentPosition, ItemOptions.STAR_PREFIX))
+                    if (!alreadyHasStar) {
+                        expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), tail, descriptor, argumentPosition))
+                    }
+
+                    expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentPosition, starOptions))
                 }
             }
             else {
+                if (alreadyHasStar) continue
+
                 val parameterType = if (useHeuristicSignatures)
                     HeuristicSignatures.correctedParameterType(descriptor, parameter, moduleDescriptor, callElement.getProject()) ?: parameter.getType()
                 else

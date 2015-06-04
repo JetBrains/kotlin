@@ -269,6 +269,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("NamedVarargAfterStar.kt")
+    public void testNamedVarargAfterStar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NamedVarargAfterStar.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("NoExtensionMethodFromClassObject.kt")
     public void testNoExtensionMethodFromClassObject() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/NoExtensionMethodFromClassObject.kt");
@@ -416,6 +422,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
     @TestMetadata("Vararg4.kt")
     public void testVararg4() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/Vararg4.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("VarargAfterStar.kt")
+    public void testVarargAfterStar() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/smart/VarargAfterStar.kt");
         doTest(fileName);
     }
 
