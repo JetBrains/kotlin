@@ -133,9 +133,9 @@ class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaIn
                 document.insertString(offset, "()")
             }
             PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
-        }
 
-        openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
+            openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
+        }
 
         val closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
 
