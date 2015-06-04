@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.integration;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.OutputListener;
 import com.intellij.execution.configurations.GeneralCommandLine;
@@ -31,33 +29,22 @@ import kotlin.text.MatchResult;
 import kotlin.text.Regex;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.test.JetTestUtils;
-import org.jetbrains.kotlin.test.Tmpdir;
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
 import org.jetbrains.kotlin.utils.PathUtil;
-import org.junit.ComparisonFailure;
-import org.junit.Rule;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
-
-public abstract class KotlinIntegrationTestBase {
-    protected static final File INTEGRATION_TEST_DATA_BASE_DIR = new File(JetTestUtils.getTestDataPathBase(), "integration");
-
-    @Rule
-    public final Tmpdir tmpdir = new Tmpdir();
-
+public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
     static {
         System.setProperty("java.awt.headless", "true");
     }
 
-    @NotNull
-    protected abstract File getTestDataDir();
-
-    protected int runJava(String logName, String... arguments) throws Exception {
-        GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(getTestDataDir());
+    protected int runJava(@NotNull String testDataDir, @Nullable String logName, @NotNull String... arguments) throws Exception {
+        GeneralCommandLine commandLine = new GeneralCommandLine().withWorkDirectory(testDataDir);
         commandLine.setExePath(getJavaRuntime().getAbsolutePath());
         commandLine.addParameters(arguments);
 
@@ -68,7 +55,7 @@ public abstract class KotlinIntegrationTestBase {
             assertEquals("Non-zero exit code", 0, exitCode);
         }
         else {
-            check(logName, executionLog.toString());
+            check(testDataDir, logName, executionLog.toString());
         }
 
         return exitCode;
@@ -88,9 +75,10 @@ public abstract class KotlinIntegrationTestBase {
         });
     }
 
-    protected String normalizeOutput(String content) {
-        content = normalizePath(content, getTestDataDir(), "[TestData]");
-        content = normalizePath(content, tmpdir.getTmpDir(), "[Temp]");
+    @NotNull
+    protected String normalizeOutput(@NotNull File testDataDir, @NotNull String content) {
+        content = normalizePath(content, testDataDir, "[TestData]");
+        content = normalizePath(content, tmpdir, "[Temp]");
         content = normalizePath(content, getCompilerLib(), "[CompilerLib]");
         content = normalizePath(content, getKotlinProjectHome(), "[KotlinProjectHome]");
         content = content.replaceAll(KotlinVersion.VERSION, "[KotlinVersion]");
@@ -98,26 +86,11 @@ public abstract class KotlinIntegrationTestBase {
         return content;
     }
 
-    private void check(String baseName, String content) throws IOException {
-        File actualFile = new File(getTestDataDir(), baseName + ".actual");
-        File expectedFile = new File(getTestDataDir(), baseName + ".expected");
+    private void check(String testDataDir, String baseName, String content) throws IOException {
+        File expectedFile = new File(testDataDir, baseName + ".expected");
+        String normalizedContent = normalizeOutput(new File(testDataDir), content);
 
-        String normalizedContent = normalizeOutput(content);
-
-        if (!expectedFile.isFile()) {
-            Files.write(normalizedContent, actualFile, Charsets.UTF_8);
-            fail("No .expected file " + expectedFile);
-        }
-
-        try {
-            JetTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
-            //noinspection ResultOfMethodCallIgnored
-            actualFile.delete();
-        }
-        catch (ComparisonFailure e) {
-            Files.write(normalizedContent, actualFile, Charsets.UTF_8);
-            throw e;
-        }
+        JetTestUtils.assertEqualsToFile(expectedFile, normalizedContent);
     }
 
     private static int runProcess(GeneralCommandLine commandLine, StringBuilder executionLog) throws ExecutionException {
