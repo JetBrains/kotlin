@@ -21,25 +21,27 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 import java.io.File;
 
-public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
-    protected static final File ANT_TASK_TEST_DATA_BASE_DIR = new File(INTEGRATION_TEST_DATA_BASE_DIR, "ant");
+public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
+    protected void doTest(String testFile) throws Exception {
+        String testDataDir = new File(testFile).getAbsolutePath();
 
-    protected void doAntTest() throws Exception {
         runJava(
+                testDataDir,
                 "build.log",
                 "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
                 "-Dkotlin.lib=" + getCompilerLib(),
                 "-Dkotlin.runtime.jar=" + ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
                 "-Dkotlin.reflect.jar=" + ForTestCompileRuntime.reflectJarForTests().getAbsolutePath(),
-                "-Dtest.data=" + getTestDataDir(),
-                "-Dtemp=" + tmpdir.getTmpDir(),
+                "-Dtest.data=" + testDataDir,
+                "-Dtemp=" + tmpdir,
                 "-f", "build.xml"
         );
     }
 
+    @NotNull
     @Override
-    protected String normalizeOutput(String content) {
-        return super.normalizeOutput(content).replaceAll("Total time: .+\n", "Total time: [time]\n");
+    protected String normalizeOutput(@NotNull File testDataDir, @NotNull String content) {
+        return super.normalizeOutput(testDataDir, content).replaceAll("Total time: .+\n", "Total time: [time]\n");
     }
 
     @NotNull

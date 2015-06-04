@@ -23,9 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.js.test.rhino.RhinoFunctionResultChecker;
 import org.jetbrains.kotlin.js.test.rhino.RhinoUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
+import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,27 +31,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
-
-public class AntTaskJsTest extends AntTaskBaseTest {
+public class AntTaskJsTest extends AbstractAntTaskTest {
     private static final String JS_OUT_FILE = "out.js";
 
-    @Rule
-    public final TestName name = new TestName();
-
     @NotNull
-    @Override
-    protected File getTestDataDir() {
-        return new File(new File(ANT_TASK_TEST_DATA_BASE_DIR, "js"), name.getMethodName());
+    private String getTestDataDir() {
+        return JetTestUtils.getTestDataPathBase() + "/integration/ant/js/" + getTestName(true);
     }
 
     @NotNull
     private File getOutputFileByName(@NotNull String name) {
-        return new File(tmpdir.getTmpDir(), name);
+        return new File(tmpdir, name);
+    }
+
+    private void doTest() throws Exception {
+        doTest(getTestDataDir());
     }
 
     private void doJsAntTest(String... jsFiles) throws Exception {
-        doAntTest();
+        doTest();
 
         List<String> fileNames = new ArrayList<String>(Arrays.asList(jsFiles));
         fileNames.add(JS_OUT_FILE);
@@ -92,123 +88,99 @@ public class AntTaskJsTest extends AntTaskBaseTest {
         }
     }
 
-    @Test
-    public void simple() throws Exception {
+    public void testSimple() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void simpleWithMain() throws Exception {
+    public void testSimpleWithMain() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void simpleWithStdlib() throws Exception {
+    public void testSimpleWithStdlib() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void simpleWithStdlibAndAnotherLib() throws Exception {
+    public void testSimpleWithStdlibAndAnotherLib() throws Exception {
         doJsAntTest("jslib-example.js");
     }
 
-    @Test
-    public void simpleWithStdlibAndFolderAsAnotherLib() throws Exception {
+    public void testSimpleWithStdlibAndFolderAsAnotherLib() throws Exception {
         doJsAntTest("jslib-example.js");
     }
 
-    @Test
-    public void simpleWithoutStdlibAndFolderAsAnotherLib() throws Exception {
+    public void testSimpleWithoutStdlibAndFolderAsAnotherLib() throws Exception {
         doJsAntTest("jslib-example.js");
     }
 
-    @Test
-    public void simpleWithoutStdlibAndJsFileAsAnotherLib() throws Exception {
+    public void testSimpleWithoutStdlibAndJsFileAsAnotherLib() throws Exception {
         doJsAntTest("jslib-example.js");
     }
 
-    @Test
-    public void simpleWithStdlibAndJsFileAsAnotherLib() throws Exception {
+    public void testSimpleWithStdlibAndJsFileAsAnotherLib() throws Exception {
         doJsAntTest("jslib-example.js");
     }
 
-    @Test
-    public void simpleWithStdlibAndTwoJsFilesAsLibraries() throws Exception {
+    public void testSimpleWithStdlibAndTwoJsFilesAsLibraries() throws Exception {
         doJsAntTest("jslib-example1.js", "jslib-example2.js");
     }
 
-    @Test
-    public void simpleWithStdlibAndJsFilesWithTwoModulesAsLibrary() throws Exception {
+    public void testSimpleWithStdlibAndJsFilesWithTwoModulesAsLibrary() throws Exception {
         doJsAntTest("jslib-example.js");
     }
 
-    @Test
-    public void simpleWithMainFQArgs() throws Exception {
+    public void testSimpleWithMainFQArgs() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void simpleWithVarargMain() throws Exception {
+    public void testSimpleWithVarargMain() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void manySources() throws Exception {
+    public void testManySources() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void additionalArguments() throws Exception {
+    public void testAdditionalArguments() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void suppressWarnings() throws Exception {
+    public void testSuppressWarnings() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void verbose() throws Exception {
+    public void testVerbose() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void version() throws Exception {
+    public void testVersion() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void outputWithoutDirectory() throws Exception {
+    public void testOutputWithoutDirectory() throws Exception {
         doJsAntTest();
     }
 
-    @Test
-    public void noSrcParam() throws Exception {
-        doAntTest();
+    public void testNoSrcParam() throws Exception {
+        doTest();
     }
 
-    @Test
-    public void noOutputParam() throws Exception {
-        doAntTest();
+    public void testNoOutputParam() throws Exception {
+        doTest();
     }
 
-    @Test
-    public void outputPrefix() throws Exception {
+    public void testOutputPrefix() throws Exception {
         doJsAntTestForPostfixPrefix("prefix", null);
     }
 
-    @Test
-    public void outputPostfix() throws Exception {
+    public void testOutputPostfix() throws Exception {
         doJsAntTestForPostfixPrefix(null, "postfix");
     }
 
-    @Test
-    public void bothPrefixAndPostfix() throws Exception {
+    public void testBothPrefixAndPostfix() throws Exception {
         doJsAntTestForPostfixPrefix("prefix", "postfix");
     }
 
-    @Test
-    public void sourceMap() throws Exception {
+    public void testSourceMap() throws Exception {
         doJsAntTest();
 
         File sourceMap = getOutputFileByName(JS_OUT_FILE + ".map");
