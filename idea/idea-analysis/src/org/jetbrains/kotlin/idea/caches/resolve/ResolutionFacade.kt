@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -42,4 +43,16 @@ public trait ResolutionFacade {
     public fun findModuleDescriptor(element: JetElement): ModuleDescriptor
 
     public fun <T> get(extension: CacheExtension<T>): T
+
+    companion object {
+        //NOTE: idea default API returns module search scope for file under module but not in source or production source (for example, test data )
+        // this scope can't be used to search for kotlin declarations in index in order to resolve in that case
+        // see com.intellij.psi.impl.file.impl.ResolveScopeManagerImpl.getInherentResolveScope
+        public fun getResolveScope(file: JetFile): GlobalSearchScope {
+            return when (file.getModuleInfo()) {
+                is ModuleSourceInfo -> file.getResolveScope()
+                else -> GlobalSearchScope.EMPTY_SCOPE
+            }
+        }
+    }
 }
