@@ -143,11 +143,15 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                         inlinesChanged = false
                 )
             header.isCompatibleClassKind() ->
-                getRecompilationDecision(
-                        protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
-                        constantsChanged = constantsMap.process(className, fileBytes),
-                        inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
-                )
+                when (header.classKind!!) {
+                    JvmAnnotationNames.KotlinClass.Kind.CLASS -> getRecompilationDecision(
+                            protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
+                            constantsChanged = constantsMap.process(className, fileBytes),
+                            inlinesChanged = inlineFunctionsMap.process(className, fileBytes)
+                    )
+
+                    JvmAnnotationNames.KotlinClass.Kind.LOCAL_CLASS, JvmAnnotationNames.KotlinClass.Kind.ANONYMOUS_OBJECT -> DO_NOTHING
+                }
             header.syntheticClassKind == JvmAnnotationNames.KotlinSyntheticClass.Kind.PACKAGE_PART -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
 

@@ -1,0 +1,11 @@
+package test
+
+fun foo() {
+    class X {
+        fun bar() = 111
+        fun baz() = ":)"
+    }
+
+    X().bar()
+    X().baz()
+}

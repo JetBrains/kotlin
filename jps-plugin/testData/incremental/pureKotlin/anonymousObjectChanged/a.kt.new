@@ -1,6 +1,5 @@
 package a
 
-// Signatures in the class "...$main$1" have changed, thus we need to recompile the whole module
 fun foo() = object {
     fun baz() = ":)"
 }
