@@ -30,6 +30,7 @@ messages/**)
 -dontwarn org.xerial.snappy.SnappyBundleActivator
 -dontwarn com.intellij.util.CompressionUtil
 -dontwarn com.intellij.util.SnappyInitializer
+-dontwarn org.iq80.snappy.Snappy
 -dontwarn net.sf.cglib.**
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 
