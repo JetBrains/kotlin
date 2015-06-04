@@ -175,6 +175,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("kt7046localVarInInline.kt")
+        public void testKt7046localVarInInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt7046localVarInInline.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("localVariables.kt")
         public void testLocalVariables() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/localVariables.kt");
