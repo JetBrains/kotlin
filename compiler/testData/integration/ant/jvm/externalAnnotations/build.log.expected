@@ -7,6 +7,8 @@ build:
     [javac] Compiling [[TestData]/root1] => [[Temp]/classes]
     [javac] Running javac...
       [jar] Building jar: [Temp]/hello.jar
+     [java] Hello, a!
+     [java] Java Hello
 
 BUILD SUCCESSFUL
 Total time: [time]

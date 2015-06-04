@@ -47,6 +47,11 @@ public class AntTaskJsTest extends AntTaskBaseTest {
         return new File(new File(ANT_TASK_TEST_DATA_BASE_DIR, "js"), name.getMethodName());
     }
 
+    @NotNull
+    private File getOutputFileByName(@NotNull String name) {
+        return new File(tmpdir.getTmpDir(), name);
+    }
+
     private void doJsAntTest(String... jsFiles) throws Exception {
         doAntTest();
 

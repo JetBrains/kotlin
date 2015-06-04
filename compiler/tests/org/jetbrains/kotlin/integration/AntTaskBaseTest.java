@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.integration;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 import java.io.File;
 
@@ -28,6 +29,8 @@ public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
                 "build.log",
                 "-jar", getAntHome() + File.separator + "lib" + File.separator + "ant-launcher.jar",
                 "-Dkotlin.lib=" + getCompilerLib(),
+                "-Dkotlin.runtime.jar=" + ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
+                "-Dkotlin.reflect.jar=" + ForTestCompileRuntime.reflectJarForTests().getAbsolutePath(),
                 "-Dtest.data=" + getTestDataDir(),
                 "-Dtemp=" + tmpdir.getTmpDir(),
                 "-f", "build.xml"
@@ -42,10 +45,5 @@ public abstract class AntTaskBaseTest extends KotlinIntegrationTestBase {
     @NotNull
     private static String getAntHome() {
         return getKotlinProjectHome().getAbsolutePath() + File.separator + "dependencies" + File.separator + "ant-1.8";
-    }
-
-    @NotNull
-    protected File getOutputFileByName(@NotNull String name) {
-        return new File(tmpdir.getTmpDir(), name);
     }
 }

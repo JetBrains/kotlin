@@ -12,5 +12,12 @@
         <jar destfile="${temp}/hello.jar">
             <fileset dir="${temp}/classes"/>
         </jar>
+
+        <java classname="hello.HelloPackage" fork="true">
+            <classpath>
+                <pathelement location="${temp}/hello.jar"/>
+                <pathelement location="${kotlin.runtime.jar}"/>
+            </classpath>
+        </java>
     </target>
 </project>
