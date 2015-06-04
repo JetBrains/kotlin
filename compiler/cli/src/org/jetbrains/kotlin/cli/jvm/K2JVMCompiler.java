@@ -200,15 +200,13 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
                 KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
             }
 
-            if (arguments.reportPerf) {
-                PerformanceCounter.Companion.report(new Function1<String, Unit>() {
-                    @Override
-                    public Unit invoke(String s) {
-                        reportPerf(environment.getConfiguration(), s);
-                        return Unit.INSTANCE$;
-                    }
-                });
-            }
+            PerformanceCounter.Companion.report(new Function1<String, Unit>() {
+                @Override
+                public Unit invoke(String s) {
+                    reportPerf(environment.getConfiguration(), s);
+                    return Unit.INSTANCE$;
+                }
+            });
             return OK;
         }
         catch (CompilationException e) {
@@ -230,9 +228,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
     }
 
     public static void reportPerf(CompilerConfiguration configuration, String message) {
-        MessageCollector collector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        assert collector != null;
-        collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION);
+        if (configuration.get(JVMConfigurationKeys.PERFORMANCE_OUTPUT_ENABLED, false)) {
+            MessageCollector collector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
+            assert collector != null;
+            collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION);
+        }
     }
 
     private static void putAdvancedOptions(@NotNull CompilerConfiguration configuration, @NotNull K2JVMCompilerArguments arguments) {
@@ -240,6 +240,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions);
         configuration.put(JVMConfigurationKeys.DISABLE_INLINE, arguments.noInline);
         configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, arguments.noOptimize);
+        configuration.put(JVMConfigurationKeys.PERFORMANCE_OUTPUT_ENABLED, arguments.reportPerf);
     }
 
     /**

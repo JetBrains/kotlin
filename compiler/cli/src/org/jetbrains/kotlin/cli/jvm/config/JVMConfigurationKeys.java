@@ -50,4 +50,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<List<String>> MODULE_IDS =
             CompilerConfigurationKey.create("module id strings");
+
+    public static final CompilerConfigurationKey<Boolean> PERFORMANCE_OUTPUT_ENABLED =
+            CompilerConfigurationKey.create("performance output enabled");
 }
