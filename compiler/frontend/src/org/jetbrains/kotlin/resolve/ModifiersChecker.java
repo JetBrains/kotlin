@@ -295,21 +295,37 @@ public class ModifiersChecker {
         JetAnnotationEntry annotationEntry = trace.get(BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotation);
         if (annotationEntry == null) return;
 
-        if (!DescriptorUtils.isTopLevelDeclaration(descriptor) || !(descriptor instanceof FunctionDescriptor) ||
-            descriptor instanceof ConstructorDescriptor) {
-            trace.report(INAPPLICABLE_ANNOTATION.on(annotationEntry));
+        if (!isRenamableDeclaration(descriptor)) {
+            trace.report(INAPPLICABLE_PLATFORM_NAME.on(annotationEntry));
         }
 
+        String value = null;
         Collection<CompileTimeConstant<?>> values = annotation.getAllValueArguments().values();
         if (!values.isEmpty()) {
             CompileTimeConstant<?> name = values.iterator().next();
             if (name instanceof StringValue) {
-                String value = ((StringValue) name).getValue();
-                if (value == null || !Name.isValidIdentifier(value)) {
-                    trace.report(ILLEGAL_PLATFORM_NAME.on(annotationEntry, String.valueOf(value)));
-                }
+                value = ((StringValue) name).getValue();
             }
         }
+        if (value == null || !Name.isValidIdentifier(value)) {
+            trace.report(ILLEGAL_PLATFORM_NAME.on(annotationEntry, String.valueOf(value)));
+        }
+
+        if (descriptor instanceof CallableMemberDescriptor) {
+            CallableMemberDescriptor callableMemberDescriptor = (CallableMemberDescriptor) descriptor;
+            if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.getModality().isOverridable()) {
+                trace.report(INAPPLICABLE_PLATFORM_NAME.on(annotationEntry));
+            }
+        }
+
+    }
+
+    private static boolean isRenamableDeclaration(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDescriptor = descriptor.getContainingDeclaration();
+
+        return (descriptor instanceof PropertyAccessorDescriptor)
+               || (containingDescriptor instanceof PackageFragmentDescriptor || containingDescriptor instanceof ClassDescriptor)
+                   && descriptor instanceof FunctionDescriptor && !(descriptor instanceof ConstructorDescriptor);
     }
 
     private void checkCompatibility(@Nullable JetModifierList modifierList, Collection<JetModifierKeywordToken> availableModifiers, Collection<JetModifierKeywordToken>... availableCombinations) {

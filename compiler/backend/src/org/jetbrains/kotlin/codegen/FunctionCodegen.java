@@ -760,7 +760,7 @@ public class FunctionCodegen {
         int flags = ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC; // TODO.
 
         MethodVisitor mv =
-                v.newMethod(DiagnosticsPackage.Bridge(descriptor, origin), flags, delegateTo.getName(), bridge.getDescriptor(), null, null);
+                v.newMethod(DiagnosticsPackage.Bridge(descriptor, origin), flags, bridge.getName(), bridge.getDescriptor(), null, null);
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         mv.visitCode();

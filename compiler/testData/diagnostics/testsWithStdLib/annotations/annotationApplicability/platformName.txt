@@ -1,4 +1,4 @@
-package
+package 
 
 kotlin.platform.platformName(name = "c": kotlin.String) internal val px: kotlin.Int = 1
 internal val valx: kotlin.Int
@@ -8,6 +8,16 @@ kotlin.platform.platformName(name = "d": kotlin.String) internal val kotlin.Any.
 kotlin.platform.platformName(name = "a": kotlin.String) internal fun foo(): kotlin.Unit
 internal fun foo1(): kotlin.Unit
 kotlin.platform.platformName(name = "b": kotlin.String) internal fun kotlin.Any.foo(): kotlin.Unit
+
+internal abstract class AB {
+    public constructor AB()
+    kotlin.platform.platformName(name = "AB_absFun1": kotlin.String) internal abstract fun absFun1(): kotlin.Unit
+    internal abstract fun absFun2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    kotlin.platform.platformName(name = "AB_openFun": kotlin.String) internal open fun openFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 
 kotlin.platform.platformName(name = "C": kotlin.String) internal final class C {
     kotlin.platform.platformName(name = "primary": kotlin.String) public constructor C()
@@ -21,4 +31,15 @@ kotlin.platform.platformName(name = "C": kotlin.String) internal final class C {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     kotlin.platform.platformName(name = "b": kotlin.String) internal final fun kotlin.Any.foo(): kotlin.Unit
+}
+
+internal final class D : AB {
+    public constructor D()
+    internal open override /*1*/ fun absFun1(): kotlin.Unit
+    kotlin.platform.platformName(name = "D_absFun2": kotlin.String) internal open override /*1*/ fun absFun2(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    kotlin.platform.platformName(name = "D_finalFun": kotlin.String) internal final fun finalFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    kotlin.platform.platformName(name = "D_openFun": kotlin.String) internal final override /*1*/ fun openFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

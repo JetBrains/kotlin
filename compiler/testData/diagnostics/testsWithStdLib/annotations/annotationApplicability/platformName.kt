@@ -8,10 +8,10 @@ fun foo() {}
 @platformName("b")
 fun Any.foo() {}
 
-<!INAPPLICABLE_ANNOTATION!>@platformName("c")<!>
+<!INAPPLICABLE_PLATFORM_NAME!>@platformName("c")<!>
 val px = 1
 
-<!INAPPLICABLE_ANNOTATION!>@platformName("d")<!>
+<!INAPPLICABLE_PLATFORM_NAME!>@platformName("d")<!>
 val Any.px : Int
     get() = 1
 
@@ -31,37 +31,61 @@ var vardef: Int = 1
     @platformName("i")
     set
 
-<!INAPPLICABLE_ANNOTATION!>@platformName("C")<!>
-class C <!INAPPLICABLE_ANNOTATION!>platformName("primary")<!> constructor() {
-    <!INAPPLICABLE_ANNOTATION!>platformName("ctr")<!> constructor(x: Int): this() {}
-    <!INAPPLICABLE_ANNOTATION!>@platformName("a")<!>
+<!INAPPLICABLE_PLATFORM_NAME!>@platformName("C")<!>
+class C <!INAPPLICABLE_PLATFORM_NAME!>platformName("primary")<!> constructor() {
+    <!INAPPLICABLE_PLATFORM_NAME!>platformName("ctr")<!> constructor(x: Int): this() {}
+
+    @platformName("a")
     fun foo() {}
 
-    <!INAPPLICABLE_ANNOTATION!>@platformName("b")<!>
+    @platformName("b")
     fun Any.foo() {}
 
-    <!INAPPLICABLE_ANNOTATION!>@platformName("c")<!>
+    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("c")<!>
     val px = 1
 
-    <!INAPPLICABLE_ANNOTATION!>@platformName("d")<!>
+    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("d")<!>
     val Any.px : Int
         get() = 1
 
     val valx: Int
-        <!INAPPLICABLE_ANNOTATION!>@platformName("e")<!>
+        @platformName("e")
         get() = 1
 
     var varx: Int
-        <!INAPPLICABLE_ANNOTATION!>@platformName("f")<!>
+        @platformName("f")
         get() = 1
-        <!INAPPLICABLE_ANNOTATION!>@platformName("g")<!>
+        @platformName("g")
         set(v) {}
 }
 
 fun foo1() {
-    <!INAPPLICABLE_ANNOTATION!>@platformName("a")<!>
+    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("a")<!>
     fun foo() {}
 
-    <!INAPPLICABLE_ANNOTATION!>@platformName("a")<!>
+    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("a")<!>
     val x = 1
+}
+
+abstract class AB {
+    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("AB_absFun1")<!>
+    abstract fun absFun1()
+
+    abstract fun absFun2()
+
+    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("AB_openFun")<!>
+    open fun openFun() {}
+}
+
+class D: AB() {
+    override fun absFun1() {}
+
+    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("D_absFun2")<!>
+    override fun absFun2() {}
+
+    <!INAPPLICABLE_PLATFORM_NAME!>@platformName("D_openFun")<!>
+    final override fun openFun() {}
+
+    @platformName("D_finalFun")
+    fun finalFun() {}
 }

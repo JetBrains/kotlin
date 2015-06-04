@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
@@ -663,8 +664,10 @@ public class JetTypeMapper {
 
     @NotNull
     private String mapFunctionName(@NotNull FunctionDescriptor descriptor) {
-        String platformName = getPlatformName(descriptor);
-        if (platformName != null) return platformName;
+        if (!(descriptor instanceof JavaCallableMemberDescriptor)) {
+            String platformName = getPlatformName(descriptor);
+            if (platformName != null) return platformName;
+        }
 
         if (descriptor instanceof PropertyAccessorDescriptor) {
             PropertyDescriptor property = ((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty();

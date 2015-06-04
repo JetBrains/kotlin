@@ -59,6 +59,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("platformName")
+    public void testPlatformName() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/platformName/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("referenceToJavaFieldOfKotlinSubclass")
     public void testReferenceToJavaFieldOfKotlinSubclass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/referenceToJavaFieldOfKotlinSubclass/");
