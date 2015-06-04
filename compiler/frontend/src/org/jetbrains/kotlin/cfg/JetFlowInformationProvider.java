@@ -655,7 +655,13 @@ public class JetFlowInformationProvider {
                                 }
                                 else if (element instanceof JetParameter) {
                                     PsiElement owner = element.getParent().getParent();
-                                    if (owner instanceof JetFunction) {
+                                    if (owner instanceof JetPrimaryConstructor) {
+                                        if (!((JetParameter) element).hasValOrVar() &&
+                                            !((JetPrimaryConstructor) owner).getContainingClassOrObject().isAnnotation()) {
+                                            report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
+                                        }
+                                    }
+                                    else if (owner instanceof JetFunction) {
                                         MainFunctionDetector mainFunctionDetector = new MainFunctionDetector(trace.getBindingContext());
                                         boolean isMain = (owner instanceof JetNamedFunction) && mainFunctionDetector.isMain((JetNamedFunction) owner);
                                         if (owner instanceof JetFunctionLiteral) return;
@@ -671,12 +677,6 @@ public class JetFlowInformationProvider {
                                             return;
                                         }
                                         report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
-                                    }
-                                    else if (owner instanceof JetPrimaryConstructor) {
-                                        if (!((JetParameter) element).hasValOrVar() &&
-                                            !((JetPrimaryConstructor) owner).getContainingClassOrObject().isAnnotation()) {
-                                            report(Errors.UNUSED_PARAMETER.on((JetParameter) element, variableDescriptor), ctxt);
-                                        }
                                     }
                                 }
                             }

@@ -39,7 +39,7 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
     override fun isApplicableTo(element: JetCallableDeclaration, caretOffset: Int): Boolean {
         if (element.getContainingFile() is JetCodeFragment) return false
         if (element is JetFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?
-        if (element is JetPrimaryConstructor || element is JetSecondaryConstructor) return false // TODO: base class?
+        if (element is JetConstructor<*>) return false
         if (element.getTypeReference() != null) return false
 
         if (getTypeForDeclaration(element).isError() || hasPublicMemberDiagnostic(element)) return false

@@ -40,7 +40,7 @@ public class ChangeParameterTypeFix extends JetIntentionAction<JetParameter> {
         super(element);
         this.type = type;
         JetNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, JetNamedDeclaration.class);
-        isPrimaryConstructorParameter = declaration instanceof JetClass;
+        isPrimaryConstructorParameter = declaration instanceof JetPrimaryConstructor;
         FqName declarationFQName = declaration == null ? null : declaration.getFqName();
         containingDeclarationName = declarationFQName == null ? declaration.getName() : declarationFQName.asString();
     }

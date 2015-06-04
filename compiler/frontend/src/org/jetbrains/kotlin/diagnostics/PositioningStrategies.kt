@@ -121,6 +121,11 @@ public object PositioningStrategies {
     public val DECLARATION_SIGNATURE: PositioningStrategy<JetDeclaration> = object : DeclarationHeader<JetDeclaration>() {
         override fun mark(element: JetDeclaration): List<TextRange> {
             when (element) {
+                is JetPrimaryConstructor -> {
+                    val begin = element.getConstructorKeyword() ?: element.getValueParameterList() ?: return markElement(element)
+                    val end = element.getValueParameterList() ?: element.getConstructorKeyword() ?: return markElement(element)
+                    return markRange(begin, end)
+                }
                 is JetFunction -> {
                     val endOfSignatureElement =
                             element.getTypeReference()
@@ -155,14 +160,6 @@ public object PositioningStrategies {
                 }
                 is JetObjectDeclaration -> {
                     return DECLARATION_NAME.mark(element)
-                }
-                is JetPrimaryConstructor -> {
-                    val begin = element.getConstructorKeyword() ?: element.getValueParameterList() ?: return markElement(element)
-                    val end = element.getValueParameterList() ?: element.getConstructorKeyword()
-                    return markRange(begin, end)
-                }
-                is JetSecondaryConstructor -> {
-                    return markRange(element.getConstructorKeyword(), element.getValueParameterList() ?: element.getConstructorKeyword())
                 }
             }
             return super.mark(element)

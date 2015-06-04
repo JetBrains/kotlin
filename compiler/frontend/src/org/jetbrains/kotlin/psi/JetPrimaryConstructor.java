@@ -17,19 +17,14 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.addRemoveModifier.AddRemoveModifierPackage;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
-import java.util.Collections;
-import java.util.List;
-
-public class JetPrimaryConstructor extends JetDeclarationStub<KotlinPlaceHolderStub<JetPrimaryConstructor>> {
+public class JetPrimaryConstructor extends JetConstructor<JetPrimaryConstructor> {
     public JetPrimaryConstructor(@NotNull ASTNode node) {
         super(node);
     }
@@ -43,15 +38,15 @@ public class JetPrimaryConstructor extends JetDeclarationStub<KotlinPlaceHolderS
         return visitor.visitPrimaryConstructor(this, data);
     }
 
-    @Nullable
-    public JetParameterList getValueParameterList() {
-        return getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
+    @NotNull
+    public JetClassOrObject getContainingClassOrObject() {
+        return (JetClassOrObject) getParent();
     }
 
     @NotNull
-    public List<JetParameter> getValueParameters() {
-        JetParameterList list = getValueParameterList();
-        return list != null ? list.getParameters() : Collections.<JetParameter>emptyList();
+    @Override
+    public JetClassOrObject getClassOrObject() {
+        return getContainingClassOrObject();
     }
 
     @Override
@@ -69,20 +64,5 @@ public class JetPrimaryConstructor extends JetDeclarationStub<KotlinPlaceHolderS
             JetModifierList newModifierList = psiFactory.createModifierList(modifier);
             addBefore(newModifierList, parameterList);
         }
-    }
-
-    @NotNull
-    public JetClassOrObject getContainingClassOrObject() {
-        return (JetClassOrObject) getParent();
-    }
-
-    public boolean hasConstructorKeyword() {
-        if (getStub() != null) return true;
-        return getConstructorKeyword() != null;
-    }
-
-    @Nullable
-    public PsiElement getConstructorKeyword() {
-        return findChildByType(JetTokens.CONSTRUCTOR_KEYWORD);
     }
 }

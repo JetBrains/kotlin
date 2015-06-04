@@ -18,19 +18,12 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
 
-import java.util.Collections;
-import java.util.List;
-
-public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolderStub<JetSecondaryConstructor>> implements JetFunction {
+public class JetSecondaryConstructor extends JetConstructor<JetSecondaryConstructor> {
     public JetSecondaryConstructor(@NotNull ASTNode node) {
         super(node);
     }
@@ -45,45 +38,9 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
     }
 
     @Override
-    public boolean isLocal() {
-        return false;
-    }
-
-    @Override
-    @Nullable
-    public JetParameterList getValueParameterList() {
-        return getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
-    }
-
-    @Override
     @NotNull
-    public List<JetParameter> getValueParameters() {
-        JetParameterList list = getValueParameterList();
-        return list != null ? list.getParameters() : Collections.<JetParameter>emptyList();
-    }
-
-    @Nullable
-    @Override
-    public JetTypeReference getReceiverTypeReference() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public JetTypeReference getTypeReference() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public PsiElement getColon() {
-        return findChildByType(JetTokens.COLON);
+    public JetClassOrObject getClassOrObject() {
+        return (JetClassOrObject) getParent().getParent();
     }
 
     @Nullable
@@ -92,98 +49,20 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
         return findChildByClass(JetBlockExpression.class);
     }
 
-    @Nullable
-    @Override
-    public PsiElement getEqualsToken() {
-        return null;
-    }
-
-    @Override
-    public boolean hasBlockBody() {
-        return true;
-    }
-
-    @Override
-    public boolean hasBody() {
-        return getBodyExpression() != null;
-    }
-
-    @Override
-    public boolean hasDeclaredReturnType() {
-        return false;
-    }
-
     @Override
     @NotNull
-    public String getName() {
-        return getClassOrObject().getName();
-    }
-
-    @Nullable
-    @Override
-    public JetTypeParameterList getTypeParameterList() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public JetTypeConstraintList getTypeConstraintList() {
-        return null;
-    }
-
-    @NotNull
-    @Override
-    public List<JetTypeConstraint> getTypeConstraints() {
-        return Collections.emptyList();
-    }
-
-    @NotNull
-    @Override
-    public List<JetTypeParameter> getTypeParameters() {
-        return Collections.emptyList();
-    }
-
-    @NotNull
-    @Override
-    public Name getNameAsSafeName() {
-        return Name.identifier(getName());
-    }
-
-    @Nullable
-    @Override
-    public FqName getFqName() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Name getNameAsName() {
-        return getNameAsSafeName();
-    }
-
-    @Nullable
-    @Override
-    public PsiElement getNameIdentifier() {
-        return null;
-    }
-
-    @Override
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        throw new IncorrectOperationException("setName to constructor");
+    public PsiElement getConstructorKeyword() {
+        //noinspection ConstantConditions
+        return notNullChild(super.getConstructorKeyword());
     }
 
     @NotNull
     public JetConstructorDelegationCall getDelegationCall() {
-        return findChildByClass(JetConstructorDelegationCall.class);
+        return findNotNullChildByClass(JetConstructorDelegationCall.class);
     }
 
     public boolean hasImplicitDelegationCall() {
         return getDelegationCall().isImplicit();
-    }
-
-    @NotNull
-    public JetClassOrObject getClassOrObject() {
-        return (JetClassOrObject) getParent().getParent();
     }
 
     @NotNull
@@ -200,15 +79,5 @@ public class JetSecondaryConstructor extends JetDeclarationStub<KotlinPlaceHolde
         String delegationName = isThis ? "this" : "super";
 
         return (JetConstructorDelegationCall) addAfter(psiFactory.createConstructorDelegationCall(delegationName + "()"), colon);
-    }
-
-    @NotNull
-    public PsiElement getConstructorKeyword() {
-        return findNotNullChildByType(JetTokens.CONSTRUCTOR_KEYWORD);
-    }
-
-    @Override
-    public int getTextOffset() {
-        return getConstructorKeyword().getTextRange().getStartOffset();
     }
 }
