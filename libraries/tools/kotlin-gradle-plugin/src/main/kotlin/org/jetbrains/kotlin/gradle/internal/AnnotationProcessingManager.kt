@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.plugin.kotlinWarn
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes.*
 import java.io.File
@@ -62,7 +64,11 @@ public class AnnotationProcessingManager(
 
     fun afterJavaCompile() {
         val generatedFile = File(javaTask.getDestinationDir(), "$GEN_ANNOTATION/Cl.class")
-        if (generatedFile.exists()) generatedFile.delete()
+        if (generatedFile.exists()) {
+            generatedFile.delete()
+        } else {
+            project.getLogger().kotlinDebug("kapt: Java file stub was not found at $generatedFile")
+        }
     }
 
     private fun generateJavaHackFile(aptDir: File, javaTask: JavaCompile) {
@@ -76,6 +82,7 @@ public class AnnotationProcessingManager(
                 "package __gen.annotation;" +
                 "class Cl { @__gen.KotlinAptAnnotation boolean v; }")
 
+        project.getLogger().kotlinDebug("kapt: Java file stub generated: $javaHackClFile")
         javaTask.source(javaAptSourceDir)
     }
 
@@ -160,7 +167,10 @@ public class AnnotationProcessingManager(
 
         val injectPackage = File(outputDirectory, packageName)
         injectPackage.mkdirs()
-        File(injectPackage, "$className.class").writeBytes(bytes)
+        val outputFile = File(injectPackage, "$className.class")
+        outputFile.writeBytes(bytes)
+
+        project.getLogger().kotlinDebug("kapt: Stub annotation generated: $outputFile")
     }
 
     private fun generateAnnotationProcessorWrapper(processorFqName: String, packageName: String, outputDirectory: File) {
@@ -188,7 +198,10 @@ public class AnnotationProcessingManager(
             visitEnd()
             toByteArray()
         }
-        File(outputDirectory, "$className.class").writeBytes(bytes)
+        val outputFile = File(outputDirectory, "$className.class")
+        outputFile.writeBytes(bytes)
+
+        project.getLogger().kotlinDebug("kapt: Wrapper for $processorFqName generated: $outputFile")
     }
 
     private fun lookupAnnotationProcessors(files: Set<File>): Set<String> {
@@ -232,6 +245,7 @@ public class AnnotationProcessingManager(
             }
         }
 
+        project.getLogger().kotlinDebug("kapt: Discovered annotation processors: ${annotationProcessors.joinToString()}")
         return annotationProcessors
     }
 
