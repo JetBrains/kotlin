@@ -208,11 +208,13 @@ class ExpectedInfos(
                 if (isFunctionLiteralArgument) continue
 
                 if (argumentName == null) {
-                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(),
-                                                           if (tail == Tail.RPARENTH) null else tail, descriptor, argumentPosition))
+                    // even if it's the last parameter, there can be more arguments for the same parameter
+                    val varargTail = if (tail == Tail.RPARENTH) null else tail
+
+                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
 
                     if (argumentIndex == parameters.indexOf(parameter)) {
-                        expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentPosition, ItemOptions.STAR_PREFIX))
+                        expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, ItemOptions.STAR_PREFIX))
                     }
                 }
                 else {
