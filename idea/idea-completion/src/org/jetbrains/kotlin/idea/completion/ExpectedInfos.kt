@@ -183,13 +183,11 @@ class ExpectedInfos(
 
             val expectedName = if (descriptor.hasSynthesizedParameterNames()) null else parameter.getName().asString()
 
-            val lastNonOptionalParam = parameters.lastOrNull { !it.hasDefaultValue() }
-
             fun needCommaForParameter(parameter: ValueParameterDescriptor): Boolean {
                 if (parameter.hasDefaultValue()) return false // parameter is optional
                 if (parameter.getVarargElementType() != null) return false // vararg arguments list can be empty
-                // last non-optional parameter of functional type can be placed outside parenthesis:
-                if (parameter == lastNonOptionalParam && KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameter.getType())) return false
+                // last parameter of functional type can be placed outside parenthesis:
+                if (parameter == parameters.last() && KotlinBuiltIns.isFunctionOrExtensionFunctionType(parameter.getType())) return false
                 return true
             }
 
