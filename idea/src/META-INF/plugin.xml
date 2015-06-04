@@ -1024,7 +1024,7 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinCleanupInspection"
         shortName="KotlinDeprecation"
-        displayName="Usage of redundant or deprecated syntax"
+        displayName="Usage of redundant or deprecated syntax or deprecated symbols"
         groupName="Kotlin"
         enabledByDefault="true"
         cleanupTool="true"

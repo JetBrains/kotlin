@@ -43,7 +43,7 @@ import kotlin.properties.Delegates
 
 public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspectionTool {
     // required to simplify the inspection registration in tests
-    override fun getDisplayName(): String = "Usage of redundant or deprecated syntax"
+    override fun getDisplayName(): String = "Usage of redundant or deprecated syntax or deprecated symbols"
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         if (isOnTheFly || !ProjectRootsUtil.isInProjectSource(file)) {
