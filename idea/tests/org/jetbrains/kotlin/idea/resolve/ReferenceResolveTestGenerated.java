@@ -347,9 +347,21 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         doTest(fileName);
     }
 
+    @TestMetadata("TypeParameterInAnonymousObject.kt")
+    public void testTypeParameterInAnonymousObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeParameterInAnonymousObject.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("TypeParameterInFunctionLiteral.kt")
     public void testTypeParameterInFunctionLiteral() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/TypeParameterInFunctionLiteral.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("ValueParameter.kt")
+    public void testValueParameter() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/references/ValueParameter.kt");
         doTest(fileName);
     }
 

@@ -69,13 +69,18 @@ public class DescriptorUtils {
      */
     public static boolean isLocal(@NotNull DeclarationDescriptor descriptor) {
         DeclarationDescriptor current = descriptor;
-        while (current instanceof MemberDescriptor) {
-            if (isAnonymousObject(current) || ((DeclarationDescriptorWithVisibility) current).getVisibility() == Visibilities.LOCAL) {
+        while (current != null) {
+            if (isAnonymousObject(current) || isDescriptorWithLocalVisibility(current)) {
                 return true;
             }
             current = current.getContainingDeclaration();
         }
         return false;
+    }
+
+    private static boolean isDescriptorWithLocalVisibility(DeclarationDescriptor current) {
+        return current instanceof DeclarationDescriptorWithVisibility &&
+         ((DeclarationDescriptorWithVisibility) current).getVisibility() == Visibilities.LOCAL;
     }
 
     @NotNull
