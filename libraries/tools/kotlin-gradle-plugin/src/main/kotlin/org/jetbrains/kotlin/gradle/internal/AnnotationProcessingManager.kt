@@ -20,12 +20,12 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.kotlinWarn
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes.*
 import java.io.File
 import java.io.IOException
 import java.lang.ref.WeakReference
+import java.util.*
 import java.util.zip.ZipFile
 
 public class AnnotationProcessingManager(
@@ -54,10 +54,14 @@ public class AnnotationProcessingManager(
 
         generateJavaHackFile(aptWorkingDir, javaTask)
 
-        javaTask.appendClasspath(aptFiles)
-
         val annotationProcessorFqNames = lookupAnnotationProcessors(aptFiles)
-        generateAnnotationProcessorStubs(aptWorkingDir, javaTask, annotationProcessorFqNames)
+
+        val stubOutputDir = File(aptWorkingDir, WRAPPERS_DIRECTORY)
+        generateAnnotationProcessorStubs(javaTask, annotationProcessorFqNames, stubOutputDir)
+
+        val processorPath = setOf(stubOutputDir) + aptFiles
+        setProcessorPath(javaTask, processorPath.joinToString(File.pathSeparator))
+        javaTask.appendClasspath(stubOutputDir)
 
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
     }
@@ -86,12 +90,10 @@ public class AnnotationProcessingManager(
         javaTask.source(javaAptSourceDir)
     }
 
-    private fun generateAnnotationProcessorStubs(aptDir: File, javaTask: JavaCompile, processorFqNames: Set<String>) {
-        val stubOutputDir = File(aptDir, "$WRAPPERS_DIRECTORY")
+    private fun generateAnnotationProcessorStubs(javaTask: JavaCompile, processorFqNames: Set<String>, outputDir: File) {
+        generateKotlinAptAnnotation(outputDir)
 
-        generateKotlinAptAnnotation(stubOutputDir)
-
-        val stubOutputPackageDir = File(stubOutputDir, "__gen")
+        val stubOutputPackageDir = File(outputDir, "__gen")
         stubOutputPackageDir.mkdirs()
 
         for (processor in processorFqNames) {
@@ -102,54 +104,58 @@ public class AnnotationProcessingManager(
                 .map { fqName -> "__gen." + getProcessorStubClassName(fqName) }
                 .joinToString(",")
 
-        javaTask.appendClasspath(stubOutputDir)
         addWrappersToCompilerArgs(javaTask, annotationProcessorWrapperFqNames)
     }
 
     private fun JavaCompile.appendClasspath(file: File) = setClasspath(getClasspath() + project.files(file))
 
-    private fun JavaCompile.appendClasspath(files: Iterable<File>) = setClasspath(getClasspath() + project.files(files))
-
     private fun addWrappersToCompilerArgs(javaTask: JavaCompile, wrapperFqNames: String) {
-        val compilerArgs = javaTask.getOptions().getCompilerArgs()
-        val argIndex = compilerArgs.indexOfFirst { "-processor" == it }
-
-        // Already has a "-processor" argument (and it is not the last one)
-        if (argIndex >= 0 && compilerArgs.size() > (argIndex + 1)) {
-            compilerArgs[argIndex + 1] =
-                    compilerArgs[argIndex + 1] + "," + wrapperFqNames
+        javaTask.addCompilerArgument("-processor") { prevValue ->
+            if (prevValue != null) "$prevValue,$wrapperFqNames" else wrapperFqNames
         }
-        else {
-            compilerArgs.add("-processor")
-            compilerArgs.add(wrapperFqNames)
-        }
+    }
 
-        javaTask.getOptions().setCompilerArgs(compilerArgs)
+    private fun addGeneratedSourcesOutputToCompilerArgs(javaTask: JavaCompile, outputDir: File) {
+        outputDir.mkdirs()
+
+        javaTask.addCompilerArgument("-s") { prevValue ->
+            if (prevValue != null)
+                javaTask.getLogger().warn("Destination for generated sources was modified by kapt. Previous value = $prevValue")
+            outputDir.getAbsolutePath()
+        }
+    }
+
+    private fun setProcessorPath(javaTask: JavaCompile, path: String) {
+        javaTask.addCompilerArgument("-processorpath") { prevValue ->
+            if (prevValue != null)
+                javaTask.getLogger().warn("Processor path was modified by kapt. Previous value = $prevValue")
+            path
+        }
     }
 
     private fun getProcessorStubClassName(processorFqName: String): String {
         return "AnnotationProcessorWrapper_${taskQualifier}_${processorFqName.replace('.', '_')}"
     }
 
-    private fun addGeneratedSourcesOutputToCompilerArgs(javaTask: JavaCompile, outputDir: File) {
-        outputDir.mkdirs()
+    private inline fun JavaCompile.addCompilerArgument(name: String, value: (String?) -> String) {
+        modifyCompilerArguments { args ->
+            val argIndex = args.indexOfFirst { name == it }
 
-        val compilerArgs = javaTask.getOptions().getCompilerArgs().toArrayList()
-
-        val argIndex = compilerArgs.indexOfFirst { "-s" == it }
-
-        if (argIndex >= 0 && compilerArgs.size() > (argIndex + 1)) {
-            task.getLogger().warn("Destination for generated sources was modified by kapt. " +
-                    "Previous value = " + compilerArgs[argIndex + 1])
-
-            compilerArgs[argIndex + 1] = outputDir.getAbsolutePath()
+            if (argIndex >= 0 && args.size() > (argIndex + 1)) {
+                args[argIndex + 1] = value(args[argIndex + 1])
+            }
+            else {
+                args.add(name)
+                args.add(value(null))
+            }
         }
-        else {
-            compilerArgs.add("-s")
-            compilerArgs.add(outputDir.getAbsolutePath())
-        }
+    }
 
-        javaTask.getOptions().setCompilerArgs(compilerArgs)
+    private inline fun JavaCompile.modifyCompilerArguments(modifier: (MutableList<String>) -> Unit) {
+        val compilerArgs: List<Any> = getOptions().getCompilerArgs()
+        val newCompilerArgs = compilerArgs.mapTo(arrayListOf<String>()) { it.toString() }
+        modifier(newCompilerArgs)
+        getOptions().setCompilerArgs(newCompilerArgs)
     }
 
     private fun generateKotlinAptAnnotation(outputDirectory: File) {
