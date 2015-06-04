@@ -114,7 +114,13 @@ class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaIn
         }
 
         var openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)
+        var closeBracketOffset = openingBracketOffset?.let { chars.indexOfSkippingSpace(closingBracket, it + 1) }
         var inBracketsShift = 0
+
+        if (insertLambda && lambdaInfo!!.explicitParameters && closeBracketOffset == null) {
+            openingBracketOffset = null
+        }
+
         if (openingBracketOffset == null) {
             if (insertLambda) {
                 if (completionChar == ' ' || completionChar == '{') {
@@ -135,9 +141,8 @@ class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaIn
             PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
 
             openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
+            closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)!!
         }
-
-        val closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
 
         val editor = context.getEditor()
         if (shouldPlaceCaretInBrackets(completionChar) || closeBracketOffset == null) {

@@ -225,6 +225,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ReplaceByLambdaTemplateNoClosingParenth.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("WithArgsEmptyLambdaAfter.kt")
+        public void testWithArgsEmptyLambdaAfter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/WithArgsEmptyLambdaAfter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("WithArgsNonEmptyLambdaAfter.kt")
+        public void testWithArgsNonEmptyLambdaAfter() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/highOrderFunctions/WithArgsNonEmptyLambdaAfter.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate")
