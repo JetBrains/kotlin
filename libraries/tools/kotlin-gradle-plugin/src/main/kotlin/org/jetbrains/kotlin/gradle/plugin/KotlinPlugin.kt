@@ -589,7 +589,7 @@ private fun Project.initKapt(
         val stubsDir = File(getBuildDir(), "tmp/kapt/$variantName/classFileStubs")
         kotlinTask.getExtensions().getExtraProperties().set("stubsDir", stubsDir)
 
-        javaTask.getClasspath().add(files(stubsDir))
+        javaTask.setClasspath(javaTask.getClasspath() + files(stubsDir))
 
         kotlinTask.doFirst {
             kotlinAfterJavaTask.source(kotlinTask.getSource())
@@ -597,6 +597,8 @@ private fun Project.initKapt(
 
         environment.addSubpluginArguments(this, kotlinAfterJavaTask)
     } else {
+        kotlinTask.getLogger().kotlinDebug("kapt: Class file stubs are not used")
+
         kotlinAfterJavaTask.setEnabled(false)
         environment.addSubpluginArguments(this, kotlinTask)
     }
