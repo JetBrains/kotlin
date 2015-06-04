@@ -6,3 +6,6 @@ fun other() = 12
 fun test() {
     som<caret>other()
 }
+
+// ELEMENT: some
+// CHAR: '\t'

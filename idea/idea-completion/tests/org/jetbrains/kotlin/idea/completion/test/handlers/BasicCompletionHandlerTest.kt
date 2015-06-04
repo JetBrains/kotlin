@@ -83,23 +83,9 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testExtFunction() = doTest()
 
-    fun testFunctionLiteralInsertOnSpace() = doTest(2, null, null, ' ')
-
     fun testInsertImportOnTab() = doTest(2, "ArrayList", null, '\t')
 
-    fun testHigherOrderFunction() = doTest()
-
     fun testInsertFqnForJavaClass() = doTest(2, "SortedSet", "<E> (java.util)", '\n')
-
-    fun testHigherOrderFunctionWithArg() = doTest(2, "filterNot", null, '\n')
-
-    fun testHigherOrderFunctionWithArgs1() = doTest(1, "foo", "foo", " { String, Char -> ... } (<root>)", '\n')
-
-    fun testHigherOrderFunctionWithArgs2() = doTest(1, "foo", "foo", "(p: (String, Char) -> Boolean) (<root>)", '\n')
-
-    fun testHigherOrderFunctionWithArgs3() = doTest(1, "foo", "foo", " { String, Char -> ... } (<root>)", '\n')
-
-    fun testForceParenthesisForTabChar() = doTest(0, "some", null, '\t')
 
     fun testTabInsertAtTheFileEnd() = doTest(0, "vvvvv", null, '\t')
 
@@ -121,8 +107,6 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     fun testTabInsertInSimpleName() = doTest(0, "vvvvv", null, '\t')
 
-    fun testInsertFunctionWithSingleParameterWithBrace() = doTest(0, "some", null, '{')
-
     fun testTabReplaceIdentifier() = doTest(1, "sss", null, '\t')
     fun testTabReplaceIdentifier2() = doTest(1, "sss", null, '\t')
     fun testTabReplaceThis() = doTest(1, "sss", null, '\t')
@@ -140,19 +124,6 @@ public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
         fixture.configureByFile(fileName())
         fixture.type("test()")
         checkResult()
-    }
-
-    fun testFunctionLiteralInsertWhenNoSpacesForBraces() {
-        val settings = CodeStyleSettingsManager.getSettings(getProject())
-        val jetSettings = settings.getCustomSettings(javaClass<JetCodeStyleSettings>())!!
-
-        try {
-            jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = false
-            doTest()
-        }
-        finally {
-            jetSettings.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = true
-        }
     }
 
     fun testObject() = doTest()

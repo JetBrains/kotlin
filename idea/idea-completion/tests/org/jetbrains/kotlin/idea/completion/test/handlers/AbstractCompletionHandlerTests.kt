@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.completion.test.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
@@ -29,32 +31,45 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
     private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
     private val COMPLETION_CHAR_PREFIX = "CHAR:"
     private val COMPLETION_TYPE_PREFIX = "COMPLETION_TYPE:"
+    private val INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD:"
 
     protected open fun doTest(testPath: String) {
         setUpFixture(testPath)
 
-        val fileText = FileUtil.loadFile(File(testPath))
-        val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
-        val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
-        val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
-        val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
+        val settingManager = CodeStyleSettingsManager.getInstance()
+        val tempSettings = settingManager.getCurrentSettings().clone()
+        settingManager.setTemporarySettings(tempSettings)
+        try {
+            val fileText = FileUtil.loadFile(File(testPath))
+            val invocationCount = InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX) ?: 1
+            val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
+            val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
+            val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
 
-        val completionCharString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX)
-        val completionChar = when(completionCharString) {
-            "\\n", null -> '\n'
-            "\\t" -> '\t'
-            else -> completionCharString.singleOrNull() ?: error("Incorrect completion char: \"$completionCharString\"")
+            val completionCharString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX)
+            val completionChar = when(completionCharString) {
+                "\\n", null -> '\n'
+                "\\t" -> '\t'
+                else -> completionCharString.singleOrNull() ?: error("Incorrect completion char: \"$completionCharString\"")
+            }
+
+            val completionTypeString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_TYPE_PREFIX)
+            val completionType = when (completionTypeString) {
+                "BASIC" -> CompletionType.BASIC
+                "SMART" -> CompletionType.SMART
+                null -> defaultCompletionType
+                else -> error("Unknown completion type: $completionTypeString")
+            }
+
+            InTextDirectivesUtils.getPrefixedBoolean(fileText, INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD)?.let {
+                JetCodeStyleSettings.getInstance(getProject()).INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = it
+            }
+
+            doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, testPath + ".after")
         }
-
-        val completionTypeString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_TYPE_PREFIX)
-        val completionType = when (completionTypeString) {
-            "BASIC" -> CompletionType.BASIC
-            "SMART" -> CompletionType.SMART
-            null -> defaultCompletionType
-            else -> error("Unknown completion type: $completionTypeString")
+        finally {
+            settingManager.dropTemporarySettings()
         }
-
-        doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, testPath + ".after")
     }
 
     protected open fun setUpFixture(testPath: String) {
