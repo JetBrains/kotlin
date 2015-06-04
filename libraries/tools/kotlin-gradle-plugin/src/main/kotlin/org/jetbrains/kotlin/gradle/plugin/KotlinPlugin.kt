@@ -483,18 +483,17 @@ private fun loadSubplugins(project: Project, logger: Logger): SubpluginEnvironme
             subpluginClasspaths.put(subplugin, files)
         }
 
-        return SubpluginEnvironment(subpluginClasspaths, subplugins, logger)
+        return SubpluginEnvironment(subpluginClasspaths, subplugins)
     } catch (e: NoClassDefFoundError) {
         // Skip plugin loading if KotlinGradleSubplugin is not defined.
         // It is true now for tests in kotlin-gradle-plugin-core.
-        return SubpluginEnvironment(mapOf(), listOf(), logger)
+        return SubpluginEnvironment(mapOf(), listOf())
     }
 }
 
 private class SubpluginEnvironment(
     val subpluginClasspaths: Map<KotlinGradleSubplugin, List<String>>,
-    val subplugins: List<KotlinGradleSubplugin>,
-    val logger: Logger
+    val subplugins: List<KotlinGradleSubplugin>
 ) {
 
     fun addSubpluginArguments(project: Project, compileTask: AbstractCompile) {
@@ -506,7 +505,7 @@ private class SubpluginEnvironment(
             val args = subplugin.getExtraArguments(project, compileTask)
 
             with (subplugin) {
-                logger.kotlinDebug("Subplugin ${getPluginName()} (${getGroupName()}:${getArtifactName()}) loaded.")
+                project.getLogger().kotlinDebug("Subplugin ${getPluginName()} (${getGroupName()}:${getArtifactName()}) loaded.")
             }
 
             val subpluginClasspath = subpluginClasspaths[subplugin]
