@@ -38,6 +38,7 @@ import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
+import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.Method
 import com.sun.jdi.ObjectCollectedException
 import com.sun.jdi.ReferenceType
@@ -427,8 +428,62 @@ class KotlinFieldBreakpoint(project: Project, breakpoint: XBreakpoint<JavaFieldB
 
     }
 
-    override fun getEventMessage(event: LocatableEvent?): String? {
-        return super.getEventMessage(event)
+    override fun getEventMessage(event: LocatableEvent): String {
+        val location = event.location()
+        val locationQName = location.declaringType().name() + "." + location.method().name()
+        val locationFileName = try {
+            location.sourceName()
+        }
+        catch (e: AbsentInformationException) {
+            getFileName()
+        }
+
+        val locationLine = location.lineNumber()
+        when (event) {
+            is ModificationWatchpointEvent-> {
+                val field = event.field()
+                return DebuggerBundle.message(
+                        "status.static.field.watchpoint.reached.access",
+                        field.declaringType().name(),
+                        field.name(),
+                        locationQName,
+                        locationFileName,
+                        locationLine)
+            }
+            is AccessWatchpointEvent -> {
+                val field = event.field()
+                return DebuggerBundle.message(
+                        "status.static.field.watchpoint.reached.access",
+                        field.declaringType().name(),
+                        field.name(),
+                        locationQName,
+                        locationFileName,
+                        locationLine)
+            }
+            is MethodEntryEvent -> {
+                val method = event.method()
+                return DebuggerBundle.message(
+                        "status.method.entry.breakpoint.reached",
+                        method.declaringType().name() + "." + method.name() + "()",
+                        locationQName,
+                        locationFileName,
+                        locationLine)
+            }
+            is MethodExitEvent -> {
+                val method = event.method()
+                return DebuggerBundle.message(
+                        "status.method.exit.breakpoint.reached",
+                        method.declaringType().name() + "." + method.name() + "()",
+                        locationQName,
+                        locationFileName,
+                        locationLine)
+            }
+        }
+        return DebuggerBundle.message(
+                "status.line.breakpoint.reached",
+                locationQName,
+                locationFileName,
+                locationLine)
     }
 
     fun setFieldName(fieldName: String) {
