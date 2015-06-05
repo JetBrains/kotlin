@@ -24,6 +24,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMember;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -32,12 +34,13 @@ import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.renderer.RendererPackage;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import javax.swing.*;
+import java.util.Collections;
 
 public class DescriptorClassMember extends MemberChooserObjectBase implements ClassMemberWithElement {
 
@@ -47,12 +50,18 @@ public class DescriptorClassMember extends MemberChooserObjectBase implements Cl
     @NotNull
     private final PsiElement myPsiElement;
 
-    private static final DescriptorRenderer MEMBER_RENDERER = new DescriptorRendererBuilder()
-            .setWithDefinedIn(false)
-            .setModifiers()
-            .setStartFromName(true)
-            .setNameShortness(NameShortness.SHORT)
-            .build();
+    private static final DescriptorRenderer MEMBER_RENDERER = DescriptorRenderer.Companion.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setWithDefinedIn(false);
+                    options.setModifiers(Collections.<DescriptorRenderer.Modifier>emptySet());
+                    options.setStartFromName(true);
+                    options.setNameShortness(NameShortness.SHORT);
+                    return Unit.INSTANCE$;
+                }
+            }
+    );
 
     public DescriptorClassMember(@NotNull PsiElement element, @NotNull DeclarationDescriptor descriptor) {
         super(getText(descriptor), getIcon(element, descriptor));

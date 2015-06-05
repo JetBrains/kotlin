@@ -34,6 +34,8 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -46,7 +48,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil;
 import org.jetbrains.kotlin.resolve.VisibilityUtil;
@@ -62,12 +64,19 @@ import java.util.*;
  * Fix that changes member function's signature to match one of super functions' signatures.
  */
 public class ChangeMemberFunctionSignatureFix extends JetHintAction<JetNamedFunction> {
-    private static final DescriptorRenderer SIGNATURE_RENDERER = new DescriptorRendererBuilder()
-            .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
-            .setWithDefinedIn(false)
-            .setModifiers()
-            .setNameShortness(NameShortness.SHORT)
-            .setUnitReturnType(false).build();
+    private static final DescriptorRenderer SIGNATURE_RENDERER = DescriptorRenderer.Companion.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES);
+                    options.setWithDefinedIn(false);
+                    options.setModifiers(Collections.<DescriptorRenderer.Modifier>emptySet());
+                    options.setNameShortness(NameShortness.SHORT);
+                    options.setUnitReturnType(false);
+                    return Unit.INSTANCE$;
+                }
+            }
+    );
 
     private final List<FunctionDescriptor> possibleSignatures;
 

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
@@ -93,26 +92,18 @@ private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
 private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
 
-private val descriptorRendererForDecompiler = DescriptorRendererBuilder()
-        .setWithDefinedIn(false)
-        .setClassWithPrimaryConstructor(true)
-        .setTypeNormalizer {
-            type ->
-            if (type.isFlexible()) {
-                type.flexibility().lowerBound
-            }
-            else type
+private val descriptorRendererForDecompiler = DescriptorRenderer.withOptions {
+    withDefinedIn = false
+    classWithPrimaryConstructor = true
+    typeNormalizer = { type -> if (type.isFlexible()) type.flexibility().lowerBound else type }
+    secondaryConstructorsAsPrimary = false
+}
 
-        }
-        .setSecondaryConstructorsAsPrimary(false)
-        .build()
-
-private val descriptorRendererForKotlinJavascriptDecompiler = DescriptorRendererBuilder()
-        .setWithDefinedIn(false)
-        .setClassWithPrimaryConstructor(true)
-        .setSecondaryConstructorsAsPrimary(false)
-        .build()
-
+private val descriptorRendererForKotlinJavascriptDecompiler = DescriptorRenderer.withOptions {
+    withDefinedIn = false
+    classWithPrimaryConstructor = true
+    secondaryConstructorsAsPrimary = false
+}
 
 private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS
 

@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.serialization.builtins;
 
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ContainerUtil;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -25,7 +27,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
@@ -47,12 +49,18 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     public void testBuiltIns() throws Exception {
         RecursiveDescriptorComparator.Configuration configuration =
                 RecursiveDescriptorComparator.RECURSIVE_ALL.includeMethodsOfKotlinAny(false).withRenderer(
-                        new DescriptorRendererBuilder()
-                                .setWithDefinedIn(false)
-                                .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
-                                .setVerbose(true)
-                                .setPrettyFunctionTypes(false)
-                                .build()
+                        DescriptorRenderer.Companion.withOptions(
+                                new Function1<DescriptorRendererOptions, Unit>() {
+                                    @Override
+                                    public Unit invoke(DescriptorRendererOptions options) {
+                                        options.setWithDefinedIn(false);
+                                        options.setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
+                                        options.setVerbose(true);
+                                        options.setPrettyFunctionTypes(false);
+                                        return Unit.INSTANCE$;
+                                    }
+                                }
+                        )
                 );
 
         List<JetFile> files = JetTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(

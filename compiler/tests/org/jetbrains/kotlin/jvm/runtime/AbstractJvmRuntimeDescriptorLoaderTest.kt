@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
@@ -44,24 +43,25 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.net.URLClassLoader
+import java.util.*
 import java.util.regex.Pattern
 
 public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     companion object {
-        private val renderer = DescriptorRendererBuilder()
-                .setWithDefinedIn(false)
-                .setExcludedAnnotationClasses(listOf(
-                        ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME,
-                        // TODO: add these annotations when they are retained at runtime
-                        "kotlin.deprecated",
-                        "kotlin.data",
-                        "kotlin.inline"
-                ).map { FqName(it) } + JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES)
-                .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
-                .setParameterNameRenderingPolicy(DescriptorRenderer.ParameterNameRenderingPolicy.NONE)
-                .setIncludePropertyConstant(false)
-                .setVerbose(true)
-                .build()
+        private val renderer = DescriptorRenderer.withOptions {
+            withDefinedIn = false
+            excludedAnnotationClasses = (listOf(
+                    ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME,
+                    // TODO: add these annotations when they are retained at runtime
+                    "kotlin.deprecated",
+                    "kotlin.data",
+                    "kotlin.inline"
+            ).map { FqName(it) } + JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES).toSet()
+            overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
+            parameterNameRenderingPolicy = DescriptorRenderer.ParameterNameRenderingPolicy.NONE
+            includePropertyConstant = false
+            verbose = true
+        }
     }
 
     // NOTE: this test does a dirty hack of text substitution to make all annotations defined in source code retain at runtime.

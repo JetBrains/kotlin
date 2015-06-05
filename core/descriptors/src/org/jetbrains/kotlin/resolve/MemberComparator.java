@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 
 import java.util.Comparator;
 import java.util.List;
@@ -29,7 +31,15 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 public class MemberComparator implements Comparator<DeclarationDescriptor> {
     public static final MemberComparator INSTANCE = new MemberComparator();
 
-    private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder().setWithDefinedIn(false).setVerbose(true).build();
+    private static final DescriptorRenderer RENDERER = DescriptorRenderer.Companion.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setWithDefinedIn(false);
+                    options.setVerbose(true);
+                    return Unit.INSTANCE$;
+                }
+            });
 
     private MemberComparator() {
     }

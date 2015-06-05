@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import com.intellij.psi.NavigatablePsiElement
@@ -45,12 +44,12 @@ object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
 
         val isAbstract = elementDescriptor!!.getModality() == Modality.ABSTRACT
 
-        val renderer = DescriptorRendererBuilder()
-                .setTextFormat(DescriptorRenderer.TextFormat.HTML)
-                .setWithDefinedIn(false)
-                .setStartFromName(true)
-                .setWithoutSuperTypes(true)
-                .build()
+        val renderer = DescriptorRenderer.withOptions {
+            textFormat = DescriptorRenderer.TextFormat.HTML
+            withDefinedIn = false
+            startFromName = true
+            withoutSuperTypes = true
+        }
 
         val containingStrings = overriddenDescriptors.map {
             val declaration = it.getContainingDeclaration()

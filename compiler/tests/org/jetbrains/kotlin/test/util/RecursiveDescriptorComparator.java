@@ -20,6 +20,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -27,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.MemberComparator;
@@ -37,7 +39,6 @@ import org.jetbrains.kotlin.utils.Printer;
 import org.junit.Assert;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -46,13 +47,20 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public class RecursiveDescriptorComparator {
-    private static final DescriptorRenderer DEFAULT_RENDERER = new DescriptorRendererBuilder()
-            .setWithDefinedIn(false)
-            .setExcludedAnnotationClasses(Arrays.asList(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)))
-            .setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE)
-            .setIncludePropertyConstant(true)
-            .setNameShortness(NameShortness.FULLY_QUALIFIED)
-            .setVerbose(true).build();
+    private static final DescriptorRenderer DEFAULT_RENDERER = DescriptorRenderer.Companion.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setWithDefinedIn(false);
+                    options.setExcludedAnnotationClasses(Collections.singleton(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)));
+                    options.setOverrideRenderingPolicy(DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
+                    options.setIncludePropertyConstant(true);
+                    options.setNameShortness(NameShortness.FULLY_QUALIFIED);
+                    options.setVerbose(true);
+                    return Unit.INSTANCE$;
+                }
+            }
+    );
 
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false,
                                                                                          Predicates.<DeclarationDescriptor>alwaysTrue(),

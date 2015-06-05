@@ -100,7 +100,7 @@ public final class JvmAnnotationNames {
     public static final FqName OLD_KOTLIN_TRAIT_IMPL = new FqName("jet.KotlinTraitImpl");
 
     // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
-    // See also DescriptorRendererBuilder#excludedTypeAnnotationClasses
+    // See also DescriptorRendererOptions#excludedTypeAnnotationClasses
     public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = KotlinPackage.setOf(
             JETBRAINS_READONLY_ANNOTATION,
             JETBRAINS_MUTABLE_ANNOTATION,

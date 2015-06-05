@@ -38,42 +38,12 @@ import java.util.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 
-public class DescriptorRendererImpl internal constructor(
-        private val nameShortness: NameShortness,
-        private val withDefinedIn: Boolean,
-        private val modifiers: Set<DescriptorRenderer.Modifier>,
-        private val startFromName: Boolean,
-        private val debugMode: Boolean,
-        private val classWithPrimaryConstructor: Boolean,
-        private val verbose: Boolean,
-        private val unitReturnType: Boolean,
-        private val normalizedVisibilities: Boolean,
-        private val showInternalKeyword: Boolean,
-        private val prettyFunctionTypes: Boolean,
-        private val uninferredTypeParameterAsName: Boolean,
-        private val overrideRenderingPolicy: DescriptorRenderer.OverrideRenderingPolicy,
-        private val handler: DescriptorRenderer.ValueParametersHandler,
-        private val textFormat: DescriptorRenderer.TextFormat,
-        excludedAnnotationClasses: Collection<FqName>,
-        excludedTypeAnnotationClasses: Collection<FqName>,
-        private val includePropertyConstant: Boolean,
-        private val parameterNameRenderingPolicy: DescriptorRenderer.ParameterNameRenderingPolicy,
-        private val withoutTypeParameters: Boolean,
-        private val receiverAfterName: Boolean,
-        private val renderCompanionObjectName: Boolean,
-        private val withoutSuperTypes: Boolean,
-        private val typeNormalizer: Function1<JetType, JetType>,
-        private val renderDefaultValues: Boolean,
-        private val flexibleTypesForCode: Boolean,
-        private val secondaryConstructorsAsPrimary: Boolean,
-        private val renderAccessors: Boolean
-) : DescriptorRenderer {
-    private val excludedAnnotationClasses: Set<FqName>
-    private val excludedTypeAnnotationClasses: Set<FqName>
+public/*TODO*/ class DescriptorRendererImpl internal constructor(
+        public val options: DescriptorRendererOptionsImpl
+) : DescriptorRenderer, DescriptorRendererOptions by options/* this gives access to options without qualifier */ {
 
     init {
-        this.excludedAnnotationClasses = HashSet(excludedAnnotationClasses)
-        this.excludedTypeAnnotationClasses = HashSet(excludedTypeAnnotationClasses)
+        assert(options.isLocked)
     }
 
     /* FORMATTING */
@@ -682,13 +652,13 @@ public class DescriptorRendererImpl internal constructor(
 
     private fun renderValueParameters(function: FunctionDescriptor, builder: StringBuilder) {
         val includeNames = shouldRenderParameterNames(function)
-        handler.appendBeforeValueParameters(function, builder)
+        valueParametersHandler.appendBeforeValueParameters(function, builder)
         for (parameter in function.getValueParameters()) {
-            handler.appendBeforeValueParameter(parameter, builder)
+            valueParametersHandler.appendBeforeValueParameter(parameter, builder)
             renderValueParameter(parameter, includeNames, builder, false)
-            handler.appendAfterValueParameter(parameter, builder)
+            valueParametersHandler.appendAfterValueParameter(parameter, builder)
         }
-        handler.appendAfterValueParameters(function, builder)
+        valueParametersHandler.appendAfterValueParameters(function, builder)
     }
 
     private fun shouldRenderParameterNames(function: FunctionDescriptor): Boolean {

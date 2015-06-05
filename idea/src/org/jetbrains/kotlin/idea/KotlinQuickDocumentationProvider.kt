@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -83,12 +82,12 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
     companion object {
         private val LOG = Logger.getInstance(javaClass<KotlinQuickDocumentationProvider>())
 
-        val quickDocNameFormat = DescriptorRendererBuilder()
-                .setWithDefinedIn(true)
-                .setNameShortness(NameShortness.SHORT)
-                .setRenderCompanionObjectName(true)
-                .setTextFormat(DescriptorRenderer.TextFormat.HTML)
-                .build()
+        val quickDocNameFormat = DescriptorRenderer.withOptions {
+            withDefinedIn = true
+            nameShortness = NameShortness.SHORT
+            renderCompanionObjectName = true
+            textFormat = DescriptorRenderer.TextFormat.HTML
+        }
 
 
         private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {

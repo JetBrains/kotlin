@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.resolve.annotation;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
@@ -31,7 +33,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetAnnotationEntry;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -48,10 +50,16 @@ import java.util.List;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
 
 public abstract class AbstractAnnotationDescriptorResolveTest extends JetLiteFixture {
-    private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = new DescriptorRendererBuilder()
-                                                                                    .setVerbose(true)
-                                                                                    .setNameShortness(NameShortness.SHORT)
-                                                                                    .build();
+    private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = DescriptorRenderer.Companion.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setVerbose(true);
+                    options.setNameShortness(NameShortness.SHORT);
+                    return Unit.INSTANCE$;
+                }
+            }
+    );
 
     private static final String PATH = "compiler/testData/resolveAnnotations/testFile.kt";
 

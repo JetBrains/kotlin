@@ -21,13 +21,20 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeProjection
 
 public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
-
+    public fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
+        val options = (this as DescriptorRendererImpl).options.copy()
+        options.changeOptions()
+        options.lock()
+        return DescriptorRendererImpl(options)
+    }
+    
     public fun renderType(type: JetType): String
 
     public fun renderTypeArguments(typeArguments: List<TypeProjection>): String
@@ -70,121 +77,157 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
         MEMBER_KIND
     }
 
-    /** @see DefaultValueParameterHandler
-     */
     public interface ValueParametersHandler {
-        public fun appendBeforeValueParameters(function: FunctionDescriptor, stringBuilder: StringBuilder)
-        public fun appendAfterValueParameters(function: FunctionDescriptor, stringBuilder: StringBuilder)
+        public fun appendBeforeValueParameters(function: FunctionDescriptor, builder: StringBuilder)
+        public fun appendAfterValueParameters(function: FunctionDescriptor, builder: StringBuilder)
 
-        public fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, stringBuilder: StringBuilder)
-        public fun appendAfterValueParameter(parameter: ValueParameterDescriptor, stringBuilder: StringBuilder)
-    }
+        public fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, builder: StringBuilder)
+        public fun appendAfterValueParameter(parameter: ValueParameterDescriptor, builder: StringBuilder)
 
-    public class DefaultValueParameterHandler : ValueParametersHandler {
-        override fun appendBeforeValueParameters(function: FunctionDescriptor, stringBuilder: StringBuilder) {
-            stringBuilder.append("(")
-        }
+        public object DEFAULT : ValueParametersHandler {
+            override fun appendBeforeValueParameters(function: FunctionDescriptor, builder: StringBuilder) {
+                builder.append("(")
+            }
 
-        override fun appendAfterValueParameters(function: FunctionDescriptor, stringBuilder: StringBuilder) {
-            stringBuilder.append(")")
-        }
+            override fun appendAfterValueParameters(function: FunctionDescriptor, builder: StringBuilder) {
+                builder.append(")")
+            }
 
-        override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, stringBuilder: StringBuilder) {
-        }
+            override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, builder: StringBuilder) {
+            }
 
-        override fun appendAfterValueParameter(parameter: ValueParameterDescriptor, stringBuilder: StringBuilder) {
-            val function = parameter.getContainingDeclaration() as FunctionDescriptor
-            if (parameter.getIndex() != function.getValueParameters().size() - 1) {
-                stringBuilder.append(", ")
+            override fun appendAfterValueParameter(parameter: ValueParameterDescriptor, builder: StringBuilder) {
+                val function = parameter.getContainingDeclaration() as FunctionDescriptor
+                if (parameter.getIndex() != function.getValueParameters().size() - 1) {
+                    builder.append(", ")
+                }
             }
         }
     }
 
     companion object {
-        public val COMPACT_WITH_MODIFIERS: DescriptorRenderer = DescriptorRendererBuilder()
-                .setWithDefinedIn(false)
-                .build()
+        public fun withOptions(changeOptions: DescriptorRendererOptions.() -> Unit): DescriptorRenderer {
+            val options = DescriptorRendererOptionsImpl()
+            options.changeOptions()
+            options.lock()
+            return DescriptorRendererImpl(options)
+        }
 
-        public val COMPACT: DescriptorRenderer = DescriptorRendererBuilder()
-                .setWithDefinedIn(false)
-                .setModifiers()
-                .build()
+        public val COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+        }
 
-        public val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = DescriptorRendererBuilder()
-                .setModifiers()
-                .setNameShortness(NameShortness.SHORT)
-                .setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED)
-                .build()
+        public val COMPACT: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+            modifiers = emptySet()
+        }
 
-        public val STARTS_FROM_NAME: DescriptorRenderer = DescriptorRendererBuilder()
-                .setWithDefinedIn(false)
-                .setModifiers()
-                .setStartFromName(true)
-                .build()
+        public val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
+            modifiers = emptySet()
+            nameShortness = NameShortness.SHORT
+            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
+        }
 
-        public val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = DescriptorRendererBuilder()
-                .setWithDefinedIn(false)
-                .setModifiers()
-                .setNameShortness(NameShortness.SHORT)
-                .setWithoutTypeParameters(true)
-                .setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE)
-                .setReceiverAfterName(true)
-                .setRenderCompanionObjectName(true)
-                .setWithoutSuperTypes(true)
-                .setStartFromName(true)
-                .build()
+        public val STARTS_FROM_NAME: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+            modifiers = emptySet()
+            startFromName = true
+        }
 
-        public val FQ_NAMES_IN_TYPES: DescriptorRenderer = DescriptorRendererBuilder().build()
+        public val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+            modifiers = emptySet()
+            nameShortness = NameShortness.SHORT
+            withoutTypeParameters = true
+            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
+            receiverAfterName = true
+            renderCompanionObjectName = true
+            withoutSuperTypes = true
+            startFromName = true
+        }
 
-        public val SHORT_NAMES_IN_TYPES: DescriptorRenderer = DescriptorRendererBuilder()
-                .setNameShortness(NameShortness.SHORT)
-                .setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED)
-                .build()
+        public val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {  }
 
-        public val DEBUG_TEXT: DescriptorRenderer = DescriptorRendererBuilder()
-                .setDebugMode(true)
-                .setNameShortness(NameShortness.FULLY_QUALIFIED)
-                .build()
+        public val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
+            nameShortness = NameShortness.SHORT
+            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
+        }
 
-        public val FLEXIBLE_TYPES_FOR_CODE: DescriptorRenderer = DescriptorRendererBuilder()
-                .setFlexibleTypesForCode(true)
-                .build()
+        public val DEBUG_TEXT: DescriptorRenderer = withOptions {
+            debugMode = true
+            nameShortness = NameShortness.FULLY_QUALIFIED
+        }
 
-        public val HTML_COMPACT_WITH_MODIFIERS: DescriptorRenderer = DescriptorRendererBuilder()
-                .setWithDefinedIn(false)
-                .setTextFormat(TextFormat.HTML)
-                .build()
+        public val FLEXIBLE_TYPES_FOR_CODE: DescriptorRenderer = withOptions {
+            flexibleTypesForCode = true
+        }
 
-        public val HTML_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = DescriptorRendererBuilder()
-                .setWithDefinedIn(false)
-                .setNameShortness(NameShortness.SHORT)
-                .setRenderCompanionObjectName(true)
-                .setTextFormat(TextFormat.HTML)
-                .build()
+        public val HTML_COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+            textFormat = TextFormat.HTML
+        }
 
-        public val HTML: DescriptorRenderer = DescriptorRendererBuilder()
-                .setTextFormat(TextFormat.HTML)
-                .build()
+        public val HTML_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+            nameShortness = NameShortness.SHORT
+            renderCompanionObjectName = true
+            textFormat = TextFormat.HTML
+        }
 
-        public val HTML_FOR_UNINFERRED_TYPE_PARAMS: DescriptorRenderer = DescriptorRendererBuilder()
-                .setUninferredTypeParameterAsName(true)
-                .setModifiers()
-                .setNameShortness(NameShortness.SHORT)
-                .setTextFormat(TextFormat.HTML)
-                .build()
+        public val HTML: DescriptorRenderer = withOptions {
+            textFormat = TextFormat.HTML
+        }
 
-        public val DEPRECATION: DescriptorRenderer = DescriptorRendererBuilder()
-                .setWithDefinedIn(false)
-                .setModifiers()
-                .setNameShortness(NameShortness.SHORT)
-                .setWithoutTypeParameters(false)
-                .setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE)
-                .setReceiverAfterName(false)
-                .setRenderCompanionObjectName(true)
-                .setRenderAccessors(true)
-                .setWithoutSuperTypes(true)
-                .setRenderDefaultValues(false)
-                .setStartFromName(true)
-                .build()
+        public val HTML_FOR_UNINFERRED_TYPE_PARAMS: DescriptorRenderer = withOptions {
+            uninferredTypeParameterAsName = true
+            modifiers = emptySet()
+            nameShortness = NameShortness.SHORT
+            textFormat = TextFormat.HTML
+        }
+
+        public val DEPRECATION: DescriptorRenderer = withOptions {
+            withDefinedIn = false
+            modifiers = emptySet()
+            nameShortness = NameShortness.SHORT
+            withoutTypeParameters = false
+            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
+            receiverAfterName = false
+            renderCompanionObjectName = true
+            renderAccessors = true
+            withoutSuperTypes = true
+            renderDefaultValues = false
+            startFromName = true
+        }
     }
+}
+
+public interface DescriptorRendererOptions {
+    public var nameShortness: NameShortness
+    public var withDefinedIn: Boolean
+    public var modifiers: Set<DescriptorRenderer.Modifier>
+    public var startFromName: Boolean
+    public var debugMode: Boolean
+    public var classWithPrimaryConstructor: Boolean
+    public var verbose: Boolean
+    public var unitReturnType: Boolean
+    public var normalizedVisibilities: Boolean
+    public var showInternalKeyword: Boolean
+    public var prettyFunctionTypes: Boolean
+    public var uninferredTypeParameterAsName: Boolean
+    public var overrideRenderingPolicy: DescriptorRenderer.OverrideRenderingPolicy
+    public var valueParametersHandler: DescriptorRenderer.ValueParametersHandler
+    public var textFormat: DescriptorRenderer.TextFormat
+    public var excludedAnnotationClasses: Set<FqName>
+    public var excludedTypeAnnotationClasses: Set<FqName>
+    public var includePropertyConstant: Boolean
+    public var parameterNameRenderingPolicy: DescriptorRenderer.ParameterNameRenderingPolicy
+    public var withoutTypeParameters: Boolean
+    public var receiverAfterName: Boolean
+    public var renderCompanionObjectName: Boolean
+    public var withoutSuperTypes: Boolean
+    public var typeNormalizer: (JetType) -> JetType
+    public var renderDefaultValues: Boolean
+    public var flexibleTypesForCode: Boolean
+    public var secondaryConstructorsAsPrimary: Boolean
+    public var renderAccessors: Boolean
 }

@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.jvm.compiler;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -43,11 +45,18 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
     // Do not render parameter names because there are test cases where classes inherit from JDK collections,
     // and some versions of JDK have debug information in the class files (including parameter names), and some don't
     public static final RecursiveDescriptorComparator.Configuration CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.withRenderer(
-            new DescriptorRendererBuilder()
-                    .setWithDefinedIn(false)
-                    .setParameterNameRenderingPolicy(DescriptorRenderer.ParameterNameRenderingPolicy.NONE)
-                    .setVerbose(true)
-                    .build());
+            DescriptorRenderer.Companion.withOptions(
+                    new Function1<DescriptorRendererOptions, Unit>() {
+                        @Override
+                        public Unit invoke(DescriptorRendererOptions options) {
+                            options.setWithDefinedIn(false);
+                            options.setParameterNameRenderingPolicy(DescriptorRenderer.ParameterNameRenderingPolicy.NONE);
+                            options.setVerbose(true);
+                            return Unit.INSTANCE$;
+                        }
+                    }
+            )
+    );
 
     protected void doTest(String ktFilePath) throws IOException {
         Assert.assertTrue(ktFilePath.endsWith(".kt"));

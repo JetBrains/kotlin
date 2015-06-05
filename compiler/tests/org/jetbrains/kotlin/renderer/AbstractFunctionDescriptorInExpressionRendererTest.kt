@@ -50,7 +50,7 @@ abstract public class AbstractFunctionDescriptorInExpressionRendererTest : Kotli
             }
         })
 
-        val renderer = DescriptorRendererBuilder().setNameShortness(NameShortness.FULLY_QUALIFIED).setVerbose(true).build()
+        val renderer = DescriptorRenderer.withOptions { nameShortness = NameShortness.FULLY_QUALIFIED; verbose = true }
         val renderedDescriptors = descriptors.map { renderer.render(it) }.joinToString(separator = "\n")
 
         val document = DocumentImpl(file.getText())

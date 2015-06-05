@@ -31,6 +31,8 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.messages.MessageBusConnection;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
@@ -45,20 +47,28 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
 
 import javax.swing.*;
+import java.util.Collections;
 
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_SIGNATURE;
 
 public class KotlinSignatureAnnotationIntention extends BaseIntentionAction implements Iconable {
-    private static final DescriptorRenderer RENDERER = new DescriptorRendererBuilder()
-            .setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES)
-            .setNameShortness(NameShortness.SHORT)
-            .setModifiers()
-            .setWithDefinedIn(false).build();
+    private static final DescriptorRenderer RENDERER = DescriptorRenderer.Companion.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES);
+                    options.setNameShortness(NameShortness.SHORT);
+                    options.setModifiers(Collections.<DescriptorRenderer.Modifier>emptySet());
+                    options.setWithDefinedIn(false);
+                    return Unit.INSTANCE$;
+                }
+            }
+    );
 
     @NotNull
     @Override

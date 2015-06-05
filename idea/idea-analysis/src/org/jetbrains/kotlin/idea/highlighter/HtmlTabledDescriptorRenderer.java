@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.highlighter;
 
 import com.google.common.base.Predicate;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
@@ -26,11 +28,12 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.Table
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.kotlin.types.JetType;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -166,44 +169,50 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
 
     private static final DescriptorRenderer.ValueParametersHandler VALUE_PARAMETERS_HANDLER = new DescriptorRenderer.ValueParametersHandler() {
         @Override
-        public void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder) {
-            stringBuilder.append("<td align=\"right\" style=\"white-space:nowrap;font-weight:bold;\">");
+        public void appendBeforeValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder builder) {
+            builder.append("<td align=\"right\" style=\"white-space:nowrap;font-weight:bold;\">");
         }
 
         @Override
-        public void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder stringBuilder) {
+        public void appendAfterValueParameter(@NotNull ValueParameterDescriptor parameter, @NotNull StringBuilder builder) {
             boolean last = ((FunctionDescriptor) parameter.getContainingDeclaration()).getValueParameters().size() - 1 == parameter.getIndex();
             if (!last) {
-                stringBuilder.append(",");
+                builder.append(",");
             }
-            stringBuilder.append("</td>");
+            builder.append("</td>");
         }
 
         @Override
-        public void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder) {
-            stringBuilder.append("</td>");
+        public void appendBeforeValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder builder) {
+            builder.append("</td>");
             if (function.getValueParameters().isEmpty()) {
-                tdBold(stringBuilder, "( )");
+                tdBold(builder, "( )");
             }
             else {
-                tdBold(stringBuilder, "(");
+                tdBold(builder, "(");
             }
         }
 
         @Override
-        public void appendAfterValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder stringBuilder) {
+        public void appendAfterValueParameters(@NotNull FunctionDescriptor function, @NotNull StringBuilder builder) {
             if (!function.getValueParameters().isEmpty()) {
-                tdBold(stringBuilder, ")");
+                tdBold(builder, ")");
             }
-            stringBuilder.append("<td style=\"white-space:nowrap;font-weight:bold;\">");
+            builder.append("<td style=\"white-space:nowrap;font-weight:bold;\">");
         }
     };
 
-    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = new DescriptorRendererBuilder()
-            .setWithDefinedIn(false)
-            .setModifiers()
-            .setValueParametersHandler(VALUE_PARAMETERS_HANDLER)
-            .setTextFormat(DescriptorRenderer.TextFormat.HTML).build();
+    public static final DescriptorRenderer DESCRIPTOR_IN_TABLE = DescriptorRenderer.Companion.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setWithDefinedIn(false);
+                    options.setModifiers(Collections.<DescriptorRenderer.Modifier>emptySet());
+                    options.setValueParametersHandler(VALUE_PARAMETERS_HANDLER);
+                    options.setTextFormat(DescriptorRenderer.TextFormat.HTML);
+                    return Unit.INSTANCE$;
+                }
+            });
 
     private static void td(StringBuilder builder, String text) {
         builder.append("<td style=\"white-space:nowrap;\">").append(text).append("</td>");
