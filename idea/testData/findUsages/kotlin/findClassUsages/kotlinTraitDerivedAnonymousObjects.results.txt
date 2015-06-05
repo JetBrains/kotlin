@@ -1,4 +1,4 @@
-Unclassified usage (12: 17) val x = object : X {
-Unclassified usage (7: 12) open class A: X {
-Unclassified usage (9: 17) doSomething(object : A() {}, object: X {})
-Unclassified usage (9: 34) doSomething(object : A() {}, object: X {})
+[kotlinTraitDerivedAnonymousObjects.0.kt] Unclassified usage (7: 12) open class A: X {
+[kotlinTraitDerivedAnonymousObjects.1.kt] Unclassified usage (12: 17) val x = object : X {
+[kotlinTraitDerivedAnonymousObjects.1.kt] Unclassified usage (9: 17) doSomething(object : A() {}, object: X {})
+[kotlinTraitDerivedAnonymousObjects.1.kt] Unclassified usage (9: 34) doSomething(object : A() {}, object: X {})

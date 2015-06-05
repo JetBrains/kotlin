@@ -357,6 +357,19 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
 
         Collection<UsageInfo2UsageAdapter> filteredUsages = getUsageAdapters(filteringRules, usageInfos);
 
+        List<String> usageFiles = KotlinPackage.distinct(
+                KotlinPackage.map(
+                        filteredUsages,
+                        new Function1<UsageInfo2UsageAdapter, String>() {
+                            @Override
+                            public String invoke(UsageInfo2UsageAdapter adapter) {
+                                return adapter.getFile().getName();
+                            }
+                        }
+                )
+        );
+        final boolean appendFileName = usageFiles.size() > 1;
+
         Function<UsageInfo2UsageAdapter, String> convertToString = new Function<UsageInfo2UsageAdapter, String>() {
             @Override
             public String apply(@Nullable final UsageInfo2UsageAdapter usageAdapter) {
@@ -381,7 +394,8 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
                 UsageType usageType = getUsageType(usageAdapter.getElement());
                 String usageTypeAsString = usageType == null ? "null" : usageType.toString(USAGE_VIEW_PRESENTATION);
 
-                return usageTypeAsString + " " +
+                return (appendFileName ? "[" + usageAdapter.getFile().getName() + "] " : "") +
+                       usageTypeAsString + " " +
                        groupAsString +
                        Joiner.on("").join(Arrays.asList(usageAdapter.getPresentation().getText()));
             }

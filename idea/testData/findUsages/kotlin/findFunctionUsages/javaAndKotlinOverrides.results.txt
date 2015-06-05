@@ -1,2 +1,2 @@
-Unclassified usage (29: 18) override fun foo(t: String) {
-Unclassified usage (3: 17) public void foo(String s) {
+[javaAndKotlinOverrides.0.kt] Unclassified usage (29: 18) override fun foo(t: String) {
+[javaAndKotlinOverrides.1.java] Unclassified usage (3: 17) public void foo(String s) {

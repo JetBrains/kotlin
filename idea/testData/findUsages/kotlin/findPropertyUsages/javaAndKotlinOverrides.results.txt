@@ -1,5 +1,5 @@
-Unclassified usage (12: 17) public void setFoo(String s) {
-Unclassified usage (13: 9) set(value: String) {
-Unclassified usage (25: 18) override var foo: String = ""
-Unclassified usage (7: 19) public String getFoo() {
-Unclassified usage (9: 9) get() {
+[javaAndKotlinOverrides.0.kt] Unclassified usage (13: 9) set(value: String) {
+[javaAndKotlinOverrides.0.kt] Unclassified usage (25: 18) override var foo: String = ""
+[javaAndKotlinOverrides.0.kt] Unclassified usage (9: 9) get() {
+[javaAndKotlinOverrides.1.java] Unclassified usage (12: 17) public void setFoo(String s) {
+[javaAndKotlinOverrides.1.java] Unclassified usage (7: 19) public String getFoo() {

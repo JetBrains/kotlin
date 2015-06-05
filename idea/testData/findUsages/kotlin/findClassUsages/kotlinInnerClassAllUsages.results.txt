@@ -1,21 +1,21 @@
-Class/object property type (7: 25) var next: Outer.A? = (this@KOuter : Outer).A()
-Field declaration (10: 5) A next = new A();
-Function return types (19: 30) fun getNext(): Outer.A? {
-Function return types (33: 22) fun Any.toA(): Outer.A? {
-Function return types (37: 27) fun Any.asServer(): Outer.A? {
-Local variable declaration (15: 27) val aa: Outer.A = a
-New instance creation (10: 18) A next = new A();
-New instance creation (11: 35) (this@KOuter : Outer).A().bar = ""
-New instance creation (29: 39) fun KOuter.X.bar(a: Outer.A = Outer().A()) {
-New instance creation (6: 63) public inner class X(bar: String? = (this@KOuter : Outer).A().bar): Outer.A() {
-New instance creation (7: 52) var next: Outer.A? = (this@KOuter : Outer).A()
-New instance creation (8: 52) val myBar: String? = (this@KOuter : Outer).A().bar
-Parameter type (14: 26) fun foo(a: Outer.A) {
-Parameter type (29: 27) fun KOuter.X.bar(a: Outer.A = Outer().A()) {
-Super type qualifier (24: 25) super<Outer.A>.foo()
-Supertype (6: 79) public inner class X(bar: String? = (this@KOuter : Outer).A().bar): Outer.A() {
-Target type of 'is' operation (34: 30) return if (this is Outer.A) this as Outer.A else null
-Target type of 'is' operation (38: 30) return if (this is Outer.A) this as Outer.A else null
-Usage in cast target type (34: 47) return if (this is Outer.A) this as Outer.A else null
-Usage in cast target type (38: 47) return if (this is Outer.A) this as Outer.A else null
-Usage in extends/implements clause (6: 21) class Y extends A {
+[kotlinInnerClassAllUsages.1.kt] Class/object property type (7: 25) var next: Outer.A? = (this@KOuter : Outer).A()
+[kotlinInnerClassAllUsages.1.kt] Function return types (19: 30) fun getNext(): Outer.A? {
+[kotlinInnerClassAllUsages.1.kt] Function return types (33: 22) fun Any.toA(): Outer.A? {
+[kotlinInnerClassAllUsages.1.kt] Function return types (37: 27) fun Any.asServer(): Outer.A? {
+[kotlinInnerClassAllUsages.1.kt] Local variable declaration (15: 27) val aa: Outer.A = a
+[kotlinInnerClassAllUsages.1.kt] New instance creation (11: 35) (this@KOuter : Outer).A().bar = ""
+[kotlinInnerClassAllUsages.1.kt] New instance creation (29: 39) fun KOuter.X.bar(a: Outer.A = Outer().A()) {
+[kotlinInnerClassAllUsages.1.kt] New instance creation (6: 63) public inner class X(bar: String? = (this@KOuter : Outer).A().bar): Outer.A() {
+[kotlinInnerClassAllUsages.1.kt] New instance creation (7: 52) var next: Outer.A? = (this@KOuter : Outer).A()
+[kotlinInnerClassAllUsages.1.kt] New instance creation (8: 52) val myBar: String? = (this@KOuter : Outer).A().bar
+[kotlinInnerClassAllUsages.1.kt] Parameter type (14: 26) fun foo(a: Outer.A) {
+[kotlinInnerClassAllUsages.1.kt] Parameter type (29: 27) fun KOuter.X.bar(a: Outer.A = Outer().A()) {
+[kotlinInnerClassAllUsages.1.kt] Super type qualifier (24: 25) super<Outer.A>.foo()
+[kotlinInnerClassAllUsages.1.kt] Supertype (6: 79) public inner class X(bar: String? = (this@KOuter : Outer).A().bar): Outer.A() {
+[kotlinInnerClassAllUsages.1.kt] Target type of 'is' operation (34: 30) return if (this is Outer.A) this as Outer.A else null
+[kotlinInnerClassAllUsages.1.kt] Target type of 'is' operation (38: 30) return if (this is Outer.A) this as Outer.A else null
+[kotlinInnerClassAllUsages.1.kt] Usage in cast target type (34: 47) return if (this is Outer.A) this as Outer.A else null
+[kotlinInnerClassAllUsages.1.kt] Usage in cast target type (38: 47) return if (this is Outer.A) this as Outer.A else null
+[kotlinInnerClassAllUsages.2.java] Field declaration (10: 5) A next = new A();
+[kotlinInnerClassAllUsages.2.java] New instance creation (10: 18) A next = new A();
+[kotlinInnerClassAllUsages.2.java] Usage in extends/implements clause (6: 21) class Y extends A {

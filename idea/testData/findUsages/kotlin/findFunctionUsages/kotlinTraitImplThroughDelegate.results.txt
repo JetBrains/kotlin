@@ -1,2 +1,2 @@
-Function call (11: 53) fun test(twdwi: TraitWithDelegatedWithImpl) = twdwi.foo()
-Unclassified usage (7: 14) some.foo();
+[kotlinTraitImplThroughDelegate.0.kt] Function call (11: 53) fun test(twdwi: TraitWithDelegatedWithImpl) = twdwi.foo()
+[kotlinTraitImplThroughDelegate.1.java] Unclassified usage (7: 14) some.foo();

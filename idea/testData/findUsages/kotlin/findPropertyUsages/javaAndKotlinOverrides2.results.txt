@@ -1,6 +1,6 @@
-Unclassified usage (11: 9) set(value: String) {
-Unclassified usage (12: 17) public void setFoo(String s) {
-Unclassified usage (23: 18) override var foo: String = ""
-Unclassified usage (26: 30) open class E<T>(override var foo: T): A<T>(foo)
-Unclassified usage (7: 19) public String getFoo() {
-Unclassified usage (7: 9) get() {
+[javaAndKotlinOverrides2.0.kt] Unclassified usage (11: 9) set(value: String) {
+[javaAndKotlinOverrides2.0.kt] Unclassified usage (23: 18) override var foo: String = ""
+[javaAndKotlinOverrides2.0.kt] Unclassified usage (26: 30) open class E<T>(override var foo: T): A<T>(foo)
+[javaAndKotlinOverrides2.0.kt] Unclassified usage (7: 9) get() {
+[javaAndKotlinOverrides2.1.java] Unclassified usage (12: 17) public void setFoo(String s) {
+[javaAndKotlinOverrides2.1.java] Unclassified usage (7: 19) public String getFoo() {

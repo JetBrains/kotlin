@@ -1,4 +1,4 @@
-Function call (9: 7) a.component1()
-Value read (10: 9) val (x, y, z) = a
-Value read (2: 10) for ((x, y, z) in array<A>()) {
-Value read (8: 7) a.n
+[componentFunctions.0.kt] Function call (9: 7) a.component1()
+[componentFunctions.0.kt] Value read (10: 9) val (x, y, z) = a
+[componentFunctions.0.kt] Value read (8: 7) a.n
+[componentFunctions.1.kt] Value read (2: 10) for ((x, y, z) in array<A>()) {

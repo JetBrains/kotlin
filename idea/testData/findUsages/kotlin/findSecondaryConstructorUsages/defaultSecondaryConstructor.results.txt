@@ -1,8 +1,8 @@
-New instance creation (11: 13) new B();
-New instance creation (28: 5) B()
-Supertype (23: 11) class C : B() {
-Unclassified usage (14: 27) constructor(a: Int) : super() {
-Unclassified usage (18: 19) constructor() {
-Unclassified usage (3: 9) super();
-Unclassified usage (6: 12) public J() {
-Unclassified usage (8: 26) constructor(a: Int): this() {
+[defaultSecondaryConstructor.0.kt] New instance creation (28: 5) B()
+[defaultSecondaryConstructor.0.kt] Supertype (23: 11) class C : B() {
+[defaultSecondaryConstructor.0.kt] Unclassified usage (14: 27) constructor(a: Int) : super() {
+[defaultSecondaryConstructor.0.kt] Unclassified usage (18: 19) constructor() {
+[defaultSecondaryConstructor.0.kt] Unclassified usage (8: 26) constructor(a: Int): this() {
+[defaultSecondaryConstructor.1.java] New instance creation (11: 13) new B();
+[defaultSecondaryConstructor.1.java] Unclassified usage (3: 9) super();
+[defaultSecondaryConstructor.1.java] Unclassified usage (6: 12) public J() {

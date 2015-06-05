@@ -1,3 +1,3 @@
-Value write (10: 11) b.foo = "b"
-Value write (15: 22) super<A>.foo = value
-Value write (6: 11) a.foo = "a"
+[kotlinPropertyWriteUsages2.0.kt] Value write (15: 22) super<A>.foo = value
+[kotlinPropertyWriteUsages2.1.kt] Value write (10: 11) b.foo = "b"
+[kotlinPropertyWriteUsages2.1.kt] Value write (6: 11) a.foo = "a"

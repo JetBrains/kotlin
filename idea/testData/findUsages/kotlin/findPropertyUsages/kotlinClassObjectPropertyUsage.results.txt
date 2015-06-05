@@ -1,2 +1,2 @@
-Unclassified usage (7: 22) int i = Some.XX;
-Value read (11: 14) val a = Some.XX
+[kotlinClassObjectPropertyUsage.0.kt] Value read (11: 14) val a = Some.XX
+[kotlinClassObjectPropertyUsage.1.java] Unclassified usage (7: 22) int i = Some.XX;

@@ -1,4 +1,4 @@
-Unclassified usage (11: 17) public void foo() {
-Unclassified usage (14: 25) public override fun foo() {
-Unclassified usage (2: 25) public override fun foo() {
-Unclassified usage (8: 25) public override fun foo() {
+[JKMethodOverrides.0.java] Unclassified usage (11: 17) public void foo() {
+[JKMethodOverrides.1.kt] Unclassified usage (14: 25) public override fun foo() {
+[JKMethodOverrides.1.kt] Unclassified usage (2: 25) public override fun foo() {
+[JKMethodOverrides.1.kt] Unclassified usage (8: 25) public override fun foo() {

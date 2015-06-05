@@ -1,3 +1,3 @@
-Unclassified usage (15: 11) interface Z: A {
-Unclassified usage (5: 11) interface Y extends X {
-Unclassified usage (9: 11) interface U extends Z {
+[javaDerivedInterfaceUsages2.0.kt] Unclassified usage (15: 11) interface Z: A {
+[javaDerivedInterfaceUsages2.1.java] Unclassified usage (5: 11) interface Y extends X {
+[javaDerivedInterfaceUsages2.1.java] Unclassified usage (9: 11) interface U extends Z {

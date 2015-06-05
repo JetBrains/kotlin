@@ -1,6 +1,6 @@
-New instance creation (10: 13) new B("");
-New instance creation (22: 5) B("")
-Supertype (17: 11) class C : B("") {
-Unclassified usage (12: 27) constructor(a: Int) : super("") {
-Unclassified usage (2: 20) constructor(): this("") {
-Unclassified usage (6: 9) super("");
+[secondaryConstructorByJavaNewExpression.0.java] New instance creation (10: 13) new B("");
+[secondaryConstructorByJavaNewExpression.0.java] Unclassified usage (6: 9) super("");
+[secondaryConstructorByJavaNewExpression.1.kt] New instance creation (22: 5) B("")
+[secondaryConstructorByJavaNewExpression.1.kt] Supertype (17: 11) class C : B("") {
+[secondaryConstructorByJavaNewExpression.1.kt] Unclassified usage (12: 27) constructor(a: Int) : super("") {
+[secondaryConstructorByJavaNewExpression.1.kt] Unclassified usage (2: 20) constructor(): this("") {
