@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.JetTokens
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
 
@@ -39,7 +40,7 @@ public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
                               ?.siblings(forward = false, withItself = false)
                               ?.firstOrNull { !isToSkip(it) }  ?: return -1
 
-        val pair = element.parents(withItself = true)
+        val pair = element.parentsWithSelf
                            .map { getPropertyAndAssignment(it) }
                            .filterNotNull()
                            .firstOrNull() ?: return -1

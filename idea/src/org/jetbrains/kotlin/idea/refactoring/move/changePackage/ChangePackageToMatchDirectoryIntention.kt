@@ -20,8 +20,8 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.psi.psiUtil.getFqNameByDirectory
-import org.jetbrains.kotlin.psi.psiUtil.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
+import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 
 public class ChangePackageToMatchDirectoryIntention : JetSelfTargetingOffsetIndependentIntention<JetPackageDirective>(
         javaClass(), "", "Change file's package to match directory"

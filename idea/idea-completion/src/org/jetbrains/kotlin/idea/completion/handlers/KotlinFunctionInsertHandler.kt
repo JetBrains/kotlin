@@ -42,7 +42,7 @@ enum class CaretPosition {
 
 data class GenerateLambdaInfo(val lambdaType: JetType, val explicitParameters: Boolean)
 
-class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : KotlinCallableInsertHandler() {
+class KotlinFunctionInsertHandler(val caretPosition: CaretPosition, val lambdaInfo: GenerateLambdaInfo?) : KotlinCallableInsertHandler() {
     init {
         if (caretPosition == CaretPosition.AFTER_BRACKETS && lambdaInfo != null) {
             throw IllegalArgumentException("CaretPosition.AFTER_BRACKETS with lambdaInfo != null combination is not supported")
@@ -92,11 +92,10 @@ class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaI
         val document = context.getDocument()
         val chars = document.getCharsSequence()
 
-        val forceParenthesis = lambdaInfo != null && completionChar == '\t' && chars.charAt(offset) == '('
-        val braces = lambdaInfo != null && completionChar != '(' && !forceParenthesis
+        val insertLambda = lambdaInfo != null && completionChar != '(' && !(completionChar == '\t' && chars.charAt(offset) == '(')
 
-        val openingBracket = if (braces) '{' else '('
-        val closingBracket = if (braces) '}' else ')'
+        val openingBracket = if (insertLambda) '{' else '('
+        val closingBracket = if (insertLambda) '}' else ')'
 
         if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
             val offset1 = chars.skipSpaces(offset)
@@ -117,7 +116,7 @@ class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaI
         var openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)
         var inBracketsShift = 0
         if (openingBracketOffset == null) {
-            if (braces) {
+            if (insertLambda) {
                 if (completionChar == ' ' || completionChar == '{') {
                     context.setAddCompletionChar(false)
                 }
@@ -151,8 +150,8 @@ class KotlinFunctionInsertHandler(val caretPosition : CaretPosition, val lambdaI
 
         PsiDocumentManager.getInstance(context.getProject()).commitDocument(document)
 
-        if (lambdaInfo != null && lambdaInfo.explicitParameters) {
-            insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo.lambdaType)
+        if (insertLambda && lambdaInfo!!.explicitParameters) {
+            insertLambdaTemplate(context, TextRange(openingBracketOffset, closeBracketOffset!! + 1), lambdaInfo!!.lambdaType)
         }
     }
 

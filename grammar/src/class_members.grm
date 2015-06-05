@@ -111,7 +111,7 @@ parameter
   ;
 
 object
-  : "object" SimpleName (":" delegationSpecifier{","})? classBody? // Class body can be optional: this is a declaration
+  : "object" SimpleName primaryConstructor? (":" delegationSpecifier{","})? classBody? // Class body can be optional: this is a declaration
 
 secondaryConstructor
   : modifiers "constructor" valueParameters (":" constructorDelegationCall)? block

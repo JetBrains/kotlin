@@ -88,7 +88,8 @@ public class JetExceptionFilter implements Filter {
     }
 
     // Matches strings like "\tat test.TestPackage$foo$f$1.invoke(a.kt:3)\n"
-    private static final Pattern STACK_TRACE_ELEMENT_PATTERN = Pattern.compile("^\\s*at\\s+(.+)\\.(.+)\\((.+):(\\d+)\\)\\s*$");
+    //                   or "\tBreakpoint reached at test.TestPackage$foo$f$1.invoke(a.kt:3)\n"
+    private static final Pattern STACK_TRACE_ELEMENT_PATTERN = Pattern.compile("^[\\w|\\s]*at\\s+(.+)\\.(.+)\\((.+):(\\d+)\\)\\s*$");
 
     @Nullable
     private static StackTraceElement parseStackTraceLine(@NotNull String line) {

@@ -23,7 +23,7 @@ public final class InvokeConventionTest extends AbstractExpressionTest {
     }
 
     public void testInvokeMethod() throws Exception {
-        fooBoxIsValue("hello world!");
+        checkFooBoxIsOk();
     }
 
     public void testExplicitInvokeLambda() throws Exception {

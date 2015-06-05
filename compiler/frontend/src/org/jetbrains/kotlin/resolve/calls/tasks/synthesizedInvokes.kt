@@ -87,7 +87,14 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
 }
 
 fun isSynthesizedInvoke(descriptor: DeclarationDescriptor): Boolean {
-    return descriptor.getName() == OperatorConventions.INVOKE &&
-           (descriptor as? FunctionDescriptor)?.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED &&
-           descriptor.getContainingDeclaration() is FunctionClassDescriptor
+    if (descriptor.getName() != OperatorConventions.INVOKE || descriptor !is FunctionDescriptor) return false
+
+    var real: FunctionDescriptor = descriptor
+    while (!real.getKind().isReal()) {
+        // You can't override two different synthesized invokes at the same time
+        real = real.getOverriddenDescriptors().singleOrNull() ?: return false
+    }
+
+    return real.getKind() == CallableMemberDescriptor.Kind.SYNTHESIZED &&
+           real.getContainingDeclaration() is FunctionClassDescriptor
 }

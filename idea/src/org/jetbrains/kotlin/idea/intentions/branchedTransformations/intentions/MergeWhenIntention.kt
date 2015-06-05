@@ -20,6 +20,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.core.appendElement
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.matches
@@ -77,12 +79,19 @@ public class MergeWhenIntention : JetSelfTargetingRangeIntention<JetWhenExpressi
 
     private fun JetExpression?.mergeWith(that: JetExpression?): JetExpression? = when {
         this == null -> that
+
         that == null -> this
+
         else -> {
-            val block = if (this is JetBlockExpression) this else replaced(wrapInBlock())
+            val psiFactory = JetPsiFactory(this)
+            val block = if (this is JetBlockExpression)
+                this
+            else
+                replaced(psiFactory.createSingleStatementBlock(this))
+
             for (element in that.blockExpressionsOrSingle()) {
                 val expression = block.appendElement(element)
-                block.addBefore(JetPsiFactory(this).createNewLine(), expression)
+                block.addBefore(psiFactory.createNewLine(), expression)
             }
             block
         }

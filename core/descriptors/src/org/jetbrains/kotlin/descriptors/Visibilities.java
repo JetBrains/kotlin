@@ -173,6 +173,22 @@ public class Visibilities {
         }
     };
 
+    // Currently used as default visibility of FunctionDescriptor
+    // It's needed to prevent NPE when requesting non-nullable visibility of descriptor before `initialize` has been called
+    public static final Visibility UNKNOWN = new Visibility("unknown", false) {
+        @Override
+        public boolean mustCheckInImports() {
+            throw new IllegalStateException("This method shouldn't be invoked for UNKNOWN visibility");
+        }
+
+        @Override
+        protected boolean isVisible(
+                @NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from
+        ) {
+            return false;
+        }
+    };
+
     public static final Set<Visibility> INVISIBLE_FROM_OTHER_MODULES =
             Collections.unmodifiableSet(KotlinPackage.setOf(PRIVATE, PRIVATE_TO_THIS, INTERNAL, LOCAL));
 

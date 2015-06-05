@@ -8,6 +8,7 @@ class A {
     fun foo() {
         inlineFun ({ l ->
                        var zzz = l;
+                       zzz++
                    }, 11)
     }
 }

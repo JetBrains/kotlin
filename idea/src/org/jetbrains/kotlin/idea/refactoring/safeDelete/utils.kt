@@ -16,16 +16,15 @@
 
 package org.jetbrains.kotlin.idea.refactoring.safeDelete
 
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.lexer.JetTokens
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
 
 public fun PsiElement.canDeleteElement(): Boolean {
-    if (isObjectLiteral()) return false
+    if (this is JetObjectDeclaration && isObjectLiteral()) return false
 
     if (this is JetParameter) {
         val parameterList = getParent() as? JetParameterList ?: return false

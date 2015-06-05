@@ -1,0 +1,33 @@
+package test
+
+internal final class E1 : java.lang.Exception {
+    public constructor E1()
+    public final /*fake_override*/ fun getCause(): kotlin.Throwable?
+    public final /*fake_override*/ fun getMessage(): kotlin.String?
+    public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
+}
+
+internal final class E2 : java.lang.Exception {
+    public constructor E2()
+    public final /*fake_override*/ fun getCause(): kotlin.Throwable?
+    public final /*fake_override*/ fun getMessage(): kotlin.String?
+    public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
+}
+
+public/*package*/ open class JavaClass {
+    public/*package*/ constructor JavaClass()
+    public/*package*/ open fun testMethod(): kotlin.Unit
+}
+
+internal final class Test : test.Trait {
+    public constructor Test()
+    internal open /*fake_override*/ fun none(): kotlin.Unit
+    internal open /*fake_override*/ fun one(): kotlin.Unit
+    internal open /*fake_override*/ fun two(): kotlin.Unit
+}
+
+internal interface Trait {
+    internal open fun none(): kotlin.Unit
+    internal open fun one(): kotlin.Unit
+    internal open fun two(): kotlin.Unit
+}

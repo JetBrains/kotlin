@@ -57,4 +57,12 @@ public final class ForeachTest extends AbstractExpressionTest {
     public void testLabeledForWithWhile() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testForWithEmptyBody() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testForWithSideEffectImElementAccessAndWithEmptyBody() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

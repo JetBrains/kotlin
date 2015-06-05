@@ -1,0 +1,28 @@
+package test
+
+public open class DefaultArgumentInEnumConstructor {
+    public constructor DefaultArgumentInEnumConstructor()
+
+    // Static members
+    public/*package*/ final var entry: test.K!
+}
+
+internal final enum class K : kotlin.Enum<test.K> {
+    public enum entry ENTRY : test.K {
+        private constructor ENTRY()
+        invisible_fake final /*fake_override*/ val default: kotlin.String
+        public final /*fake_override*/ fun compareTo(/*0*/ test.K): kotlin.Int
+        public final /*fake_override*/ fun name(): kotlin.String
+        public final /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    private constructor K(/*0*/ kotlin.String = ...)
+    private final val default: kotlin.String
+    public final /*fake_override*/ fun compareTo(/*0*/ test.K): kotlin.Int
+    public final /*fake_override*/ fun name(): kotlin.String
+    public final /*fake_override*/ fun ordinal(): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.K
+    public final /*synthesized*/ fun values(): kotlin.Array<test.K>
+}

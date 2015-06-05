@@ -119,6 +119,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("ReplaceByLambdaTemplateNoClosingParenth.kt")
+    public void testReplaceByLambdaTemplateNoClosingParenth() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ReplaceByLambdaTemplateNoClosingParenth.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ReplaceFunctionCallByProperty.kt")
     public void testReplaceFunctionCallByProperty() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/ReplaceFunctionCallByProperty.kt");

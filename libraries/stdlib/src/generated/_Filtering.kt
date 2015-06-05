@@ -190,6 +190,133 @@ public fun String.drop(n: Int): String {
 }
 
 /**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): List<T> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): List<Boolean> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<Byte> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Char> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): List<Double> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<Float> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Long> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<Short> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a list containing all elements except last elements that satisfy the given [predicate].
+ */
+public inline fun <T> List<T>.dropLastWhile(predicate: (T) -> Boolean): List<T> {
+    for (index in lastIndex downTo 0) {
+        if (!predicate(this[index])) {
+            return take(index + 1)
+        }
+    }
+    return emptyList()
+}
+
+/**
+ * Returns a string containing all characters except last characters that satisfy the given [predicate].
+ */
+public inline fun String.dropLastWhile(predicate: (Char) -> Boolean): String {
+    return trimEnd(predicate)
+}
+
+/**
  * Returns a list containing all elements except first elements that satisfy the given [predicate].
  */
 public inline fun <T> Array<out T>.dropWhile(predicate: (T) -> Boolean): List<T> {
@@ -369,11 +496,7 @@ public fun <T> Stream<T>.dropWhile(predicate: (T) -> Boolean): Stream<T> {
  * Returns a string containing all characters except first characters that satisfy the given [predicate].
  */
 public inline fun String.dropWhile(predicate: (Char) -> Boolean): String {
-    for (index in 0..length - 1)
-        if (!predicate(get(index))) {
-            return substring(index)
-        }
-    return ""
+    return trimStart(predicate)
 }
 
 /**

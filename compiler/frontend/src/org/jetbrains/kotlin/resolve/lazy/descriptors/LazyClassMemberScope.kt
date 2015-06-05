@@ -134,8 +134,7 @@ public open class LazyClassMemberScope(
     private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name) {
         if (!KotlinBuiltIns.isData(thisDescriptor)) return
 
-        val constructor = getPrimaryConstructor()
-        if (constructor == null) return
+        val constructor = getPrimaryConstructor() ?: return
 
         val primaryConstructorParameters = declarationProvider.getOwnerInfo().getPrimaryConstructorParameters()
         assert(constructor.getValueParameters().size() == primaryConstructorParameters.size()) { "From descriptor: " + constructor.getValueParameters().size() + " but from PSI: " + primaryConstructorParameters.size() }
@@ -149,8 +148,6 @@ public open class LazyClassMemberScope(
 
                 val properties = getProperties(parameter.getName())
                 if (properties.isEmpty()) continue
-
-                assert(properties.size() == 1) { "A constructor parameter is resolved to more than one (" + properties.size() + ") property: " + parameter }
 
                 val property = properties.iterator().next() as PropertyDescriptor
 
@@ -275,15 +272,12 @@ public open class LazyClassMemberScope(
 
     protected open fun resolvePrimaryConstructor(): ConstructorDescriptor? {
         val ownerInfo = declarationProvider.getOwnerInfo()
-        val classOrObject = ownerInfo.getCorrespondingClassOrObject()
-        if (!thisDescriptor.getKind().isSingleton() && !classOrObject.isObjectLiteral()) {
-            assert(classOrObject is JetClass) { "No JetClass for $thisDescriptor" }
-            classOrObject as JetClass
+        val classOrObject = ownerInfo.getCorrespondingClassOrObject() ?: return null
 
-            if (DescriptorUtils.isTrait(thisDescriptor) && declarationProvider.getOwnerInfo().getPrimaryConstructorParameters().isEmpty()) {
-                return null
-            }
+        val hasPrimaryConstructor = classOrObject.hasExplicitPrimaryConstructor()
+        if (DescriptorUtils.isTrait(thisDescriptor) && !hasPrimaryConstructor) return null
 
+        if (DescriptorUtils.canHaveDeclaredConstructors(thisDescriptor) || hasPrimaryConstructor) {
             val constructor = c.functionDescriptorResolver.resolvePrimaryConstructorDescriptor(
                     thisDescriptor.getScopeForClassHeaderResolution(), thisDescriptor, classOrObject, trace)
             constructor ?: return null
@@ -298,10 +292,7 @@ public open class LazyClassMemberScope(
     }
 
     private fun resolveSecondaryConstructors(): Collection<ConstructorDescriptor> {
-        val classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject()
-        if (!DescriptorUtils.canHaveSecondaryConstructors(thisDescriptor)) return emptyList()
-        // Script classes have usual class descriptors but do not have conventional class body
-        if (classOrObject !is JetClass) return emptyList()
+        val classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject() ?: return emptyList()
 
         return classOrObject.getSecondaryConstructors().map { constructor ->
             val descriptor = c.functionDescriptorResolver.resolveSecondaryConstructorDescriptor(

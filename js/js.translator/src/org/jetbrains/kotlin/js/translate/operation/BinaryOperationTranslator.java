@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
+import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.TopLevelFIF;
 import org.jetbrains.kotlin.js.translate.intrinsic.operation.BinaryOperationIntrinsic;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
@@ -35,7 +36,11 @@ import org.jetbrains.kotlin.psi.JetBinaryExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
+import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+
+import java.util.Collections;
 
 import static org.jetbrains.kotlin.js.translate.operation.AssignmentTranslator.isAssignmentOperator;
 import static org.jetbrains.kotlin.js.translate.operation.CompareToTranslator.isCompareToCall;
@@ -107,6 +112,9 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         }
         if (isCompareToCall(operationToken, operationDescriptor)) {
             return CompareToTranslator.translate(expression, context());
+        }
+        if (isEquals()) {
+            return translateEquals();
         }
         assert operationDescriptor != null :
                 "Overloadable operations must have not null descriptor";
@@ -246,11 +254,33 @@ public final class BinaryOperationTranslator extends AbstractTranslator {
         return result;
     }
 
+    private boolean isEquals() {
+        return operationToken == JetTokens.EQEQ || operationToken == JetTokens.EXCLEQ;
+    }
+
+    private JsExpression translateEquals() {
+        JsExpression left = Translation.translateAsExpression(leftJetExpression, context());
+        JsExpression right = Translation.translateAsExpression(rightJetExpression, context());
+
+        if (left == JsLiteral.NULL || right == JsLiteral.NULL) {
+            JsBinaryOperator operator = operationToken == JetTokens.EXCLEQ ? JsBinaryOperator.NEQ : JsBinaryOperator.EQ;
+            return new JsBinaryOperation(operator, left, right);
+        }
+
+        JetType leftType = context().bindingContext().getType(leftJetExpression);
+        JetType rightType = context().bindingContext().getType(rightJetExpression);
+
+        if (leftType != null && TypeUtils.isNullableType(leftType) || rightType != null && TypeUtils.isNullableType(rightType)) {
+            return mayBeWrapWithNegation(TopLevelFIF.KOTLIN_EQUALS.apply(left, Collections.singletonList(right), context()));
+        }
+
+        return translateAsOverloadedBinaryOperation();
+    }
 
     @NotNull
     private JsExpression translateAsOverloadedBinaryOperation() {
         ResolvedCall<? extends FunctionDescriptor> resolvedCall = getFunctionResolvedCallWithAssert(expression, bindingContext());
-        JsExpression result = CallTranslator.INSTANCE$.translate(context(), resolvedCall, getReceiver());
+        JsExpression result = CallTranslator.translate(context(), resolvedCall, getReceiver());
         return mayBeWrapWithNegation(result);
     }
 

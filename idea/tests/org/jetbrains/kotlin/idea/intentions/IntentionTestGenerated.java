@@ -3247,6 +3247,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("dontAddRedundantParenthesis.kt")
+        public void testDontAddRedundantParenthesis() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/dontAddRedundantParenthesis.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("doubleNegation.kt")
         public void testDoubleNegation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertNegatedExpressionWithDemorgansLaw/doubleNegation.kt");
@@ -4588,6 +4594,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("StringTemplate.kt")
+        public void testStringTemplate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/StringTemplate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("TwoStatements.kt")
         public void testTwoStatements() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/TwoStatements.kt");
@@ -5761,6 +5773,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("literalsWhenTypeArgHasTypeArg.kt")
         public void testLiteralsWhenTypeArgHasTypeArg() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/literalsWhenTypeArgHasTypeArg.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapGet.kt")
+        public void testMapGet() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/mapGet.kt");
             doTest(fileName);
         }
 

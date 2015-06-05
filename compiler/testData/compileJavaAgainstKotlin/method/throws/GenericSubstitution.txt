@@ -1,0 +1,24 @@
+package test
+
+internal interface Base</*0*/ T> {
+    internal open fun one(/*0*/ T): kotlin.Unit
+}
+
+internal final class Derived : test.Base<kotlin.String> {
+    public constructor Derived()
+    internal open /*fake_override*/ fun one(/*0*/ kotlin.String): kotlin.Unit
+}
+
+internal final class E1 : java.lang.Exception {
+    public constructor E1()
+    public final /*fake_override*/ fun getCause(): kotlin.Throwable?
+    public final /*fake_override*/ fun getMessage(): kotlin.String?
+    public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
+}
+
+public/*package*/ open class JavaClass {
+    public/*package*/ constructor JavaClass()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}

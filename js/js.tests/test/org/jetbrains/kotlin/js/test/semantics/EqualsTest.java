@@ -53,4 +53,16 @@ public final class EqualsTest extends AbstractExpressionTest {
     public void testCompareNullableListWithNull() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testCompareToNullWithCustomEquals() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testCompareNullablesWithCustomEquals() throws Exception {
+        checkFooBoxIsOk();
+    }
+
+    public void testEqualsBehaviorOnNull() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

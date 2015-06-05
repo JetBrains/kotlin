@@ -1,0 +1,16 @@
+package test
+
+internal interface A</*0*/ T> {
+    internal abstract fun foo(): T
+}
+
+internal abstract class B : test.A<kotlin.Int> {
+    public constructor B()
+    internal abstract fun foo(): kotlin.Int
+}
+
+public/*package*/ open class ExtendsB : test.B {
+    public/*package*/ constructor ExtendsB()
+    public open fun foo(): kotlin.Int!
+    public/*package*/ open fun test(): kotlin.Unit
+}

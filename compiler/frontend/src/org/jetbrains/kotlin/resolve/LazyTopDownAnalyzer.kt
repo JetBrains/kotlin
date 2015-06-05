@@ -23,7 +23,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT
 import org.jetbrains.kotlin.diagnostics.Errors.MANY_COMPANION_OBJECTS
-import org.jetbrains.kotlin.diagnostics.Errors.SECONDARY_CONSTRUCTOR_IN_OBJECT
+import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_OBJECT
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -176,7 +176,7 @@ public class LazyTopDownAnalyzer {
                         }
                         else if (jetDeclaration is JetSecondaryConstructor) {
                             if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
-                                trace!!.report(SECONDARY_CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
+                                trace!!.report(CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
                             }
                             else if (classDescriptor.getKind() == ClassKind.INTERFACE) {
                                 trace!!.report(CONSTRUCTOR_IN_TRAIT.on(jetDeclaration))
@@ -199,10 +199,6 @@ public class LazyTopDownAnalyzer {
                 }
 
                 override fun visitSecondaryConstructor(constructor: JetSecondaryConstructor) {
-                    val classDescriptor = lazyDeclarationResolver!!.resolveToDescriptor(constructor.getClassOrObject()) as ClassDescriptor
-                    if (!DescriptorUtils.canHaveSecondaryConstructors(classDescriptor)) {
-                        return
-                    }
                     c.getSecondaryConstructors().put(constructor, lazyDeclarationResolver!!.resolveToDescriptor(constructor) as ConstructorDescriptor)
                     registerScope(c, constructor)
                 }

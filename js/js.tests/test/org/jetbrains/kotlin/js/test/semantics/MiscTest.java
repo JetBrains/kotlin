@@ -149,7 +149,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testPackageLevelVarInPackage() throws Exception {
-        fooBoxIsValue("OK");
+        checkFooBoxIsOk();
     }
 
     public void testPackageLevelVarInRoot() throws Exception {
@@ -161,7 +161,7 @@ public final class MiscTest extends AbstractExpressionTest {
     }
 
     public void testLocalVarAsFunction() throws Exception {
-        fooBoxIsValue("OK");
+        checkFooBoxIsOk();
     }
 
     public void testExclExclThrows() throws Exception {

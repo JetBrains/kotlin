@@ -327,6 +327,12 @@ public final class StaticContext {
                         return null;
                     }
 
+                    if (descriptor instanceof ConstructorDescriptor) {
+                        DeclarationDescriptor classDescriptor = descriptor.getContainingDeclaration();
+                        assert classDescriptor != null;
+                        descriptor = classDescriptor;
+                    }
+
                     String name = getNameForAnnotatedObjectWithOverrides(descriptor);
                     if (name != null) return getEnclosingScope(descriptor).declareName(name);
                     return null;

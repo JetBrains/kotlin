@@ -10,7 +10,7 @@
 
     <property name="max.heap.size.for.forked.jvm" value="1024m"/>
 
-    <property name="bootstrap.home" value="dependencies/bootstrap-compiler"/>
+    <property name="bootstrap.home" value="${basedir}/dependencies/bootstrap-compiler"/>
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
     <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
@@ -56,6 +56,7 @@
 
     <path id="classpath">
         <file file="${bootstrap.runtime}"/>
+        <file file="${bootstrap.reflect}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <pathelement location="${protobuf.jar}"/>
 
@@ -517,7 +518,7 @@
                 <available property="jssejar" value="${java.home}/lib/jsse.jar" file="${java.home}/lib/jsse.jar"/>
                 <available property="jssejar" value="${java.home}/../Classes/jsse.jar" file="${java.home}/../Classes/jsse.jar"/>
 
-                <proguard configuration="compiler.pro"/>
+                <proguard configuration="${basedir}/compiler/compiler.pro"/>
             </else>
         </if>
 
@@ -525,6 +526,7 @@
             <!-- TODO: don't include both to the jar: it's impossible to test changes to core in the local maven build without bootstrap -->
             <zipfileset src="${kotlin-home}/lib/kotlin-compiler.jar" includes="**"/>
             <zipfileset src="${bootstrap.runtime}" includes="**" excludes="META-INF/**"/>
+            <zipfileset src="${bootstrap.reflect}" includes="**" excludes="META-INF/**"/>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
@@ -549,6 +551,7 @@
                 <pathelement path="${idea.sdk}/core/intellij-core.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
                 <pathelement path="${bootstrap.runtime}"/>
+                <pathelement path="${bootstrap.reflect}"/>
             </classpath>
         </kotlinc>
 
@@ -573,7 +576,8 @@
             <compilerarg value="-Xlint:all"/>
             <classpath>
                 <file file="${bootstrap.runtime}"/>
-                <pathelement location="${dependencies.dir}/ant-1.7/lib/ant.jar"/>
+                <file file="${bootstrap.reflect}"/>
+                <pathelement location="${dependencies.dir}/ant-1.8/lib/ant.jar"/>
                 <pathelement location="${kotlin-home}/lib/kotlin-preloader.jar"/>
             </classpath>
         </javac2>
@@ -820,6 +824,14 @@
                 <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/core/runtime.jvm/src" includes="**/*"/>
                 <fileset dir="${basedir}/libraries/stdlib/src" includes="**/*"/>
+                <fileset dir="${output}/core.src" includes="**/*"/>
+            </jar-content>
+        </pack-runtime-jar>
+
+        <pack-runtime-jar jar-dir="${output}" jar-name="kotlin-reflect-sources-for-maven.jar"
+                          implementation-title="${manifest.impl.title.kotlin.jvm.reflect.sources}">
+            <jar-content>
+                <fileset dir="${basedir}/core/reflection.jvm/src" includes="**/*"/>
                 <fileset dir="${output}/core.src" includes="**/*"/>
             </jar-content>
         </pack-runtime-jar>

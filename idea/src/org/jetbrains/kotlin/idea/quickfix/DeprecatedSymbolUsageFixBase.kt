@@ -29,16 +29,15 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.CommentSaver
-import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
-import org.jetbrains.kotlin.idea.core.asExpression
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator
+import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.psiModificationUtil.moveFunctionLiteralOutsideParentheses
+import org.jetbrains.kotlin.idea.core.moveFunctionLiteralOutsideParentheses
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName
@@ -47,11 +46,12 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -108,16 +108,12 @@ public abstract class DeprecatedSymbolUsageFixBase(
         public fun replaceWithPattern(descriptor: DeclarationDescriptor, project: Project): ReplaceWith? {
             val annotationClass = descriptor.builtIns.getDeprecatedAnnotation()
             val annotation = descriptor.getAnnotations().findAnnotation(DescriptorUtils.getFqNameSafe(annotationClass)) ?: return null
-            //TODO: code duplication
-            val replaceWithValue = annotation.getAllValueArguments().entrySet()
-                                           .singleOrNull { it.key.getName().asString() == "replaceWith"/*TODO*/ }
-                                           ?.value?.getValue() as? AnnotationDescriptor ?: return null
-            val pattern = replaceWithValue.getAllValueArguments().entrySet()
-                                  .singleOrNull { it.key.getName().asString() == "expression"/*TODO*/ }
-                                  ?.value?.getValue() as? String ?: return null
+            val replaceWithValue = annotation.argumentValue("replaceWith"/*TODO: kotlin.deprecated::replaceWith.name*/) as? AnnotationDescriptor ?: return null
+            val pattern = replaceWithValue.argumentValue("expression"/*TODO: kotlin.ReplaceWith::expression.name*/) as? String ?: return null
             if (pattern.isEmpty()) return null
-            val argument = replaceWithValue.getAllValueArguments().entrySet().singleOrNull { it.key.getName().asString() == "imports"/*TODO*/ }?.value
-            val imports = (argument?.getValue() as? List<CompileTimeConstant<String>>)?.map { it.getValue() } ?: emptyList()
+            val importValues = replaceWithValue.argumentValue("imports"/*TODO: kotlin.ReplaceWith::imports.name*/) as? List<*> ?: return null
+            if (importValues.any { it !is StringValue }) return null
+            val imports = importValues.map { (it as StringValue).getValue() }
 
             // should not be available for descriptors with optional parameters if we cannot fetch default values for them (currently for library with no sources)
             if (descriptor is CallableDescriptor &&
@@ -167,38 +163,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
-            @data class IntroduceValueForParameter(
-                    val parameter: ValueParameterDescriptor,
-                    val value: JetExpression,
-                    val valueType: JetType?)
+            val introduceValuesForParameters = processValueParameterUsages(resolvedCall, replacement, bindingContext, project)
 
-            val introduceValuesForParameters = ArrayList<IntroduceValueForParameter>()
-
-            // process parameters in reverse order because default values can use previous parameters
-            for (parameter in descriptor.getValueParameters().reverse()) {
-                val argument = argumentForParameter(parameter, resolvedCall, bindingContext, project) ?: continue
-
-                argument.expression.put(PARAMETER_VALUE_KEY, parameter)
-
-                val parameterName = parameter.getName()
-                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
-                    it[ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY] == parameterName
-                }
-                usages.forEach {
-                    if (argument.isNamed) {
-                        (it.getParent() as? JetValueArgument)?.mark(MAKE_ARGUMENT_NAMED_KEY)
-                    }
-                    it.replace(argument.wrapped)
-                }
-
-                //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
-
-                if (argument.expression.shouldKeepValue(usages.size())) {
-                    introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
-                }
-            }
-
-            unwrapDefaultValues(replacement.expression)
+            processTypeParameterUsages(resolvedCall, replacement)
 
             val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToBeReplaced, bindingContext)
 
@@ -230,15 +197,98 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     .flatMap { file.getResolutionFacade().resolveImportReference(file, it) }
                     .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
-            result = postProcessInsertedExpression(result, wrapper.addedStatements)
-
-            val resultRange = if (wrapper.addedStatements.isEmpty())
+            var resultRange = if (wrapper.addedStatements.isEmpty())
                 PsiChildRange.singleElement(result)
             else
                 PsiChildRange(wrapper.addedStatements.first(), result)
+
+            resultRange = postProcessInsertedExpression(resultRange)
+
             commentSaver.restore(resultRange)
 
-            return result
+            return resultRange.last as JetExpression
+        }
+
+        private fun processValueParameterUsages(
+                resolvedCall: ResolvedCall<out CallableDescriptor>,
+                replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression,
+                bindingContext: BindingContext,
+                project: Project
+        ): Collection<IntroduceValueForParameter> {
+            val introduceValuesForParameters = ArrayList<IntroduceValueForParameter>()
+
+            // process parameters in reverse order because default values can use previous parameters
+            val parameters = resolvedCall.getResultingDescriptor().getValueParameters()
+            for (parameter in parameters.reverse()) {
+                val argument = argumentForParameter(parameter, resolvedCall, bindingContext, project) ?: continue
+
+                argument.expression.put(PARAMETER_VALUE_KEY, parameter)
+
+                val parameterName = parameter.getName()
+                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
+                    it[ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY] == parameterName
+                }
+                usages.forEach {
+                    val usageArgument = it.getParent() as? JetValueArgument
+                    if (argument.isNamed) {
+                        usageArgument?.mark(MAKE_ARGUMENT_NAMED_KEY)
+                    }
+                    if (argument.isDefaultValue) {
+                        usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
+                    }
+                    it.replace(argument.expression)
+                }
+
+                //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
+
+                if (argument.expression.shouldKeepValue(usages.size())) {
+                    introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
+                }
+            }
+
+            return introduceValuesForParameters
+        }
+
+        private data class IntroduceValueForParameter(
+                val parameter: ValueParameterDescriptor,
+                val value: JetExpression,
+                val valueType: JetType?)
+
+        private fun processTypeParameterUsages(resolvedCall: ResolvedCall<out CallableDescriptor>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {
+            val typeParameters = resolvedCall.getResultingDescriptor().getOriginal().getTypeParameters()
+
+            val callElement = resolvedCall.getCall().getCallElement()
+            val callExpression = callElement as? JetCallExpression
+            val explicitTypeArgs = callExpression?.getTypeArgumentList()?.getArguments()
+            if (explicitTypeArgs != null && explicitTypeArgs.size() != typeParameters.size()) return
+
+            for ((index, typeParameter) in typeParameters.withIndex()) {
+                val parameterName = typeParameter.getName()
+                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
+                    it[ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY] == parameterName
+                }
+
+                val factory = JetPsiFactory(callElement)
+                val typeElement = if (explicitTypeArgs != null) { // we use explicit type arguments if available to avoid shortening
+                    val _typeElement = explicitTypeArgs[index].getTypeReference()?.getTypeElement() ?: continue
+                    _typeElement.marked(USER_CODE_KEY)
+                }
+                else {
+                    val type = resolvedCall.getTypeArguments()[typeParameter]!!
+                    factory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)).getTypeElement()!!
+                }
+
+                for (usage in usages) {
+                    val parent = usage.getParent()
+                    if (parent is JetUserType) {
+                        parent.replace(typeElement)
+                    }
+                    else {
+                        //TODO: tests for this?
+                        usage.replace(JetPsiFactory(usage).createExpression(typeElement.getText()))
+                    }
+                }
+            }
         }
 
         private fun ConstructedExpressionWrapper.wrapExpressionForSafeCall(receiver: JetExpression, receiverType: JetType?) {
@@ -296,17 +346,15 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
         private class Argument(
                 val expression: JetExpression,
-                val wrapped: JetExpression,
                 val expressionType: JetType?,
-                val isNamed: Boolean = false)
+                val isNamed: Boolean = false,
+                val isDefaultValue: Boolean = false)
 
         private fun argumentForParameter(
                 parameter: ValueParameterDescriptor,
                 resolvedCall: ResolvedCall<out CallableDescriptor>,
                 bindingContext: BindingContext,
                 project: Project): Argument? {
-            //TODO: named parameters - keep named form if makes sense
-            //TODO: keep functional literal argument form
             val resolvedArgument = resolvedCall.getValueArguments()[parameter]!!
             when (resolvedArgument) {
                 is ExpressionValueArgument -> {
@@ -316,7 +364,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     if (valueArgument is FunctionLiteralArgument) {
                         expression.mark(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
                     }
-                    return Argument(expression, expression, bindingContext.getType(expression), isNamed = valueArgument.isNamed())
+                    return Argument(expression, bindingContext.getType(expression), isNamed = valueArgument.isNamed())
                 }
 
                 is DefaultValueArgument -> {
@@ -327,14 +375,12 @@ public abstract class DeprecatedSymbolUsageFixBase(
                         usages.forEach { it.put(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY, param.getName()) }
                     }
 
-                    // we temporary wrap default values into parenthesis so that we can safely mark them with DEFAULT_PARAMETER_VALUE_KEY
-                    val wrapped = JetPsiFactory(project).createExpressionByPattern("($0)", expression) as JetParenthesizedExpression
-                    wrapped.mark(DEFAULT_PARAMETER_VALUE_KEY)
+                    val expressionCopy = expression.copied()
 
                     // clean up user data in original
                     expression.forEachDescendantOfType<JetExpression> { it.clear(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY) }
 
-                    return Argument(wrapped.getExpression()!!, wrapped, null/*TODO*/)
+                    return Argument(expressionCopy, null/*TODO*/, isDefaultValue = true)
                 }
 
                 is VarargValueArgument -> {
@@ -342,7 +388,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     val single = arguments.singleOrNull()
                     if (single != null && single.getSpreadElement() != null) {
                         val expression = single.getArgumentExpression()!!.marked(USER_CODE_KEY)
-                        return Argument(expression, expression, bindingContext.getType(expression), isNamed = single.isNamed())
+                        return Argument(expression, bindingContext.getType(expression), isNamed = single.isNamed())
                     }
 
                     val elementType = parameter.getVarargElementType()!!
@@ -358,23 +404,27 @@ public abstract class DeprecatedSymbolUsageFixBase(
                         }
                         appendFixedText(")")
                     }
-                    return Argument(expression, expression, parameter.getType(), isNamed = single?.isNamed() ?: false)
+                    return Argument(expression, parameter.getType(), isNamed = single?.isNamed() ?: false)
                 }
 
                 else -> error("Unknown argument type: $resolvedArgument")
             }
         }
 
-        private fun postProcessInsertedExpression(result: JetExpression, additionalStatements: Collection<JetExpression>): JetExpression {
-            var allExpressions = listOf(result) + additionalStatements
+        private fun postProcessInsertedExpression(range: PsiChildRange): PsiChildRange {
+            val expressions = range.filterIsInstance<JetExpression>().toList()
 
-            allExpressions.forEach {
+            expressions.forEach {
                 introduceNamedArguments(it)
 
                 restoreFunctionLiteralArguments(it)
 
                 //TODO: do this earlier
                 dropArgumentsForDefaultValues(it)
+
+                simplifySpreadArrayOfArguments(it)
+
+                removeExplicitTypeArguments(it)
             }
 
 
@@ -391,28 +441,27 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
-            allExpressions = allExpressions.map {
+            val newExpressions = expressions.map {
                 ShortenReferences({ ShortenReferences.Options(removeThis = true) }).process(it, shortenFilter) as JetExpression
             }
 
-            allExpressions.forEach {
-                simplifySpreadArrayOfArguments(it)
-
+            newExpressions.forEach {
                 // clean up user data
                 it.forEachDescendantOfType<JetExpression> {
                     it.clear(USER_CODE_KEY)
                     it.clear(ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY)
+                    it.clear(ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY)
                     it.clear(PARAMETER_VALUE_KEY)
                     it.clear(RECEIVER_VALUE_KEY)
-                    it.clear(DEFAULT_PARAMETER_VALUE_KEY)
                     it.clear(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
                 }
                 it.forEachDescendantOfType<JetValueArgument> {
                     it.clear(MAKE_ARGUMENT_NAMED_KEY)
+                    it.clear(DEFAULT_PARAMETER_VALUE_KEY)
                 }
             }
 
-            return allExpressions.first()
+            return PsiChildRange(newExpressions.first(), newExpressions.last())
         }
 
         private fun introduceNamedArguments(result: JetExpression) {
@@ -439,6 +488,11 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     val name = argumentMatch.valueParameter.getName().asString()
                     //TODO: not always correct for vararg's
                     val newArgument = psiFactory.createArgument(argument.getArgumentExpression()!!, name, argument.getSpreadElement() != null)
+
+                    if (argument[DEFAULT_PARAMETER_VALUE_KEY]) {
+                        newArgument.mark(DEFAULT_PARAMETER_VALUE_KEY)
+                    }
+
                     argument.replace(newArgument)
                 }
             }
@@ -450,9 +504,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
             val argumentsToDrop = ArrayList<ValueArgument>()
 
             // we drop only those arguments that added to the code from some parameter's default
-            fun canDropArgument(argument: ValueArgument) = argument.getArgumentExpression()!![DEFAULT_PARAMETER_VALUE_KEY]
+            fun canDropArgument(argument: ValueArgument) = (argument as JetValueArgument)[DEFAULT_PARAMETER_VALUE_KEY]
 
-            //TODO: other types of calls
             result.forEachDescendantOfType<JetCallExpression> { callExpression ->
                 val resolvedCall = callExpression.getResolvedCall(newBindingContext) ?: return@forEachDescendantOfType
 
@@ -472,25 +525,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
         }
 
-        private fun unwrapDefaultValues(expression: JetExpression) {
-            val values = expression.collectDescendantsOfType<JetParenthesizedExpression> {
-                it[DEFAULT_PARAMETER_VALUE_KEY] && !it.getParent()[DEFAULT_PARAMETER_VALUE_KEY]
-            }
-
-            fun JetParenthesizedExpression.unwrap(): JetExpression {
-                if (!this[DEFAULT_PARAMETER_VALUE_KEY]) return this
-                var inner = getExpression()!!
-                if (inner is JetParenthesizedExpression) {
-                    inner = inner.unwrap()
-                }
-                val result = replace(inner) as JetExpression
-                result.mark(DEFAULT_PARAMETER_VALUE_KEY)
-                return result
-            }
-
-            values.forEach { it.unwrap() }
-        }
-
         private fun arrayOfFunctionName(elementType: JetType): String {
             return when {
                 KotlinBuiltIns.isInt(elementType) -> "kotlin.intArrayOf"
@@ -506,32 +540,27 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
         }
 
+        private fun removeExplicitTypeArguments(result: JetExpression) {
+            val intention = RemoveExplicitTypeArgumentsIntention()
+            result.collectDescendantsOfType<JetTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] }) { intention.isApplicableTo(it) }
+                    .forEach { it.delete() }
+        }
+
         private fun simplifySpreadArrayOfArguments(expression: JetExpression) {
             //TODO: test for nested
 
             val argumentsToExpand = ArrayList<Pair<JetValueArgument, Collection<JetValueArgument>>>()
 
-            expression.accept(object : JetTreeVisitorVoid() {
-                override fun visitArgument(argument: JetValueArgument) {
-                    super.visitArgument(argument)
-
-                    if (argument.getSpreadElement() != null && !argument.isNamed()) {
-                        val call = argument.getArgumentExpression() as? JetCallExpression
-                        if (call != null) {
-                            val resolvedCall = call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL))
-                            if (resolvedCall != null && CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
-                                argumentsToExpand.add(argument to call.getValueArguments())
-                            }
-                        }
+            expression.forEachDescendantOfType<JetValueArgument>(canGoInside = { !it[USER_CODE_KEY] }) { argument ->
+                if (argument.getSpreadElement() != null && !argument.isNamed()) {
+                    val argumentExpression = argument.getArgumentExpression() ?: return@forEachDescendantOfType
+                    val resolvedCall = argumentExpression.getResolvedCall(argumentExpression.analyze(BodyResolveMode.PARTIAL)) ?: return@forEachDescendantOfType
+                    val callExpression = resolvedCall.getCall().getCallElement() as? JetCallExpression ?: return@forEachDescendantOfType
+                    if (CompileTimeConstantUtils.isArrayMethodCall(resolvedCall)) {
+                        argumentsToExpand.add(argument to callExpression.getValueArguments())
                     }
                 }
-
-                override fun visitJetElement(element: JetElement) {
-                    if (!element[USER_CODE_KEY]) { // do not go inside original user's code
-                        super.visitJetElement(element)
-                    }
-                }
-            })
+            }
 
             for ((argument, replacements) in argumentsToExpand) {
                 argument.replaceByMultiple(replacements)
@@ -552,7 +581,6 @@ public abstract class DeprecatedSymbolUsageFixBase(
             }
         }
 
-        //TODO: do this before processing of optional parameters
         private fun restoreFunctionLiteralArguments(expression: JetExpression) {
             val callExpressions = ArrayList<JetCallExpression>()
 
@@ -595,11 +623,11 @@ public abstract class DeprecatedSymbolUsageFixBase(
         private val USER_CODE_KEY = Key<Unit>("USER_CODE")
         private val PARAMETER_VALUE_KEY = Key<ValueParameterDescriptor>("PARAMETER_VALUE")
         private val RECEIVER_VALUE_KEY = Key<Unit>("RECEIVER_VALUE")
-        private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
         private val WAS_FUNCTION_LITERAL_ARGUMENT_KEY = Key<Unit>("WAS_FUNCTION_LITERAL_ARGUMENT")
 
-        // this key is used on JetValueArgument
+        // these keys are used on JetValueArgument
         private val MAKE_ARGUMENT_NAMED_KEY = Key<Unit>("MAKE_ARGUMENT_NAMED")
+        private val DEFAULT_PARAMETER_VALUE_KEY = Key<Unit>("DEFAULT_PARAMETER_VALUE")
     }
 
     class ConstructedExpressionWrapper(

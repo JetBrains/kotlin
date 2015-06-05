@@ -16,13 +16,11 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
-import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kinds
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.storage.StorageManager
 import kotlin.platform.platformStatic
@@ -38,23 +36,30 @@ public class BuiltInFictitiousFunctionClassFactory(
     private data class KindWithArity(val kind: Kind, val arity: Int)
 
     companion object {
-        platformStatic public fun parseClassName(className: String, allowedKinds: Set<Kind>): KindWithArity? {
-            for (kind in allowedKinds) {
+        platformStatic public fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
+            for (kind in FunctionClassDescriptor.Kinds.byPackage(packageFqName)) {
                 val prefix = kind.classNamePrefix
                 if (!className.startsWith(prefix)) continue
 
-                val arity = try {
-                    className.substring(prefix.length()).toInt()
-                }
-                catch (e: NumberFormatException) {
-                    continue
-                }
+                val arity = toInt(className.substring(prefix.length())) ?: continue
 
                 // TODO: validate arity, should be <= 255 for functions, <= 254 for members/extensions
                 return KindWithArity(kind, arity)
             }
 
             return null
+        }
+
+        private fun toInt(s: String): Int? {
+            if (s.isEmpty()) return null
+
+            var result = 0
+            for (c in s) {
+                val d = c - '0'
+                if (d !in 0..9) return null
+                result = result * 10 + d
+            }
+            return result
         }
     }
 
@@ -65,14 +70,7 @@ public class BuiltInFictitiousFunctionClassFactory(
         if ("Function" !in className) return null // An optimization
 
         val packageFqName = classId.getPackageFqName()
-
-        val allowedKinds = when (packageFqName) {
-            BUILT_INS_PACKAGE_FQ_NAME -> Kinds.Functions
-            KOTLIN_REFLECT_FQ_NAME -> Kinds.KFunctions
-            else -> return null
-        }
-
-        val kindWithArity = parseClassName(className, allowedKinds) ?: return null
+        val kindWithArity = parseClassName(className, packageFqName) ?: return null
         val (kind, arity) = kindWithArity // KT-5100
 
         val containingPackageFragment = module.getPackage(packageFqName)!!.getFragments().single()

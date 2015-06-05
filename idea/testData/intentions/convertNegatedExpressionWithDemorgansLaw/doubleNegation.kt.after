@@ -3,5 +3,5 @@ fun String.not(): Boolean {
 }
 
 fun foo(a: Boolean, b: Boolean) : Boolean {
-    return !!"" && !b
+    return "" && !b
 }

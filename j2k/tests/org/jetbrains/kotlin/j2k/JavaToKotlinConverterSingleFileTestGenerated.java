@@ -4180,6 +4180,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/typeCastExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("castNullable.java")
+        public void testCastNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/castNullable.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("extendsWildcardCast.java")
         public void testExtendsWildcardCast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/extendsWildcardCast.java");

@@ -207,7 +207,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
                 val token = original.findElementAt(element.getStartOffsetIn(createdElement) + rangeInOriginal.getStartOffset())
                 if (token != null) {
                     val elementLength = element.getTextLength()
-                    for (originalElement in token.parents()) {
+                    for (originalElement in token.parentsWithSelf) {
                         val length = originalElement.getTextLength()
                         if (length < elementLength) continue
                         if (length == elementLength) {
@@ -396,7 +396,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
     }
 
     private fun PsiElement.anchorToAddCommentOrSpace(before: Boolean): PsiElement {
-        return parents()
+        return parentsWithSelf
                 .dropWhile { it.getParent() !is PsiFile && (if (before) it.getPrevSibling() else it.getNextSibling()) == null }
                 .first()
     }
@@ -448,7 +448,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
     private val nonSpaceAndNonEmptyFilter = { element: PsiElement -> element !is PsiWhiteSpace && element.getTextLength() > 0 }
 
     companion object {
-        //TODO: making it private causes error on runtime
+        //TODO: making it private causes error on runtime (KT-7874?)
         val PsiElement.tokenType: JetToken?
             get() = getNode().getElementType() as? JetToken
     }

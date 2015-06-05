@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.js.translate.intrinsic.operation
 
-import com.google.dart.compiler.backend.js.ast.*
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperation
+import com.google.dart.compiler.backend.js.ast.JsBinaryOperator
+import com.google.dart.compiler.backend.js.ast.JsExpression
+import com.google.dart.compiler.backend.js.ast.JsLiteral
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.patterns.NamePredicate
 import org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern
@@ -26,15 +29,13 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils.getOperationToken
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
-import org.jetbrains.kotlin.lexer.JetToken
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetBinaryExpression
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
-
 import java.util.Arrays
-import com.google.common.collect.ImmutableSet
 
 object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
@@ -42,15 +43,14 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
 
     private object LONG_EQUALS_ANY_INTRINSIC : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
-            val isNegated = getOperationToken(expression) == JetTokens.EXCLEQ
             val invokeEquals = JsAstUtils.equalsForObject(left, right)
-            return if (isNegated) JsAstUtils.not(invokeEquals) else invokeEquals
+            return if (expression.isNegated()) JsAstUtils.not(invokeEquals) else invokeEquals
         }
     }
 
     private object EqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
         override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsExpression {
-            val isNegated = getOperationToken(expression) == JetTokens.EXCLEQ
+            val isNegated = expression.isNegated()
             if (right == JsLiteral.NULL || left == JsLiteral.NULL) {
                 return TranslationUtils.nullCheck(if (right == JsLiteral.NULL) left else right, isNegated)
             }
@@ -81,12 +81,26 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
+    object EnumEqualsIntrinsic : AbstractBinaryOperationIntrinsic() {
+        override fun apply(expression: JetBinaryExpression, left: JsExpression, right: JsExpression, context: TranslationContext): JsBinaryOperation {
+            val operator = if (expression.isNegated()) JsBinaryOperator.REF_NEQ else JsBinaryOperator.REF_EQ
+            return JsBinaryOperation(operator, left, right)
+        }
+    }
+
     override public fun getSupportTokens() = OperatorConventions.EQUALS_OPERATIONS
 
-    override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
-        if (JsDescriptorUtils.isBuiltin(descriptor) || TopLevelFIF.EQUALS_IN_ANY.apply(descriptor)) {
-            return if (LONG_EQUALS_ANY.apply(descriptor)) LONG_EQUALS_ANY_INTRINSIC else EqualsIntrinsic
-        }
-        return null
-    }
+    override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? =
+            when {
+                (LONG_EQUALS_ANY.apply(descriptor)) -> LONG_EQUALS_ANY_INTRINSIC
+
+                DescriptorUtils.isEnumClass(descriptor.getContainingDeclaration()) -> EnumEqualsIntrinsic
+
+                JsDescriptorUtils.isBuiltin(descriptor) ||
+                TopLevelFIF.EQUALS_IN_ANY.apply(descriptor) -> EqualsIntrinsic
+
+                else -> null
+            }
+
+    private fun JetBinaryExpression.isNegated() = getOperationToken(this) == JetTokens.EXCLEQ
 }

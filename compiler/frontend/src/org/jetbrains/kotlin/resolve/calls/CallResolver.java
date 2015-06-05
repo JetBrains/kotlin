@@ -349,9 +349,12 @@ public class CallResolver {
         Collection<ConstructorDescriptor> constructors = delegateClassDescriptor.getConstructors();
 
         if (!isThisCall && currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
-            context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(
-                    (JetConstructorDelegationCall) calleeExpression.getParent()
-            ));
+            if (DescriptorUtils.canHaveDeclaredConstructors(currentClassDescriptor)) {
+                // Diagnostic is meaningless when reporting on interfaces and object
+                context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(
+                        (JetConstructorDelegationCall) calleeExpression.getParent()
+                ));
+            }
             if (call.isImplicit()) return OverloadResolutionResultsImpl.nameNotFound();
         }
 

@@ -161,6 +161,8 @@ public class JetAddImportAction(
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
             project.executeWriteCommand(QuickFixBundle.message("add.import")) {
+                if (!element.isValid()) return@executeWriteCommand
+
                 val file = element.getContainingFile() as JetFile
                 val descriptor = selectedVariant.descriptorToImport
                 // for class or package we use ShortenReferences because we not necessary insert an import but may want to insert partly qualified name

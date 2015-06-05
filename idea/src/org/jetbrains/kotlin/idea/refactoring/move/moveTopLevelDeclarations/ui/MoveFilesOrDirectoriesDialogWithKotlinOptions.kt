@@ -24,7 +24,7 @@ import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.psiUtil.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 import java.awt.GridBagConstraints
 import java.awt.Insets
 import javax.swing.JCheckBox

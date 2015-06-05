@@ -1,0 +1,30 @@
+package test
+
+internal final enum class MyEnum : kotlin.Enum<test.MyEnum> {
+    public enum entry ENTRY : test.MyEnum {
+        private constructor ENTRY()
+        kotlin.deprecated(value = "": kotlin.String) internal final /*fake_override*/ val ord: kotlin.Int
+        public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int
+        internal final /*fake_override*/ fun f(/*0*/ java.lang.Deprecated() kotlin.Int): kotlin.Unit
+        public final /*fake_override*/ fun name(): kotlin.String
+        public final /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    private constructor MyEnum(/*0*/ kotlin.deprecated(value = "": kotlin.String) kotlin.Int)
+    kotlin.deprecated(value = "": kotlin.String) internal final val ord: kotlin.Int
+    public final /*fake_override*/ fun compareTo(/*0*/ test.MyEnum): kotlin.Int
+    internal final fun f(/*0*/ java.lang.Deprecated() kotlin.Int): kotlin.Unit
+    public final /*fake_override*/ fun name(): kotlin.String
+    public final /*fake_override*/ fun ordinal(): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ kotlin.String): test.MyEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<test.MyEnum>
+}
+
+public open class kt4050 {
+    public constructor kt4050()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}

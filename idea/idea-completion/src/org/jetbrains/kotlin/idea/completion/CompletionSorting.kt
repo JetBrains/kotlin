@@ -44,7 +44,7 @@ import java.util.HashSet
 public fun CompletionResultSet.addKotlinSorting(parameters: CompletionParameters): CompletionResultSet {
     var sorter = CompletionSorter.defaultSorter(parameters, getPrefixMatcher())!!
 
-    sorter = sorter.weighBefore("stats", PriorityWeigher, DeprecatedWeigher, KindWeigher)
+    sorter = sorter.weighBefore("stats", DeprecatedWeigher, PriorityWeigher, KindWeigher)
 
     if (parameters.getCompletionType() == CompletionType.SMART) {
         sorter = sorter.weighBefore("kotlin.kind", NameSimilarityWeigher, SmartCompletionPriorityWeigher)

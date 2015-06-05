@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.argumentValue
+import org.jetbrains.kotlin.resolve.annotations.deprecatedAnnotationMessage
 
 public class DeprecatedSymbolValidator : SymbolUsageValidator {
     private val JAVA_DEPRECATED = FqName(javaClass<Deprecated>().getName())
@@ -89,26 +91,11 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
     }
 
     private fun createDeprecationDiagnostic(element: PsiElement, descriptor: DeclarationDescriptor, deprecated: AnnotationDescriptor): Diagnostic {
-        val message = getMessageFromAnnotationDescriptor(deprecated)
+        val message = deprecated.deprecatedAnnotationMessage()
         return if (message == null)
             Errors.DEPRECATED_SYMBOL.on(element, descriptor)
         else
             Errors.DEPRECATED_SYMBOL_WITH_MESSAGE.on(element, descriptor, message)
-    }
-
-    private fun getMessageFromAnnotationDescriptor(descriptor: AnnotationDescriptor): String? {
-        val parameterName = Name.identifier("value")
-        for ((parameterDescriptor, argument) in descriptor.getAllValueArguments()) {
-            if (parameterDescriptor.getName() == parameterName) {
-                val parameterValue = argument.getValue()
-                if (parameterValue is String) {
-                    return parameterValue
-                }
-                else
-                    return null
-            }
-        }
-        return null
     }
 
     private val PROPERTY_SET_OPERATIONS = TokenSet.create(JetTokens.EQ, JetTokens.PLUSEQ, JetTokens.MINUSEQ, JetTokens.MULTEQ, JetTokens.DIVEQ, JetTokens.PERCEQ, JetTokens.PLUSPLUS, JetTokens.MINUSMINUS)

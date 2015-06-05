@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
@@ -283,7 +283,7 @@ public class ArgumentTypeResolver {
             // For an unsafe call, we should not do it,
             // otherwise not-null will propagate to successive statements
             // Sample: x?.foo(x.bar()) // Inside foo call, x is not-nullable
-            if (PsiUtilPackage.isSafeCall(call)) {
+            if (CallUtilPackage.isSafeCall(call)) {
                 initialDataFlowInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.NULL);
             }
         }

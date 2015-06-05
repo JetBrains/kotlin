@@ -1900,6 +1900,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
+            @TestMetadata("AnnotationInAnnotationArguments.kt")
+            public void testAnnotationInAnnotationArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/AnnotationInAnnotationArguments.kt");
+                doTestCompiledKotlin(fileName);
+            }
+
             @TestMetadata("EnumArgumentWithCustomToString.kt")
             public void testEnumArgumentWithCustomToString() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/EnumArgumentWithCustomToString.kt");

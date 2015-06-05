@@ -1,0 +1,13 @@
+<project name="Ant Task Test" default="build">
+    <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
+
+    <target name="build">
+        <mkdir dir="${temp}/classes"/>
+        <javac srcdir="${test.data}" destdir="${temp}/classes" includeantruntime="false">
+            <withKotlin/>
+        </javac>
+        <jar destfile="${temp}/hello.jar">
+            <fileset dir="${temp}/classes"/>
+        </jar>
+    </target>
+</project>

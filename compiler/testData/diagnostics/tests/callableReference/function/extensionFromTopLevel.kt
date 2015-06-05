@@ -16,4 +16,8 @@ fun main() {
     checkSubtype<KExtensionFunction0<A, Unit>>(x)
     checkSubtype<KExtensionFunction1<A, Int, Unit>>(y)
     checkSubtype<KExtensionFunction0<A, String>>(z)
+
+    checkSubtype<KExtensionFunction<A, Unit>>(x)
+    checkSubtype<KExtensionFunction<A, Unit>>(y)
+    checkSubtype<KExtensionFunction<A, String>>(z)
 }

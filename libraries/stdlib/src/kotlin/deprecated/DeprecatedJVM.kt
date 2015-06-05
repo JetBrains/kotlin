@@ -31,12 +31,8 @@ public fun <K, V> sortedMap(vararg values: Pair<K, V>): SortedMap<K, V> = sorted
 /**
  * A helper method for creating a [[Callable]] from a function
  */
-deprecated("Use SAM constructor: Callable(...)")
-public /*inline*/ fun <T> callable(action: () -> T): Callable<T> {
-    return object: Callable<T> {
-        public override fun call() = action()
-    }
-}
+deprecated("Use SAM constructor: Callable(...)", ReplaceWith("Callable(action)", "java.util.concurrent.Callable"))
+public /*inline*/ fun <T> callable(action: () -> T): Callable<T> = Callable(action)
 
 deprecated("Use length() instead", ReplaceWith("length()"))
 public val String.size: Int

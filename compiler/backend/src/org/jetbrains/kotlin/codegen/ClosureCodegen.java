@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -337,8 +336,11 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
             iv.load(0, superClassAsmType);
 
-            if (superClassAsmType.equals(AsmTypes.LAMBDA)) {
-                iv.iconst(funDescriptor.getValueParameters().size());
+            if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE)) {
+                int arity = funDescriptor.getValueParameters().size();
+                if (funDescriptor.getExtensionReceiverParameter() != null) arity++;
+                if (funDescriptor.getDispatchReceiverParameter() != null) arity++;
+                iv.iconst(arity);
                 iv.invokespecial(superClassAsmType.getInternalName(), "<init>", "(I)V", false);
             }
             else {

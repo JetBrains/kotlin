@@ -76,8 +76,8 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                     is JetNamedFunction ->
                         addCorrespondingParameterDescriptor(getDescriptor(declaringElement, resolveSession) as FunctionDescriptor, parameter)
                     is JetPrimaryConstructor -> {
-                        val jetClass: JetClass = declaringElement.getContainingClass()
-                        val classDescriptor = getDescriptor(jetClass, resolveSession) as ClassDescriptor
+                        val jetClassOrObject: JetClassOrObject = declaringElement.getContainingClassOrObject()
+                        val classDescriptor = getDescriptor(jetClassOrObject, resolveSession) as ClassDescriptor
                         addCorrespondingParameterDescriptor(classDescriptor.getUnsubstitutedPrimaryConstructor(), parameter)
                     }
                     else ->  super.visitParameter(parameter)
@@ -105,7 +105,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 descriptors.add(descriptor)
                 if (descriptor is ClassDescriptor) {
                     // if class has primary constructor then we visit it later, otherwise add it artificially
-                    if (element !is JetClass || !element.hasExplicitPrimaryConstructor()) {
+                    if (element !is JetClassOrObject || !element.hasExplicitPrimaryConstructor()) {
                         if (descriptor.getUnsubstitutedPrimaryConstructor() != null) {
                             descriptors.add(descriptor.getUnsubstitutedPrimaryConstructor())
                         }

@@ -67,7 +67,7 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
                            .dropWhile { it.getElementType() != JetTokens.RBRACE } // search for '}'
                            .drop(1) // skip it
                            .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
-                           .firstOrNull() ?: blockNode.getLastChildNode()!!
+                           .firstOrNull() ?: blockNode
         return node.getTextRange()!!.getEndOffset()
     }
 }

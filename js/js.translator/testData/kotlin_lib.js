@@ -47,6 +47,10 @@
             return obj2 == null;
         }
 
+        if (obj2 == null) {
+            return false;
+        }
+
         if (Array.isArray(obj1)) {
             return Kotlin.arrayEquals(obj1, obj2);
         }

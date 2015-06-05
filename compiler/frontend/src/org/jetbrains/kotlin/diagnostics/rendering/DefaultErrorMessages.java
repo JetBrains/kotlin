@@ -155,7 +155,21 @@ public class DefaultErrorMessages {
         MAP.put(MIXING_NAMED_AND_POSITIONED_ARGUMENTS, "Mixing named and positioned arguments is not allowed");
         MAP.put(ARGUMENT_PASSED_TWICE, "An argument is already passed for this parameter");
         MAP.put(NAMED_PARAMETER_NOT_FOUND, "Cannot find a parameter with this name: {0}", ELEMENT_TEXT);
-        MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for non-Kotlin functions");
+        MAP.put(NAMED_ARGUMENTS_NOT_ALLOWED, "Named arguments are not allowed for {0}", new Renderer<BadNamedArgumentsTarget>() {
+            @NotNull
+            @Override
+            public String render(@NotNull BadNamedArgumentsTarget target) {
+                switch (target) {
+                    case NON_KOTLIN_FUNCTION:
+                        return "non-Kotlin functions";
+                    case INVOKE_ON_FUNCTION_TYPE:
+                        return "function types";
+                    default:
+                        throw new AssertionError(target);
+                }
+            }
+        });
+
         MAP.put(VARARG_OUTSIDE_PARENTHESES, "Passing value as a vararg is only allowed inside a parenthesized argument list");
         MAP.put(NON_VARARG_SPREAD, "The spread operator (*foo) may only be applied in a vararg position");
 
@@ -402,7 +416,7 @@ public class DefaultErrorMessages {
         MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");
 
         MAP.put(CYCLIC_CONSTRUCTOR_DELEGATION_CALL, "There's a cycle in the delegation calls chain");
-        MAP.put(SECONDARY_CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects");
+        MAP.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects");
         MAP.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without primary constructor");
         MAP.put(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED, "Primary constructor call expected");
         MAP.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Call to super is not allowed in enum constructor");

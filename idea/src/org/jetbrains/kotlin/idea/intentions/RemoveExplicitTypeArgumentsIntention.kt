@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
 
 public class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<JetTypeArgumentList>(RemoveExplicitTypeArgumentsIntention()) {
@@ -42,8 +43,9 @@ public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndepe
         val callExpression = element.getParent() as? JetCallExpression ?: return false
         if (callExpression.getTypeArguments().isEmpty()) return false
 
-        val context = callExpression.analyze()
-        val scope = context[BindingContext.RESOLUTION_SCOPE, callExpression] ?: return false
+        val context = callExpression.analyze(BodyResolveMode.PARTIAL)
+        val calleeExpression = callExpression.getCalleeExpression() ?: return false
+        val scope = context[BindingContext.RESOLUTION_SCOPE, calleeExpression/*TODO: discuss it*/] ?: return false
         val originalCall = callExpression.getResolvedCall(context) ?: return false
         val untypedCall = CallWithoutTypeArgs(originalCall.getCall())
 

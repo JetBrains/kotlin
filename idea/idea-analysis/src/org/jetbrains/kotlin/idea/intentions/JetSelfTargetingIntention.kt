@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 public abstract class JetSelfTargetingIntention<TElement : JetElement>(
         public val elementType: Class<TElement>,
@@ -55,13 +56,13 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
 
         var elementsToCheck: Sequence<PsiElement> = sequence { null }
         if (leaf1 != null) {
-            elementsToCheck += leaf1.parents().takeWhile { it != commonParent }
+            elementsToCheck += leaf1.parentsWithSelf.takeWhile { it != commonParent }
         }
         if (leaf2 != null) {
-            elementsToCheck += leaf2.parents().takeWhile { it != commonParent }
+            elementsToCheck += leaf2.parentsWithSelf.takeWhile { it != commonParent }
         }
         if (commonParent != null) {
-            elementsToCheck += commonParent.parents()
+            elementsToCheck += commonParent.parentsWithSelf
         }
 
         val elementsOfType = elementsToCheck.filterIsInstance(elementType)

@@ -16,45 +16,13 @@
 
 package org.jetbrains.kotlin.ant
 
+import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Task
+import org.apache.tools.ant.types.Commandline
 import org.apache.tools.ant.types.Path
 import org.apache.tools.ant.types.Reference
 import java.io.File
-import org.apache.tools.ant.BuildException
-import org.apache.tools.ant.types.Commandline
 import java.io.PrintStream
-import org.apache.tools.ant.AntClassLoader
-import java.lang.ref.SoftReference
-import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
-import java.net.JarURLConnection
-
-object CompilerClassLoaderHolder {
-    private var classLoaderRef = SoftReference<ClassLoader?>(null)
-
-    synchronized fun getOrCreateClassLoader(): ClassLoader {
-        val cached = classLoaderRef.get()
-        if (cached != null) return cached
-
-        val myLoader = javaClass.getClassLoader()
-        if (myLoader !is AntClassLoader) return myLoader
-
-        // Find path of kotlin-ant.jar in the filesystem and find kotlin-compiler.jar in the same directory
-        val resourcePath = "/" + javaClass.getName().replace('.', '/') + ".class"
-        val jarConnection = javaClass.getResource(resourcePath).openConnection() as? JarURLConnection
-                            ?: throw UnsupportedOperationException("Kotlin compiler Ant task should be loaded from the JAR file")
-        val antTaskJarPath = File(jarConnection.getJarFileURL().toURI())
-
-        val compilerJarPath = File(antTaskJarPath.getParent(), "kotlin-compiler.jar")
-        if (!compilerJarPath.exists()) {
-            throw IllegalStateException("kotlin-compiler.jar is not found in the directory of Kotlin Ant task")
-        }
-
-        val classLoader = ClassPreloadingUtils.preloadClasses(listOf(compilerJarPath), 4096, myLoader, null)
-        classLoaderRef = SoftReference(classLoader)
-
-        return classLoader
-    }
-}
 
 public abstract class KotlinCompilerBaseTask : Task() {
     protected abstract val compilerFqName: String
@@ -66,10 +34,13 @@ public abstract class KotlinCompilerBaseTask : Task() {
     public var nowarn: Boolean = false
     public var verbose: Boolean = false
     public var printVersion: Boolean = false
+    public var failOnError: Boolean = false
 
     public var noStdlib: Boolean = false
 
     public val additionalArguments: MutableList<Commandline.Argument> = arrayListOf()
+
+    internal var exitCode: Int? = null
 
     public fun createSrc(): Path {
         val srcPath = src
@@ -112,16 +83,16 @@ public abstract class KotlinCompilerBaseTask : Task() {
     final override fun execute() {
         fillArguments()
 
-        val compilerClass = CompilerClassLoaderHolder.getOrCreateClassLoader().loadClass(compilerFqName)
+        val compilerClass = KotlinAntTaskUtil.getOrCreateClassLoader().loadClass(compilerFqName)
         val compiler = compilerClass.newInstance()
         val exec = compilerClass.getMethod("execFullPathsInMessages", javaClass<PrintStream>(), javaClass<Array<String>>())
 
         log("Compiling ${src!!.list().toList()} => [${output!!.canonicalPath}]");
 
-        val exitCode = exec(compiler, System.err, args.copyToArray())
+        val result = exec(compiler, System.err, args.toTypedArray())
+        exitCode = (result as Enum<*>).ordinal()
 
-        // TODO: support failOnError attribute of javac
-        if ((exitCode as Enum<*>).ordinal() != 0) {
+        if (failOnError && exitCode != 0) {
             throw BuildException("Compile failed; see the compiler error output for details.")
         }
     }

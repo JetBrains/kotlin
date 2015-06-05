@@ -75,11 +75,11 @@ object CreateParameterActionFactory: JetSingleIntentionActionFactory() {
 
         fun chooseContainingClass(it: PsiElement): JetClass? {
             valOrVar = if (varExpected) JetValVar.Var else JetValVar.Val
-            return it.parents(false).firstIsInstanceOrNull<JetClassOrObject>() as? JetClass
+            return it.parents.firstIsInstanceOrNull<JetClassOrObject>() as? JetClass
         }
 
         // todo: skip lambdas for now because Change Signature doesn't apply to them yet
-        val container = refExpr.parents(false)
+        val container = refExpr.parents
                 .filter {
                     it is JetNamedFunction || it is JetPropertyAccessor || it is JetClassBody || it is JetClassInitializer ||
                     it is JetDelegationSpecifier

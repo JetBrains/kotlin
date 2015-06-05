@@ -61,6 +61,7 @@ public abstract class KotlinFindUsagesHandler<T extends PsiElement> extends Find
     }
 
     protected static boolean processUsage(Processor<UsageInfo> processor, PsiReference ref) {
+        if (ref == null) return true;
         TextRange rangeInElement = ref.getRangeInElement();
         return processor.process(new UsageInfo(ref.getElement(), rangeInElement.getStartOffset(), rangeInElement.getEndOffset(), false));
     }

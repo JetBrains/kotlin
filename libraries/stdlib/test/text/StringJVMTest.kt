@@ -65,6 +65,9 @@ class StringJVMTest {
         assertEquals(listOf("ab", "cd", "def", ""), s.split(isDigit))
         assertEquals(listOf("ab", "cd", "def3"), s.split(isDigit, 3))
 
+        // deprecation replacement equivalence
+        assertEquals("\\d".toPattern().split(s).toList(), s.split("\\d".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray().toList())
+
         fails {
             s.split(isDigit, -1)
         }

@@ -16,14 +16,29 @@
 
 package org.jetbrains.kotlin.ant;
 
+import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.MagicNames;
 import org.apache.tools.ant.taskdefs.Javac;
-import org.apache.tools.ant.taskdefs.compilers.DefaultCompilerAdapter;
 import org.apache.tools.ant.taskdefs.compilers.Javac13;
+import org.apache.tools.ant.taskdefs.condition.AntVersion;
+import org.apache.tools.ant.types.Commandline;
 import org.apache.tools.ant.types.Path;
+import org.jetbrains.annotations.NotNull;
 
-public class KotlinCompilerAdapter extends DefaultCompilerAdapter {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.apache.tools.ant.Project.MSG_WARN;
+
+public class KotlinCompilerAdapter extends Javac13 {
+    private static final List<String> KOTLIN_EXTENSIONS = Arrays.asList("kt", "kts");
+
     private Path externalAnnotations;
+    public List<Commandline.Argument> additionalArguments = new ArrayList<Commandline.Argument>(0);
 
     public void setExternalAnnotations(Path externalAnnotations) {
         this.externalAnnotations = externalAnnotations;
@@ -36,22 +51,93 @@ public class KotlinCompilerAdapter extends DefaultCompilerAdapter {
         return externalAnnotations.createPath();
     }
 
+    public Commandline.Argument createCompilerArg() {
+        Commandline.Argument argument = new Commandline.Argument();
+        additionalArguments.add(argument);
+        return argument;
+    }
+
+    @Override
+    public String[] getSupportedFileExtensions() {
+        List<String> result = KotlinPackage.plus(Arrays.asList(super.getSupportedFileExtensions()), KOTLIN_EXTENSIONS);
+        //noinspection SSBasedInspection
+        return result.toArray(new String[result.size()]);
+    }
+
     @Override
     public boolean execute() throws BuildException {
         Javac javac = getJavac();
 
-        Kotlin2JvmTask kotlinTask = new Kotlin2JvmTask();
-        kotlinTask.setOutput(javac.getDestdir());
-        kotlinTask.setClasspath(javac.getClasspath());
-        kotlinTask.setSrc(javac.getSrcdir());
-        kotlinTask.setExternalAnnotations(externalAnnotations);
+        checkAntVersion();
 
-        kotlinTask.execute();
+        Kotlin2JvmTask kotlinc = new Kotlin2JvmTask();
+        kotlinc.setFailOnError(javac.getFailonerror());
+        kotlinc.setOutput(javac.getDestdir());
+
+        Path classpath = javac.getClasspath();
+        if (classpath != null) {
+            kotlinc.setClasspath(classpath);
+        }
+
+        // We use the provided src dir instead of compileList, because the latter is insane:
+        // it is constructed only of sources which are newer than classes with the same name
+        kotlinc.setSrc(javac.getSrcdir());
+
+        kotlinc.setExternalAnnotations(externalAnnotations);
+
+        kotlinc.getAdditionalArguments().addAll(additionalArguments);
+
+        kotlinc.execute();
+        if (!Integer.valueOf(0).equals(kotlinc.getExitCode())) {
+            // Don't run javac if failOnError = false and there were errors on Kotlin sources
+            return false;
+        }
 
         javac.log("Running javac...");
 
-        Javac13 javac13 = new Javac13();
-        javac13.setJavac(javac);
-        return javac13.execute();
+        // Javac13#execute passes everything in compileList to javac, which doesn't recognize .kt files
+        compileList = filterOutKotlinSources(compileList);
+
+        addRuntimeToJavacClasspath(kotlinc);
+
+        return compileList.length == 0 || super.execute();
+    }
+
+    private void addRuntimeToJavacClasspath(@NotNull Kotlin2JvmTask kotlinc) {
+        for (String arg : kotlinc.getArgs()) {
+            // If "-no-stdlib" was specified explicitly, probably the user also wanted the javac classpath to not have it
+            if ("-no-stdlib".equals(arg)) return;
+        }
+
+        if (compileClasspath == null) {
+            compileClasspath = new Path(getProject());
+        }
+        compileClasspath.add(new Path(getProject(), KotlinAntTaskUtil.INSTANCE$.getRuntimeJar().getAbsolutePath()));
+    }
+
+    private void checkAntVersion() {
+        AntVersion checkVersion = new AntVersion();
+        checkVersion.setAtLeast("1.8.2");
+        if (!checkVersion.eval()) {
+            getJavac().log("<withKotlin> task requires Ant of version at least 1.8.2 to operate reliably. " +
+                           "Please upgrade or, as a workaround, make sure you have at least one Java source and " +
+                           "the output directory is clean before running this task. " +
+                           "You have: " + getProject().getProperty(MagicNames.ANT_VERSION), MSG_WARN);
+        }
+    }
+
+    @NotNull
+    private static File[] filterOutKotlinSources(@NotNull File[] files) {
+        List<File> nonKotlinSources = KotlinPackage.filterNot(files, new Function1<File, Boolean>() {
+            @Override
+            public Boolean invoke(File file) {
+                for (String extension : KOTLIN_EXTENSIONS) {
+                    if (file.getPath().endsWith("." + extension)) return true;
+                }
+                return false;
+            }
+        });
+
+        return nonKotlinSources.toArray(new File[nonKotlinSources.size()]);
     }
 }

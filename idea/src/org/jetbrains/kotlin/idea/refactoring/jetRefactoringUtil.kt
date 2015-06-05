@@ -21,7 +21,7 @@ import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.ConflictsUtil
 import com.intellij.psi.PsiFileFactory
-import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.JetFileType
 import com.intellij.openapi.project.Project
 import java.io.File
@@ -151,7 +151,7 @@ public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<J
 
 public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<JetElement> {
     fun getEnclosingDeclaration(element: PsiElement, strict: Boolean): PsiElement? {
-        return element.parents(!strict)
+        return (if (strict) element.parents else element.parentsWithSelf)
                 .filter {
                     (it is JetDeclarationWithBody && it !is JetFunctionLiteral)
                     || it is JetClassInitializer

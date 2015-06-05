@@ -76,18 +76,18 @@ class UnitType : NotNullType() {
     }
 }
 
-class NullType : Type() {
-    override val isNullable: Boolean = true
-
+open class ErrorType : Type() {
     override fun generateCode(builder: CodeBuilder) {
         builder.append("???")
     }
+
+    override val isNullable: Boolean
+        get() = false
 }
 
-class ErrorType : NotNullType() {
-    override fun generateCode(builder: CodeBuilder) {
-        builder.append("UNRESOLVED_TYPE")
-    }
+class NullType : ErrorType() {
+    override val isNullable: Boolean
+        get() = true
 }
 
 class ClassType(val referenceElement: ReferenceElement, nullability: Nullability, settings: ConverterSettings)

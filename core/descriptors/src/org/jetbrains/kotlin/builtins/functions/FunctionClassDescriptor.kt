@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
+import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinClass
 import org.jetbrains.kotlin.storage.StorageManager
@@ -50,11 +52,11 @@ public class FunctionClassDescriptor(
         val arity: Int
 ) : AbstractClassDescriptor(storageManager, functionKind.numberedClassName(arity)) {
 
-    public enum class Kind(val classNamePrefix: String) {
-        Function("Function"),
-        KFunction("KFunction"),
-        KMemberFunction("KMemberFunction"),
-        KExtensionFunction("KExtensionFunction");
+    public enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
+        Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
+        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction"),
+        KMemberFunction(KOTLIN_REFLECT_FQ_NAME, "KMemberFunction"),
+        KExtensionFunction(KOTLIN_REFLECT_FQ_NAME, "KExtensionFunction");
         // TODO: KMemberExtensionFunction
 
         fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
@@ -64,7 +66,13 @@ public class FunctionClassDescriptor(
 
     public object Kinds {
         val Functions = EnumSet.of(Kind.Function)
-        val KFunctions = EnumSet.of(Kind.KFunction, Kind.KMemberFunction, Kind.KExtensionFunction)
+        val KFunctions = EnumSet.complementOf(Functions)
+
+        fun byPackage(fqName: FqName) = when (fqName) {
+            BUILT_INS_PACKAGE_FQ_NAME -> Functions
+            KOTLIN_REFLECT_FQ_NAME -> KFunctions
+            else -> error(fqName)
+        }
     }
 
     private val staticScope = StaticScopeForKotlinClass(this)
@@ -91,7 +99,9 @@ public class FunctionClassDescriptor(
     override fun getSource() = SourceElement.NO_SOURCE
 
     private inner class FunctionTypeConstructor : AbstractClassTypeConstructor() {
-        private val parameters = storageManager.createLazyValue {
+        private val parameters: List<TypeParameterDescriptor>
+
+        init {
             val result = ArrayList<TypeParameterDescriptor>()
 
             fun typeParameter(variance: Variance, name: String) {
@@ -113,26 +123,33 @@ public class FunctionClassDescriptor(
 
             typeParameter(Variance.OUT_VARIANCE, "R")
 
-            result.toReadOnlyList()
+            parameters = result.toReadOnlyList()
         }
 
         private val supertypes = storageManager.createLazyValue {
             val result = ArrayList<JetType>(2)
 
-            fun add(packageFragment: PackageFragmentDescriptor, name: Name, annotations: Annotations) {
+            fun add(
+                    packageFragment: PackageFragmentDescriptor,
+                    name: Name,
+                    annotations: Annotations,
+                    supertypeArguments: (superParameters: List<TypeParameterDescriptor>) -> List<TypeProjection>
+            ) {
                 val descriptor = packageFragment.getMemberScope().getClassifier(name) as? ClassDescriptor
                                  ?: error("Class $name not found in $packageFragment")
 
-                // Substitute K type parameters of the super class with our last K type parameters
                 val typeConstructor = descriptor.getTypeConstructor()
-                val superParameters = typeConstructor.getParameters()
-                val arguments = getParameters().takeLast(superParameters.size()).map { TypeProjectionImpl(it.getDefaultType()) }
+                val arguments = supertypeArguments(typeConstructor.getParameters())
 
                 result.add(JetTypeImpl(annotations, typeConstructor, false, arguments, descriptor.getMemberScope(arguments)))
             }
 
             // Add unnumbered base class, e.g. KMemberFunction for KMemberFunction5, or Function for Function0
-            add(containingDeclaration, Name.identifier(functionKind.classNamePrefix), Annotations.EMPTY)
+            add(containingDeclaration, Name.identifier(functionKind.classNamePrefix), Annotations.EMPTY) { superParameters ->
+                // Substitute type parameters of the super class with our type parameters with the same names
+                val parametersByName = getParameters().toMap { it.getName() }
+                superParameters.map { TypeProjectionImpl(parametersByName[it.getName()]!!.getDefaultType()) }
+            }
 
             // For K*Functions, add corresponding numbered Function class, e.g. Function2 for KMemberFunction1
             if (functionKind in Kinds.KFunctions) {
@@ -150,13 +167,16 @@ public class FunctionClassDescriptor(
                             AnnotationsImpl(listOf(KotlinBuiltIns.getInstance().createExtensionAnnotation()))
                         else Annotations.EMPTY
 
-                add(kotlinPackageFragment, Kind.Function.numberedClassName(functionArity), annotations)
+                add(kotlinPackageFragment, Kind.Function.numberedClassName(functionArity), annotations) {
+                    // Substitute all type parameters of the super class with all our type parameters
+                    getParameters().map { TypeProjectionImpl(it.getDefaultType()) }
+                }
             }
 
             result.toReadOnlyList()
         }
 
-        override fun getParameters() = parameters()
+        override fun getParameters() = parameters
 
         override fun getSupertypes(): Collection<JetType> = supertypes()
 

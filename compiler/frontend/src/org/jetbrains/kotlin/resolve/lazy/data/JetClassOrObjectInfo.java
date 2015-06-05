@@ -90,6 +90,12 @@ public abstract class JetClassOrObjectInfo<E extends JetClassOrObject> implement
         return body == null ? Collections.<JetAnnotationEntry>emptyList() : body.getDanglingAnnotations();
     }
 
+    @NotNull
+    @Override
+    public List<? extends JetParameter> getPrimaryConstructorParameters() {
+        return element.getPrimaryConstructorParameters();
+    }
+
     @Override
     public String toString() {
         return "info for " + element.getText();

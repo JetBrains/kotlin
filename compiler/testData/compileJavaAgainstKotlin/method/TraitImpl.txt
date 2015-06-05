@@ -1,0 +1,12 @@
+package test
+
+internal interface Trait {
+    internal open fun generic(/*0*/ kotlin.List<kotlin.String>): kotlin.Unit
+    internal open fun simple(): kotlin.Unit
+}
+
+public/*package*/ abstract class TraitImpl : test.Trait {
+    public/*package*/ constructor TraitImpl()
+    internal open /*fake_override*/ fun generic(/*0*/ kotlin.List<kotlin.String>): kotlin.Unit
+    internal open /*fake_override*/ fun simple(): kotlin.Unit
+}

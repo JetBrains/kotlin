@@ -111,13 +111,6 @@ public final class PsiUtils {
         return (binaryExpression.getOperationToken() == JetTokens.IN_KEYWORD);
     }
 
-    @NotNull
-    public static JetExpression getLoopBody(@NotNull JetLoopExpression expression) {
-        JetExpression body = expression.getBody();
-        assert body != null : "Loops cannot have null bodies.";
-        return body;
-    }
-
     @Nullable
     public static JetParameter getLoopParameter(@NotNull JetForExpression expression) {
         return expression.getLoopParameter();
