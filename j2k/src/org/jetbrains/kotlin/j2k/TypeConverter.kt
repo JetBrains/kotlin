@@ -291,7 +291,7 @@ class TypeConverter(val converter: Converter) {
                 val operationType = parent.getOperationTokenType()
                 if (operationType == JavaTokenType.EQEQ || operationType == JavaTokenType.NE) {
                     val otherOperand = if (usage == parent.getLOperand()) parent.getROperand() else parent.getLOperand()
-                    return otherOperand is PsiLiteralExpression && otherOperand.getType() == PsiType.NULL
+                    return otherOperand?.isNullLiteral() ?: false
                 }
             }
             else if (parent is PsiVariable && usage == parent.getInitializer() && parent.isEffectivelyFinal()) {

@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.j2k
 
+import com.intellij.codeInsight.generation.GenerateEqualsHelper
 import com.intellij.psi.*
-import com.intellij.psi.CommonClassNames.JAVA_LANG_DOUBLE
-import com.intellij.psi.CommonClassNames.JAVA_LANG_FLOAT
-import com.intellij.psi.CommonClassNames.JAVA_LANG_INTEGER
-import com.intellij.psi.CommonClassNames.JAVA_LANG_LONG
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
+import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.KotlinLightField
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 trait ExpressionConverter {
     fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression
@@ -105,19 +103,51 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     }
 
     override fun visitBinaryExpression(expression: PsiBinaryExpression) {
-        var lhs = codeConverter.convertExpression(expression.getLOperand(), null)
-        var rhs = codeConverter.convertExpression(expression.getROperand(), null)
+        val left = expression.getLOperand()
+        val right = expression.getROperand()
+        var leftConverted = codeConverter.convertExpression(left, null)
+        var rightConverted = codeConverter.convertExpression(right, null)
 
-        if (expression.getOperationTokenType() in NON_NULL_OPERAND_OPS) {
-            lhs = BangBangExpression.surroundIfNullable(lhs)
-            rhs = BangBangExpression.surroundIfNullable(rhs)
+        val operationTokenType = expression.getOperationTokenType()
+        if (operationTokenType in NON_NULL_OPERAND_OPS) {
+            leftConverted = BangBangExpression.surroundIfNullable(leftConverted)
+            rightConverted = BangBangExpression.surroundIfNullable(rightConverted)
         }
-        if (expression.getOperationTokenType() == JavaTokenType.GTGTGT) {
-            result = MethodCallExpression.buildNotNull(lhs, "ushr", listOf(rhs))
+
+        if (operationTokenType == JavaTokenType.GTGTGT) {
+            result = MethodCallExpression.buildNotNull(leftConverted, "ushr", listOf(rightConverted))
         }
         else {
-            result = BinaryExpression(lhs, rhs, getOperatorString(expression.getOperationSign().getTokenType()))
+            var operatorString = getOperatorString(operationTokenType)
+            if (operationTokenType == JavaTokenType.EQEQ || operationTokenType == JavaTokenType.NE) {
+                if (!canKeepEqEq(left, right)) {
+                    operatorString += "="
+                }
+            }
+            result = BinaryExpression(leftConverted, rightConverted, operatorString)
         }
+    }
+
+    private fun canKeepEqEq(left: PsiExpression, right: PsiExpression?): Boolean {
+        if (left.isNullLiteral() || (right?.isNullLiteral() ?: false)) return true
+        val type = left.getType()
+        when (type) {
+            is PsiPrimitiveType, is PsiArrayType -> return true
+
+            is PsiClassType -> {
+                val psiClass = type.resolve() ?: return false
+                if (!psiClass.hasModifierProperty(PsiModifier.FINAL)) return false
+
+                val equalsSignature = GenerateEqualsHelper.getEqualsSignature(converter.project, GlobalSearchScope.allScope(converter.project))
+                val equalsMethod = MethodSignatureUtil.findMethodBySignature(psiClass, equalsSignature, true)
+                if (equalsMethod != null && equalsMethod.getContainingClass()?.getQualifiedName() != CommonClassNames.JAVA_LANG_OBJECT) return false
+
+                return true
+            }
+
+            else -> return false
+        }
+
     }
 
     private val NON_NULL_OPERAND_OPS = setOf(
