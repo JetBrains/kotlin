@@ -988,6 +988,20 @@
         level="WEAK WARNING"
         />
 
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateInspection"
+                       displayName="Remove redundant curly braces in string template"
+                       groupName="Kotlin"
+                       enabledByDefault="true"
+                       level="WEAK WARNING"
+          />
+
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.SimplifyBooleanWithConstantsInspection"
+                       displayName="Simplify boolean expression with constants"
+                       groupName="Kotlin"
+                       enabledByDefault="true"
+                       level="WEAK WARNING"
+          />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedSymbolInspection"
         displayName="Unused Symbol"
         groupName="Kotlin"

@@ -17,15 +17,18 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+
+public class SimplifyBooleanWithConstantsInspection : IntentionBasedInspection<JetBinaryExpression>(SimplifyBooleanWithConstantsIntention())
 
 public class SimplifyBooleanWithConstantsIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Simplify boolean expression") {
 

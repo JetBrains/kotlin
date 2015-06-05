@@ -17,12 +17,15 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.JetBlockStringTemplateEntry
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import java.util.regex.*
-import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.psi.JetBlockStringTemplateEntry
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetStringTemplateEntryWithExpression
+import java.util.regex.Pattern
+
+public class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<JetBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
 
 public class RemoveCurlyBracesFromTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
     override fun isApplicableTo(element: JetBlockStringTemplateEntry): Boolean {
