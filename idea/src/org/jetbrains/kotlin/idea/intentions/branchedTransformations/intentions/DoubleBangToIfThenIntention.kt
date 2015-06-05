@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.template.Template
 import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.TemplateEditingAdapter
@@ -27,7 +28,10 @@ import org.apache.commons.lang.StringEscapeUtils.escapeJava
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.JetTypeLookupExpression
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.*
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVariable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetPostfixExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
@@ -35,7 +39,7 @@ import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetThrowExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression") {
+public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPostfixExpression>(javaClass(), "Replace '!!' expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: JetPostfixExpression): TextRange? {
         return if (element.getOperationToken() == JetTokens.EXCLEXCL && element.getBaseExpression() != null)
             element.getOperationReference().getTextRange()

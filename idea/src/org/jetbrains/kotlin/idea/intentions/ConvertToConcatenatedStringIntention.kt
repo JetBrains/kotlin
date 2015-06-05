@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 
-public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<JetStringTemplateExpression>(javaClass(), "Convert template to concatenated string") {
+public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndependentIntention<JetStringTemplateExpression>(javaClass(), "Convert template to concatenated string"), LowPriorityAction {
     override fun isApplicableTo(element: JetStringTemplateExpression): Boolean {
         if (element.getLastChild().getNode().getElementType() != JetTokens.CLOSING_QUOTE) return false // not available for unclosed literal
         return element.getEntries().any { it is JetStringTemplateEntryWithExpression }

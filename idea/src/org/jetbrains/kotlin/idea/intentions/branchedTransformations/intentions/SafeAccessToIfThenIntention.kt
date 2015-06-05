@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableVari
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class SafeAccessToIfThenIntention : JetSelfTargetingRangeIntention<JetSafeQualifiedExpression>(javaClass(), "Replace safe access expression with 'if' expression") {
+public class SafeAccessToIfThenIntention : JetSelfTargetingRangeIntention<JetSafeQualifiedExpression>(javaClass(), "Replace safe access expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: JetSafeQualifiedExpression): TextRange? {
         if (element.getSelectorExpression() == null) return null
         return element.getOperationTokenNode().getTextRange()

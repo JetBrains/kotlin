@@ -16,16 +16,20 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.psi.JetIfExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
+import org.jetbrains.kotlin.psi.JetReturnExpression
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'if' expression") {
+public class UnfoldReturnToIfIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: JetReturnExpression): TextRange? {
         val ifExpression = element.getReturnedExpression() as? JetIfExpression ?: return null
         return TextRange(element.startOffset, ifExpression.getIfKeyword().endOffset)

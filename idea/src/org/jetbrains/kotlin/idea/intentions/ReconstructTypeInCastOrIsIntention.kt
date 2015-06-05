@@ -16,19 +16,18 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.idea.core.replaced
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
 
-public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Replace by reconstructed type") {
+public class ReconstructTypeInCastOrIsIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Replace by reconstructed type"), LowPriorityAction {
     override fun isApplicableTo(element: JetTypeReference): Boolean {
         // Only user types (like Foo) are interesting
         val typeElement = element.getTypeElement() as? JetUserType ?: return false

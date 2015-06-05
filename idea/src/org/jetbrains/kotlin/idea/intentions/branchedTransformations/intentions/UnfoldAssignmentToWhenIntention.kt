@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.JetWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldAssignmentToWhenIntention : JetSelfTargetingRangeIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'when' expression" ) {
+public class UnfoldAssignmentToWhenIntention : JetSelfTargetingRangeIntention<JetBinaryExpression>(javaClass(), "Replace assignment with 'when' expression" ), LowPriorityAction {
     override fun applicabilityRange(element: JetBinaryExpression): TextRange? {
         if (element.getOperationToken() !in JetTokens.ALL_ASSIGNMENTS) return null
         if (element.getLeft() == null) return null

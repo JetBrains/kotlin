@@ -16,24 +16,16 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.google.common.collect.Lists
-import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInsight.template.*
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.j2k.isConstructor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -43,7 +35,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.ArrayList
 
-public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCallableDeclaration>(javaClass(), "Specify type explicitly") {
+public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCallableDeclaration>(javaClass(), "Specify type explicitly"), LowPriorityAction {
     override fun isApplicableTo(element: JetCallableDeclaration, caretOffset: Int): Boolean {
         if (element.getContainingFile() is JetCodeFragment) return false
         if (element is JetFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?

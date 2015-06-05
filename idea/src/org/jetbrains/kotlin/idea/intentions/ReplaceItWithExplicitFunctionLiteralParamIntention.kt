@@ -16,28 +16,21 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.PsiElementBaseIntentionAction
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameExpression>(
+public class ReplaceItWithExplicitFunctionLiteralParamIntention() : JetSelfTargetingOffsetIndependentIntention<JetSimpleNameExpression> (
         javaClass(), "Replace 'it' with explicit parameter"
-) {
+), LowPriorityAction {
     override fun isApplicableTo(element: JetSimpleNameExpression)
             = isAutoCreatedItUsage(element)
 

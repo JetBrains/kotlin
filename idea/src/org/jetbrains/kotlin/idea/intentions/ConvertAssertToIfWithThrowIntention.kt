@@ -16,16 +16,17 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace 'assert' with 'if' statement") {
+public class ConvertAssertToIfWithThrowIntention : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Replace 'assert' with 'if' statement"), LowPriorityAction {
     override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
         val callee = element.getCalleeExpression() ?: return false
         if (!callee.getTextRange().containsOffset(caretOffset)) return false

@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedUnfoldingUtils
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.copied
+import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression") {
+public class UnfoldReturnToWhenIntention : JetSelfTargetingRangeIntention<JetReturnExpression>(javaClass(), "Replace return with 'when' expression"), LowPriorityAction {
     override fun applicabilityRange(element: JetReturnExpression): TextRange? {
         val whenExpr = element.getReturnedExpression() as? JetWhenExpression ?: return null
         if (!JetPsiUtil.checkWhenExpressionHasSingleElse(whenExpr)) return null

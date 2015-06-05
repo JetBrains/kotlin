@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Convert receiver to parameter") {
+public class ConvertReceiverToParameterIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeReference>(javaClass(), "Convert receiver to parameter"), LowPriorityAction {
     override fun isApplicableTo(element: JetTypeReference): Boolean {
         return (element.getParent() as? JetNamedFunction)?.getReceiverTypeReference() == element
     }

@@ -16,18 +16,18 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.psi.JetPsiFactory
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.resolve.BindingContext
 
-public class SpecifyExplicitLambdaSignatureIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Specify explicit lambda signature") {
+public class SpecifyExplicitLambdaSignatureIntention : JetSelfTargetingIntention<JetFunctionLiteralExpression>(javaClass(), "Specify explicit lambda signature"), LowPriorityAction {
 
     override fun isApplicableTo(element: JetFunctionLiteralExpression, caretOffset: Int): Boolean {
         val arrow = element.getFunctionLiteral().getArrow()

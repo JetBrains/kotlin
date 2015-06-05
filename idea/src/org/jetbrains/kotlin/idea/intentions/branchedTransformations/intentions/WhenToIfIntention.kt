@@ -16,13 +16,14 @@
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
 import org.jetbrains.kotlin.psi.*
 
-public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Replace 'when' with 'if'") {
+public class WhenToIfIntention : JetSelfTargetingRangeIntention<JetWhenExpression>(javaClass(), "Replace 'when' with 'if'"), LowPriorityAction {
     override fun applicabilityRange(element: JetWhenExpression): TextRange? {
         val entries = element.getEntries()
         if (entries.isEmpty()) return null

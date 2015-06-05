@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions.declarations
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.util.TextRange
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 
-public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<JetCallableDeclaration>(javaClass(), "Convert member to extension") {
+public class ConvertMemberToExtensionIntention : JetSelfTargetingRangeIntention<JetCallableDeclaration>(javaClass(), "Convert member to extension"), LowPriorityAction {
     override fun applicabilityRange(element: JetCallableDeclaration): TextRange? {
         val classBody = element.getParent() as? JetClassBody ?: return null
         if (classBody.getParent() !is JetClass) return null
