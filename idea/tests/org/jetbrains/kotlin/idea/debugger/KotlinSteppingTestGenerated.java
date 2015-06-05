@@ -286,9 +286,9 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/stepOut"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("fieldWatchpoints.kt")
-        public void testFieldWatchpoints() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/fieldWatchpoints.kt");
+        @TestMetadata("fwBackingField.kt")
+        public void testFwBackingField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/fwBackingField.kt");
             doStepOutTest(fileName);
         }
 

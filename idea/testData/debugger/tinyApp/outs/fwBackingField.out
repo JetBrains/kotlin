@@ -1,0 +1,44 @@
+KotlinFieldBreakpoint created at fwBackingField.kt:4
+KotlinFieldBreakpoint created at fwBackingField.kt:7
+KotlinFieldBreakpoint created at fwBackingField.kt:17
+KotlinFieldBreakpoint created at fwBackingField.kt:20
+KotlinFieldBreakpoint created at fwBackingField.kt:30
+KotlinFieldBreakpoint created at fwBackingField.kt:32
+KotlinFieldBreakpoint created at fwBackingField.kt:44
+KotlinFieldBreakpoint created at fwBackingField.kt:47
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fwBackingField.FwBackingFieldPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+fwBackingField.kt:18
+fwBackingField.kt:21
+fwBackingField.kt:59
+fwBackingField.kt:5
+fwBackingField.kt:8
+fwBackingField.kt:59
+fwBackingField.kt:11
+fwBackingField.kt:12
+fwBackingField.kt:13
+fwBackingField.kt:60
+fwBackingField.kt:24
+fwBackingField.kt:25
+fwBackingField.kt:26
+fwBackingField.kt:61
+fwBackingField.kt:0
+fwBackingField.kt:0
+fwBackingField.kt:61
+fwBackingField.kt:36
+fwBackingField.kt:37
+fwBackingField.kt:38
+fwBackingField.kt:62
+fwBackingField.kt:45
+fwBackingField.kt:48
+fwBackingField.kt:62
+fwBackingField.kt:45
+fwBackingField.kt:51
+fwBackingField.kt:48
+fwBackingField.kt:52
+fwBackingField.kt:48
+fwBackingField.kt:54
+fwBackingField.kt:63
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

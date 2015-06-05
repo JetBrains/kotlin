@@ -1,4 +1,4 @@
-package fieldWatchpoints
+package fwBackingField
 
 class A {
     //FieldWatchpoint! (propVal)
