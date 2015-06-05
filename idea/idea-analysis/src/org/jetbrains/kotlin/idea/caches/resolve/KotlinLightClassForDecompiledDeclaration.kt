@@ -29,11 +29,13 @@ class KotlinLightClassForDecompiledDeclaration(
     override fun copy() = this
 
     override fun getOwnInnerClasses(): List<PsiClass> {
-        //TODO (light classes for decompiled files): correct origin
-        return clsClass.getOwnInnerClasses().map { KotlinLightClassForDecompiledDeclaration(it as ClsClassImpl, null) }
+        val nestedClasses = origin?.getDeclarations()?.filterIsInstance<JetClassOrObject>() ?: emptyList()
+        return clsClass.getOwnInnerClasses().map { innerClsClass ->
+            KotlinLightClassForDecompiledDeclaration(innerClsClass as ClsClassImpl,
+                                                     nestedClasses.firstOrNull { innerClsClass.getName() == it.getName() })
+        }
     }
 
-    //TODO (light classes for decompiled files): correct navigation element
     override fun getNavigationElement() = origin?.getNavigationElement() ?: super.getNavigationElement()
 
     override fun getDelegate() = clsClass

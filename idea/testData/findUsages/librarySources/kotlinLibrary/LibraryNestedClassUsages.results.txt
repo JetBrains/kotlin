@@ -3,6 +3,11 @@
 [LibraryNestedClassUsages.0.kt] New instance creation (17: 16) val aa = A.T(1)
 [LibraryNestedClassUsages.0.kt] Supertype (13: 14) class Y(): A.T(1)
 [LibraryNestedClassUsages.0.kt] Supertype (9: 12) class X: A.T {
+[LibraryNestedClassUsages.1.java] Local variable declaration (11: 11) A.T t = new A.T();
+[LibraryNestedClassUsages.1.java] Local variable declaration (12: 11) A.T tt = new A.T(1);
+[LibraryNestedClassUsages.1.java] New instance creation (11: 23) A.T t = new A.T();
+[LibraryNestedClassUsages.1.java] New instance creation (12: 24) A.T tt = new A.T(1);
+[LibraryNestedClassUsages.1.java] Usage in extends/implements clause (5: 19) class J extends A.T {
 [library.kt] New instance creation (59: 15) val t = A.T(1)
 [library.kt] New instance creation (60: 16) val tt = A.T()
 [library.kt] Supertype (18: 16) class U: A.T {
