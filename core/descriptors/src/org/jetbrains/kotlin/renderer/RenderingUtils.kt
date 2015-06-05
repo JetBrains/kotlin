@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.name.FqNameBase
 import org.jetbrains.kotlin.name.Name
 
 public fun qualifiedNameForSourceCode(descriptor: ClassifierDescriptor): String {
-    val nameString = DescriptorRenderer.COMPACT.renderName(descriptor.getName())
+    val nameString = descriptor.getName().render()
     val qualifier = qualifierName(descriptor.getContainingDeclaration())
     return if (qualifier != null && qualifier != "") qualifier + "." + nameString else nameString
 }
 
 private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (descriptor) {
     is ClassDescriptor -> qualifiedNameForSourceCode(descriptor)
-    is PackageFragmentDescriptor -> DescriptorRenderer.COMPACT.renderFqName(descriptor.fqName)
+    is PackageFragmentDescriptor -> descriptor.fqName.render()
     else -> null
 }
 

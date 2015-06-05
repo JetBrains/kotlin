@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.JetDescriptorIconProvider
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.JetType
@@ -71,7 +72,7 @@ class MultipleArgumentsItemProvider(val bindingContext: BindingContext,
         compoundIcon.setIcon(firstIcon, 1, 0, 0)
 
         return LookupElementBuilder
-                .create(variables.map { IdeDescriptorRenderers.SOURCE_CODE.renderName(it.getName()) }.joinToString(", "))
+                .create(variables.map { it.getName().render() }.joinToString(", "))
                 .withInsertHandler { context, lookupElement ->
                     if (context.getCompletionChar() == Lookup.REPLACE_SELECT_CHAR) {
                         val offset = context.getOffsetMap().getOffset(SmartCompletion.MULTIPLE_ARGUMENTS_REPLACEMENT_OFFSET)

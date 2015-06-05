@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -126,7 +127,7 @@ class StaticMembers(
             }
 
             override fun handleInsert(context: InsertionContext) {
-                var text = qualifierText + "." + IdeDescriptorRenderers.SOURCE_CODE.renderName(memberDescriptor.getName())
+                var text = qualifierText + "." + memberDescriptor.getName().render()
 
                 context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
                 context.setTailOffset(context.getStartOffset() + text.length())

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.JetValueArgumentName
 import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import java.util.*
@@ -109,9 +110,9 @@ object NamedParametersCompletion {
     private class NamedParameterInsertHandler(val parameterName: Name) : InsertHandler<LookupElement> {
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
             val editor = context.getEditor()
-            val text = IdeDescriptorRenderers.SOURCE_CODE.renderName(parameterName)
+            val text = parameterName.render()
             editor.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
-            editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length)
+            editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length())
 
             WithTailInsertHandler.eqTail().postHandleInsert(context, item)
         }

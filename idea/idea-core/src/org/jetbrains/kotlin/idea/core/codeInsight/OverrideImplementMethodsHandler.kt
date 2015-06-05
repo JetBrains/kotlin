@@ -47,6 +47,7 @@ import java.util.Collections
 
 import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.renderer.render
 
 public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActionHandler {
 
@@ -302,7 +303,6 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
             }
         }
 
-        fun DeclarationDescriptor.escapedName() =
-                DescriptorRenderer.COMPACT.renderName(getName())
+        private fun DeclarationDescriptor.escapedName() = getName().render()
     }
 }

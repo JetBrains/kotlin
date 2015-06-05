@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -126,7 +127,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
 
             // now check that there are no conflicts and all classes are really imported
             val fileWithImportsText = StringBuilder {
-                append("package ").append(IdeDescriptorRenderers.SOURCE_CODE.renderFqName(currentPackageName)).append("\n")
+                append("package ").append(currentPackageName.render()).append("\n")
                 importsToGenerate.filter { it.isAllUnder() }.map { "import " + it.getPathStr() }.joinTo(this, "\n")
             }.toString()
             val fileWithImports = JetPsiFactory(file).createAnalyzableFile("Dummy.kt", fileWithImportsText, file)

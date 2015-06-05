@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.RendererPackage;
 
 public final class ImportPath {
     private final @NotNull FqName fqName;
@@ -51,7 +51,7 @@ public final class ImportPath {
     }
 
     public String getPathStr() {
-        return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderFqName(fqName) + (isAllUnder ? ".*" : "");
+        return RendererPackage.render(fqName) + (isAllUnder ? ".*" : "");
     }
 
     @Override
