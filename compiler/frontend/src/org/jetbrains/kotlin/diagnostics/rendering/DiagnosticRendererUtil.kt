@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
-import org.jetbrains.kotlin.renderer.Renderer
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.renderer.DescriptorRendererImpl
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.Renderer
 
 public fun <P> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter
 
-public fun ClassDescriptor.renderKindWithName(): String = "${DescriptorRendererImpl.getClassKindPrefix(this)} '${getName()}'"
+public fun ClassDescriptor.renderKindWithName(): String = DescriptorRenderer.getClassKindPrefix(this) + " '" + getName() + "'"
 
-public fun ClassDescriptor.renderKind(): String = DescriptorRendererImpl.getClassKindPrefix(this)
+public fun ClassDescriptor.renderKind(): String = DescriptorRenderer.getClassKindPrefix(this)

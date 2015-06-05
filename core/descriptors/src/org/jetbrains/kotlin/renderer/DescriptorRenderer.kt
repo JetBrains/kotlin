@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameBase
@@ -197,6 +194,20 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
             withoutSuperTypes = true
             renderDefaultValues = false
             startFromName = true
+        }
+
+        public fun getClassKindPrefix(klass: ClassDescriptor): String {
+            if (klass.isCompanionObject()) {
+                return "companion object"
+            }
+            return when (klass.getKind()) {
+                ClassKind.CLASS -> "class"
+                ClassKind.INTERFACE -> "interface"
+                ClassKind.ENUM_CLASS -> "enum class"
+                ClassKind.OBJECT -> "object"
+                ClassKind.ANNOTATION_CLASS -> "annotation class"
+                ClassKind.ENUM_ENTRY -> "enum entry"
+            }
         }
     }
 }

@@ -38,8 +38,8 @@ import java.util.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
 
-public/*TODO*/ class DescriptorRendererImpl internal constructor(
-        public val options: DescriptorRendererOptionsImpl
+internal class DescriptorRendererImpl(
+        val options: DescriptorRendererOptionsImpl
 ) : DescriptorRenderer, DescriptorRendererOptions by options/* this gives access to options without qualifier */ {
 
     init {
@@ -815,7 +815,7 @@ public/*TODO*/ class DescriptorRendererImpl internal constructor(
     }
 
     private fun renderClassKindPrefix(klass: ClassDescriptor, builder: StringBuilder) {
-        builder.append(renderKeyword(getClassKindPrefix(klass)))
+        builder.append(renderKeyword(DescriptorRenderer.getClassKindPrefix(klass)))
     }
 
 
@@ -928,61 +928,40 @@ public/*TODO*/ class DescriptorRendererImpl internal constructor(
         }
     }
 
-    companion object {
-
-        private fun renderSpaceIfNeeded(builder: StringBuilder) {
-            val length = builder.length()
-            if (length == 0 || builder.charAt(length - 1) != ' ') {
-                builder.append(' ')
-            }
-        }
-
-        private fun nameShouldBeEscaped(identifier: Name): Boolean {
-            if (identifier.isSpecial()) return false
-
-            val name = identifier.asString()
-
-            if (KeywordStringsGenerated.KEYWORDS.contains(name)) return true
-
-            for (i in 0..name.length() - 1) {
-                val c = name.charAt(i)
-                if (!Character.isLetterOrDigit(c) && c != '_') return true
-            }
-
-            return false
-        }
-
-        private fun replacePrefixes(lowerRendered: String, lowerPrefix: String, upperRendered: String, upperPrefix: String, foldedPrefix: String): String? {
-            if (lowerRendered.startsWith(lowerPrefix) && upperRendered.startsWith(upperPrefix)) {
-                val lowerWithoutPrefix = lowerRendered.substring(lowerPrefix.length())
-                if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(upperPrefix.length()))) {
-                    return foldedPrefix + lowerWithoutPrefix + "!"
-                }
-            }
-            return null
-        }
-
-        private fun differsOnlyInNullability(lower: String, upper: String): Boolean {
-            return lower == upper.replace("?", "") || upper.endsWith("?") && ((lower + "?") == upper) || (("(" + lower + ")?") == upper)
-        }
-
-        private fun overridesSomething(callable: CallableMemberDescriptor): Boolean {
-            return !callable.getOverriddenDescriptors().isEmpty()
-        }
-
-        public fun getClassKindPrefix(klass: ClassDescriptor): String {
-            if (klass.isCompanionObject()) {
-                return "companion object"
-            }
-            when (klass.getKind()) {
-                ClassKind.CLASS -> return "class"
-                ClassKind.INTERFACE -> return "interface"
-                ClassKind.ENUM_CLASS -> return "enum class"
-                ClassKind.OBJECT -> return "object"
-                ClassKind.ANNOTATION_CLASS -> return "annotation class"
-                ClassKind.ENUM_ENTRY -> return "enum entry"
-                else -> throw IllegalStateException("unknown class kind: " + klass.getKind())
-            }
+    private fun renderSpaceIfNeeded(builder: StringBuilder) {
+        val length = builder.length()
+        if (length == 0 || builder.charAt(length - 1) != ' ') {
+            builder.append(' ')
         }
     }
+
+    private fun nameShouldBeEscaped(identifier: Name): Boolean {
+        if (identifier.isSpecial()) return false
+
+        val name = identifier.asString()
+
+        if (KeywordStringsGenerated.KEYWORDS.contains(name)) return true
+
+        for (i in 0..name.length() - 1) {
+            val c = name.charAt(i)
+            if (!Character.isLetterOrDigit(c) && c != '_') return true
+        }
+
+        return false
+    }
+
+    private fun replacePrefixes(lowerRendered: String, lowerPrefix: String, upperRendered: String, upperPrefix: String, foldedPrefix: String): String? {
+        if (lowerRendered.startsWith(lowerPrefix) && upperRendered.startsWith(upperPrefix)) {
+            val lowerWithoutPrefix = lowerRendered.substring(lowerPrefix.length())
+            if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(upperPrefix.length()))) {
+                return foldedPrefix + lowerWithoutPrefix + "!"
+            }
+        }
+        return null
+    }
+
+    private fun differsOnlyInNullability(lower: String, upper: String)
+            = lower == upper.replace("?", "") || upper.endsWith("?") && ("$lower?") == upper || "($lower)?" == upper
+
+    private fun overridesSomething(callable: CallableMemberDescriptor) = !callable.getOverriddenDescriptors().isEmpty()
 }
