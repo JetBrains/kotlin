@@ -59,13 +59,7 @@ import kotlin.test.fail
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
 
-    private val appender = object : AppenderSkeleton() {
-        override fun append(event: LoggingEvent?) {
-            println(event?.getRenderedMessage(), ProcessOutputTypes.SYSTEM)
-        }
-        override fun close() {}
-        override fun requiresLayout() = false
-    }
+    private var appender: AppenderSkeleton? = null
 
     private var oldLogLevel: Level? = null
     private var oldShowFqTypeNames = false
@@ -79,12 +73,24 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
         oldLogLevel = logger.getLevel()
         logger.setLevel(Level.DEBUG)
+
+        appender = object : AppenderSkeleton() {
+            override fun append(event: LoggingEvent?) {
+                println(event?.getRenderedMessage(), ProcessOutputTypes.SYSTEM)
+            }
+            override fun close() {}
+            override fun requiresLayout() = false
+        }
+
         logger.addAppender(appender)
     }
 
     override fun tearDown() {
         logger.setLevel(oldLogLevel)
         logger.removeAppender(appender)
+
+        appender = null
+        oldLogLevel = null
 
         NodeRendererSettings.getInstance()!!.getClassRenderer()!!.SHOW_FQ_TYPE_NAMES = oldShowFqTypeNames
 
@@ -195,7 +201,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     }
 
     fun getExtraVars(): Set<TextWithImports> {
-        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext.getSourcePosition(), evaluationContext, hashSetOf())!!
+        return KotlinFrameExtraVariablesProvider().collectVariables(debuggerContext!!.getSourcePosition(), evaluationContext, hashSetOf())!!
     }
 
     private inner class Printer() {
@@ -223,11 +229,11 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 is StackFrameDescriptor ->    logDescriptor(descriptor, "$curIndent frame    = $label\n")
                 is WatchItemDescriptor ->     logDescriptor(descriptor, "$curIndent extra    = ${descriptor.calcValueName()}\n")
                 is LocalVariableDescriptor -> logDescriptor(descriptor, "$curIndent local    = $label"
-                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext))})\n")
+                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext!!))})\n")
                 is StaticDescriptor ->        logDescriptor(descriptor, "$curIndent static   = $label\n")
                 is ThisDescriptorImpl ->      logDescriptor(descriptor, "$curIndent this     = $label\n")
                 is FieldDescriptor ->         logDescriptor(descriptor, "$curIndent field    = $label"
-                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext))})\n")
+                                                    + " (sp = ${render(SourcePositionProvider.getSourcePosition(descriptor, myProject, debuggerContext!!))})\n")
                 else ->                       logDescriptor(descriptor, "$curIndent unknown  = $label\n")
             }
             return false

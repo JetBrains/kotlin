@@ -50,13 +50,15 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
 import javax.swing.SwingUtilities
-import kotlin.properties.Delegates
 
 abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
-    private var oldSettings: DebuggerSettings by Delegates.notNull()
-    private var oldIsFilterForStdlibAlreadyAdded: Boolean by Delegates.notNull()
-    private var oldDisableKotlinInternalClasses: Boolean by Delegates.notNull()
-    private var oldRenderDelegatedProperties: Boolean by Delegates.notNull()
+    private var oldSettings: DebuggerSettings? = null
+    private var oldIsFilterForStdlibAlreadyAdded = false
+    private var oldDisableKotlinInternalClasses = false
+    private var oldRenderDelegatedProperties = false
+
+    protected var evaluationContext: EvaluationContextImpl? = null
+    protected var debuggerContext: DebuggerContextImpl? = null
 
     override fun initApplication() {
         super.initApplication()
@@ -66,6 +68,9 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     override fun tearDown() {
         super.tearDown()
         restoreDefaultSettings()
+
+        evaluationContext = null
+        debuggerContext = null
     }
 
     protected fun configureSettings(fileText: String) {
@@ -75,11 +80,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         kotlinSettings.DEBUG_RENDER_DELEGATED_PROPERTIES = fileText.getValueForSetting("RENDER_DELEGATED_PROPERTIES", oldRenderDelegatedProperties)
 
         val debuggerSettings = DebuggerSettings.getInstance()!!
-        debuggerSettings.SKIP_SYNTHETIC_METHODS = fileText.getValueForSetting("SKIP_SYNTHETIC_METHODS", oldSettings.SKIP_SYNTHETIC_METHODS)
-        debuggerSettings.SKIP_CONSTRUCTORS = fileText.getValueForSetting("SKIP_CONSTRUCTORS", oldSettings.SKIP_CONSTRUCTORS)
-        debuggerSettings.SKIP_CLASSLOADERS = fileText.getValueForSetting("SKIP_CLASSLOADERS", oldSettings.SKIP_CLASSLOADERS)
-        debuggerSettings.TRACING_FILTERS_ENABLED = fileText.getValueForSetting("TRACING_FILTERS_ENABLED", oldSettings.TRACING_FILTERS_ENABLED)
-        debuggerSettings.SKIP_GETTERS = fileText.getValueForSetting("SKIP_GETTERS", oldSettings.SKIP_GETTERS)
+        debuggerSettings.SKIP_SYNTHETIC_METHODS = fileText.getValueForSetting("SKIP_SYNTHETIC_METHODS", oldSettings!!.SKIP_SYNTHETIC_METHODS)
+        debuggerSettings.SKIP_CONSTRUCTORS = fileText.getValueForSetting("SKIP_CONSTRUCTORS", oldSettings!!.SKIP_CONSTRUCTORS)
+        debuggerSettings.SKIP_CLASSLOADERS = fileText.getValueForSetting("SKIP_CLASSLOADERS", oldSettings!!.SKIP_CLASSLOADERS)
+        debuggerSettings.TRACING_FILTERS_ENABLED = fileText.getValueForSetting("TRACING_FILTERS_ENABLED", oldSettings!!.TRACING_FILTERS_ENABLED)
+        debuggerSettings.SKIP_GETTERS = fileText.getValueForSetting("SKIP_GETTERS", oldSettings!!.SKIP_GETTERS)
     }
 
     private fun String.getValueForSetting(name: String, defaultValue: Boolean): Boolean {
@@ -99,11 +104,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES = oldRenderDelegatedProperties
 
         val debuggerSettings = DebuggerSettings.getInstance()!!
-        debuggerSettings.SKIP_SYNTHETIC_METHODS = oldSettings.SKIP_SYNTHETIC_METHODS
-        debuggerSettings.SKIP_CONSTRUCTORS = oldSettings.SKIP_CONSTRUCTORS
-        debuggerSettings.SKIP_CLASSLOADERS = oldSettings.SKIP_CLASSLOADERS
-        debuggerSettings.TRACING_FILTERS_ENABLED = oldSettings.TRACING_FILTERS_ENABLED
-        debuggerSettings.SKIP_GETTERS = oldSettings.SKIP_GETTERS
+        debuggerSettings.SKIP_SYNTHETIC_METHODS = oldSettings!!.SKIP_SYNTHETIC_METHODS
+        debuggerSettings.SKIP_CONSTRUCTORS = oldSettings!!.SKIP_CONSTRUCTORS
+        debuggerSettings.SKIP_CLASSLOADERS = oldSettings!!.SKIP_CLASSLOADERS
+        debuggerSettings.TRACING_FILTERS_ENABLED = oldSettings!!.TRACING_FILTERS_ENABLED
+        debuggerSettings.SKIP_GETTERS = oldSettings!!.SKIP_GETTERS
     }
 
     protected val dp: DebugProcessImpl
@@ -116,9 +121,6 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             it.action()
         }
     }
-
-    protected var evaluationContext: EvaluationContextImpl by Delegates.notNull()
-    protected var debuggerContext: DebuggerContextImpl by Delegates.notNull()
 
     protected fun initContexts(suspendContext: SuspendContextImpl) {
         evaluationContext = createEvaluationContext(suspendContext)
