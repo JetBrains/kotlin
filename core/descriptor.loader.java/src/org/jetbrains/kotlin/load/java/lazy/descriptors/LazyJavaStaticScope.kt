@@ -16,10 +16,14 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.descriptors.ClassOrPackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.JetType
 
 public abstract class LazyJavaStaticScope(
@@ -41,7 +45,7 @@ public abstract class LazyJavaStaticScope(
     ): LazyJavaMemberScope.MethodSignatureData {
         val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
                 method, false, returnType, null, valueParameters.descriptors, methodTypeParameters, false)
-        return LazyJavaMemberScope.MethodSignatureData(effectiveSignature, listOf(), effectiveSignature.getErrors())
+        return LazyJavaMemberScope.MethodSignatureData(effectiveSignature, effectiveSignature.getErrors())
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {

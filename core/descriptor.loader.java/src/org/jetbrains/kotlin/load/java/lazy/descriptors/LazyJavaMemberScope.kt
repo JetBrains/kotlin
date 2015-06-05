@@ -98,7 +98,6 @@ public abstract class LazyJavaMemberScope(
 
     protected data class MethodSignatureData(
             val effectiveSignature: ExternalSignatureResolver.AlternativeMethodSignature,
-            val superFunctions: List<FunctionDescriptor>,
             val errors: List<String>
     )
 
@@ -109,7 +108,6 @@ public abstract class LazyJavaMemberScope(
             valueParameters: ResolvedValueParameters): MethodSignatureData
 
     fun resolveMethodToFunctionDescriptor(method: JavaMethod, record: Boolean = true): JavaMethodDescriptor {
-
         val annotations = c.resolveAnnotations(method)
         val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
                 containingDeclaration, annotations, method.getName(), c.sourceElementFactory.source(method)
@@ -122,7 +120,7 @@ public abstract class LazyJavaMemberScope(
 
         val returnType = computeMethodReturnType(method, annotations, c)
 
-        val (effectiveSignature, superFunctions, signatureErrors) = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters)
+        val (effectiveSignature, signatureErrors) = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters)
 
         functionDescriptorImpl.initialize(
                 effectiveSignature.getReceiverType(),
@@ -141,7 +139,9 @@ public abstract class LazyJavaMemberScope(
             c.javaResolverCache.recordMethod(method, functionDescriptorImpl)
         }
 
-        c.methodSignatureChecker.checkSignature(method, record, functionDescriptorImpl, signatureErrors, superFunctions)
+        if (signatureErrors.isNotEmpty()) {
+            c.externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, signatureErrors)
+        }
 
         return functionDescriptorImpl
     }

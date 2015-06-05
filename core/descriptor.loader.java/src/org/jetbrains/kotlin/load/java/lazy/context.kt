@@ -17,18 +17,21 @@
 package org.jetbrains.kotlin.load.java.lazy
 
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.components.*
+import org.jetbrains.kotlin.load.java.components.ExternalAnnotationResolver
+import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
+import org.jetbrains.kotlin.load.java.components.JavaResolverCache
+import org.jetbrains.kotlin.load.java.components.SamConversionResolver
+import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
+import org.jetbrains.kotlin.load.java.structure.JavaPropertyInitializerEvaluator
+import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.java.structure.JavaPropertyInitializerEvaluator
-import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
-import org.jetbrains.kotlin.load.java.structure.JavaTypeParameterListOwner
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
+import org.jetbrains.kotlin.storage.StorageManager
 
 open class GlobalJavaResolverContext(
         val storageManager: StorageManager,
@@ -38,7 +41,6 @@ open class GlobalJavaResolverContext(
         val externalAnnotationResolver: ExternalAnnotationResolver,
         val externalSignatureResolver: ExternalSignatureResolver,
         val errorReporter: ErrorReporter,
-        val methodSignatureChecker: MethodSignatureChecker,
         val javaResolverCache: JavaResolverCache,
         val javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,
         val samConversionResolver: SamConversionResolver,
@@ -61,7 +63,6 @@ open class LazyJavaResolverContext(
         globalContext.externalAnnotationResolver,
         globalContext.externalSignatureResolver,
         globalContext.errorReporter,
-        globalContext.methodSignatureChecker,
         globalContext.javaResolverCache,
         globalContext.javaPropertyInitializerEvaluator,
         globalContext.samConversionResolver,

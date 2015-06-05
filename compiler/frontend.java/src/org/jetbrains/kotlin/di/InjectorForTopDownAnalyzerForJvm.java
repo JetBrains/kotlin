@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.load.java.JavaClassFinderImpl;
 import org.jetbrains.kotlin.load.java.components.TraceBasedExternalSignatureResolver;
 import org.jetbrains.kotlin.load.java.components.LazyResolveBasedCache;
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter;
-import org.jetbrains.kotlin.load.java.components.PsiBasedMethodSignatureChecker;
 import org.jetbrains.kotlin.load.java.components.PsiBasedExternalAnnotationResolver;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPropertyInitializerEvaluatorImpl;
 import org.jetbrains.kotlin.load.java.sam.SamConversionResolverImpl;
@@ -116,7 +115,6 @@ public class InjectorForTopDownAnalyzerForJvm {
     private final TraceBasedExternalSignatureResolver traceBasedExternalSignatureResolver;
     private final LazyResolveBasedCache lazyResolveBasedCache;
     private final TraceBasedErrorReporter traceBasedErrorReporter;
-    private final PsiBasedMethodSignatureChecker psiBasedMethodSignatureChecker;
     private final PsiBasedExternalAnnotationResolver psiBasedExternalAnnotationResolver;
     private final JavaPropertyInitializerEvaluatorImpl javaPropertyInitializerEvaluator;
     private final SamConversionResolverImpl samConversionResolver;
@@ -195,13 +193,12 @@ public class InjectorForTopDownAnalyzerForJvm {
         this.deserializedDescriptorResolver = new DeserializedDescriptorResolver(traceBasedErrorReporter);
         this.psiBasedExternalAnnotationResolver = new PsiBasedExternalAnnotationResolver();
         this.traceBasedExternalSignatureResolver = new TraceBasedExternalSignatureResolver();
-        this.psiBasedMethodSignatureChecker = new PsiBasedMethodSignatureChecker();
         this.lazyResolveBasedCache = new LazyResolveBasedCache();
         this.javaPropertyInitializerEvaluator = new JavaPropertyInitializerEvaluatorImpl();
         this.samConversionResolver = SamConversionResolverImpl.INSTANCE$;
         this.javaSourceElementFactory = new JavaSourceElementFactoryImpl();
         this.singleModuleClassResolver = new SingleModuleClassResolver();
-        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, javaClassFinder, jvmVirtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, psiBasedMethodSignatureChecker, lazyResolveBasedCache, javaPropertyInitializerEvaluator, samConversionResolver, javaSourceElementFactory, singleModuleClassResolver);
+        this.globalJavaResolverContext = new GlobalJavaResolverContext(storageManager, javaClassFinder, jvmVirtualFileFinder, deserializedDescriptorResolver, psiBasedExternalAnnotationResolver, traceBasedExternalSignatureResolver, traceBasedErrorReporter, lazyResolveBasedCache, javaPropertyInitializerEvaluator, samConversionResolver, javaSourceElementFactory, singleModuleClassResolver);
         this.reflectionTypes = new ReflectionTypes(moduleDescriptor);
         this.lazyJavaPackageFragmentProvider = new LazyJavaPackageFragmentProvider(globalJavaResolverContext, moduleDescriptor, reflectionTypes);
         this.javaDescriptorResolver = new JavaDescriptorResolver(lazyJavaPackageFragmentProvider, moduleDescriptor);
@@ -289,9 +286,6 @@ public class InjectorForTopDownAnalyzerForJvm {
         lazyResolveBasedCache.setSession(resolveSession);
 
         traceBasedErrorReporter.setTrace(bindingTrace);
-
-        psiBasedMethodSignatureChecker.setExternalAnnotationResolver(psiBasedExternalAnnotationResolver);
-        psiBasedMethodSignatureChecker.setExternalSignatureResolver(traceBasedExternalSignatureResolver);
 
         singleModuleClassResolver.setResolver(javaDescriptorResolver);
 

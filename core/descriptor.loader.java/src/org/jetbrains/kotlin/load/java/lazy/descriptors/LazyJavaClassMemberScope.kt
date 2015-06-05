@@ -125,14 +125,15 @@ public class LazyJavaClassMemberScope(
             valueParameters: LazyJavaMemberScope.ResolvedValueParameters
     ): LazyJavaMemberScope.MethodSignatureData {
         val propagated = c.externalSignatureResolver.resolvePropagatedSignature(
-                method, getContainingDeclaration(), returnType, null, valueParameters.descriptors, methodTypeParameters)
-        val superFunctions = propagated.getSuperMethods()
+                method, getContainingDeclaration(), returnType, null, valueParameters.descriptors, methodTypeParameters
+        )
         val effectiveSignature = c.externalSignatureResolver.resolveAlternativeMethodSignature(
-                method, !superFunctions.isEmpty(), propagated.getReturnType(),
+                method, !propagated.getSuperMethods().isEmpty(), propagated.getReturnType(),
                 propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters(),
-                propagated.hasStableParameterNames())
+                propagated.hasStableParameterNames()
+        )
 
-        return LazyJavaMemberScope.MethodSignatureData(effectiveSignature, superFunctions, propagated.getErrors() + effectiveSignature.getErrors())
+        return LazyJavaMemberScope.MethodSignatureData(effectiveSignature, propagated.getErrors() + effectiveSignature.getErrors())
     }
 
     private fun resolveConstructor(constructor: JavaConstructor): JavaConstructorDescriptor {

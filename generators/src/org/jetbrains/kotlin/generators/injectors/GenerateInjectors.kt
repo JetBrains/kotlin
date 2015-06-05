@@ -133,7 +133,6 @@ private fun generatorForRuntimeDescriptorLoader() =
             publicField<DeserializationComponentsForJava>()
 
             field<ExternalSignatureResolver>(init = GetSingleton.byField(javaClass<ExternalSignatureResolver>(), "DO_NOTHING"))
-            field<MethodSignatureChecker>(init = GetSingleton.byField(javaClass<MethodSignatureChecker>(), "DO_NOTHING"))
             field<JavaResolverCache>(init = GetSingleton.byField(javaClass<JavaResolverCache>(), "EMPTY"))
             field<ExternalAnnotationResolver>(init = GetSingleton.byField(javaClass<ExternalAnnotationResolver>(), "EMPTY"))
             field<JavaPropertyInitializerEvaluator>(init = GetSingleton.byField(javaClass<JavaPropertyInitializerEvaluator>(), "DO_NOTHING"))
@@ -165,7 +164,6 @@ private fun generatorForLazyResolveWithJava() =
             field<TraceBasedExternalSignatureResolver>()
             field<LazyResolveBasedCache>()
             field<TraceBasedErrorReporter>()
-            field<PsiBasedMethodSignatureChecker>()
             field<PsiBasedExternalAnnotationResolver>()
             field<JavaPropertyInitializerEvaluatorImpl>()
             field<SamConversionResolverImpl>()
@@ -268,7 +266,6 @@ private fun DependencyInjectorGenerator.commonForJavaTopDownAnalyzer() {
     field<TraceBasedExternalSignatureResolver>()
     field<LazyResolveBasedCache>()
     field<TraceBasedErrorReporter>()
-    field<PsiBasedMethodSignatureChecker>()
     field<PsiBasedExternalAnnotationResolver>()
     field<JavaPropertyInitializerEvaluatorImpl>()
     field<SamConversionResolverImpl>()
