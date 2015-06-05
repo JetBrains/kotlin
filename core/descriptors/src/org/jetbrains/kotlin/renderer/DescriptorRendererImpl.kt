@@ -117,20 +117,9 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    override fun renderFqName(fqName: FqNameBase): String {
-        return renderFqName(fqName.pathSegments())
-    }
+    override fun renderFqName(fqName: FqNameBase) = renderFqName(fqName.pathSegments())
 
-    private fun renderFqName(pathSegments: List<Name>): String {
-        val buf = StringBuilder()
-        for (element in pathSegments) {
-            if (buf.length() != 0) {
-                buf.append(".")
-            }
-            buf.append(renderName(element))
-        }
-        return buf.toString()
-    }
+    private fun renderFqName(pathSegments: List<Name>) = escape(org.jetbrains.kotlin.renderer.renderFqName(pathSegments))
 
     override fun renderClassifierName(klass: ClassifierDescriptor): String {
         if (klass is MissingDependencyErrorClass) {
@@ -164,7 +153,7 @@ internal class DescriptorRendererImpl(
 
     /* TYPES RENDERING */
     override fun renderType(type: JetType): String {
-        return renderNormalizedType(typeNormalizer.invoke(type))
+        return renderNormalizedType(typeNormalizer(type))
     }
 
     private fun renderNormalizedType(type: JetType): String {

@@ -47,4 +47,18 @@ private fun Name.shouldBeEscaped(): Boolean {
     return string in KeywordStringsGenerated.KEYWORDS || string.any { !Character.isLetterOrDigit(it) && it != '_' }
 }
 
-public fun FqNameBase.render(): String = DescriptorRenderer.COMPACT.renderFqName(this)
+public fun FqNameBase.render(): String {
+    return renderFqName(pathSegments())
+}
+
+public fun renderFqName(pathSegments: List<Name>): String {
+    return StringBuilder {
+        for (element in pathSegments) {
+            if (length() > 0) {
+                append(".")
+            }
+            append(element.render())
+        }
+    }.toString()
+}
+
