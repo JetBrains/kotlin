@@ -70,14 +70,18 @@ public object IdeRenderers {
         DescriptorRenderer.HTML.renderType(returnType)
     }
 
-    public val HTML_CONFLICTING_JVM_DECLARATIONS_DATA: Renderer<ConflictingJvmDeclarationsData> = Renderer<ConflictingJvmDeclarationsData> {
+    public val HTML_COMPACT_WITH_MODIFIERS: DescriptorRenderer = DescriptorRenderer.HTML.withOptions {
+        withDefinedIn = false
+    }
+
+    public val HTML_CONFLICTING_JVM_DECLARATIONS_DATA: Renderer<ConflictingJvmDeclarationsData> = Renderer {
         data: ConflictingJvmDeclarationsData ->
 
         val conflicts = data.signatureOrigins
             .map { it.descriptor }
             .filterNotNull()
             .sortBy(MemberComparator.INSTANCE)
-            .joinToString("") { "<li>" + DescriptorRenderer.HTML_COMPACT_WITH_MODIFIERS.render(it) + "</li>\n" }
+            .joinToString("") { "<li>" + HTML_COMPACT_WITH_MODIFIERS.render(it) + "</li>\n" }
 
         "The following declarations have the same JVM signature (<code>${data.signature.name}${data.signature.desc}</code>):<br/>\n<ul>\n$conflicts</ul>"
     }

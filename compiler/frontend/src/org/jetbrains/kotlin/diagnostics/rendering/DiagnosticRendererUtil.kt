@@ -25,3 +25,4 @@ public fun <P> renderParameter(parameter: P, renderer: Renderer<P>?): Any = rend
 public fun ClassDescriptor.renderKindWithName(): String = DescriptorRenderer.getClassKindPrefix(this) + " '" + getName() + "'"
 
 public fun ClassDescriptor.renderKind(): String = DescriptorRenderer.getClassKindPrefix(this)
+

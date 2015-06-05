@@ -99,12 +99,6 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
-        public val STARTS_FROM_NAME: DescriptorRenderer = withOptions {
-            withDefinedIn = false
-            modifiers = emptySet()
-            startFromName = true
-        }
-
         public val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
@@ -133,41 +127,8 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
             flexibleTypesForCode = true
         }
 
-        public val HTML_COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
-            withDefinedIn = false
-            textFormat = RenderingFormat.HTML
-        }
-
-        public val HTML_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
-            withDefinedIn = false
-            nameShortness = NameShortness.SHORT
-            renderCompanionObjectName = true
-            textFormat = RenderingFormat.HTML
-        }
-
         public val HTML: DescriptorRenderer = withOptions {
             textFormat = RenderingFormat.HTML
-        }
-
-        public val HTML_FOR_UNINFERRED_TYPE_PARAMS: DescriptorRenderer = withOptions {
-            uninferredTypeParameterAsName = true
-            modifiers = emptySet()
-            nameShortness = NameShortness.SHORT
-            textFormat = RenderingFormat.HTML
-        }
-
-        public val DEPRECATION: DescriptorRenderer = withOptions {
-            withDefinedIn = false
-            modifiers = emptySet()
-            nameShortness = NameShortness.SHORT
-            withoutTypeParameters = false
-            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
-            receiverAfterName = false
-            renderCompanionObjectName = true
-            renderAccessors = true
-            withoutSuperTypes = true
-            renderDefaultValues = false
-            startFromName = true
         }
 
         public fun getClassKindPrefix(klass: ClassDescriptor): String {

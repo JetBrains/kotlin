@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.NameShortness
+import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.hasTypeMismatchErrorOnParameter
 import org.jetbrains.kotlin.resolve.calls.callUtil.hasUnmappedArguments
@@ -36,8 +38,15 @@ public fun renderError(o: Any): String = RED_TEMPLATE.format(o)
 
 public fun renderStrong(o: Any, error: Boolean): String = (if (error) RED_TEMPLATE else STRONG_TEMPLATE).format(o)
 
+private val HTML_FOR_UNINFERRED_TYPE_PARAMS: DescriptorRenderer = DescriptorRenderer.withOptions {
+    uninferredTypeParameterAsName = true
+    modifiers = emptySet()
+    nameShortness = NameShortness.SHORT
+    textFormat = RenderingFormat.HTML
+}
+
 fun <D : CallableDescriptor> renderResolvedCall(resolvedCall: ResolvedCall<D>): String {
-    val htmlRenderer = DescriptorRenderer.HTML_FOR_UNINFERRED_TYPE_PARAMS
+    val htmlRenderer = HTML_FOR_UNINFERRED_TYPE_PARAMS
     val stringBuilder = StringBuilder("")
     val indent = "&nbsp;&nbsp;"
 

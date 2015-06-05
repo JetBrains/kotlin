@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.diagnostics.rendering;
 
 import com.intellij.openapi.extensions.ExtensionPointName;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
 import org.jetbrains.kotlin.psi.JetTypeConstraint;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.MultiRenderer;
 import org.jetbrains.kotlin.renderer.Renderer;
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker.VarianceConflictDiagnosticData;
@@ -93,6 +96,18 @@ public class DefaultErrorMessages {
 
         return null;
     }
+
+    public static final DescriptorRenderer DEPRECATION_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions(
+            new Function1<DescriptorRendererOptions, Unit>() {
+                @Override
+                public Unit invoke(DescriptorRendererOptions options) {
+                    options.setWithoutTypeParameters(false);
+                    options.setReceiverAfterName(false);
+                    options.setRenderAccessors(true);
+                    return Unit.INSTANCE$;
+                }
+            }
+    );
 
     static {
         MAP.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", ELEMENT_TEXT);
@@ -268,8 +283,8 @@ public class DefaultErrorMessages {
         MAP.put(MANY_COMPANION_OBJECTS, "Only one companion object is allowed per class");
         MAP.put(COMPANION_OBJECT_NOT_ALLOWED, "A companion object is not allowed here");
 
-        MAP.put(DEPRECATED_SYMBOL, "''{0}'' is deprecated.", DEPRECATION);
-        MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION, STRING);
+        MAP.put(DEPRECATED_SYMBOL, "''{0}'' is deprecated.", DEPRECATION_RENDERER);
+        MAP.put(DEPRECATED_SYMBOL_WITH_MESSAGE, "''{0}'' is deprecated. {1}", DEPRECATION_RENDERER, STRING);
 
         MAP.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", NAME);
         MAP.put(LOCAL_ENUM_NOT_ALLOWED, "Enum class ''{0}'' cannot be local", NAME);
