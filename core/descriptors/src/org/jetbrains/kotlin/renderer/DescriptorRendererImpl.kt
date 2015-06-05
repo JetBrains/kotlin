@@ -197,7 +197,7 @@ public/*TODO*/ class DescriptorRendererImpl internal constructor(
     private fun renderInflexibleType(type: JetType): String {
         assert(!type.isFlexible()) { "Flexible types not allowed here: " + renderNormalizedType(type) }
 
-        if (type == CANT_INFER_FUNCTION_PARAM_TYPE || TypeUtils.isDontCarePlaceholder(type)) {
+        if (type identityEquals CANT_INFER_FUNCTION_PARAM_TYPE || TypeUtils.isDontCarePlaceholder(type)) {
             return "???"
         }
         if (ErrorUtils.isUninferredParameter(type)) {
