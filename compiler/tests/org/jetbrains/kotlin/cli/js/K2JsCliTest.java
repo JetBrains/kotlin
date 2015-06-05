@@ -52,6 +52,13 @@ public class K2JsCliTest extends CliBaseTest {
     }
 
     @Test
+    public void wrongAbiVersion() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
+    }
+
+    @Test
     public void jsHelp() throws Exception {
         executeCompilerCompareOutputJS();
     }

@@ -40,7 +40,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.utils.LibraryUtils.isKotlinJavascriptLibraryWithMetadata;
 import static org.jetbrains.kotlin.utils.LibraryUtils.isOldKotlinJavascriptLibrary;
 import static org.jetbrains.kotlin.utils.PathUtil.getKotlinPathsForDistDirectory;
 
@@ -161,12 +160,21 @@ public class LibrarySourcesConfig extends Config {
             if (isOldKotlinJavascriptLibrary(filePath)) {
                 moduleName = LibraryUtils.getKotlinJsModuleName(filePath);
             }
-            else if (isKotlinJavascriptLibraryWithMetadata(filePath)) {
-                moduleName = null;
-            }
             else {
-                report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
-                return true;
+                List<KotlinJavascriptMetadata> metadataList = KotlinJavascriptMetadataUtils.loadMetadata(filePath);
+                if (metadataList.isEmpty()) {
+                    report.invoke("'" + path + "' is not a valid Kotlin Javascript library");
+                    return true;
+                }
+
+                for (KotlinJavascriptMetadata metadata : metadataList) {
+                    if (!metadata.getIsAbiVersionCompatible()) {
+                        report.invoke("File '" + path + "' was compiled with an incompatible version of Kotlin. Its ABI version is " + metadata.getAbiVersion() + ", expected ABI version is " + KotlinJavascriptMetadataUtils.ABI_VERSION);
+                        return true;
+                    }
+                }
+
+                moduleName = null;
             }
 
             if (action != null) {

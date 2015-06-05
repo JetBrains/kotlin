@@ -36,8 +36,7 @@ import com.intellij.util.PathUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil.isJsKotlinModule
-import org.jetbrains.kotlin.utils.LibraryUtils
-import java.io.File
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.platform.platformStatic
 
@@ -103,11 +102,12 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
                             val path = PathUtil.getLocalPath(clsRootFile)
                             assert(path != null, "expected not-null path for ${clsRootFile.getName()}")
 
-                            if (LibraryUtils.isKotlinJavascriptLibraryWithMetadata(File(path))) {
-                                val classRoot = KotlinJavaScriptMetaFileSystem.getInstance().refreshAndFindFileByPath(path!! + "!/")
-                                clsRootFiles.add(classRoot)
-                                addSources = true
-                            }
+                            val metadataList = KotlinJavascriptMetadataUtils.loadMetadata(path!!)
+                            if (metadataList.filter { !it.isAbiVersionCompatible }.isNotEmpty()) continue
+
+                            val classRoot = KotlinJavaScriptMetaFileSystem.getInstance().refreshAndFindFileByPath(path + "!/")
+                            clsRootFiles.add(classRoot)
+                            addSources = true
                         }
                         if (addSources) {
                             srcRootFiles.addAll(arrayListOf(*library.getFiles(OrderRootType.SOURCES)))

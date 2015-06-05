@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata;
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -146,6 +147,9 @@ public abstract class Config {
     }
 
     private ModuleDescriptorImpl createModuleDescriptor(KotlinJavascriptMetadata metadata) {
+        assert metadata.getIsAbiVersionCompatible() :
+                "expected abi version " + KotlinJavascriptMetadataUtils.ABI_VERSION + ", but metadata.abiVersion = " + metadata.getAbiVersion();
+
         ModuleDescriptorImpl moduleDescriptor = new ModuleDescriptorImpl(
                 Name.special("<" + metadata.getModuleName() + ">"), storageManager,
                 TopDownAnalyzerFacadeForJS.JS_MODULE_PARAMETERS

@@ -285,5 +285,11 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/withLib.args");
             doJsTest(fileName);
         }
+
+        @TestMetadata("wrongAbiVersion.args")
+        public void testWrongAbiVersion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/js/wrongAbiVersion.args");
+            doJsTest(fileName);
+        }
     }
 }
