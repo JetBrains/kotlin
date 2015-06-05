@@ -80,16 +80,12 @@ public class DeclarationDescriptorVisitorEmptyBodies<R, D> implements Declaratio
 
     @Override
     public R visitPropertyGetterDescriptor(PropertyGetterDescriptor descriptor, D data) {
-        return visitPropertyAccessorDescriptor(descriptor, data);
-    }
-
-    private R visitPropertyAccessorDescriptor(PropertyAccessorDescriptor descriptor, D data) {
         return visitFunctionDescriptor(descriptor, data);
     }
 
     @Override
     public R visitPropertySetterDescriptor(PropertySetterDescriptor descriptor, D data) {
-        return visitPropertyAccessorDescriptor(descriptor, data);
+        return visitFunctionDescriptor(descriptor, data);
     }
 
     @Override
