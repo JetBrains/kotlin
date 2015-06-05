@@ -65,7 +65,7 @@
 
     <problem>
         <file>NotAvailableOnDocComment.kt</file>
-        <line>2</line>
+        <line>5</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="NotAvailableOnDocComment.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
@@ -74,7 +74,7 @@
 
     <problem>
         <file>NoDefaultImport.kt</file>
-        <line>1</line>
+        <line>2</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="NoDefaultImport.kt" />
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
