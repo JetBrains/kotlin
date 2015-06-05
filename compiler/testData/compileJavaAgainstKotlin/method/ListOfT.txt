@@ -1,0 +1,10 @@
+package test
+
+internal fun </*0*/ P> listOfT(/*0*/ kotlin.List<P>): kotlin.List<P>
+
+public/*package*/ open class ListOfT {
+    public/*package*/ constructor ListOfT()
+
+    // Static members
+    public open fun check(): kotlin.Unit
+}

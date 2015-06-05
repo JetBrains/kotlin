@@ -49,10 +49,7 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.JetPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import java.util.Collections
@@ -90,7 +87,7 @@ public data class IntroduceParameterDescriptor(
                 }
             }
             if (occurrencesToReplace.all {
-                PsiTreeUtil.findCommonParent(it.elements)?.parents()?.any(modifierIsUnnecessary) ?: false
+                PsiTreeUtil.findCommonParent(it.elements)?.parentsWithSelf?.any(modifierIsUnnecessary) ?: false
             }) JetValVar.None else JetValVar.Val
         }
         else JetValVar.None
@@ -154,12 +151,12 @@ fun selectNewParameterContext(
             editor = editor,
             file = file,
             getContainers = { elements, parent ->
-                val parents = parent.parents(withItself = false)
-                val stopAt = (parent.parents(withItself = false) zip parent.parents(withItself = false).drop(1))
+                val parents = parent.parents
+                val stopAt = (parent.parents zip parent.parents.drop(1))
                         .firstOrNull { isObjectOrNonInnerClass(it.first) }
                         ?.second
 
-                (if (stopAt != null) parent.parents(withItself = false).takeWhile { it != stopAt } else parents)
+                (if (stopAt != null) parent.parents.takeWhile { it != stopAt } else parents)
                         .filter {
                             ((it is JetClass && !it.isInterface() && it !is JetEnumEntry) || it is JetNamedFunction || it is JetSecondaryConstructor) &&
                             ((it as JetNamedDeclaration).getValueParameterList() != null || it.getNameIdentifier() != null)

@@ -182,25 +182,26 @@ private object ReflectClassStructure {
                 val classId = (if (clazz.isEnum()) clazz else clazz.getEnclosingClass()).classId
                 visitor.visitEnum(name, classId, Name.identifier((value as Enum<*>).name()))
             }
-            clazz.isAnnotation() -> {
-                // TODO: support values of annotation types
-                throw UnsupportedOperationException("Values of annotation types are not yet supported in Kotlin reflection: $value")
+            javaClass<Annotation>().isAssignableFrom(clazz) -> {
+                val annotationClass = clazz.getInterfaces().single()
+                val v = visitor.visitAnnotation(name, annotationClass.classId) ?: return
+                processAnnotationArguments(v, value as Annotation, annotationClass)
             }
             clazz.isArray() -> {
-                val elementVisitor = visitor.visitArray(name) ?: return
+                val v = visitor.visitArray(name) ?: return
                 val componentType = clazz.getComponentType()
                 if (componentType.isEnum()) {
                     val enumClassId = componentType.classId
                     for (element in value as Array<*>) {
-                        elementVisitor.visitEnum(enumClassId, Name.identifier((element as Enum<*>).name()))
+                        v.visitEnum(enumClassId, Name.identifier((element as Enum<*>).name()))
                     }
                 }
                 else {
                     for (element in value as Array<*>) {
-                        elementVisitor.visit(element)
+                        v.visit(element)
                     }
                 }
-                elementVisitor.visitEnd()
+                v.visitEnd()
             }
             else -> {
                 throw UnsupportedOperationException("Unsupported annotation argument value ($clazz): $value")

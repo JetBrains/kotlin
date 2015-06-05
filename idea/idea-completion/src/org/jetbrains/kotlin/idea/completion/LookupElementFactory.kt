@@ -233,12 +233,16 @@ public class LookupElementFactory(
                 return CallableWeight.notApplicableReceiverNullable
             }
             else {
+                if (descriptor !is CallableMemberDescriptor) {
+                    return CallableWeight.local
+                }
+
                 val container = descriptor.getContainingDeclaration()
                 return when (container) {
                     is PackageFragmentDescriptor -> CallableWeight.global
 
                     is ClassifierDescriptor -> {
-                        if ((descriptor as CallableMemberDescriptor).getKind() == CallableMemberDescriptor.Kind.DECLARATION)
+                        if (descriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION)
                             CallableWeight.thisClassMember
                         else
                             CallableWeight.baseClassMember

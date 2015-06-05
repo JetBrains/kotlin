@@ -1,0 +1,23 @@
+package test
+
+internal final class KotlinClass {
+    public constructor KotlinClass()
+
+    internal companion object Companion {
+        private constructor Companion()
+        internal final val FOO: kotlin.Int
+    }
+}
+
+public open class kt3698 {
+    public constructor kt3698()
+
+    public/*package*/ final annotation class Foo : kotlin.Annotation {
+        public/*package*/ constructor Foo(/*0*/ kotlin.Int)
+        public final val value: kotlin.Int
+        public abstract fun value(): kotlin.Int
+    }
+
+    // Static members
+    test.kt3698.Foo(value = 10: kotlin.Int) public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}

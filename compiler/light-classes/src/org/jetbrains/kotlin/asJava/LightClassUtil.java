@@ -234,7 +234,7 @@ public class LightClassUtil {
     @Nullable
     private static PsiClass getWrappingClass(@NotNull JetDeclaration declaration) {
         if (declaration instanceof JetParameter) {
-            JetClass constructorClass = JetPsiUtil.getClassIfParameterIsProperty((JetParameter) declaration);
+            JetClassOrObject constructorClass = JetPsiUtil.getClassIfParameterIsProperty((JetParameter) declaration);
             if (constructorClass != null) {
                 return getPsiClass(constructorClass);
             }

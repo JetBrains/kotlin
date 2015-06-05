@@ -43,7 +43,7 @@ object CreateLocalVariableActionFactory: JetSingleIntentionActionFactory() {
 
         val propertyName = refExpr.getReferencedName()
 
-        val container = refExpr.parents(false)
+        val container = refExpr.parents
                 .filter { it is JetBlockExpression || it is JetDeclarationWithBody }
                 .firstOrNull() as? JetElement ?: return null
 

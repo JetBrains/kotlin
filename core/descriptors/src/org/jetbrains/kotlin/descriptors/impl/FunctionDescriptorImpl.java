@@ -40,7 +40,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private ReceiverParameterDescriptor extensionReceiverParameter;
     private ReceiverParameterDescriptor dispatchReceiverParameter;
     private Modality modality;
-    private Visibility visibility;
+    private Visibility visibility = Visibilities.UNKNOWN;
     private final Set<FunctionDescriptor> overriddenFunctions = new LinkedHashSet<FunctionDescriptor>(); // LinkedHashSet is essential here
     private final FunctionDescriptor original;
     private final Kind kind;

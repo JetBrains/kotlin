@@ -1,0 +1,15 @@
+package test
+
+internal interface A</*0*/ T> {
+    internal abstract fun foo(): T
+}
+
+internal final class B : test.A<kotlin.Int> {
+    public constructor B()
+    internal open fun foo(): kotlin.Int
+}
+
+public/*package*/ open class Test {
+    public/*package*/ constructor Test()
+    public/*package*/ open fun test(): kotlin.Unit
+}

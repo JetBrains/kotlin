@@ -158,10 +158,9 @@ public class QuickFixRegistrar {
         QuickFixes.actions.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
         QuickFixes.actions.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, implementMethodsHandler);
 
-        ChangeVariableMutabilityFix changeVariableMutabilityFix = new ChangeVariableMutabilityFix();
-        QuickFixes.actions.put(VAL_WITH_SETTER, changeVariableMutabilityFix);
-        QuickFixes.actions.put(VAL_REASSIGNMENT, changeVariableMutabilityFix);
-        QuickFixes.actions.put(VAR_OVERRIDDEN_BY_VAL, changeVariableMutabilityFix);
+        QuickFixes.factories.put(VAL_WITH_SETTER, ChangeVariableMutabilityFix.VAL_WITH_SETTER_FACTORY);
+        QuickFixes.factories.put(VAL_REASSIGNMENT, ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY);
+        QuickFixes.factories.put(VAR_OVERRIDDEN_BY_VAL, ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY);
 
         JetSingleIntentionActionFactory removeValVarFromParameterFixFactory = RemoveValVarFromParameterFix.createFactory();
         QuickFixes.factories.put(VAL_OR_VAR_ON_FUN_PARAMETER, removeValVarFromParameterFixFactory);

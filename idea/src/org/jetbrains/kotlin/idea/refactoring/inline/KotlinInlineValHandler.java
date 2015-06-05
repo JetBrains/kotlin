@@ -168,7 +168,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
                                         continue;
                                     }
 
-                                    inlinedExpressions.add(replaceExpression(referenceExpression, initializer));
+                                    inlinedExpressions.add((JetExpression) referenceExpression.replace(initializer));
                                 }
 
                                 for (PsiElement assignment : assignments) {
@@ -392,23 +392,5 @@ public class KotlinInlineValHandler extends InlineActionHandler {
             }
         }
         return false;
-    }
-
-    @NotNull
-    private static JetExpression replaceExpression(
-            @NotNull PsiElement referenceElement,
-            @NotNull JetExpression newExpression
-    ) {
-        PsiElement parent = referenceElement.getParent();
-        if (parent instanceof JetSimpleNameStringTemplateEntry &&
-            !(newExpression instanceof JetSimpleNameExpression)) {
-            JetBlockStringTemplateEntry templateEntry =
-                    (JetBlockStringTemplateEntry) parent.replace(
-                            JetPsiFactory((JetElement) parent).createBlockStringTemplateEntry(newExpression));
-            JetExpression expression = templateEntry.getExpression();
-            assert expression != null;
-            return expression;
-        }
-        return (JetExpression) referenceElement.replace(newExpression.copy());
     }
 }

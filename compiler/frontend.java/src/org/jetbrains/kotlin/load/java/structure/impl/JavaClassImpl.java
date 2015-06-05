@@ -109,7 +109,14 @@ public class JavaClassImpl extends JavaClassifierImpl<PsiClass> implements JavaC
     @Override
     @NotNull
     public Collection<JavaField> getFields() {
-        return fields(getPsi().getFields());
+        // ex. Android plugin generates LightFields for resources started from '.' (.DS_Store file etc)
+        return fields(KotlinPackage.filter(getPsi().getFields(), new Function1<PsiField, Boolean>() {
+            @Override
+            public Boolean invoke(PsiField field) {
+                String name = field.getName();
+                return name != null && Name.isValidIdentifier(name);
+            }
+        }));
     }
 
     @Override

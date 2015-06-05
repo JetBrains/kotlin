@@ -46,7 +46,6 @@ public class DeprecatedCallableAddReplaceWithInspection : IntentionBasedInspecti
 public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIntention<JetCallableDeclaration>(
         javaClass(), "Add 'replaceWith' argument to specify replacement pattern", "Add 'replaceWith' argument to 'deprecated' annotation"
 ) {
-    //TODO: use ReplaceWith from package kotlin
     private class ReplaceWith(val expression: String, vararg val imports: String)
 
     override fun applicabilityRange(element: JetCallableDeclaration): TextRange? {
@@ -63,11 +62,27 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         val annotationEntry = element.deprecatedAnnotationWithNoReplaceWith()!!
         val psiFactory = JetPsiFactory(element)
 
-        val escapedText = replaceWith.expression
+        var escapedText = replaceWith.expression
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
 
-        //TODO: escape $!
+        // escape '$' if it's followed by a letter or '{'
+        if (escapedText.contains('$')) {
+            escapedText = StringBuilder {
+                var i = 0
+                val length = escapedText.length()
+                while (i < length) {
+                    val c = escapedText[i++]
+                    if (c == '$' && i < length) {
+                        val c1 = escapedText[i]
+                        if (c1.isJavaIdentifierStart() || c1 == '{') {
+                            append('\\')
+                        }
+                    }
+                    append(c)
+                }
+            }.toString()
+        }
 
         val argumentText = StringBuilder {
             append("kotlin.ReplaceWith(\"")
@@ -99,7 +114,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
             if (DescriptorUtils.getFqName(descriptor).asString() != "kotlin.deprecated") continue
 
             val replaceWithArguments = resolvedCall.getValueArguments().entrySet()
-                    .single { it.key.getName().asString() == "replaceWith"/*TODO*/ }.value
+                    .single { it.key.getName().asString() == "replaceWith"/*TODO: kotlin.deprecated::replaceWith.name*/ }.value
             return if (replaceWithArguments.getArguments().isEmpty()) entry else null
         }
         return null
@@ -154,7 +169,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         var expression = try {
             JetPsiFactory(this).createExpression(text.replace('\n', ' '))
         }
-        catch(e: Exception) { // does not parse in one line
+        catch(e: Throwable) { // does not parse in one line
             return null
         }
         expression = CodeStyleManager.getInstance(getProject()).reformat(expression, true) as JetExpression

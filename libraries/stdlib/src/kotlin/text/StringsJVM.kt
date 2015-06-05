@@ -131,7 +131,7 @@ public fun String.split(regex: Pattern, limit: Int = 0): List<String>
 /**
  * Splits this string around matches of the given regular expression.
  */
-deprecated("Convert String argument to regex with toRegex or use splitBy instead for literal delimiters. Please note the change of return type.", ReplaceWith("split(regex.toRegex()).toTypedArray()"))
+deprecated("Convert String argument to regex with toRegex or use splitBy instead for literal delimiters. Please note the change of return type.", ReplaceWith("split(regex.toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()"))
 public fun String.split(regex: String): Array<String> = (this as java.lang.String).split(regex)
 
 /**

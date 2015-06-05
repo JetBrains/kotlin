@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.JetType
 import javax.swing.*
 import javax.swing.event.PopupMenuEvent
@@ -164,7 +165,7 @@ public class KotlinInplacePropertyIntroducer(
     }
 
     override fun checkLocalScope(): PsiElement? {
-        return myElementToRename.parents().first { it is JetClassOrObject || it is JetFile }
+        return myElementToRename.parentsWithSelf.first { it is JetClassOrObject || it is JetFile }
     }
 
     override fun collectRefs(referencesSearchScope: SearchScope): MutableCollection<PsiReference>? {

@@ -21,63 +21,47 @@
             <artifactId>kotlin-stdlib</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <!-- Do not use ${protobuf.version} because it couldn't be resolve in gradle -->
-            <version>2.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.inject</groupId>
-            <artifactId>javax.inject</artifactId>
-            <version>1</version>
-        </dependency>
     </dependencies>
 
     <build>
-        <sourceDirectory>target/copied-sources</sourceDirectory>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-
+                <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-sources</id>
-                        <phase>process-sources</phase>
-                        <configuration>
-                            <target>
-                                <delete dir="${basedir}/target/copied-sources" failonerror="false" />
-                                <copy todir="${basedir}/target/copied-sources">
-                                    <fileset dir="${basedir}/../../../core/descriptor.loader.java/src"/>
-                                    <fileset dir="${basedir}/../../../core/descriptors/src"/>
-                                    <fileset dir="${basedir}/../../../core/descriptors.runtime/src"/>
-                                    <fileset dir="${basedir}/../../../core/deserialization/src"/>
-                                    <fileset dir="${basedir}/../../../core/reflection.jvm/src"/>
-                                    <fileset dir="${basedir}/../../../core/util.runtime/src"/>
-                                </copy>
-                            </target>
-                        </configuration>
+                        <id>empty-javadoc-jar</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>run</goal>
+                            <goal>jar</goal>
                         </goals>
+                        <configuration>
+                            <classifier>javadoc</classifier>
+                            <classesDirectory>${basedir}/javadoc</classesDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
 
             <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${project.version}</version>
-
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>compile</id>
-                        <phase>process-sources</phase>
+                        <id>copy-jar</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-reflect.jar"
+                                      tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
+                                      overwrite="true" verbose="true"/>
+                                <copy file="${kotlin-dist}/kotlin-reflect-sources-for-maven.jar"
+                                      tofile="${basedir}/target/${project.artifactId}-${project.version}-sources.jar"
+                                      overwrite="true" verbose="true"/>
+                            </tasks>
+                        </configuration>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>run</goal>
                         </goals>
                     </execution>
                 </executions>

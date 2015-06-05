@@ -1,0 +1,20 @@
+package test
+
+internal fun bar(/*0*/ test.K<*>): kotlin.Unit
+
+internal open class K</*0*/ out T : test.K<T>> {
+    public constructor K</*0*/ out T : test.K<T>>()
+    internal final fun foo(): test.K<*>
+    internal final fun foo(/*0*/ test.K<*>): kotlin.Unit
+}
+
+public open class StarProjection {
+    public constructor StarProjection()
+    public/*package*/ open fun foo(/*0*/ test.K<*>!): kotlin.Unit
+}
+
+internal final class Sub : test.K<test.K<*>> {
+    public constructor Sub()
+    internal final /*fake_override*/ fun foo(): test.K<*>
+    internal final /*fake_override*/ fun foo(/*0*/ test.K<*>): kotlin.Unit
+}

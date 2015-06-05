@@ -16,29 +16,26 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.psi.JetTypeArgumentList
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.ErrorUtils
 
-public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpression>(javaClass(), "Add explicit type arguments") {
-    override fun isApplicableTo(element: JetCallExpression, caretOffset: Int): Boolean {
-        if (!element.getTypeArguments().isEmpty()) return false
-        val callee = element.getCalleeExpression() ?: return false
-        if (!callee.getTextRange().containsOffset(caretOffset)) return false
-
-        val resolvedCall = element.getResolvedCall(element.analyze()) ?: return false
-        val typeArgs = resolvedCall.getTypeArguments()
-        return !typeArgs.isEmpty() && typeArgs.values().none { ErrorUtils.containsErrorType(it) }
+public class InsertExplicitTypeArguments : JetSelfTargetingRangeIntention<JetCallExpression>(javaClass(), "Add explicit type arguments"), LowPriorityAction {
+    override fun applicabilityRange(element: JetCallExpression): TextRange? {
+        return if (isApplicableTo(element, element.analyze())) element.getCalleeExpression()!!.getTextRange() else null
     }
 
     override fun applyTo(element: JetCallExpression, editor: Editor) {
-        val argumentList = createTypeArguments(element)!!
+        val argumentList = createTypeArguments(element, element.analyze())!!
 
         val callee = element.getCalleeExpression()!!
         val newArgumentList = element.addAfter(argumentList, callee) as JetTypeArgumentList
@@ -47,8 +44,17 @@ public class InsertExplicitTypeArguments : JetSelfTargetingIntention<JetCallExpr
     }
 
     companion object {
-        public fun createTypeArguments(element: JetCallExpression): JetTypeArgumentList? {
-            val resolvedCall = element.getResolvedCall(element.analyze()) ?: return null
+        public fun isApplicableTo(element: JetCallExpression, bindingContext: BindingContext): Boolean {
+            if (!element.getTypeArguments().isEmpty()) return false
+            if (element.getCalleeExpression() == null) return false
+
+            val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
+            val typeArgs = resolvedCall.getTypeArguments()
+            return typeArgs.isNotEmpty() && typeArgs.values().none { ErrorUtils.containsErrorType(it) }
+        }
+
+        public fun createTypeArguments(element: JetCallExpression, bindingContext: BindingContext): JetTypeArgumentList? {
+            val resolvedCall = element.getResolvedCall(bindingContext) ?: return null
 
             val args = resolvedCall.getTypeArguments()
             val types = resolvedCall.getCandidateDescriptor().getTypeParameters()

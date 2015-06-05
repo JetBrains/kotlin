@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.intellij.codeInspection.*
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInspection.LocalInspectionToolSession
+import com.intellij.codeInspection.LocalQuickFixOnPsiElement
+import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -24,42 +28,24 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.JetElement
 
-public abstract class IntentionBasedInspection<T : JetElement>(
-        protected val intentions: List<JetSelfTargetingRangeIntention<T>>,
+public abstract class IntentionBasedInspection<TElement : JetElement>(
+        protected val intentions: List<JetSelfTargetingRangeIntention<TElement>>,
         protected val problemText: String?,
-        protected val elementType: Class<T>
+        protected val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {
-    constructor(intention: JetSelfTargetingRangeIntention<T>) : this(listOf(intention), null, intention.elementType)
+    constructor(intention: JetSelfTargetingRangeIntention<TElement>) : this(listOf(intention), null, intention.elementType)
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        class IntentionBasedQuickFix(
-                val intention: JetSelfTargetingRangeIntention<T>,
-                val targetElement: T
-        ): LocalQuickFix {
-            // store text into variable because intention instance is shared and may change its text later
-            private val text = intention.getText()
-
-            override fun getFamilyName() = intention.getFamilyName()
-
-            override fun getName() = text
-
-            override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-                targetElement.getOrCreateEditor()?.let { editor ->
-                    editor.getCaretModel().moveToOffset(targetElement.getTextOffset())
-                    intention.applyTo(targetElement, editor)
-                }
-            }
-        }
-
         return object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 if (!elementType.isInstance(element) || element.getTextLength() == 0) return
 
                 @suppress("UNCHECKED_CAST")
-                val targetElement = element as T
+                val targetElement = element as TElement
 
                 val ranges = intentions
                         .map {
@@ -82,13 +68,47 @@ public abstract class IntentionBasedInspection<T : JetElement>(
     protected open val problemHighlightType: ProblemHighlightType
         get() = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
-    private fun PsiElement.getOrCreateEditor(): Editor? {
-        val file = getContainingFile()?.getVirtualFile() ?: return null
-        val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
+    /* we implement IntentionAction to provide isAvailable which will be used to hide outdated items and make sure we never call 'invoke' for such item */
+    private class IntentionBasedQuickFix<TElement : JetElement>(
+            val intention: JetSelfTargetingRangeIntention<TElement>,
+            targetElement: TElement
+    ): LocalQuickFixOnPsiElement(targetElement), IntentionAction {
+        // store text into variable because intention instance is shared and may change its text later
+        private val _text = intention.getText()
 
-        val editorFactory = EditorFactory.getInstance()
+        override fun getFamilyName() = intention.getFamilyName()
 
-        val editors = editorFactory.getEditors(document)
-        return if (editors.isEmpty()) editorFactory.createEditor(document) else editors[0]
+        override fun getText(): String = _text
+
+        override fun startInWriteAction() = true
+
+        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = isAvailable()
+
+        override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
+            assert(startElement == endElement)
+            return intention.applicabilityRange(startElement as TElement) != null
+        }
+
+        override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
+            applyFix()
+        }
+
+        override fun invoke(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement) {
+            assert(startElement == endElement)
+            startElement.getOrCreateEditor()?.let { editor ->
+                editor.getCaretModel().moveToOffset(startElement.getTextOffset())
+                intention.applyTo(startElement as TElement, editor)
+            }
+        }
+
+        private fun PsiElement.getOrCreateEditor(): Editor? {
+            val file = getContainingFile()?.getVirtualFile() ?: return null
+            val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
+
+            val editorFactory = EditorFactory.getInstance()
+
+            val editors = editorFactory.getEditors(document)
+            return if (editors.isEmpty()) editorFactory.createEditor(document) else editors[0]
+        }
     }
 }

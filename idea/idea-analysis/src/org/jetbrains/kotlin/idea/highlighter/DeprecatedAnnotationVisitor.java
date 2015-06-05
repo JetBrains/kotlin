@@ -29,19 +29,15 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
-import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
-import org.jetbrains.kotlin.types.TypeUtils;
-
-import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME;
 
 public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisitor {
 
@@ -226,27 +222,8 @@ public class DeprecatedAnnotationVisitor extends AfterAnalysisHighlightingVisito
 
     private static String composeTooltipString(@NotNull DeclarationDescriptor declarationDescriptor, @NotNull AnnotationDescriptor descriptor) {
         String fact = "'" + getDescriptorString(declarationDescriptor) + "' is deprecated.";
-        String message = getMessageFromAnnotationDescriptor(descriptor);
+        String message = AnnotationsPackage.deprecatedAnnotationMessage(descriptor);
         return message == null ? fact : fact + " " + message;
-    }
-
-    @Nullable
-    private static String getMessageFromAnnotationDescriptor(@NotNull AnnotationDescriptor descriptor) {
-        ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(descriptor.getType());
-        if (classDescriptor != null) {
-            ValueParameterDescriptor parameter =
-                    DescriptorResolverUtils.getAnnotationParameterByName(DEFAULT_ANNOTATION_MEMBER_NAME, classDescriptor);
-            if (parameter != null) {
-                CompileTimeConstant<?> valueArgument = descriptor.getAllValueArguments().get(parameter);
-                if (valueArgument != null) {
-                    Object value = valueArgument.getValue();
-                    if (value instanceof String) {
-                        return String.valueOf(value);
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     private static String getDescriptorString(@NotNull DeclarationDescriptor descriptor) {

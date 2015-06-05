@@ -54,7 +54,7 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
     }
 
     private fun getEnclosingFunction(element: JetElement): JetNamedFunction? {
-        for (parent in element.parents(false)) {
+        for (parent in element.parents) {
             when (parent) {
                 is JetFunctionLiteral -> if (!InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return null
                 is JetNamedFunction -> if (!InlineUtil.isInlinedArgument(parent, parent.analyze(), false)) return parent

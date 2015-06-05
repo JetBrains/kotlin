@@ -325,6 +325,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ObjectWithConstructor.kt")
+        public void testObjectWithConstructor() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ObjectWithConstructor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OverrideFunctionWithParamDefaultValue.kt")
         public void testOverrideFunctionWithParamDefaultValue() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/OverrideFunctionWithParamDefaultValue.kt");
@@ -756,6 +762,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("missingValOnParameter.kt")
             public void testMissingValOnParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/missingValOnParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noNameProperty.kt")
+            public void testNoNameProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/noNameProperty.kt");
                 doTest(fileName);
             }
 
@@ -2835,6 +2847,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("paramNameSameToField.kt")
             public void testParamNameSameToField() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/paramNameSameToField.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("repeatedProperties.kt")
+            public void testRepeatedProperties() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/dataClasses/repeatedProperties.kt");
                 doTest(fileName);
             }
 
@@ -9413,6 +9431,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("invokeInFunctionClass.kt")
+                public void testInvokeInFunctionClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/parameterNames/invokeInFunctionClass.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("jjkHierarchy.kt")
                 public void testJjkHierarchy() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/parameterNames/jjkHierarchy.kt");
@@ -12927,6 +12951,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("topLevelAnonymousObjects.kt")
             public void testTopLevelAnonymousObjects() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/topLevelAnonymousObjects.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unresolvedSupertype.kt")
+            public void testUnresolvedSupertype() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/unresolvedSupertype.kt");
                 doTest(fileName);
             }
         }

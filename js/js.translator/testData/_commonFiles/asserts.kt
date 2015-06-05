@@ -19,3 +19,11 @@ fun assertNotEquals<T>(illegal: T, actual: T, message: String? = null) {
 fun assertTrue(actual: Boolean, message: String? = null) = assertEquals(true, actual, message)
 
 fun assertFalse(actual: Boolean, message: String? = null) = assertEquals(false, actual, message)
+
+fun testTrue(f: () -> Boolean) {
+    assertTrue(f(), f.toString())
+}
+
+fun testFalse(f: () -> Boolean) {
+    assertFalse(f(), f.toString())
+}

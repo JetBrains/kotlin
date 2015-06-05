@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getPackage
+import org.jetbrains.kotlin.idea.core.getPackage
 import java.util.HashSet
 import java.util.LinkedHashSet
 

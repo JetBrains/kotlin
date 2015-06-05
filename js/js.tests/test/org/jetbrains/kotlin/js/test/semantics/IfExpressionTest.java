@@ -41,4 +41,8 @@ public class IfExpressionTest extends AbstractExpressionTest {
     public void testNestedIf() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testWithEmptyBlocks() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

@@ -1,0 +1,18 @@
+package test
+
+internal final class Test {
+    public constructor Test()
+
+    internal companion object Companion {
+        private constructor Companion()
+        public final val valProp: kotlin.Int
+        public final var varProp: kotlin.Int
+    }
+}
+
+public/*package*/ open class staticClassProperty {
+    public/*package*/ constructor staticClassProperty()
+
+    // Static members
+    public open fun main(/*0*/ kotlin.Array<(out) kotlin.String!>!): kotlin.Unit
+}

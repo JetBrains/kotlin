@@ -17,22 +17,24 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.psi.*
 import java.util.Collections
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.util.ArrayList
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 
 public fun JetClassOrObject.toLightClass(): KotlinLightClass? = LightClassUtil.getPsiClass(this) as KotlinLightClass?
 
 public fun JetDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {
-            is JetClassOrObject -> Collections.singletonList(LightClassUtil.getPsiClass(this))
+            is JetClassOrObject -> LightClassUtil.getPsiClass(this).singletonOrEmptyList()
             is JetNamedFunction,
-            is JetSecondaryConstructor -> Collections.singletonList(LightClassUtil.getLightClassMethod(this as JetFunction))
+            is JetSecondaryConstructor -> LightClassUtil.getLightClassMethod(this as JetFunction).singletonOrEmptyList()
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
-            is JetPropertyAccessor -> Collections.singletonList(LightClassUtil.getLightClassAccessorMethod(this))
+            is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
             is JetParameter -> ArrayList<PsiNamedElement>().let { elements ->
                 toPsiParameter()?.let { psiParameter -> elements.add(psiParameter) }
                 LightClassUtil.getLightClassPropertyMethods(this).toCollection(elements)
@@ -49,8 +51,8 @@ public fun PsiElement.toLightMethods(): List<PsiMethod> =
             is JetProperty -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
             is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(this).singletonOrEmptyList()
-            is JetClass -> Collections.singletonList(LightClassUtil.getPsiClass(this).getConstructors()[0])
-            is PsiMethod -> Collections.singletonList(this)
+            is JetClass -> LightClassUtil.getPsiClass(this)?.getConstructors()?.first().singletonOrEmptyList()
+            is PsiMethod -> this.singletonList()
             else -> listOf()
         }
 
@@ -70,12 +72,12 @@ public fun JetParameter.toPsiParameter(): PsiParameter? {
 
     val paramIndex = paramList.getParameters().indexOf(this)
     val owner = paramList.getParent()
-    val lightParamIndex = if (owner != null && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
+    val lightParamIndex = if (owner is JetDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
     val method: PsiMethod? = when (owner) {
         is JetFunction -> LightClassUtil.getLightClassMethod(owner)
         is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(owner)
-        is JetPrimaryConstructor -> LightClassUtil.getPsiClass(owner.getContainingClass())?.getConstructors()?.let { constructors ->
+        is JetPrimaryConstructor -> LightClassUtil.getPsiClass(owner.getContainingClassOrObject())?.getConstructors()?.let { constructors ->
             if (constructors.isNotEmpty()) constructors[0] else null
         }
         else -> null

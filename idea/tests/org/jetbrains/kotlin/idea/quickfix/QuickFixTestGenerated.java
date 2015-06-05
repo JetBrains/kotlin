@@ -2938,6 +2938,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("incorrectArgs.kt")
+        public void testIncorrectArgs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/incorrectArgs.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("incorrectReplacement.kt")
         public void testIncorrectReplacement() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/incorrectReplacement.kt");
@@ -3040,6 +3046,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("stringTemplate.kt")
+        public void testStringTemplate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/stringTemplate.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("toOuterClassMethod.kt")
         public void testToOuterClassMethod() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/toOuterClassMethod.kt");
@@ -3111,6 +3123,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("complexExpressionNotUsedSafeCall2Runtime.kt")
             public void testComplexExpressionNotUsedSafeCall2Runtime() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/argumentSideEffects/complexExpressionNotUsedSafeCall2Runtime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("complexExpressionNotUsedShortenRefsRuntime.kt")
+            public void testComplexExpressionNotUsedShortenRefsRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/argumentSideEffects/complexExpressionNotUsedShortenRefsRuntime.kt");
                 doTest(fileName);
             }
 
@@ -3448,6 +3466,57 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
+        @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TypeArguments extends AbstractQuickFixTest {
+            public void testAllFilesPresentInTypeArguments() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("emptyVarargRuntime.kt")
+            public void testEmptyVarargRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/emptyVarargRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("explicitInPatternImplicitInUsage.kt")
+            public void testExplicitInPatternImplicitInUsage() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/explicitInPatternImplicitInUsage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("explicitTypeArg.kt")
+            public void testExplicitTypeArg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/explicitTypeArg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("keepInUserCodeRuntime.kt")
+            public void testKeepInUserCodeRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/keepInUserCodeRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("keepOriginalIfQualified.kt")
+            public void testKeepOriginalIfQualified() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/keepOriginalIfQualified.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noImplicitTypeArgImportRuntime.kt")
+            public void testNoImplicitTypeArgImportRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/noImplicitTypeArgImportRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nonEmptyVarargRuntime.kt")
+            public void testNonEmptyVarargRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/typeArguments/nonEmptyVarargRuntime.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/vararg")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -3531,6 +3600,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("multipleSpreadArgumentsRuntime.kt")
             public void testMultipleSpreadArgumentsRuntime() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/vararg/multipleSpreadArgumentsRuntime.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noImportRuntime.kt")
+            public void testNoImportRuntime() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/vararg/noImportRuntime.kt");
                 doTest(fileName);
             }
 
@@ -4766,6 +4841,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("changeReturnTypeOfOverriddenFunction.kt")
             public void testChangeReturnTypeOfOverriddenFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/typeMismatchOnOverride/changeReturnTypeOfOverriddenFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("namedFunctionReturnOverrideInsideVariableInitializer.kt")
+            public void testNamedFunctionReturnOverrideInsideVariableInitializer() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/override/typeMismatchOnOverride/namedFunctionReturnOverrideInsideVariableInitializer.kt");
                 doTest(fileName);
             }
 
@@ -6348,6 +6429,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         public static class ChangeMutability extends AbstractQuickFixTest {
             public void testAllFilesPresentInChangeMutability() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/variables/changeMutability"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("localInGetter.kt")
+            public void testLocalInGetter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/localInGetter.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("valOverrideVar.kt")

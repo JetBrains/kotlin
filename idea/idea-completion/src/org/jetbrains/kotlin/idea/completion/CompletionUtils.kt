@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -220,7 +221,7 @@ fun thisExpressionItems(bindingContext: BindingContext, position: JetExpression,
 
 fun returnExpressionItems(bindingContext: BindingContext, position: JetElement): Collection<LookupElement> {
     val result = ArrayList<LookupElement>()
-    for (parent in position.parents()) {
+    for (parent in position.parentsWithSelf) {
         if (parent is JetDeclarationWithBody) {
             val returnsUnit = returnsUnit(parent, bindingContext)
             if (parent is JetFunctionLiteral) {
@@ -279,7 +280,7 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
     val result = ArrayList<LookupElement>()
 
     parentsLoop@
-    for (parent in position.parents()) {
+    for (parent in position.parentsWithSelf) {
         when (parent) {
             is JetLoopExpression -> {
                 if (result.isEmpty()) {

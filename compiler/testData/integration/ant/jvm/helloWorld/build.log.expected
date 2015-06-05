@@ -3,6 +3,7 @@ Buildfile: [TestData]/build.xml
 
 build:
   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
+     [java] Hello, a!
 
 BUILD SUCCESSFUL
 Total time: [time]

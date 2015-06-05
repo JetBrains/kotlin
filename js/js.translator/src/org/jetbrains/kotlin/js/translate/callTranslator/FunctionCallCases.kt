@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.translate.callTranslator
 
 import com.google.dart.compiler.backend.js.ast.*
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -211,7 +210,8 @@ object ConstructorCallCase : FunctionCallCase {
 
         val functionRef = if (isNative()) fqName else context.aliasOrValue(callableDescriptor) { fqName }
 
-        if((callableDescriptor as ConstructorDescriptor).isPrimary()) {
+        val constructorDescriptor = callableDescriptor as ConstructorDescriptor
+        if(constructorDescriptor.isPrimary() || AnnotationsUtils.isNativeObject(constructorDescriptor)) {
             return JsNew(functionRef, argumentsInfo.translateArguments)
         }
         else {

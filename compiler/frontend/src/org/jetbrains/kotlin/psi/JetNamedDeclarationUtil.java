@@ -63,7 +63,7 @@ public final class JetNamedDeclarationUtil {
             return getFQName((JetNamedDeclaration) parent);
         }
         else if (namedDeclaration instanceof JetParameter) {
-            JetClass constructorClass = JetPsiUtil.getClassIfParameterIsProperty((JetParameter) namedDeclaration);
+            JetClassOrObject constructorClass = JetPsiUtil.getClassIfParameterIsProperty((JetParameter) namedDeclaration);
             if (constructorClass != null) {
                 return getFQName(constructorClass);
             }

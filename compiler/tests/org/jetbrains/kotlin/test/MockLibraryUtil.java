@@ -44,8 +44,7 @@ import static org.junit.Assert.assertEquals;
 
 public class MockLibraryUtil {
 
-    private static SoftReference<Class<?>> compiler2JVMClassRef = new SoftReference<Class<?>>(null);
-    private static SoftReference<Class<?>> compiler2JSClassRef = new SoftReference<Class<?>>(null);
+    private static SoftReference<ClassLoader> compilerClassLoader = new SoftReference<ClassLoader>(null);
 
     @NotNull
     public static File compileLibraryToJar(
@@ -199,32 +198,33 @@ public class MockLibraryUtil {
 
     @NotNull
     private static synchronized Class<?> getCompiler2JVMClass() {
-        Class<?> compilerClass = compiler2JVMClassRef.get();
-        if (compilerClass == null) {
-            compilerClass = getCompilerClass(K2JVMCompiler.class.getName());
-            compiler2JVMClassRef = new SoftReference<Class<?>>(compilerClass);
-        }
-        return compilerClass;
+        return loadCompilerClass(K2JVMCompiler.class.getName());
     }
 
     @NotNull
     private static synchronized Class<?> getCompiler2JSClass() {
-        Class<?> compilerClass = compiler2JSClassRef.get();
-        if (compilerClass == null) {
-            compilerClass = getCompilerClass(K2JSCompiler.class.getName());
-            compiler2JSClassRef = new SoftReference<Class<?>>(compilerClass);
+        return loadCompilerClass(K2JSCompiler.class.getName());
+    }
+
+    private static synchronized Class<?> loadCompilerClass(String compilerClassName) {
+        try {
+            ClassLoader classLoader = compilerClassLoader.get();
+            if (classLoader == null) {
+                classLoader = createCompilerClassLoader();
+                compilerClassLoader = new SoftReference<ClassLoader>(classLoader);
+            }
+            return classLoader.loadClass(compilerClassName);
         }
-        return compilerClass;
+        catch (Throwable e) {
+            throw UtilsPackage.rethrow(e);
+        }
     }
 
     @NotNull
-    private static synchronized Class<?> getCompilerClass(String compilerClassName) {
+    private static synchronized ClassLoader createCompilerClassLoader() {
         try {
             File kotlinCompilerJar = new File(PathUtil.getKotlinPathsForDistDirectory().getLibPath(), "kotlin-compiler.jar");
-            ClassLoader classLoader =
-                    ClassPreloadingUtils.preloadClasses(Collections.singletonList(kotlinCompilerJar), 4096, null, null, null);
-
-            return classLoader.loadClass(compilerClassName);
+            return ClassPreloadingUtils.preloadClasses(Collections.singletonList(kotlinCompilerJar), 4096, null, null, null);
         }
         catch (Throwable e) {
             throw UtilsPackage.rethrow(e);

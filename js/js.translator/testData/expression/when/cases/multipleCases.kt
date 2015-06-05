@@ -1,6 +1,6 @@
 package foo
 
-fun box(): Int {
+fun box(): String {
     val c = 3
     val d = 5
     var z = 0
@@ -17,5 +17,6 @@ fun box(): Int {
             z = -1000;
         }
     }
-    return z
+    assertEquals(2, z)
+    return "OK"
 }

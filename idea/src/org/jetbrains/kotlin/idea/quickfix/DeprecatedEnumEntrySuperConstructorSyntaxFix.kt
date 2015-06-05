@@ -68,7 +68,7 @@ class DeprecatedEnumEntrySuperConstructorSyntaxFix(element: JetEnumEntry): JetIn
             val list = entry.getInitializerList()!!
             transformInitializerList(list)
             // Delete everything between name identifier and initializer (colon with whitespaces)
-            val name = entry.getNameAsDeclaration()
+            val name = entry.getNameAsDeclaration()!!
             entry.deleteChildRange(name.getNextSibling()!!, list.getPrevSibling()!!)
         }
     }

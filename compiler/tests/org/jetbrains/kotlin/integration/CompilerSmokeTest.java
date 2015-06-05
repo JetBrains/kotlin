@@ -17,12 +17,8 @@
 package org.jetbrains.kotlin.integration;
 
 import com.intellij.util.ArrayUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.test.JetTestUtils;
 import org.jetbrains.kotlin.utils.UtilsPackage;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,16 +26,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-
 public class CompilerSmokeTest extends KotlinIntegrationTestBase {
-    @Rule
-    public final TestName name = new TestName();
-
-    @NotNull
-    @Override
-    protected File getTestDataDir() {
-        return new File(new File(INTEGRATION_TEST_DATA_BASE_DIR, "smoke"), name.getMethodName());
+    private int run(String logName, String... args) throws Exception {
+        return runJava(JetTestUtils.getTestDataPathBase() + "/integration/smoke/" + getTestName(true), logName, args);
     }
 
     private int runCompiler(String logName, String... arguments) throws Exception {
@@ -55,54 +44,47 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
 
         Collections.addAll(javaArgs, arguments);
 
-        return runJava(logName, ArrayUtil.toStringArray(javaArgs));
+        return run(logName, ArrayUtil.toStringArray(javaArgs));
     }
 
-    @Test
-    public void helloApp() throws Exception {
-        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
+    public void testHelloApp() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
-        runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
+        run("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
-    @Test
-    public void helloAppFQMain() throws Exception {
-        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
+    public void testHelloAppFQMain() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
-        runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
+        run("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
-    @Test
-    public void helloAppVarargMain() throws Exception {
-        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "hello.jar";
+    public void testHelloAppVarargMain() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "hello.jar";
 
         assertEquals("compilation failed", 0, runCompiler("hello.compile", "-include-runtime", "hello.kt", "-d", jar));
-        runJava("hello.run", "-cp", jar, "Hello.HelloPackage");
+        run("hello.run", "-cp", jar, "Hello.HelloPackage");
     }
 
-    @Test
-    public void compilationFailed() throws Exception {
-        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
+    public void testCompilationFailed() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "smoke.jar";
 
         runCompiler("hello.compile", "hello.kt", "-d", jar);
     }
 
-    @Test
-    public void syntaxErrors() throws Exception {
-        String jar = tmpdir.getTmpDir().getAbsolutePath() + File.separator + "smoke.jar";
+    public void testSyntaxErrors() throws Exception {
+        String jar = tmpdir.getAbsolutePath() + File.separator + "smoke.jar";
 
         runCompiler("test.compile", "test.kt", "-d", jar);
     }
 
-    @Test
-    public void simpleScript() throws Exception {
+    public void testSimpleScript() throws Exception {
         runCompiler("script", "-script", "script.kts", "hi", "there");
     }
 
-    @Test
-    public void scriptWithClasspath() throws Exception {
+    public void testScriptWithClasspath() throws Exception {
         runCompiler("script", "-cp", new File("lib/javax.inject.jar").getAbsolutePath(), "-script", "script.kts");
     }
 }

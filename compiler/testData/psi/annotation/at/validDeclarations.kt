@@ -28,7 +28,7 @@ private @open [Ann1(1)] @Ann2("1") Ann3("2") class A(
 
     @companion object
 
-    @companion @private object B
+    @companion @private object B;
 
     @main
 

@@ -53,7 +53,7 @@ public final class WhenTest extends AbstractExpressionTest {
     }
 
     public void testMultipleCases() throws Exception {
-        fooBoxIsValue(2.0);
+        checkFooBoxIsOk();
     }
 
     public void testMatchNullableType() throws Exception {

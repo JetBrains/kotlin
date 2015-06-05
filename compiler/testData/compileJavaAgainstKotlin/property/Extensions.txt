@@ -1,0 +1,8 @@
+package test
+
+internal val kotlin.String.val_: kotlin.String
+internal var kotlin.String.var_: kotlin.String
+
+public/*package*/ open class GenericArray {
+    public/*package*/ constructor GenericArray()
+}

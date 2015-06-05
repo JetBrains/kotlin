@@ -16,21 +16,58 @@
 
 package org.jetbrains.kotlin.jvm.compiler;
 
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
+import org.jetbrains.kotlin.psi.JetFile;
+import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererBuilder;
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
+import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import org.junit.Assert;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.test.JetTestUtils.compileKotlinWithJava;
+import static org.jetbrains.kotlin.test.JetTestUtils.*;
+import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT;
+import static org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile;
 
 @SuppressWarnings({"JUnitTestCaseWithNonTrivialConstructors", "JUnitTestCaseWithNoTests"})
 public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithTmpdir {
+    // Do not render parameter names because there are test cases where classes inherit from JDK collections,
+    // and some versions of JDK have debug information in the class files (including parameter names), and some don't
+    public static final RecursiveDescriptorComparator.Configuration CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.withRenderer(
+            new DescriptorRendererBuilder()
+                    .setWithDefinedIn(false)
+                    .setParameterNameRenderingPolicy(DescriptorRenderer.ParameterNameRenderingPolicy.NONE)
+                    .setVerbose(true)
+                    .build());
+
     protected void doTest(String ktFilePath) throws IOException {
         Assert.assertTrue(ktFilePath.endsWith(".kt"));
         File ktFile = new File(ktFilePath);
-        File javaFile = new File(ktFilePath.replaceFirst("\\.kt", ".java"));
-        compileKotlinWithJava(Collections.singletonList(javaFile), Collections.singletonList(ktFile), tmpdir, getTestRootDisposable());
+        File javaFile = new File(ktFilePath.replaceFirst("\\.kt$", ".java"));
+        File expectedFile = new File(ktFilePath.replaceFirst("\\.kt$", ".txt"));
+
+        File out = new File(tmpdir, "out");
+        compileKotlinWithJava(Collections.singletonList(javaFile), Collections.singletonList(ktFile), out, getTestRootDisposable());
+
+        KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
+                getTestRootDisposable(),
+                compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, getAnnotationsJar(), out),
+                EnvironmentConfigFiles.JVM_CONFIG_FILES
+        );
+
+        AnalysisResult exhaust = JvmResolveUtil.analyzeFilesWithJavaIntegration(environment.getProject(), Collections.<JetFile>emptySet());
+        PackageViewDescriptor packageView = exhaust.getModuleDescriptor().getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME);
+        assertNotNull(packageView);
+
+        validateAndCompareDescriptorWithFile(packageView, CONFIGURATION, expectedFile);
     }
 }

@@ -27,7 +27,7 @@ import com.intellij.refactoring.util.RefactoringMessageUtil
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.psi.JetPackageDirective
-import org.jetbrains.kotlin.psi.psiUtil.packageMatchesDirectory
+import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
 
 public class MoveFileToPackageMatchingDirectoryIntention : JetSelfTargetingOffsetIndependentIntention<JetPackageDirective>(
         javaClass(), "", "Move file to package-matching directory"

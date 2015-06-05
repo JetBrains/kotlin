@@ -1,0 +1,10 @@
+package test
+
+internal fun ggg(/*0*/ kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
+
+public/*package*/ open class ListOfInt {
+    public/*package*/ constructor ListOfInt()
+
+    // Static members
+    public open fun hhh(): kotlin.Unit
+}

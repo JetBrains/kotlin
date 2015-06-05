@@ -21,6 +21,7 @@ import com.google.common.collect.Sets;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
@@ -37,6 +38,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
+import static org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE;
+import static org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION;
 import static org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.calls.ValueArgumentsToParametersMapper.Status.*;
 
@@ -150,11 +153,17 @@ public class ValueArgumentsToParametersMapper {
             public ProcessorState processNamedArgument(@NotNull ValueArgument argument) {
                 assert argument.isNamed();
 
+                D candidate = candidateCall.getCandidateDescriptor();
+
                 JetSimpleNameExpression nameReference = argument.getArgumentName().getReferenceExpression();
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedNameAsName());
-                if (!candidateCall.getCandidateDescriptor().hasStableParameterNames()) {
-                    report(NAMED_ARGUMENTS_NOT_ALLOWED.on(nameReference));
+                if (!candidate.hasStableParameterNames()) {
+                    report(NAMED_ARGUMENTS_NOT_ALLOWED.on(
+                            nameReference,
+                            candidate instanceof FunctionInvokeDescriptor ? INVOKE_ON_FUNCTION_TYPE : NON_KOTLIN_FUNCTION
+                    ));
                 }
+
                 if (valueParameterDescriptor == null) {
                     report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference));
                     unmappedArguments.add(argument);

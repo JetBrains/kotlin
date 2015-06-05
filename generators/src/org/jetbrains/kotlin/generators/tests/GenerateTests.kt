@@ -92,6 +92,7 @@ import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
 import org.jetbrains.kotlin.idea.stubs.AbstractResolveByStubTest
 import org.jetbrains.kotlin.idea.stubs.AbstractStubBuilderTest
+import org.jetbrains.kotlin.integration.AbstractAntTaskTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterForWebDemoTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterMultiFileTest
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
@@ -270,6 +271,10 @@ fun main(args: Array<String>) {
 
         testClass(javaClass<AbstractReplInterpreterTest>()) {
             model("repl", extension = "repl")
+        }
+
+        testClass(javaClass<AbstractAntTaskTest>()) {
+            model("integration/ant/jvm", extension = null, recursive = false, excludeParentDirs = true)
         }
 
         testClass(javaClass<AbstractControlFlowTest>()) {

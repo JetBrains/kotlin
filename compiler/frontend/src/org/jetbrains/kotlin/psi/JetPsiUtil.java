@@ -447,11 +447,11 @@ public class JetPsiUtil {
     }
 
     @Nullable
-    public static JetClass getClassIfParameterIsProperty(@NotNull JetParameter jetParameter) {
+    public static JetClassOrObject getClassIfParameterIsProperty(@NotNull JetParameter jetParameter) {
         if (jetParameter.hasValOrVarNode()) {
             PsiElement grandParent = jetParameter.getParent().getParent();
             if (grandParent instanceof JetPrimaryConstructor) {
-                return ((JetPrimaryConstructor) grandParent).getContainingClassOrNull();
+                return ((JetPrimaryConstructor) grandParent).getContainingClassOrObject();
             }
         }
 

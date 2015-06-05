@@ -31,12 +31,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.ExtractionEnginePackage;
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler;
 import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.idea.util.psiModificationUtil.PsiModificationUtilPackage;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
@@ -435,7 +435,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                     (JetCallExpression) (newElement instanceof JetQualifiedExpression
                                       ? ((JetQualifiedExpression) newElement).getSelectorExpression()
                                       : newElement);
-            PsiModificationUtilPackage.moveFunctionLiteralOutsideParentheses(newCallExpression);
+            CorePackage.moveFunctionLiteralOutsideParentheses(newCallExpression);
         }
     }
 

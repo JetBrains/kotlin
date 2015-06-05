@@ -26,10 +26,7 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.renderName
-import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.parents
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.LinkedHashMap
@@ -124,7 +121,7 @@ public fun <TElement : JetElement> createByPattern(pattern: String, vararg args:
 
         for ((range, text) in placeholders) {
             val token = resultElement.findElementAt(range.getStartOffset())!!
-            for (element in token.parents()) {
+            for (element in token.parentsWithSelf) {
                 val elementRange = element.getTextRange().shiftRight(-start)
                 if (elementRange == range && expectedElementType.isInstance(element)) {
                     val pointer = pointerManager.createSmartPsiElementPointer(element)

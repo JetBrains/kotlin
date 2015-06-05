@@ -531,7 +531,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                 fun addNextToOriginalElementContainer(addBefore: Boolean): JetNamedDeclaration {
                     val actualContainer = (containingElement as? JetClassOrObject)?.getBody() ?: containingElement
-                    val sibling = config.originalElement.parents().first { it.getParent() == actualContainer }
+                    val sibling = config.originalElement.parentsWithSelf.first { it.getParent() == actualContainer }
                     return if (addBefore) {
                         actualContainer.addBefore(declaration, sibling)
                     }
@@ -848,8 +848,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val adjustedDeclaration = when (declaration) {
                     is JetNamedFunction, is JetProperty -> {
                         val klass = psiFactory.createClass("class Foo {}")
-                        klass.getBody().add(declaration)
-                        (declaration.replace(klass) as JetClass).getBody().getDeclarations().first()
+                        klass.getBody()!!.add(declaration)
+                        (declaration.replace(klass) as JetClass).getBody()!!.getDeclarations().first()
                     }
                     else -> declaration
                 }

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import org.jetbrains.kotlin.codegen.optimization.common.InsnStream
+import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.org.objectweb.asm.tree.LineNumberNode
 import org.jetbrains.org.objectweb.asm.Label
 import kotlin.properties.Delegates
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.codegen.SourceInfo
 class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
 
     val lineNumbers =
-        InsnStream(node.instructions.getFirst(), null).stream().filterIsInstance<LineNumberNode>().map {
+        InsnSequence(node.instructions.getFirst(), null).stream().filterIsInstance<LineNumberNode>().map {
             val index = Collections.binarySearch(classSMAP.intervals, RangeMapping(it.line, it.line, 1)) {
                 value, key ->
                 if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)

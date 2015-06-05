@@ -29,6 +29,10 @@ public trait Runnable {
     public open fun run() : Unit;
 }
 
+public fun Runnable(action: () -> Unit): Runnable = object : Runnable {
+    override fun run() = action()
+}
+
 library
 public trait Appendable {
     public open fun append(csq: CharSequence?): Appendable

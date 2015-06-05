@@ -24,4 +24,19 @@ public abstract class FunctionReference
                    KMemberFunction,
                    KTopLevelExtensionFunction,
                    KLocalFunction {
+    private final int arity;
+
+    public FunctionReference(int arity) {
+        this.arity = arity;
+    }
+
+    @Deprecated // preserved for binary compatibility with M12 release
+    public FunctionReference() {
+        this.arity = 0;
+    }
+
+    @Override
+    public int getArity() {
+        return arity;
+    }
 }

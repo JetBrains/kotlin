@@ -1,0 +1,20 @@
+package test
+
+kotlin.jvm.jvmOverloads() internal fun one(/*0*/ kotlin.Int = ...): kotlin.Unit
+
+internal final class E1 : java.lang.Exception {
+    public constructor E1()
+    public final /*fake_override*/ fun getCause(): kotlin.Throwable?
+    public final /*fake_override*/ fun getMessage(): kotlin.String?
+    public final /*fake_override*/ fun printStackTrace(): kotlin.Unit
+}
+
+public/*package*/ open class JavaClass {
+    public/*package*/ constructor JavaClass()
+    public/*package*/ open fun testMethod(/*0*/ test.One!): kotlin.Unit
+}
+
+internal final class One {
+    public constructor One(/*0*/ kotlin.Int = ...)
+    internal final fun one(/*0*/ kotlin.Int = ...): kotlin.Unit
+}
