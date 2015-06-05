@@ -28,6 +28,22 @@ class ListSpecificTest {
         assertEquals(listOf('C', 'A', 'D'), list.slice(iter))
     }
 
+    Test fun getOr() {
+        expect("foo") { data.get(0) }
+        expect("bar") { data.get(1) }
+        fails { data.get(2) }
+        fails { data.get(-1) }
+        fails { empty.get(0) }
+
+        expect("foo") { data.getOrElse(0, {""} )}
+        expect("zoo") { data.getOrElse(-1, { "zoo" })}
+        expect("zoo") { data.getOrElse(2, { "zoo" })}
+        expect("zoo") { empty.getOrElse(0) { "zoo" }}
+
+        expect(null) { empty.getOrNull(0) }
+
+    }
+
     Test fun lastIndex() {
         assertEquals(-1, empty.lastIndex)
         assertEquals(1, data.lastIndex)

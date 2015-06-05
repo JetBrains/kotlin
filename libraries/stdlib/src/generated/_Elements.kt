@@ -600,9 +600,9 @@ public inline fun ShortArray.elementAtOrElse(index: Int, defaultValue: (Int) -> 
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
  */
-public inline fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+public fun <T> Iterable<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     if (this is List<T>)
-        return this.elementAtOrElse(index, defaultValue)
+        return this.getOrElse(index, defaultValue)
     if (index < 0)
         return defaultValue(index)
     val iterator = iterator()
@@ -625,7 +625,7 @@ public inline fun <T> List<T>.elementAtOrElse(index: Int, defaultValue: (Int) ->
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
  */
-public inline fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
+public fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
     if (index < 0)
         return defaultValue(index)
     val iterator = iterator()
@@ -713,7 +713,7 @@ public fun ShortArray.elementAtOrNull(index: Int): Short? {
  */
 public fun <T> Iterable<T>.elementAtOrNull(index: Int): T? {
     if (this is List<T>)
-        return this.elementAtOrNull(index)
+        return this.getOrNull(index)
     if (index < 0)
         return null
     val iterator = iterator()
@@ -1227,6 +1227,160 @@ public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 public inline fun String.firstOrNull(predicate: (Char) -> Boolean): Char? {
     for (element in this) if (predicate(element)) return element
     return null
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun <T> Array<out T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun BooleanArray.getOrElse(index: Int, defaultValue: (Int) -> Boolean): Boolean {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun ByteArray.getOrElse(index: Int, defaultValue: (Int) -> Byte): Byte {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun DoubleArray.getOrElse(index: Int, defaultValue: (Int) -> Double): Double {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun FloatArray.getOrElse(index: Int, defaultValue: (Int) -> Float): Float {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun IntArray.getOrElse(index: Int, defaultValue: (Int) -> Int): Int {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun LongArray.getOrElse(index: Int, defaultValue: (Int) -> Long): Long {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun ShortArray.getOrElse(index: Int, defaultValue: (Int) -> Short): Short {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
+ */
+public inline fun String.getOrElse(index: Int, defaultValue: (Int) -> Char): Char {
+    return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun <T> Array<out T>.getOrNull(index: Int): T? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun BooleanArray.getOrNull(index: Int): Boolean? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun ByteArray.getOrNull(index: Int): Byte? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun CharArray.getOrNull(index: Int): Char? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun DoubleArray.getOrNull(index: Int): Double? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun FloatArray.getOrNull(index: Int): Float? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun IntArray.getOrNull(index: Int): Int? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun LongArray.getOrNull(index: Int): Long? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun ShortArray.getOrNull(index: Int): Short? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun <T> List<T>.getOrNull(index: Int): T? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
+}
+
+/**
+ * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
+ */
+public fun String.getOrNull(index: Int): Char? {
+    return if (index >= 0 && index <= lastIndex) get(index) else null
 }
 
 /**

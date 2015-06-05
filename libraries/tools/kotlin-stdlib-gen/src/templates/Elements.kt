@@ -202,11 +202,10 @@ fun elements(): List<GenericFunction> {
     templates add f("elementAtOrElse(index: Int, defaultValue: (Int) -> T)") {
         doc { "Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection." }
         returns("T")
-        inline(true)
         body {
             """
             if (this is List<T>)
-                return this.elementAtOrElse(index, defaultValue)
+                return this.getOrElse(index, defaultValue)
             if (index < 0)
                 return defaultValue(index)
             val iterator = iterator()
@@ -233,7 +232,20 @@ fun elements(): List<GenericFunction> {
             return defaultValue(index)
             """
         }
+        inline(true, Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
         body(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
+            """
+        }
+    }
+
+    templates add f("getOrElse(index: Int, defaultValue: (Int) -> T)") {
+        doc { "Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection." }
+        returns("T")
+        inline(true)
+        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        body {
             """
             return if (index >= 0 && index <= lastIndex) get(index) else defaultValue(index)
             """
@@ -247,7 +259,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             if (this is List<T>)
-                return this.elementAtOrNull(index)
+                return this.getOrNull(index)
             if (index < 0)
                 return null
             val iterator = iterator()
@@ -280,6 +292,18 @@ fun elements(): List<GenericFunction> {
             """
         }
     }
+
+    templates add f("getOrNull(index: Int)") {
+        doc { "Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection." }
+        returns("T?")
+        only(Strings, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        body {
+            """
+            return if (index >= 0 && index <= lastIndex) get(index) else null
+            """
+        }
+    }
+
 
     templates add f("first()") {
         doc { """Returns first element.
