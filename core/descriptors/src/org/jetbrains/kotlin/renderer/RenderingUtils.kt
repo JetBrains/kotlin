@@ -36,6 +36,15 @@ private fun qualifierName(descriptor: DeclarationDescriptor): String? = when (de
 }
 
 
-public fun Name.render(): String = DescriptorRenderer.COMPACT.renderName(this)
+public fun Name.render(): String {
+    return if (this.shouldBeEscaped()) '`' + asString() + '`' else asString()
+}
+
+private fun Name.shouldBeEscaped(): Boolean {
+    if (isSpecial()) return false
+
+    val string = asString()
+    return string in KeywordStringsGenerated.KEYWORDS || string.any { !Character.isLetterOrDigit(it) && it != '_' }
+}
 
 public fun FqNameBase.render(): String = DescriptorRenderer.COMPACT.renderFqName(this)

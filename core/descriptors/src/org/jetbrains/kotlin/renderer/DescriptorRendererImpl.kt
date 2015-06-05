@@ -92,8 +92,7 @@ internal class DescriptorRendererImpl(
 
     /* NAMES RENDERING */
     override fun renderName(name: Name): String {
-        val asString = name.asString()
-        return escape(if (nameShouldBeEscaped(name)) '`' + asString + '`' else asString)
+        return escape(name.render())
     }
 
     private fun renderName(descriptor: DeclarationDescriptor, builder: StringBuilder) {
@@ -880,14 +879,6 @@ internal class DescriptorRendererImpl(
         if (length == 0 || builder.charAt(length - 1) != ' ') {
             builder.append(' ')
         }
-    }
-
-    private fun nameShouldBeEscaped(identifier: Name): Boolean {
-        if (identifier.isSpecial()) return false
-
-        val name = identifier.asString()
-
-        return KeywordStringsGenerated.KEYWORDS.contains(name) || name.any { !Character.isLetterOrDigit(it) && it != '_' }
     }
 
     private fun replacePrefixes(lowerRendered: String, lowerPrefix: String, upperRendered: String, upperPrefix: String, foldedPrefix: String): String? {
