@@ -81,6 +81,22 @@ public fun thread(start: Boolean = true, daemon: Boolean = false, contextClassLo
 }
 
 /**
+ * Gets the value in the current thread's copy of this
+ * thread-local variable or replaces the value with the result of calling
+ * [default] function in case if that value was `null`.
+ *
+ * If the variable has no value for the current thread,
+ * it is first initialized to the value returned
+ * by an invocation of the [ThreadLocal.initialValue] method.
+ * Then if it is still `null`, the provided [default] function is called and its result
+ * is stored for the current thread and then returned.
+ */
+public inline fun <T: Any> ThreadLocal<T>.getOrSet(default: () -> T): T {
+    // TODO: replace let with apply or touch
+    return get() ?: default().let { set(it); it }
+}
+
+/**
  * Allows you to use the executor as a function to
  * execute the given block on the [Executor].
  */

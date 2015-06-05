@@ -28,4 +28,24 @@ class ThreadTest {
         assertEquals("Hello", future.get(2, SECONDS))
     }
 
+    test fun threadLocalGetOrSet() {
+        val v = ThreadLocal<String>()
+
+        assertEquals("v1", v.getOrSet { "v1" })
+        assertEquals("v1", v.get())
+        assertEquals("v1", v.getOrSet { "v2" })
+
+        v.set(null)
+        assertEquals("v2", v.getOrSet { "v2" })
+
+        v.set("v3")
+        assertEquals("v3", v.getOrSet { "v2" })
+
+
+        val w = object: ThreadLocal<String>() {
+            override fun initialValue() = "default"
+        }
+
+        assertEquals("default", w.getOrSet { "v1" })
+    }
 }
