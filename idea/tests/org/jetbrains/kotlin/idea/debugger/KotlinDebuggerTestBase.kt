@@ -187,12 +187,13 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         val runnable = {
             var offset = -1;
             while (true) {
-                offset = document.getText().indexOf("FieldWatchpoint!", offset + 1)
+                val fileText = document.getText()
+                offset = fileText.indexOf("FieldWatchpoint!", offset + 1)
                 if (offset == -1) break
 
                 val commentLine = document.getLineNumber(offset)
 
-                val comment = document.getText().substring(document.getLineStartOffset(commentLine), document.getLineEndOffset(commentLine))
+                val comment = fileText.substring(document.getLineStartOffset(commentLine), document.getLineEndOffset(commentLine))
 
                 val lineIndex = commentLine + 1
                 val fieldName = comment.substringAfter("//FieldWatchpoint! (").substringBefore(")")
@@ -211,8 +212,9 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                 val javaBreakpoint = BreakpointManager.getJavaBreakpoint(xBreakpoint)
                 if (javaBreakpoint is KotlinFieldBreakpoint) {
                     javaBreakpoint.setFieldName(fieldName)
-                    javaBreakpoint.setWatchAccess(true)
-                    javaBreakpoint.setWatchModification(true)
+                    javaBreakpoint.setWatchAccess(fileText.getValueForSetting("WATCH_FIELD_ACCESS", true))
+                    javaBreakpoint.setWatchModification(fileText.getValueForSetting("WATCH_FIELD_MODIFICATION", true))
+                    javaBreakpoint.setWatchInitialization(fileText.getValueForSetting("WATCH_FIELD_INITIALISATION", false))
                     BreakpointManager.addBreakpoint(javaBreakpoint)
                     println("KotlinFieldBreakpoint created at ${file.getVirtualFile().getName()}:$lineIndex", ProcessOutputTypes.SYSTEM)
                 }

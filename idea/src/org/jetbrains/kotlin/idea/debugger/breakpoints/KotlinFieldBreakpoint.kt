@@ -17,15 +17,20 @@
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
 import com.intellij.debugger.DebuggerBundle
+import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.PositionUtil
 import com.intellij.debugger.requests.Requestor
+import com.intellij.debugger.ui.breakpoints.BreakpointCategory
 import com.intellij.debugger.ui.breakpoints.BreakpointWithHighlighter
 import com.intellij.debugger.ui.breakpoints.FieldBreakpoint
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.breakpoints.XBreakpoint
@@ -36,7 +41,6 @@ import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest
 import com.sun.jdi.request.MethodEntryRequest
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.java.debugger.breakpoints.properties.JavaFieldBreakpointProperties
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -46,10 +50,15 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import javax.swing.Icon
 
-class KotlinFieldBreakpoint(project: Project, breakpoint: XBreakpoint<JavaFieldBreakpointProperties>) : FieldBreakpoint(project, breakpoint) {
+class KotlinFieldBreakpoint(
+        project: Project,
+        breakpoint: XBreakpoint<KotlinPropertyBreakpointProperties>
+): BreakpointWithHighlighter<KotlinPropertyBreakpointProperties>(project, breakpoint) {
     companion object {
         private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint")
+        private val CATEGORY: Key<FieldBreakpoint> = BreakpointCategory.lookup<FieldBreakpoint>("field_breakpoints")
     }
 
     private enum class BreakpointType {
@@ -127,6 +136,22 @@ class KotlinFieldBreakpoint(project: Project, breakpoint: XBreakpoint<JavaFieldB
 
         val vm = debugProcess.getVirtualMachineProxy()
         try {
+            if (getProperties().WATCH_INITIALIZATION) {
+                val sourcePosition = getSourcePosition()
+                if (sourcePosition != null) {
+                    debugProcess.getPositionManager()
+                            .locationsOfLine(refType, sourcePosition)
+                            .filter { it.method().isConstructor() || it.method().isStaticInitializer() }
+                            .forEach {
+                                val request = debugProcess.getRequestsManager().createBreakpointRequest(this, it)
+                                debugProcess.getRequestsManager().enableRequest(request)
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Breakpoint request added")
+                                }
+                            }
+                }
+            }
+            
             when (breakpointType) {
                 BreakpointType.FIELD -> {
                     val field = refType.fieldByName(getFieldName())
@@ -298,4 +323,67 @@ class KotlinFieldBreakpoint(project: Project, breakpoint: XBreakpoint<JavaFieldB
     fun setWatchModification(value: Boolean) {
         getProperties().WATCH_MODIFICATION = value
     }
+
+    @TestOnly
+    fun setWatchInitialization(value: Boolean) {
+        getProperties().WATCH_INITIALIZATION = value
+    }
+
+    override fun getDisabledIcon(isMuted: Boolean): Icon {
+        val master = DebuggerManagerEx.getInstanceEx(myProject).getBreakpointManager().findMasterBreakpoint(this)
+        return when {
+            isMuted && master == null -> AllIcons.Debugger.Db_muted_disabled_field_breakpoint
+            isMuted && master != null -> AllIcons.Debugger.Db_muted_dep_field_breakpoint
+            master != null -> AllIcons.Debugger.Db_dep_field_breakpoint
+            else -> AllIcons.Debugger.Db_disabled_field_breakpoint
+        }
+    }
+
+    override fun getSetIcon(isMuted: Boolean): Icon {
+        return when {
+            isMuted -> AllIcons.Debugger.Db_muted_field_breakpoint
+            else -> AllIcons.Debugger.Db_field_breakpoint
+        }
+    }
+
+    override fun getInvalidIcon(isMuted: Boolean): Icon {
+        return when {
+            isMuted -> AllIcons.Debugger.Db_muted_invalid_field_breakpoint
+            else -> AllIcons.Debugger.Db_invalid_field_breakpoint
+        }
+    }
+
+    override fun getVerifiedIcon(isMuted: Boolean): Icon {
+        return when {
+            isMuted -> AllIcons.Debugger.Db_muted_verified_field_breakpoint
+            else -> AllIcons.Debugger.Db_verified_field_breakpoint
+        }
+    }
+
+    override fun getVerifiedWarningsIcon(isMuted: Boolean): Icon {
+        return when {
+            isMuted -> AllIcons.Debugger.Db_muted_field_warning_breakpoint
+            else -> AllIcons.Debugger.Db_field_warning_breakpoint
+        }
+    }
+
+    override fun getCategory() = CATEGORY
+
+    override fun getDisplayName(): String? {
+        if (!isValid()) {
+            return DebuggerBundle.message("status.breakpoint.invalid")
+        }
+        val className = getClassName()
+        return if (className != null && !className.isEmpty()) className + "." + getFieldName() else getFieldName()
+    }
+
+    private fun getFieldName(): String {
+        val declaration = getField()
+        return runReadAction { declaration?.getName() } ?: "unknown"
+    }
+
+    override fun getEvaluationElement(): PsiElement? {
+        return getField()
+    }
+
 }

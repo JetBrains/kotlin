@@ -1,0 +1,11 @@
+KotlinFieldBreakpoint created at fwInitializer.kt:11
+KotlinFieldBreakpoint created at fwInitializer.kt:16
+KotlinFieldBreakpoint created at fwInitializer.kt:20
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fwInitializer.FwInitializerPackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+fwInitializer.kt:12
+fwInitializer.kt:17
+fwInitializer.kt:21
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

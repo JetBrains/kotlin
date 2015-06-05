@@ -22,6 +22,7 @@ import com.intellij.util.ui.DialogUtil
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointBase
+import org.jetbrains.kotlin.idea.JetBundle
 import java.awt.BorderLayout
 import java.awt.event.ActionEvent
 import java.awt.event.ActionListener
@@ -32,13 +33,16 @@ import javax.swing.JPanel
 import kotlin.properties.Delegates
 
 public class KotlinFieldBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<KotlinPropertyBreakpointProperties>>() {
+    private var myWatchInitializationCheckBox: JCheckBox by Delegates.notNull()
     private var myWatchAccessCheckBox: JCheckBox by Delegates.notNull()
     private var myWatchModificationCheckBox: JCheckBox by Delegates.notNull()
 
     override fun getComponent(): JComponent {
-        myWatchAccessCheckBox = JCheckBox(DebuggerBundle.message("label.filed.breakpoint.properties.panel.field.access"))
-        myWatchModificationCheckBox = JCheckBox(DebuggerBundle.message("label.filed.breakpoint.properties.panel.field.modification"))
+        myWatchInitializationCheckBox = JCheckBox(JetBundle.message("debugger.field.watchpoints.properties.panel.field.initialization.label"))
+        myWatchAccessCheckBox = JCheckBox(JetBundle.message("debugger.field.watchpoints.properties.panel.field.access.label"))
+        myWatchModificationCheckBox = JCheckBox(JetBundle.message("debugger.field.watchpoints.properties.panel.field.modification.label"))
 
+        DialogUtil.registerMnemonic(myWatchInitializationCheckBox)
         DialogUtil.registerMnemonic(myWatchAccessCheckBox)
         DialogUtil.registerMnemonic(myWatchModificationCheckBox)
 
@@ -49,6 +53,7 @@ public class KotlinFieldBreakpointPropertiesPanel: XBreakpointCustomPropertiesPa
         }
 
         val watchBox = Box.createVerticalBox()
+        watchBox.addNewPanelForCheckBox(myWatchInitializationCheckBox)
         watchBox.addNewPanelForCheckBox(myWatchAccessCheckBox)
         watchBox.addNewPanelForCheckBox(myWatchModificationCheckBox)
 
@@ -59,24 +64,11 @@ public class KotlinFieldBreakpointPropertiesPanel: XBreakpointCustomPropertiesPa
         innerPanel.add(Box.createHorizontalStrut(3), BorderLayout.EAST)
         mainPanel.add(innerPanel, BorderLayout.NORTH)
         mainPanel.setBorder(IdeBorderFactory.createTitledBorder(DebuggerBundle.message("label.group.watch.events"), true))
-
-        val listener = object : ActionListener {
-            override fun actionPerformed(e: ActionEvent) {
-                if (!myWatchAccessCheckBox.isSelected() && !myWatchModificationCheckBox.isSelected()) {
-                    when(e.getSource()) {
-                        myWatchAccessCheckBox -> myWatchModificationCheckBox.setSelected(true)
-                        myWatchModificationCheckBox -> myWatchAccessCheckBox.setSelected(true)
-                    }
-                }
-            }
-        }
-        myWatchAccessCheckBox.addActionListener(listener)
-        myWatchModificationCheckBox.addActionListener(listener)
-
         return mainPanel
     }
 
     override fun loadFrom(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>) {
+        myWatchInitializationCheckBox.setSelected(breakpoint.getProperties().WATCH_INITIALIZATION)
         myWatchAccessCheckBox.setSelected(breakpoint.getProperties().WATCH_ACCESS)
         myWatchModificationCheckBox.setSelected(breakpoint.getProperties().WATCH_MODIFICATION)
     }
@@ -87,6 +79,9 @@ public class KotlinFieldBreakpointPropertiesPanel: XBreakpointCustomPropertiesPa
 
         changed = breakpoint.getProperties().WATCH_MODIFICATION != myWatchModificationCheckBox.isSelected() || changed
         breakpoint.getProperties().WATCH_MODIFICATION = myWatchModificationCheckBox.isSelected()
+
+        changed = breakpoint.getProperties().WATCH_INITIALIZATION != myWatchInitializationCheckBox.isSelected() || changed
+        breakpoint.getProperties().WATCH_INITIALIZATION = myWatchInitializationCheckBox.isSelected()
 
         if (changed) {
             (breakpoint as XBreakpointBase<*, *, *>).fireBreakpointChanged()

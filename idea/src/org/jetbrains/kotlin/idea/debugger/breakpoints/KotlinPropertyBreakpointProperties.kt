@@ -16,11 +16,28 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
-import com.intellij.util.xmlb.annotations.Attribute
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties
 import org.jetbrains.java.debugger.breakpoints.properties.JavaFieldBreakpointProperties
 
+import com.intellij.util.xmlb.annotations.Attribute
+
 public class KotlinPropertyBreakpointProperties(
-        propertyName: String = "",
-        className: String = ""
-): JavaFieldBreakpointProperties(propertyName, className)
+        @Attribute var myFieldName: String = "",
+        @Attribute var myClassName: String = ""
+): JavaBreakpointProperties<KotlinPropertyBreakpointProperties>() {
+    public var WATCH_MODIFICATION: Boolean = true
+    public var WATCH_ACCESS: Boolean = false
+    public var WATCH_INITIALIZATION: Boolean = false
+
+    override fun getState() = this
+
+    override fun loadState(state: KotlinPropertyBreakpointProperties) {
+        super.loadState(state)
+
+        WATCH_MODIFICATION = state.WATCH_MODIFICATION
+        WATCH_ACCESS = state.WATCH_ACCESS
+        WATCH_INITIALIZATION = state.WATCH_INITIALIZATION
+        myFieldName = state.myFieldName
+        myClassName = state.myClassName
+    }
+}
