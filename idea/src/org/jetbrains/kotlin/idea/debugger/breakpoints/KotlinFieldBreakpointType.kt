@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.debugger.breakpoints
 
 import com.intellij.debugger.DebuggerBundle
 import com.intellij.debugger.ui.breakpoints.*
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -49,8 +50,6 @@ import javax.swing.JComponent
 public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointProperties>, XLineBreakpointType<KotlinPropertyBreakpointProperties>(
         "kotlin-field", JetBundle.message("debugger.field.watchpoints.tab.title")
 ) {
-    private val delegate = JavaFieldBreakpointType()
-
     override fun createJavaBreakpoint(project: Project, breakpoint: XBreakpoint<KotlinPropertyBreakpointProperties>): Breakpoint<*> {
         return KotlinFieldBreakpoint(project, breakpoint)
     }
@@ -176,29 +175,17 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
         Messages.showMessageDialog(project, message, DebuggerBundle.message("add.field.breakpoint.dialog.title"), Messages.getErrorIcon())
     }
 
-    override fun isAddBreakpointButtonVisible(): Boolean {
-        return delegate.isAddBreakpointButtonVisible()
-    }
+    override fun isAddBreakpointButtonVisible() = true
 
-    override fun getMutedEnabledIcon(): Icon {
-        return delegate.getMutedEnabledIcon()
-    }
+    override fun getMutedEnabledIcon() = AllIcons.Debugger.Db_muted_field_breakpoint
 
-    override fun getDisabledIcon(): Icon {
-        return delegate.getDisabledIcon()
-    }
+    override fun getDisabledIcon() = AllIcons.Debugger.Db_disabled_field_breakpoint
 
-    override fun getEnabledIcon(): Icon {
-        return delegate.getEnabledIcon()
-    }
+    override fun getEnabledIcon() = AllIcons.Debugger.Db_field_breakpoint
 
-    override fun getMutedDisabledIcon(): Icon {
-        return delegate.getMutedDisabledIcon()
-    }
+    override fun getMutedDisabledIcon() = AllIcons.Debugger.Db_muted_disabled_field_breakpoint
 
-    override fun canBeHitInOtherPlaces(): Boolean {
-        return delegate.canBeHitInOtherPlaces()
-    }
+    override fun canBeHitInOtherPlaces() = true
 
     override fun getShortText(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>): String? {
         val properties = breakpoint.getProperties()
@@ -224,15 +211,11 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
         }
     }
 
-    override fun getEditorsProvider(): XDebuggerEditorsProvider? {
-        return delegate.getEditorsProvider()
-    }
+    override fun getEditorsProvider() = null
 
     override fun createCustomRightPropertiesPanel(project: Project): XBreakpointCustomPropertiesPanel<XLineBreakpoint<KotlinPropertyBreakpointProperties>>? {
         return KotlinBreakpointFiltersPanel(project)
     }
 
-    override fun isSuspendThreadSupported(): Boolean {
-        return delegate.isSuspendThreadSupported()
-    }
+    override fun isSuspendThreadSupported() = true
 }
