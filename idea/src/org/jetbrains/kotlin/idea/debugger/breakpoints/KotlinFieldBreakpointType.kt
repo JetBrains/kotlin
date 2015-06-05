@@ -121,7 +121,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<JavaFieldBreakpointP
     override fun getPriority() = 120
 
     override fun createBreakpointProperties(file: VirtualFile, line: Int): JavaFieldBreakpointProperties? {
-        return delegate.createBreakpointProperties(file, line)
+        return KotlinPropertyBreakpointProperties()
     }
 
     override fun addBreakpoint(project: Project, parentComponent: JComponent?): XLineBreakpoint<JavaFieldBreakpointProperties>? {
@@ -186,7 +186,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<JavaFieldBreakpointP
                     this,
                     file.getVirtualFile().getUrl(),
                     line,
-                    JavaFieldBreakpointProperties(fieldName, className)
+                    KotlinPropertyBreakpointProperties(fieldName, className)
             )
         }
     }
@@ -224,11 +224,11 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<JavaFieldBreakpointP
     }
 
     override fun createProperties(): JavaFieldBreakpointProperties? {
-        return delegate.createProperties()
+        return KotlinPropertyBreakpointProperties()
     }
 
     override fun createCustomPropertiesPanel(): XBreakpointCustomPropertiesPanel<XLineBreakpoint<JavaFieldBreakpointProperties>>? {
-        return delegate.createCustomPropertiesPanel()
+        return KotlinFieldBreakpointPropertiesPanel() as XBreakpointCustomPropertiesPanel<XLineBreakpoint<JavaFieldBreakpointProperties>>
     }
 
     override fun getDisplayText(breakpoint: XLineBreakpoint<JavaFieldBreakpointProperties>?): String? {
