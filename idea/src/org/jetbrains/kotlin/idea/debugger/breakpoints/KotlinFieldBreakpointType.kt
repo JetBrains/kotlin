@@ -229,8 +229,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
     }
 
     override fun createCustomRightPropertiesPanel(project: Project): XBreakpointCustomPropertiesPanel<XLineBreakpoint<KotlinPropertyBreakpointProperties>>? {
-        //TODO unsafe cast
-        return delegate.createCustomRightPropertiesPanel(project) as XBreakpointCustomPropertiesPanel<XLineBreakpoint<KotlinPropertyBreakpointProperties>>
+        return KotlinBreakpointFiltersPanel(project)
     }
 
     override fun isSuspendThreadSupported(): Boolean {
