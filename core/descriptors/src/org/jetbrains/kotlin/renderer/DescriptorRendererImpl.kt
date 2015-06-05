@@ -68,25 +68,20 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun lt(): String {
-        return escape("<")
-    }
-
-    private fun gt(): String {
-        return escape(">")
-    }
+    private fun lt() = escape("<")
+    private fun gt() = escape(">")
 
     private fun arrow(): String {
-        when (textFormat) {
-            DescriptorRenderer.TextFormat.PLAIN -> return escape("->")
-            DescriptorRenderer.TextFormat.HTML -> return "&rarr;"
+        return when (textFormat) {
+            DescriptorRenderer.TextFormat.PLAIN -> escape("->")
+            DescriptorRenderer.TextFormat.HTML -> "&rarr;"
         }
     }
 
     private fun renderMessage(message: String): String {
-        when (textFormat) {
-            DescriptorRenderer.TextFormat.PLAIN -> return message
-            DescriptorRenderer.TextFormat.HTML -> return "<i>" + message + "</i>"
+        return when (textFormat) {
+            DescriptorRenderer.TextFormat.PLAIN -> message
+            DescriptorRenderer.TextFormat.HTML -> "<i>$message</i>"
         }
     }
 
