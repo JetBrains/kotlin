@@ -29,10 +29,6 @@ public abstract class AbstractJetType implements JetType {
     @Nullable
     @Override
     public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
-        if (capabilityClass.isInstance(this)) {
-            //noinspection unchecked
-            return (T) this;
-        }
         return null;
     }
 

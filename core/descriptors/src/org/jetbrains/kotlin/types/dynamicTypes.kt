@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import kotlin.platform.platformStatic
 
 open class DynamicTypesSettings {
     open val dynamicTypesAllowed: Boolean
@@ -29,7 +28,7 @@ class DynamicTypesAllowed: DynamicTypesSettings() {
         get() = true
 }
 
-trait Dynamicity : TypeCapability
+interface Dynamicity : TypeCapability
 
 // Object is created only for convenience here. Dynamic types may occur in the form of DelegatingFlexibleTypes,
 // which are produced by substitutions
@@ -45,14 +44,20 @@ public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     override val id: String get() = "kotlin.DynamicType"
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? {
-        if (capabilityClass.isAssignableFrom(javaClass<Impl>()))
-            [suppress("UNCHECKED_CAST")]
-            return Impl(flexibility) as T
-        else return null
+        @suppress("UNCHECKED_CAST")
+        return if (capabilityClass in Impl.capabilityClasses) Impl(flexibility) as T else null
     }
 
-
     private class Impl(flexibility: Flexibility) : Dynamicity, Specificity, NullAwareness, FlexibleTypeDelegation {
+        companion object {
+            internal val capabilityClasses = hashSetOf(
+                    javaClass<Dynamicity>(),
+                    javaClass<Specificity>(),
+                    javaClass<NullAwareness>(),
+                    javaClass<FlexibleTypeDelegation>()
+            )
+        }
+
         override val delegateType: JetType = flexibility.upperBound
 
         override fun getSpecificityRelationTo(otherType: JetType): Specificity.Relation {

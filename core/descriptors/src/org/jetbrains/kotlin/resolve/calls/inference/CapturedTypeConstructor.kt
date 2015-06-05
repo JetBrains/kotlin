@@ -16,11 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.types.Variance.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
+import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 
 public class CapturedTypeConstructor(
         public val typeProjection: TypeProjection
@@ -63,6 +64,12 @@ public class CapturedType(
     }
 
     override fun getDelegate(): JetType = delegateType
+
+    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
+        @suppress("UNCHECKED_CAST")
+        return if (capabilityClass == javaClass<SubtypingRepresentatives>()) this as T
+        else super<DelegatingType>.getCapability(capabilityClass)
+    }
 
     override val subTypeRepresentative: JetType
         get() = representative(OUT_VARIANCE, KotlinBuiltIns.getInstance().getNullableAnyType())

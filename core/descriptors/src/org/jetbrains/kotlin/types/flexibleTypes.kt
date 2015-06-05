@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.types.Approximation.DataFlowExtras
-import org.jetbrains.kotlin.name.FqName
-import kotlin.platform.platformStatic
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import kotlin.platform.platformStatic
 
 public trait FlexibleTypeCapabilities {
     fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T?
@@ -142,12 +141,20 @@ trait FlexibleTypeDelegation : TypeCapability {
     public val delegateType: JetType
 }
 
-public open class DelegatingFlexibleType protected (
+public open class DelegatingFlexibleType protected constructor(
         override val lowerBound: JetType,
         override val upperBound: JetType,
         override val extraCapabilities: FlexibleTypeCapabilities
 ) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation, Approximation {
     companion object {
+        internal val capabilityClasses = hashSetOf(
+                javaClass<NullAwareness>(),
+                javaClass<Flexibility>(),
+                javaClass<SubtypingRepresentatives>(),
+                javaClass<FlexibleTypeDelegation>(),
+                javaClass<Approximation>()
+        )
+
         platformStatic fun create(lowerBound: JetType, upperBound: JetType, extraCapabilities: FlexibleTypeCapabilities): JetType {
             if (lowerBound == upperBound) return lowerBound
             return DelegatingFlexibleType(lowerBound, upperBound, extraCapabilities)
@@ -166,7 +173,13 @@ public open class DelegatingFlexibleType protected (
     }
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
-        return extraCapabilities.getCapability(capabilityClass, this, this) ?: super<DelegatingType>.getCapability(capabilityClass)
+        val extra = extraCapabilities.getCapability(capabilityClass, this, this)
+        if (extra != null) return extra
+
+        @suppress("UNCHECKED_CAST")
+        if (capabilityClass in capabilityClasses) return this as T
+
+        return super<DelegatingType>.getCapability(capabilityClass)
     }
 
     override fun makeNullableAsSpecified(nullable: Boolean): JetType {

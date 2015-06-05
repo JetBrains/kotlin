@@ -300,10 +300,11 @@ class LazyJavaTypeResolver(
         override val id: String get() = "kotlin.jvm.PlatformType"
 
         override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: JetType, flexibility: Flexibility): T? {
-            if (capabilityClass.isAssignableFrom(javaClass<Impl>()))
-                [suppress("UNCHECKED_CAST")]
-                return Impl(flexibility) as T
-            else return null
+            @suppress("UNCHECKED_CAST")
+            return when (capabilityClass) {
+                javaClass<CustomTypeVariable>(), javaClass<Specificity>() -> Impl(flexibility) as T
+                else -> null
+            }
         }
 
 

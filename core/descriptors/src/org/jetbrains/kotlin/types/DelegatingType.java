@@ -64,10 +64,6 @@ public abstract class DelegatingType implements JetType {
     @Override
     @Nullable
     public <T extends TypeCapability> T getCapability(@NotNull Class<T> capabilityClass) {
-        if (capabilityClass.isInstance(this)) {
-            //noinspection unchecked
-            return (T) this;
-        }
         return getDelegate().getCapability(capabilityClass);
     }
 
