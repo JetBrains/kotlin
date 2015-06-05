@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxInlineCodegenTest
 import org.jetbrains.kotlin.findUsages.AbstractJetFindUsagesTest
-import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesInLibrarySourceTest
+import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
 import org.jetbrains.kotlin.formatter.AbstractJetFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractJetTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.tests.generator.*
@@ -504,8 +504,8 @@ fun main(args: Array<String>) {
             model("findUsages/java", pattern = """^(.+)\.0\.java$""")
         }
 
-        testClass(javaClass<AbstractKotlinFindUsagesInLibrarySourceTest>()) {
-            model("findUsages/librarySources", pattern = """^(.+)\.0\.kt$""")
+        testClass(javaClass<AbstractKotlinFindUsagesWithLibraryTest>()) {
+            model("findUsages/libraryUsages", pattern = """^(.+)\.0\.kt$""")
         }
 
         testClass(javaClass<AbstractJetMoveTest>()) {
