@@ -59,6 +59,12 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noStdlibForJavac")
+    public void testNoStdlibForJavac() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/noStdlibForJavac/");
+        doTest(fileName);
+    }
+
     @TestMetadata("suppressWarnings")
     public void testSuppressWarnings() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/suppressWarnings/");

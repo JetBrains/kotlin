@@ -98,12 +98,21 @@ public class KotlinCompilerAdapter extends Javac13 {
         // Javac13#execute passes everything in compileList to javac, which doesn't recognize .kt files
         compileList = filterOutKotlinSources(compileList);
 
+        addRuntimeToJavacClasspath(kotlinc);
+
+        return compileList.length == 0 || super.execute();
+    }
+
+    private void addRuntimeToJavacClasspath(@NotNull Kotlin2JvmTask kotlinc) {
+        for (String arg : kotlinc.getArgs()) {
+            // If "-no-stdlib" was specified explicitly, probably the user also wanted the javac classpath to not have it
+            if ("-no-stdlib".equals(arg)) return;
+        }
+
         if (compileClasspath == null) {
             compileClasspath = new Path(getProject());
         }
         compileClasspath.add(new Path(getProject(), KotlinAntTaskUtil.INSTANCE$.getRuntimeJar().getAbsolutePath()));
-
-        return compileList.length == 0 || super.execute();
     }
 
     private void checkAntVersion() {
