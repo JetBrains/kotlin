@@ -59,12 +59,6 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         doTest(fileName);
     }
 
-    @TestMetadata("noClasspathGiven")
-    public void testNoClasspathGiven() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/noClasspathGiven/");
-        doTest(fileName);
-    }
-
     @TestMetadata("suppressWarnings")
     public void testSuppressWarnings() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/integration/ant/jvm/suppressWarnings/");
