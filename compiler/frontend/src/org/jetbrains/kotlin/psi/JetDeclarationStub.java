@@ -52,16 +52,16 @@ abstract class JetDeclarationStub<T extends StubElement> extends JetModifierList
         return super.getParent();
     }
 
+    @Override
+    public PsiElement getOriginalElement() {
+        KotlinDeclarationNavigationPolicy navigationPolicy = ServiceManager.getService(KotlinDeclarationNavigationPolicy.class);
+        return navigationPolicy != null ? navigationPolicy.getOriginalElement(this) : this;
+    }
+
     @NotNull
     @Override
     public PsiElement getNavigationElement() {
         KotlinDeclarationNavigationPolicy navigationPolicy = ServiceManager.getService(KotlinDeclarationNavigationPolicy.class);
-        if (navigationPolicy != null) {
-            JetElement navigationElement = navigationPolicy.getNavigationElement(this);
-            if (navigationElement != null) {
-                return navigationElement;
-            }
-        }
-        return this;
+        return navigationPolicy != null ? navigationPolicy.getNavigationElement(this) : this;
     }
 }

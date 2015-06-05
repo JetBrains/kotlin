@@ -19,8 +19,11 @@ package org.jetbrains.kotlin.idea.decompiler.navigation;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.OrderEntry;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.JavaPsiFacade;
@@ -31,7 +34,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.stubs.StringStubIndexExtension;
 import com.intellij.util.containers.ContainerUtil;
 import gnu.trove.THashSet;
-import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -44,8 +46,10 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.di.InjectorForLazyResolve;
 import org.jetbrains.kotlin.idea.stubindex.JetFullClassNameIndex;
+import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex;
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelPropertyFqnNameIndex;
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
@@ -72,39 +76,34 @@ import static org.jetbrains.kotlin.descriptors.DescriptorsPackage.ModuleParamete
 import static org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*;
 
 public class JetSourceNavigationHelper {
+    public enum NavigationKind {
+        CLASS_FILES_TO_SOURCES,
+        SOURCES_TO_CLASS_FILES
+    }
+
     private static boolean forceResolve = false;
 
     private JetSourceNavigationHelper() {
     }
 
-    @Nullable
-    public static JetClassOrObject getSourceClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
-        return getSourceForNamedClassOrObject(decompiledClassOrObject);
-    }
-
     @NotNull
-    private static GlobalSearchScope createLibrarySourcesScope(@NotNull JetNamedDeclaration decompiledDeclaration) {
-        JetFile containingFile = decompiledDeclaration.getContainingJetFile();
+    private static GlobalSearchScope createLibraryOrSourcesScope(
+            @NotNull JetNamedDeclaration declaration,
+            @NotNull NavigationKind navigationKind
+    ) {
+        JetFile containingFile = declaration.getContainingJetFile();
         VirtualFile libraryFile = containingFile.getVirtualFile();
-        if (libraryFile == null) {
+        if (libraryFile == null) return GlobalSearchScope.EMPTY_SCOPE;
+
+        boolean includeLibrarySources = navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES;
+        if (ProjectRootsUtil.isInContent(declaration, false, includeLibrarySources, !includeLibrarySources)) {
             return GlobalSearchScope.EMPTY_SCOPE;
         }
 
-        Project project = decompiledDeclaration.getProject();
-        ProjectFileIndex projectFileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-
-        if (!projectFileIndex.isInLibraryClasses(libraryFile)) {
-            return GlobalSearchScope.EMPTY_SCOPE;
-        }
-
-        Set<VirtualFile> sourceRootSet = Sets.newLinkedHashSet();
-        for (OrderEntry entry : projectFileIndex.getOrderEntriesForFile(libraryFile)) {
-            if (entry instanceof LibraryOrSdkOrderEntry) {
-                KotlinPackage.addAll(sourceRootSet, entry.getFiles(OrderRootType.SOURCES));
-            }
-        }
-
-        return new LibrarySourcesScope(project, sourceRootSet);
+        Project project = declaration.getProject();
+        return includeLibrarySources
+               ? JetSourceFilterScope.kotlinLibrarySources(GlobalSearchScope.allScope(project), project)
+               : JetSourceFilterScope.kotlinLibraryClassFiles(GlobalSearchScope.allScope(project), project);
     }
 
     private static List<JetFile> getContainingFiles(@NotNull Iterable<JetNamedDeclaration> declarations) {
@@ -151,35 +150,48 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static JetNamedDeclaration getSourcePropertyOrFunction(@NotNull JetNamedDeclaration decompiledDeclaration) {
-        String memberNameAsString = decompiledDeclaration.getName();
+    private static JetNamedDeclaration convertPropertyOrFunction(
+            @NotNull JetNamedDeclaration declaration,
+            @NotNull NavigationKind navigationKind
+    ) {
+        if (declaration instanceof JetPrimaryConstructor) {
+            JetClassOrObject sourceClassOrObject =
+                    convertNamedClassOrObject(((JetPrimaryConstructor) declaration).getContainingClassOrObject(), navigationKind);
+            JetPrimaryConstructor primaryConstructor = sourceClassOrObject != null ? sourceClassOrObject.getPrimaryConstructor() : null;
+            return primaryConstructor != null ? primaryConstructor : sourceClassOrObject;
+        }
+
+        String memberNameAsString = declaration.getName();
         assert memberNameAsString != null;
         Name memberName = Name.identifier(memberNameAsString);
 
-        PsiElement decompiledContainer = decompiledDeclaration.getParent();
+        PsiElement decompiledContainer = declaration.getParent();
 
         Collection<JetNamedDeclaration> candidates;
         if (decompiledContainer instanceof JetFile) {
-            candidates = getInitialTopLevelCandidates(decompiledDeclaration);
+            candidates = getInitialTopLevelCandidates(declaration, navigationKind);
         }
         else if (decompiledContainer instanceof JetClassBody) {
             JetClassOrObject decompiledClassOrObject = (JetClassOrObject) decompiledContainer.getParent();
-            JetClassOrObject sourceClassOrObject = getSourceClassOrObject(decompiledClassOrObject);
+            JetClassOrObject sourceClassOrObject = convertNamedClassOrObject(decompiledClassOrObject, navigationKind);
 
             //noinspection unchecked
             candidates = sourceClassOrObject == null
                          ? Collections.<JetNamedDeclaration>emptyList()
-                         : getInitialMemberCandidates(sourceClassOrObject, memberName, (Class<JetNamedDeclaration>) decompiledDeclaration.getClass());
+                         : getInitialMemberCandidates(sourceClassOrObject, memberName,
+                                                      (Class<JetNamedDeclaration>) declaration.getClass());
 
             if (candidates.isEmpty()) {
-                if (decompiledDeclaration instanceof JetProperty && sourceClassOrObject instanceof JetClass) {
+                if (declaration instanceof JetProperty && sourceClassOrObject instanceof JetClass) {
                     return findSpecialProperty(memberName, (JetClass) sourceClassOrObject);
                 }
             }
         }
         else {
-            throw new IllegalStateException("Unexpected container of decompiled declaration: "
-                                            + decompiledContainer.getClass().getSimpleName());
+            throw new IllegalStateException("Unexpected container of " +
+                                            (navigationKind == NavigationKind.CLASS_FILES_TO_SOURCES ? "decompiled" : "source") +
+                                            " declaration: " +
+                                            decompiledContainer.getClass().getSimpleName());
         }
 
         if (candidates.isEmpty()) {
@@ -187,14 +199,14 @@ public class JetSourceNavigationHelper {
         }
 
         if (!forceResolve) {
-            candidates = filterByReceiverPresenceAndParametersCount(decompiledDeclaration, candidates);
+            candidates = filterByReceiverPresenceAndParametersCount(declaration, candidates);
 
             if (candidates.size() <= 1) {
                 return candidates.isEmpty() ? null : candidates.iterator().next();
             }
 
             if (!haveRenamesInImports(getContainingFiles(candidates))) {
-                candidates = filterByReceiverAndParameterTypes(decompiledDeclaration, candidates);
+                candidates = filterByReceiverAndParameterTypes(declaration, candidates);
 
                 if (candidates.size() <= 1) {
                     return candidates.isEmpty() ? null : candidates.iterator().next();
@@ -202,14 +214,14 @@ public class JetSourceNavigationHelper {
             }
         }
 
-        KotlinCodeAnalyzer analyzer = createAnalyzer(candidates, decompiledDeclaration.getProject());
+        KotlinCodeAnalyzer analyzer = createAnalyzer(candidates, declaration.getProject());
 
         for (JetNamedDeclaration candidate : candidates) {
             //noinspection unchecked
             CallableDescriptor candidateDescriptor = (CallableDescriptor) analyzer.resolveToDescriptor(candidate);
-            if (receiversMatch(decompiledDeclaration, candidateDescriptor)
-                    && valueParametersTypesMatch(decompiledDeclaration, candidateDescriptor)
-                    && typeParametersMatch((JetTypeParameterListOwner) decompiledDeclaration, candidateDescriptor.getTypeParameters())) {
+            if (receiversMatch(declaration, candidateDescriptor)
+                    && valueParametersTypesMatch(declaration, candidateDescriptor)
+                    && typeParametersMatch((JetTypeParameterListOwner) declaration, candidateDescriptor.getTypeParameters())) {
                 return candidate;
             }
         }
@@ -250,16 +262,19 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    private static JetClassOrObject getSourceForNamedClassOrObject(@NotNull JetClassOrObject decompiledClassOrObject) {
-        FqName classFqName = decompiledClassOrObject.getFqName();
+    private static JetClassOrObject convertNamedClassOrObject(
+            @NotNull JetClassOrObject classOrObject,
+            @NotNull NavigationKind navigationKind
+    ) {
+        FqName classFqName = classOrObject.getFqName();
         assert classFqName != null;
 
-        GlobalSearchScope librarySourcesScope = createLibrarySourcesScope(decompiledClassOrObject);
+        GlobalSearchScope librarySourcesScope = createLibraryOrSourcesScope(classOrObject, navigationKind);
         if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
             return null;
         }
         Collection<JetClassOrObject> classes = JetFullClassNameIndex.getInstance()
-                .get(classFqName.asString(), decompiledClassOrObject.getProject(), librarySourcesScope);
+                .get(classFqName.asString(), classOrObject.getProject(), librarySourcesScope);
         if (classes.isEmpty()) {
             return null;
         }
@@ -267,18 +282,21 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    private static Collection<JetNamedDeclaration> getInitialTopLevelCandidates(@NotNull JetNamedDeclaration decompiledDeclaration) {
-        FqName memberFqName = decompiledDeclaration.getFqName();
+    private static Collection<JetNamedDeclaration> getInitialTopLevelCandidates(
+            @NotNull JetNamedDeclaration declaration,
+            @NotNull NavigationKind navigationKind
+    ) {
+        FqName memberFqName = declaration.getFqName();
         assert memberFqName != null;
 
-        GlobalSearchScope librarySourcesScope = createLibrarySourcesScope(decompiledDeclaration);
+        GlobalSearchScope librarySourcesScope = createLibraryOrSourcesScope(declaration, navigationKind);
         if (librarySourcesScope == GlobalSearchScope.EMPTY_SCOPE) { // .getProject() == null for EMPTY_SCOPE, and this breaks code
             return Collections.emptyList();
         }
         //noinspection unchecked
         StringStubIndexExtension<JetNamedDeclaration> index =
-                (StringStubIndexExtension<JetNamedDeclaration>) getIndexForTopLevelPropertyOrFunction(decompiledDeclaration);
-        return index.get(memberFqName.asString(), decompiledDeclaration.getProject(), librarySourcesScope);
+                (StringStubIndexExtension<JetNamedDeclaration>) getIndexForTopLevelPropertyOrFunction(declaration);
+        return index.get(memberFqName.asString(), declaration.getProject(), librarySourcesScope);
     }
 
     private static StringStubIndexExtension<? extends JetNamedDeclaration> getIndexForTopLevelPropertyOrFunction(
@@ -332,16 +350,6 @@ public class JetSourceNavigationHelper {
                 return receiverAndParametersShortTypesMatch(candidate, decompiledDeclaration);
             }
         });
-    }
-
-    @Nullable
-    public static JetNamedDeclaration getSourceProperty(@NotNull JetProperty decompiledProperty) {
-        return getSourcePropertyOrFunction(decompiledProperty);
-    }
-
-    @Nullable
-    public static JetNamedDeclaration getSourceFunction(@NotNull JetFunction decompiledFunction) {
-        return getSourcePropertyOrFunction(decompiledFunction);
     }
 
     @TestOnly
@@ -414,30 +422,60 @@ public class JetSourceNavigationHelper {
     }
 
     @NotNull
-    public static JetDeclaration replaceBySourceDeclarationIfPresent(@NotNull JetDeclaration original) {
-        JetDeclaration sourceElement = original.accept(new SourceForDecompiledExtractingVisitor(), null);
-        return sourceElement != null ? sourceElement : original;
+    public static JetDeclaration getNavigationElement(@NotNull JetDeclaration declaration) {
+        return navigateToDeclaration(declaration, NavigationKind.CLASS_FILES_TO_SOURCES);
     }
 
-    private static class SourceForDecompiledExtractingVisitor extends JetVisitor<JetDeclaration, Void> {
+    @NotNull
+    public static JetDeclaration getOriginalElement(@NotNull JetDeclaration declaration) {
+        return navigateToDeclaration(declaration, NavigationKind.SOURCES_TO_CLASS_FILES);
+    }
+
+    @NotNull
+    public static JetDeclaration navigateToDeclaration(
+            @NotNull JetDeclaration from,
+            @NotNull NavigationKind navigationKind) {
+        if (DumbService.isDumb(from.getProject())) return from;
+
+        switch (navigationKind) {
+            case CLASS_FILES_TO_SOURCES:
+                if (!from.getContainingJetFile().isCompiled()) return from;
+                break;
+            case SOURCES_TO_CLASS_FILES:
+                if (from.getContainingJetFile().isCompiled()) return from;
+                if (JetPsiUtil.isLocal(from)) return from;
+                break;
+        }
+
+        JetDeclaration result = from.accept(new SourceAndDecompiledConversionVisitor(navigationKind), null);
+        return result != null ? result : from;
+    }
+
+    private static class SourceAndDecompiledConversionVisitor extends JetVisitor<JetDeclaration, Void> {
+        private final NavigationKind navigationKind;
+
+        public SourceAndDecompiledConversionVisitor(@NotNull NavigationKind navigationKind) {
+            this.navigationKind = navigationKind;
+        }
+
         @Override
         public JetDeclaration visitNamedFunction(@NotNull JetNamedFunction function, Void data) {
-            return getSourceFunction(function);
+            return convertPropertyOrFunction(function, navigationKind);
         }
 
         @Override
         public JetDeclaration visitProperty(@NotNull JetProperty property, Void data) {
-            return getSourceProperty(property);
+            return convertPropertyOrFunction(property, navigationKind);
         }
 
         @Override
         public JetDeclaration visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, Void data) {
-            return getSourceClassOrObject(declaration);
+            return convertNamedClassOrObject(declaration, navigationKind);
         }
 
         @Override
         public JetDeclaration visitClass(@NotNull JetClass klass, Void data) {
-            return getSourceClassOrObject(klass);
+            return convertNamedClassOrObject(klass, navigationKind);
         }
 
         @Override
@@ -455,47 +493,12 @@ public class JetSourceNavigationHelper {
 
         @Override
         public JetDeclaration visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, Void data) {
-            return getSourceFunction(constructor);
+            return convertPropertyOrFunction(constructor, navigationKind);
         }
 
         @Override
         public JetDeclaration visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, Void data) {
-            return getSourceFunction(constructor);
+            return convertPropertyOrFunction(constructor, navigationKind);
         }
     }
-
-    private static class LibrarySourcesScope extends GlobalSearchScope {
-        private final Set<VirtualFile> sources;
-        private final ProjectFileIndex fileIndex;
-
-        public LibrarySourcesScope(Project project, Set<VirtualFile> sources) {
-            super(project);
-            fileIndex = ProjectRootManager.getInstance(project).getFileIndex();
-            this.sources = sources;
-        }
-
-        @Override
-        public boolean contains(@NotNull VirtualFile file) {
-            if (fileIndex.isInLibrarySource(file)) {
-                return sources.contains(fileIndex.getSourceRootForFile(file));
-            }
-            return false;
-        }
-
-        @Override
-        public int compare(@NotNull VirtualFile file1, @NotNull VirtualFile file2) {
-            return 0;
-        }
-
-        @Override
-        public boolean isSearchInModuleContent(@NotNull Module aModule) {
-            return false;
-        }
-
-        @Override
-        public boolean isSearchInLibraries() {
-            return true;
-        }
-    }
-
 }

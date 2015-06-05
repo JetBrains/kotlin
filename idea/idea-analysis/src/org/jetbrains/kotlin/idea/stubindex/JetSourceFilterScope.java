@@ -29,22 +29,33 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
     @NotNull
     public static GlobalSearchScope kotlinSourcesAndLibraries(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
-        return create(delegate, true, true, project);
+        return create(delegate, true, true, true, project);
     }
 
     @NotNull
     public static GlobalSearchScope kotlinSourceAndClassFiles(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
-        return create(delegate, false, true, project);
+        return create(delegate, true, false, true, project);
     }
 
     @NotNull
     public static GlobalSearchScope kotlinSources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
-        return create(delegate, false, false, project);
+        return create(delegate, true, false, false, project);
+    }
+
+    @NotNull
+    public static GlobalSearchScope kotlinLibrarySources(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+        return create(delegate, false, true, false, project);
+    }
+
+    @NotNull
+    public static GlobalSearchScope kotlinLibraryClassFiles(@NotNull GlobalSearchScope delegate, @NotNull Project project) {
+        return create(delegate, false, false, true, project);
     }
 
     @NotNull
     private static GlobalSearchScope create(
             @NotNull GlobalSearchScope delegate,
+            boolean includeProjectSourceFiles,
             boolean includeLibrarySourceFiles,
             boolean includeClassFiles,
             @NotNull Project project
@@ -54,29 +65,37 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
         if (delegate instanceof JetSourceFilterScope) {
             JetSourceFilterScope wrappedDelegate = (JetSourceFilterScope) delegate;
 
+            boolean doIncludeProjectSourceFiles = wrappedDelegate.includeProjectSourceFiles && includeProjectSourceFiles;
             boolean doIncludeLibrarySourceFiles = wrappedDelegate.includeLibrarySourceFiles && includeLibrarySourceFiles;
             boolean doIncludeClassFiles = wrappedDelegate.includeClassFiles && includeClassFiles;
 
-            return new JetSourceFilterScope(wrappedDelegate.myBaseScope, doIncludeLibrarySourceFiles, doIncludeClassFiles, project);
+            return new JetSourceFilterScope(wrappedDelegate.myBaseScope,
+                                            doIncludeProjectSourceFiles,
+                                            doIncludeLibrarySourceFiles,
+                                            doIncludeClassFiles,
+                                            project);
         }
 
-        return new JetSourceFilterScope(delegate, includeLibrarySourceFiles, includeClassFiles, project);
+        return new JetSourceFilterScope(delegate, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, project);
     }
 
     private final ProjectFileIndex index;
     private final Project project;
+    private final boolean includeProjectSourceFiles;
     private final boolean includeLibrarySourceFiles;
     private final boolean includeClassFiles;
     private final boolean isJsProject;
 
     private JetSourceFilterScope(
             @NotNull GlobalSearchScope delegate,
+            boolean includeProjectSourceFiles,
             boolean includeLibrarySourceFiles,
             boolean includeClassFiles,
             @NotNull Project project
     ) {
         super(delegate);
         this.project = project;
+        this.includeProjectSourceFiles = includeProjectSourceFiles;
         this.includeLibrarySourceFiles = includeLibrarySourceFiles;
         this.includeClassFiles = includeClassFiles;
         //NOTE: avoid recomputing in potentially bottleneck 'contains' method
@@ -91,10 +110,9 @@ public class JetSourceFilterScope extends DelegatingGlobalSearchScope {
 
     @Override
     public boolean contains(@NotNull VirtualFile file) {
-        if (!super.contains(file)) {
-            return false;
-        }
-
-        return ProjectRootsUtil.isInContent(project, file, true, includeLibrarySourceFiles, includeClassFiles, index, isJsProject);
+        if (!super.contains(file)) return false;
+        return ProjectRootsUtil.isInContent(
+                project, file, includeProjectSourceFiles, includeLibrarySourceFiles, includeClassFiles, index, isJsProject
+        );
     }
 }

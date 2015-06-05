@@ -1,0 +1,4 @@
+[LibraryObjectUsages.0.kt] Value read (10: 13) val o = O
+[LibraryObjectUsages.1.java] Class static member access (7: 15) O o = O.INSTANCE$;
+[LibraryObjectUsages.1.java] Local variable declaration (7: 9) O o = O.INSTANCE$;
+[library.kt] Value read (51: 13) val o = O

@@ -1,0 +1,4 @@
+[LibraryFunctionUsages.0.kt] Callable reference (10: 15) val f = ::foo
+[LibraryFunctionUsages.0.kt] Function call (11: 5) foo()
+[library.kt] Callable reference (49: 15) val f = ::foo
+[library.kt] Function call (48: 5) foo()

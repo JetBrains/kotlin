@@ -33,6 +33,7 @@ import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.PsiPackage;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.usageView.UsageInfo;
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.JetTestUtils;
@@ -325,31 +327,42 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         }
         myFixture.configureByFile(path);
 
-        PsiElement originalElement =
+        PsiElement caretElement =
                 InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_REF")
                 ? TargetElementUtilBase.findTargetElement(myFixture.getEditor(),
-                                                          TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED | TargetElementUtil.NEW_AS_CONSTRUCTOR)
+                                                          TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED |
+                                                          TargetElementUtil.NEW_AS_CONSTRUCTOR)
                 : myFixture.getElementAtCaret();
-        boolean findByMirrorElement = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_MIRROR_ELEMENT");
-        boolean findByNavigationElement = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// FIND_BY_NAVIGATION_ELEMENT");
-        if (findByMirrorElement && findByNavigationElement) {
-            fail("Incompatible directives");
-        }
+        assertNotNull(caretElement);
+        assertInstanceOf(caretElement, caretElementClass);
 
-        if (findByMirrorElement) {
-            assert originalElement instanceof PsiCompiledElement : "PsiCompiledElement is expected: " + originalElement;
-            originalElement = ((PsiCompiledElement)originalElement).getMirror();
-        }
-
-        if (findByNavigationElement) {
-            assert originalElement != null : "Original element is not found";
-            originalElement = originalElement.getNavigationElement();
-        }
-
-        T caretElement = PsiTreeUtil.getParentOfType(originalElement, caretElementClass, false);
-        assertNotNull(String.format("Element with type '%s' wasn't found at caret position", caretElementClass), caretElement);
+        PsiFile containingFile = caretElement.getContainingFile();
+        boolean isLibraryElement = containingFile != null && ProjectRootsUtil.isLibraryFile(getProject(), containingFile.getVirtualFile());
 
         FindUsagesOptions options = parser != null ? parser.parse(mainFileText, getProject()) : null;
+
+        // Ensure that search by sources (if present) and decompiled declarations gives the same results
+        if (isLibraryElement) {
+            PsiElement originalElement = caretElement.getOriginalElement();
+            findUsagesAndCheckResults(mainFileText, prefix, rootPath, originalElement, options);
+
+            PsiElement navigationElement = caretElement.getNavigationElement();
+            if (navigationElement != originalElement) {
+                findUsagesAndCheckResults(mainFileText, prefix, rootPath, navigationElement, options);
+            }
+        }
+        else {
+            findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options);
+        }
+    }
+
+    private <T extends PsiElement> void findUsagesAndCheckResults(
+            String mainFileText,
+            String prefix,
+            String rootPath,
+            T caretElement,
+            FindUsagesOptions options
+    ) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Collection<UsageInfo> usageInfos = findUsages(caretElement, options);
 
         Collection<UsageFilteringRule> filteringRules = instantiateClasses(mainFileText, "// FILTERING_RULES: ");
@@ -414,6 +427,8 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         if (options == null) {
             options = handler.getFindUsagesOptions(null);
         }
+
+        options.searchScope = GlobalSearchScope.allScope(project);
 
         CommonProcessors.CollectProcessor<UsageInfo> processor = new CommonProcessors.CollectProcessor<UsageInfo>();
         PsiElement[] psiElements = ArrayUtil.mergeArrays(handler.getPrimaryElements(), handler.getSecondaryElements());

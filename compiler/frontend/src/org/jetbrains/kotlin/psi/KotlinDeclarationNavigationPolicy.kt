@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi
 
-public trait KotlinDeclarationNavigationPolicy {
-    public fun getNavigationElement(declaration: JetDeclaration): JetElement?
+public interface KotlinDeclarationNavigationPolicy {
+    public fun getOriginalElement(declaration: JetDeclaration): JetElement
+    public fun getNavigationElement(declaration: JetDeclaration): JetElement
 }

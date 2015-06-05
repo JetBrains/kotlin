@@ -1,0 +1,4 @@
+[LibraryNestedClassPrimaryConstructorUsages.0.kt] New instance creation (17: 16) val aa = A.T(1)
+[LibraryNestedClassPrimaryConstructorUsages.0.kt] Supertype (13: 14) class Y(): A.T(1)
+[library.kt] New instance creation (59: 15) val t = A.T(1)
+[library.kt] Supertype (24: 18) class V(): A.T(1)

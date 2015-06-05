@@ -22,13 +22,8 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import com.intellij.openapi.project.DumbService
 
 public class KotlinDeclarationNavigationPolicyImpl : KotlinDeclarationNavigationPolicy {
-    override fun getNavigationElement(declaration: JetDeclaration): JetElement? {
-        if (DumbService.isDumb(declaration.getProject())) {
-            return null
-        }
-        if (declaration.getContainingJetFile().isCompiled()) {
-            return JetSourceNavigationHelper.replaceBySourceDeclarationIfPresent(declaration)
-        }
-        return null
-    }
+    override fun getOriginalElement(declaration: JetDeclaration) =
+            JetSourceNavigationHelper.getOriginalElement(declaration)
+    override fun getNavigationElement(declaration: JetDeclaration) =
+            JetSourceNavigationHelper.getNavigationElement(declaration)
 }

@@ -1,0 +1,1 @@
+Value write (9: 9) Foo.X = 1

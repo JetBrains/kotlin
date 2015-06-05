@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.types.JetType;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -42,24 +41,18 @@ public class MemberMatching {
     /* DECLARATIONS ROUGH MATCHING */
     @Nullable
     private static JetTypeReference getReceiverType(@NotNull JetNamedDeclaration propertyOrFunction) {
-        if (propertyOrFunction instanceof JetNamedFunction) {
-            return ((JetNamedFunction) propertyOrFunction).getReceiverTypeReference();
+        if (propertyOrFunction instanceof JetCallableDeclaration) {
+            return ((JetCallableDeclaration) propertyOrFunction).getReceiverTypeReference();
         }
-        if (propertyOrFunction instanceof JetProperty) {
-            return ((JetProperty) propertyOrFunction).getReceiverTypeReference();
-        }
-        throw new IllegalArgumentException("Neither function nor declaration: " + propertyOrFunction.getClass().getName());
+        throw new IllegalArgumentException("Not a callable declaration: " + propertyOrFunction.getClass().getName());
     }
 
     @NotNull
     private static List<JetParameter> getValueParameters(@NotNull JetNamedDeclaration propertyOrFunction) {
-        if (propertyOrFunction instanceof JetNamedFunction) {
-            return ((JetNamedFunction) propertyOrFunction).getValueParameters();
+        if (propertyOrFunction instanceof JetCallableDeclaration) {
+            return ((JetCallableDeclaration) propertyOrFunction).getValueParameters();
         }
-        if (propertyOrFunction instanceof JetProperty) {
-            return Collections.emptyList();
-        }
-        throw new IllegalArgumentException("Neither function nor declaration: " + propertyOrFunction.getClass().getName());
+        throw new IllegalArgumentException("Not a callable declaration: " + propertyOrFunction.getClass().getName());
     }
 
     private static String getTypeShortName(@NotNull JetTypeReference typeReference) {

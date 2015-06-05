@@ -1,1 +1,0 @@
-Nested class/object (6: 5) System.exit(0)

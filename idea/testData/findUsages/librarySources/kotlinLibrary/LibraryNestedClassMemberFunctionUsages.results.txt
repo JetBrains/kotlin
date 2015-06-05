@@ -1,0 +1,4 @@
+[LibraryNestedClassMemberFunctionUsages.0.kt] Callable reference (10: 18) val f = A.T::bar
+[LibraryNestedClassMemberFunctionUsages.0.kt] Function call (11: 11) A.T().bar(1)
+[library.kt] Callable reference (62: 20) val fff = A.T::bar
+[library.kt] Function call (61: 7) t.bar(2)

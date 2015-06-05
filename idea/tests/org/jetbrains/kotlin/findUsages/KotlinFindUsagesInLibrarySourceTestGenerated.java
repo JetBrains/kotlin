@@ -35,39 +35,117 @@ public class KotlinFindUsagesInLibrarySourceTestGenerated extends AbstractKotlin
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/librarySources"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
     }
 
-    @TestMetadata("LibraryClassUsages.0.kt")
-    public void testLibraryClassUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/LibraryClassUsages.0.kt");
-        doTest(fileName);
+    @TestMetadata("idea/testData/findUsages/librarySources/javaLibrary")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaLibrary extends AbstractKotlinFindUsagesInLibrarySourceTest {
+        public void testAllFilesPresentInJavaLibrary() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/librarySources/javaLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+        }
+
+        @TestMetadata("LibraryClassUsages.0.kt")
+        public void testLibraryClassUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/javaLibrary/LibraryClassUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryConstructorUsages.0.kt")
+        public void testLibraryConstructorUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/javaLibrary/LibraryConstructorUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryFieldUsages.0.kt")
+        public void testLibraryFieldUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/javaLibrary/LibraryFieldUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryMethodUsages.0.kt")
+        public void testLibraryMethodUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/javaLibrary/LibraryMethodUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryStaticFieldUsages.0.kt")
+        public void testLibraryStaticFieldUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/javaLibrary/LibraryStaticFieldUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryStaticMethodUsages.0.kt")
+        public void testLibraryStaticMethodUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/javaLibrary/LibraryStaticMethodUsages.0.kt");
+            doTest(fileName);
+        }
     }
 
-    @TestMetadata("LibraryConstructorUsages.0.kt")
-    public void testLibraryConstructorUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/LibraryConstructorUsages.0.kt");
-        doTest(fileName);
-    }
+    @TestMetadata("idea/testData/findUsages/librarySources/kotlinLibrary")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class KotlinLibrary extends AbstractKotlinFindUsagesInLibrarySourceTest {
+        public void testAllFilesPresentInKotlinLibrary() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/findUsages/librarySources/kotlinLibrary"), Pattern.compile("^(.+)\\.0\\.kt$"), true);
+        }
 
-    @TestMetadata("LibraryFieldUsages.0.kt")
-    public void testLibraryFieldUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/LibraryFieldUsages.0.kt");
-        doTest(fileName);
-    }
+        @TestMetadata("LibraryClassUsages.0.kt")
+        public void testLibraryClassUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryClassUsages.0.kt");
+            doTest(fileName);
+        }
 
-    @TestMetadata("LibraryMethodUsages.0.kt")
-    public void testLibraryMethodUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/LibraryMethodUsages.0.kt");
-        doTest(fileName);
-    }
+        @TestMetadata("LibraryFunctionUsages.0.kt")
+        public void testLibraryFunctionUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryFunctionUsages.0.kt");
+            doTest(fileName);
+        }
 
-    @TestMetadata("LibraryStaticFieldUsages.0.kt")
-    public void testLibraryStaticFieldUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/LibraryStaticFieldUsages.0.kt");
-        doTest(fileName);
-    }
+        @TestMetadata("LibraryMemberFunctionUsages.0.kt")
+        public void testLibraryMemberFunctionUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryMemberFunctionUsages.0.kt");
+            doTest(fileName);
+        }
 
-    @TestMetadata("LibraryStaticMethodUsages.0.kt")
-    public void testLibraryStaticMethodUsages() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/LibraryStaticMethodUsages.0.kt");
-        doTest(fileName);
+        @TestMetadata("LibraryNestedClassMemberFunctionUsages.0.kt")
+        public void testLibraryNestedClassMemberFunctionUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryNestedClassMemberFunctionUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryNestedClassPrimaryConstructorUsages.0.kt")
+        public void testLibraryNestedClassPrimaryConstructorUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryNestedClassPrimaryConstructorUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryNestedClassSecondaryConstructorUsages.0.kt")
+        public void testLibraryNestedClassSecondaryConstructorUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryNestedClassSecondaryConstructorUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryNestedClassUsages.0.kt")
+        public void testLibraryNestedClassUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryNestedClassUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryObjectUsages.0.kt")
+        public void testLibraryObjectUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryObjectUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryPrimaryConstructorUsages.0.kt")
+        public void testLibraryPrimaryConstructorUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibraryPrimaryConstructorUsages.0.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibrarySecondaryConstructorUsages.0.kt")
+        public void testLibrarySecondaryConstructorUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/librarySources/kotlinLibrary/LibrarySecondaryConstructorUsages.0.kt");
+            doTest(fileName);
+        }
     }
 }
