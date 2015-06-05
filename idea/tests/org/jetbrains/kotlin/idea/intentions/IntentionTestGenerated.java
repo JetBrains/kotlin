@@ -4558,6 +4558,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NotAvailableOnDocComment.kt")
+        public void testNotAvailableOnDocComment() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/NotAvailableOnDocComment.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PrivateSymbolUsed.kt")
         public void testPrivateSymbolUsed() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/PrivateSymbolUsed.kt");
@@ -4617,6 +4623,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/deprecatedCallableAddReplaceWith/ValPropertyWithReturn.kt");
             doTest(fileName);
         }
+
     }
 
     @TestMetadata("idea/testData/intentions/ifNullToElvis")
