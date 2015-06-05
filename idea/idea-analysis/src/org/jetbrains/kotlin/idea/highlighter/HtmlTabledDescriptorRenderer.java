@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.DescriptorRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.FunctionArgumentsRow;
 import org.jetbrains.kotlin.diagnostics.rendering.TabledDescriptorRenderer.TableRenderer.TableRow;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
-import org.jetbrains.kotlin.renderer.Renderer;
+import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition;
 import org.jetbrains.kotlin.types.JetType;
 
@@ -207,9 +205,9 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setWithDefinedIn(false);
-                    options.setModifiers(Collections.<DescriptorRenderer.Modifier>emptySet());
+                    options.setModifiers(Collections.<DescriptorRendererModifier>emptySet());
                     options.setValueParametersHandler(VALUE_PARAMETERS_HANDLER);
-                    options.setTextFormat(DescriptorRenderer.TextFormat.HTML);
+                    options.setTextFormat(RenderingFormat.HTML);
                     return Unit.INSTANCE$;
                 }
             });

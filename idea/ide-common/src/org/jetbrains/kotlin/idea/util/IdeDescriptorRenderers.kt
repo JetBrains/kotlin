@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
+import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
 import org.jetbrains.kotlin.types.JetType
 
 public object IdeDescriptorRenderers {
@@ -29,7 +30,7 @@ public object IdeDescriptorRenderers {
         normalizedVisibilities = true
         withDefinedIn = false
         showInternalKeyword = false
-        overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE
+        overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
         unitReturnType = false
     }
 

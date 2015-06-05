@@ -16,26 +16,27 @@
 
 package org.jetbrains.kotlin.idea.highlighter.markers
 
+import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
+import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.psi.NavigatablePsiElement
+import com.intellij.util.Function
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import com.intellij.psi.NavigatablePsiElement
-import java.awt.event.MouseEvent
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.codeInsight.daemon.impl.PsiElementListNavigator
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.idea.codeInsight.JetFunctionPsiElementCellRenderer
-import org.jetbrains.annotations.TestOnly
-import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
-import java.util.ArrayList
-import com.intellij.util.Function
-import org.jetbrains.kotlin.psi.JetDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.codeInsight.JetFunctionPsiElementCellRenderer
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.RenderingFormat
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.OverrideResolver
+import java.awt.event.MouseEvent
+import java.util.ArrayList
 
 object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
     override fun `fun`(jetDeclaration: JetDeclaration?): String? {
@@ -45,7 +46,7 @@ object SuperDeclarationMarkerTooltip: Function<JetDeclaration, String> {
         val isAbstract = elementDescriptor!!.getModality() == Modality.ABSTRACT
 
         val renderer = DescriptorRenderer.withOptions {
-            textFormat = DescriptorRenderer.TextFormat.HTML
+            textFormat = RenderingFormat.HTML
             withDefinedIn = false
             startFromName = true
             withoutSuperTypes = true

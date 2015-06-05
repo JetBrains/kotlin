@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.idea.JetDescriptorIconProvider;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
-import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
-import org.jetbrains.kotlin.renderer.NameShortness;
-import org.jetbrains.kotlin.renderer.RendererPackage;
+import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
 import javax.swing.*;
@@ -55,7 +52,7 @@ public class DescriptorClassMember extends MemberChooserObjectBase implements Cl
                 @Override
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setWithDefinedIn(false);
-                    options.setModifiers(Collections.<DescriptorRenderer.Modifier>emptySet());
+                    options.setModifiers(Collections.<DescriptorRendererModifier>emptySet());
                     options.setStartFromName(true);
                     options.setNameShortness(NameShortness.SHORT);
                     return Unit.INSTANCE$;

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaConstructorImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaFieldImpl;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaMethodImpl;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
 import org.jetbrains.kotlin.renderer.NameShortness;
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver;
@@ -63,7 +64,7 @@ public class KotlinSignatureAnnotationIntention extends BaseIntentionAction impl
                 public Unit invoke(DescriptorRendererOptions options) {
                     options.setTypeNormalizer(IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES);
                     options.setNameShortness(NameShortness.SHORT);
-                    options.setModifiers(Collections.<DescriptorRenderer.Modifier>emptySet());
+                    options.setModifiers(Collections.<DescriptorRendererModifier>emptySet());
                     options.setWithDefinedIn(false);
                     return Unit.INSTANCE$;
                 }

@@ -18,36 +18,26 @@ package org.jetbrains.kotlin.idea.core.codeInsight
 
 import com.intellij.codeInsight.hint.HintManager
 import com.intellij.ide.util.MemberChooser
-import com.intellij.lang.ASTNode
 import com.intellij.lang.LanguageCodeInsightActionHandler
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
-import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.quickfix.*
+import org.jetbrains.kotlin.idea.quickfix.moveCaretIntoGeneratedElement
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.NameShortness
-import org.jetbrains.kotlin.types.JetType
-
-import java.util.ArrayList
-import java.util.Collections
-
-import org.jetbrains.kotlin.psi.JetPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.renderer.render
+import org.jetbrains.kotlin.renderer.*
+import java.util.ArrayList
 
 public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActionHandler {
 
@@ -120,10 +110,10 @@ public abstract class OverrideImplementMethodsHandler : LanguageCodeInsightActio
     companion object {
         private val OVERRIDE_RENDERER = DescriptorRenderer.withOptions {
             renderDefaultValues = false
-            modifiers = setOf(DescriptorRenderer.Modifier.OVERRIDE)
+            modifiers = setOf(DescriptorRendererModifier.OVERRIDE)
             withDefinedIn = false
             nameShortness = NameShortness.SOURCE_CODE_QUALIFIED
-            overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE
+            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OVERRIDE
             unitReturnType = false
             typeNormalizer = IdeDescriptorRenderers.APPROXIMATE_FLEXIBLE_TYPES
         }

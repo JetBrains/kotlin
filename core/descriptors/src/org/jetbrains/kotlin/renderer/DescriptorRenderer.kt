@@ -48,32 +48,6 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
     public fun renderFqName(fqName: FqNameBase): String
 
-    public enum class TextFormat {
-        PLAIN,
-        HTML
-    }
-
-    public enum class OverrideRenderingPolicy {
-        RENDER_OVERRIDE,
-        RENDER_OPEN,
-        RENDER_OPEN_OVERRIDE
-    }
-
-    public enum class ParameterNameRenderingPolicy {
-        ALL,
-        ONLY_NON_SYNTHESIZED,
-        NONE
-    }
-
-    public enum class Modifier {
-        VISIBILITY,
-        MODALITY,
-        OVERRIDE,
-        ANNOTATIONS,
-        INNER,
-        MEMBER_KIND
-    }
-
     public interface ValueParametersHandler {
         public fun appendBeforeValueParameters(function: FunctionDescriptor, builder: StringBuilder)
         public fun appendAfterValueParameters(function: FunctionDescriptor, builder: StringBuilder)
@@ -161,25 +135,25 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
 
         public val HTML_COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
             withDefinedIn = false
-            textFormat = TextFormat.HTML
+            textFormat = RenderingFormat.HTML
         }
 
         public val HTML_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
             nameShortness = NameShortness.SHORT
             renderCompanionObjectName = true
-            textFormat = TextFormat.HTML
+            textFormat = RenderingFormat.HTML
         }
 
         public val HTML: DescriptorRenderer = withOptions {
-            textFormat = TextFormat.HTML
+            textFormat = RenderingFormat.HTML
         }
 
         public val HTML_FOR_UNINFERRED_TYPE_PARAMS: DescriptorRenderer = withOptions {
             uninferredTypeParameterAsName = true
             modifiers = emptySet()
             nameShortness = NameShortness.SHORT
-            textFormat = TextFormat.HTML
+            textFormat = RenderingFormat.HTML
         }
 
         public val DEPRECATION: DescriptorRenderer = withOptions {
@@ -215,7 +189,7 @@ public interface DescriptorRenderer : Renderer<DeclarationDescriptor> {
 public interface DescriptorRendererOptions {
     public var nameShortness: NameShortness
     public var withDefinedIn: Boolean
-    public var modifiers: Set<DescriptorRenderer.Modifier>
+    public var modifiers: Set<DescriptorRendererModifier>
     public var startFromName: Boolean
     public var debugMode: Boolean
     public var classWithPrimaryConstructor: Boolean
@@ -225,13 +199,13 @@ public interface DescriptorRendererOptions {
     public var showInternalKeyword: Boolean
     public var prettyFunctionTypes: Boolean
     public var uninferredTypeParameterAsName: Boolean
-    public var overrideRenderingPolicy: DescriptorRenderer.OverrideRenderingPolicy
+    public var overrideRenderingPolicy: OverrideRenderingPolicy
     public var valueParametersHandler: DescriptorRenderer.ValueParametersHandler
-    public var textFormat: DescriptorRenderer.TextFormat
+    public var textFormat: RenderingFormat
     public var excludedAnnotationClasses: Set<FqName>
     public var excludedTypeAnnotationClasses: Set<FqName>
     public var includePropertyConstant: Boolean
-    public var parameterNameRenderingPolicy: DescriptorRenderer.ParameterNameRenderingPolicy
+    public var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
     public var withoutTypeParameters: Boolean
     public var receiverAfterName: Boolean
     public var renderCompanionObjectName: Boolean
@@ -241,4 +215,36 @@ public interface DescriptorRendererOptions {
     public var flexibleTypesForCode: Boolean
     public var secondaryConstructorsAsPrimary: Boolean
     public var renderAccessors: Boolean
+}
+
+public enum class RenderingFormat {
+    PLAIN,
+    HTML
+}
+
+public enum class NameShortness {
+    SHORT,
+    FULLY_QUALIFIED,
+    SOURCE_CODE_QUALIFIED // for local declarations qualified up to function scope
+}
+
+public enum class OverrideRenderingPolicy {
+    RENDER_OVERRIDE,
+    RENDER_OPEN,
+    RENDER_OPEN_OVERRIDE
+}
+
+public enum class ParameterNameRenderingPolicy {
+    ALL,
+    ONLY_NON_SYNTHESIZED,
+    NONE
+}
+
+public enum class DescriptorRendererModifier {
+    VISIBILITY,
+    MODALITY,
+    OVERRIDE,
+    ANNOTATIONS,
+    INNER,
+    MEMBER_KIND
 }

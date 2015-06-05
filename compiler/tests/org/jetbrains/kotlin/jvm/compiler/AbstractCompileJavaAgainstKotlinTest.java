@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.PackageViewDescriptor;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions;
+import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
@@ -50,7 +51,7 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
                         @Override
                         public Unit invoke(DescriptorRendererOptions options) {
                             options.setWithDefinedIn(false);
-                            options.setParameterNameRenderingPolicy(DescriptorRenderer.ParameterNameRenderingPolicy.NONE);
+                            options.setParameterNameRenderingPolicy(ParameterNameRenderingPolicy.NONE);
                             options.setVerbose(true);
                             return Unit.INSTANCE$;
                         }

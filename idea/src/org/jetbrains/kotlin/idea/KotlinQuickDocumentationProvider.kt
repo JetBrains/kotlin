@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
+import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
@@ -86,7 +87,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             withDefinedIn = true
             nameShortness = NameShortness.SHORT
             renderCompanionObjectName = true
-            textFormat = DescriptorRenderer.TextFormat.HTML
+            textFormat = RenderingFormat.HTML
         }
 
 

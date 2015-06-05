@@ -49,22 +49,22 @@ internal class DescriptorRendererImpl(
     /* FORMATTING */
     private fun renderKeyword(keyword: String): String {
         when (textFormat) {
-            DescriptorRenderer.TextFormat.PLAIN -> return keyword
-            DescriptorRenderer.TextFormat.HTML -> return "<b>" + keyword + "</b>"
+            RenderingFormat.PLAIN -> return keyword
+            RenderingFormat.HTML -> return "<b>" + keyword + "</b>"
         }
     }
 
     private fun renderError(keyword: String): String {
         when (textFormat) {
-            DescriptorRenderer.TextFormat.PLAIN -> return keyword
-            DescriptorRenderer.TextFormat.HTML -> return "<font color=red><b>" + keyword + "</b></font>"
+            RenderingFormat.PLAIN -> return keyword
+            RenderingFormat.HTML -> return "<font color=red><b>" + keyword + "</b></font>"
         }
     }
 
     private fun escape(string: String): String {
         when (textFormat) {
-            DescriptorRenderer.TextFormat.PLAIN -> return string
-            DescriptorRenderer.TextFormat.HTML -> return string.replace("<", "&lt;").replace(">", "&gt;")
+            RenderingFormat.PLAIN -> return string
+            RenderingFormat.HTML -> return string.replace("<", "&lt;").replace(">", "&gt;")
         }
     }
 
@@ -73,15 +73,15 @@ internal class DescriptorRendererImpl(
 
     private fun arrow(): String {
         return when (textFormat) {
-            DescriptorRenderer.TextFormat.PLAIN -> escape("->")
-            DescriptorRenderer.TextFormat.HTML -> "&rarr;"
+            RenderingFormat.PLAIN -> escape("->")
+            RenderingFormat.HTML -> "&rarr;"
         }
     }
 
     private fun renderMessage(message: String): String {
         return when (textFormat) {
-            DescriptorRenderer.TextFormat.PLAIN -> message
-            DescriptorRenderer.TextFormat.HTML -> "<i>$message</i>"
+            RenderingFormat.PLAIN -> message
+            RenderingFormat.HTML -> "<i>$message</i>"
         }
     }
 
@@ -321,7 +321,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderAnnotations(annotated: Annotated, builder: StringBuilder, needBrackets: Boolean = false) {
-        if (DescriptorRenderer.Modifier.ANNOTATIONS !in modifiers) return
+        if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
         val excluded = if (annotated is JetType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
@@ -380,7 +380,7 @@ internal class DescriptorRendererImpl(
 
     private fun renderVisibility(visibility: Visibility, builder: StringBuilder) {
         var visibility = visibility
-        if (DescriptorRenderer.Modifier.VISIBILITY !in modifiers) return
+        if (DescriptorRendererModifier.VISIBILITY !in modifiers) return
         if (normalizedVisibilities) {
             visibility = visibility.normalize()
         }
@@ -389,13 +389,13 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderModality(modality: Modality, builder: StringBuilder) {
-        if (DescriptorRenderer.Modifier.MODALITY !in modifiers) return
+        if (DescriptorRendererModifier.MODALITY !in modifiers) return
         val keyword = modality.name().toLowerCase()
         builder.append(renderKeyword(keyword)).append(" ")
     }
 
     private fun renderInner(isInner: Boolean, builder: StringBuilder) {
-        if (DescriptorRenderer.Modifier.INNER !in modifiers) return
+        if (DescriptorRendererModifier.INNER !in modifiers) return
         if (isInner) {
             builder.append(renderKeyword("inner")).append(" ")
         }
@@ -403,7 +403,7 @@ internal class DescriptorRendererImpl(
 
     private fun renderModalityForCallable(callable: CallableMemberDescriptor, builder: StringBuilder) {
         if (!DescriptorUtils.isTopLevelDeclaration(callable) || callable.getModality() != Modality.FINAL) {
-            if (overridesSomething(callable) && overrideRenderingPolicy == DescriptorRenderer.OverrideRenderingPolicy.RENDER_OVERRIDE && callable.getModality() == Modality.OPEN) {
+            if (overridesSomething(callable) && overrideRenderingPolicy == OverrideRenderingPolicy.RENDER_OVERRIDE && callable.getModality() == Modality.OPEN) {
                 return
             }
             renderModality(callable.getModality(), builder)
@@ -411,9 +411,9 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderOverride(callableMember: CallableMemberDescriptor, builder: StringBuilder) {
-        if (DescriptorRenderer.Modifier.OVERRIDE !in modifiers) return
+        if (DescriptorRendererModifier.OVERRIDE !in modifiers) return
         if (overridesSomething(callableMember)) {
-            if (overrideRenderingPolicy != DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN) {
+            if (overrideRenderingPolicy != OverrideRenderingPolicy.RENDER_OPEN) {
                 builder.append("override ")
                 if (verbose) {
                     builder.append("/*").append(callableMember.getOverriddenDescriptors().size()).append("*/ ")
@@ -423,7 +423,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderMemberKind(callableMember: CallableMemberDescriptor, builder: StringBuilder) {
-        if (DescriptorRenderer.Modifier.MEMBER_KIND !in modifiers) return
+        if (DescriptorRendererModifier.MEMBER_KIND !in modifiers) return
         if (verbose && callableMember.getKind() != CallableMemberDescriptor.Kind.DECLARATION) {
             builder.append("/*").append(callableMember.getKind().name().toLowerCase()).append("*/ ")
         }
@@ -617,9 +617,9 @@ internal class DescriptorRendererImpl(
 
     private fun shouldRenderParameterNames(function: FunctionDescriptor): Boolean {
         when (parameterNameRenderingPolicy) {
-            DescriptorRenderer.ParameterNameRenderingPolicy.ALL -> return true
-            DescriptorRenderer.ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED -> return !function.hasSynthesizedParameterNames()
-            DescriptorRenderer.ParameterNameRenderingPolicy.NONE -> return false
+            ParameterNameRenderingPolicy.ALL -> return true
+            ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED -> return !function.hasSynthesizedParameterNames()
+            ParameterNameRenderingPolicy.NONE -> return false
         }
     }
 

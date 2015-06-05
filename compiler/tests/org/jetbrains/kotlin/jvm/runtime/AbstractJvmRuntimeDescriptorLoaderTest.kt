@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.reflect.RuntimeModuleData
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
+import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
@@ -43,7 +45,6 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.net.URLClassLoader
-import java.util.*
 import java.util.regex.Pattern
 
 public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
@@ -57,8 +58,8 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                     "kotlin.data",
                     "kotlin.inline"
             ).map { FqName(it) } + JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES).toSet()
-            overrideRenderingPolicy = DescriptorRenderer.OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
-            parameterNameRenderingPolicy = DescriptorRenderer.ParameterNameRenderingPolicy.NONE
+            overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
+            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             includePropertyConstant = false
             verbose = true
         }

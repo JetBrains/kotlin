@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
+import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -151,7 +152,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
         private val RENDERER = DescriptorRenderer.withOptions {
             modifiers = emptySet()
             nameShortness = NameShortness.SHORT
-            parameterNameRenderingPolicy = DescriptorRenderer.ParameterNameRenderingPolicy.NONE
+            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             receiverAfterName = true
             renderCompanionObjectName = true
             withoutSuperTypes = true
