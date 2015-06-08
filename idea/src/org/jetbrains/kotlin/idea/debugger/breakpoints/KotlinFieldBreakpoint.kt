@@ -48,7 +48,10 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetParameter
+import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import javax.swing.Icon
 
@@ -66,23 +69,7 @@ class KotlinFieldBreakpoint(
         METHOD
     }
 
-    private val breakpointType: BreakpointType
-
-    init {
-        val element = getField()!!
-        val bindingContext = element.analyzeAndGetResult().bindingContext
-        var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-        if (descriptor is ValueParameterDescriptor) {
-            descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
-        }
-
-        breakpointType = if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)) {
-            BreakpointType.FIELD
-        }
-        else {
-            BreakpointType.METHOD
-        }
-    }
+    private var breakpointType: BreakpointType = BreakpointType.FIELD
 
     override fun isValid(): Boolean {
         if (!BreakpointWithHighlighter.isPositionValid(getXBreakpoint().getSourcePosition())) return false
@@ -133,6 +120,10 @@ class KotlinFieldBreakpoint(
 
     override fun createRequestForPreparedClass(debugProcess: DebugProcessImpl?, refType: ReferenceType?) {
         if (debugProcess == null || refType == null) return
+
+        val property = getProperty(getSourcePosition()) ?: return
+
+        breakpointType = computeBreakpointType(property)
 
         val vm = debugProcess.getVirtualMachineProxy()
         try {
@@ -194,6 +185,23 @@ class KotlinFieldBreakpoint(
         }
         catch (ex: Exception) {
             LOG.debug(ex)
+        }
+    }
+
+    private fun computeBreakpointType(property: JetCallableDeclaration): BreakpointType {
+        return runReadAction {
+            val bindingContext = property.analyzeAndGetResult().bindingContext
+            var descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
+            if (descriptor is ValueParameterDescriptor) {
+                descriptor = bindingContext.get(BindingContext.VALUE_PARAMETER_AS_PROPERTY, descriptor)
+            }
+
+            if (bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor as PropertyDescriptor)) {
+                BreakpointType.FIELD
+            }
+            else {
+                BreakpointType.METHOD
+            }
         }
     }
 
