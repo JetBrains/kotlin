@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException;
 import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException;
 import org.jetbrains.kotlin.compiler.plugin.PluginPackage;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
+import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.config.Services;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider;
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
@@ -81,9 +82,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         final CompilerConfiguration configuration = new CompilerConfiguration();
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
-        IncrementalCacheProvider incrementalCacheProvider = services.get(IncrementalCacheProvider.class);
-        if (incrementalCacheProvider != null) {
-            configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER, incrementalCacheProvider);
+        if (IncrementalCompilation.ENABLED) {
+            IncrementalCacheProvider incrementalCacheProvider = services.get(IncrementalCacheProvider.class);
+            if (incrementalCacheProvider != null) {
+                configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER, incrementalCacheProvider);
+            }
         }
 
         CompilerJarLocator locator = services.get(CompilerJarLocator.class);
