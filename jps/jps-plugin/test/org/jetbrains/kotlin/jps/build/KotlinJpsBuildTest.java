@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.build;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
@@ -614,8 +615,8 @@ public class KotlinJpsBuildTest extends AbstractKotlinJpsBuildTestCase {
     }
 
     private String packagePartClass(String moduleName, String fileName, String packageClassFqName) {
-        File file = new File(workDir, fileName);
-        LightVirtualFile fakeVirtualFile = new LightVirtualFile(file.getPath()) {
+        String path = FileUtilRt.toSystemIndependentName(new File(workDir, fileName).getAbsolutePath());
+        LightVirtualFile fakeVirtualFile = new LightVirtualFile(path) {
             @NotNull
             @Override
             public String getPath() {
