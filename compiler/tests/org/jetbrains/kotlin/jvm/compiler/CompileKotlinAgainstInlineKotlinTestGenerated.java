@@ -274,6 +274,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             doBoxTestWithInlineCheck(fileName);
         }
 
+        @TestMetadata("defaultParamRemapping.1.kt")
+        public void testDefaultParamRemapping() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/defaultParamRemapping.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
         @TestMetadata("inlineInDefaultParameter.1.kt")
         public void testInlineInDefaultParameter() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/defaultValues/inlineInDefaultParameter.1.kt");

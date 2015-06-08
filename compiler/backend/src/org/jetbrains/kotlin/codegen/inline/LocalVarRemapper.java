@@ -114,7 +114,11 @@ public class LocalVarRemapper {
         StackValue value = remapInfo.value;
         if (value instanceof StackValue.Local) {
             if (remapInfo.parameterInfo != null) {
-                opcode = value.type.getOpcode(Opcodes.ILOAD);
+                //All remapped value parameters can't be rewritten except case of default ones.
+                //On remapping default parameter to actual value there is only one instruction that writes to it according to mask value
+                //but if such parameter remapped then it passed and this mask branch code never executed
+                //TODO add assertion about parameter default value: descriptor is required
+                opcode = value.type.getOpcode(InlineCodegenUtil.isStoreInstruction(opcode) ? Opcodes.ISTORE : Opcodes.ILOAD);
             }
             mv.visitVarInsn(opcode, ((StackValue.Local) value).index);
             if (remapInfo.parameterInfo != null) {

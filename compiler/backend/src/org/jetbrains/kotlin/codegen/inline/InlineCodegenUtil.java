@@ -443,4 +443,8 @@ public class InlineCodegenUtil {
     public static int getLoadStoreArgSize(int opcode) {
         return opcode == Opcodes.DSTORE || opcode == Opcodes.LSTORE || opcode == Opcodes.DLOAD || opcode == Opcodes.LLOAD ? 2 : 1;
     }
+
+    public static boolean isStoreInstruction(int opcode) {
+        return opcode >= Opcodes.ISTORE && opcode <= Opcodes.ASTORE;
+    }
 }
