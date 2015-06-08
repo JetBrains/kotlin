@@ -106,6 +106,15 @@ public class AnnotationResolver {
     }
 
     @NotNull
+    public Annotations resolveAnnotationsWithoutArguments(
+            @NotNull JetScope scope,
+            @NotNull List<JetAnnotationEntry> annotationEntries,
+            @NotNull BindingTrace trace
+    ) {
+        return resolveAnnotationEntries(scope, annotationEntries, trace, false);
+    }
+
+    @NotNull
     public Annotations resolveAnnotationsWithArguments(
             @NotNull JetScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntries,

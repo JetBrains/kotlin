@@ -147,6 +147,7 @@ class FunctionDescriptorResolver(
                     typeResolver.resolveType(innerScope, receiverTypeRef, trace, true)
                 else
                     expectedFunctionType.getReceiverType()
+        receiverType?.let { AnnotationResolver.resolveAnnotationsArguments(it.getAnnotations()) }
 
 
         val valueParameterDescriptors = createValueParameterDescriptors(function, functionDescriptor, innerScope, trace, expectedFunctionType)
@@ -166,6 +167,9 @@ class FunctionDescriptorResolver(
                 modality,
                 visibility
         )
+        for (valueParameterDescriptor in valueParameterDescriptors) {
+            AnnotationResolver.resolveAnnotationsArguments(valueParameterDescriptor.getType().getAnnotations())
+        }
     }
 
     private fun createValueParameterDescriptors(

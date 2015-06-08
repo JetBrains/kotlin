@@ -861,6 +861,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("RecursivelyAnnotatedParameterType.kt")
+            public void testRecursivelyAnnotatedParameterType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotatedParameterType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("RecursivelyAnnotatedParameterWithAt.kt")
             public void testRecursivelyAnnotatedParameterWithAt() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/RecursivelyAnnotatedParameterWithAt.kt");
