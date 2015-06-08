@@ -320,7 +320,7 @@ public class KotlinToJVMBytecodeCompiler {
                 }
         );
         long analysisNanos = PerformanceCounter.Companion.currentThreadCpuTime() - analysisStart;
-        String message = "Analyzed " + environment.getSourceFiles().size() + " files (" +
+        String message = "ANALYZE: " + environment.getSourceFiles().size() + " files (" +
                          environment.getSourceLinesOfCode() + " lines) in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms";
         K2JVMCompiler.reportPerf(environment.getConfiguration(), message);
 
@@ -381,7 +381,7 @@ public class KotlinToJVMBytecodeCompiler {
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
         long generationNanos = PerformanceCounter.Companion.currentThreadCpuTime() - generationStart;
-        String message = "Generated " + sourceFiles.size() + " files (" +
+        String message = "GENERATE: " + sourceFiles.size() + " files (" +
                          environment.countLinesOfCode(sourceFiles) + " lines) in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
         K2JVMCompiler.reportPerf(environment.getConfiguration(), message);
 

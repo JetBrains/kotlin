@@ -81,7 +81,7 @@ public class CliBaseTest {
         String[] lines = StringUtil.splitByLinesKeepSeparators(output);
         StringBuilder result = new StringBuilder();
         for (String line : lines) {
-            if (!line.contains("INFO: PERF:")) {
+            if (!line.contains("PERF:")) {
                 result.append(line);
             }
         }

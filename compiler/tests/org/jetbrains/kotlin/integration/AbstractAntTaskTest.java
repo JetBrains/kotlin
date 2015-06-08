@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.integration;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.cli.CliBaseTest;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 import java.io.File;
@@ -42,7 +41,7 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
     @Override
     @NotNull
     protected String normalizeOutput(@NotNull File testDataDir, @NotNull String content) {
-        return CliBaseTest.removePerfOutput(super.normalizeOutput(testDataDir, content))
+        return super.normalizeOutput(testDataDir, content)
                 .replaceAll("Total time: .+\n", "Total time: [time]\n");
     }
 
