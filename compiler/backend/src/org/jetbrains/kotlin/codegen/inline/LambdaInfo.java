@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFunctionLiteralExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
@@ -156,7 +156,14 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
         //add skipped this cause inlined lambda doesn't have it
         builder.addThis(AsmTypes.OBJECT_TYPE, true).setLambda(this);
 
-        List<ValueParameterDescriptor> valueParameters = getFunctionDescriptor().getValueParameters();
+        FunctionDescriptor lambdaDescriptor = getFunctionDescriptor();
+        ReceiverParameterDescriptor extensionParameter = lambdaDescriptor.getExtensionReceiverParameter();
+        if (extensionParameter != null) {
+            Type type = typeMapper.mapType(extensionParameter.getType());
+            builder.addNextParameter(type, false, null);
+        }
+
+        List<ValueParameterDescriptor> valueParameters = lambdaDescriptor.getValueParameters();
         for (ValueParameterDescriptor parameter : valueParameters) {
             Type type = typeMapper.mapType(parameter.getType());
             builder.addNextParameter(type, false, null);
@@ -181,3 +188,4 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
     }
 
 }
+
