@@ -209,24 +209,17 @@ class ExpectedInfos(
             if (varargElementType != null) {
                 if (isFunctionLiteralArgument) continue
 
+                val varargTail = if (argumentName == null && tail == Tail.RPARENTH)
+                    null /* even if it's the last parameter, there can be more arguments for the same parameter */
+                else
+                    tail
+
+                if (!alreadyHasStar) {
+                    expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
+                }
+
                 val starOptions = if (!alreadyHasStar) ItemOptions.STAR_PREFIX else ItemOptions.DEFAULT
-                if (argumentName == null) {
-                    // even if it's the last parameter, there can be more arguments for the same parameter
-                    val varargTail = if (tail == Tail.RPARENTH) null else tail
-
-                    if (!alreadyHasStar) {
-                        expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), varargTail, descriptor, argumentPosition))
-                    }
-
-                    expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, starOptions))
-                }
-                else {
-                    if (!alreadyHasStar) {
-                        expectedInfos.add(ArgumentExpectedInfo(varargElementType, expectedName?.unpluralize(), tail, descriptor, argumentPosition))
-                    }
-
-                    expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, tail, descriptor, argumentPosition, starOptions))
-                }
+                expectedInfos.add(ArgumentExpectedInfo(parameter.getType(), expectedName, varargTail, descriptor, argumentPosition, starOptions))
             }
             else {
                 if (alreadyHasStar) continue
