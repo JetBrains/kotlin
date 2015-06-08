@@ -24,6 +24,10 @@ public class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(
         doTest("jps-plugin/testData/incremental/custom/projectPathCaseChanged/")
     }
 
+    fun testProjectPathCaseChangedMultiFile() {
+        doTest("jps-plugin/testData/incremental/custom/projectPathCaseChangedMultiFile/")
+    }
+
     override fun doTest(testDataPath: String) {
         if (SystemInfoRt.isFileSystemCaseSensitive) {
             return

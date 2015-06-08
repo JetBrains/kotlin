@@ -41,10 +41,7 @@ import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClass
 
 public class PackagePartClassUtils {
     public static int getPathHashCode(@NotNull VirtualFile file) {
-        // Conversion to system-dependent name seems to be unnecessary, but it's hard to check now:
-        // it was introduced when fixing KT-2839, which appeared again (KT-3639).
-        // If you try to remove it, run tests on Windows.
-        return FileUtil.toSystemDependentName(file.getPath()).hashCode();
+        return file.getPath().toLowerCase().hashCode();
     }
 
     @NotNull
