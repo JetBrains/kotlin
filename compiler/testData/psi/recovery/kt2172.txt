@@ -1,6 +1,8 @@
 JetFile: kt2172.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   CLASS
     PsiElement(class)('class')
     PsiWhiteSpace(' ')

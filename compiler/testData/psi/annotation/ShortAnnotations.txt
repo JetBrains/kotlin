@@ -53,6 +53,8 @@ JetFile: ShortAnnotations.kt
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('aa')
+  IMPORT_LIST
+    <empty list>
   PsiWhiteSpace('\n\n')
   CLASS
     MODIFIER_LIST

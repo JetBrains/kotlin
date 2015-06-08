@@ -17,3 +17,5 @@ JetFile: PackageModifiers.kt
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('name')
+  IMPORT_LIST
+    <empty list>

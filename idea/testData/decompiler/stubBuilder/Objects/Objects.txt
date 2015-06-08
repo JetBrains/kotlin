@@ -1,5 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
+  IMPORT_LIST:
   OBJECT_DECLARATION:[fqName=Objects, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Objects, superNames=[]]
     MODIFIER_LIST:[public]
     CLASS_BODY:

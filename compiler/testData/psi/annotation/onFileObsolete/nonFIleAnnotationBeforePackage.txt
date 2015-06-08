@@ -84,3 +84,5 @@ JetFile: nonFIleAnnotationBeforePackage.kt
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('boo')
+  IMPORT_LIST
+    <empty list>

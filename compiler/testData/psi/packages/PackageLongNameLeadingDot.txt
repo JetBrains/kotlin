@@ -14,3 +14,5 @@ JetFile: PackageLongNameLeadingDot.kt
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('c')
+  IMPORT_LIST
+    <empty list>

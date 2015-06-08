@@ -1,7 +1,7 @@
+import kotlin.reflect.KClass
+
 // "Replace Class<T> with KClass<T> for each annotation in project" "true"
 // WITH_RUNTIME
-
-import kotlin.reflect.KClass
 
 annotation class Ann1(val arg: KClass<*>)
 

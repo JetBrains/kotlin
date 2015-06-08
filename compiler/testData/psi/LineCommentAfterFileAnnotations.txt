@@ -11,9 +11,11 @@ JetFile: LineCommentAfterFileAnnotations.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('volatile')
       PsiElement(RBRACKET)(']')
-  PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n')
   CLASS
     PsiComment(EOL_COMMENT)('// class C')
     PsiWhiteSpace('\n')

@@ -19,6 +19,8 @@ JetFile: PackageNewLineRecovery.kt
     PsiElement(DOT)('.')
     PsiErrorElement:Package name must be a '.'-separated identifier list placed on a single line
       <empty list>
+  IMPORT_LIST
+    <empty list>
   PsiWhiteSpace('\n')
   PROPERTY
     MODIFIER_LIST
