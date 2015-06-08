@@ -1,0 +1,7 @@
+Cleaning output files:
+out/production/module/_DefaultPackage$foo$*.class
+out/production/module/_DefaultPackage.class
+End of files
+Compiling files:
+src/foo.kt
+End of files

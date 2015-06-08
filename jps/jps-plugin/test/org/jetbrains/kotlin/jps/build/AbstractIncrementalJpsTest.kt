@@ -79,6 +79,9 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
         get() = null
 
+    protected open val checkDumpsCaseInsensitively: Boolean
+        get() = false
+
     fun build(scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().all()): MakeResult {
         val workDirPath = FileUtil.toSystemIndependentName(workDir.getAbsolutePath())
         val logger = MyLogger(workDirPath)
@@ -190,7 +193,12 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         assertEqualDirectories(outDir, outAfterMake, makeOverallResult.makeFailed)
 
         if (!makeOverallResult.makeFailed) {
-            TestCase.assertEquals(rebuildResult.mappingsDump, makeOverallResult.mappingsDump)
+            if (checkDumpsCaseInsensitively && rebuildResult.mappingsDump?.toLowerCase() == makeOverallResult.mappingsDump?.toLowerCase()) {
+                // do nothing
+            }
+            else {
+                TestCase.assertEquals(rebuildResult.mappingsDump, makeOverallResult.mappingsDump)
+            }
         }
 
         FileUtil.delete(outAfterMake)
@@ -219,7 +227,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         return result
     }
 
-    protected fun doTest(testDataPath: String) {
+    protected open fun doTest(testDataPath: String) {
         testDataDir = File(testDataPath)
         workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "jps-build", null)
 
