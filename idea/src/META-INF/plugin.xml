@@ -393,7 +393,7 @@
                                     implementationClass="org.jetbrains.kotlin.idea.ktSignature.KotlinSignatureInJavaMarkerProvider"/>
     <iconProvider implementation="org.jetbrains.kotlin.idea.JetIconProvider"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetFunctionPresenter"
-                              forClass="org.jetbrains.kotlin.psi.JetNamedFunction"/>
+                              forClass="org.jetbrains.kotlin.psi.JetFunction"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetClassPresenter"
                               forClass="org.jetbrains.kotlin.psi.JetClass"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.JetObjectPresenter"

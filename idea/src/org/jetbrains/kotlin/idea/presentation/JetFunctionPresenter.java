@@ -23,15 +23,15 @@ import com.intellij.navigation.ItemPresentationProvider;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetParameter;
-import org.jetbrains.kotlin.psi.JetTypeReference;
+import org.jetbrains.kotlin.psi.*;
 
 import java.util.Collection;
 
-public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFunction> {
+public class JetFunctionPresenter implements ItemPresentationProvider<JetFunction> {
     @Override
-    public ItemPresentation getPresentation(@NotNull final JetNamedFunction function) {
+    public ItemPresentation getPresentation(@NotNull final JetFunction function) {
+        if (function instanceof JetFunctionLiteral) return null;
+
         return new JetDefaultNamedDeclarationPresentation(function) {
             @Override
             public String getPresentableText() {
@@ -60,6 +60,11 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetNamedFu
 
             @Override
             public String getLocationString() {
+                if (function instanceof JetConstructor) {
+                    FqName name = ((JetConstructor) function).getClassOrObject().getFqName();
+                    return name != null ? String.format("(in %s)", name) : "";
+                }
+
                 FqName name = function.getFqName();
                 if (name != null) {
                     JetTypeReference receiverTypeRef = function.getReceiverTypeReference();

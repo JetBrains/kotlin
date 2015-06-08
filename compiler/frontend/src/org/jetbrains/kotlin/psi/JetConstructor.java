@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
+import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.util.IncorrectOperationException;
@@ -169,6 +171,11 @@ public abstract class JetConstructor<T extends JetConstructor<T>> extends JetDec
     @Override
     public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
         throw new IncorrectOperationException("setName to constructor");
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+        return ItemPresentationProviders.getItemPresentation(this);
     }
 
     @Nullable
