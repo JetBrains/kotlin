@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
 import com.intellij.debugger.DebuggerBundle
-import com.intellij.debugger.ui.breakpoints.*
+import com.intellij.debugger.ui.breakpoints.Breakpoint
+import com.intellij.debugger.ui.breakpoints.BreakpointManager
+import com.intellij.debugger.ui.breakpoints.BreakpointWithHighlighter
+import com.intellij.debugger.ui.breakpoints.JavaBreakpointType
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
@@ -32,7 +35,6 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
-import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
 import org.jetbrains.kotlin.asJava.KotlinLightClass
 import org.jetbrains.kotlin.asJava.KotlinLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.KotlinLightClassForPackage
@@ -41,10 +43,10 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.debugger.breakpoints.dialog.AddFieldBreakpointDialog
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import javax.swing.Icon
 import javax.swing.JComponent
 
 public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointProperties>, XLineBreakpointType<KotlinPropertyBreakpointProperties>(
