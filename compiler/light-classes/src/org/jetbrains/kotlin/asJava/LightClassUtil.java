@@ -247,6 +247,10 @@ public class LightClassUtil {
             declaration = (JetProperty) propertyParent;
         }
 
+        if (declaration instanceof JetConstructor) {
+            return getPsiClass(((JetConstructor) declaration).getClassOrObject());
+        }
+
         //noinspection unchecked
         if (PsiTreeUtil.getParentOfType(declaration, JetFunction.class, JetProperty.class) != null) {
             // Can't get wrappers for internal declarations. Their classes are not generated during calcStub

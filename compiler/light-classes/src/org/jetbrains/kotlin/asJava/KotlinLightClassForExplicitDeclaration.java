@@ -100,15 +100,15 @@ public class KotlinLightClassForExplicitDeclaration extends KotlinWrappingLightC
                 //noinspection unchecked
                 PsiElement declaration = JetPsiUtil.getTopmostParentOfTypes(
                         classOrObject,
-                        JetNamedFunction.class, JetProperty.class, JetClassInitializer.class, JetParameter.class
+                        JetNamedFunction.class, JetConstructor.class, JetProperty.class, JetClassInitializer.class, JetParameter.class
                 );
 
                 if (declaration instanceof JetParameter) {
                     declaration = PsiTreeUtil.getParentOfType(declaration, JetNamedDeclaration.class);
                 }
 
-                if (declaration instanceof JetNamedFunction) {
-                    JetNamedFunction function = (JetNamedFunction) declaration;
+                if (declaration instanceof JetFunction) {
+                    JetFunction function = (JetFunction) declaration;
                     return getParentByPsiMethod(LightClassUtil.getLightClassMethod(function), function.getName(), false);
                 }
 

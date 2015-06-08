@@ -67,22 +67,18 @@ public fun PsiElement.getRepresentativeLightMethod(): PsiMethod? =
         }
 
 public fun JetParameter.toPsiParameter(): PsiParameter? {
-    val paramList = getNonStrictParentOfType<JetParameterList>()
-    if (paramList == null) return null
+    val paramList = getNonStrictParentOfType<JetParameterList>() ?: return null
 
     val paramIndex = paramList.getParameters().indexOf(this)
     val owner = paramList.getParent()
     val lightParamIndex = if (owner is JetDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
-    val method: PsiMethod? = when (owner) {
-        is JetFunction -> LightClassUtil.getLightClassMethod(owner)
-        is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(owner)
-        is JetPrimaryConstructor -> LightClassUtil.getPsiClass(owner.getContainingClassOrObject())?.getConstructors()?.let { constructors ->
-            if (constructors.isNotEmpty()) constructors[0] else null
-        }
-        else -> null
-    }
-    if (method == null) return null
+    val method: PsiMethod =
+            when (owner) {
+                is JetFunction -> LightClassUtil.getLightClassMethod(owner)
+                is JetPropertyAccessor -> LightClassUtil.getLightClassAccessorMethod(owner)
+                else -> null
+            } ?: return null
 
     return method.getParameterList().getParameters()[lightParamIndex]
 }

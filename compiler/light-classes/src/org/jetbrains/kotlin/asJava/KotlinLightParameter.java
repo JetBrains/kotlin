@@ -78,13 +78,8 @@ public class KotlinLightParameter extends LightParameter implements KotlinLightE
         int jetIndex = PsiUtilPackage.isExtensionDeclaration(declaration) ? index - 1 : index;
         if (jetIndex < 0) return null;
 
-        if (declaration instanceof JetNamedFunction) {
-            List<JetParameter> paramList = ((JetNamedFunction) declaration).getValueParameters();
-            return jetIndex < paramList.size() ? paramList.get(jetIndex) : null;
-        }
-
-        if (declaration instanceof JetClass) {
-            List<JetParameter> paramList = ((JetClass) declaration).getPrimaryConstructorParameters();
+        if (declaration instanceof JetFunction) {
+            List<JetParameter> paramList = ((JetFunction) declaration).getValueParameters();
             return jetIndex < paramList.size() ? paramList.get(jetIndex) : null;
         }
 

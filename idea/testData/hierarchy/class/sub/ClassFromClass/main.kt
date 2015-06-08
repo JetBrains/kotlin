@@ -18,6 +18,10 @@ class MyClass(a: A = run { class X: A(); object: A() {} }) {
     }
 }
 
+class MyClass2 {
+    constructor(a: A = run { class X: A(); object: A() {} })
+}
+
 val bar: Int
     get() {
         class E: A()

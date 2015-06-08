@@ -340,11 +340,8 @@ public class JetRefactoringUtil {
 
         if (method instanceof KotlinLightMethod) {
             JetDeclaration declaration = ((KotlinLightMethod) method).getOrigin();
-            if (declaration instanceof JetNamedFunction) {
-                result.add(((JetNamedFunction) declaration).getValueParameters().get(parameterIndex));
-            }
-            else if (declaration instanceof JetClass) {
-                result.add(((JetClass) declaration).getPrimaryConstructorParameters().get(parameterIndex));
+            if (declaration instanceof JetFunction) {
+                result.add(((JetFunction) declaration).getValueParameters().get(parameterIndex));
             }
         }
         else {

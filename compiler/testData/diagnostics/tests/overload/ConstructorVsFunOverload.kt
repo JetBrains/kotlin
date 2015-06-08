@@ -2,21 +2,21 @@
 
 package constructorVsFun
 
-class <!CONFLICTING_OVERLOADS!>a()<!> { }
+class a<!CONFLICTING_OVERLOADS!>()<!> { }
 
 <!CONFLICTING_OVERLOADS!>fun a()<!> = 1
 
 class Tram {
     <!CONFLICTING_OVERLOADS!>fun f()<!> { }
 
-    class <!CONFLICTING_OVERLOADS!>f()<!> { }
+    class f<!CONFLICTING_OVERLOADS!>()<!> { }
 }
 
 class Yvayva {
     companion object {
         <!CONFLICTING_OVERLOADS!>fun fghj()<!> { }
 
-        class <!CONFLICTING_OVERLOADS!>fghj()<!> { }
+        class fghj<!CONFLICTING_OVERLOADS!>()<!> { }
     }
 }
 
@@ -27,4 +27,3 @@ class Rtyu {
         class ololo() { }
     }
 }
-

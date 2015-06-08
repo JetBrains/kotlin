@@ -1,12 +1,14 @@
 <node text="A ()" base="true">
   <node text="B ()"/>
-  <node text="X in MyClass ()"/>
-  <node text="Anonymous in MyClass ()"/>
+  <node text="X in MyClass() in MyClass ()"/>
+  <node text="Anonymous in MyClass() in MyClass ()"/>
   <node text="G in MyClass ()"/>
   <node text="C in MyClass ()"/>
   <node text="X in foo() in MyClass ()"/>
   <node text="Anonymous in foo() in MyClass ()"/>
   <node text="F in foo() in MyClass ()"/>
   <node text="D in foo() in MyClass ()"/>
+  <node text="X in MyClass2() in MyClass2 ()"/>
+  <node text="Anonymous in MyClass2() in MyClass2 ()"/>
   <node text="E in bar() in main.kt ()"/>
 </node>
