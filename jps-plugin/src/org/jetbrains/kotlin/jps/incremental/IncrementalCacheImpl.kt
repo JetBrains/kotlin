@@ -46,6 +46,7 @@ import org.jetbrains.jps.builders.storage.BuildDataPaths
 import com.intellij.util.io.BooleanDataDescriptor
 import java.util.ArrayList
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import org.jetbrains.kotlin.utils.Printer
 import java.io.DataInputStream
 
@@ -546,7 +547,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     private inner class SourceToClassesMap : BasicMap<List<String>>() {
         override fun createMap(): PersistentHashMap<String, List<String>> = PersistentHashMap(
                 File(baseDir, SOURCE_TO_CLASSES),
-                EnumeratorStringDescriptor(),
+                PathStringDescriptor.INSTANCE,
                 StringListExternalizer
         )
 
