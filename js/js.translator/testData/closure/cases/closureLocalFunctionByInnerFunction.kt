@@ -4,7 +4,7 @@ fun box(): String {
     fun simple(s: String? = null): String {
         if (s != null) return s
 
-        return run {
+        return myRun {
             simple("OK")
         }
     }
@@ -15,7 +15,7 @@ fun box(): String {
     fun withClosure(s: String? = null): String {
         if (s != null) return s
 
-        return ok + run {
+        return ok + myRun {
             withClosure(ok)
         }
     }

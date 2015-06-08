@@ -3,7 +3,7 @@
 package foo
 
 public class Foo(val trigger: () -> Any) {
-    fun test() = run {trigger()};
+    fun test() = myRun { trigger() };
 }
 
 fun box() = Foo({ "OK" }).test()

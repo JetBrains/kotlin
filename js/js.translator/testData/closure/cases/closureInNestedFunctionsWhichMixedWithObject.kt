@@ -1,10 +1,10 @@
 package foo
 
 fun box(): Boolean {
-    val t = run {
+    val t = myRun {
         object {
             fun boo(param: String): String {
-                return run { param }
+                return myRun { param }
             }
         }
     }

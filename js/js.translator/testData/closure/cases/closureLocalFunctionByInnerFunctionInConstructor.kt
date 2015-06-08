@@ -10,7 +10,7 @@ class Foo {
                 return
             }
 
-            run {
+            myRun {
                 bar(OK)
             }
         }

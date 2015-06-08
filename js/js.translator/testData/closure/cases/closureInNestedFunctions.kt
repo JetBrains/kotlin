@@ -14,8 +14,8 @@ fun funfun(): Boolean {
 fun litlit(): Boolean {
     val result = true
 
-    return run {
-        run { result }
+    return myRun {
+        myRun { result }
     }
 }
 
@@ -23,7 +23,7 @@ fun funlit(): Boolean {
     val result = true
 
     fun foo(): Boolean {
-        return run { result }
+        return myRun { result }
     }
 
     return foo()
@@ -32,7 +32,7 @@ fun funlit(): Boolean {
 fun litfun(): Boolean {
     val result = true
 
-    return run {
+    return myRun {
         fun bar() = result
         bar()
     }

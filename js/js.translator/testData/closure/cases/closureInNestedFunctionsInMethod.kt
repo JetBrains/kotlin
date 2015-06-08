@@ -8,8 +8,8 @@ class A {
 
     fun litlit() {
         val testName = "litlit"
-        run {
-            run {
+        myRun {
+            myRun {
                 assertEquals(12, a, testName)
 
                 assertEquals(1, b, testName)
@@ -40,7 +40,7 @@ class A {
 
     fun litfun() {
         val testName = "litfun"
-        run {
+        myRun {
             fun bar() {
                 assertEquals(12, a, testName)
 
@@ -57,7 +57,7 @@ class A {
     fun funlit() {
         val testName = "funlit"
         fun foo() {
-            run {
+            myRun {
                 assertEquals(12, a, testName)
 
                 assertEquals(1, b, testName)

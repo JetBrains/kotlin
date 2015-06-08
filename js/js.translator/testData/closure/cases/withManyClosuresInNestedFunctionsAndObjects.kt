@@ -1,14 +1,14 @@
 package foo
 
 fun box(): String {
-    val t = run {
+    val t = myRun {
                 object {
                     fun foo() = "3"
 
                     fun boo(param: String): String {
                         val a = object {
                             fun bar() = "57"
-                            fun b(): String = run { param + bar() + foo() }
+                            fun b(): String = myRun { param + bar() + foo() }
                         }
 
                         return a.b()
