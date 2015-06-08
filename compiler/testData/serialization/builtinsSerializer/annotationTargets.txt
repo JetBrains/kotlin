@@ -16,7 +16,7 @@ test.anno(x = "top level class": kotlin.String) internal final class C1 {
         public constructor C2()
     }
 
-    test.anno(x = "companion object": kotlin.String) internal companion object Companion {
+    test.anno(x = "companion object": kotlin.String) public companion object Companion {
         private constructor Companion()
     }
 }

@@ -3,7 +3,7 @@ package test
 internal final class ClassObjectDeclaresProperty {
     /*primary*/ public constructor ClassObjectDeclaresProperty()
 
-    internal companion object Companion {
+    public companion object Companion {
         /*primary*/ private constructor Companion()
         internal final val i: kotlin.Int = 1
             internal final fun <get-i>(): kotlin.Int

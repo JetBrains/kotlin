@@ -76,7 +76,7 @@ PsiJetFileStubImpl[package=test.class_object]
           VALUE_PARAMETER_LIST:
         CLASS_BODY:
           OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
-            MODIFIER_LIST:[internal companion]
+            MODIFIER_LIST:[public companion]
             CLASS_BODY:
               CLASS:[fqName=test.class_object.ClassObject.B.Companion.C, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
                 MODIFIER_LIST:[internal final]
@@ -85,7 +85,7 @@ PsiJetFileStubImpl[package=test.class_object]
                   VALUE_PARAMETER_LIST:
                 CLASS_BODY:
                   OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion.C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
-                    MODIFIER_LIST:[internal companion]
+                    MODIFIER_LIST:[public companion]
                     CLASS_BODY:
                       CLASS:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
                         MODIFIER_LIST:[internal final]
@@ -94,7 +94,7 @@ PsiJetFileStubImpl[package=test.class_object]
                           VALUE_PARAMETER_LIST:
                         CLASS_BODY:
                           OBJECT_DECLARATION:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
-                            MODIFIER_LIST:[internal companion]
+                            MODIFIER_LIST:[public companion]
                             CLASS_BODY:
                               PROPERTY:[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
                                 MODIFIER_LIST:[internal final]

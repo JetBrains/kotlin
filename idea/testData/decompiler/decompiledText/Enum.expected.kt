@@ -16,7 +16,7 @@ internal final enum class Enum private constructor() : kotlin.Enum<test.Enum> {
 
     F
 
-    internal companion object {
+    public companion object {
         internal final val c: kotlin.Int /* compiled code */
     }
 

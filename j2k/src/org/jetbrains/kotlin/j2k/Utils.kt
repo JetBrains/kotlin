@@ -141,3 +141,4 @@ fun PsiMember.isImported(file: PsiJavaFile): Boolean {
     }
 }
 
+fun PsiExpression.isNullLiteral() = this is PsiLiteralExpression && getType() == PsiType.NULL

@@ -3,7 +3,7 @@ test@ for (i in 0..max) {
     var j = i
     var k = 0
     while (n-- != 0) {
-        if (searchMe.charAt(j++) != substring.charAt(k++)) {
+        if (searchMe.charAt(j++) !== substring.charAt(k++)) {
             continue@test
         }
     }

@@ -1729,6 +1729,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/equals"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("EqOperator.java")
+        public void testEqOperator() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/EqOperator.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("Equals1.java")
         public void testEquals1() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/equals/Equals1.java");

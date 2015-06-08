@@ -59,7 +59,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
                 if (ranges.isEmpty()) return
 
                 val fixes = intentions.map { IntentionBasedQuickFix(it, targetElement) }.toTypedArray()
-                val rangeInElement = ranges.fold(TextRange.EMPTY_RANGE) { a, b -> a union b }
+                val rangeInElement = ranges.fold(ranges.first()) { result, range -> result.union(range) }
                 holder.registerProblem(targetElement, problemText ?: fixes.first().getName(), problemHighlightType, rangeInElement, *fixes)
             }
         }

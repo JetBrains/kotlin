@@ -93,6 +93,9 @@ messages/**)
 -keep class com.intellij.openapi.util.io.ZipFileCache { public *; }
 -keep class com.intellij.openapi.util.LowMemoryWatcher { public *; }
 
+# for j2k
+-keep class com.intellij.codeInsight.NullableNotNullManager { public protected *; }
+
 -keepclassmembers enum * {
     public static **[] values();
     public static ** valueOf(java.lang.String);
