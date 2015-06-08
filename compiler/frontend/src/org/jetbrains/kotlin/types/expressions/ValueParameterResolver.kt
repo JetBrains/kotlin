@@ -49,7 +49,7 @@ public class ValueParameterResolver(
             context: ExpressionTypingContext
     ) {
         for ((descriptor, parameter) in valueParameterDescriptors zip valueParameters) {
-            AnnotationResolver.resolveAnnotationsArguments(parameter.getModifierList(), context.trace)
+            AnnotationResolver.resolveAnnotationsArguments(descriptor.getAnnotations())
             resolveDefaultValue(descriptor, parameter, context)
         }
     }

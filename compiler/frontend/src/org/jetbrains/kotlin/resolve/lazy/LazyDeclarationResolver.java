@@ -211,7 +211,7 @@ public class LazyDeclarationResolver {
             throw new IllegalStateException("No descriptor resolved for " + declaration + ":\n" +
                                             PsiUtilPackage.getElementTextWithContext(declaration));
         }
-        AnnotationResolver.resolveAnnotationsArguments(result.getAnnotations(), trace);
+        AnnotationResolver.resolveAnnotationsArguments(result.getAnnotations());
         return result;
     }
 
