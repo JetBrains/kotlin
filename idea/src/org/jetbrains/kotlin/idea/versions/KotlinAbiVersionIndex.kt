@@ -41,7 +41,7 @@ import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.*;
 /**
  * Important! This is not a stub-based index. And it has its own version
  */
-public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> {
+public class KotlinAbiVersionIndex extends ScalarIndexExtension<Integer> constructor {
     private static final Logger LOG = Logger.getInstance(KotlinAbiVersionIndex.class);
 
     public static final KotlinAbiVersionIndex INSTANCE = new KotlinAbiVersionIndex();
