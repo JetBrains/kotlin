@@ -61,4 +61,8 @@ public final class InvokeConventionTest extends AbstractExpressionTest {
     public void testInheritFromFunctionTraits() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testInvokeWithImplicitDispatchReceiverAndExtensionReceiver() throws Exception {
+        checkFooBoxIsOk();
+    }
 }

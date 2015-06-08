@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.psi.Call.CallType
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import kotlin.platform.platformStatic
-import kotlin.test.assertNotNull
 
 object CallTranslator {
     jvmOverloads
@@ -131,12 +131,16 @@ fun computeExplicitReceiversForInvoke(
     val dispatchReceiver = resolvedCall.getDispatchReceiver()
     val extensionReceiver = resolvedCall.getExtensionReceiver()
 
-    if (dispatchReceiver.exists() && extensionReceiver.exists()) {
-        assertNotNull(explicitReceivers.extensionOrDispatchReceiver, "No explicit receiver for 'invoke' resolved call with both receivers: $callElement")
+    if (dispatchReceiver.exists() && extensionReceiver.exists() && resolvedCall.getExplicitReceiverKind() == ExplicitReceiverKind.BOTH_RECEIVERS) {
+        assert(explicitReceivers.extensionOrDispatchReceiver != null) {
+            "No explicit receiver for 'invoke' resolved call with both receivers: $callElement, text: ${callElement.getText()}" +
+            "Dispatch receiver: $dispatchReceiver Extension receiver: $extensionReceiver"
+        }
     }
     else {
         assert(explicitReceivers.extensionOrDispatchReceiver == null) {
-               "Non trivial explicit receiver ${explicitReceivers.extensionOrDispatchReceiver}\n for 'invoke' resolved call: $callElement\n" +
+               "Non trivial explicit receiver ${explicitReceivers.extensionOrDispatchReceiver}\n" +
+               "for 'invoke' resolved call: $callElement, text: ${callElement.getText()}\n" +
                "Dispatch receiver: $dispatchReceiver Extension receiver: $extensionReceiver"
         }
     }
