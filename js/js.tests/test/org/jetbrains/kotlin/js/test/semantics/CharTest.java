@@ -50,4 +50,8 @@ public final class CharTest extends SingleFileTranslationTest {
     public void testCharEquals() throws Exception {
         checkFooBoxIsOk();
     }
+
+    public void testCharConstantByUnicodeId() throws Exception {
+        checkFooBoxIsOk();
+    }
 }
