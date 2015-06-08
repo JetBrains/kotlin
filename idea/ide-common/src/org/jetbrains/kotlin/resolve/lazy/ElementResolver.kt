@@ -248,21 +248,21 @@ public abstract class ElementResolver protected(
         val modifierList = jetAnnotationEntry.getParentOfType<JetModifierList>(true)
         val declaration = modifierList?.getParentOfType<JetDeclaration>(true)
         if (declaration != null) {
-            doResolveAnnotations(resolveSession, getAnnotationsByDeclaration(resolveSession, modifierList!!, declaration))
+            doResolveAnnotations(getAnnotationsByDeclaration(resolveSession, modifierList!!, declaration))
         }
         else {
             val fileAnnotationList = jetAnnotationEntry.getParentOfType<JetFileAnnotationList>(true)
             if (fileAnnotationList != null) {
-                doResolveAnnotations(resolveSession, resolveSession.getFileAnnotations(fileAnnotationList.getContainingJetFile()))
+                doResolveAnnotations(resolveSession.getFileAnnotations(fileAnnotationList.getContainingJetFile()))
             }
             if (modifierList != null && modifierList.getParent() is JetFile) {
-                doResolveAnnotations(resolveSession, resolveSession.getDanglingAnnotations(modifierList.getContainingJetFile()))
+                doResolveAnnotations(resolveSession.getDanglingAnnotations(modifierList.getContainingJetFile()))
             }
         }
     }
 
-    private fun doResolveAnnotations(resolveSession: ResolveSession, annotations: Annotations) {
-        AnnotationResolver.resolveAnnotationsArguments(annotations, resolveSession.getTrace())
+    private fun doResolveAnnotations(annotations: Annotations) {
+        AnnotationResolver.resolveAnnotationsArguments(annotations)
         ForceResolveUtil.forceResolveAllContents(annotations)
     }
 
