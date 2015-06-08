@@ -349,8 +349,7 @@ class Converter private(
         if (specifyAlways) return convertType()
 
         val initializer = variable.getInitializer()
-        if (initializer == null) return convertType()
-        if (initializer is PsiLiteralExpression && initializer.getType() == PsiType.NULL) return convertType()
+        if (initializer == null || initializer.isNullLiteral()) return convertType()
 
         if (canChangeType) return null
 
