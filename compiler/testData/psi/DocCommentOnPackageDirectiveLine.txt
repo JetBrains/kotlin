@@ -9,6 +9,8 @@ JetFile: DocCommentOnPackageDirectiveLine.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('p2')
     PsiElement(SEMICOLON)(';')
+  IMPORT_LIST
+    <empty list>
   FUN
     KDoc
       PsiElement(KDOC_START)('/**')

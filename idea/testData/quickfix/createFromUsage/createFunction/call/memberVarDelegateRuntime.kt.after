@@ -1,6 +1,6 @@
-// "Create function 'foo'" "true"
-
 import kotlin.properties.ReadWriteProperty
+
+// "Create function 'foo'" "true"
 
 class A<T>(val t: T) {
     var x: A<Int> by foo(t, "")

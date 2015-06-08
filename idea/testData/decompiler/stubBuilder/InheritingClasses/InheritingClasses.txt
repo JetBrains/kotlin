@@ -1,6 +1,7 @@
 PsiJetFileStubImpl[package=a]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=a]
+  IMPORT_LIST:
   CLASS:[fqName=a.InheritingClasses, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InheritingClasses, superNames=[]]
     MODIFIER_LIST:[internal final]
     PRIMARY_CONSTRUCTOR:

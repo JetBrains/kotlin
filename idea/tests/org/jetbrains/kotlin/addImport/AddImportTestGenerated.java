@@ -59,6 +59,18 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         doTest(fileName);
     }
 
+    @TestMetadata("Comments.kt")
+    public void testComments() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/Comments.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("CommentsNoPackageDirective.kt")
+    public void testCommentsNoPackageDirective() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/CommentsNoPackageDirective.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ConflictingNameAppearsAndHasUsage1.kt")
     public void testConflictingNameAppearsAndHasUsage1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/addImport/ConflictingNameAppearsAndHasUsage1.kt");

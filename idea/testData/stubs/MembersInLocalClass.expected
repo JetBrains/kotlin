@@ -1,5 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
+  IMPORT_LIST:
   FUN:[fqName=f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, name=f]
     MODIFIER_LIST:[public]
     CLASS:[fqName=null, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=C, superNames=[]]

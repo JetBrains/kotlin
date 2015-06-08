@@ -1,5 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
+  IMPORT_LIST:
   CLASS:[fqName=More, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=More, superNames=[]]
     CLASS_BODY:
       PROPERTY:[fqName=More.test, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=test]

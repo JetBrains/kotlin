@@ -12,9 +12,11 @@ JetFile: withoutPackage.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foo')
       PsiElement(RBRACKET)(']')
-  PsiWhiteSpace('\n')
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiWhiteSpace('\n')
   FUN
     MODIFIER_LIST
       ANNOTATION

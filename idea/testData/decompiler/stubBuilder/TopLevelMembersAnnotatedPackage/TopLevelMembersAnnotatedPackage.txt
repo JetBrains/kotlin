@@ -7,6 +7,7 @@ PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
           REFERENCE_EXPRESSION:[referencedName=b]
         REFERENCE_EXPRESSION:[referencedName=c]
       REFERENCE_EXPRESSION:[referencedName=topLevelMembersAnnotated]
+  IMPORT_LIST:
   PROPERTY:[fqName=a.b.c.topLevelMembersAnnotated.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=i]
     MODIFIER_LIST:[internal]
       ANNOTATION_ENTRY:[hasValueArguments=false, shortName=a]
