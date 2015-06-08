@@ -61,7 +61,9 @@ public abstract class ClassWithAbstractAndOpenMembers {
     }
 }
 
-public class ClassWithConstructor(val a: String, b: Any)
+public class ClassWithConstructor(val a: String, b: Any) {
+    constructor(a: String): this(a, a)
+}
 
 public fun main(args : Array<String>) {
 }

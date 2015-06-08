@@ -340,7 +340,7 @@ public class JetSourceNavigationHelper {
     }
 
     @Nullable
-    public static JetNamedDeclaration getSourceFunction(@NotNull JetNamedFunction decompiledFunction) {
+    public static JetNamedDeclaration getSourceFunction(@NotNull JetFunction decompiledFunction) {
         return getSourcePropertyOrFunction(decompiledFunction);
     }
 
@@ -451,6 +451,16 @@ public class JetSourceNavigationHelper {
             List<JetParameter> sourceParameters = sourceCallable.getValueParameters();
             if (sourceParameters.size() != parameters.size()) return null;
             return sourceParameters.get(index);
+        }
+
+        @Override
+        public JetDeclaration visitPrimaryConstructor(@NotNull JetPrimaryConstructor constructor, Void data) {
+            return getSourceFunction(constructor);
+        }
+
+        @Override
+        public JetDeclaration visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, Void data) {
+            return getSourceFunction(constructor);
         }
     }
 
