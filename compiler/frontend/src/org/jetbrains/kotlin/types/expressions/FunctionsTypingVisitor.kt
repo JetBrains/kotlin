@@ -90,6 +90,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
                     context.trace, context.dataFlowInfo, context.expectedType
             )
         }
+        // Necessary for local functions
         AnnotationResolver.resolveAnnotationsArguments(functionDescriptor.getAnnotations());
 
         val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)
@@ -140,7 +141,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         val expectedType = context.expectedType
         val functionTypeExpected = !noExpectedType(expectedType) && KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
 
-        val functionDescriptor = createFunctionDescriptor(expression, context)
+        val functionDescriptor = createFunctionLiteralDescriptor(expression, context)
         val safeReturnType = computeReturnType(expression, context, functionDescriptor, functionTypeExpected)
         functionDescriptor.setReturnType(safeReturnType)
 
@@ -153,7 +154,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
         return createCheckedTypeInfo(resultType, context, expression)
     }
 
-    private fun createFunctionDescriptor(
+    private fun createFunctionLiteralDescriptor(
             expression: JetFunctionLiteralExpression,
             context: ExpressionTypingContext
     ): AnonymousFunctionDescriptor {

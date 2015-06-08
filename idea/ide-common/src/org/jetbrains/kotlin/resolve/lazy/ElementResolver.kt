@@ -262,7 +262,6 @@ public abstract class ElementResolver protected(
     }
 
     private fun doResolveAnnotations(annotations: Annotations) {
-        AnnotationResolver.resolveAnnotationsArguments(annotations)
         ForceResolveUtil.forceResolveAllContents(annotations)
     }
 

@@ -587,8 +587,6 @@ public class BodyResolver {
                 resolvePropertyDelegate(c, property, propertyDescriptor, delegateExpression, propertyScope, propertyScope);
             }
 
-            AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor.getAnnotations());
-
             resolvePropertyAccessors(c, property, propertyDescriptor);
         }
     }

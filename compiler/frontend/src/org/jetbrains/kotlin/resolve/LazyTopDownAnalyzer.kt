@@ -270,6 +270,7 @@ public class LazyTopDownAnalyzer {
             val descriptor = lazyDeclarationResolver!!.resolveToDescriptor(property) as PropertyDescriptor
 
             c.getProperties().put(property, descriptor)
+            ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())
             registerTopLevelFqName(topLevelFqNames, property, descriptor)
 
             registerScope(c, property)
@@ -280,7 +281,12 @@ public class LazyTopDownAnalyzer {
 
     private fun createFunctionDescriptors(c: TopDownAnalysisContext, functions: List<JetNamedFunction>) {
         for (function in functions) {
-            c.getFunctions().put(function, lazyDeclarationResolver!!.resolveToDescriptor(function) as SimpleFunctionDescriptor)
+            val simpleFunctionDescriptor = lazyDeclarationResolver!!.resolveToDescriptor(function) as SimpleFunctionDescriptor
+            c.getFunctions().put(function, simpleFunctionDescriptor)
+            ForceResolveUtil.forceResolveAllContents(simpleFunctionDescriptor.getAnnotations())
+            for (parameterDescriptor in simpleFunctionDescriptor.getValueParameters()) {
+                ForceResolveUtil.forceResolveAllContents(parameterDescriptor.getAnnotations())
+            }
             registerScope(c, function)
         }
     }

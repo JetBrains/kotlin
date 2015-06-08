@@ -615,6 +615,24 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("AnnotatedLocalObjectFun.kt")
+            public void testAnnotatedLocalObjectFun() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedLocalObjectFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AnnotatedLocalObjectProperty.kt")
+            public void testAnnotatedLocalObjectProperty() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedLocalObjectProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AnnotatedResultType.kt")
+            public void testAnnotatedResultType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedResultType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AnnotationForClassTypeParameter.kt")
             public void testAnnotationForClassTypeParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter.kt");

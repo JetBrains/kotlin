@@ -105,6 +105,7 @@ public class DeprecatedCallableAddReplaceWithIntention : JetSelfTargetingRangeIn
         val bindingContext = this.analyze()
 //        val deprecatedConstructor = KotlinBuiltIns.getInstance().getDeprecatedAnnotation().getUnsubstitutedPrimaryConstructor()
         for (entry in getAnnotationEntries()) {
+            entry.analyze()
             val resolvedCall = entry.getCalleeExpression().getResolvedCall(bindingContext) ?: continue
             if (!resolvedCall.getStatus().isSuccess()) continue
 //            if (resolvedCall.getResultingDescriptor() != deprecatedConstructor) continue
