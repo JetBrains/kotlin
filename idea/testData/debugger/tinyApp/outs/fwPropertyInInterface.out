@@ -1,0 +1,26 @@
+KotlinFieldBreakpoint created at fwPropertyInInterface.kt:5
+KotlinFieldBreakpoint created at fwPropertyInInterface.kt:8
+KotlinFieldBreakpoint created at fwPropertyInInterface.kt:42
+KotlinFieldBreakpoint created at fwPropertyInInterface.kt:45
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !APP_PATH!\classes;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! fwPropertyInInterface.FwPropertyInInterfacePackage
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+fwPropertyInInterface.kt:57
+fwPropertyInInterface.kt:59
+fwPropertyInInterface.kt:61
+fwPropertyInInterface.kt:19
+fwPropertyInInterface.kt:20
+fwPropertyInInterface.kt:20
+fwPropertyInInterface.kt:19
+fwPropertyInInterface.kt:20
+fwPropertyInInterface.kt:20
+fwPropertyInInterface.kt:43
+fwPropertyInInterface.kt:46
+fwPropertyInInterface.kt:43
+fwPropertyInInterface.kt:46
+fwPropertyInInterface.kt:46
+fwPropertyInInterface.kt:43
+fwPropertyInInterface.kt:46
+fwPropertyInInterface.kt:46
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0
