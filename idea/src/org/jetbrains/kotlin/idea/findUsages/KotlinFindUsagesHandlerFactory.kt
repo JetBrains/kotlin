@@ -46,14 +46,14 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
             element is JetProperty ||
             element is JetParameter ||
             element is JetTypeParameter ||
-            element is JetSecondaryConstructor
+            element is JetConstructor<*>
 
     public override fun createFindUsagesHandler(element: PsiElement, forHighlightUsages: Boolean): FindUsagesHandler? {
         val handler = when (element) {
             is JetClassOrObject ->
                 KotlinFindClassUsagesHandler(element, this)
 
-            is JetNamedFunction, is JetProperty, is JetParameter, is JetSecondaryConstructor -> {
+            is JetNamedFunction, is JetProperty, is JetParameter, is JetConstructor<*> -> {
                 val declaration = element as JetNamedDeclaration
 
                 if (forHighlightUsages) return KotlinFindMemberUsagesHandler.getInstance(declaration, this)

@@ -123,7 +123,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
     protected abstract UsagesSearchHelper<T> getSearchHelper(KotlinCallableFindUsagesOptions options);
 
     private static Iterable<PsiMethod> getLightMethods(JetNamedDeclaration element) {
-        if (element instanceof JetNamedFunction || element instanceof JetSecondaryConstructor) {
+        if (element instanceof JetFunction) {
             PsiMethod method = LightClassUtil.getLightClassMethod((JetFunction) element);
             return method != null ? Collections.singletonList(method) : Collections.<PsiMethod>emptyList();
         }
@@ -163,7 +163,7 @@ public abstract class KotlinFindMemberUsagesHandler<T extends JetNamedDeclaratio
                         PsiMethod psiMethod =
                                 element instanceof PsiMethod
                                 ? (PsiMethod) element
-                                : element instanceof JetSecondaryConstructor
+                                : element instanceof JetConstructor
                                   ? LightClassUtil.getLightClassMethod((JetFunction) element)
                                   : null;
                         if (psiMethod != null) {

@@ -1,0 +1,6 @@
+[primaryConstructorByJavaRef.0.java] New instance creation (12: 13) new A(1);
+[primaryConstructorByJavaRef.0.java] Unclassified usage (7: 9) super(n);
+[primaryConstructorByJavaRef.1.kt] New instance creation (13: 5) A(1)
+[primaryConstructorByJavaRef.1.kt] Supertype (9: 12) class C(): A(1)
+[primaryConstructorByJavaRef.1.kt] Unclassified usage (2: 20) constructor(): this(1)
+[primaryConstructorByJavaRef.1.kt] Unclassified usage (6: 26) constructor(n: Int): super(n)

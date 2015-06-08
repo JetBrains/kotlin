@@ -86,7 +86,8 @@ fun PsiReference.isConstructorUsage(jetClassOrObject: JetClassOrObject): Boolean
         val descriptor = getConstructorCallDescriptor()
         if (descriptor !is ConstructorDescriptor) return false
 
-        return DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) == jetClassOrObject
+        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration())
+        return declaration == jetClassOrObject || (declaration is JetConstructor<*> && declaration.getClassOrObject() == jetClassOrObject)
     }
 
     checkJavaUsage() || checkKotlinUsage()
@@ -118,7 +119,7 @@ public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope,
 private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: SearchScope, process: (JetConstructorDelegationCall) -> Unit) {
     val element = unwrapped
     val klass = when (element) {
-        is JetSecondaryConstructor -> element.getClassOrObject()
+        is JetConstructor<*> -> element.getClassOrObject()
         is JetClass -> element
         else -> return
     }
