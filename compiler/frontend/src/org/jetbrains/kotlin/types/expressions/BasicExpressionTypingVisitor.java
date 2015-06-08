@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.types.expressions.unqualifiedSuper.UnqualifiedSuperPackage;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 import org.jetbrains.kotlin.utils.ThrowingList;
 
@@ -398,7 +399,20 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             if (supertypes.size() > 1) {
-                context.trace.report(AMBIGUOUS_SUPER.on(expression));
+                Collection<JetType> supertypesResolvedFromContext =
+                        UnqualifiedSuperPackage.resolveUnqualifiedSuperFromExpressionContext(expression, supertypes);
+                if (supertypesResolvedFromContext.size() == 1) {
+                    JetType singleResolvedType = supertypesResolvedFromContext.iterator().next();
+                    result = substitutor.substitute(singleResolvedType, Variance.INVARIANT);
+                }
+                else if (supertypesResolvedFromContext.isEmpty()) {
+                    // No supertype found, either with concrete or abstract members.
+                    // Resolve to 'Any' (this will cause diagnostics for unresolved member reference).
+                    result = components.builtIns.getAnyType();
+                }
+                else {
+                    context.trace.report(AMBIGUOUS_SUPER.on(expression));
+                }
             }
             else {
                 // supertypes may be empty when all the supertypes are error types (are not resolved, for example)

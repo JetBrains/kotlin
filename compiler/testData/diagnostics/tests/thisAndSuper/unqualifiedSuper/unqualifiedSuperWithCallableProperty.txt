@@ -1,0 +1,30 @@
+package
+
+internal open class BaseWithCallableProp {
+    public constructor BaseWithCallableProp()
+    internal final val bar: () -> kotlin.String
+    internal final val fn: () -> kotlin.String
+    internal open fun bar(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class DerivedUsingFun : BaseWithCallableProp, InterfaceWithFun {
+    public constructor DerivedUsingFun()
+    internal final override /*1*/ /*fake_override*/ val bar: () -> kotlin.String
+    internal final override /*1*/ /*fake_override*/ val fn: () -> kotlin.String
+    internal open override /*1*/ fun bar(): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ /*fake_override*/ fun fn(): kotlin.String
+    internal final fun foo(): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal interface InterfaceWithFun {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open fun fn(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

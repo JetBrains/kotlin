@@ -1,0 +1,50 @@
+package 
+
+internal open class GenericBaseClass</*0*/ T> {
+    public constructor GenericBaseClass</*0*/ T>()
+    internal open fun ambiguous(/*0*/ x: T): T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open fun foo(/*0*/ x: T): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal interface GenericBaseInterface</*0*/ T> {
+    internal open fun ambiguous(/*0*/ x: T): T
+    internal open fun bar(/*0*/ x: T): T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class GenericDerivedClass</*0*/ T> : GenericBaseClass<T>, GenericBaseInterface<T> {
+    public constructor GenericDerivedClass</*0*/ T>()
+    internal open override /*2*/ fun ambiguous(/*0*/ x: T): T
+    internal open override /*1*/ fun bar(/*0*/ x: T): T
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ fun foo(/*0*/ x: T): T
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class MixedDerivedClass</*0*/ T> : GenericBaseClass<kotlin.Int>, GenericBaseInterface<T> {
+    public constructor MixedDerivedClass</*0*/ T>()
+    internal open override /*1*/ fun ambiguous(/*0*/ x: T): T
+    internal open override /*1*/ fun ambiguous(/*0*/ x: kotlin.Int): kotlin.Int
+    internal open override /*1*/ fun bar(/*0*/ x: T): T
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class SpecializedDerivedClass : GenericBaseClass<kotlin.Int>, GenericBaseInterface<kotlin.String> {
+    public constructor SpecializedDerivedClass()
+    internal open override /*1*/ fun ambiguous(/*0*/ x: kotlin.Int): kotlin.Int
+    internal open override /*1*/ fun ambiguous(/*0*/ x: kotlin.String): kotlin.String
+    internal open override /*1*/ fun bar(/*0*/ x: kotlin.String): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ fun foo(/*0*/ x: kotlin.Int): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

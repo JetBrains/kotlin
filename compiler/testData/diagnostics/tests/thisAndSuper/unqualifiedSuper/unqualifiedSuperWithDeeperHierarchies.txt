@@ -1,0 +1,48 @@
+package
+
+internal open class DeepBase : DeeperBase {
+    public constructor DeepBase()
+    internal open override /*1*/ /*fake_override*/ val deeperBaseProp: kotlin.Int
+    internal open override /*1*/ /*fake_override*/ fun deeperBaseFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class DeepDerived : DeepBase, DeepInterface {
+    public constructor DeepDerived()
+    internal open override /*1*/ val deeperBaseProp: kotlin.Int
+    internal final fun callsSuperDeeperBaseFun(): kotlin.Unit
+    internal final fun callsSuperInterfaceFuns(): kotlin.Unit
+    internal open override /*1*/ fun deepInterfaceFun(): kotlin.Unit
+    internal open override /*1*/ fun deeperBaseFun(): kotlin.Unit
+    internal open override /*1*/ fun deeperInterfaceFun(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal final fun getsSuperDeeperBaseProp(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal interface DeepInterface : DeeperInterface {
+    internal open fun deepInterfaceFun(): kotlin.Unit
+    internal open override /*1*/ /*fake_override*/ fun deeperInterfaceFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal open class DeeperBase {
+    public constructor DeeperBase()
+    internal open val deeperBaseProp: kotlin.Int
+    internal open fun deeperBaseFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal interface DeeperInterface {
+    internal open fun deeperInterfaceFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

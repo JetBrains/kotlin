@@ -13406,6 +13406,75 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/traitSuperCall.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class UnqualifiedSuper extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInUnqualifiedSuper() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("ambiguousSuperWithGenerics.kt")
+                public void testAmbiguousSuperWithGenerics() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/ambiguousSuperWithGenerics.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuper.kt")
+                public void testUnqualifiedSuper() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuper.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuperWithAbstractMembers.kt")
+                public void testUnqualifiedSuperWithAbstractMembers() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuperWithAbstractMembers.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuperWithCallableProperty.kt")
+                public void testUnqualifiedSuperWithCallableProperty() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuperWithCallableProperty.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuperWithDeeperHierarchies.kt")
+                public void testUnqualifiedSuperWithDeeperHierarchies() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuperWithDeeperHierarchies.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuperWithGenerics.kt")
+                public void testUnqualifiedSuperWithGenerics() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuperWithGenerics.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuperWithInnerClass.kt")
+                public void testUnqualifiedSuperWithInnerClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuperWithInnerClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuperWithInterfaces.kt")
+                public void testUnqualifiedSuperWithInterfaces() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuperWithInterfaces.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuperWithLocalClass.kt")
+                public void testUnqualifiedSuperWithLocalClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuperWithLocalClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unqualifiedSuperWithUnresolvedBase.kt")
+                public void testUnqualifiedSuperWithUnresolvedBase() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/thisAndSuper/unqualifiedSuper/unqualifiedSuperWithUnresolvedBase.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/traitWithRequired")

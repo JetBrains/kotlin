@@ -1,0 +1,38 @@
+package 
+
+internal open class Base {
+    public constructor Base()
+    internal open val ambiguousProp: kotlin.Int
+    internal open val prop: kotlin.Int
+    internal open fun ambiguous(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal final class Derived : Base, Interface {
+    public constructor Derived()
+    internal open override /*2*/ val ambiguousProp: kotlin.Int
+    internal open override /*1*/ val prop: kotlin.Int
+    internal open override /*2*/ fun ambiguous(): kotlin.Unit
+    internal open override /*1*/ fun bar(): kotlin.Unit
+    internal final fun callsAmbiguousSuperFun(): kotlin.Unit
+    internal final fun callsFunFromSuperClass(): kotlin.Unit
+    internal final fun callsFunFromSuperInterface(): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    internal open override /*1*/ fun foo(): kotlin.Unit
+    internal final fun getAmbiguousSuperProp(): kotlin.Int
+    internal final fun getSuperProp(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+internal interface Interface {
+    internal open val ambiguousProp: kotlin.Int
+    internal open fun ambiguous(): kotlin.Unit
+    internal open fun bar(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

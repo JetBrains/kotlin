@@ -12,7 +12,7 @@ class A<E>() : C(), T {
     fun test() {
         <!SUPER_IS_NOT_AN_EXPRESSION!>super<!>
         <!SUPER_IS_NOT_AN_EXPRESSION!>super<T><!>
-        <!AMBIGUOUS_SUPER!>super<!>.<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!>()
+        super.foo()
         super<T>.foo()
         super<C>.bar()
         super<T>@A.foo()
