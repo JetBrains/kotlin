@@ -171,4 +171,6 @@ public class JetSimpleNameReference(
     override fun toString(): String {
         return javaClass<JetSimpleNameReference>().getSimpleName() + ": " + expression.getText()
     }
+
+    override fun getCanonicalText(): String = expression.getText()
 }

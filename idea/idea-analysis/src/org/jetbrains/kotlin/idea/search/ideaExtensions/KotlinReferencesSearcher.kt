@@ -53,7 +53,7 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
 
                     when {
                         !ReferenceRange.containsOffsetInElement(ref, offsetInElement) -> true
-                        !ref.matchesTarget(unwrappedElement) -> true
+                        !ref.isReferenceTo(unwrappedElement) -> true
                         else -> consumer.process(ref)
                     }
                 }
@@ -73,20 +73,12 @@ public class KotlinReferencesSearcher : QueryExecutorBase<PsiReference, Referenc
         public fun processJetClassOrObject(element: JetClassOrObject, queryParameters: ReferencesSearch.SearchParameters) {
             val className = element.getName()
             if (className != null) {
-                val lightClass = ApplicationManager.getApplication().runReadAction<PsiClass>(object : Computable<PsiClass?> {
-                    override fun compute(): PsiClass? {
-                        return LightClassUtil.getPsiClass(element)
-                    }
-                })
+                val lightClass = runReadAction { LightClassUtil.getPsiClass(element) }
                 if (lightClass != null) {
                     searchNamedElement(queryParameters, lightClass, className)
 
                     if (element is JetObjectDeclaration && element.isCompanion()) {
-                        val fieldForCompanionObject = ApplicationManager.getApplication().runReadAction<PsiField>(object : Computable<PsiField?> {
-                            override fun compute(): PsiField? {
-                                return LightClassUtil.getLightFieldForCompanionObject(element)
-                            }
-                        })
+                        val fieldForCompanionObject = runReadAction { LightClassUtil.getLightFieldForCompanionObject(element) }
                         if (fieldForCompanionObject != null) {
                             searchNamedElement(queryParameters, fieldForCompanionObject)
                         }
