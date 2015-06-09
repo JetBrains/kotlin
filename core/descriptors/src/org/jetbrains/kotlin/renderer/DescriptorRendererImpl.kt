@@ -585,15 +585,11 @@ internal class DescriptorRendererImpl(
         val upperBoundStrings = ArrayList<String>(0)
 
         for (typeParameter in typeParameters) {
-            if (typeParameter.getUpperBounds().size() > 1) {
-                for ((i, upperBound) in typeParameter.getUpperBounds().withIndex()) {
-                    // first parameter is rendered by renderTypeParameter:
-                    if (i > 0) {
-                        upperBoundStrings.add(renderName(typeParameter.getName()) + " : " + escape(renderType(upperBound)))
-                    }
-                }
-            }
+            typeParameter.getUpperBounds()
+                    .drop(1) // first parameter is rendered by renderTypeParameter
+                    .mapTo(upperBoundStrings) { renderName(typeParameter.getName()) + " : " + escape(renderType(it)) }
         }
+
         if (!upperBoundStrings.isEmpty()) {
             builder.append(" ").append(renderKeyword("where")).append(" ")
             upperBoundStrings.joinTo(builder, ", ")
