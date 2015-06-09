@@ -668,7 +668,7 @@ public class InlineCodegen extends CallGenerator {
             MethodInliner.PointForExternalFinallyBlocks extension = extensionPoints.get(curInstr);
             if (extension != null) {
                 Label start = new Label();
-                Label end = new Label();
+                //Label end = new Label();
 
                 MethodNode finallyNode = InlineCodegenUtil.createEmptyMethodNode();
                 finallyNode.visitLabel(start);
@@ -684,12 +684,12 @@ public class InlineCodegen extends CallGenerator {
                     frameMap.enterTemp(Type.INT_TYPE);
                 }
 
-                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType);
-                finallyNode.visitLabel(end);
+                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, extension.labelNode.getLabel());
+                //finallyNode.visitLabel(end);
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
                 InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, curInstr);
 
-                SimpleInterval splitBy = new SimpleInterval((LabelNode) start.info, (LabelNode) end.info);
+                SimpleInterval splitBy = new SimpleInterval((LabelNode) start.info, extension.labelNode);
                 processor.getTryBlocksMetaInfo().splitCurrentIntervals(splitBy, false);
 
                 processor.getLocalVarsMetaInfo().splitCurrentIntervals(splitBy, false);

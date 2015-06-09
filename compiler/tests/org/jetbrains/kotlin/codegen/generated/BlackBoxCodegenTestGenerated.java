@@ -2143,6 +2143,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("kt8148.kt")
+        public void testKt8148() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/kt8148.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt8148_break.kt")
+        public void testKt8148_break() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/kt8148_break.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt8148_continue.kt")
+        public void testKt8148_continue() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/kt8148_continue.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt870.kt")
         public void testKt870() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/kt870.kt");

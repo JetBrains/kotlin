@@ -699,8 +699,10 @@ public class MethodInliner {
                 }
 
                 //genetate finally block before nonLocalReturn flag/return/goto
-                result.add(new PointForExternalFinallyBlocks(isLocalReturn ? insnNode : insnNode.getPrevious(), getReturnType(insnNode.getOpcode())
-                ));
+                LabelNode label = new LabelNode();
+                instructions.insert(insnNode, label);
+                result.add(new PointForExternalFinallyBlocks(isLocalReturn ? insnNode : insnNode.getPrevious(), getReturnType(insnNode.getOpcode()),
+                                                             label));
             }
             insnNode = insnNode.getNext();
         }
@@ -714,9 +716,12 @@ public class MethodInliner {
 
         final Type returnType;
 
-        public PointForExternalFinallyBlocks(AbstractInsnNode beforeIns, Type returnType) {
+        final LabelNode labelNode;
+
+        public PointForExternalFinallyBlocks(@NotNull AbstractInsnNode beforeIns, @NotNull Type returnType, @NotNull LabelNode labelNode) {
             this.beforeIns = beforeIns;
             this.returnType = returnType;
+            this.labelNode = labelNode;
         }
 
     }
