@@ -14,55 +14,35 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.psi.addRemoveModifier.AddRemoveModifierPackage;
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import com.intellij.lang.ASTNode
+import org.jetbrains.kotlin.lexer.JetModifierKeywordToken
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.addRemoveModifier.*
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-public class JetPrimaryConstructor extends JetConstructor<JetPrimaryConstructor> {
-    public JetPrimaryConstructor(@NotNull ASTNode node) {
-        super(node);
-    }
+public class JetPrimaryConstructor : JetConstructor<JetPrimaryConstructor> {
+    public constructor(node: ASTNode) : super(node)
+    public constructor(stub: KotlinPlaceHolderStub<JetPrimaryConstructor>) : super(stub, JetStubElementTypes.PRIMARY_CONSTRUCTOR)
 
-    public JetPrimaryConstructor(@NotNull KotlinPlaceHolderStub<JetPrimaryConstructor> stub) {
-        super(stub, JetStubElementTypes.PRIMARY_CONSTRUCTOR);
-    }
+    override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D) = visitor.visitPrimaryConstructor(this, data)
 
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitPrimaryConstructor(this, data);
-    }
+    public fun getContainingClassOrObject(): JetClassOrObject = getParent() as JetClassOrObject
 
-    @NotNull
-    public JetClassOrObject getContainingClassOrObject() {
-        return (JetClassOrObject) getParent();
-    }
+    override fun getClassOrObject() = getContainingClassOrObject()
 
-    @NotNull
-    @Override
-    public JetClassOrObject getClassOrObject() {
-        return getContainingClassOrObject();
-    }
-
-    @Override
-    public void addModifier(@NotNull JetModifierKeywordToken modifier) {
-        JetModifierList modifierList = getModifierList();
+    override fun addModifier(modifier: JetModifierKeywordToken) {
+        val modifierList = getModifierList()
         if (modifierList != null) {
-            AddRemoveModifierPackage.addModifier(modifierList, modifier, JetTokens.PUBLIC_KEYWORD);
+            addModifier(modifierList, modifier, JetTokens.PUBLIC_KEYWORD)
         }
         else {
-            if (modifier == JetTokens.PUBLIC_KEYWORD) return;
-
-            JetParameterList parameterList = getValueParameterList();
-            assert parameterList != null;
-            JetPsiFactory psiFactory = new JetPsiFactory(getProject());
-            JetModifierList newModifierList = psiFactory.createModifierList(modifier);
-            addBefore(newModifierList, parameterList);
+            if (modifier == JetTokens.PUBLIC_KEYWORD) return
+            val parameterList = getValueParameterList()!!
+            val newModifierList = JetPsiFactory(getProject()).createModifierList(modifier)
+            addBefore(newModifierList, parameterList)
         }
     }
 }

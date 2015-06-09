@@ -14,70 +14,40 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-public class JetSecondaryConstructor extends JetConstructor<JetSecondaryConstructor> {
-    public JetSecondaryConstructor(@NotNull ASTNode node) {
-        super(node);
-    }
+public class JetSecondaryConstructor : JetConstructor<JetSecondaryConstructor> {
+    public constructor(node: ASTNode) : super(node)
+    public constructor(stub: KotlinPlaceHolderStub<JetSecondaryConstructor>) : super(stub, JetStubElementTypes.SECONDARY_CONSTRUCTOR)
 
-    public JetSecondaryConstructor(@NotNull KotlinPlaceHolderStub<JetSecondaryConstructor> stub) {
-        super(stub, JetStubElementTypes.SECONDARY_CONSTRUCTOR);
-    }
+    override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D) = visitor.visitSecondaryConstructor(this, data)
 
-    @Override
-    public <R, D> R accept(@NotNull JetVisitor<R, D> visitor, D data) {
-        return visitor.visitSecondaryConstructor(this, data);
-    }
+    override fun getClassOrObject() = getParent().getParent() as JetClassOrObject
 
-    @Override
-    @NotNull
-    public JetClassOrObject getClassOrObject() {
-        return (JetClassOrObject) getParent().getParent();
-    }
+    override fun getBodyExpression() = findChildByClass(javaClass<JetBlockExpression>())
 
-    @Nullable
-    @Override
-    public JetBlockExpression getBodyExpression() {
-        return findChildByClass(JetBlockExpression.class);
-    }
+    override fun getConstructorKeyword() = notNullChild<PsiElement>(super.getConstructorKeyword())
 
-    @Override
-    @NotNull
-    public PsiElement getConstructorKeyword() {
-        //noinspection ConstantConditions
-        return notNullChild(super.getConstructorKeyword());
-    }
+    public fun getDelegationCall(): JetConstructorDelegationCall = findNotNullChildByClass(javaClass<JetConstructorDelegationCall>())
 
-    @NotNull
-    public JetConstructorDelegationCall getDelegationCall() {
-        return findNotNullChildByClass(JetConstructorDelegationCall.class);
-    }
+    public fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit()
 
-    public boolean hasImplicitDelegationCall() {
-        return getDelegationCall().isImplicit();
-    }
+    public fun replaceImplicitDelegationCallWithExplicit(isThis: Boolean): JetConstructorDelegationCall {
+        val psiFactory = JetPsiFactory(getProject())
+        val current = getDelegationCall()
 
-    @NotNull
-    public JetConstructorDelegationCall replaceImplicitDelegationCallWithExplicit(boolean isThis) {
-        JetPsiFactory psiFactory = new JetPsiFactory(getProject());
-        JetConstructorDelegationCall current = getDelegationCall();
+        assert(current.isImplicit()) { "Method should not be called with explicit delegation call: " + getText() }
+        current.delete()
 
-        assert current.isImplicit()
-                : "Method should not be called with explicit delegation call: " + getText();
-        current.delete();
+        val colon = addAfter(psiFactory.createColon(), getValueParameterList())
 
-        PsiElement colon = addAfter(psiFactory.createColon(), getValueParameterList());
+        val delegationName = if (isThis) "this" else "super"
 
-        String delegationName = isThis ? "this" : "super";
-
-        return (JetConstructorDelegationCall) addAfter(psiFactory.createConstructorDelegationCall(delegationName + "()"), colon);
+        return addAfter(psiFactory.createConstructorDelegationCall(delegationName + "()"), colon) as JetConstructorDelegationCall
     }
 }

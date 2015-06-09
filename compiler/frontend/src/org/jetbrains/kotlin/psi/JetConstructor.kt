@@ -14,188 +14,79 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.lang.ASTNode;
-import com.intellij.navigation.ItemPresentation;
-import com.intellij.navigation.ItemPresentationProviders;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
-import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes;
+import com.intellij.lang.ASTNode
+import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.psi.PsiElement
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.elements.JetPlaceHolderStubElementType
+import org.jetbrains.kotlin.psi.stubs.elements.JetStubElementTypes
 
-import java.util.Collections;
-import java.util.List;
+public abstract class JetConstructor<T : JetConstructor<T>> : JetDeclarationStub<KotlinPlaceHolderStub<T>>, JetFunction {
+    protected constructor(node: ASTNode) : super(node)
+    protected constructor(stub: KotlinPlaceHolderStub<T>, nodeType: JetPlaceHolderStubElementType<T>) : super(stub, nodeType)
 
-public abstract class JetConstructor<T extends JetConstructor<T>> extends JetDeclarationStub<KotlinPlaceHolderStub<T>> implements JetFunction {
-    protected JetConstructor(@NotNull ASTNode node) {
-        super(node);
-    }
+    public abstract fun getClassOrObject(): JetClassOrObject
 
-    protected JetConstructor(@NotNull KotlinPlaceHolderStub<T> stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
-    }
+    override fun isLocal() = false
 
-    @NotNull
-    public abstract JetClassOrObject getClassOrObject();
+    override fun getValueParameterList() = getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST)
 
-    @Override
-    public boolean isLocal() {
-        return false;
-    }
+    override fun getValueParameters() = getValueParameterList()?.getParameters() ?: emptyList()
 
-    @Override
-    @Nullable
-    public JetParameterList getValueParameterList() {
-        return getStubOrPsiChild(JetStubElementTypes.VALUE_PARAMETER_LIST);
-    }
+    override fun getReceiverTypeReference() = null
 
-    @Override
-    @NotNull
-    public List<JetParameter> getValueParameters() {
-        JetParameterList list = getValueParameterList();
-        return list != null ? list.getParameters() : Collections.<JetParameter>emptyList();
-    }
+    override fun getTypeReference() = null
 
-    @Nullable
-    @Override
-    public JetTypeReference getReceiverTypeReference() {
-        return null;
-    }
+    throws(IncorrectOperationException::class)
+    override fun setTypeReference(typeRef: JetTypeReference?) = throw IncorrectOperationException("setTypeReference to constructor")
 
-    @Nullable
-    @Override
-    public JetTypeReference getTypeReference() {
-        return null;
-    }
+    override fun getColon() = findChildByType<PsiElement>(JetTokens.COLON)
 
-    @Nullable
-    @Override
-    public JetTypeReference setTypeReference(@Nullable JetTypeReference typeRef) {
-        return null;
-    }
+    override fun getBodyExpression(): JetBlockExpression? = null
 
-    @Nullable
-    @Override
-    public PsiElement getColon() {
-        return findChildByType(JetTokens.COLON);
-    }
+    override fun getEqualsToken() = null
 
-    @Nullable
-    @Override
-    public JetBlockExpression getBodyExpression() {
-        return null;
-    }
+    override fun hasBlockBody() = true
 
-    @Nullable
-    @Override
-    public PsiElement getEqualsToken() {
-        return null;
-    }
+    override fun hasBody() = getBodyExpression() != null
 
-    @Override
-    public boolean hasBlockBody() {
-        return true;
-    }
+    override fun hasDeclaredReturnType() = false
 
-    @Override
-    public boolean hasBody() {
-        return getBodyExpression() != null;
-    }
+    override fun getTypeParameterList() = null
 
-    @Override
-    public boolean hasDeclaredReturnType() {
-        return false;
-    }
+    override fun getTypeConstraintList() = null
 
-    @Nullable
-    @Override
-    public JetTypeParameterList getTypeParameterList() {
-        return null;
-    }
+    override fun getTypeConstraints() = emptyList<JetTypeConstraint>()
 
-    @Nullable
-    @Override
-    public JetTypeConstraintList getTypeConstraintList() {
-        return null;
-    }
+    override fun getTypeParameters() = emptyList<JetTypeParameter>()
 
-    @NotNull
-    @Override
-    public List<JetTypeConstraint> getTypeConstraints() {
-        return Collections.emptyList();
-    }
+    override fun getName(): String = getClassOrObject().getName()!!
 
-    @NotNull
-    @Override
-    public List<JetTypeParameter> getTypeParameters() {
-        return Collections.emptyList();
-    }
+    override fun getNameAsSafeName() = Name.identifier(getName())
 
-    @Override
-    @NotNull
-    public String getName() {
-        return getClassOrObject().getName();
-    }
+    override fun getFqName() = null
 
-    @NotNull
-    @Override
-    public Name getNameAsSafeName() {
-        return Name.identifier(getName());
-    }
+    override fun getNameAsName() = getNameAsSafeName()
 
-    @Nullable
-    @Override
-    public FqName getFqName() {
-        return null;
-    }
+    override fun getNameIdentifier() = null
 
-    @Nullable
-    @Override
-    public Name getNameAsName() {
-        return getNameAsSafeName();
-    }
+    throws(IncorrectOperationException::class)
+    override fun setName(name: String): PsiElement = throw IncorrectOperationException("setName to constructor")
 
-    @Nullable
-    @Override
-    public PsiElement getNameIdentifier() {
-        return null;
-    }
+    override fun getPresentation() = ItemPresentationProviders.getItemPresentation(this)
 
-    @Override
-    public PsiElement setName(@NotNull String name) throws IncorrectOperationException {
-        throw new IncorrectOperationException("setName to constructor");
-    }
+    public open fun getConstructorKeyword(): PsiElement? = findChildByType(JetTokens.CONSTRUCTOR_KEYWORD)
 
-    @Override
-    public ItemPresentation getPresentation() {
-        return ItemPresentationProviders.getItemPresentation(this);
-    }
+    public fun hasConstructorKeyword(): Boolean = getStub() != null || getConstructorKeyword() != null
 
-    @Nullable
-    public PsiElement getConstructorKeyword() {
-        return findChildByType(JetTokens.CONSTRUCTOR_KEYWORD);
-    }
-
-    public boolean hasConstructorKeyword() {
-        if (getStub() != null) return true;
-        return getConstructorKeyword() != null;
-    }
-
-    @Override
-    public int getTextOffset() {
-        PsiElement keyword = getConstructorKeyword();
-        if (keyword != null) return keyword.getTextOffset();
-
-        JetParameterList parameterList = getValueParameterList();
-        if (parameterList != null) return parameterList.getTextOffset();
-
-        return super.getTextOffset();
+    override fun getTextOffset(): Int {
+        return getConstructorKeyword()?.getTextOffset()
+               ?: getValueParameterList()?.getTextOffset()
+               ?: super<JetDeclarationStub>.getTextOffset()
     }
 }
