@@ -103,7 +103,6 @@ public class TypeResolver(
     }
 
     private fun doResolvePossiblyBareType(c: TypeResolutionContext, typeReference: JetTypeReference): PossiblyBareType {
-        AnnotationResolver.reportDeprecatedAnnotationSyntax(typeReference.getAnnotations(), c.trace);
         val annotations = annotationResolver.resolveAnnotationsWithoutArguments(c.scope, typeReference.getAnnotationEntries(), c.trace)
 
         val typeElement = typeReference.getTypeElement()

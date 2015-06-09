@@ -236,7 +236,6 @@ public class DeclarationsChecker {
         }
     }
     private void checkObject(JetObjectDeclaration declaration, ClassDescriptor classDescriptor) {
-        AnnotationResolver.reportDeprecatedAnnotationSyntax(declaration.getAnnotations(), trace);
         reportErrorIfHasIllegalModifier(declaration);
         if  (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor));
@@ -244,7 +243,6 @@ public class DeclarationsChecker {
     }
 
     private void checkClass(BodiesResolveContext c, JetClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
-        AnnotationResolver.reportDeprecatedAnnotationSyntax(aClass.getAnnotations(), trace);
         checkOpenMembers(classDescriptor);
         checkTypeParameters(aClass);
 

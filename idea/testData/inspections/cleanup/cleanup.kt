@@ -1,9 +1,6 @@
 trait Foo {
 }
 
-
-[deprecated("boo")] fun bar() {}
-
 enum class E {
     First Second
 }

@@ -3824,21 +3824,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
-        @TestMetadata("idea/testData/quickfix/migration/bracketsAnnotations")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class BracketsAnnotations extends AbstractQuickFixTest {
-            public void testAllFilesPresentInBracketsAnnotations() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/bracketsAnnotations"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("basic.kt")
-            public void testBasic() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/bracketsAnnotations/basic.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("idea/testData/quickfix/migration/enumConstructor")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

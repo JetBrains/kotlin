@@ -948,21 +948,6 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
         }
 
-        @TestMetadata("idea/testData/quickfix/migration/bracketsAnnotations")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class BracketsAnnotations extends AbstractQuickFixMultiFileTest {
-            public void testAllFilesPresentInBracketsAnnotations() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/bracketsAnnotations"), Pattern.compile("^(\\w+)\\.before\\.Main\\.kt$"), true);
-            }
-
-            @TestMetadata("manyFilesMuitliple.before.Main.kt")
-            public void testManyFilesMuitliple() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/migration/bracketsAnnotations/manyFilesMuitliple.before.Main.kt");
-                doTestWithExtraFile(fileName);
-            }
-        }
-
         @TestMetadata("idea/testData/quickfix/migration/javaAnnotationPositionedArguments")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

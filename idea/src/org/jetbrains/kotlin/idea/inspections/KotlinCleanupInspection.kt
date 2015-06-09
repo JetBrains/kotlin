@@ -82,7 +82,6 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
 
     private val cleanupDiagnosticsFactories = setOf(
             Errors.DEPRECATED_TRAIT_KEYWORD,
-            Errors.DEPRECATED_ANNOTATION_SYNTAX,
             Errors.ENUM_ENTRY_USES_DEPRECATED_OR_NO_DELIMITER,
             Errors.ENUM_ENTRY_USES_DEPRECATED_SUPER_CONSTRUCTOR,
             Errors.DEPRECATED_LAMBDA_SYNTAX,

@@ -3,9 +3,6 @@ import kotlin.reflect.KClass
 interface Foo {
 }
 
-
-@deprecated("boo") fun bar() {}
-
 enum class E {
     First, Second
 }
