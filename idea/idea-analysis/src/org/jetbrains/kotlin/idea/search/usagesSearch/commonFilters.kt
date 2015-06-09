@@ -69,6 +69,6 @@ val (PsiReference.() -> Boolean).searchFilter: UsagesSearchFilter
 
 val <T: PsiNamedElement> (PsiReference.(T) -> Boolean).searchFilter: UsagesSearchFilter
     get() = object: UsagesSearchFilter {
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         override fun accepts(ref: PsiReference, item: UsagesSearchRequestItem): Boolean = ref.this@searchFilter(item.target.element as T)
     }

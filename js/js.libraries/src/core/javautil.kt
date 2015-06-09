@@ -70,9 +70,9 @@ public open class LinkedList<E>() : AbstractList<E>() {
     override fun set(index: Int, element: E): E = noImpl
     override fun add(index: Int, element: E): Unit = noImpl
 
-    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    @suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     public fun poll(): E? = noImpl
-    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    @suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     public fun peek(): E? = noImpl
     public fun offer(e: E): Boolean = noImpl
 }
@@ -104,13 +104,13 @@ library
 public open class HashMap<K, V>(initialCapacity: Int = DEFAULT_INITIAL_CAPACITY, loadFactor: Float = DEFAULT_LOAD_FACTOR) : MutableMap<K, V> {
     override fun size(): Int = noImpl
     override fun isEmpty(): Boolean = noImpl
-    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    @suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun get(key: Any?): V? = noImpl
     override fun containsKey(key: Any?): Boolean = noImpl
-    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    @suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun put(key: K, value: V): V? = noImpl
     override fun putAll(m: Map<out K, V>): Unit = noImpl
-    [suppress("BASE_WITH_NULLABLE_UPPER_BOUND")]
+    @suppress("BASE_WITH_NULLABLE_UPPER_BOUND")
     override fun remove(key: Any?): V? = noImpl
     override fun clear(): Unit = noImpl
     override fun containsValue(value: Any?): Boolean = noImpl

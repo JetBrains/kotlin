@@ -39,6 +39,6 @@ public fun Project.executeCommand(name: String, groupId: Any? = null, command: (
 public fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, command: () -> T): T {
     var result: T = null as T
     CommandProcessor.getInstance().executeCommand(this, { result = runWriteAction(command) }, name, groupId)
-    [suppress("USELESS_CAST")]
+    @suppress("USELESS_CAST")
     return result as T
 }

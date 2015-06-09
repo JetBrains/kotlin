@@ -31,7 +31,7 @@ open class KMemberPropertyImpl<T : Any, out R> : DescriptorBasedProperty, KMembe
     override fun get(instance: T): R {
         try {
             val getter = getter
-            [suppress("UNCHECKED_CAST")]
+            @suppress("UNCHECKED_CAST")
             return if (getter != null) getter(instance) as R else field!!.get(instance) as R
         }
         catch (e: IllegalAccessException) {

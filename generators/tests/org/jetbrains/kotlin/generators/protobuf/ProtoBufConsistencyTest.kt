@@ -26,7 +26,7 @@ import java.lang.reflect.Modifier
 
 public class ProtoBufConsistencyTest : TestCase() {
     public fun testExtensionNumbersDoNotIntersect() {
-        [data] class Key(val messageType: Class<*>, val index: Int)
+        @data class Key(val messageType: Class<*>, val index: Int)
 
         val extensions = LinkedHashMultimap.create<Key, Descriptors.FieldDescriptor>()
 

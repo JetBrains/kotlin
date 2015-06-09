@@ -49,12 +49,12 @@ fun generate(): String {
     val binaryOperationsMap = arrayListOf<Pair<String, List<JetType>>>()
 
     val builtIns = KotlinBuiltIns.getInstance()
-    [suppress("UNCHECKED_CAST")]
+    @suppress("UNCHECKED_CAST")
     val allPrimitiveTypes = builtIns.getBuiltInsPackageScope().getDescriptors()
             .filter { it is ClassDescriptor && KotlinBuiltIns.isPrimitiveType(it.getDefaultType()) } as List<ClassDescriptor>
 
     for (descriptor in allPrimitiveTypes + builtIns.getString()) {
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         val functions = descriptor.getMemberScope(listOf()).getDescriptors()
                 .filter { it is FunctionDescriptor && !EXCLUDED_FUNCTIONS.contains(it.getName().asString()) } as List<FunctionDescriptor>
 

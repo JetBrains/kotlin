@@ -34,7 +34,7 @@ public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<Tr
         val element = node.getElement()
         if (element !is JetClassOrObject) return listOf()
 
-        [suppress("USELESS_CAST")] // KT-3996 Workaround
+        @suppress("USELESS_CAST") // KT-3996 Workaround
         val project = (element as NavigatablePsiElement).getProject()
 
         val context = element.analyze()

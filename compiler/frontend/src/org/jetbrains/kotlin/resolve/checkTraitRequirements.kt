@@ -43,7 +43,7 @@ fun checkTraitRequirements(c: Map<JetClassOrObject, ClassDescriptorWithResolutio
 }
 
 private fun getAllSuperTraits(descriptor: ClassDescriptor): List<ClassDescriptor> {
-    [suppress("UNCHECKED_CAST")]
+    @suppress("UNCHECKED_CAST")
     return TypeUtils.getAllSupertypes(descriptor.getDefaultType())
             .map { supertype -> supertype.getConstructor().getDeclarationDescriptor() }
             .filter { superClass -> DescriptorUtils.isTrait(superClass) } as List<ClassDescriptor>

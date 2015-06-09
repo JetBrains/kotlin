@@ -30,7 +30,7 @@ open class KTopLevelExtensionPropertyImpl<T, out R> : DescriptorBasedProperty, K
 
     override fun get(receiver: T): R {
         try {
-            [suppress("UNCHECKED_CAST")]
+            @suppress("UNCHECKED_CAST")
             return getter.invoke(null, receiver) as R
         }
         catch (e: IllegalAccessException) {

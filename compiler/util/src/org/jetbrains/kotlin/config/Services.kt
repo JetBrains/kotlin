@@ -24,7 +24,7 @@ public class Services private(private val map: Map<Class<*>, Any>) {
     }
 
     public fun <T> get(interfaceClass: Class<T>): T {
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         return map.get(interfaceClass) as T
     }
 

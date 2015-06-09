@@ -28,7 +28,7 @@ class PsiUtilsTest {
 
     private var environment: KotlinCoreEnvironment? = null
 
-    [Before]
+    @Before
     fun before() {
         System.setProperty("java.awt.headless", "true")
 
@@ -37,7 +37,7 @@ class PsiUtilsTest {
         environment = KotlinCoreEnvironment.createForTests(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
-    [After]
+    @After
     fun after() {
         Disposer.dispose(rootDisposable)
     }
@@ -49,7 +49,7 @@ class PsiUtilsTest {
                 .trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false) as JetFile
     }
 
-    [Test]
+    @Test
     fun splitPsi() {
         val file = createFile("class Foo")
         val items: List<String> = splitPsi(file).map { t -> t.first }

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 
 public object PluginCliParser {
 
-    [platformStatic]
+    @platformStatic
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
         val classLoader = PluginURLClassLoader(
                 arguments.pluginClasspaths

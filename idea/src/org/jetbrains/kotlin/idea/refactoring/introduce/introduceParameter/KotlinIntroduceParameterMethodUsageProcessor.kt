@@ -110,7 +110,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         val refElement = usage.getElement() as? JetReferenceExpression ?: return true
         val callElement = refElement.getParentOfTypeAndBranch<JetCallElement>(true) { getCalleeExpression() } ?: return true
         val delegateUsage = if (callElement is JetConstructorDelegationCall) {
-            [suppress("CAST_NEVER_SUCCEEDS")]
+            @suppress("CAST_NEVER_SUCCEEDS")
             (JetConstructorDelegationCallUsage(callElement, changeInfo) as JetUsageInfo<JetCallElement>)
         }
         else {

@@ -41,7 +41,7 @@ public class JavaMethodKotlinDerivedDefinitionUsage(
         function: JetFunction,
         functionDescriptor: FunctionDescriptor,
         javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetFunction>(function, javaMethodChangeInfo) {
-    [suppress("CAST_NEVER_SUCCEEDS")]
+    @suppress("CAST_NEVER_SUCCEEDS")
     override protected val delegateUsage = JetFunctionDefinitionUsage(
             psiElement,
             functionDescriptor,

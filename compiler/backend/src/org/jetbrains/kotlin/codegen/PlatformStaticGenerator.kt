@@ -84,7 +84,7 @@ class PlatformStaticGenerator(
     }
 
     companion object {
-        [platformStatic]
+        @platformStatic
         public fun createStaticFunctionDescriptor(descriptor: FunctionDescriptor): FunctionDescriptor {
             val memberDescriptor = if (descriptor is PropertyAccessorDescriptor) descriptor.getCorrespondingProperty() else descriptor
             val copies = CodegenUtil.copyFunctions(

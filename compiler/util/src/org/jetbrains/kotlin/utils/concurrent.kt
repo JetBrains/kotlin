@@ -28,7 +28,7 @@ public class LockedClearableLazyValue<T: Any>(val lock: Any, val init: () -> T) 
         return synchronized(lock) {
             val _v2 = value
             // Suppress because of https://youtrack.jetbrains.com/issue/KT-6176
-            [suppress("UNNECESSARY_NOT_NULL_ASSERTION")]
+            @suppress("UNNECESSARY_NOT_NULL_ASSERTION")
             if (_v2 != null) {
                 _v2!!
             }

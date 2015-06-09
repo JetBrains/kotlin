@@ -31,7 +31,7 @@ fun File.mkdirsProperly() {
 
 
 class KDocSampleTest {
-    [Test]
+    @Test
     fun generateKDocForSample() {
         val compiler = KDocCompiler()
 

@@ -29,4 +29,4 @@ public annotation class volatile
 native
 public annotation class synchronized
 
-public inline fun <R> synchronized(lock: Any, [inlineOptions(ONLY_LOCAL_RETURN)] block: () -> R): R = block()
+public inline fun <R> synchronized(lock: Any, @inlineOptions(ONLY_LOCAL_RETURN) block: () -> R): R = block()

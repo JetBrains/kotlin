@@ -94,7 +94,7 @@ public class CallCompleter(
             context: BasicCallResolutionContext,
             results: OverloadResolutionResultsImpl<D>
     ) {
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         val candidates = (if (context.collectAllCandidates) {
             results.getAllCandidates()!!
         }
@@ -274,7 +274,7 @@ public class CallCompleter(
         if (cachedDataForCall == null) return null
 
         val (cachedResolutionResults, cachedContext, tracing) = cachedDataForCall
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         val cachedResults = cachedResolutionResults as OverloadResolutionResultsImpl<CallableDescriptor>
         val contextForArgument = cachedContext.replaceBindingTrace(context.trace)
                 .replaceExpectedType(context.expectedType).replaceCollectAllCandidates(false)

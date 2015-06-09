@@ -82,7 +82,7 @@ public fun JetCallElement.getValueArgumentsInParentheses(): List<ValueArgument> 
 
 public fun Call.getValueArgumentListOrElement(): JetElement = getValueArgumentList() ?: getCalleeExpression() ?: getCallElement()
 
-[suppress("UNCHECKED_CAST")]
+@suppress("UNCHECKED_CAST")
 private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is JetFunctionLiteralArgument } as List<ValueArgument>
 
 public fun Call.getValueArgumentForExpression(expression: JetExpression): ValueArgument? {

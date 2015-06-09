@@ -313,7 +313,7 @@ public class TypeResolver(
     }
 
     companion object {
-        [platformStatic]
+        @platformStatic
         public fun resolveProjectionKind(projectionKind: JetProjectionKind): Variance {
             return when (projectionKind) {
                 JetProjectionKind.IN -> IN_VARIANCE

@@ -29,15 +29,15 @@ public open class JavaClassFinderPostConstruct {
 
 public class JavaLazyAnalyzerPostConstruct : JavaClassFinderPostConstruct() {
     public var project: Project? = null
-        [Inject] set
+        @Inject set
 
     public var trace: BindingTrace? = null
-        [Inject] set
+        @Inject set
 
     public var codeAnalyzer: KotlinCodeAnalyzer? = null
-        [Inject] set
+        @Inject set
 
-    [PostConstruct] override fun postCreate() {
+    @PostConstruct override fun postCreate() {
         CodeAnalyzerInitializer.getInstance(project!!).initialize(trace!!, codeAnalyzer!!.getModuleDescriptor(), codeAnalyzer)
     }
 }

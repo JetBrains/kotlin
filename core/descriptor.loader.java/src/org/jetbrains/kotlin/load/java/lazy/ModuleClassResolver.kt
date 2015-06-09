@@ -33,7 +33,7 @@ public class SingleModuleClassResolver() : ModuleClassResolver {
     }
 
     var resolver: JavaDescriptorResolver? = null
-        [Inject] set
+        @Inject set
 }
 
 public class ModuleClassResolverImpl(private val descriptorResolverByJavaClass: (JavaClass) -> JavaDescriptorResolver): ModuleClassResolver {

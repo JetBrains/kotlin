@@ -268,7 +268,7 @@ public class JetPositionManager(private val myDebugProcess: DebugProcess) : Mult
         }
     }
 
-    [deprecated("Since Idea 14.0.3 use createPrepareRequests fun")]
+    @deprecated("Since Idea 14.0.3 use createPrepareRequests fun")
     override fun createPrepareRequest(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): ClassPrepareRequest? {
         if (sourcePosition.getFile() !is JetFile) {
             throw NoDataException.INSTANCE

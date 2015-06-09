@@ -162,7 +162,7 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
     for (info in expectedInfos) {
         val classification = infoClassifier(info)
         if (classification.substitutor != null) {
-            [suppress("UNCHECKED_CAST")]
+            @suppress("UNCHECKED_CAST")
             val substitutedDescriptor = descriptor?.substitute(classification.substitutor) as TDescriptor
             val map = if (classification.makeNotNullable) makeNullableInfos else matchedInfos
             map.getOrPut(ItemData(substitutedDescriptor, info.itemOptions)) { ArrayList() }.add(info)

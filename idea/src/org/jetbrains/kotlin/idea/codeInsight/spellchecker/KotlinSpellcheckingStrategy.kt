@@ -32,7 +32,7 @@ class KotlinSpellcheckingStrategy: SpellcheckingStrategy() {
     private val emptyTokenizer = SpellcheckingStrategy.EMPTY_TOKENIZER
 
     override fun getTokenizer(element: PsiElement?): Tokenizer<out PsiElement?> {
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         return when {
             element is PsiNameIdentifierOwner || element is PsiComment ->
                 super.getTokenizer(element)

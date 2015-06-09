@@ -115,7 +115,7 @@ public class LazyAnnotationDescriptor(
 
         if (!resolutionResults.isSingleResult()) return mapOf()
 
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         return resolutionResults.getResultingCall().getValueArguments()
                 .mapValues { val (valueParameter, resolvedArgument) = it;
                     if (resolvedArgument == null) null

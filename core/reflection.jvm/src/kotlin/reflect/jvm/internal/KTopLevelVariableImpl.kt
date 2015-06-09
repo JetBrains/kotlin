@@ -30,7 +30,7 @@ open class KTopLevelVariableImpl<out R> : DescriptorBasedProperty, KTopLevelVari
 
     override fun get(): R {
         try {
-            [suppress("UNCHECKED_CAST")]
+            @suppress("UNCHECKED_CAST")
             return getter.invoke(null) as R
         }
         catch (e: IllegalAccessException) {

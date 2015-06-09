@@ -21,7 +21,7 @@ import kotlin.platform.platformStatic
 
 object SMAPParser {
 
-    [platformStatic]
+    @platformStatic
     /*null smap means that there is no any debug info in file (e.g. sourceName)*/
     public fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
         if (mappingInfo == null || mappingInfo.isEmpty()) {
@@ -41,7 +41,7 @@ object SMAPParser {
         return parse(mappingInfo)
     }
 
-    [platformStatic]
+    @platformStatic
     public fun parse(mappingInfo: String): SMAP {
         val fileMappings = linkedMapOf<Int, FileMapping>()
 

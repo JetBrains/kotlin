@@ -36,7 +36,7 @@ open class KMemberExtensionPropertyImpl<D : Any, E, out R> : DescriptorBasedProp
 
     override fun get(instance: D, extensionReceiver: E): R {
         try {
-            [suppress("UNCHECKED_CAST")]
+            @suppress("UNCHECKED_CAST")
             return getter.invoke(instance, extensionReceiver) as R
         }
         catch (e: IllegalAccessException) {

@@ -63,7 +63,7 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
 
     override fun bindToElement(element: PsiElement): PsiElement = throw IncorrectOperationException()
 
-    [suppress("CAST_NEVER_SUCCEEDS")]
+    @suppress("CAST_NEVER_SUCCEEDS")
     override fun getVariants(): Array<Any> = PsiReference.EMPTY_ARRAY as Array<Any>
 
     override fun isSoft(): Boolean = false

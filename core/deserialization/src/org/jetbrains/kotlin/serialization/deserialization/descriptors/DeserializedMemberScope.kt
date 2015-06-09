@@ -75,7 +75,7 @@ public abstract class DeserializedMemberScope protected(
         val memberProtos = membersProtos()[ProtoKey(name, kind, isExtension = false)].orEmpty() +
                            membersProtos()[ProtoKey(name, kind, isExtension = true)].orEmpty()
 
-        [suppress("UNCHECKED_CAST")]
+        @suppress("UNCHECKED_CAST")
         return memberProtos.mapTo(LinkedHashSet<D>()) { memberProto ->
             c.memberDeserializer.loadCallable(memberProto) as D
         }

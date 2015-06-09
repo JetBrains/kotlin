@@ -224,7 +224,7 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
 
     companion object {
         var namesHighlightingEnabled = true
-            [TestOnly] set
+            @TestOnly set
 
         platformStatic fun highlightName(holder: AnnotationHolder, psiElement: PsiElement, attributesKey: TextAttributesKey) {
             if (namesHighlightingEnabled) {

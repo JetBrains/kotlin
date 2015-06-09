@@ -101,7 +101,7 @@ public open class LazyClassMemberScope(
         OverridingUtil.generateOverridesInFunctionGroup(name, fromSupertypes, ArrayList(result), thisDescriptor, object : OverridingUtil.DescriptorSink {
             override fun addToScope(fakeOverride: CallableMemberDescriptor) {
                 assert(exactDescriptorClass.isInstance(fakeOverride)) { "Wrong descriptor type in an override: " + fakeOverride + " while expecting " + exactDescriptorClass.getSimpleName() }
-                [suppress("UNCHECKED_CAST")]
+                @suppress("UNCHECKED_CAST")
                 result.add(fakeOverride as D)
             }
 
@@ -188,7 +188,7 @@ public open class LazyClassMemberScope(
         }
     }
 
-    [suppress("UNCHECKED_CAST")]
+    @suppress("UNCHECKED_CAST")
     protected override fun getNonDeclaredProperties(name: Name, result: MutableSet<VariableDescriptor>) {
         createPropertiesFromPrimaryConstructorParameters(name, result)
 
@@ -319,7 +319,7 @@ public open class LazyClassMemberScope(
 
         private val EXTRACT_PROPERTIES: MemberExtractor<PropertyDescriptor> = object : MemberExtractor<PropertyDescriptor> {
             override fun extract(extractFrom: JetType, name: Name): Collection<PropertyDescriptor> {
-                [suppress("UNCHECKED_CAST")]
+                @suppress("UNCHECKED_CAST")
                 return extractFrom.getMemberScope().getProperties(name) as Collection<PropertyDescriptor>
             }
         }

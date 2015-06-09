@@ -638,7 +638,7 @@ private val BOOLEAN = CompileTimeType<Boolean>()
 private val STRING = CompileTimeType<String>()
 private val ANY = CompileTimeType<Any>()
 
-[suppress("UNCHECKED_CAST")]
+@suppress("UNCHECKED_CAST")
 private fun <A, B> binaryOperation(
         a: CompileTimeType<A>,
         b: CompileTimeType<B>,
@@ -647,7 +647,7 @@ private fun <A, B> binaryOperation(
         checker: Function2<BigInteger, BigInteger, BigInteger>
 ) = BinaryOperationKey(a, b, functionName) to Pair(operation, checker) as Pair<Function2<Any?, Any?, Any>, Function2<BigInteger, BigInteger, BigInteger>>
 
-[suppress("UNCHECKED_CAST")]
+@suppress("UNCHECKED_CAST")
 private fun <A> unaryOperation(
         a: CompileTimeType<A>,
         functionName: String,

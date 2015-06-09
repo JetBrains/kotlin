@@ -34,7 +34,7 @@ public object CodegenUtilKt {
     //   toTrait = Bar
     //   delegateExpressionType = typeof(baz)
     // return Map<member of Foo, corresponding member of typeOf(baz)>
-    public [platformStatic] fun getDelegates(
+    public platformStatic fun getDelegates(
             descriptor: ClassDescriptor,
             toTrait: ClassDescriptor,
             delegateExpressionType: JetType? = null

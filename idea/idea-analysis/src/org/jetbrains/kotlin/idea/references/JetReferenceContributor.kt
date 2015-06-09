@@ -59,9 +59,9 @@ public class JetReferenceContributor() : PsiReferenceContributor() {
         ) {
         registerReferenceProvider(PlatformPatterns.psiElement(elementClass), object: PsiReferenceProvider() {
             override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
-                [suppress("UNCHECKED_CAST")]
-                    return array(factory(element as E))
-                }
+                @suppress("UNCHECKED_CAST")
+                return array(factory(element as E))
+            }
         })
     }
 }

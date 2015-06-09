@@ -203,7 +203,7 @@ class LazyOperationsLog(
 private fun <T> Any.field(name: String): T {
     val field = this.javaClass.getDeclaredField(name)
     field.setAccessible(true)
-    [suppress("UNCHECKED_CAST")]
+    @suppress("UNCHECKED_CAST")
     return field.get(this) as T
 }
 

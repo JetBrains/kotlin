@@ -248,7 +248,7 @@ public abstract class AbstractJetExtractionTest() : JetLightCodeInsightFixtureTe
 
             val extractionOptions = InTextDirectivesUtils.findListWithPrefixes(fileText, "// OPTIONS: ").let {
                 if (it.isNotEmpty()) {
-                    [suppress("CAST_NEVER_SUCCEEDS")]
+                    @suppress("CAST_NEVER_SUCCEEDS")
                     val args = it.map { it.toBoolean() }.copyToArray() as Array<Any?>
                     javaClass<ExtractionOptions>().getConstructors().first { it.getParameterTypes().size() == args.size() }.newInstance(*args) as ExtractionOptions
                 } else ExtractionOptions.DEFAULT
