@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 
 import javax.swing.*;
@@ -85,7 +86,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
 
     @Nullable
     public static EditorNotificationPanel checkAndCreate(@NotNull Project project) {
-        Collection<VirtualFile> badRoots = KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
+        Collection<VirtualFile> badRoots = collectBadRoots(project);
         if (!badRoots.isEmpty()) {
             return new UnsupportedAbiVersionNotificationPanelProvider(project).doCreate(badRoots);
         }
@@ -101,8 +102,9 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
             @Override
             public boolean apply(@Nullable Library library) {
                 assert library != null : "library should be non null";
-                VirtualFile runtimeJar = JavaRuntimePresentationProvider.getRuntimeJar(library);
-                return badRoots.contains(KotlinRuntimeLibraryUtil.getLocalJar(runtimeJar));
+                VirtualFile runtimeJar = KotlinRuntimeLibraryUtil.getLocalJar(JavaRuntimePresentationProvider.getRuntimeJar(library));
+                VirtualFile jsLibJar = KotlinRuntimeLibraryUtil.getLocalJar(JSLibraryStdPresentationProvider.getJsStdLibJar(library));
+                return badRoots.contains(runtimeJar) || badRoots.contains(jsLibJar);
             }
         });
 
@@ -161,8 +163,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
                 DumbService.getInstance(project).tryRunReadActionInSmartMode(new Computable<Object>() {
                     @Override
                     public Object compute() {
-                        Collection<VirtualFile> badRoots =
-                                KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
+                        Collection<VirtualFile> badRoots = collectBadRoots(project);
                         assert !badRoots.isEmpty() : "This action should only be called when bad roots are present";
 
                         LibraryRootsPopupModel listPopupModel = new LibraryRootsPopupModel("Unsupported format", project, badRoots);
@@ -272,4 +273,10 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
         });
     }
 
+    @NotNull
+    private static Collection<VirtualFile> collectBadRoots(@NotNull Project project) {
+        Collection<VirtualFile> badRoots = KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
+        badRoots.addAll(KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleForKotlinJs(project));
+        return badRoots;
+    }
 }

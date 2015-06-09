@@ -61,7 +61,8 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
 
             // Force update indices for files under config directory
             val fileBasedIndex = FileBasedIndex.getInstance()
-            fileBasedIndex.requestRebuild(KotlinAbiVersionIndex.INSTANCE.getName())
+            fileBasedIndex.requestRebuild(KotlinAbiVersionIndex.getName())
+            fileBasedIndex.requestRebuild(KotlinJavaScriptAbiVersionIndex.getName())
             fileBasedIndex.requestRebuild(KotlinClassFileIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinJavaScriptMetaFileIndex.KEY)
 

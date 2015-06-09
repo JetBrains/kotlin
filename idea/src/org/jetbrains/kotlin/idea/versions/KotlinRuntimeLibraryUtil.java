@@ -36,6 +36,7 @@ import com.intellij.psi.search.ProjectScope;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
+import com.intellij.util.indexing.ScalarIndexExtension;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetPluginUtil;
@@ -62,32 +63,14 @@ public class KotlinRuntimeLibraryUtil {
 
     @NotNull
     public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleKotlinClasses(@NotNull Project project) {
-        ID<Integer, Void> id = KotlinAbiVersionIndex.INSTANCE.getName();
-        Collection<Integer> abiVersions = FileBasedIndex.getInstance().getAllKeys(id, project);
-        Set<Integer> badAbiVersions = Sets.newHashSet(Collections2.filter(abiVersions, new Predicate<Integer>() {
-            @Override
-            public boolean apply(Integer abiVersion) {
-                return !AbiVersionUtil.isAbiVersionCompatible(abiVersion);
-            }
-        }));
-        Set<VirtualFile> badRoots = Sets.newHashSet();
-        ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-
-        for (Integer version : badAbiVersions) {
-            Collection<VirtualFile> indexedFiles = FileBasedIndex.getInstance().getContainingFiles(
-                    id, version, ProjectScope.getLibrariesScope(project));
-
-            for (VirtualFile indexedFile : indexedFiles) {
-                VirtualFile libraryRoot = fileIndex.getClassRootForFile(indexedFile);
-                assert libraryRoot != null : "Only library roots were requested, " +
-                                             "and only class files should be indexed with KotlinAbiVersionIndex key. " +
-                                             "File: " + indexedFile.getPath();
-                badRoots.add(getLocalFile(libraryRoot));
-            }
-        }
-
-        return badRoots;
+        return getLibraryRootsWithAbiIncompatibleVersion(project, KotlinAbiVersionIndex.INSTANCE$);
     }
+
+    @NotNull
+    public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleForKotlinJs(@NotNull Project project) {
+        return getLibraryRootsWithAbiIncompatibleVersion(project, KotlinJavaScriptAbiVersionIndex.INSTANCE$);
+    }
+
 
     public static void addJdkAnnotations(@NotNull Sdk sdk) {
         addAnnotations(sdk, PathUtil.getKotlinPathsForIdeaPlugin().getJdkAnnotationsPath());
@@ -299,5 +282,37 @@ public class KotlinRuntimeLibraryUtil {
         catch (IOException e) {
             throw new AssertionError(e);
         }
+    }
+
+    @NotNull
+    private static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleVersion(
+            @NotNull Project project,
+            @NotNull ScalarIndexExtension<Integer> index
+    ) {
+        ID<Integer, Void> id = index.getName();
+        Collection<Integer> abiVersions = FileBasedIndex.getInstance().getAllKeys(id, project);
+        Set<Integer> badAbiVersions = Sets.newHashSet(Collections2.filter(abiVersions, new Predicate<Integer>() {
+            @Override
+            public boolean apply(Integer abiVersion) {
+                return !AbiVersionUtil.isAbiVersionCompatible(abiVersion);
+            }
+        }));
+        Set<VirtualFile> badRoots = Sets.newHashSet();
+        ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
+
+        for (Integer version : badAbiVersions) {
+            Collection<VirtualFile> indexedFiles = FileBasedIndex.getInstance().getContainingFiles(
+                    id, version, ProjectScope.getLibrariesScope(project));
+
+            for (VirtualFile indexedFile : indexedFiles) {
+                VirtualFile libraryRoot = fileIndex.getClassRootForFile(indexedFile);
+                assert libraryRoot != null : "Only library roots were requested, " +
+                                             "and only class files should be indexed with KotlinAbiVersionIndex key. " +
+                                             "File: " + indexedFile.getPath();
+                badRoots.add(getLocalFile(libraryRoot));
+            }
+        }
+
+        return badRoots;
     }
 }
