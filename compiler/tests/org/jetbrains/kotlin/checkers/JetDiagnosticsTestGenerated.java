@@ -627,9 +627,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("AnnotatedLoop.kt")
+            public void testAnnotatedLoop() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedLoop.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AnnotatedResultType.kt")
             public void testAnnotatedResultType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedResultType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AnnotatedTryCatch.kt")
+            public void testAnnotatedTryCatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotatedTryCatch.kt");
                 doTest(fileName);
             }
 
