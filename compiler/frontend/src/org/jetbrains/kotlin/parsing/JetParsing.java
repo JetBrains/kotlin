@@ -447,14 +447,14 @@ public class JetParsing extends AbstractJetParsing {
 
             if (at(AT)) {
                 if (!tryParseModifier(tokenConsumer)) {
-                    parseAnnotation(annotationParsingMode);
+                    parseAnnotationOrList(annotationParsingMode);
                 }
             }
             else if (tryParseModifier(tokenConsumer)) {
                 // modifier advanced
             }
             else if (annotationParsingMode.allowShortAnnotations && at(IDENTIFIER)) {
-                parseAnnotationEntry(annotationParsingMode);
+                parseAnnotation(annotationParsingMode);
             }
             else {
                 break;
@@ -513,13 +513,13 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * annotations
-     *   : annotation*
+     *   : (annotation | annotationList)*
      *   ;
      */
     boolean parseAnnotations(AnnotationParsingMode mode) {
-        if (!parseAnnotation(mode)) return false;
+        if (!parseAnnotationOrList(mode)) return false;
 
-        while (parseAnnotation(mode)) {
+        while (parseAnnotationOrList(mode)) {
             // do nothing
         }
 
@@ -528,14 +528,20 @@ public class JetParsing extends AbstractJetParsing {
 
     /*
      * annotation
-     *   : "[" ("file" ":")? annotationEntry+ "]"
-     *   : annotationEntry
-     *   : "@" annotationEntry
+     *   : annotationPrefix? unescapedAnnotation
+     *   ;
+     *
+     * annotationList
+     *   : annotationPrefix "[" unescapedAnnotation+ "]"
+     *   ;
+     *
+     *  annotationPrefix:
+     *   : ("@" (":" "file")?)
      *   ;
      */
-    private boolean parseAnnotation(AnnotationParsingMode mode) {
+    private boolean parseAnnotationOrList(AnnotationParsingMode mode) {
         if (mode.allowShortAnnotations && at(IDENTIFIER)) {
-            return parseAnnotationEntry(mode);
+            return parseAnnotation(mode);
         }
         else if (at(AT)) {
             IElementType nextRawToken = myBuilder.rawLookup(1);
@@ -553,7 +559,7 @@ public class JetParsing extends AbstractJetParsing {
             }
 
             if (tokenToMatch == IDENTIFIER) {
-                return parseAnnotationEntry(mode);
+                return parseAnnotation(mode);
             }
             else if (tokenToMatch == LBRACKET) {
                 return parseAnnotationList(mode);
@@ -604,7 +610,7 @@ public class JetParsing extends AbstractJetParsing {
                     continue;
                 }
 
-                parseAnnotationEntry(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
+                parseAnnotation(ALLOW_UNESCAPED_REGULAR_ANNOTATIONS);
                 while (at(COMMA)) {
                     errorAndAdvance("No commas needed to separate annotations");
                 }
@@ -650,11 +656,15 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     /*
-     * annotationEntry
+     * annotation
+     *   : annotationPrefix? unescapedAnnotation
+     *   ;
+     *
+     * unescapedAnnotation
      *   : SimpleName{"."} typeArguments? valueArguments?
      *   ;
      */
-    private boolean parseAnnotationEntry(AnnotationParsingMode mode) {
+    private boolean parseAnnotation(AnnotationParsingMode mode) {
         assert _at(IDENTIFIER) ||
                (_at(AT) && !WHITE_SPACE_OR_COMMENT_BIT_SET.contains(myBuilder.rawLookup(1)));
 

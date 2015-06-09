@@ -3,14 +3,21 @@
 */
 
 annotations
-  : annotation*
+  : (annotation | annotationList)*
   ;
 
 annotation
-  : "@"? "[" annotationEntry+ "]"
-  : "@"? annotationEntry
+  : annotationPrefix? unescapedAnnotation
   ;
 
-annotationEntry
+annotationList
+  : annotationPrefix "[" unescapedAnnotation+ "]"
+  ;
+
+annotationPrefix:
+  : ("@" (":" "file")?)
+  ;
+
+unescapedAnnotation
   : SimpleName{"."} typeArguments? valueArguments?
   ;
