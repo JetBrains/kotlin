@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.PsiSourceElement
+import org.jetbrains.kotlin.utils.addToStdlib.constant
 
 public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() {
 
@@ -140,7 +141,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
         private fun mixKotlinToJava(declarationDescriptor: DeclarationDescriptor, element: PsiElement, originalElement: PsiElement?): String? {
             val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
             if (originalInfo != null) {
-                val renderedDecl = MIX_KOTLIN_TO_JAVA_RENDERER.render(declarationDescriptor)
+                val renderedDecl = constant { DESCRIPTOR_RENDERER.withOptions { withDefinedIn = false } }.render(declarationDescriptor)
                 return renderedDecl + "<br/>Java declaration:<br/>" + originalInfo
             }
 

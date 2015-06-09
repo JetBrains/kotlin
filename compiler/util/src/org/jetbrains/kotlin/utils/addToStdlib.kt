@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.utils.addToStdlib
 
+import java.lang.reflect.Modifier
 import java.util.Collections
 import java.util.NoSuchElementException
+import java.util.concurrent.ConcurrentHashMap
 
 public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()
 
@@ -76,3 +78,20 @@ public fun <T> streamOfLazyValues(vararg elements: () -> T): Stream<T> = element
 public fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 
 public fun <T: Any> T.check(predicate: (T) -> Boolean): T? = if (predicate(this)) this else null
+
+public fun <T : Any> constant(calculator: () -> T): T {
+    val cached = constantMap[calculator]
+    if (cached != null) return cached as T
+
+    // safety check
+    val fields = calculator.javaClass.getDeclaredFields().filter { it.getModifiers().and(Modifier.STATIC) == 0 }
+    assert(fields.isEmpty()) {
+        "No fields in the passed lambda expected but ${fields.joinToString()} found"
+    }
+
+    val value = calculator()
+    constantMap[calculator] = value
+    return value
+}
+
+private val constantMap = ConcurrentHashMap<Function0<*>, Any>()
