@@ -140,12 +140,11 @@ class Kotlin2JvmSourceSetProcessor(
 
         val javaTask = project.getTasks().findByName(sourceSet.getCompileJavaTaskName()) as AbstractCompile?
 
-        val kotlinAfterJavaTask = if (javaTask is JavaCompile) {
-            project.createKotlinAfterJavaTask(kotlinTask, javaTask, kotlinDestinationDir) {
-                createKotlinCompileTask(it)
-            }
+        if (javaTask != null) {
+            javaTask.dependsOn(kotlinTaskName)
+            val javacClassPath = javaTask.getClasspath() + project.files(kotlinDestinationDir);
+            javaTask.setClasspath(javacClassPath)
         }
-        else null
 
         val kotlinAnnotationProcessingDep = cachedKotlinAnnotationProcessingDep ?: run {
             val projectVersion = loadKotlinVersionFromResource(project.getLogger())
@@ -162,13 +161,15 @@ class Kotlin2JvmSourceSetProcessor(
                     kotlinDirSet?.srcDir(dir)
                 }
 
-                if (aptConfiguration.getDependencies().size() > 1 && javaTask is JavaCompile && kotlinAfterJavaTask != null) {
+                if (aptConfiguration.getDependencies().size() > 1 && javaTask is JavaCompile) {
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(kotlinTask, sourceSetName)
 
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
 
-                    project.initKapt(kotlinTask, kotlinAfterJavaTask, javaTask, kaptManager, sourceSetName)
+                    project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, kotlinDestinationDir) {
+                        createKotlinCompileTask(it)
+                    }
                 }
             }
         }
@@ -434,16 +435,14 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
             val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(kotlinTask, variantDataName)
             variantData.addJavaSourceFoldersToModel(aptOutputDir)
 
-            val kotlinAfterJavaTask = project.createKotlinAfterJavaTask(kotlinTask, javaTask, kotlinOutputDir) {
-                tasksProvider.createKotlinJVMTask(project, kotlinTaskName + "AfterJava")
-            }
-
             if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
                 val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
                         aptFiles.toSet(), aptOutputDir, aptWorkingDir)
                 kotlinTask.storeKaptAnnotationsFile(kaptManager)
 
-                project.initKapt(kotlinTask, kotlinAfterJavaTask, javaTask, kaptManager, variantDataName, subpluginEnvironment)
+                project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOutputDir, subpluginEnvironment) {
+                    tasksProvider.createKotlinJVMTask(project, kotlinTaskName + "AfterJava")
+                }
             }
 
             javaTask doFirst {
@@ -573,16 +572,20 @@ private fun Project.createKaptExtension() {
 
 private fun Project.initKapt(
         kotlinTask: AbstractCompile,
-        kotlinAfterJavaTask: AbstractCompile,
         javaTask: AbstractCompile,
         kaptManager: AnnotationProcessingManager,
         variantName: String,
-        subpluginEnvironment: SubpluginEnvironment? = null
+        kotlinOutputDir: File,
+        subpluginEnvironment: SubpluginEnvironment? = null,
+        taskFactory: (suffix: String) -> AbstractCompile
 ) {
     val kaptExtension = getExtensions().kapt
     val environment = subpluginEnvironment ?: loadSubplugins(this, getLogger())
+    val kotlinAfterJavaTask: AbstractCompile?
 
     if (kaptExtension.generateStubs) {
+        kotlinAfterJavaTask = createKotlinAfterJavaTask(kotlinTask, javaTask, kotlinOutputDir, taskFactory)
+
         kotlinTask.getLogger().kotlinDebug("kapt: Using class file stubs")
 
         val stubsDir = File(getBuildDir(), "tmp/kapt/$variantName/classFileStubs")
@@ -596,15 +599,14 @@ private fun Project.initKapt(
 
         environment.addSubpluginArguments(this, kotlinAfterJavaTask)
     } else {
+        kotlinAfterJavaTask = null
         kotlinTask.getLogger().kotlinDebug("kapt: Class file stubs are not used")
-
-        kotlinAfterJavaTask.setEnabled(false)
         environment.addSubpluginArguments(this, kotlinTask)
     }
 
     javaTask.doFirst {
         kaptManager.setupKapt()
-        kotlinAfterJavaTask.setClasspath(files(kotlinTask.getClasspath(), javaTask.getDestinationDir()))
+        kotlinAfterJavaTask?.setClasspath(files(kotlinTask.getClasspath(), javaTask.getDestinationDir()))
     }
 
     javaTask.doLast {
@@ -620,10 +622,6 @@ private fun Project.createKotlinAfterJavaTask(
         kotlinDestinationDir: File,
         taskFactory: (suffix: String) -> AbstractCompile
 ): AbstractCompile {
-    javaTask.dependsOn(kotlinTask.getName())
-    val javacClassPath = javaTask.getClasspath() + files(kotlinDestinationDir)
-    javaTask.setClasspath(javacClassPath)
-
     val kotlinTaskAfterJava = taskFactory("AfterJava")
     kotlinTaskAfterJava.setProperty("kotlinDestinationDir", kotlinDestinationDir)
     kotlinTaskAfterJava.setDestinationDir(javaTask.getDestinationDir())
