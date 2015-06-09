@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.asJava.KotlinLightElement
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.codegen.PropertyCodegen
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
+import org.jetbrains.kotlin.asJava.KotlinNoOriginLightMethod
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -133,6 +134,8 @@ private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: Searc
 
 private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchScope, process: (JetConstructorDelegationCall) -> Unit) {
     if (this is KotlinLightElement<*, *>) return
+    // TODO: Temporary hack to avoid NPE while KotlinNoOriginLightMethod is around
+    if (this is KotlinNoOriginLightMethod) return
     if (!(this is PsiMethod && isConstructor())) return
     val klass = getContainingClass() ?: return
     val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return
