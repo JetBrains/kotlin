@@ -20,8 +20,6 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.Opcodes.*
 import java.io.File
 import java.io.IOException
 import java.lang.ref.WeakReference
@@ -30,11 +28,12 @@ import java.util.zip.ZipFile
 
 public class AnnotationProcessingManager(
         private val task: AbstractCompile,
-        val javaTask: JavaCompile,
-        val taskQualifier: String,
-        val aptFiles: Set<File>,
-        val aptOutputDir: File,
-        val aptWorkingDir: File) {
+        private val javaTask: JavaCompile,
+        private val taskQualifier: String,
+        private val aptFiles: Set<File>,
+        private val aptOutputDir: File,
+        private val aptWorkingDir: File,
+        private val coreClassLoader: ClassLoader) {
 
     private val project = task.getProject()
 
@@ -97,13 +96,21 @@ public class AnnotationProcessingManager(
     }
 
     private fun generateAnnotationProcessorStubs(javaTask: JavaCompile, processorFqNames: Set<String>, outputDir: File) {
-        generateKotlinAptAnnotation(outputDir)
+        val aptAnnotationFile = invokeCoreKaptMethod("generateKotlinAptAnnotation", outputDir) as File
+        project.getLogger().kotlinDebug("kapt: Stub annotation generated: $aptAnnotationFile")
 
         val stubOutputPackageDir = File(outputDir, "__gen")
         stubOutputPackageDir.mkdirs()
 
-        for (processor in processorFqNames) {
-            generateAnnotationProcessorWrapper(processor, "__gen", stubOutputPackageDir)
+        for (processorFqName in processorFqNames) {
+            val wrapperFile = invokeCoreKaptMethod("generateAnnotationProcessorWrapper",
+                    processorFqName,
+                    "__gen",
+                    stubOutputPackageDir,
+                    getProcessorStubClassName(processorFqName),
+                    taskQualifier) as File
+
+            project.getLogger().kotlinDebug("kapt: Wrapper for $processorFqName generated: $wrapperFile")
         }
 
         val annotationProcessorWrapperFqNames = processorFqNames
@@ -164,58 +171,6 @@ public class AnnotationProcessingManager(
         getOptions().setCompilerArgs(newCompilerArgs)
     }
 
-    private fun generateKotlinAptAnnotation(outputDirectory: File) {
-        val packageName = "__gen"
-        val className = "KotlinAptAnnotation"
-        val classFqName = "$packageName/$className"
-
-        val bytes = with (ClassWriter(0)) {
-            visit(49, ACC_PUBLIC + ACC_ABSTRACT + ACC_INTERFACE + ACC_ANNOTATION, classFqName,
-                    null, null, arrayOf("java/lang/annotation/Annotation"))
-            visitSource(null, null)
-            visitEnd()
-            toByteArray()
-        }
-
-        val injectPackage = File(outputDirectory, packageName)
-        injectPackage.mkdirs()
-        val outputFile = File(injectPackage, "$className.class")
-        outputFile.writeBytes(bytes)
-
-        project.getLogger().kotlinDebug("kapt: Stub annotation generated: $outputFile")
-    }
-
-    private fun generateAnnotationProcessorWrapper(processorFqName: String, packageName: String, outputDirectory: File) {
-        val className = getProcessorStubClassName(processorFqName)
-        val classFqName = "$packageName/$className"
-
-        val bytes = with (ClassWriter(0)) {
-            val superClass = "org/jetbrains/kotlin/annotation/AnnotationProcessorWrapper"
-
-            visit(49, ACC_PUBLIC + ACC_SUPER, classFqName, null,
-                    superClass, null)
-
-            visitSource(null, null)
-
-            with (visitMethod(ACC_PUBLIC, "<init>", "()V", null, null)) {
-                visitVarInsn(ALOAD, 0)
-                visitLdcInsn(processorFqName)
-                visitLdcInsn(taskQualifier)
-                visitMethodInsn(INVOKESPECIAL, superClass, "<init>", "(Ljava/lang/String;Ljava/lang/String;)V", false)
-                visitInsn(RETURN)
-                visitMaxs(3 /*max stack*/, 1 /*max locals*/)
-                visitEnd()
-            }
-
-            visitEnd()
-            toByteArray()
-        }
-        val outputFile = File(outputDirectory, "$className.class")
-        outputFile.writeBytes(bytes)
-
-        project.getLogger().kotlinDebug("kapt: Wrapper for $processorFqName generated: $outputFile")
-    }
-
     private fun lookupAnnotationProcessors(files: Set<File>): Set<String> {
         fun withZipFile(file: File, job: (ZipFile) -> Unit) {
             var zipFile: ZipFile? = null
@@ -259,6 +214,17 @@ public class AnnotationProcessingManager(
 
         project.getLogger().kotlinDebug("kapt: Discovered annotation processors: ${annotationProcessors.joinToString()}")
         return annotationProcessors
+    }
+
+    private fun invokeCoreKaptMethod(methodName: String, vararg args: Any): Any {
+        val array = arrayOfNulls<Class<*>>(args.size())
+        args.forEachIndexed { i, arg -> array[i] = arg.javaClass }
+        val method = getCoreKaptPackageClass().getMethod(methodName, *array)
+        return method.invoke(null, *args)
+    }
+
+    private fun getCoreKaptPackageClass(): Class<*> {
+        return Class.forName("org.jetbrains.kotlin.gradle.tasks.kapt.KaptPackage", false, coreClassLoader)
     }
 
 }

@@ -165,7 +165,7 @@ class Kotlin2JvmSourceSetProcessor(
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(kotlinTask, sourceSetName)
 
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
-                            aptConfiguration.resolve(), aptOutputDir, aptWorkingDir)
+                            aptConfiguration.resolve(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
 
                     project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, kotlinDestinationDir) {
                         createKotlinCompileTask(it)
@@ -437,7 +437,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
             if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
                 val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
-                        aptFiles.toSet(), aptOutputDir, aptWorkingDir)
+                        aptFiles.toSet(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
+
                 kotlinTask.storeKaptAnnotationsFile(kaptManager)
 
                 project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOutputDir, subpluginEnvironment) {
