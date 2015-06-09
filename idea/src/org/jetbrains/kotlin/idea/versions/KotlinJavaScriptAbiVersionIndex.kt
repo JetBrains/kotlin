@@ -17,41 +17,30 @@
 package org.jetbrains.kotlin.idea.versions
 
 import com.google.common.collect.Maps
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VfsUtilCore
-import com.intellij.util.indexing.*
-import com.intellij.util.io.ExternalIntegerKeyDescriptor
+import com.intellij.util.indexing.DataIndexer
+import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.ArrayList
 
-/**
- * Important! This is not a stub-based index. And it has its own version
- */
-public object KotlinJavaScriptAbiVersionIndex : ScalarIndexExtension<Int>() {
-
-    override fun getName() = ID.create<Int, Void>(javaClass<KotlinJavaScriptAbiVersionIndex>().getCanonicalName())
+public object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(javaClass<KotlinJavaScriptAbiVersionIndex>()) {
 
     override fun getIndexer() = INDEXER
 
-    override fun getKeyDescriptor() = ExternalIntegerKeyDescriptor()
-
     override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> JavaScript.EXTENSION == file.getExtension() }
-
-    override fun dependsOnFileContent() = true
 
     override fun getVersion() = VERSION
 
     private val VERSION = 1
 
-    private val LOG = Logger.getInstance(javaClass<KotlinJavaScriptAbiVersionIndex>())
-
     private val INDEXER = DataIndexer() { inputData: FileContent ->
         val result = Maps.newHashMap<Int, Void>()
 
-        try {
+        tryBlock(inputData) {
             val text = VfsUtilCore.loadText(inputData.getFile())
             val metadataList = ArrayList<KotlinJavascriptMetadata>()
             KotlinJavascriptMetadataUtils.parseMetadata(text, metadataList)
@@ -64,9 +53,6 @@ public object KotlinJavaScriptAbiVersionIndex : ScalarIndexExtension<Int>() {
                     result.put(AbiVersionUtil.INVALID_VERSION, null)
                 }
             }
-        }
-        catch (e: Throwable) {
-            LOG.warn("Could not index ABI version for file " + inputData.getFile() + ": " + e.getMessage())
         }
 
         result

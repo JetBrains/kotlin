@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.StdFileTypes
-import com.intellij.util.indexing.*
-import com.intellij.util.io.ExternalIntegerKeyDescriptor
+import com.intellij.util.indexing.DataIndexer
+import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
 import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
@@ -28,26 +28,15 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-/**
- * Important! This is not a stub-based index. And it has its own version
- */
-public object KotlinAbiVersionIndex : ScalarIndexExtension<Int>() {
-
-    override fun getName() = ID.create<Int, Void>(javaClass<KotlinAbiVersionIndex>().getCanonicalName())
+public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersionIndex>(javaClass<KotlinAbiVersionIndex>()) {
 
     override fun getIndexer() = INDEXER
 
-    override fun getKeyDescriptor() = ExternalIntegerKeyDescriptor()
-
     override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> file.getFileType() == StdFileTypes.CLASS }
-
-    override fun dependsOnFileContent() = true
 
     override fun getVersion() = VERSION
 
     private val VERSION = 1
-
-    private val LOG = Logger.getInstance(javaClass<KotlinAbiVersionIndex>())
 
     private val kotlinAnnotationsDesc = setOf(
             OLD_JET_CLASS_ANNOTATION,
@@ -62,7 +51,7 @@ public object KotlinAbiVersionIndex : ScalarIndexExtension<Int>() {
         var version: Int? = null
         var annotationPresent = false
 
-        try {
+        tryBlock(inputData) {
             val classReader = ClassReader(inputData.getContent())
             classReader.accept(object : ClassVisitor(Opcodes.ASM5) {
                 override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
@@ -85,9 +74,6 @@ public object KotlinAbiVersionIndex : ScalarIndexExtension<Int>() {
                     }
                 }
             }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
-        }
-        catch (e: Throwable) {
-            LOG.warn("Could not index ABI version for file " + inputData.getFile() + ": " + e.getMessage())
         }
 
         if (annotationPresent && version == null) {
