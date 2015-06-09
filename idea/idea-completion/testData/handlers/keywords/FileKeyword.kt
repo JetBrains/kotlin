@@ -1,1 +1,1 @@
-[fi<caret>]
+@fi<caret>
