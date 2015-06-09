@@ -27,6 +27,27 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-jar</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <tasks>
+                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-reflect.jar"
+                                      tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
+                                      overwrite="true" verbose="true"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.6</version>
                 <executions>
@@ -45,25 +66,25 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9.1</version>
                 <executions>
                     <execution>
-                        <id>copy-jar</id>
+                        <id>attach-artifacts</id>
                         <phase>package</phase>
-                        <configuration>
-                            <tasks>
-                                <copy file="${kotlin-dist}/kotlinc/lib/kotlin-reflect.jar"
-                                      tofile="${basedir}/target/${project.artifactId}-${project.version}.jar"
-                                      overwrite="true" verbose="true"/>
-                                <copy file="${kotlin-dist}/kotlin-reflect-sources-for-maven.jar"
-                                      tofile="${basedir}/target/${project.artifactId}-${project.version}-sources.jar"
-                                      overwrite="true" verbose="true"/>
-                            </tasks>
-                        </configuration>
                         <goals>
-                            <goal>run</goal>
+                            <goal>attach-artifact</goal>
                         </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${kotlin-dist}/kotlin-reflect-sources-for-maven.jar</file>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
