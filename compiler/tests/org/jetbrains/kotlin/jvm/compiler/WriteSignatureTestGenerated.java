@@ -145,24 +145,6 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("jArrayClassOfKClass.kt")
-        public void testJArrayClassOfKClass() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/jArrayClassOfKClass.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jClassBasic.kt")
-        public void testJClassBasic() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/jClassBasic.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("jClassInt.kt")
-        public void testJClassInt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/jClassInt.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kArrayClassOfJClass.kt")
         public void testKArrayClassOfJClass() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/annotations/kArrayClassOfJClass.kt");
