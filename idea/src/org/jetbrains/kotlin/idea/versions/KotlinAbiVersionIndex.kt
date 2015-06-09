@@ -16,113 +16,85 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.google.common.collect.ImmutableSet
-import com.google.common.collect.Maps
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.fileTypes.StdFileTypes
-import com.intellij.openapi.util.Ref
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.indexing.*
 import com.intellij.util.io.ExternalIntegerKeyDescriptor
-import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
 import org.jetbrains.kotlin.load.java.AbiVersionUtil
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
-
 /**
  * Important! This is not a stub-based index. And it has its own version
  */
-public class KotlinAbiVersionIndex private constructor() : ScalarIndexExtension<Int>() {
+public object KotlinAbiVersionIndex : ScalarIndexExtension<Int>() {
 
-    override fun getName(): ID<Int, Void> {
-        return NAME
-    }
+    override fun getName() = ID.create<Int, Void>(javaClass<KotlinAbiVersionIndex>().getCanonicalName())
 
-    override fun getIndexer(): DataIndexer<Int, Void, FileContent> {
-        return INDEXER
-    }
+    override fun getIndexer() = INDEXER
 
-    override fun getKeyDescriptor(): KeyDescriptor<Int> {
-        return KEY_DESCRIPTOR
-    }
+    override fun getKeyDescriptor() = ExternalIntegerKeyDescriptor()
 
-    override fun getInputFilter(): FileBasedIndex.InputFilter {
-        return INPUT_FILTER
-    }
+    override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> file.getFileType() == StdFileTypes.CLASS }
 
-    override fun dependsOnFileContent(): Boolean {
-        return true
-    }
+    override fun dependsOnFileContent() = true
 
-    override fun getVersion(): Int {
-        return VERSION
-    }
+    override fun getVersion() = VERSION
 
-    companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinAbiVersionIndex>())
+    private val VERSION = 1
 
-        public val INSTANCE: KotlinAbiVersionIndex = KotlinAbiVersionIndex()
+    private val LOG = Logger.getInstance(javaClass<KotlinAbiVersionIndex>())
 
-        private val VERSION = 1
+    private val kotlinAnnotationsDesc = setOf(
+            OLD_JET_CLASS_ANNOTATION,
+            OLD_JET_PACKAGE_CLASS_ANNOTATION,
+            OLD_KOTLIN_CLASS,
+            OLD_KOTLIN_PACKAGE,
+            KOTLIN_CLASS,
+            KOTLIN_PACKAGE)
+            .map { asmDescByFqNameWithoutInnerClasses(it) }
 
-        private val NAME = ID.create<Int, Void>(javaClass<KotlinAbiVersionIndex>().getCanonicalName())
-        private val KEY_DESCRIPTOR = ExternalIntegerKeyDescriptor()
+    private val INDEXER = DataIndexer<Int, Void, FileContent>() { inputData: FileContent ->
+        var version: Int? = null
+        var annotationPresent = false
 
-        private val INPUT_FILTER = object : FileBasedIndex.InputFilter {
-            override fun acceptInput(file: VirtualFile): Boolean {
-                return file.getFileType() == StdFileTypes.CLASS
-            }
-        }
-
-        private val INDEXER = object : DataIndexer<Int, Void, FileContent> {
-            SuppressWarnings("deprecation")
-            private val kotlinAnnotationsDesc = ImmutableSet.Builder<String>().add(asmDescByFqNameWithoutInnerClasses(OLD_JET_CLASS_ANNOTATION)).add(asmDescByFqNameWithoutInnerClasses(OLD_JET_PACKAGE_CLASS_ANNOTATION)).add(asmDescByFqNameWithoutInnerClasses(OLD_KOTLIN_CLASS)).add(asmDescByFqNameWithoutInnerClasses(OLD_KOTLIN_PACKAGE)).add(asmDescByFqNameWithoutInnerClasses(KOTLIN_CLASS)).add(asmDescByFqNameWithoutInnerClasses(KOTLIN_PACKAGE)).build()
-
-            override fun map(inputData: FileContent): Map<Int, Void> {
-                val result = Maps.newHashMap<Int, Void>()
-                val annotationPresent = Ref(false)
-
-                try {
-                    val classReader = ClassReader(inputData.getContent())
-                    classReader.accept(object : ClassVisitor(Opcodes.ASM5) {
-                        override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                            if (!kotlinAnnotationsDesc.contains(desc)) {
-                                return null
-                            }
-                            annotationPresent.set(true)
-                            return object : AnnotationVisitor(Opcodes.ASM5) {
-                                override fun visit(name: String, value: Any) {
-                                    if (ABI_VERSION_FIELD_NAME == name) {
-                                        if (value is Int) {
-                                            result.put(value, null)
-                                        }
-                                        else {
-                                            // Version is set to something weird
-                                            result.put(AbiVersionUtil.INVALID_VERSION, null)
-                                        }
-                                    }
+        try {
+            val classReader = ClassReader(inputData.getContent())
+            classReader.accept(object : ClassVisitor(Opcodes.ASM5) {
+                override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                    if (!kotlinAnnotationsDesc.contains(desc)) {
+                        return null
+                    }
+                    annotationPresent = true
+                    return object : AnnotationVisitor(Opcodes.ASM5) {
+                        override fun visit(name: String, value: Any) {
+                            if (ABI_VERSION_FIELD_NAME == name) {
+                                if (value is Int) {
+                                    version = value
+                                }
+                                else {
+                                    // Version is set to something weird
+                                    version = AbiVersionUtil.INVALID_VERSION
                                 }
                             }
                         }
-                    }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+                    }
                 }
-                catch (e: Throwable) {
-                    LOG.warn("Could not index ABI version for file " + inputData.getFile() + ": " + e.getMessage())
-                }
-
-
-                if (annotationPresent.get() && result.isEmpty()) {
-                    // No version at all: the class is too old
-                    result.put(AbiVersionUtil.INVALID_VERSION, null)
-                }
-
-                return result
-            }
+            }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
         }
+        catch (e: Throwable) {
+            LOG.warn("Could not index ABI version for file " + inputData.getFile() + ": " + e.getMessage())
+        }
+
+        if (annotationPresent && version == null) {
+            // No version at all: the class is too old
+            version = AbiVersionUtil.INVALID_VERSION
+        }
+
+        if (version != null) mapOf<Int, Void?>(version!! to null) else mapOf()
     }
 }
