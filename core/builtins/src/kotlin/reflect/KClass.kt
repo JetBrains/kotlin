@@ -27,9 +27,16 @@ package kotlin.reflect
 public interface KClass<T> {
     /**
      * The simple name of the class as it was declared in the source code,
-     * or `null` if the class has no name (e.g. anonymous object literals).
+     * or `null` if the class has no name (if, for example, it is an anonymous object literal).
      */
     public val simpleName: String?
+
+    /**
+     * The fully qualified name of the class which consists of names of the declaring package,
+     * all outer classes of this class and the class itself separated by dots,
+     * or `null` if the class is local or it is an anonymous object literal.
+     */
+    public val qualifiedName: String?
 
     /**
      * Returns non-extension properties declared in this class and all of its superclasses.

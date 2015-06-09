@@ -2775,27 +2775,42 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("classSimpleName.kt")
-            public void testClassSimpleName() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals/classSimpleName.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("genericClass.kt")
             public void testGenericClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals/genericClass.kt");
                 doTestWithStdlib(fileName);
             }
 
-            @TestMetadata("localClassSimpleName.kt")
-            public void testLocalClassSimpleName() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals/localClassSimpleName.kt");
-                doTestWithStdlib(fileName);
-            }
-
             @TestMetadata("simpleClassLiteral.kt")
             public void testSimpleClassLiteral() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classLiterals/simpleClassLiteral.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classes")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Classes extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInClasses() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/classes"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("classSimpleName.kt")
+            public void testClassSimpleName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classes/classSimpleName.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("localClassSimpleName.kt")
+            public void testLocalClassSimpleName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classes/localClassSimpleName.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("qualifiedName.kt")
+            public void testQualifiedName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/classes/qualifiedName.kt");
                 doTestWithStdlib(fileName);
             }
         }

@@ -42,9 +42,10 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
     override val scope: JetScope get() = descriptor.getDefaultType().getMemberScope()
 
     override val simpleName: String? get() {
+        if (jClass.isAnonymousClass()) return null
+
         val classId = classId
         return when {
-            jClass.isAnonymousClass() -> null
             classId.isLocal() -> calculateLocalClassName(jClass)
             else -> classId.getShortClassName().asString()
         }
@@ -59,6 +60,16 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
             return name.substringAfter(constructor.getName() + "$")
         }
         return name.substringAfter('$')
+    }
+
+    override val qualifiedName: String? get() {
+        if (jClass.isAnonymousClass()) return null
+
+        val classId = classId
+        return when {
+            classId.isLocal() -> null
+            else -> classId.asSingleFqName().asString()
+        }
     }
 
     override val properties: Collection<KMemberProperty<T, *>>
