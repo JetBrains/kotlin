@@ -1046,12 +1046,6 @@
         cleanupTool="true"
         level="WARNING"/>
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ReplaceDeprecatedFunctionClassUsages"
-        displayName="Usage of deprecated function classes in Java"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        level="WARNING"/>
-
     <project.converterProvider implementation="org.jetbrains.kotlin.idea.converters.JetRunConfigurationSettingsFormatConverterProvider"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>

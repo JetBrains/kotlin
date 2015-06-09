@@ -69,10 +69,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, "Interfaces can't call Java default methods via super");
 
         MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument ''{0}'' can be null in Java, but exhaustive when contains no null branch");
-
-        MAP.put(ErrorsJvm.JAVA_METHOD_USES_DEPRECATED_FUNCTION_CLASS,
-                "This Java method uses the deprecated {0} class, which will be removed soon. " +
-                "Please change the signature to use the new {1} class instead", Renderers.TO_STRING, Renderers.TO_STRING);
     }
 
     @NotNull

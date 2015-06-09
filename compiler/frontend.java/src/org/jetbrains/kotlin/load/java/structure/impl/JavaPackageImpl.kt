@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.load.java.structure.impl
 
 import com.intellij.psi.PsiPackage
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.load.java.lazy.DeprecatedFunctionClassFqNameParser
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.classes
@@ -31,10 +30,7 @@ public class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSe
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         val psiClasses = getPsi().getClasses(scope).filter {
             val name = it.getName()
-            name != null && nameFilter(Name.identifier(name)) && it.getQualifiedName()?.let {
-                // TODO: drop after M12
-                !DeprecatedFunctionClassFqNameParser.isDeprecatedFunctionClassFqName(it)
-            } ?: true
+            name != null && nameFilter(Name.identifier(name))
         }
         return classes(psiClasses)
     }

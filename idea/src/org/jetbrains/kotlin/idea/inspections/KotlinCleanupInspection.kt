@@ -23,7 +23,6 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
@@ -46,17 +45,10 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
     override fun getDisplayName(): String = "Usage of redundant or deprecated syntax or deprecated symbols"
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
-        if (isOnTheFly || !ProjectRootsUtil.isInProjectSource(file)) {
+        if (isOnTheFly || file !is JetFile || !ProjectRootsUtil.isInProjectSource(file)) {
             return null
         }
-        return when (file) {
-            is JetFile -> checkKotlinFile(file, manager)
-            is PsiJavaFile -> checkJavaFile(file, manager)
-            else -> null
-        }
-    }
 
-    private fun checkKotlinFile(file: JetFile, manager: InspectionManager): Array<out ProblemDescriptor>? {
         val analysisResult = file.analyzeFullyAndGetResult()
         if (analysisResult.isError()) {
             throw ProcessCanceledException(analysisResult.error)
@@ -84,10 +76,6 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
         }
 
         return problems.sortBy { it.depth }.map { it.problemDescriptor }.toTypedArray()
-    }
-
-    private fun checkJavaFile(file: PsiJavaFile, manager: InspectionManager): Array<out ProblemDescriptor>? {
-        return ReplaceDeprecatedFunctionClassUsages().checkFile(file, manager)?.let { arrayOf(it) }
     }
 
     private fun Diagnostic.isCleanup() = getFactory() in cleanupDiagnosticsFactories || isObsoleteLabel()
