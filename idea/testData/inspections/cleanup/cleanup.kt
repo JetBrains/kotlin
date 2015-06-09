@@ -12,10 +12,6 @@ enum class F(val name: String) {
 
 val f = { (a: Int, b: Int) -> a + b }
 
-annotation class Ann(val arg1: Class<*>, val arg2: Class<out Any?>)
-
-Ann(javaClass<String>(), javaClass<Int>()) class MyClass
-
 class A private()
 
 val x = fun foo(x: String) { }
@@ -43,4 +39,4 @@ fun unnecessaryCast(x: String) = x as String
 
 fun unnecessaryElvis(x: String) = x ?: ""
 
-JavaAnn(1, "abc", arrayOf(javaClass<Array<Int>>()), javaClass<String>()) class MyClass
+JavaAnn(1, "abc") class MyClass

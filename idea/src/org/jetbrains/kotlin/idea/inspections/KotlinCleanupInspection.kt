@@ -87,8 +87,6 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.DEPRECATED_LAMBDA_SYNTAX,
             Errors.MISSING_CONSTRUCTOR_KEYWORD,
             Errors.FUNCTION_EXPRESSION_WITH_NAME,
-            Errors.JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION,
-            ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION,
             Errors.UNNECESSARY_NOT_NULL_ASSERTION,
             Errors.UNNECESSARY_SAFE_CALL,
             Errors.USELESS_CAST,

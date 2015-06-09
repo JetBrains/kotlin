@@ -1,5 +1,3 @@
-import kotlin.reflect.KClass
-
 interface Foo {
 }
 
@@ -13,10 +11,6 @@ enum class F(val name: String) {
 }
 
 val f = { a: Int, b: Int -> a + b }
-
-annotation class Ann(val arg1: KClass<*>, val arg2: KClass<out Any?>)
-
-Ann(String::class, Int::class) class MyClass
 
 class A private constructor()
 
@@ -45,4 +39,4 @@ fun unnecessaryCast(x: String) = x
 
 fun unnecessaryElvis(x: String) = x
 
-JavaAnn(1, arg1 = "abc", arg2 = arrayOf(Array<Int>::class), arg3 = String::class) class MyClass
+JavaAnn(1, arg1 = "abc") class MyClass
