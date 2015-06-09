@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.name.Name
 
 public trait ValueArgument {
     IfNotParsed
     public fun getArgumentExpression(): JetExpression?
 
-    public fun getArgumentName(): JetValueArgumentName?
+    public fun getArgumentName(): ValueArgumentName?
 
     public fun isNamed(): Boolean
 
@@ -39,4 +40,9 @@ public trait FunctionLiteralArgument : ValueArgument {
     public fun getFunctionLiteral(): JetFunctionLiteralExpression
 
     override fun getArgumentExpression(): JetExpression
+}
+
+public interface ValueArgumentName {
+    public val asName: Name
+    public val referenceExpression: JetSimpleNameExpression?
 }

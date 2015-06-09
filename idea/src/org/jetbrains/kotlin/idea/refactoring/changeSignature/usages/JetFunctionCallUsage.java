@@ -293,7 +293,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         assert arguments != null : "Argument list is expected: " + element.getText();
         List<? extends ValueArgument> oldArguments = element.getValueArguments();
 
-        boolean isNamedCall = oldArguments.size() > 1 && oldArguments.get(0).getArgumentName() != null;
+        boolean isNamedCall = oldArguments.size() > 1 && oldArguments.get(0).isNamed();
         StringBuilder parametersBuilder = new StringBuilder("(");
         boolean isFirst = true;
 
@@ -364,7 +364,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
             ValueArgument oldArgument = argumentMap.get(parameterInfo.getOldIndex());
 
             if (oldArgument != null) {
-                JetValueArgumentName argumentName = oldArgument.getArgumentName();
+                ValueArgumentName argumentName = oldArgument.getArgumentName();
                 JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
                 changeArgumentName(argumentNameExpression, parameterInfo);
                 //noinspection ConstantConditions
@@ -457,9 +457,8 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
         for (int i = 0; i < oldArguments.size(); i++) {
             ValueArgument argument = oldArguments.get(i);
-            JetValueArgumentName argumentName = argument.getArgumentName();
-            JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
-            String oldParameterName = argumentNameExpression != null ? argumentNameExpression.getReferencedName() : null;
+            ValueArgumentName argumentName = argument.getArgumentName();
+            String oldParameterName = argumentName != null ? argumentName.getAsName().asString() : null;
 
             if (oldParameterName != null) {
                 Integer oldParameterIndex = changeInfo.getOldParameterIndex(oldParameterName);
@@ -476,7 +475,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
     private void changeArgumentNames(JetChangeInfo changeInfo, JetCallElement element) {
         for (ValueArgument argument : element.getValueArguments()) {
-            JetValueArgumentName argumentName = argument.getArgumentName();
+            ValueArgumentName argumentName = argument.getArgumentName();
             JetSimpleNameExpression argumentNameExpression = argumentName != null ? argumentName.getReferenceExpression() : null;
 
             if (argumentNameExpression != null) {

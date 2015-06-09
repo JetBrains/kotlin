@@ -182,7 +182,7 @@ object DynamicCallableDescriptors {
                     null,
                     index,
                     Annotations.EMPTY,
-                    arg.getArgumentName()?.getReferenceExpression()?.getReferencedNameAsName() ?: Name.identifier("p$index"),
+                    arg.getArgumentName()?.asName ?: Name.identifier("p$index"),
                     outType,
                     false,
                     varargElementType,

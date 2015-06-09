@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.completion.smart.toList
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
 import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -63,9 +64,9 @@ data class ItemOptions(val starPrefix: Boolean) {
 
 open data class ExpectedInfo(val type: JetType, val expectedName: String?, val tail: Tail?, val itemOptions: ItemOptions = ItemOptions.DEFAULT)
 
-data class ArgumentPosition(val argumentIndex: Int, val argumentName: String?, val isFunctionLiteralArgument: Boolean) {
+data class ArgumentPosition(val argumentIndex: Int, val argumentName: Name?, val isFunctionLiteralArgument: Boolean) {
     constructor(argumentIndex: Int, isFunctionLiteralArgument: Boolean = false) : this(argumentIndex, null, isFunctionLiteralArgument)
-    constructor(argumentIndex: Int, argumentName: String?) : this(argumentIndex, argumentName, false)
+    constructor(argumentIndex: Int, argumentName: Name?) : this(argumentIndex, argumentName, false)
 }
 
 class ArgumentExpectedInfo(type: JetType, name: String?, tail: Tail?, val function: FunctionDescriptor, val position: ArgumentPosition, itemOptions: ItemOptions = ItemOptions.DEFAULT)
@@ -133,7 +134,7 @@ class ExpectedInfos(
         assert(argumentIndex >= 0) {
             "Could not find argument '$argument' among arguments of call: $call"
         }
-        val argumentName = argument.getArgumentName()?.getReferenceExpression()?.getReferencedName()
+        val argumentName = argument.getArgumentName()?.asName
         val isFunctionLiteralArgument = argument is FunctionLiteralArgument
         val argumentPosition = ArgumentPosition(argumentIndex, argumentName, isFunctionLiteralArgument)
 
@@ -243,9 +244,9 @@ class ExpectedInfos(
         return expectedInfos
     }
 
-    private fun namedArgumentTail(argumentToParameter: Map<ValueArgument, ValueParameterDescriptor>, argumentName: String, descriptor: FunctionDescriptor): Tail? {
-        val usedParameterNames = (argumentToParameter.values().map { it.getName().asString() } + listOf(argumentName)).toSet()
-        val notUsedParameters = descriptor.getValueParameters().filter { it.getName().asString() !in usedParameterNames }
+    private fun namedArgumentTail(argumentToParameter: Map<ValueArgument, ValueParameterDescriptor>, argumentName: Name, descriptor: FunctionDescriptor): Tail? {
+        val usedParameterNames = (argumentToParameter.values().map { it.getName() } + listOf(argumentName)).toSet()
+        val notUsedParameters = descriptor.getValueParameters().filter { it.getName() !in usedParameterNames }
         return if (notUsedParameters.isEmpty())
             Tail.RPARENTH
         else if (notUsedParameters.all { it.hasDefaultValue() })

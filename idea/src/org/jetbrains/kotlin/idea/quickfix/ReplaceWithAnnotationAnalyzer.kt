@@ -189,30 +189,4 @@ object ReplaceWithAnnotationAnalyzer {
             else -> throw IllegalArgumentException("Cannot find resolution scope for $descriptor")
         }
     }
-
-    private class ExplicitImportsScope(val descriptors: Collection<DeclarationDescriptor>) : JetScope {
-        override fun getClassifier(name: Name) = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
-
-        override fun getPackage(name: Name)= descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
-
-        override fun getProperties(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
-
-        override fun getLocalVariable(name: Name): VariableDescriptor? = null
-
-        override fun getFunctions(name: Name) = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
-
-        override fun getContainingDeclaration() = throw UnsupportedOperationException()
-
-        override fun getDeclarationsByLabel(labelName: Name) = emptyList<DeclarationDescriptor>()
-
-        override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) = descriptors
-
-        override fun getImplicitReceiversHierarchy() = emptyList<ReceiverParameterDescriptor>()
-
-        override fun getOwnDeclaredDescriptors() = emptyList<DeclarationDescriptor>()
-
-        override fun printScopeStructure(p: Printer) {
-            p.println(javaClass.getName())
-        }
-    }
 }

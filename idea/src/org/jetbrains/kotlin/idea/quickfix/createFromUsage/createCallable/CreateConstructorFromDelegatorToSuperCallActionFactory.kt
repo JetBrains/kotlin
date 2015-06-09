@@ -55,7 +55,7 @@ object CreateConstructorFromDelegatorToSuperCallActionFactory : JetSingleIntenti
         val parameters = delegationCall.getValueArguments().map {
             ParameterInfo(
                     it.getArgumentExpression()?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo(anyType, Variance.IN_VARIANCE),
-                    it.getArgumentName()?.getReferenceExpression()?.getReferencedName()
+                    it.getArgumentName()?.asName?.asString()
             )
         }
 

@@ -155,9 +155,11 @@ public class ValueArgumentsToParametersMapper {
 
                 D candidate = candidateCall.getCandidateDescriptor();
 
-                JetSimpleNameExpression nameReference = argument.getArgumentName().getReferenceExpression();
-                ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(nameReference.getReferencedNameAsName());
-                if (!candidate.hasStableParameterNames()) {
+                ValueArgumentName argumentName = argument.getArgumentName();
+                assert argumentName != null;
+                ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(argumentName.getAsName());
+                JetReferenceExpression nameReference = argumentName.getReferenceExpression();
+                if (!candidate.hasStableParameterNames() && nameReference != null) {
                     report(NAMED_ARGUMENTS_NOT_ALLOWED.on(
                             nameReference,
                             candidate instanceof FunctionInvokeDescriptor ? INVOKE_ON_FUNCTION_TYPE : NON_KOTLIN_FUNCTION
@@ -165,14 +167,20 @@ public class ValueArgumentsToParametersMapper {
                 }
 
                 if (valueParameterDescriptor == null) {
-                    report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference));
+                    if (nameReference != null) {
+                        report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference));
+                    }
                     unmappedArguments.add(argument);
                     setStatus(WEAK_ERROR);
                 }
                 else {
-                    candidateCall.getTrace().record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
+                    if (nameReference != null) {
+                        candidateCall.getTrace().record(REFERENCE_TARGET, nameReference, valueParameterDescriptor);
+                    }
                     if (!usedParameters.add(valueParameterDescriptor)) {
-                        report(ARGUMENT_PASSED_TWICE.on(nameReference));
+                        if (nameReference != null) {
+                            report(ARGUMENT_PASSED_TWICE.on(nameReference));
+                        }
                         unmappedArguments.add(argument);
                         setStatus(WEAK_ERROR);
                     }

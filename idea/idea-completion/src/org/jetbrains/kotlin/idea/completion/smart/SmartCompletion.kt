@@ -264,13 +264,6 @@ class SmartCompletion(
     private fun calcItemsToSkip(expression: JetExpression): Set<DeclarationDescriptor> {
         val parent = expression.getParent()
         when(parent) {
-            is JetProperty -> {
-                //TODO: this can be filtered out by ordinary completion
-                if (expression == parent.getInitializer()) {
-                    return bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent].toSet()
-                }
-            }
-
             is JetBinaryExpression -> {
                 if (parent.getRight() == expression) {
                     val operationToken = parent.getOperationToken()

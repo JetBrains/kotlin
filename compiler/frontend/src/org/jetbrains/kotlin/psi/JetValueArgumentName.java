@@ -18,16 +18,23 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.JetNodeTypes;
+import org.jetbrains.kotlin.name.Name;
 
-public class JetValueArgumentName extends JetElementImpl {
+public class JetValueArgumentName extends JetElementImpl implements ValueArgumentName {
     public JetValueArgumentName(@NotNull ASTNode node) {
         super(node);
     }
 
-    @Nullable @IfNotParsed
+    @Override
+    @NotNull
     public JetSimpleNameExpression getReferenceExpression() {
         return (JetSimpleNameExpression) findChildByType(JetNodeTypes.REFERENCE_EXPRESSION);
+    }
+
+    @NotNull
+    @Override
+    public Name getAsName() {
+        return getReferenceExpression().getReferencedNameAsName();
     }
 }

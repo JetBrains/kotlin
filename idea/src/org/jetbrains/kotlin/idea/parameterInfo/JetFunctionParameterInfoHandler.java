@@ -385,6 +385,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
 
         ResolutionFacade resolutionFacade = ResolvePackage.getResolutionFacade(callNameExpression.getContainingJetFile());
         BindingContext bindingContext = resolutionFacade.analyze(callNameExpression, BodyResolveMode.FULL);
+        ModuleDescriptor moduleDescriptor = resolutionFacade.findModuleDescriptor(callNameExpression);
 
         JetScope scope = bindingContext.get(BindingContext.RESOLUTION_SCOPE, callNameExpression);
         final DeclarationDescriptor placeDescriptor;
@@ -409,7 +410,7 @@ public class JetFunctionParameterInfoHandler implements ParameterInfoHandlerWith
                 return name.equals(refName);
             }
         };
-        Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, visibilityFilter).getReferenceVariants(
+        Collection<DeclarationDescriptor> variants = new ReferenceVariantsHelper(bindingContext, moduleDescriptor, file.getProject(), visibilityFilter).getReferenceVariants(
                 callNameExpression, new DescriptorKindFilter(DescriptorKindFilter.FUNCTIONS_MASK | DescriptorKindFilter.CLASSIFIERS_MASK,
                                                              Collections.<DescriptorKindExclude>emptyList()), false, nameFilter);
 

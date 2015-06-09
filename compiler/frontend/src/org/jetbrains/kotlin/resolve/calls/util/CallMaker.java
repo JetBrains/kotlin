@@ -60,7 +60,7 @@ public class CallMaker {
         }
 
         @Override
-        public JetValueArgumentName getArgumentName() {
+        public ValueArgumentName getArgumentName() {
             return null;
         }
 

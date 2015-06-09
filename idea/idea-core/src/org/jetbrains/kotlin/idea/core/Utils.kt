@@ -29,7 +29,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
     if (parameters.isEmpty()) return emptyMap()
 
     val map = HashMap<ValueArgument, ValueParameterDescriptor>()
-    val parametersByName = parameters.toMap { it.getName().asString() }
+    val parametersByName = parameters.toMap { it.getName() }
 
     var positionalArgumentIndex: Int? = 0
 
@@ -38,7 +38,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
             map[argument] = parameters.last()
         }
         else {
-            val argumentName = argument.getArgumentName()?.getReferenceExpression()?.getReferencedName()
+            val argumentName = argument.getArgumentName()?.asName
 
             if (argumentName != null) {
                 if (targetDescriptor.hasStableParameterNames()) {

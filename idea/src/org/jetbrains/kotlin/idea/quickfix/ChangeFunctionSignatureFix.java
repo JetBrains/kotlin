@@ -98,11 +98,11 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
     }
 
     protected static String getNewArgumentName(ValueArgument argument, JetNameValidator validator) {
-        JetValueArgumentName argumentName = argument.getArgumentName();
+        ValueArgumentName argumentName = argument.getArgumentName();
         JetExpression expression = argument.getArgumentExpression();
 
         if (argumentName != null) {
-            return validator.validateName(argumentName.getName());
+            return validator.validateName(argumentName.getAsName().asString());
         }
         else if (expression != null) {
             return JetNameSuggester.suggestNames(expression, validator, "param")[0];

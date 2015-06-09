@@ -1396,6 +1396,87 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             }
         }
 
+        @TestMetadata("idea/idea-completion/testData/basic/common/shadowing")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Shadowing extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInShadowing() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/shadowing"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("InInitializer1.kt")
+            public void testInInitializer1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/InInitializer1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InInitializer2.kt")
+            public void testInInitializer2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/InInitializer2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InInitializer3.kt")
+            public void testInInitializer3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/InInitializer3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Locals1.kt")
+            public void testLocals1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/Locals1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Locals2.kt")
+            public void testLocals2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/Locals2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Overloads.kt")
+            public void testOverloads() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/Overloads.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OverloadsAndVararg.kt")
+            public void testOverloadsAndVararg() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/OverloadsAndVararg.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferCloserMember.kt")
+            public void testPreferCloserMember() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferCloserMember.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferMemberExtension.kt")
+            public void testPreferMemberExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMemberExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferMemberToExtension.kt")
+            public void testPreferMemberToExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMemberToExtension.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferMemberToGlobal.kt")
+            public void testPreferMemberToGlobal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMemberToGlobal.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("PreferMoreSpecificExtension.kt")
+            public void testPreferMoreSpecificExtension() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/PreferMoreSpecificExtension.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/idea-completion/testData/basic/common/typeArgsOrNot")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

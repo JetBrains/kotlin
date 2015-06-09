@@ -1,4 +1,5 @@
 /*
+
  * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,34 +17,37 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import java.util.*
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.idea.util.CallType
-import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallable
-import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
+import java.util.*
 
 public class ReferenceVariantsHelper(
         private val context: BindingContext,
+        private val moduleDescriptor: ModuleDescriptor,
+        private val project: Project,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
 ) {
-
     public data class ReceiversData(
             public val receivers: Collection<ReceiverValue>,
             public val callType: CallType
@@ -59,7 +63,10 @@ public class ReferenceVariantsHelper(
             useRuntimeReceiverType: Boolean,
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
-        return getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter).filter(visibilityFilter)
+        val variants = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter)
+                .filter(visibilityFilter)
+        return ShadowedDeclarationsFilter(context, moduleDescriptor, project).filter(variants, expression)
+        //TODO: if visibility filter is empty, filter out shadowed can work incorrectly!
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(
@@ -69,7 +76,7 @@ public class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         val parent = expression.getParent()
-        val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
+        val resolutionScope = context.correctedResolutionScope(expression) ?: return listOf()
         val containingDeclaration = resolutionScope.getContainingDeclaration()
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {
@@ -80,12 +87,11 @@ public class ReferenceVariantsHelper(
             return resolutionScope.getDescriptorsFiltered(kindFilter.restrictedToKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK), nameFilter)
         }
 
+        val descriptors = LinkedHashSet<DeclarationDescriptor>()
+
         val pair = getExplicitReceiverData(expression)
         if (pair != null) {
             val (receiverExpression, callType) = pair
-
-            // Process as call expression
-            val descriptors = HashSet<DeclarationDescriptor>()
 
             val qualifier = context[BindingContext.QUALIFIER, receiverExpression]
             if (qualifier != null) {
@@ -107,20 +113,16 @@ public class ReferenceVariantsHelper(
 
                 descriptors.addCallableExtensions(resolutionScope, receiverValue, dataFlowInfo, callType, kindFilter, nameFilter)
             }
-
-            return descriptors
         }
         else {
             val dataFlowInfo = context.getDataFlowInfo(expression)
-
-            val descriptorsSet = HashSet<DeclarationDescriptor>()
 
             // process instance members that can be called via implicit receiver's instances
             val receivers = resolutionScope.getImplicitReceiversWithInstance()
             val receiverValues = receivers.map { it.getValue() }
             for (receiverValue in receiverValues) {
                 for (variant in SmartCastUtils.getSmartCastVariantsWithLessSpecificExcluded(receiverValue, context, containingDeclaration, dataFlowInfo)) {
-                    descriptorsSet.addMembersFromReceiver(variant, CallType.NORMAL, kindFilter, nameFilter)
+                    descriptors.addMembersFromReceiver(variant, CallType.NORMAL, kindFilter, nameFilter)
                 }
             }
 
@@ -129,17 +131,17 @@ public class ReferenceVariantsHelper(
                 if (descriptor is CallableDescriptor && descriptor.getExtensionReceiverParameter() != null) {
                     val dispatchReceiver = descriptor.getDispatchReceiverParameter()
                     if (dispatchReceiver == null || dispatchReceiver in receivers) {
-                        descriptorsSet.addAll(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL, containingDeclaration))
+                        descriptors.addAll(descriptor.substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.NORMAL, containingDeclaration))
                     }
                 }
                 else {
                     if (descriptor is CallableDescriptor && descriptor.getDispatchReceiverParameter() != null) continue // should already be processed via implicit receivers
-                    descriptorsSet.add(descriptor)
+                    descriptors.add(descriptor)
                 }
             }
-
-            return descriptorsSet
         }
+
+        return descriptors
     }
 
     private fun MutableCollection<DeclarationDescriptor>.addMembersFromReceiver(

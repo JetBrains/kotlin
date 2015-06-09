@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CallType
+import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
 import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
@@ -74,6 +75,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     private val file = position.getContainingFile() as JetFile
     protected val resolutionFacade: ResolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor: ModuleDescriptor = resolutionFacade.findModuleDescriptor(file)
+    protected val project: Project = position.getProject()
 
     protected val reference: JetSimpleNameReference?
     protected val expression: JetExpression?
@@ -126,7 +128,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
-    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext) { isVisibleDescriptor(it) }
+    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, project) { isVisibleDescriptor(it) }
 
     protected val receiversData: ReferenceVariantsHelper.ReceiversData? = reference?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it.expression) }
 
@@ -157,8 +159,6 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         LookupElementsCollector.Context.NORMAL
 
     protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, lookupElementFactory, inDescriptor, collectorContext)
-
-    protected val project: Project = position.getProject()
 
     protected val originalSearchScope: GlobalSearchScope = ResolutionFacade.getResolveScope(parameters.getOriginalFile() as JetFile)
 
@@ -224,8 +224,12 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected fun getTopLevelCallables(): Collection<DeclarationDescriptor>
             = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
 
-    protected fun getTopLevelExtensions(): Collection<CallableDescriptor>
-            = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
+    protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
+        val extensions = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
+        //TODO: it filters out too much
+        //TODO: not filtered out dominated by members
+        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project, importDeclarations = true).filter(extensions, reference.expression)
+    }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
         AllClassesCompletion(
@@ -451,7 +455,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                     val dummyArgument = object : FunctionLiteralArgument {
                         override fun getFunctionLiteral() = throw UnsupportedOperationException()
                         override fun getArgumentExpression() = throw UnsupportedOperationException()
-                        override fun getArgumentName(): JetValueArgumentName? = null
+                        override fun getArgumentName(): ValueArgumentName? = null
                         override fun isNamed() = false
                         override fun asElement() = throw UnsupportedOperationException()
                         override fun getSpreadElement(): LeafPsiElement? = null
