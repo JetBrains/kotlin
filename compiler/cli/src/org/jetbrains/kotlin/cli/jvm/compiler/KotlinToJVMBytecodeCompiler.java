@@ -287,6 +287,8 @@ public class KotlinToJVMBytecodeCompiler {
             return null;
         }
 
+        if (!result.getShouldGenerateCode()) return null;
+
         result.throwIfError();
 
         return generate(environment, result, environment.getSourceFiles(), null, null);

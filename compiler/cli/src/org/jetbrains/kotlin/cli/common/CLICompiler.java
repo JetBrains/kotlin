@@ -152,9 +152,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 Disposer.dispose(rootDisposable);
             }
         }
-        catch (CompilationInterruptedException e) {
-            return e.exitCode;
-        }
         catch (Throwable t) {
             groupingCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(t),
                                      CompilerMessageLocation.NO_LOCATION);
@@ -202,14 +199,6 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         catch (CompileEnvironmentException e) {
             System.err.println(e.getMessage());
             return INTERNAL_ERROR;
-        }
-    }
-
-    public static class CompilationInterruptedException extends RuntimeException {
-        final ExitCode exitCode;
-
-        public CompilationInterruptedException(ExitCode exitCode) {
-            this.exitCode = exitCode;
         }
     }
 }

@@ -155,7 +155,8 @@ public enum TopDownAnalyzerFacadeForJVM {
                     AnalysisCompletedHandlerExtension.Companion.getInstances(moduleContext.getProject());
 
             for (AnalysisCompletedHandlerExtension extension : analysisCompletedHandlerExtensions) {
-                extension.analysisCompleted(project, module, bindingContext, files);
+                AnalysisResult result = extension.analysisCompleted(project, module, bindingContext, files);
+                if (result != null) return result;
             }
 
             return AnalysisResult.success(bindingContext, module);
