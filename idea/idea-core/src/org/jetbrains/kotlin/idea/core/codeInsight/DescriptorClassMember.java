@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.core.codeInsight;
 import com.intellij.codeInsight.generation.ClassMemberWithElement;
 import com.intellij.codeInsight.generation.MemberChooserObject;
 import com.intellij.codeInsight.generation.MemberChooserObjectBase;
+import com.intellij.codeInsight.generation.PsiElementMemberChooserObject;
 import com.intellij.openapi.util.Iconable;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.JetDescriptorIconProvider;
 import org.jetbrains.kotlin.psi.JetClass;
 import org.jetbrains.kotlin.psi.JetDeclaration;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetNamedDeclaration;
 import org.jetbrains.kotlin.renderer.*;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -99,6 +101,9 @@ public class DescriptorClassMember extends MemberChooserObjectBase implements Cl
         if (myPsiElement instanceof JetDeclaration) {
             // kotlin
             declaration = PsiTreeUtil.getStubOrPsiParentOfType(myPsiElement, JetNamedDeclaration.class);
+            if (declaration == null) {
+                declaration = PsiTreeUtil.getStubOrPsiParentOfType(myPsiElement, JetFile.class);
+            }
         }
         else {
             // java or bytecode
@@ -106,6 +111,12 @@ public class DescriptorClassMember extends MemberChooserObjectBase implements Cl
         }
         assert parent != null : NO_PARENT_FOR + myDescriptor;
         assert declaration != null : NO_PARENT_FOR + myPsiElement;
+
+        if (declaration instanceof JetFile) {
+            JetFile file = (JetFile) declaration;
+            return new PsiElementMemberChooserObject(file, file.getName());
+        }
+
         return new DescriptorClassMember(declaration, parent);
     }
 

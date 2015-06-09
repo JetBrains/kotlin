@@ -29,6 +29,9 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.core.codeInsight.DescriptorClassMember;
+import org.jetbrains.kotlin.psi.JetProperty;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -79,24 +82,18 @@ public abstract class AddFieldBreakpointDialog extends DialogWrapper {
         });
 
         myFieldChooser.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+            public void actionPerformed(@NotNull ActionEvent e) {
                 PsiClass selectedClass = getSelectedClass();
-                if (selectedClass != null) {
-                    PsiField[] fields = selectedClass.getFields();
-                    MemberChooser<PsiFieldMember> chooser = new MemberChooser<PsiFieldMember>(
-                            ContainerUtil.map2Array(fields, PsiFieldMember.class, new Function<PsiField, PsiFieldMember>() {
-                                public PsiFieldMember fun(final PsiField s) {
-                                    return new PsiFieldMember(s);
-                                }
-                            }), false, false, myProject);
-                    chooser.setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", fields.length));
-                    chooser.setCopyJavadocVisible(false);
-                    chooser.show();
-                    List<PsiFieldMember> selectedElements = chooser.getSelectedElements();
-                    if (selectedElements != null && selectedElements.size() == 1) {
-                        PsiField field = selectedElements.get(0).getElement();
-                        myFieldChooser.setText(field.getName());
-                    }
+                DescriptorClassMember[] properties = DialogPackage.collectProperties(selectedClass);
+                MemberChooser<DescriptorClassMember> chooser = new MemberChooser<DescriptorClassMember>(properties, false, false, myProject);
+                chooser.setTitle(DebuggerBundle.message("add.field.breakpoint.dialog.field.chooser.title", properties.length));
+                chooser.setCopyJavadocVisible(false);
+                chooser.show();
+                List<DescriptorClassMember> selectedElements = chooser.getSelectedElements();
+                if (selectedElements != null && selectedElements.size() == 1) {
+                    JetProperty field = (JetProperty) selectedElements.get(0).getElement();
+                    myFieldChooser.setText(field.getName());
                 }
             }
         });
