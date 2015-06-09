@@ -3,11 +3,11 @@ package test
 import kotlin.platform.platformStatic
 
 object A {
-    [platformStatic] val b: String = "OK"
+    @platformStatic val b: String = "OK"
 
     var A.c: String
-        [platformStatic]get() = "OK"
-        [platformStatic]set(t: String) {}
+        @platformStatic get() = "OK"
+        @platformStatic set(t: String) {}
 
 }
 

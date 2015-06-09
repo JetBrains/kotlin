@@ -1,4 +1,4 @@
-[annot]
-[foo] fun foo() {
+@annot
+@foo fun foo() {
 }
 

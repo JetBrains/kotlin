@@ -1,4 +1,4 @@
->>> [data] class Person(val name: String)
+>>> @[data] class Person(val name: String)
 >>> var x: String? = "hello"
 >>> val y = x?.let { Person(it) }
 >>> y

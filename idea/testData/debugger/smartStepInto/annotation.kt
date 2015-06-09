@@ -1,5 +1,5 @@
 fun foo() {
-    [Ann() Ann] val a = bar()<caret>
+    @Ann() @Ann val a = bar()<caret>
 }
 
 annotation class Ann

@@ -2,4 +2,4 @@
 // ERROR: Unresolved reference: ann
 
 @suppress("REDUNDANT_NULLABLE")
-[ann] fun foo(): String?<caret>? = null
+@ann fun foo(): String?<caret>? = null

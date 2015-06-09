@@ -1,4 +1,4 @@
-[annot]
+@annot
 final fun foo() {
 }
 

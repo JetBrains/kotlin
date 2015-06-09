@@ -16,7 +16,7 @@ anno("extension property")
 val Double.p2: Double get() = null
 
 anno("top level class")
-class C1 [anno("constructor")] () {
+class C1 @anno("constructor") constructor() {
     anno("member function")
     fun f3(anno("member function parameter") p: Int) {}
 

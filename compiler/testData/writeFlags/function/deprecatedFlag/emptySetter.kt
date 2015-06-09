@@ -1,6 +1,6 @@
 class MyClass() {
     var test = ""
-        [deprecated("")] set
+        @deprecated("") set
 }
 
 // TESTED_OBJECT_KIND: function

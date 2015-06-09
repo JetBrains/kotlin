@@ -3,5 +3,5 @@ package test
 annotation class Anno
 
 interface Trait {
-    [Anno] val property: Int
+    @[Anno] val property: Int
 }

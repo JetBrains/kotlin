@@ -4,11 +4,11 @@ import kotlin.platform.platformStatic
 
 class A {
     companion object {
-        [platformStatic] val b: String = "OK"
+        @platformStatic val b: String = "OK"
 
         var A.c: String
-            [platformStatic] get() = "OK"
-            [platformStatic] set(t: String) {}
+            @platformStatic get() = "OK"
+            @platformStatic set(t: String) {}
     }
 }
 

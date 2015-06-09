@@ -1,1 +1,1 @@
-val c = [x] val a
+val c = @[x] val a

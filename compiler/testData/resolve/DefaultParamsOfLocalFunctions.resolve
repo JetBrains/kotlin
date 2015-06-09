@@ -10,7 +10,7 @@ package m
 fun test() {
     ~x~val x = 2
 
-    [`zzz`zzz] fun local(
+    @[`zzz`zzz] fun local(
             `zzz`zzz i: Int = `x`x,
             j: Int = 3,
             s: String = "$`x`x",

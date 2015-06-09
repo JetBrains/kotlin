@@ -1,6 +1,6 @@
 import kotlin.platform.*
 
-[platformName("bar")]
+@platformName("bar")
 fun foo() = "foo"
 
 fun box(): String {

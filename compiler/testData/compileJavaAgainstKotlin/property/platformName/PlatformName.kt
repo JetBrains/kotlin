@@ -3,7 +3,7 @@ package test
 import kotlin.platform.*
 
 var v: Int = 1
-    [platformName("vget")]
+    @platformName("vget")
     get
-    [platformName("vset")]
+    @platformName("vset")
     set

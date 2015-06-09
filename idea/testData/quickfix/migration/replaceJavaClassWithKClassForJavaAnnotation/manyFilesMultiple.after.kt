@@ -7,12 +7,12 @@ Ann(String::class, arg = Int::class, x = 1, args = array(Double::class)) class M
     Ann(String::class, arg = Int::class, args = array(Double::class)) class Nested {
         Ann(String::class, arg = Int::class, args = array(Double::class)) fun foo1() {
 
-            [Ann(String::class, arg = Int::class, args = array(Double::class))] class Local
+            @Ann(String::class, arg = Int::class, args = array(Double::class)) class Local
         }
 
-        [Ann(String::class, arg = Int::class, args = array(Double::class), x = 1)] fun foo2() {
+        @Ann(String::class, arg = Int::class, args = array(Double::class), x = 1) fun foo2() {
 
-            [Ann(String::class, arg = Int::class, args = array(Double::class))] val local = 0
+            @Ann(String::class, arg = Int::class, args = array(Double::class)) val local = 0
         }
     }
 

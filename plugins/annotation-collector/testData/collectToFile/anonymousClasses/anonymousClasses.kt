@@ -4,7 +4,7 @@ public class SomeClass {
 
     private fun a() {
         object : Any() {
-            [Deprecated]
+            @Deprecated
             val property: Int = 5
         }
 

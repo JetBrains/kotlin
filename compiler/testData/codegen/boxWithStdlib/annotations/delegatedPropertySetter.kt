@@ -5,7 +5,7 @@ annotation class First
 
 class MyClass() {
     public var x: String by Delegate()
-        [First] set
+        @First set
 }
 
 class Delegate {

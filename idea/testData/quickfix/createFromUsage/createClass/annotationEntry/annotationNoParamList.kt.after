@@ -1,6 +1,6 @@
 // "Create annotation 'foo'" "true"
 
-[foo] fun test() {
+@[foo] fun test() {
 
 }
 

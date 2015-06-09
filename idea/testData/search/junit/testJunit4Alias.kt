@@ -4,7 +4,7 @@ import org.junit.Test
 class MyTestClass {
     test fun test1() {}
 
-    [Deprecated test] fun test2() {}
+    @Deprecated @test fun test2() {}
 
     Test fun test3() {}
 }

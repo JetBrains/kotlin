@@ -8,13 +8,13 @@ Ann1(javaClass<MyClass1>()) class MyClass2
 
 annotation class Ann2(val arg: Array<Class<*>>)
 
-Ann2(arg = array(javaClass<Double>())) class MyClass3 [Ann1(javaClass<Char>())] () {
+Ann2(arg = array(javaClass<Double>())) class MyClass3 @Ann1(javaClass<Char>()) constructor() {
     annotation class Ann3(val arg: Class<*> = javaClass<Any>())
 
     Ann3(javaClass<String>()) class Nested {
         Ann1(arg = javaClass<String>()) fun foo1() {
             annotation class LocalAnn(val arg: Class<*>)
-            [LocalAnn(javaClass<Class<*>>())] val x = 1
+            @LocalAnn(javaClass<Class<*>>()) val x = 1
         }
     }
 

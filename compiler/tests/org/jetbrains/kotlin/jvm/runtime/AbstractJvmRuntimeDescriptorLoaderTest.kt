@@ -168,7 +168,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
     private fun addRuntimeRetentionToKotlinSource(text: String): String {
         return text.replace(
                 "annotation class",
-                "[java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)] annotation class"
+                "@[java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)] annotation class"
         )
     }
 

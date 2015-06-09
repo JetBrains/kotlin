@@ -1,4 +1,4 @@
 annotation class Foo(val s: String)
 
-[Foo("...")]
+@Foo("...")
 class ExtraAnnotations

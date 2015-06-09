@@ -1,4 +1,4 @@
-class C [kotlin.jvm.jvmOverloads] (s1: String, s2: String = "K") {
+class C @kotlin.jvm.jvmOverloads constructor(s1: String, s2: String = "K") {
     public val status: String = s1 + s2
 }
 

@@ -1,7 +1,7 @@
 annotation class Hello
 val v = 1
 
-fun foo([<caret>) { }
+fun foo(@[<caret>) { }
 
 // INVOCATION_COUNT: 1
 // EXIST: Hello

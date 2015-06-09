@@ -8,6 +8,6 @@ class MyClass {
 }
 
 private fun __dummyTestFun__() {
-    [MyClass.P] val t: Int = 1
+    @[MyClass.P] val t: Int = 1
     t
 }

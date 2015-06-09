@@ -9,12 +9,12 @@ Retention(RetentionPolicy.RUNTIME)
 annotation class Second(val value: String)
 
 enum class E {
-    [First]
+    @First
     E1 {
         fun foo() = "something"
     }
 
-    [Second("OK")]
+    @Second("OK")
     E2
 }
 

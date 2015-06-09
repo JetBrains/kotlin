@@ -1,4 +1,4 @@
-[file: kotlin.<caret>deprecated("message")]
+@file:[kotlin.<caret>deprecated("message")]
 
 package foo
 

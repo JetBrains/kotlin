@@ -3,8 +3,8 @@ package rendererTest
 annotation class TheAnnotation
 annotation class AnotherAnnotation
 
-[TheAnnotation]
-public open class TheClass<out T : Int, X> [AnotherAnnotation] () {
+@TheAnnotation
+public open class TheClass<out T : Int, X> @AnotherAnnotation constructor() {
   private val privateVal: Int = 5
 
   val shouldBeFinal: Int = 5
@@ -14,7 +14,7 @@ public open class TheClass<out T : Int, X> [AnotherAnnotation] () {
 
   protected abstract fun foo() {}
 
-  [TheAnnotation] private constructor()
+  @TheAnnotation private constructor()
 
   private class Inner {}
 }

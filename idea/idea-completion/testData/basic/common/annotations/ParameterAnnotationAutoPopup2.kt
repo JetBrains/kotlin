@@ -1,6 +1,6 @@
 val v = 1
 
-fun foo([volatile i<caret>) { }
+fun foo(@[volatile i<caret>) { }
 
 // INVOCATION_COUNT: 0
 // EXIST: inlineOptions

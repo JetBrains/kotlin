@@ -4,7 +4,7 @@ class A {
     annotation class Ann(val info: String)
 
     fun foo() {
-        [Ann("class")] class Local {
+        @Ann("class") class Local {
             Ann("fun") fun foo(): Local = this
             Ann("val") val x = foo()
 

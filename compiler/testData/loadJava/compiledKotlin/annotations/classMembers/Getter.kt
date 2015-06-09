@@ -4,5 +4,5 @@ annotation class Anno
 
 class Class {
     val property: Int
-        [Anno] get() = 42
+        @[Anno] get() = 42
 }

@@ -1,4 +1,4 @@
 package test
 
-[AnnotatedAnnotation]
+@[AnnotatedAnnotation]
 public annotation class AnnotatedAnnotation

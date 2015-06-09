@@ -5,5 +5,5 @@ annotation class A
 class Class {
     var Int.foo: Int
         get() = this
-        set([A] value) {}
+        set(@[A] value) {}
 }

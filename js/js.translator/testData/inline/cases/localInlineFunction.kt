@@ -12,7 +12,7 @@ inline fun repeatAction(times: Int, action: () -> Unit) {
 fun localWithoutCapture(a: Int, b: Int): Int {
     var sum = 0
 
-    [inline] fun inc(x: Int): Int {
+    @inline fun inc(x: Int): Int {
         return x + 1
     }
 
@@ -26,7 +26,7 @@ fun localWithoutCapture(a: Int, b: Int): Int {
 fun localWithCapture(a: Int, b: Int): Int {
     var sum = 0
 
-    [inline] fun inc() {
+    @inline fun inc() {
         sum++
     }
 

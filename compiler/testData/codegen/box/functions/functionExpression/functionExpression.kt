@@ -18,7 +18,7 @@ fun box() : String {
     if(  1.(fun Int.(i: Int) = i + this)(1) != 2) return "test 6 failed";
     if(  (fooT1<String>()("mama")) != "mama")  return "test 7 failed";
 
-    val a = [A] fun Int.() = this + 1
+    val a = @A fun Int.() = this + 1
     if (1.a() != 2) return "test 8 failed"
     val b = ( fun Int.() = this + 1)
     if (1.b() != 2) return "test 9 failed"

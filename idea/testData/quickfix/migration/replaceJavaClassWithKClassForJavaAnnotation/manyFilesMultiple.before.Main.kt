@@ -7,12 +7,12 @@ Ann(javaClass<String>(), arg = javaClass<Int>(), x = 1, args = array(javaClass<D
     Ann(javaClass<String>(), arg = javaClass<Int>(), args = array(javaClass<Double>())) class Nested {
         Ann(javaClass<String>(), arg = javaClass<Int>(), args = array(javaClass<Double>())) fun foo1() {
 
-            [Ann(javaClass<String>(), arg = javaClass<Int>(), args = array(javaClass<Double>()))] class Local
+            @Ann(javaClass<String>(), arg = javaClass<Int>(), args = array(javaClass<Double>())) class Local
         }
 
-        [Ann(javaClass<String>(), arg = javaClass<Int>(), args = array(javaClass<Double>()), x = 1)] fun foo2() {
+        @Ann(javaClass<String>(), arg = javaClass<Int>(), args = array(javaClass<Double>()), x = 1) fun foo2() {
 
-            [Ann(javaClass<String>(), arg = javaClass<Int>(), args = array(javaClass<Double>()))] val local = 0
+            @Ann(javaClass<String>(), arg = javaClass<Int>(), args = array(javaClass<Double>())) val local = 0
         }
     }
 

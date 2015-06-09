@@ -1,6 +1,6 @@
-[Deprecated] class TestClass1 {}
+@Deprecated class TestClass1 {}
 
-[java.lang.Deprecated] class TestClass2 {}
+@java.lang.Deprecated class TestClass2 {}
 
 Deprecated class TestClass3 {}
 

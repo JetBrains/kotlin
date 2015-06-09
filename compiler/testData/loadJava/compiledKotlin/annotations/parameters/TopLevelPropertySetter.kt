@@ -5,4 +5,4 @@ annotation class B
 
 var foo: Int
     get() = 42
-    set([A B] value) {}
+    set(@[A B] value) {}

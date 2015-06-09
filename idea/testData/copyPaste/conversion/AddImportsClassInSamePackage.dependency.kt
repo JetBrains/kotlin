@@ -3,6 +3,6 @@ package ppp
 import kotlin.platform.platformStatic
 
 public object Dependency {
-    [platformStatic]
+    @platformStatic
     public val FIELD: Int = 1
 }

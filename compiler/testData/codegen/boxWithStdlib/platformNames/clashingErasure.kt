@@ -2,7 +2,7 @@ import kotlin.platform.*
 
 fun <T> List<T>.foo() = "foo"
 
-[platformName("fooInt")]
+@platformName("fooInt")
 fun List<Int>.foo() = "fooInt"
 
 fun box(): String {

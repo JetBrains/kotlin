@@ -7,7 +7,7 @@ open class B
 class A {
 
     companion object {
-        [platformStatic]
+        @platformStatic
         fun <T: B> a(s: T) : T {
             return s
         }

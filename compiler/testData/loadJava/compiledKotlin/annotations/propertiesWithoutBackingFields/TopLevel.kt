@@ -2,5 +2,5 @@ package test
 
 annotation class Anno
 
-[Anno] val property: Int
+@[Anno] val property: Int
     get() = 42

@@ -1,1 +1,1 @@
-class A [Deprecated] private [Override Deprecated] ()
+class A @[Deprecated] private @[Override Deprecated] ()

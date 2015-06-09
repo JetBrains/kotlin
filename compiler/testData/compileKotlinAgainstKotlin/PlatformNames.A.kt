@@ -2,11 +2,11 @@ package lib
 
 import kotlin.platform.*
 
-[platformName("bar")]
+@platformName("bar")
 fun foo() = "foo"
 
 var v: Int = 1
-    [platformName("vget")]
+    @platformName("vget")
     get
-    [platformName("vset")]
+    @platformName("vset")
     set

@@ -2,7 +2,7 @@
 
 fun foo() {
     @suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-    [ann] ""<caret>!!
+    @ann ""<caret>!!
 }
 
 annotation class ann

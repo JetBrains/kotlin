@@ -5,10 +5,10 @@ object A {
     platformStatic var a: Int = 1
 
     var b: Int = 1
-        [platformStatic] get
+        @platformStatic get
 
     var c: Int = 1
-        [platformStatic] set
+        @platformStatic set
 
 }
 

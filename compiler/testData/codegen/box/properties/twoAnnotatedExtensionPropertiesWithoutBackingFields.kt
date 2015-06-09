@@ -1,9 +1,9 @@
 annotation class Anno
 
-[Anno] val Int.foo: Int
+@Anno val Int.foo: Int
     get() = this
 
-[Anno] val String.foo: Int
+@Anno val String.foo: Int
     get() = 42
 
 fun box() = if (42.foo == 42 && "OK".foo == 42) "OK" else "Fail"

@@ -2,5 +2,5 @@ package test
 
 import kotlin.platform.*
 
-[platformName("bar")]
+@platformName("bar")
 fun foo() {}

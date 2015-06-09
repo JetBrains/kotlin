@@ -1,5 +1,5 @@
 // "Create annotation 'foo'" "true"
 
-[<caret>foo()] fun test() {
+@[<caret>foo()] fun test() {
 
 }

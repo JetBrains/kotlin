@@ -1,2 +1,2 @@
-[Deprecated Override] fun foo() {
+@[Deprecated Override] fun foo() {
 }

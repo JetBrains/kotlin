@@ -54,7 +54,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testPropField() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("[Deprecated] var x = 0");
+        ClassLoader loader = loadFileGetClassLoader("@[Deprecated] var x = 0");
         Class<?> packageClass = getPackageClass(loader);
         assertNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
@@ -66,7 +66,7 @@ public class AnnotationGenTest extends CodegenTestCase {
 
     public void testPropGetter() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("var x = 0\n" +
-                 "[Deprecated] get");
+                 "@[Deprecated] get");
         Class<?> packageClass = getPackageClass(loader);
         assertNotNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
@@ -78,7 +78,7 @@ public class AnnotationGenTest extends CodegenTestCase {
 
     public void testPropSetter() throws Exception {
         ClassLoader loader = loadFileGetClassLoader("var x = 0\n" +
-                 "[Deprecated] set");
+                 "@[Deprecated] set");
         Class<?> packageClass = getPackageClass(loader);
         assertNull(packageClass.getDeclaredMethod("getX").getAnnotation(Deprecated.class));
         assertNotNull(packageClass.getDeclaredMethod("setX", int.class).getAnnotation(Deprecated.class));
@@ -89,7 +89,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testAnnotationForParamInTopLevelFunction() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("fun x([Deprecated] i: Int) {}");
+        ClassLoader loader = loadFileGetClassLoader("fun x(@[Deprecated] i: Int) {}");
         Class<?> packageClass = getPackageClass(loader);
         Method packageClassMethod = packageClass.getMethod("x", int.class);
         assertNotNull(packageClassMethod);
@@ -101,7 +101,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testAnnotationForParamInInstanceFunction() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("class A() { fun x([Deprecated] i: Int) {}}");
+        loadText("class A() { fun x(@[Deprecated] i: Int) {}}");
         Class<?> aClass = generateClass("A");
         Method x = aClass.getMethod("x", int.class);
         assertNotNull(x);
@@ -111,7 +111,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testAnnotationForParamInInstanceExtensionFunction() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("class A() { fun String.x([Deprecated] i: Int) {}}");
+        loadText("class A() { fun String.x(@[Deprecated] i: Int) {}}");
         Class<?> aClass = generateClass("A");
         Method x = aClass.getMethod("x", String.class, int.class);
         assertNotNull(x);
@@ -121,7 +121,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testParamInConstructor() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("class A ([Deprecated] x: Int) {}");
+        loadText("class A (@[Deprecated] x: Int) {}");
         Class<?> aClass = generateClass("A");
         Constructor constructor = aClass.getDeclaredConstructor(int.class);
         assertNotNull(constructor);
@@ -131,7 +131,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testParamInEnumConstructor() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("enum class E([Deprecated] p: String)");
+        loadText("enum class E(@[Deprecated] p: String)");
         Class<?> klass = generateClass("E");
         Constructor constructor = klass.getDeclaredConstructor(String.class, int.class, String.class);
         assertNotNull(constructor);
@@ -141,7 +141,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testParamInInnerConstructor() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("class Outer { inner class Inner([Deprecated] x: Int) }");
+        loadText("class Outer { inner class Inner(@[Deprecated] x: Int) }");
         Class<?> outer = generateClass("Outer");
         Class<?> inner = outer.getDeclaredClasses()[0];
         Constructor constructor = inner.getDeclaredConstructor(outer, int.class);
@@ -152,7 +152,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testPropFieldInConstructor() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("class A ([Deprecated] var x: Int) {}");
+        loadText("class A (@[Deprecated] var x: Int) {}");
         Class<?> aClass = generateClass("A");
         Constructor constructor = aClass.getDeclaredConstructor(int.class);
         assertNotNull(constructor);
@@ -199,7 +199,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     } 
 
     public void testConstructor() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("class A [Deprecated] () {}");
+        loadText("class A @[Deprecated] () {}");
         Class<?> aClass = generateClass("A");
         Constructor x = aClass.getDeclaredConstructor();
         Deprecated annotation = (Deprecated) x.getAnnotation(Deprecated.class);
@@ -207,7 +207,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testMethod() throws Exception {
-        ClassLoader loader = loadFileGetClassLoader("[Deprecated] fun x () {}");
+        ClassLoader loader = loadFileGetClassLoader("@[Deprecated] fun x () {}");
 
         Class<?> packageClass = getPackageClass(loader);
         Method packageClassMethod = packageClass.getDeclaredMethod("x");
@@ -220,7 +220,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     }
 
     public void testClass() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("[Deprecated] class A () {}");
+        loadText("@[Deprecated] class A () {}");
         Class aClass = generateClass("A");
         Deprecated annotation = (Deprecated) aClass.getAnnotation(Deprecated.class);
         assertNotNull(annotation);

@@ -18,18 +18,18 @@ val notNullVal: String = ""
 var notNullVar: String = ""
 
 val notNullValWithGet: String
-    [Nullable] get() = ""
+    @[Nullable] get() = ""
 
 var notNullVarWithGetSet: String
-    [Nullable] get() = ""
-    [Nullable] set(v) {}
+    @[Nullable] get() = ""
+    @[Nullable] set(v) {}
 
 val nullableValWithGet: String?
-    [NotNull] get() = ""
+    @[NotNull] get() = ""
 
 var nullableVarWithGetSet: String?
-    [NotNull] get() = ""
-    [NotNull] set(v) {}
+    @NotNull get() = ""
+    @NotNull set(v) {}
 
 private val privateNn: String = ""
 private val privateN: String? = ""

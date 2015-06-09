@@ -1,5 +1,5 @@
 class C {
-    [Ann]
+    @[Ann]
 }
 
-[Ann]
+@[Ann]

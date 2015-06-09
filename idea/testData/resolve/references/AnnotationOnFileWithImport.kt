@@ -1,4 +1,4 @@
-[file: <caret>D("message")]
+@file:[<caret>D("message")]
 
 package foo
 
