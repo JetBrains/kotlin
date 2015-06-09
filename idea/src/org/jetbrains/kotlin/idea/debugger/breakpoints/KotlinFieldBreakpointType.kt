@@ -131,7 +131,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
 
                 result = when (psiClass) {
                     is KotlinLightClassForPackage -> {
-                        psiClass.files.asSequence().map { createBreakpointIfPropertyExists(it, it, className, fieldName) }.firstOrNull()
+                        psiClass.files.asSequence().map { createBreakpointIfPropertyExists(it, it, className, fieldName) }.filterNotNull().firstOrNull()
                     }
                     is KotlinLightClassForExplicitDeclaration -> {
                         val jetClass = psiClass.getOrigin()
