@@ -13,7 +13,6 @@ A(value = {}: kotlin.Array<out kotlin.String>) internal fun test8(): kotlin.Unit
 A(value = {}: kotlin.Array<out kotlin.String>, x = kotlin.Any::class: kotlin.reflect.KClass<kotlin.Any>, y = IntegerValueType(3): IntegerValueType(3)) internal fun test9(): kotlin.Unit
 
 public final annotation class A : kotlin.Annotation {
-    public /*synthesized*/ constructor A(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ x: java.lang.Class<*> = ..., /*2*/ y: kotlin.Int = ...)
     public constructor A(/*0*/ vararg value: kotlin.String /*kotlin.Array<out kotlin.String>*/, /*1*/ x: kotlin.reflect.KClass<*> = ..., /*2*/ y: kotlin.Int = ...)
     public final val value: kotlin.Array<kotlin.String>
     public final val x: kotlin.reflect.KClass<*>

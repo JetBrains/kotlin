@@ -1,7 +1,6 @@
 package
 
 public final annotation class A : kotlin.Annotation {
-    public /*synthesized*/ constructor A(/*0*/ arg: java.lang.Class<*> = ..., /*1*/ x: kotlin.Int = ..., /*2*/ b: B)
     public constructor A(/*0*/ arg: kotlin.reflect.KClass<*> = ..., /*1*/ x: kotlin.Int = ..., /*2*/ b: B)
     public final val arg: kotlin.reflect.KClass<*>
     public final val b: B
@@ -15,7 +14,6 @@ public final annotation class A : kotlin.Annotation {
 }
 
 public final annotation class B : kotlin.Annotation {
-    public /*synthesized*/ constructor B(/*0*/ arg: java.lang.Class<*> = ..., /*1*/ y: kotlin.Int = ...)
     public constructor B(/*0*/ arg: kotlin.reflect.KClass<*> = ..., /*1*/ y: kotlin.Int = ...)
     public final val arg: kotlin.reflect.KClass<*>
     public final val y: kotlin.Int
