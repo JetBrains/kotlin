@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.extensions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
@@ -33,5 +34,5 @@ public interface AnalysisCompletedHandlerExtension {
             project: Project,
             module: ModuleDescriptor,
             bindingContext: BindingContext,
-            files: Collection<JetFile>)
+            files: Collection<JetFile>): AnalysisResult?
 }

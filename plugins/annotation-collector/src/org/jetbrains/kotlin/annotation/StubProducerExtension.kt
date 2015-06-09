@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.annotation
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
@@ -34,7 +35,12 @@ import java.io.File
 
 public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompletedHandlerExtension {
 
-    override fun analysisCompleted(project: Project, module: ModuleDescriptor, bindingContext: BindingContext, files: Collection<JetFile>) {
+    override fun analysisCompleted(
+            project: Project,
+            module: ModuleDescriptor,
+            bindingContext: BindingContext,
+            files: Collection<JetFile>
+    ): AnalysisResult? {
         val forExtraDiagnostics = BindingTraceContext()
         
         val generationState = GenerationState(
@@ -60,7 +66,7 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
         generationState.getFactory().writeAllTo(stubsOutputDir)
 
         generationState.destroy()
-        throw CLICompiler.CompilationInterruptedException(ExitCode.OK)
+        return AnalysisResult.success(BindingContext.EMPTY, module, shouldGenerateCode = false)
     }
 }
 
