@@ -477,6 +477,7 @@
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.KotlinJavaScriptMetaFileDecompiler"/>
     
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.versions.KotlinAbiVersionIndex"/>
+    <fileBasedIndex implementation="org.jetbrains.kotlin.idea.versions.KotlinJavaScriptAbiVersionIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinClassFileIndex"/>
     <fileBasedIndex implementation="org.jetbrains.kotlin.idea.vfilefinder.KotlinJavaScriptMetaFileIndex"/>
 
