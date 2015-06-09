@@ -42,6 +42,8 @@ public class AnnotationProcessingManager(
         val JAVA_FQNAME_PATTERN = "^([\\p{L}_$][\\p{L}\\p{N}_$]*\\.)*[\\p{L}_$][\\p{L}\\p{N}_$]*$".toRegex()
         val WRAPPERS_DIRECTORY = "wrappers"
         val GEN_ANNOTATION = "__gen/annotation"
+
+        private val ANDROID_APT_PLUGIN_ID = "com.neenbedankt.android-apt"
     }
 
     fun getAnnotationFile(): File {
@@ -51,6 +53,10 @@ public class AnnotationProcessingManager(
 
     fun setupKapt() {
         if (aptFiles.isEmpty()) return
+
+        if (project.getPlugins().findPlugin("com.neenbedankt.android-apt") != null) {
+            project.getLogger().warn("Please do not use `$ANDROID_APT_PLUGIN_ID` with kapt.")
+        }
 
         generateJavaHackFile(aptWorkingDir, javaTask)
 
