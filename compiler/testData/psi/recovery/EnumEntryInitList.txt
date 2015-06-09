@@ -204,6 +204,7 @@ JetFile: EnumEntryInitList.kt
         INITIALIZER_LIST
           DELEGATOR_SUPER_CALL
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE

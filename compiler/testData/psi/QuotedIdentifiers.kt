@@ -1,4 +1,4 @@
-[`return`] fun `package`() {
+@`return` fun `package`() {
   `class`()
 }
 

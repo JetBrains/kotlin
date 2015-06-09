@@ -91,6 +91,7 @@ JetFile: lambda.kt
                       PsiElement(IDENTIFIER)('ann')
             PsiWhiteSpace(' ')
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -161,6 +162,7 @@ JetFile: lambda.kt
         FUNCTION_LITERAL_ARGUMENT
           ANNOTATED_EXPRESSION
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -205,6 +207,7 @@ JetFile: lambda.kt
                       PsiElement(IDENTIFIER)('ann')
             PsiWhiteSpace(' ')
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -292,6 +295,7 @@ JetFile: lambda.kt
         ELSE
           ANNOTATED_EXPRESSION
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE

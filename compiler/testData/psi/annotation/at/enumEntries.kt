@@ -1,5 +1,5 @@
 enum class A {
-    [Ann] @Ann(1) X : A()
+    @[Ann] @Ann(1) X : A()
 
     @Ann Y : A() {}
 

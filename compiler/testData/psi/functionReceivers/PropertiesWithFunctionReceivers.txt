@@ -222,6 +222,7 @@ JetFile: PropertiesWithFunctionReceivers.kt
     PROPERTY_ACCESSOR
       MODIFIER_LIST
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -372,6 +373,7 @@ JetFile: PropertiesWithFunctionReceivers.kt
     PROPERTY_ACCESSOR
       MODIFIER_LIST
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE

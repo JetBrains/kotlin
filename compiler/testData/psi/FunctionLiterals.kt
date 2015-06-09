@@ -26,7 +26,7 @@ fun foo() {
     {T.(a) : T -> a}
 
     {x, y -> 1}
-    {[a] x, [b] y, [c] z -> 1}
+    {@[a] x, @[b] y, @[c] z -> 1}
 
     {((a: Int = object { fun t() {} }) -> Int).(x: Int) : String -> "" }
     { A.B<String>.(x: Int) -> }

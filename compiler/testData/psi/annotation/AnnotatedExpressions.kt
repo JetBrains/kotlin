@@ -1,5 +1,5 @@
 fun foo() {
-    [a] foo
+    @[a] foo
     1
-    [a] this
+    @[a] this
 }

@@ -1,3 +1,3 @@
-[file:volatile]
+@file:[volatile]
 // class C
 class C{}

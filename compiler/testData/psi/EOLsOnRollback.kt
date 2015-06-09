@@ -6,8 +6,8 @@ fun foo() {
     typealias x = t
     var r
 
-    [a] var foo = 4
+    @a var foo = 4
 
     1
-    [a] val f
+    @a val f
 }

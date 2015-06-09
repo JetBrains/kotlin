@@ -42,6 +42,7 @@ JetFile: multiDeclaration.kt
                       PsiElement(IDENTIFIER)('ann')
             PsiWhiteSpace(' ')
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -66,6 +67,7 @@ JetFile: multiDeclaration.kt
         MULTI_VARIABLE_DECLARATION_ENTRY
           MODIFIER_LIST
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE

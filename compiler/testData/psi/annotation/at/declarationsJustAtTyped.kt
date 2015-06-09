@@ -1,4 +1,4 @@
-private @ [Ann1(1)] Ann3("2") class A(
+private @ @[Ann1(1)] Ann3("2") class A(
         @ private val x: Int,
         @ private var y: Int,
         @ open z: Int
@@ -10,10 +10,10 @@ private @ [Ann1(1)] Ann3("2") class A(
 
         @
 
-        [inline2] private
+        @[inline2] private
         fun inlineLocal() {}
 
-        [Ann]
+        @[Ann]
         private
         @
         @volatile var x = 1

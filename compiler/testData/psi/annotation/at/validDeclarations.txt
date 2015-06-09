@@ -10,6 +10,7 @@ JetFile: validDeclarations.kt
       PsiElement(open)('@open')
       PsiWhiteSpace(' ')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -156,6 +157,7 @@ JetFile: validDeclarations.kt
           PsiElement(private)('@private')
           PsiWhiteSpace(' ')
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -244,6 +246,7 @@ JetFile: validDeclarations.kt
                   PsiElement(RPAR)(')')
               PsiWhiteSpace('\n\n        ')
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE
@@ -269,6 +272,7 @@ JetFile: validDeclarations.kt
           PROPERTY
             MODIFIER_LIST
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE
@@ -365,6 +369,7 @@ JetFile: validDeclarations.kt
                       PsiElement(IDENTIFIER)('inject')
             PsiWhiteSpace(' ')
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -466,6 +471,7 @@ JetFile: validDeclarations.kt
                   PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE

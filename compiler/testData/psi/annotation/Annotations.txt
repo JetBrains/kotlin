@@ -42,6 +42,7 @@ JetFile: Annotations.kt
       PsiElement(internal)('internal')
       PsiWhiteSpace('\n')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -135,6 +136,7 @@ JetFile: Annotations.kt
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -147,6 +149,7 @@ JetFile: Annotations.kt
       PsiElement(in)('in')
       PsiWhiteSpace('\n')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -177,6 +180,7 @@ JetFile: Annotations.kt
           PsiElement(open)('open')
           PsiWhiteSpace('\n')
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -205,6 +209,7 @@ JetFile: Annotations.kt
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace('\n')
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -226,6 +231,7 @@ JetFile: Annotations.kt
             PsiElement(RBRACKET)(']')
           PsiWhiteSpace('\n')
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -269,6 +275,7 @@ JetFile: Annotations.kt
           PsiElement(abstract)('abstract')
           PsiWhiteSpace('\n')
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE

@@ -5,11 +5,11 @@ class A {
 
     private annot constructor(x: Int) {}
 
-    [constructor] fun constructor() {}
+    @constructor fun constructor() {}
 
     annot protected constructor(x: Int, y: Int) : this(1,2) {}
 
-    [constructor] public constructor() : super() {
+    @[constructor] public constructor() : super() {
         x = 1
     }
 }

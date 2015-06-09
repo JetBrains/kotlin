@@ -463,6 +463,7 @@ JetFile: FunctionLiterals.kt
           BLOCK
             ANNOTATED_EXPRESSION
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE
@@ -477,6 +478,7 @@ JetFile: FunctionLiterals.kt
             PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               PsiElement(IDENTIFIER)('b')
               PsiElement(RBRACKET)(']')
@@ -484,6 +486,7 @@ JetFile: FunctionLiterals.kt
               PsiElement(IDENTIFIER)('y')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               PsiElement(IDENTIFIER)('c')
               PsiElement(RBRACKET)(']')

@@ -72,7 +72,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             // Prefix
             MINUS, PLUS, MINUSMINUS, PLUSPLUS,
             EXCL, EXCLEXCL, // Joining complex tokens makes it necessary to put EXCLEXCL here
-            LBRACKET,
             // Atomic
 
             COLONCOLON, // callable reference
@@ -121,7 +120,6 @@ public class JetExpressionParsing extends AbstractJetParsing {
             EXPRESSION_FIRST,
             TokenSet.create(
                     // declaration
-                    LBRACKET, // annotation
                     FUN_KEYWORD,
                     VAL_KEYWORD, VAR_KEYWORD,
                     TRAIT_KEYWORD,
@@ -343,7 +341,7 @@ public class JetExpressionParsing extends AbstractJetParsing {
     private void parsePrefixExpression() {
         //        System.out.println("pre at "  + myBuilder.getTokenText());
 
-        if (at(LBRACKET) || at(AT)) {
+        if (at(AT)) {
             if (!parseLocalDeclaration()) {
                 PsiBuilder.Marker expression = mark();
                 myJetParsing.parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);

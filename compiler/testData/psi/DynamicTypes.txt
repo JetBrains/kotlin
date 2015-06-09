@@ -24,15 +24,13 @@ JetFile: DynamicTypes.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           DYNAMIC_TYPE
             PsiElement(dynamic)('dynamic')

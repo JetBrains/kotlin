@@ -1,12 +1,12 @@
 fun foo() {
     for (@volatile x in z) {}
 
-    for ([ann]) {}
+    for (@[ann]) {}
     for (@ in z) {}
 
-    for ((x, private data @ann [ann] y) in x) {}
+    for ((x, private data @ann @[ann] y) in x) {}
 
-    for (([ann], x) in pair) {}
+    for ((@[ann], x) in pair) {}
 
     for (volatile x in 1..100) {}
     for (volatile(1) x in 1..100) {}

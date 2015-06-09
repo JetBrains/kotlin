@@ -84,6 +84,7 @@ JetFile: primaryConstructor.kt
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -117,6 +118,7 @@ JetFile: primaryConstructor.kt
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -192,6 +194,7 @@ JetFile: primaryConstructor.kt
     PRIMARY_CONSTRUCTOR
       MODIFIER_LIST
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -207,6 +210,7 @@ JetFile: primaryConstructor.kt
           PsiElement(AT)('@')
         PsiWhiteSpace(' ')
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE

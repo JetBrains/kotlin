@@ -22,15 +22,13 @@ JetFile: LocalDeclarations.kt
       PsiWhiteSpace('\n    ')
       CLASS
         MODIFIER_LIST
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
           PsiWhiteSpace(' ')
           PsiElement(abstract)('abstract')
         PsiWhiteSpace(' ')
@@ -46,15 +44,13 @@ JetFile: LocalDeclarations.kt
         MODIFIER_LIST
           PsiElement(abstract)('abstract')
           PsiWhiteSpace(' ')
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(class)('class')
         PsiWhiteSpace(' ')
@@ -79,15 +75,13 @@ JetFile: LocalDeclarations.kt
       PsiWhiteSpace('\n    ')
       PROPERTY
         MODIFIER_LIST
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(var)('var')
         PsiWhiteSpace(' ')

@@ -79,6 +79,7 @@ JetFile: Properties_ERR.kt
     PsiWhiteSpace(' ')
     PsiErrorElement:Annotations are not allowed in this position
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -131,15 +132,13 @@ JetFile: Properties_ERR.kt
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiErrorElement:Annotations are not allowed in this position
-      ANNOTATION
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('a')
-        PsiElement(RBRACKET)(']')
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('a')
     PsiWhiteSpace(' ')
     PsiElement(IDENTIFIER)('foo')
     PsiWhiteSpace(' ')

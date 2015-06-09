@@ -51,15 +51,13 @@ JetFile: EOLsOnRollback.kt
       PsiWhiteSpace('\n\n    ')
       PROPERTY
         MODIFIER_LIST
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
@@ -75,15 +73,13 @@ JetFile: EOLsOnRollback.kt
       PsiWhiteSpace('\n    ')
       PROPERTY
         MODIFIER_LIST
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('a')
-            PsiElement(RBRACKET)(']')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('a')
         PsiWhiteSpace(' ')
         PsiElement(val)('val')
         PsiWhiteSpace(' ')

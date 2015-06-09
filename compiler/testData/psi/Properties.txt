@@ -31,6 +31,7 @@ JetFile: Properties.kt
     PsiWhiteSpace(' ')
     PsiErrorElement:Annotations are not allowed in this position
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -69,6 +70,7 @@ JetFile: Properties.kt
     PsiWhiteSpace(' ')
     PsiErrorElement:Annotations are not allowed in this position
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE

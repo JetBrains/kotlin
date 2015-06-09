@@ -6,4 +6,4 @@ object Foo private () : Bar {
 
 }
 
-object Foo [foo] private [bar()] ()
+object Foo @[foo] private @[bar()] ()

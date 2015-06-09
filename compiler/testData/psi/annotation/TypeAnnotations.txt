@@ -17,6 +17,7 @@ JetFile: TypeAnnotations.kt
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -27,6 +28,7 @@ JetFile: TypeAnnotations.kt
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -50,6 +52,7 @@ JetFile: TypeAnnotations.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -60,6 +63,7 @@ JetFile: TypeAnnotations.kt
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -77,6 +81,7 @@ JetFile: TypeAnnotations.kt
           TYPE_PROJECTION
             MODIFIER_LIST
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE
@@ -110,6 +115,7 @@ JetFile: TypeAnnotations.kt
       DELEGATOR_SUPER_CLASS
         TYPE_REFERENCE
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -127,6 +133,7 @@ JetFile: TypeAnnotations.kt
       DELEGATOR_BY
         TYPE_REFERENCE
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -157,6 +164,7 @@ JetFile: TypeAnnotations.kt
         CONSTRUCTOR_CALLEE
           TYPE_REFERENCE
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -177,6 +185,7 @@ JetFile: TypeAnnotations.kt
       DELEGATOR_SUPER_CLASS
         TYPE_REFERENCE
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE

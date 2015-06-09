@@ -34,6 +34,7 @@ JetFile: Annotations_ERR.kt
       PsiElement(abstract)('abstract')
       PsiWhiteSpace('\n')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         PsiErrorElement:Expecting a list of annotations
           <empty list>
@@ -48,6 +49,7 @@ JetFile: Annotations_ERR.kt
       PsiElement(internal)('internal')
       PsiWhiteSpace('\n')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -143,6 +145,7 @@ JetFile: Annotations_ERR.kt
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -155,6 +158,7 @@ JetFile: Annotations_ERR.kt
       PsiElement(in)('in')
       PsiWhiteSpace('\n')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -166,6 +170,7 @@ JetFile: Annotations_ERR.kt
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -225,6 +230,7 @@ JetFile: Annotations_ERR.kt
           PsiElement(abstract)('abstract')
           PsiWhiteSpace('\n')
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE

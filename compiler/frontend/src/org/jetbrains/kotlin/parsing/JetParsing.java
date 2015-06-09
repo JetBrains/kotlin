@@ -453,8 +453,8 @@ public class JetParsing extends AbstractJetParsing {
             else if (tryParseModifier(tokenConsumer)) {
                 // modifier advanced
             }
-            else if (at(LBRACKET) || (annotationParsingMode.allowShortAnnotations && at(IDENTIFIER))) {
-                parseAnnotation(annotationParsingMode);
+            else if (annotationParsingMode.allowShortAnnotations && at(IDENTIFIER)) {
+                parseAnnotationEntry(annotationParsingMode);
             }
             else {
                 break;
@@ -534,10 +534,7 @@ public class JetParsing extends AbstractJetParsing {
      *   ;
      */
     private boolean parseAnnotation(AnnotationParsingMode mode) {
-        if (at(LBRACKET)) {
-            return parseAnnotationList(mode, false);
-        }
-        else if (mode.allowShortAnnotations && at(IDENTIFIER)) {
+        if (mode.allowShortAnnotations && at(IDENTIFIER)) {
             return parseAnnotationEntry(mode);
         }
         else if (at(AT)) {
@@ -559,7 +556,7 @@ public class JetParsing extends AbstractJetParsing {
                 return parseAnnotationEntry(mode);
             }
             else if (tokenToMatch == LBRACKET) {
-                return parseAnnotationList(mode, true);
+                return parseAnnotationList(mode);
             }
             else {
                 if (isTargetedAnnotation) {
@@ -580,14 +577,13 @@ public class JetParsing extends AbstractJetParsing {
         return false;
     }
 
-    private boolean parseAnnotationList(AnnotationParsingMode mode, boolean expectAtSymbol) {
-        assert !expectAtSymbol || _at(AT);
-        assert expectAtSymbol || _at(LBRACKET);
+    private boolean parseAnnotationList(AnnotationParsingMode mode) {
+        assert _at(AT);
         PsiBuilder.Marker annotation = mark();
 
         myBuilder.disableNewlines();
 
-        advance(); // AT or LBRACKET
+        advance(); // AT
 
         if (!parseAnnotationTargetIfNeeded(mode)) {
             annotation.rollbackTo();
@@ -595,10 +591,8 @@ public class JetParsing extends AbstractJetParsing {
             return false;
         }
 
-        if (expectAtSymbol) {
-            assert _at(LBRACKET);
-            advance(); // LBRACKET
-        }
+        assert _at(LBRACKET);
+        advance(); // LBRACKET
 
         if (!at(IDENTIFIER) && !at(AT)) {
             error("Expecting a list of annotations");
@@ -1389,7 +1383,7 @@ public class JetParsing extends AbstractJetParsing {
 
         if (!at(LPAR)) {
             // Account for Jet-114 (val a : int get {...})
-            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(LBRACKET, AT, GET_KEYWORD, SET_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
+            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(AT, GET_KEYWORD, SET_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
             if (!atSet(ACCESSOR_FIRST_OR_PROPERTY_END)) {
                 errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
             }

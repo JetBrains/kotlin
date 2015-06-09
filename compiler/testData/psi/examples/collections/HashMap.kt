@@ -19,7 +19,7 @@ open class IMap<K, V> {
 class HashableWrapper(val obj : Any) : IHashable
   // equals and hashCode implementations are inherited
 
-[inline] fun Any.hashable() : HashableWrapper = HashableWrapper(this)
+@[inline] fun Any.hashable() : HashableWrapper = HashableWrapper(this)
 
 open class IHashingStrategy<K> {
   fun equals(a : K, b : K) : Boolean
@@ -39,8 +39,8 @@ class JavaObjectHashingStrategy<K> : IHashingStrategy<K> {
 }
 
 class HashMap<K, V> : IMap<K, V> {
-  private [inline] fun hashCode(a : K) = a.hashable().hashCode
-  private [inline] fun equals(a : K, b : K) = a.hashable() == b
+  private @[inline] fun hashCode(a : K) = a.hashable().hashCode
+  private @[inline] fun equals(a : K, b : K) = a.hashable() == b
 
   // everything else uses these equals() and hashCode()... 
 

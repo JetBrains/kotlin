@@ -25,7 +25,7 @@ fun foo() {
 
     label@simpleName
 
-    val x = @ann [ann] l@{
+    val x = @ann @[ann] l@{
         a, b, c -> a
     }
 }

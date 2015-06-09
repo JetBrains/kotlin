@@ -7,7 +7,7 @@ fun foo() {
         print(2)
     }
 
-    bar @ann [ann] {
+    bar @ann @[ann] {
         print(2)
     }
 
@@ -15,11 +15,11 @@ fun foo() {
         print(1)
     }
 
-    bar() [ann] {
+    bar() @[ann] {
         print(2)
     }
 
-    bar() @ann [ann] {
+    bar() @ann @[ann] {
         print(2)
     }
 
@@ -30,7 +30,7 @@ fun foo() {
     if (true) @ann {
 
     }
-    else [ann] @ann {
+    else @[ann] @ann {
 
     }
 

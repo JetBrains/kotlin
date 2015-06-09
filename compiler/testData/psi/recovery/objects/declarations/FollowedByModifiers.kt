@@ -4,4 +4,4 @@ public class Bar
 
 object Foo
 
-[foo] class Bar
+@[foo] class Bar

@@ -336,6 +336,7 @@ JetFile: validExpressions.kt
                     PsiElement(IDENTIFIER)('ann')
           PsiWhiteSpace(' ')
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE

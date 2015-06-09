@@ -1,16 +1,16 @@
 val foo = object : AntBuilder() {
 
-  [lazy] val groovy = library {
+  @lazy val groovy = library {
     classpath("$libs/groovy-...")
   }
 
-  [lazy] val gant = library {
+  @lazy val gant = library {
     File("$gantHome/lib").files.each {
       classpath(it)
     }
   }
 
-  [lazy] val JPS = module {
+  @lazy val JPS = module {
     targetLevel = "1.5"
     classpath(antLayout, gant, groovy)
     src("$projectHome/antLayout/src")

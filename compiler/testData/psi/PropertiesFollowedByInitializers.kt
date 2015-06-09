@@ -13,8 +13,8 @@ class Foo() {
   }
 
   var b5 : Int get abstract set
-  var b6 : Int get [a] abstract set
-  var b7 : Int get [a] abstract {}
+  var b6 : Int get @[a] abstract set
+  var b7 : Int get @[a] abstract {}
   var b8 : Int get @a abstract set
   var b9 : Int get @a abstract {}
 }

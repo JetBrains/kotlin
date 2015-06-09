@@ -1,10 +1,10 @@
 val a = fun )
 val a = fun foo)
 
-val a = fun [a] T.foo(a : ) : bar
+val a = fun @[a] T.foo(a : ) : bar
 
-val a = fun [a()] T.foo<>(a : foo) : bar
-val a = fun [a()] T.<>(a : foo) : bar
+val a = fun @[a()] T.foo<>(a : foo) : bar
+val a = fun @[a()] T.<>(a : foo) : bar
 
 val a = fun T.foo<T, , T>(a : foo) : bar
 val a = fun T.foo<, T, , T>(a : foo) : bar
@@ -24,7 +24,7 @@ fun outer() {
 
     bar(fun T)
     bar(fun T.)
-    bar(fun [a])
+    bar(fun @[a])
 
 
     bar(public fun ())

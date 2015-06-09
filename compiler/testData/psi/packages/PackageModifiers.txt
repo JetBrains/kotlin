@@ -4,6 +4,7 @@ JetFile: PackageModifiers.kt
       PsiElement(public)('public')
       PsiWhiteSpace(' ')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE

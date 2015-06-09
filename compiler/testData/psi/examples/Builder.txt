@@ -33,15 +33,13 @@ JetFile: Builder.kt
             PsiWhiteSpace('\n\n  ')
             PROPERTY
               MODIFIER_LIST
-                ANNOTATION
-                  PsiElement(LBRACKET)('[')
-                  ANNOTATION_ENTRY
-                    CONSTRUCTOR_CALLEE
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('lazy')
-                  PsiElement(RBRACKET)(']')
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('lazy')
               PsiWhiteSpace(' ')
               PsiElement(val)('val')
               PsiWhiteSpace(' ')
@@ -80,15 +78,13 @@ JetFile: Builder.kt
             PsiWhiteSpace('\n\n  ')
             PROPERTY
               MODIFIER_LIST
-                ANNOTATION
-                  PsiElement(LBRACKET)('[')
-                  ANNOTATION_ENTRY
-                    CONSTRUCTOR_CALLEE
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('lazy')
-                  PsiElement(RBRACKET)(']')
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('lazy')
               PsiWhiteSpace(' ')
               PsiElement(val)('val')
               PsiWhiteSpace(' ')
@@ -154,15 +150,13 @@ JetFile: Builder.kt
             PsiWhiteSpace('\n\n  ')
             PROPERTY
               MODIFIER_LIST
-                ANNOTATION
-                  PsiElement(LBRACKET)('[')
-                  ANNOTATION_ENTRY
-                    CONSTRUCTOR_CALLEE
-                      TYPE_REFERENCE
-                        USER_TYPE
-                          REFERENCE_EXPRESSION
-                            PsiElement(IDENTIFIER)('lazy')
-                  PsiElement(RBRACKET)(']')
+                ANNOTATION_ENTRY
+                  PsiElement(AT)('@')
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION
+                          PsiElement(IDENTIFIER)('lazy')
               PsiWhiteSpace(' ')
               PsiElement(val)('val')
               PsiWhiteSpace(' ')

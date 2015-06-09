@@ -1,11 +1,11 @@
 val foo = bar.foo.bar
 
 val foo
-val [a] foo
+val @[a] foo
 val foo.bar
 
 val foo : T
-val [a] foo = bar
+val @[a] foo = bar
 val foo.bar
    get() {}
    set(sad) = foo

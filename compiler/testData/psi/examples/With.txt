@@ -5,15 +5,12 @@ JetFile: With.kt
     <empty list>
   FUN
     MODIFIER_LIST
-      ANNOTATION
-        PsiElement(LBRACKET)('[')
-        ANNOTATION_ENTRY
-          CONSTRUCTOR_CALLEE
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION
-                  PsiElement(IDENTIFIER)('inline')
-        PsiElement(RBRACKET)(']')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('inline')
     PsiWhiteSpace(' ')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')

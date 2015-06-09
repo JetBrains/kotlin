@@ -1,6 +1,6 @@
 fun foo() {
 
     when (e) {
-      is [a] T -> d
+      is @[a] T -> d
     }
 }

@@ -11,7 +11,7 @@ val (foo.bar.() -> Unit).foo = foo
 
 
 val (foo.bar.() -> Unit).foo : bar = foo
-   [a] public get() {}
+   @[a] public get() {}
    open set(a : b) {}
 
 
@@ -20,7 +20,7 @@ val (foo.bar.() -> Unit).foo : bar = foo
 
 
 val (foo.bar.() -> Unit).foo : bar = foo
-   [a] public get() {}
+   @[a] public get() {}
 
 // Error recovery:
 

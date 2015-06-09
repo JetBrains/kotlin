@@ -45,15 +45,13 @@ JetFile: DynamicSoftKeyword.kt
       PsiWhiteSpace('\n    ')
       FUN
         MODIFIER_LIST
-          ANNOTATION
-            PsiElement(LBRACKET)('[')
-            ANNOTATION_ENTRY
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('dynamic')
-            PsiElement(RBRACKET)(']')
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('dynamic')
         PsiWhiteSpace(' ')
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')

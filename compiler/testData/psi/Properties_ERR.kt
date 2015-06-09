@@ -4,10 +4,10 @@ var f :
 val foo :
 val :
 val : Int
-val [a foo = foo
+val @[a foo = foo
 val foo.bar.
 val foo.
-val [a] foo : = bar
+val @a foo : = bar
 val foo.bar
    public () {}
    () = foo

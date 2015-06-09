@@ -282,9 +282,8 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiErrorElement:Property getter or setter expected
       PsiElement(val)('val')
       PsiWhiteSpace(' ')
-      PsiElement(LBRACKET)('[')
+      PsiElement(AT)('@')
       PsiElement(IDENTIFIER)('a')
-      PsiElement(RBRACKET)(']')
       PsiWhiteSpace(' ')
       PsiElement(IDENTIFIER)('T')
       PsiElement(LT)('<')
@@ -307,6 +306,7 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -375,6 +375,7 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiErrorElement:Receiver type is not allowed on a multi-declaration
       TYPE_REFERENCE
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE

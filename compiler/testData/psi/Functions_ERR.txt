@@ -17,6 +17,7 @@ JetFile: Functions_ERR.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -55,6 +56,7 @@ JetFile: Functions_ERR.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -102,6 +104,7 @@ JetFile: Functions_ERR.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -156,6 +159,7 @@ JetFile: Functions_ERR.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -213,6 +217,7 @@ JetFile: Functions_ERR.kt
     PsiWhiteSpace(' ')
     TYPE_REFERENCE
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE

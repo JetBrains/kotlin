@@ -1,3 +1,3 @@
-[file: foo]
-[file:bar baz]
+@file:[ foo]
+@file:[bar baz]
 package bar

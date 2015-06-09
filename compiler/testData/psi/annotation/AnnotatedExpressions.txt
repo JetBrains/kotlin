@@ -16,6 +16,7 @@ JetFile: AnnotatedExpressions.kt
       PsiWhiteSpace('\n    ')
       ANNOTATED_EXPRESSION
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE
@@ -33,6 +34,7 @@ JetFile: AnnotatedExpressions.kt
       PsiWhiteSpace('\n    ')
       ANNOTATED_EXPRESSION
         ANNOTATION
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           ANNOTATION_ENTRY
             CONSTRUCTOR_CALLEE

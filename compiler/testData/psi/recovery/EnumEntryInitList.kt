@@ -35,7 +35,7 @@ enum class E6 {
 enum class E7 {
     FIRST:
 
-    [Some]
+    @[Some]
     SECOND
 }
 

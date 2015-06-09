@@ -11,6 +11,7 @@ JetFile: declarationsJustAtTyped.kt
         PsiElement(AT)('@')
       PsiWhiteSpace(' ')
       ANNOTATION
+        PsiElement(AT)('@')
         PsiElement(LBRACKET)('[')
         ANNOTATION_ENTRY
           CONSTRUCTOR_CALLEE
@@ -145,6 +146,7 @@ JetFile: declarationsJustAtTyped.kt
                 PsiElement(AT)('@')
               PsiWhiteSpace('\n\n        ')
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE
@@ -170,6 +172,7 @@ JetFile: declarationsJustAtTyped.kt
           PROPERTY
             MODIFIER_LIST
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE

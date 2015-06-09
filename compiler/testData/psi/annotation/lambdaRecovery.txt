@@ -75,6 +75,7 @@ JetFile: lambdaRecovery.kt
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -173,6 +174,7 @@ JetFile: lambdaRecovery.kt
         FUNCTION_LITERAL_ARGUMENT
           ANNOTATED_EXPRESSION
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               PsiErrorElement:Expecting a list of annotations
                 <empty list>
@@ -281,6 +283,7 @@ JetFile: lambdaRecovery.kt
         ELSE
           ANNOTATED_EXPRESSION
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE

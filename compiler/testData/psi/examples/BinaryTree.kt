@@ -20,7 +20,7 @@ class BinaryTree<T> : IMutableSet<T> {
   constructor() : this(naturalOrder<T>()) {
   }
 
-  private [operator] fun T.compareTo(other : T) : Int = compare(this, other)
+  private @[operator] fun T.compareTo(other : T) : Int = compare(this, other)
 
   override fun contains(item : T) : Boolean {
     return contains(root, item)

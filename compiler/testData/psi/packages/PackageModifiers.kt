@@ -1,1 +1,1 @@
-public [a] package name
+public @[a] package name

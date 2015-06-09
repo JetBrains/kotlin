@@ -227,6 +227,7 @@ JetFile: PropertiesFollowedByInitializers.kt
         PROPERTY_ACCESSOR
           MODIFIER_LIST
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -256,6 +257,7 @@ JetFile: PropertiesFollowedByInitializers.kt
           PsiElement(get)('get')
         PsiWhiteSpace(' ')
         PsiErrorElement:Property getter or setter expected
+          PsiElement(AT)('@')
           PsiElement(LBRACKET)('[')
           PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACKET)(']')

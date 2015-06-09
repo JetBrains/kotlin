@@ -17,6 +17,7 @@ JetFile: FunctionTypes.kt
           VALUE_PARAMETER
             MODIFIER_LIST
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE
@@ -81,6 +82,7 @@ JetFile: FunctionTypes.kt
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
           ANNOTATION
+            PsiElement(AT)('@')
             PsiElement(LBRACKET)('[')
             ANNOTATION_ENTRY
               CONSTRUCTOR_CALLEE
@@ -132,6 +134,7 @@ JetFile: FunctionTypes.kt
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE
@@ -240,6 +243,7 @@ JetFile: FunctionTypes.kt
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
               ANNOTATION
+                PsiElement(AT)('@')
                 PsiElement(LBRACKET)('[')
                 ANNOTATION_ENTRY
                   CONSTRUCTOR_CALLEE
@@ -544,6 +548,7 @@ JetFile: FunctionTypes.kt
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -580,6 +585,7 @@ JetFile: FunctionTypes.kt
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE
@@ -620,6 +626,7 @@ JetFile: FunctionTypes.kt
         FUNCTION_TYPE_RECEIVER
           TYPE_REFERENCE
             ANNOTATION
+              PsiElement(AT)('@')
               PsiElement(LBRACKET)('[')
               ANNOTATION_ENTRY
                 CONSTRUCTOR_CALLEE

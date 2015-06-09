@@ -735,6 +735,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("oldAnnotationsRecovery.kt")
+            public void testOldAnnotationsRecovery() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/oldAnnotationsRecovery.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("ShortAnnotations.kt")
             public void testShortAnnotations() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/ShortAnnotations.kt");
@@ -884,63 +890,6 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 @TestMetadata("withoutPackageWithSimpleAnnotation.kt")
                 public void testWithoutPackageWithSimpleAnnotation() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFile/withoutPackageWithSimpleAnnotation.kt");
-                    doParsingTest(fileName);
-                }
-            }
-
-            @TestMetadata("compiler/testData/psi/annotation/onFileObsolete")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class OnFileObsolete extends AbstractJetParsingTest {
-                public void testAllFilesPresentInOnFileObsolete() throws Exception {
-                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/onFileObsolete"), Pattern.compile("^(.*)\\.kts?$"), true);
-                }
-
-                @TestMetadata("fileAnnotationInWrongPlace.kt")
-                public void testFileAnnotationInWrongPlace() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFileObsolete/fileAnnotationInWrongPlace.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("manyAnnotationBlocks.kt")
-                public void testManyAnnotationBlocks() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFileObsolete/manyAnnotationBlocks.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("manyInOneAnnotationBlock.kt")
-                public void testManyInOneAnnotationBlock() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFileObsolete/manyInOneAnnotationBlock.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("nonFIleAnnotationBeforePackage.kt")
-                public void testNonFIleAnnotationBeforePackage() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFileObsolete/nonFIleAnnotationBeforePackage.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("single.kt")
-                public void testSingle() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFileObsolete/single.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("withoutFileAnnotationAndPackageDeclaration.kt")
-                public void testWithoutFileAnnotationAndPackageDeclaration() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFileObsolete/withoutFileAnnotationAndPackageDeclaration.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("withoutPackage.kt")
-                public void testWithoutPackage() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFileObsolete/withoutPackage.kt");
-                    doParsingTest(fileName);
-                }
-
-                @TestMetadata("withoutPackageWithSimpleAnnotation.kt")
-                public void testWithoutPackageWithSimpleAnnotation() throws Exception {
-                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/annotation/onFileObsolete/withoutPackageWithSimpleAnnotation.kt");
                     doParsingTest(fileName);
                 }
             }
