@@ -203,7 +203,7 @@ public class OverloadResolver {
             }
             else {
                 String containingClassName = jetDeclaration instanceof JetSecondaryConstructor ?
-                                               ((JetSecondaryConstructor) jetDeclaration).getClassOrObject().getName() : null;
+                                               ((JetSecondaryConstructor) jetDeclaration).getContainingClassOrObject().getName() : null;
 
                 trace.report(Errors.CONFLICTING_OVERLOADS.on(
                         jetDeclaration, memberDescriptor,

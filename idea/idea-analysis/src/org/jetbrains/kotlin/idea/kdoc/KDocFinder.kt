@@ -31,7 +31,7 @@ object KDocFinder {
             var psiDeclaration = (declaration.getSource() as? PsiSourceElement)?.psi?.getNavigationElement()
             // KDoc for primary constructor is located inside of its class KDoc
             if (psiDeclaration is JetPrimaryConstructor) {
-                psiDeclaration = psiDeclaration.getClassOrObject()
+                psiDeclaration = psiDeclaration.getContainingClassOrObject()
             }
 
             if (psiDeclaration is JetDeclaration) {

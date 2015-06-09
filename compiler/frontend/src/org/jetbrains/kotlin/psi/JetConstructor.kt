@@ -30,7 +30,7 @@ public abstract class JetConstructor<T : JetConstructor<T>> : JetDeclarationStub
     protected constructor(node: ASTNode) : super(node)
     protected constructor(stub: KotlinPlaceHolderStub<T>, nodeType: JetPlaceHolderStubElementType<T>) : super(stub, nodeType)
 
-    public abstract fun getClassOrObject(): JetClassOrObject
+    public abstract fun getContainingClassOrObject(): JetClassOrObject
 
     override fun isLocal() = false
 
@@ -65,7 +65,7 @@ public abstract class JetConstructor<T : JetConstructor<T>> : JetDeclarationStub
 
     override fun getTypeParameters() = emptyList<JetTypeParameter>()
 
-    override fun getName(): String = getClassOrObject().getName()!!
+    override fun getName(): String = getContainingClassOrObject().getName()!!
 
     override fun getNameAsSafeName() = Name.identifier(getName())
 

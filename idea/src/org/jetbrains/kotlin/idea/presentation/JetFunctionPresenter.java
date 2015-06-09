@@ -61,7 +61,7 @@ public class JetFunctionPresenter implements ItemPresentationProvider<JetFunctio
             @Override
             public String getLocationString() {
                 if (function instanceof JetConstructor) {
-                    FqName name = ((JetConstructor) function).getClassOrObject().getFqName();
+                    FqName name = ((JetConstructor) function).getContainingClassOrObject().getFqName();
                     return name != null ? String.format("(in %s)", name) : "";
                 }
 

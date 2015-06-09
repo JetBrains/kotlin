@@ -248,7 +248,7 @@ public class LightClassUtil {
         }
 
         if (declaration instanceof JetConstructor) {
-            return getPsiClass(((JetConstructor) declaration).getClassOrObject());
+            return getPsiClass(((JetConstructor) declaration).getContainingClassOrObject());
         }
 
         //noinspection unchecked

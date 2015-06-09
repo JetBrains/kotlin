@@ -29,9 +29,7 @@ public class JetPrimaryConstructor : JetConstructor<JetPrimaryConstructor> {
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D) = visitor.visitPrimaryConstructor(this, data)
 
-    public fun getContainingClassOrObject(): JetClassOrObject = getParent() as JetClassOrObject
-
-    override fun getClassOrObject() = getContainingClassOrObject()
+    override fun getContainingClassOrObject() = getParent() as JetClassOrObject
 
     override fun addModifier(modifier: JetModifierKeywordToken) {
         val modifierList = getModifierList()

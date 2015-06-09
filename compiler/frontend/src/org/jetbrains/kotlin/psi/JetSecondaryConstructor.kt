@@ -27,7 +27,7 @@ public class JetSecondaryConstructor : JetConstructor<JetSecondaryConstructor> {
 
     override fun <R, D> accept(visitor: JetVisitor<R, D>, data: D) = visitor.visitSecondaryConstructor(this, data)
 
-    override fun getClassOrObject() = getParent().getParent() as JetClassOrObject
+    override fun getContainingClassOrObject() = getParent().getParent() as JetClassOrObject
 
     override fun getBodyExpression() = findChildByClass(javaClass<JetBlockExpression>())
 

@@ -54,7 +54,7 @@ public class AddOpenModifierToClassDeclarationFix extends JetIntentionAction<Jet
         if (reference != null) {
             PsiElement target = reference.resolve();
             if (target instanceof JetSecondaryConstructor) {
-                target = ((JetSecondaryConstructor) target).getClassOrObject();
+                target = ((JetSecondaryConstructor) target).getContainingClassOrObject();
             }
             if (target instanceof JetClass && QuickFixUtil.canModifyElement(target)) {
                 classDeclaration = (JetClass) target;

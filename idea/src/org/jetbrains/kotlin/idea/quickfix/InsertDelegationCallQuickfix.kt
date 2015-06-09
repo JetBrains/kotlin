@@ -62,7 +62,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
     object InsertThisDelegationCallFactory : JetSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType<JetSecondaryConstructor> {
             secondaryConstructor ->
-            if (secondaryConstructor.getClassOrObject().getConstructorsCount() <= 1 ||
+            if (secondaryConstructor.getContainingClassOrObject().getConstructorsCount() <= 1 ||
                 !secondaryConstructor.hasImplicitDelegationCall()) return null
 
             return InsertDelegationCallQuickfix(isThis = true, element = secondaryConstructor)
@@ -75,7 +75,7 @@ public class InsertDelegationCallQuickfix(val isThis: Boolean, element: JetSecon
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val secondaryConstructor = diagnostic.getPsiElement().getNonStrictParentOfType<JetSecondaryConstructor>() ?: return null
             if (!secondaryConstructor.hasImplicitDelegationCall()) return null
-            val klass = secondaryConstructor.getClassOrObject() as? JetClass ?: return null
+            val klass = secondaryConstructor.getContainingClassOrObject() as? JetClass ?: return null
             if (klass.hasPrimaryConstructor()) return null
 
             return InsertDelegationCallQuickfix(isThis = false, element = secondaryConstructor)
