@@ -526,6 +526,18 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
             doTestAgainstJava(fileName);
         }
 
+        @TestMetadata("kt4753.kt")
+        public void testKt4753() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/kt4753.kt");
+            doTestAgainstJava(fileName);
+        }
+
+        @TestMetadata("kt4753_2.kt")
+        public void testKt4753_2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/kt4753_2.kt");
+            doTestAgainstJava(fileName);
+        }
+
         @TestMetadata("samConstructorGenericSignature.kt")
         public void testSamConstructorGenericSignature() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/samConstructorGenericSignature.kt");

@@ -71,12 +71,6 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
-    @TestMetadata("trait")
-    public void testTrait() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/trait/");
-        doTestWithJava(fileName);
-    }
-
     @TestMetadata("compiler/testData/codegen/boxWithJava/annotationsWithKClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -128,6 +122,28 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         @TestMetadata("substitutedList")
         public void testSubstitutedList() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/builtinStubMethods/substitutedList/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
+    @TestMetadata("compiler/testData/codegen/boxWithJava/interfaces")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Interfaces extends AbstractBlackBoxCodegenTest {
+        @TestMetadata("abstractClassInheritsFromInterface")
+        public void testAbstractClassInheritsFromInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/interfaces/abstractClassInheritsFromInterface/");
+            doTestWithJava(fileName);
+        }
+
+        public void testAllFilesPresentInInterfaces() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/interfaces"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("inheritJavaInterface")
+        public void testInheritJavaInterface() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/interfaces/inheritJavaInterface/");
             doTestWithJava(fileName);
         }
 
@@ -288,5 +304,4 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         }
 
     }
-
 }
