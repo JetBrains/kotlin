@@ -128,7 +128,6 @@ public interface Errors {
     DiagnosticFactory0<JetModifierListOwner> ILLEGAL_ANNOTATION_KEYWORD = DiagnosticFactory0
             .create(ERROR, modifierSetPosition(JetTokens.ANNOTATION_KEYWORD));
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_CONST = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<JetExpression> ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT = DiagnosticFactory0.create(ERROR);

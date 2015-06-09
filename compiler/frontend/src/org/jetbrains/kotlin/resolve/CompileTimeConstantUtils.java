@@ -70,9 +70,6 @@ public class CompileTimeConstantUtils {
                 else if (!isAcceptableTypeForAnnotationParameter(parameterType)) {
                     trace.report(INVALID_TYPE_OF_ANNOTATION_MEMBER.on(typeReference));
                 }
-                else if (TypeUtilPackage.isJavaLangClassOrArray(parameterType)) {
-                    trace.report(JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION.on(typeReference));
-                }
             }
         }
     }
@@ -86,7 +83,6 @@ public class CompileTimeConstantUtils {
         KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
         if (isEnumClass(typeDescriptor) ||
             isAnnotationClass(typeDescriptor) ||
-            DescriptorUtils.isJavaLangClass(typeDescriptor) ||
             KotlinBuiltIns.isKClass(typeDescriptor) ||
             KotlinBuiltIns.isPrimitiveArray(parameterType) ||
             KotlinBuiltIns.isPrimitiveType(parameterType) ||
@@ -105,7 +101,6 @@ public class CompileTimeConstantUtils {
                 if (arrayTypeDescriptor != null) {
                     return isEnumClass(arrayTypeDescriptor) ||
                            isAnnotationClass(arrayTypeDescriptor) ||
-                           DescriptorUtils.isJavaLangClass(arrayTypeDescriptor) ||
                            KotlinBuiltIns.isKClass(arrayTypeDescriptor) ||
                            builtIns.getStringType().equals(arrayType);
                 }
@@ -129,10 +124,6 @@ public class CompileTimeConstantUtils {
 
     public static boolean isArrayMethodCall(@NotNull ResolvedCall<?> resolvedCall) {
         return ARRAY_CALL_NAMES.contains(DescriptorUtils.getFqName(resolvedCall.getCandidateDescriptor()).asString());
-    }
-
-    public static boolean isJavaClassMethodCall(@NotNull ResolvedCall<?> resolvedCall) {
-        return "kotlin.javaClass.function".equals(getIntrinsicAnnotationArgument(resolvedCall.getResultingDescriptor().getOriginal()));
     }
 
     public static boolean canBeReducedToBooleanConstant(

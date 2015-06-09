@@ -26,16 +26,16 @@ annotation class Ann4(val p1: IntArray,
 
 annotation class Ann5(val p1: MyEnum)
 
-annotation class Ann6(val p: Class<*>)
+annotation class Ann6(val p: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Class<*><!>)
 annotation class Ann7(val p: RetentionPolicy)
 
 annotation class Ann8(val p1: Array<String>,
-                      val p2: Array<Class<*>>,
+                      val p2: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Array<Class<*>><!>,
                       val p3: Array<MyEnum>,
                       val p4: Array<Ann1>)
 
 annotation class Ann9(vararg val p1: String,
-                      vararg val p2: Class<*>,
+                      vararg val p2: <!INVALID_TYPE_OF_ANNOTATION_MEMBER!>Class<*><!>,
                       vararg val p3: MyEnum,
                       vararg val p4: Ann1,
                       vararg val p5: Int)

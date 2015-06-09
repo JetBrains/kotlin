@@ -33,9 +33,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.typeUtil.isArrayOfJavaLangClass
-import org.jetbrains.kotlin.types.typeUtil.isJavaLangClass
-import org.jetbrains.kotlin.types.typeUtil.isJavaLangClassOrArray
 
 public class JavaAnnotationCallChecker : CallChecker {
     override fun <F : CallableDescriptor?> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
@@ -44,16 +41,6 @@ public class JavaAnnotationCallChecker : CallChecker {
             resultingDescriptor.getContainingDeclaration().getKind() != ClassKind.ANNOTATION_CLASS) return
 
         reportErrorsOnPositionedArguments(resolvedCall, context)
-        reportWarningOnJavaClassUsages(resolvedCall, context)
-    }
-
-    private fun reportWarningOnJavaClassUsages(
-            resolvedCall: ResolvedCall<*>,
-            context: BasicCallResolutionContext
-    ) {
-        resolvedCall.getValueArguments().filter { it.getKey().getType().isJavaLangClassOrArray() }.forEach {
-            reportOnValueArgument(context, it, ErrorsJvm.JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION)
-        }
     }
 
     private fun reportErrorsOnPositionedArguments(

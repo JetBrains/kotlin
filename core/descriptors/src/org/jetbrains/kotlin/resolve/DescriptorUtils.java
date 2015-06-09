@@ -541,8 +541,4 @@ public class DescriptorUtils {
             }
         }
     }
-
-    public static boolean isJavaLangClass(ClassDescriptor descriptor) {
-        return "java.lang.Class".equals(getFqName(descriptor).asString());
-    }
 }

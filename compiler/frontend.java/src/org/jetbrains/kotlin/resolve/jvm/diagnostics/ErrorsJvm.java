@@ -52,7 +52,6 @@ public interface ErrorsJvm {
     DiagnosticFactory0<JetDeclaration> NATIVE_DECLARATION_CANNOT_BE_INLINED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<JetExpression> POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<JetExpression> JAVA_LANG_CLASS_ARGUMENT_IN_ANNOTATION = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<JetElement>    DEPRECATED_ANNOTATION_METHOD_CALL      = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<JetElement> TRAIT_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
