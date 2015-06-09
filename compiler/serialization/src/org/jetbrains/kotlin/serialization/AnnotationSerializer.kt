@@ -103,11 +103,6 @@ public object AnnotationSerializer {
                 setIntValue(value.getValue().toLong())
             }
 
-            override fun visitJavaClassValue(value: JavaClassValue, data: Unit) {
-                // TODO: support class literals
-                throw UnsupportedOperationException("Class literal annotation arguments are not yet supported: $value")
-            }
-
             override fun visitKClassValue(value: KClassValue?, data: Unit?) {
                 // TODO: support class literals
                 throw UnsupportedOperationException("Class literal annotation arguments are not yet supported: $value")

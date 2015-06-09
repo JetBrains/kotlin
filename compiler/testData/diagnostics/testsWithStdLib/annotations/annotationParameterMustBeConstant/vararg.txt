@@ -4,7 +4,6 @@ internal var i: kotlin.Int
 internal val i2: kotlin.Int = 1
 internal val i3: kotlin.Int
 internal val iAnn: Ann
-internal val iJC: java.lang.Class<Test>
 internal fun foo(): kotlin.Int
 
 internal final annotation class Ann : kotlin.Annotation {
@@ -23,14 +22,6 @@ internal final annotation class AnnAnn : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class AnnJC : kotlin.Annotation {
-    public constructor AnnJC(/*0*/ vararg i: java.lang.Class<*> /*kotlin.Array<out java.lang.Class<*>>*/)
-    internal final val i: kotlin.Array<out java.lang.Class<*>>
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
 Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) internal final class Test {
     public constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -40,13 +31,6 @@ Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) Ann(i = {}: kotlin.In
 
 AnnAnn(i = {Ann(i = {IntegerValueType(1)}: kotlin.IntArray)}: kotlin.Array<Ann>) AnnAnn(i = {}: kotlin.Array<Ann>) internal final class TestAnn {
     public constructor TestAnn()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-AnnJC(i = {javaClass<Test>()}: kotlin.Array<java.lang.Class<Test>>) AnnJC(i = {}: kotlin.Array<java.lang.Class<Test>>) internal final class TestJC {
-    public constructor TestJC()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

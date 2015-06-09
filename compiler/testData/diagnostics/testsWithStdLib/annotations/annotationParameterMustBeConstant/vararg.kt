@@ -17,12 +17,6 @@ val i3 = foo()
 
 fun foo(): Int = 1
 
-annotation class AnnJC(vararg val i: Class<*>)
-AnnJC(*arrayOf(javaClass<Test>()))
-AnnJC(*arrayOf(<!ANNOTATION_PARAMETER_MUST_BE_CLASS_LITERAL!>iJC<!>))
-class TestJC
-val iJC = javaClass<Test>()
-
 annotation class AnnAnn(vararg val i: Ann)
 AnnAnn(*arrayOf(Ann(1)))
 AnnAnn(*arrayOf(<!ANNOTATION_PARAMETER_MUST_BE_CONST!>iAnn<!>))

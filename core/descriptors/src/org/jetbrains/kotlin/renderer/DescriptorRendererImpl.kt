@@ -372,7 +372,6 @@ internal class DescriptorRendererImpl(
         return when (value) {
             is ArrayValue -> value.getValue().map { renderConstant(it) }.joinToString(", ", "{", "}")
             is AnnotationValue -> renderAnnotation(value.getValue())
-            is JavaClassValue -> "javaClass<" + renderType(value.getValue()) + ">()"
             is KClassValue -> renderType(value.getValue()) + "::class"
             else -> value.toString()
         }

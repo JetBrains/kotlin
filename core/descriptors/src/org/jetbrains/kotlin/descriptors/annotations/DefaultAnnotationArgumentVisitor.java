@@ -94,11 +94,6 @@ public abstract class DefaultAnnotationArgumentVisitor<R, D> implements Annotati
     }
 
     @Override
-    public R visitJavaClassValue(JavaClassValue value, D data) {
-        return visitValue(value, data);
-    }
-
-    @Override
     public R visitNumberTypeValue(IntegerValueTypeConstant value, D data) {
         return visitValue(value, data);
     }

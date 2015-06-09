@@ -402,11 +402,6 @@ public class ConstantExpressionEvaluator private (val trace: BindingTrace) : Jet
             }
         }
 
-        // javaClass()
-        if (CompileTimeConstantUtils.isJavaClassMethodCall(call)) {
-            return JavaClassValue(resultingDescriptor.getReturnType()!!)
-        }
-
         return null
     }
 
