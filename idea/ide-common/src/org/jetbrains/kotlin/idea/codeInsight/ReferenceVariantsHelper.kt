@@ -66,7 +66,6 @@ public class ReferenceVariantsHelper(
         val variants = getReferenceVariantsNoVisibilityFilter(expression, kindFilter, useRuntimeReceiverType, nameFilter)
                 .filter(visibilityFilter)
         return ShadowedDeclarationsFilter(context, moduleDescriptor, project).filter(variants, expression)
-        //TODO: if visibility filter is empty, filter out shadowed can work incorrectly!
     }
 
     private fun getReferenceVariantsNoVisibilityFilter(
