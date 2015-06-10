@@ -15,5 +15,9 @@ fun box(): String {
     assertEquals(true, isInstance<Number>(0.0))
     assertEquals(false, isInstance<Number>("0"))
 
+    assertEquals(true, isInstance<Int?>(0), "isInstance<Int?>(0)")
+    assertEquals(true, isInstance<Int?>(null), "isInstance<Int?>(null)")
+    assertEquals(false, isInstance<Int?>(true), "isInstance<Int?>(true)")
+
     return "OK"
 }
