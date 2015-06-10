@@ -95,6 +95,12 @@ public class ReifiedTestGenerated extends AbstractReifiedTest {
         doTest(fileName);
     }
 
+    @TestMetadata("isTNullable.kt")
+    public void testIsTNullable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/isTNullable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("lambda.kt")
     public void testLambda() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/lambda.kt");
