@@ -161,13 +161,16 @@ class Kotlin2JvmSourceSetProcessor(
                     kotlinDirSet?.srcDir(dir)
                 }
 
+                val subpluginEnvironment = loadSubplugins(project)
+                subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
+
                 if (aptConfiguration.getDependencies().size() > 1 && javaTask is JavaCompile) {
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(kotlinTask, sourceSetName)
 
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
 
-                    project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, kotlinDestinationDir) {
+                    project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, kotlinDestinationDir, subpluginEnvironment) {
                         createKotlinCompileTask(it)
                     }
                 }
@@ -360,7 +363,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
         val logger = project.getLogger()
         val kotlinOptions = getExtension<Any?>(androidExt, "kotlinOptions")
 
-        val subpluginEnvironment = loadSubplugins(project, logger)
+        val subpluginEnvironment = loadSubplugins(project)
 
         for (variantData in variantDataList) {
             val variantDataName = variantData.getName()
@@ -424,6 +427,8 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
                 }
             }
 
+            subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
+
             kotlinTask doFirst {
                 val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
                 val fullClasspath = (javaTask.getClasspath() + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))
@@ -466,7 +471,7 @@ open class KotlinAndroidPlugin [Inject] (val scriptHandler: ScriptHandler, val t
 
 }
 
-private fun loadSubplugins(project: Project, logger: Logger): SubpluginEnvironment {
+private fun loadSubplugins(project: Project): SubpluginEnvironment {
     try {
         val subplugins = ServiceLoader.load(
             javaClass<KotlinGradleSubplugin>(), project.getBuildscript().getClassLoader()).toList()
@@ -577,15 +582,14 @@ private fun Project.initKapt(
         kaptManager: AnnotationProcessingManager,
         variantName: String,
         kotlinOutputDir: File,
-        subpluginEnvironment: SubpluginEnvironment? = null,
+        subpluginEnvironment: SubpluginEnvironment,
         taskFactory: (suffix: String) -> AbstractCompile
 ) {
     val kaptExtension = getExtensions().kapt
-    val environment = subpluginEnvironment ?: loadSubplugins(this, getLogger())
     val kotlinAfterJavaTask: AbstractCompile?
 
     if (kaptExtension.generateStubs) {
-        kotlinAfterJavaTask = createKotlinAfterJavaTask(kotlinTask, javaTask, kotlinOutputDir, taskFactory)
+        kotlinAfterJavaTask = createKotlinAfterJavaTask(javaTask, kotlinOutputDir, taskFactory)
 
         kotlinTask.getLogger().kotlinDebug("kapt: Using class file stubs")
 
@@ -598,11 +602,10 @@ private fun Project.initKapt(
             kotlinAfterJavaTask.source(kotlinTask.getSource())
         }
 
-        environment.addSubpluginArguments(this, kotlinAfterJavaTask)
+        subpluginEnvironment.addSubpluginArguments(this, kotlinAfterJavaTask)
     } else {
         kotlinAfterJavaTask = null
         kotlinTask.getLogger().kotlinDebug("kapt: Class file stubs are not used")
-        environment.addSubpluginArguments(this, kotlinTask)
     }
 
     javaTask.doFirst {
@@ -618,7 +621,6 @@ private fun Project.initKapt(
 }
 
 private fun Project.createKotlinAfterJavaTask(
-        kotlinTask: AbstractCompile,
         javaTask: AbstractCompile,
         kotlinDestinationDir: File,
         taskFactory: (suffix: String) -> AbstractCompile
