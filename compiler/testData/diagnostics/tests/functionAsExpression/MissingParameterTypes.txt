@@ -1,6 +1,6 @@
 package
 
-internal val a: (???) -> [ERROR : Cannot be inferred]
+internal val a: (???) -> ???
 internal val b: (kotlin.Int) -> kotlin.Int
 internal val c: (kotlin.Int, kotlin.String) -> kotlin.Int
 internal val d: (kotlin.Int, kotlin.String) -> kotlin.Int
