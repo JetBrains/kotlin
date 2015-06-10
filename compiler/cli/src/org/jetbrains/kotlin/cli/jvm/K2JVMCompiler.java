@@ -72,15 +72,16 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             @NotNull MessageCollector messageCollector,
             @NotNull Disposable rootDisposable
     ) {
+        MessageSeverityCollector messageSeverityCollector = new MessageSeverityCollector(messageCollector);
         KotlinPaths paths = arguments.kotlinHome != null
                                 ? new KotlinPathsFromHomeDir(new File(arguments.kotlinHome))
                                 : PathUtil.getKotlinPathsForCompiler();
 
-        messageCollector.report(CompilerMessageSeverity.LOGGING,
+        messageSeverityCollector.report(CompilerMessageSeverity.LOGGING,
                                 "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION);
 
-        final CompilerConfiguration configuration = new CompilerConfiguration();
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
+        CompilerConfiguration configuration = new CompilerConfiguration();
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageSeverityCollector);
 
         if (IncrementalCompilation.ENABLED) {
             IncrementalCacheProvider incrementalCacheProvider = services.get(IncrementalCacheProvider.class);
@@ -100,7 +101,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
         }
         catch (Throwable t) {
-            MessageCollectorUtil.reportException(messageCollector, t);
+            MessageCollectorUtil.reportException(messageSeverityCollector, t);
             return INTERNAL_ERROR;
         }
 
@@ -109,21 +110,21 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
         }
         catch (PluginCliOptionProcessingException e) {
             String message = e.getMessage() + "\n\n" + PluginPackage.cliPluginUsageString(e.getPluginId(), e.getOptions());
-            messageCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
+            messageSeverityCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
             return INTERNAL_ERROR;
         }
         catch (CliOptionProcessingException e) {
-            messageCollector.report(CompilerMessageSeverity.ERROR, e.getMessage(), CompilerMessageLocation.NO_LOCATION);
+            messageSeverityCollector.report(CompilerMessageSeverity.ERROR, e.getMessage(), CompilerMessageLocation.NO_LOCATION);
             return INTERNAL_ERROR;
         }
         catch (Throwable t) {
-            MessageCollectorUtil.reportException(messageCollector, t);
+            MessageCollectorUtil.reportException(messageSeverityCollector, t);
             return INTERNAL_ERROR;
         }
 
         if (arguments.script) {
             if (arguments.freeArgs.isEmpty()) {
-                messageCollector.report(CompilerMessageSeverity.ERROR, "Specify script source path to evaluate",
+                messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "Specify script source path to evaluate",
                                         CompilerMessageLocation.NO_LOCATION);
                 return COMPILATION_ERROR;
             }
@@ -154,7 +155,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
 
         putAdvancedOptions(configuration, arguments);
 
-        messageCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
+        messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Configuring the compilation environment",
                                 CompilerMessageLocation.NO_LOCATION);
         try {
             configureEnvironment(configuration, arguments);
@@ -175,11 +176,11 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             final KotlinCoreEnvironment environment;
 
             if (arguments.module != null) {
-                MessageCollector sanitizedCollector = new FilteringMessageCollector(messageCollector, in(CompilerMessageSeverity.VERBOSE));
+                MessageCollector sanitizedCollector = new FilteringMessageCollector(messageSeverityCollector, in(CompilerMessageSeverity.VERBOSE));
                 ModuleScriptData moduleScript = CompileEnvironmentUtil.loadModuleDescriptions(arguments.module, sanitizedCollector);
 
                 if (outputDir != null) {
-                    messageCollector.report(CompilerMessageSeverity.WARNING,
+                    messageSeverityCollector.report(CompilerMessageSeverity.WARNING,
                                             "The '-d' option with a directory destination is ignored because '-module' is specified",
                                             CompilerMessageLocation.NO_LOCATION);
                 }
@@ -200,6 +201,16 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             }
             else {
                 environment = createCoreEnvironment(rootDisposable, configuration);
+
+                if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) {
+                    return COMPILATION_ERROR;
+                }
+
+                if (environment.getSourceFiles().isEmpty()) {
+                    messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "No source files", CompilerMessageLocation.NO_LOCATION);
+                    return COMPILATION_ERROR;
+                }
+
                 KotlinToJVMBytecodeCompiler.compileBunchOfSources(environment, jar, outputDir, arguments.includeRuntime);
             }
 
@@ -213,7 +224,7 @@ public class K2JVMCompiler extends CLICompiler<K2JVMCompilerArguments> {
             return OK;
         }
         catch (CompilationException e) {
-            messageCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
+            messageSeverityCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e),
                                     MessageUtil.psiElementToMessageLocation(e.getElement()));
             return INTERNAL_ERROR;
         }
