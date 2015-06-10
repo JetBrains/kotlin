@@ -918,6 +918,12 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testRenameExtensionParameter() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.getNewParameters()[1].setName("b");
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {

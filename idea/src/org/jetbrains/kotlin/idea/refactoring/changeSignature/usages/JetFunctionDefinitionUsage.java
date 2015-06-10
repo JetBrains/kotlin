@@ -204,7 +204,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
             processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory);
         }
         else if (parameterList != null) {
-            int paramIndex = 0;
+            int paramIndex = originalFunctionDescriptor.getExtensionReceiverParameter() != null ? 1 : 0;
 
             for (JetParameter parameter : parameterList.getParameters()) {
                 JetParameterInfo parameterInfo = changeInfo.getNewParameters()[paramIndex];
