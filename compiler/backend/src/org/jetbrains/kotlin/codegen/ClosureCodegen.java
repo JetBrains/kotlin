@@ -336,7 +336,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
             iv.load(0, superClassAsmType);
 
-            if (superClassAsmType.equals(LAMBDA) || superClassAsmType.equals(FUNCTION_REFERENCE)) {
+            if (superClassAsmType.equals(LAMBDA)) {
                 int arity = funDescriptor.getValueParameters().size();
                 if (funDescriptor.getExtensionReceiverParameter() != null) arity++;
                 if (funDescriptor.getDispatchReceiverParameter() != null) arity++;
