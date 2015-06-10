@@ -14,10 +14,10 @@ public interface ReadOnlyProperty<in R, out T> {
     /**
      * Returns the value of the property for the given object.
      * @param thisRef the object for which the value is requested.
-     * @param desc the metadata for the property.
+     * @param property the metadata for the property.
      * @return the property value.
      */
-    public fun get(thisRef: R, desc: PropertyMetadata): T
+    public fun get(thisRef: R, property: PropertyMetadata): T
 }
 
 /**
@@ -33,16 +33,16 @@ public interface ReadWriteProperty<in R, T> {
     /**
      * Returns the value of the property for the given object.
      * @param thisRef the object for which the value is requested.
-     * @param desc the metadata for the property.
+     * @param property the metadata for the property.
      * @return the property value.
      */
-    public fun get(thisRef: R, desc: PropertyMetadata): T
+    public fun get(thisRef: R, property: PropertyMetadata): T
 
     /**
      * Sets the value of the property for the given object.
      * @param thisRef the object for which the value is requested.
-     * @param desc the metadata for the property.
+     * @param property the metadata for the property.
      * @param value the value to set.
      */
-    public fun set(thisRef: R, desc: PropertyMetadata, value: T)
+    public fun set(thisRef: R, property: PropertyMetadata, value: T)
 }
