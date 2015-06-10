@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.di.InjectorForMacros
-import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -35,13 +34,12 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.TypeUtils
-import java.util.ArrayList
+import java.util.*
 
 public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
         private val moduleDescriptor: ModuleDescriptor,
-        private val project: Project,
-        private val importDeclarations: Boolean = false
+        private val project: Project
 ) {
     private val psiFactory = JetPsiFactory(project)
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)
@@ -51,7 +49,27 @@ public class ShadowedDeclarationsFilter(
 
         return declarations
                 .groupBy { signature(it) }
-                .flatMap { filterEqualSignatureGroup(it.value, call) }
+                .values()
+                .flatMap { group -> filterEqualSignatureGroup(group, call) }
+    }
+
+    public fun <TDescriptor : DeclarationDescriptor> filterNonImported(
+            declarations: Collection<TDescriptor>,
+            importedDeclarations: Collection<DeclarationDescriptor>,
+            expression: JetSimpleNameExpression
+    ): Collection<TDescriptor> {
+        val importedDeclarationsSet = importedDeclarations.toSet()
+        val nonImportedDeclarations = declarations.filter { it !in importedDeclarationsSet }
+
+        val call = expression.getCall(bindingContext) ?: return nonImportedDeclarations
+
+        val notShadowed = nonImportedDeclarations
+                .groupBy { signature(it) }
+                .values()
+                .flatMapTo(HashSet<DeclarationDescriptor>()) { group ->
+                    filterEqualSignatureGroup(group + importedDeclarations, call, descriptorsToImport = group)
+                }
+        return declarations.filter { it in notShadowed }
     }
 
     private fun signature(descriptor: DeclarationDescriptor): Any {
@@ -62,7 +80,11 @@ public class ShadowedDeclarationsFilter(
         }
     }
 
-    private fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(descriptors: Collection<TDescriptor>, call: Call): Collection<TDescriptor> {
+    private fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(
+            descriptors: Collection<TDescriptor>,
+            call: Call,
+            descriptorsToImport: Collection<TDescriptor> = emptyList()
+    ): Collection<TDescriptor> {
         if (descriptors.size() == 1) return descriptors
 
         val first = descriptors.first()
@@ -128,10 +150,9 @@ public class ShadowedDeclarationsFilter(
         val calleeExpression = call.getCalleeExpression() ?: return descriptors
         var resolutionScope = bindingContext.correctedResolutionScope(calleeExpression) ?: return descriptors
 
-        if (importDeclarations) {
-            val importableDescriptors = descriptors.filter { it.canBeReferencedViaImport() }
+        if (descriptorsToImport.isNotEmpty()) {
             resolutionScope = ChainedScope(resolutionScope.getContainingDeclaration(), "Scope with explicitly imported descriptors",
-                                           ExplicitImportsScope(importableDescriptors), resolutionScope)
+                                           ExplicitImportsScope(descriptorsToImport), resolutionScope)
         }
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(calleeExpression)

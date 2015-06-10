@@ -226,8 +226,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
         val extensions = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
         //TODO: it filters out too much
-        //TODO: not filtered out dominated by members
-        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project, importDeclarations = true).filter(extensions, reference.expression)
+        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(extensions, referenceVariants, reference.expression)
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
