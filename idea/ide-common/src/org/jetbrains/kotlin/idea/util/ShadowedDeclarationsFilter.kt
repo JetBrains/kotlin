@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.di.InjectorForMacros
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -34,7 +36,8 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.TypeUtils
-import java.util.*
+import java.util.ArrayList
+import java.util.HashSet
 
 public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
@@ -64,7 +67,7 @@ public class ShadowedDeclarationsFilter(
         val call = expression.getCall(bindingContext) ?: return nonImportedDeclarations
 
         val notShadowed = nonImportedDeclarations
-                .groupBy { signature(it) }
+                .groupBy { signature(it) to packageName(it) } // same signature non-imported declarations from different packages do not shadow each other
                 .values()
                 .flatMapTo(HashSet<DeclarationDescriptor>()) { group ->
                     filterEqualSignatureGroup(group + importedDeclarations, call, descriptorsToImport = group)
@@ -79,6 +82,8 @@ public class ShadowedDeclarationsFilter(
             else -> descriptor
         }
     }
+
+    private fun packageName(descriptor: DeclarationDescriptor) = descriptor.importableFqName?.parent()
 
     private fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(
             descriptors: Collection<TDescriptor>,

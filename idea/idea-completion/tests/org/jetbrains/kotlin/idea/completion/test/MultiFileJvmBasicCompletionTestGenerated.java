@@ -113,6 +113,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("MoreSpecificExtensionInDifferentPackage")
+    public void testMoreSpecificExtensionInDifferentPackage() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/MoreSpecificExtensionInDifferentPackage/");
+        doTest(fileName);
+    }
+
     @TestMetadata("MoreSpecificExtensionIsPrivate")
     public void testMoreSpecificExtensionIsPrivate() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/MoreSpecificExtensionIsPrivate/");
