@@ -533,6 +533,32 @@ public class BodyResolver {
         return parameterScope;
     }
 
+    private void resolveProperty(
+            @NotNull BodiesResolveContext c,
+            @Nullable JetScope parentScope,
+            @NotNull JetProperty property,
+            @NotNull PropertyDescriptor propertyDescriptor
+    ) {
+        computeDeferredType(propertyDescriptor.getReturnType());
+
+        JetExpression initializer = property.getInitializer();
+        JetScope propertyScope = getScopeForProperty(c, property);
+        if (parentScope == null) {
+            parentScope = propertyScope;
+        }
+        if (initializer != null) {
+            resolvePropertyInitializer(c, property, propertyDescriptor, initializer, propertyScope);
+        }
+
+        JetExpression delegateExpression = property.getDelegateExpression();
+        if (delegateExpression != null) {
+            assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
+            resolvePropertyDelegate(c, property, propertyDescriptor, delegateExpression, parentScope, propertyScope);
+        }
+
+        resolvePropertyAccessors(c, property, propertyDescriptor);
+    }
+
     private void resolvePropertyDeclarationBodies(@NotNull BodiesResolveContext c) {
 
         // Member properties
@@ -546,23 +572,7 @@ public class BodyResolver {
                 PropertyDescriptor propertyDescriptor = c.getProperties().get(property);
                 assert propertyDescriptor != null;
 
-                computeDeferredType(propertyDescriptor.getReturnType());
-
-                JetExpression initializer = property.getInitializer();
-                JetScope propertyScope = getScopeForProperty(c, property);
-                if (initializer != null) {
-                    resolvePropertyInitializer(c, property, propertyDescriptor, initializer, propertyScope);
-                }
-
-                JetExpression delegateExpression = property.getDelegateExpression();
-                if (delegateExpression != null) {
-                    assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
-                    resolvePropertyDelegate(c, property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberDeclarationResolution(), propertyScope);
-                }
-
-                ForceResolveUtil.forceResolveAllContents(propertyDescriptor.getAnnotations());
-
-                resolvePropertyAccessors(c, property, propertyDescriptor);
+                resolveProperty(c, classDescriptor.getScopeForMemberDeclarationResolution(), property, propertyDescriptor);
                 processed.add(property);
             }
         }
@@ -574,21 +584,7 @@ public class BodyResolver {
 
             PropertyDescriptor propertyDescriptor = entry.getValue();
 
-            computeDeferredType(propertyDescriptor.getReturnType());
-
-            JetExpression initializer = property.getInitializer();
-            JetScope propertyScope = getScopeForProperty(c, property);
-            if (initializer != null) {
-                resolvePropertyInitializer(c, property, propertyDescriptor, initializer, propertyScope);
-            }
-
-            JetExpression delegateExpression = property.getDelegateExpression();
-            if (delegateExpression != null) {
-                assert initializer == null : "Initializer should be null for delegated property : " + property.getText();
-                resolvePropertyDelegate(c, property, propertyDescriptor, delegateExpression, propertyScope, propertyScope);
-            }
-
-            resolvePropertyAccessors(c, property, propertyDescriptor);
+            resolveProperty(c, null, property, propertyDescriptor);
         }
     }
 
@@ -696,7 +692,7 @@ public class BodyResolver {
     }
 
     @NotNull
-    private JetScope getScopeForProperty(@NotNull BodiesResolveContext c, @NotNull JetProperty property) {
+    private static JetScope getScopeForProperty(@NotNull BodiesResolveContext c, @NotNull JetProperty property) {
         JetScope scope = c.getDeclaringScopes().apply(property);
         assert scope != null : "Scope for property " + property.getText() + " should exists";
         return scope;
