@@ -48,6 +48,11 @@ public class K2JvmCliTest extends CliBaseTest {
     }
 
     @Test
+    public void emptySources() throws Exception {
+        executeCompilerCompareOutputJVM();
+    }
+
+    @Test
     public void classpath() throws Exception {
         executeCompilerCompareOutputJVM();
     }
