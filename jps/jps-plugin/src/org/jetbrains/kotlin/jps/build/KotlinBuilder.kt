@@ -350,6 +350,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
             generatedClasses: List<GeneratedJvmClass>
     ): IncrementalCacheImpl.RecompilationDecision {
+        incrementalCaches.values().forEach { it.saveCacheFormatVersion() }
+
         if (!IncrementalCompilation.ENABLED) {
             return DO_NOTHING
         }
