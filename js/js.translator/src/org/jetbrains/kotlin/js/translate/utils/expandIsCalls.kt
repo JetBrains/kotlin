@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.translate.utils
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck
 import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
+import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import java.util.*
@@ -30,14 +31,22 @@ fun expandIsCalls(node: JsNode, context: TranslationContext) {
 private class TypeCheckRewritingVisitor(private val context: TranslationContext) : JsVisitorWithContextImpl() {
 
     private val scopes = Stack<JsScope>()
+    private val localVars = Stack<MutableSet<JsName>>()
 
     override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean {
         scopes.push(x.scope)
+        localVars.push(IdentitySet())
+        return super.visit(x, ctx)
+    }
+
+    override fun visit(x: JsVars.JsVar, ctx: JsContext<*>): Boolean {
+        localVars.peek().add(x.name)
         return super.visit(x, ctx)
     }
 
     override fun endVisit(x: JsFunction, ctx: JsContext<*>) {
         scopes.pop()
+        localVars.pop()
         super.endVisit(x, ctx)
     }
 
@@ -60,28 +69,54 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
     }
 
     private fun getReplacement(callee: JsInvocation, calleeArgument: JsExpression, argument: JsExpression): JsExpression? {
-        return when (callee.typeCheck) {
-            // Kotlin.isTypeOf(calleeArgument)(argument) -> typeOf argument === calleeArgument
-            TypeCheck.TYPEOF ->
-                typeOfIs(argument, calleeArgument as JsStringLiteral)
+        // Kotlin.isTypeOf(calleeArgument)(argument) -> typeOf argument === calleeArgument
+        if (callee.typeCheck == TypeCheck.TYPEOF) {
+            return typeOfIs(argument, calleeArgument as JsStringLiteral)
+        }
 
-            // Kotlin.isInstanceOf(calleeArgument)(argument) -> argument instanceof calleeArgument
-            TypeCheck.INSTANCEOF ->
-                context.namer().isInstanceOf(argument, calleeArgument)
+        // Kotlin.isInstanceOf(calleeArgument)(argument) -> argument instanceof calleeArgument
+        if (callee.typeCheck == TypeCheck.INSTANCEOF) {
+            return context.namer().isInstanceOf(argument, calleeArgument)
+        }
 
-            // Kotlin.orNull(calleeArgument)(argument) -> (tmp = argument) == null || calleeArgument(tmp)
-            TypeCheck.OR_NULL -> {
+        // Kotlin.orNull(calleeArgument)(argument) -> (tmp = argument) == null || calleeArgument(tmp)
+        if (callee.typeCheck == TypeCheck.OR_NULL) {
+            if (calleeArgument is JsInvocation && calleeArgument.typeCheck == TypeCheck.OR_NULL) {
+                return JsInvocation(calleeArgument, argument)
+            }
+
+            var nullCheckTarget = argument
+            var nextCheckTarget = argument
+
+            if (argument.isAssignmentToLocalVar) {
+                // Kotlin.orNull(Kotlin.isInstance(SomeType))(localVar=someExpr) -> (localVar=someExpr) != null || Kotlin.isInstance(SomeType)(localVar)
+                val localVar = (argument as JsBinaryOperation).getArg1()
+                nextCheckTarget = localVar
+            }
+            else if (!argument.isLocalVar) {
                 val currentScope = scopes.peek()
                 val tmp = currentScope.declareTemporary()
                 val statementContext = lastStatementLevelContext
                 statementContext.addPrevious(newVar(tmp, null))
-                val assignment = assignment(tmp.makeRef(), argument)
-                val tmpIsNull = TranslationUtils.isNullCheck(assignment)
-                or(tmpIsNull, JsInvocation(calleeArgument, tmp.makeRef()))
+                nullCheckTarget = assignment(tmp.makeRef(), argument)
+                nextCheckTarget = tmp.makeRef()
             }
 
-            else ->
-                null
+            val isNull = TranslationUtils.isNullCheck(nullCheckTarget)
+            return or(isNull, JsInvocation(calleeArgument, nextCheckTarget))
         }
+
+        return null
     }
+
+    private val JsExpression.isLocalVar: Boolean
+        get() {
+            if (localVars.empty() || this !is JsNameRef) return false
+
+            val name = this.getName()
+            return name != null && localVars.peek().contains(name)
+        }
+
+    private val JsExpression.isAssignmentToLocalVar: Boolean
+        get() = this is JsBinaryOperation && getOperator() == JsBinaryOperator.ASG
 }
