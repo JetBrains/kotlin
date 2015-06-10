@@ -107,8 +107,18 @@ public class ModuleDescriptorImpl(
         get() = KotlinBuiltIns.getInstance()
 }
 
-public class ModuleDependenciesImpl(override val descriptors: List<ModuleDescriptorImpl>) : ModuleDependencies
-
 public interface ModuleDependencies {
     public val descriptors: List<ModuleDescriptorImpl>
+}
+
+public class ModuleDependenciesImpl(override val descriptors: List<ModuleDescriptorImpl>) : ModuleDependencies
+
+public class LazyModuleDependencies(
+        storageManager: StorageManager,
+        computeDependencies: () -> List<ModuleDescriptorImpl>
+) : ModuleDependencies {
+    private val dependencies = storageManager.createLazyValue(computeDependencies)
+
+    override val descriptors: List<ModuleDescriptorImpl>
+        get() = dependencies()
 }

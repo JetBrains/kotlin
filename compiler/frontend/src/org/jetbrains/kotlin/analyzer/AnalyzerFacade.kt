@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.impl.LazyModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
@@ -135,18 +136,23 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
 
         val resolverForProject = createResolverForProject()
 
+        fun computeDependencyDescriptors(module: M): List<ModuleDescriptorImpl> {
+            val dependenciesDescriptors = module.dependencies().mapTo(ArrayList<ModuleDescriptorImpl>()) {
+                dependencyInfo ->
+                resolverForProject.descriptorForModule(dependencyInfo as M)
+            }
+
+            val builtinsModule = KotlinBuiltIns.getInstance().getBuiltInsModule()
+            module.dependencyOnBuiltins().adjustDependencies(builtinsModule, dependenciesDescriptors)
+            return dependenciesDescriptors
+        }
+
         fun setupModuleDependencies() {
             modules.forEach {
                 module ->
-                val currentModule = resolverForProject.descriptorForModule(module)
-                val dependenciesDescriptors = module.dependencies().mapTo(ArrayList<ModuleDescriptorImpl>()) {
-                    dependencyInfo ->
-                    resolverForProject.descriptorForModule(dependencyInfo as M)
-                }
-
-                val builtinsModule = KotlinBuiltIns.getInstance().getBuiltInsModule()
-                module.dependencyOnBuiltins().adjustDependencies(builtinsModule, dependenciesDescriptors)
-                currentModule.setDependencies(dependenciesDescriptors)
+                resolverForProject.descriptorForModule(module).setDependencies(
+                        LazyModuleDependencies(projectContext.storageManager) { computeDependencyDescriptors(module) }
+                )
             }
         }
 
@@ -191,4 +197,3 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
 
     public val moduleParameters: ModuleParameters
 }
-
