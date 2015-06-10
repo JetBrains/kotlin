@@ -1,5 +1,5 @@
 // "Remove 'protected' modifier" "true"
 
-class A private () {
+class A private constructor() {
 
 }

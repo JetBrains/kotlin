@@ -1,6 +1,6 @@
 var state: String = "Fail"
 
-class A private(x: String = "OK") {
+class A private constructor(x: String = "OK") {
     init {
         state = x
     }

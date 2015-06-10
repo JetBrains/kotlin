@@ -1,6 +1,6 @@
 var sideEffects: String = ""
 
-abstract class B protected(val arg: Int) {
+abstract class B protected constructor(val arg: Int) {
     val parentProp: String
     init {
         sideEffects += "zero#"

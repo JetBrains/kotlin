@@ -1,4 +1,7 @@
 // "Add missing 'constructor' keyword in whole project" "true"
+// ERROR: Use 'constructor' keyword after modifiers of primary constructor
+// ERROR: Use 'constructor' keyword after modifiers of primary constructor
+// ERROR: Use 'constructor' keyword after modifiers of primary constructor
 
 annotation class Ann(val x: Int = 1)
 

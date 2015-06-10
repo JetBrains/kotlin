@@ -158,7 +158,7 @@ public interface Errors {
     DiagnosticFactory0<JetNullableType> NULLABLE_SUPERTYPE = DiagnosticFactory0.create(ERROR, NULLABLE_TYPE);
     DiagnosticFactory0<JetTypeReference> DYNAMIC_SUPERTYPE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<JetElement> MISSING_CONSTRUCTOR_KEYWORD = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<JetElement> MISSING_CONSTRUCTOR_KEYWORD = DiagnosticFactory0.create(ERROR);
 
     // Secondary constructors
 

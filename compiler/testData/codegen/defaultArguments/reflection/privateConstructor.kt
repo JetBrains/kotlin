@@ -1,4 +1,4 @@
-class Foo private(val a: Int = 1) {}
+class Foo private constructor(val a: Int = 1) {}
 
 // CLASS: Foo
 // HAS_DEFAULT_CONSTRUCTOR: false

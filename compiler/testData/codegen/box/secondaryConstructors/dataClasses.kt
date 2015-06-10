@@ -12,7 +12,7 @@ data class A1(val prop1: String) {
     fun f(): String = "$prop1#$prop2#$prop3"
 }
 
-data class A2 private () {
+data class A2 private constructor() {
     var prop1: String = ""
     var prop2: String = "const2"
     var prop3: String = ""

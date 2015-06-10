@@ -1,3 +1,3 @@
 package test
 
-class TestConstructor private(p: Int = 1)
+class TestConstructor private constructor(p: Int = 1)

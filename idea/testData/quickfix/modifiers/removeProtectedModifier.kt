@@ -1,5 +1,5 @@
 // "Remove 'protected' modifier" "true"
 
-class A private <caret>protected () {
+class A private <caret>protected constructor() {
 
 }

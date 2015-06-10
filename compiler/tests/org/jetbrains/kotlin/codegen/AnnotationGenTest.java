@@ -199,7 +199,7 @@ public class AnnotationGenTest extends CodegenTestCase {
     } 
 
     public void testConstructor() throws NoSuchFieldException, NoSuchMethodException {
-        loadText("class A @[Deprecated] () {}");
+        loadText("class A @[Deprecated] constructor() {}");
         Class<?> aClass = generateClass("A");
         Constructor x = aClass.getDeclaredConstructor();
         Deprecated annotation = (Deprecated) x.getAnnotation(Deprecated.class);
