@@ -10,6 +10,10 @@ open class A(n: Int) {
     }
 
     fun foo(a: Int): Int = a
+
+    companion object {
+
+    }
 }
 
 class B: A {

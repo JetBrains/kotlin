@@ -8,10 +8,10 @@
 [LibraryNestedClassUsages.1.java] New instance creation (11: 23) A.T t = new A.T();
 [LibraryNestedClassUsages.1.java] New instance creation (12: 24) A.T tt = new A.T(1);
 [LibraryNestedClassUsages.1.java] Usage in extends/implements clause (5: 19) class J extends A.T {
-[library.kt] New instance creation (59: 15) val t = A.T(1)
-[library.kt] New instance creation (60: 16) val tt = A.T()
-[library.kt] Supertype (18: 16) class U: A.T {
-[library.kt] Supertype (24: 18) class V(): A.T(1)
-[library.kt] Supertype (30: 17) class UU: A.T {
-[library.kt] Supertype (36: 19) class VV(): A.T()
-[library.kt] Unclassified usage (62: 17) val fff = A.T::bar
+[library.kt] New instance creation (63: 15) val t = A.T(1)
+[library.kt] New instance creation (64: 16) val tt = A.T()
+[library.kt] Supertype (22: 16) class U: A.T {
+[library.kt] Supertype (28: 18) class V(): A.T(1)
+[library.kt] Supertype (34: 17) class UU: A.T {
+[library.kt] Supertype (40: 19) class VV(): A.T()
+[library.kt] Unclassified usage (66: 17) val fff = A.T::bar

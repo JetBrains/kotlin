@@ -1,0 +1,2 @@
+[LibraryCompanionObjectUsages.0.kt] Companion object (10: 15) val a = A.Companion
+[LibraryCompanionObjectUsages.1.java] Local variable declaration (7: 11) A.Companion o = A.Companion;

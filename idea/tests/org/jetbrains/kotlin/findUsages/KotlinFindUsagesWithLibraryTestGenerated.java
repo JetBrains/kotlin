@@ -94,6 +94,12 @@ public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFind
             doTest(fileName);
         }
 
+        @TestMetadata("LibraryCompanionObjectUsages.0.kt")
+        public void testLibraryCompanionObjectUsages() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/libraryUsages/kotlinLibrary/LibraryCompanionObjectUsages.0.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("LibraryFunctionUsages.0.kt")
         public void testLibraryFunctionUsages() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/libraryUsages/kotlinLibrary/LibraryFunctionUsages.0.kt");

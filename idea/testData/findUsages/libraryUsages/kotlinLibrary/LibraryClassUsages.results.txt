@@ -8,17 +8,17 @@
 [LibraryClassUsages.1.java] New instance creation (11: 19) A a = new A();
 [LibraryClassUsages.1.java] New instance creation (12: 20) A aa = new A(1);
 [LibraryClassUsages.1.java] Usage in extends/implements clause (5: 17) class J extends A {
-[library.kt] Nested class/object (59: 13) val t = A.T(1)
-[library.kt] Nested class/object (60: 14) val tt = A.T()
-[library.kt] New instance creation (53: 13) val a = A(1)
-[library.kt] New instance creation (54: 14) val aa = A()
-[library.kt] Supertype (15: 10) class B: A {
-[library.kt] Supertype (18: 14) class U: A.T {
-[library.kt] Supertype (23: 12) class C(): A(1) {
-[library.kt] Supertype (24: 16) class V(): A.T(1)
-[library.kt] Supertype (27: 11) class BB: A {
-[library.kt] Supertype (30: 15) class UU: A.T {
-[library.kt] Supertype (35: 13) class CC(): A() {
-[library.kt] Supertype (36: 17) class VV(): A.T()
-[library.kt] Unclassified usage (57: 14) val ff = A::foo
-[library.kt] Unclassified usage (62: 15) val fff = A.T::bar
+[library.kt] Nested class/object (63: 13) val t = A.T(1)
+[library.kt] Nested class/object (64: 14) val tt = A.T()
+[library.kt] New instance creation (57: 13) val a = A(1)
+[library.kt] New instance creation (58: 14) val aa = A()
+[library.kt] Supertype (19: 10) class B: A {
+[library.kt] Supertype (22: 14) class U: A.T {
+[library.kt] Supertype (27: 12) class C(): A(1) {
+[library.kt] Supertype (28: 16) class V(): A.T(1)
+[library.kt] Supertype (31: 11) class BB: A {
+[library.kt] Supertype (34: 15) class UU: A.T {
+[library.kt] Supertype (39: 13) class CC(): A() {
+[library.kt] Supertype (40: 17) class VV(): A.T()
+[library.kt] Unclassified usage (61: 14) val ff = A::foo
+[library.kt] Unclassified usage (66: 15) val fff = A.T::bar
