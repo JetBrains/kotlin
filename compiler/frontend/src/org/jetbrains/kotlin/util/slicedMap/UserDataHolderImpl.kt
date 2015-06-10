@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.util.slicedMap
 
 import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.util.userDataHolder.UserDataHolderBase
-import org.jetbrains.kotlin.util.userDataHolder.keyFMap.KeyFMap
+import com.intellij.openapi.util.UserDataHolderBase
 
 class UserDataHolderImpl : UserDataHolderBase() {
     val keys: Array<Key<*>>
