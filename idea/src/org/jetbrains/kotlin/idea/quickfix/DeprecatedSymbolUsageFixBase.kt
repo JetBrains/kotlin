@@ -541,9 +541,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
         }
 
         private fun removeExplicitTypeArguments(result: JetExpression) {
-            val intention = RemoveExplicitTypeArgumentsIntention()
-            result.collectDescendantsOfType<JetTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] }) { intention.isApplicableTo(it) }
-                    .forEach { it.delete() }
+            result.collectDescendantsOfType<JetTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] }) {
+                RemoveExplicitTypeArgumentsIntention.isApplicableTo(it, approximateFlexible = true)
+            }.forEach { it.delete() }
         }
 
         private fun simplifySpreadArrayOfArguments(expression: JetExpression) {
