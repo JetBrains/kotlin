@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public class InsertExplicitTypeArguments : JetSelfTargetingRangeIntention<JetCallExpression>(javaClass(), "Add explicit type arguments"), LowPriorityAction {
+public class InsertExplicitTypeArgumentsIntention : JetSelfTargetingRangeIntention<JetCallExpression>(javaClass(), "Add explicit type arguments"), LowPriorityAction {
     override fun applicabilityRange(element: JetCallExpression): TextRange? {
         return if (isApplicableTo(element, element.analyze())) element.getCalleeExpression()!!.getTextRange() else null
     }

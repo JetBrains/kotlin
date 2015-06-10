@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArguments
+import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -100,8 +100,8 @@ object ReplaceWithAnnotationAnalyzer {
 
         val typeArgsToAdd = ArrayList<Pair<JetCallExpression, JetTypeArgumentList>>()
         expression.forEachDescendantOfType<JetCallExpression> {
-            if (InsertExplicitTypeArguments.isApplicableTo(it, bindingContext)) {
-                typeArgsToAdd.add(it to InsertExplicitTypeArguments.createTypeArguments(it, bindingContext)!!)
+            if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
+                typeArgsToAdd.add(it to InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!)
             }
         }
 
