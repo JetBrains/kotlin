@@ -220,12 +220,18 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         return parent is JetSimpleNameExpression && !JetPsiUtil.isSelectorInQualified(parent)
     }
 
-    protected fun getTopLevelCallables(): Collection<DeclarationDescriptor>
-            = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
+    protected fun getTopLevelCallables(): Collection<DeclarationDescriptor> {
+        val descriptors = indicesHelper.getTopLevelCallables({ prefixMatcher.prefixMatches(it) })
+        return filterShadowedNonImported(descriptors, reference!!)
+    }
 
     protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
-        val extensions = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
-        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(extensions, referenceVariants, reference.expression)
+        val descriptors = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
+        return filterShadowedNonImported(descriptors, reference)
+    }
+
+    private fun filterShadowedNonImported(descriptors: Collection<CallableDescriptor>, reference: JetSimpleNameReference): Collection<CallableDescriptor> {
+        return ShadowedDeclarationsFilter(bindingContext, moduleDescriptor, project).filterNonImported(descriptors, referenceVariants, reference.expression)
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
