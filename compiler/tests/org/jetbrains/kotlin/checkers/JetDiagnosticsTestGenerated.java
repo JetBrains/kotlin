@@ -6896,6 +6896,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt2057.kt")
+                public void testKt2057() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt2057.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt2179.kt")
                 public void testKt2179() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt2179.kt");
@@ -6974,9 +6980,21 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("kt2588.kt")
+                public void testKt2588() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt2588.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt2741.kt")
                 public void testKt2741() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt2741.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt2754.kt")
+                public void testKt2754() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt2754.kt");
                     doTest(fileName);
                 }
 
@@ -7055,6 +7073,30 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("kt3344.kt")
                 public void testKt3344() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt3344.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3496.kt")
+                public void testKt3496() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt3496.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3496_2.kt")
+                public void testKt3496_2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt3496_2.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3559.kt")
+                public void testKt3559() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt3559.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt4420.kt")
+                public void testKt4420() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/regressions/kt4420.kt");
                     doTest(fileName);
                 }
 
@@ -12341,6 +12383,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("intersectionTypes.kt")
                 public void testIntersectionTypes() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/inference/intersectionTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt1275.kt")
+                public void testKt1275() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/inference/kt1275.kt");
                     doTest(fileName);
                 }
 

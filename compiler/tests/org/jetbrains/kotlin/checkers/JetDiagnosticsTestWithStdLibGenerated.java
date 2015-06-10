@@ -531,6 +531,18 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt1558.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("kt3458.kt")
+        public void testKt3458() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt3458.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt4975.kt")
+        public void testKt4975() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/kt4975.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature")

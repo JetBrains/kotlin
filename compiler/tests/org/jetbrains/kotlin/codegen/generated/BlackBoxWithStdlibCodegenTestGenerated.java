@@ -3301,6 +3301,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("kt3850.kt")
+        public void testKt3850() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/regressions/kt3850.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("kt4142.kt")
         public void testKt4142() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/regressions/kt4142.kt");
