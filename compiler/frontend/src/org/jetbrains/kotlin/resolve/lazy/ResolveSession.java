@@ -216,9 +216,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @Nullable
     private LazyPackageDescriptor createPackage(FqName fqName) {
-        if (!fqName.isRoot() && getPackageFragment(fqName.parent()) == null) {
-            return null;
-        }
         PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
         if (provider == null) {
             return null;
