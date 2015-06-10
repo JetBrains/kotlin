@@ -3,7 +3,7 @@
     <file>variableStringFartherScope.kt</file>
     <line>5</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/variableStringFartherScope.kt" />
+    <entry_point TYPE="file" FQNAME="variableStringFartherScope.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -12,7 +12,7 @@
     <file>fourLiterals.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/fourLiterals.kt" />
+    <entry_point TYPE="file" FQNAME="fourLiterals.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -21,7 +21,7 @@
     <file>literalStringWithClass.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/literalStringWithClass.kt" />
+    <entry_point TYPE="file" FQNAME="literalStringWithClass.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -30,7 +30,7 @@
     <file>lambdaType.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/lambdaType.kt" />
+    <entry_point TYPE="file" FQNAME="lambdaType.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -39,7 +39,7 @@
     <file>literalAny.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/literalAny.kt" />
+    <entry_point TYPE="file" FQNAME="literalAny.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -48,7 +48,7 @@
     <file>literalString.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/literalString.kt" />
+    <entry_point TYPE="file" FQNAME="literalString.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -57,7 +57,7 @@
     <file>variablesAndLiterals.kt</file>
     <line>5</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/variablesAndLiterals.kt" />
+    <entry_point TYPE="file" FQNAME="variablesAndLiterals.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -66,7 +66,7 @@
     <file>literalsWhenTypeArgHasTypeArg.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/literalsWhenTypeArgHasTypeArg.kt" />
+    <entry_point TYPE="file" FQNAME="literalsWhenTypeArgHasTypeArg.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -75,7 +75,7 @@
     <file>variableString.kt</file>
     <line>4</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/variableString.kt" />
+    <entry_point TYPE="file" FQNAME="variableString.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -84,7 +84,7 @@
     <file>variableString2.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/variableString2.kt" />
+    <entry_point TYPE="file" FQNAME="variableString2.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -93,7 +93,7 @@
     <file>twoLiteralValues.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/twoLiteralValues.kt" />
+    <entry_point TYPE="file" FQNAME="twoLiteralValues.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -102,7 +102,7 @@
     <file>returnCallWithUnnecessaryTypeArgs.kt</file>
     <line>4</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/returnCallWithUnnecessaryTypeArgs.kt" />
+    <entry_point TYPE="file" FQNAME="returnCallWithUnnecessaryTypeArgs.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -111,7 +111,7 @@
     <file>propertyInitializerIsCallWithUnnecessaryTypeArgs.kt</file>
     <line>4</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/propertyInitializerIsCallWithUnnecessaryTypeArgs.kt" />
+    <entry_point TYPE="file" FQNAME="propertyInitializerIsCallWithUnnecessaryTypeArgs.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -120,7 +120,7 @@
     <file>functionBodyIsCallWithUnnecessaryTypeArgs.kt</file>
     <line>3</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/functionBodyIsCallWithUnnecessaryTypeArgs.kt" />
+    <entry_point TYPE="file" FQNAME="functionBodyIsCallWithUnnecessaryTypeArgs.kt" />
     <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>
@@ -129,7 +129,26 @@
     <file>mapGet.kt</file>
     <line>9</line>
     <module>light_idea_test_case</module>
-    <entry_point TYPE="file" FQNAME="temp:///src/mapGet.kt" />
+    <entry_point TYPE="file" FQNAME="mapGet.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+  <problem>
+    <file>platforrmType2.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="platforrmType2.kt" />
+    <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Type arguments are unnecessary</problem_class>
+    <description>Remove explicit type arguments</description>
+  </problem>
+
+
+  <problem>
+    <file>platforrmType1.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <entry_point TYPE="file" FQNAME="platforrmType1.kt" />
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Type arguments are unnecessary</problem_class>
     <description>Remove explicit type arguments</description>
   </problem>

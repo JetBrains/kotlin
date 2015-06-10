@@ -111,7 +111,7 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
             }
 
             override fun visitTypeArgumentList(typeArgumentList: JetTypeArgumentList) {
-                if (rangeFilter(typeArgumentList) == RangeFilterResult.PROCESS && RemoveExplicitTypeArgumentsIntention().isApplicableTo(typeArgumentList)) {
+                if (rangeFilter(typeArgumentList) == RangeFilterResult.PROCESS && RemoveExplicitTypeArgumentsIntention.isApplicableTo(typeArgumentList, approximateFlexible = true)) {
                     redundantTypeArgs.add(typeArgumentList)
                     return
                 }
