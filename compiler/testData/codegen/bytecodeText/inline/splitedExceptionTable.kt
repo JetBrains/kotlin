@@ -24,6 +24,5 @@ fun box() : String {
     }
     return "fail"
 }
-
-// maybe we should check test data
-// 13 TRYCATCHBLOCK
+/* 8 + 1 see notSplitedExceptionTable.kt*/
+// 9 TRYCATCHBLOCK

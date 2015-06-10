@@ -26,7 +26,17 @@ public class InlineMarker {
 
     }
 
+    //TODO: remove on ABI increment, kept only for compability
+    @Deprecated
     public static void goToTryCatchBlockEnd() {
+
+    }
+
+    public static void finallyStart(int finallyDeep) {
+
+    }
+
+    public static void finallyEnd(int finallyDeep) {
 
     }
 }

@@ -25,4 +25,4 @@ fun box() : String {
     return "fail"
 }
 
-// 10 TRYCATCHBLOCK
+// 8 TRYCATCHBLOCK

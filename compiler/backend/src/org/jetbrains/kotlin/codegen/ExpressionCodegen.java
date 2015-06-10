@@ -129,6 +129,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private int myLastLineNumber = -1;
     private boolean shouldMarkLineNumbers = true;
+    private int finallyDeep = 0;
 
     public ExpressionCodegen(
             @NotNull MethodVisitor mv,
@@ -1759,7 +1760,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
     }
 
-    private void doFinallyOnReturn(Label afterReturnLabel) {
+    private void doFinallyOnReturn(@NotNull Label afterReturnLabel) {
         if(!blockStackElements.isEmpty()) {
             BlockStackElement stackElement = blockStackElements.peek();
             if (stackElement instanceof FinallyBlockStackElement) {
@@ -1790,9 +1791,10 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     private void genFinallyBlockOrGoto(
             @Nullable FinallyBlockStackElement finallyBlockStackElement,
             @Nullable Label tryCatchBlockEnd,
-            @Nullable Label afterReturnLabel
+            @Nullable Label afterJumpLabel
     ) {
         if (finallyBlockStackElement != null) {
+            finallyDeep++;
             assert finallyBlockStackElement.gaps.size() % 2 == 0 : "Finally block gaps are inconsistent";
 
             BlockStackElement topOfStack = blockStackElements.pop();
@@ -1802,21 +1804,25 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Label finallyStart = new Label();
             v.mark(finallyStart);
             finallyBlockStackElement.addGapLabel(finallyStart);
-
+            if (context.isInlineFunction() || context.isInliningLambda()) {
+                InlineCodegenUtil.generateFinallyMarker(v, finallyDeep, true);
+            }
             //noinspection ConstantConditions
             gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
+
+            if (context.isInlineFunction() || context.isInliningLambda()) {
+                InlineCodegenUtil.generateFinallyMarker(v, finallyDeep, false);
+            }
         }
 
         if (tryCatchBlockEnd != null) {
-            if (context.isInlineFunction()) {
-                InlineCodegenUtil.generateGoToTryCatchBlockEndMarker(v);
-            }
             v.goTo(tryCatchBlockEnd);
         }
 
         if (finallyBlockStackElement != null) {
-            Label finallyEnd = afterReturnLabel != null ? afterReturnLabel : new Label();
-            if (afterReturnLabel == null) {
+            finallyDeep--;
+            Label finallyEnd = afterJumpLabel != null ? afterJumpLabel : new Label();
+            if (afterJumpLabel == null) {
                 v.mark(finallyEnd);
             }
             finallyBlockStackElement.addGapLabel(finallyEnd);
@@ -4000,8 +4006,9 @@ The "returned" value of try expression with no finally is either the last expres
         return new Stack<BlockStackElement>(blockStackElements);
     }
 
-    public void addBlockStackElementsForNonLocalReturns(@NotNull Stack<BlockStackElement> elements) {
+    public void addBlockStackElementsForNonLocalReturns(@NotNull Stack<BlockStackElement> elements, int finallyDeepIndex) {
         blockStackElements.addAll(elements);
+        this.finallyDeep = finallyDeepIndex;
     }
 
     private static class NonLocalReturnInfo {

@@ -661,14 +661,18 @@ public class InlineCodegen extends CallGenerator {
 
         DefaultProcessor processor = new DefaultProcessor(intoNode, offsetForFinallyLocalVar);
 
+        int curFinallyDeep = 0;
         AbstractInsnNode curInstr = intoNode.instructions.getFirst();
         while (curInstr != null) {
             processor.processInstruction(curInstr, true);
+            if (InlineCodegenUtil.isFinallyStart(curInstr)) {
+                //TODO deep index calc could be more precise
+                curFinallyDeep = InlineCodegenUtil.getConstant(curInstr.getPrevious());
+            }
 
             MethodInliner.PointForExternalFinallyBlocks extension = extensionPoints.get(curInstr);
             if (extension != null) {
                 Label start = new Label();
-                //Label end = new Label();
 
                 MethodNode finallyNode = InlineCodegenUtil.createEmptyMethodNode();
                 finallyNode.visitLabel(start);
@@ -676,7 +680,7 @@ public class InlineCodegen extends CallGenerator {
                 ExpressionCodegen finallyCodegen =
                         new ExpressionCodegen(finallyNode, codegen.getFrameMap(), codegen.getReturnType(),
                                               codegen.getContext(), codegen.getState(), codegen.getParentCodegen());
-                finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.getBlockStackElements());
+                finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.getBlockStackElements(), curFinallyDeep);
 
                 FrameMap frameMap = finallyCodegen.getFrameMap();
                 FrameMap.Mark mark = frameMap.mark();
@@ -685,14 +689,14 @@ public class InlineCodegen extends CallGenerator {
                 }
 
                 finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, extension.labelNode.getLabel());
-                //finallyNode.visitLabel(end);
+
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
                 InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, curInstr);
 
                 SimpleInterval splitBy = new SimpleInterval((LabelNode) start.info, extension.labelNode);
-                processor.getTryBlocksMetaInfo().splitCurrentIntervals(splitBy, false);
+                processor.getTryBlocksMetaInfo().splitCurrentIntervals(splitBy, true);
 
-                processor.getLocalVarsMetaInfo().splitCurrentIntervals(splitBy, false);
+                processor.getLocalVarsMetaInfo().splitCurrentIntervals(splitBy, true);
 
                 mark.dropTo();
             }

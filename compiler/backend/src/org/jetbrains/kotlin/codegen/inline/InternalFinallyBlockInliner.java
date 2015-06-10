@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.codegen.AsmUtil;
+import org.jetbrains.kotlin.codegen.optimization.common.CommonPackage;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -44,7 +44,10 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
         final AbstractInsnNode endInsExclusive;
 
-        private FinallyBlockInfo(@NotNull AbstractInsnNode inclusiveStart, @NotNull AbstractInsnNode exclusiveEnd) {
+        private FinallyBlockInfo(
+                @NotNull AbstractInsnNode inclusiveStart,
+                @NotNull AbstractInsnNode exclusiveEnd
+        ) {
             startIns = inclusiveStart;
             endInsExclusive = exclusiveEnd;
         }
@@ -139,8 +142,9 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             }
 
             AbstractInsnNode markedReturn = curIns;
-            final AbstractInsnNode instrInsertFinallyBefore = markedReturn.getPrevious();
-            AbstractInsnNode nextPrev = instrInsertFinallyBefore.getPrevious();
+            AbstractInsnNode instrInsertFinallyBefore = markedReturn.getPrevious();
+            AbstractInsnNode nextPrev = instrInsertFinallyBefore.getPrevious().getPrevious();
+            LabelNode newFinallyEnd = (LabelNode) markedReturn.getNext();
             Type nonLocalReturnType = InlineCodegenUtil.getReturnType(markedReturn.getOpcode());
 
             //Generally there could be several tryCatch blocks (group) on one code interval (same start and end labels, but maybe different handlers) -
@@ -148,24 +152,32 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             // Each group that corresponds to try/*catches*/finally contains tryCatch block with default handler.
             // For each such group we should insert corresponding finally before non-local return.
             // So we split all try blocks on current instructions to groups and process them independently
-            List<TryBlockCluster<TryCatchBlockNodeInfo>> clustersFromInnermost = InlinePackage.doClustering(currentCoveringNodesFromInnermost);
+            List<TryBlockCluster<TryCatchBlockNodeInfo>> clustersFromInnermost = InlinePackage.doClustering(
+                    currentCoveringNodesFromInnermost);
             Iterator<TryBlockCluster<TryCatchBlockNodeInfo>> tryCatchBlockIterator = clustersFromInnermost.iterator();
 
             checkClusterInvariant(clustersFromInnermost);
 
-            List<TryCatchBlockNodeInfo> additionalNodesToSplit = new ArrayList<TryCatchBlockNodeInfo>();
+            int originalDeepIndex = 0;
+
             while (tryCatchBlockIterator.hasNext()) {
                 TryBlockCluster<TryCatchBlockNodeInfo> clusterToFindFinally = tryCatchBlockIterator.next();
                 List<TryCatchBlockNodeInfo> clusterBlocks = clusterToFindFinally.getBlocks();
                 TryCatchBlockNodeInfo nodeWithDefaultHandlerIfExists = clusterBlocks.get(clusterBlocks.size() - 1);
 
-                FinallyBlockInfo finallyInfo = findFinallyBlockBody(nodeWithDefaultHandlerIfExists, getTryBlocksMetaInfo().getAllIntervals());
-                if (finallyInfo == null) continue;
 
                 if (nodeWithDefaultHandlerIfExists.getOnlyCopyNotProcess()) {
-                    additionalNodesToSplit.addAll(clusterBlocks);
-                    continue;
+                    //lambdas finally generated before non-local return instruction,
+                    //so it's a gap in try/catch handlers
+                    throw new RuntimeException("Lambda try blocks should be skipped");
                 }
+
+                FinallyBlockInfo finallyInfo = findFinallyBlockBody(nodeWithDefaultHandlerIfExists, getTryBlocksMetaInfo().getAllIntervals());
+                if (finallyInfo == null) continue;
+                TryCatchBlockNodeInfo defaultHandlerBlock = clusterToFindFinally.getDefaultHandler();
+                assert defaultHandlerBlock != null;
+
+                originalDeepIndex++;
 
                 instructions.resetLabels();
 
@@ -174,7 +186,6 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 //Creating temp node for finally block copy with some additional instruction
                 MethodNode finallyBlockCopy = createEmptyMethodNode();
                 Label newFinallyStart = new Label();
-                Label newFinallyEnd = new Label();
                 Label insertedBlockEnd = new Label();
 
                 boolean generateAloadAstore = nonLocalReturnType != Type.VOID_TYPE && !finallyInfo.isEmpty();
@@ -193,13 +204,11 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                             !(currentIns instanceof JumpInsnNode) ||
                             labelsInsideFinally.contains(((JumpInsnNode) currentIns).label);
 
-                    copyInstruction(nextTempNonLocalVarIndex, markedReturn, instrInsertFinallyBefore, nonLocalReturnType, finallyBlockCopy,
-                                    currentIns, isInsOrJumpInsideFinally);
+                    copyInstruction(finallyBlockCopy, currentIns, isInsOrJumpInsideFinally, originalDeepIndex);
 
                     currentIns = currentIns.getNext();
                 }
 
-                finallyBlockCopy.visitLabel(newFinallyEnd);
                 if (generateAloadAstore) {
                     finallyBlockCopy.visitVarInsn(nonLocalReturnType.getOpcode(Opcodes.ILOAD), nextTempNonLocalVarIndex);
                     nextTempNonLocalVarIndex += nonLocalReturnType.getSize(); //TODO: do more wise indexing
@@ -211,7 +220,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                 InlineCodegenUtil.insertNodeBefore(finallyBlockCopy, inlineFun, instrInsertFinallyBefore);
 
                 updateExceptionTable(clusterBlocks, newFinallyStart, newFinallyEnd,
-                                     tryCatchBlockInlinedInFinally, labelsInsideFinally, (LabelNode) insertedBlockEnd.info, additionalNodesToSplit);
+                                     tryCatchBlockInlinedInFinally, labelsInsideFinally, (LabelNode) insertedBlockEnd.info);
             }
 
             //skip just inserted finally
@@ -237,38 +246,22 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
     }
 
     private static void copyInstruction(
-            int nextTempNonLocalVarIndex,
-            @NotNull AbstractInsnNode curIns,
-            @NotNull AbstractInsnNode instrInsertFinallyBefore,
-            @NotNull Type nonLocalReturnType,
             @NotNull MethodNode finallyBlockCopy,
             @NotNull AbstractInsnNode currentIns,
-            boolean isInsOrJumpInsideFinally
+            boolean isInsOrJumpInsideFinally,
+            int deep
     ) {
-        //This condition allows another model for non-local returns processing
-        if (false) {
-            boolean isReturnForSubstitution =
-                    InlineCodegenUtil.isReturnOpcode(currentIns.getOpcode()) && !InlineCodegenUtil.isMarkedReturn(currentIns);
-            if (!isInsOrJumpInsideFinally || isReturnForSubstitution) {
-                //substitute all local returns and jumps outside finally with non-local return
-                Type localReturnType = InlineCodegenUtil.getReturnType(currentIns.getOpcode());
-                substituteReturnValueInFinally(nextTempNonLocalVarIndex, nonLocalReturnType, finallyBlockCopy,
-                                               localReturnType, isReturnForSubstitution);
-
-                instrInsertFinallyBefore.accept(finallyBlockCopy);
-                curIns.accept(finallyBlockCopy);
+        if (isInsOrJumpInsideFinally) {
+            if (InlineCodegenUtil.isFinallyMarker(currentIns.getNext())) {
+                Integer constant = getConstant(currentIns);
+                finallyBlockCopy.visitLdcInsn(constant + deep);
             } else {
                 currentIns.accept(finallyBlockCopy); //VISIT
             }
         }
         else {
-            if (isInsOrJumpInsideFinally) {
-                currentIns.accept(finallyBlockCopy); //VISIT
-            }
-            else {
-                //keep original jump: add currentIns clone
-                finallyBlockCopy.instructions.add(new JumpInsnNode(currentIns.getOpcode(), ((JumpInsnNode) currentIns).label));
-            }
+            //keep original jump: add currentIns clone
+            finallyBlockCopy.instructions.add(new JumpInsnNode(currentIns.getOpcode(), ((JumpInsnNode) currentIns).label));
         }
     }
 
@@ -306,11 +299,10 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
     private void updateExceptionTable(
             @NotNull List<TryCatchBlockNodeInfo> updatingClusterBlocks,
             @NotNull Label newFinallyStart,
-            @NotNull Label newFinallyEnd,
+            @NotNull LabelNode newFinallyEnd,
             @NotNull List<TryCatchBlockNodePosition> tryCatchBlockPresentInFinally,
             @NotNull Set<LabelNode> labelsInsideFinally,
-            @NotNull LabelNode insertedBlockEnd,
-            @NotNull List<TryCatchBlockNodeInfo> patched
+            @NotNull LabelNode insertedBlockEnd
     ) {
 
         //copy tryCatchFinallies that totally in finally block
@@ -379,7 +371,6 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                     getTryBlocksMetaInfo()
                             .split(endNode, new SimpleInterval((LabelNode) endNode.getNode().end.getLabel().info,
                                                                (LabelNode) insertedBlockEnd.getLabel().info), false);
-                    //nextPrev = (AbstractInsnNode) insertedBlockEnd.getLabel().info;
                 }
 
                 handler2Cluster.clear();
@@ -387,19 +378,16 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         }
         assert handler2Cluster.isEmpty() : "Unmatched clusters " + handler2Cluster.size();
 
-        List<TryCatchBlockNodeInfo > toProcess = new ArrayList<TryCatchBlockNodeInfo>();
-        toProcess.addAll(patched);
-        toProcess.addAll(updatingClusterBlocks);
-        patched.clear();
-        SimpleInterval splitBy = new SimpleInterval((LabelNode) newFinallyStart.info, (LabelNode) newFinallyEnd.info);
+        SimpleInterval splitBy = new SimpleInterval((LabelNode) newFinallyStart.info, newFinallyEnd);
         // Inserted finally shouldn't be handled by corresponding catches,
         // so we should split original interval by inserted finally one
-        for (TryCatchBlockNodeInfo block : toProcess) {
+        for (TryCatchBlockNodeInfo block : updatingClusterBlocks) {
             //update exception mapping
-            tryBlocksMetaInfo.split(block, splitBy, false);
+            SplittedPair<TryCatchBlockNodeInfo> split = tryBlocksMetaInfo.splitAndRemoveInterval(block, splitBy, false);
+            checkFinally(split.getNewPart());
+            checkFinally(split.getPatchedPart());
             //block patched in split method
             assert !block.isEmpty() : "Finally block should be non-empty";
-            patched.add(block);
             //TODO add assert
         }
 
@@ -432,15 +420,6 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             @NotNull TryCatchBlockNodeInfo tryCatchBlock,
             @ReadOnly @NotNull List<TryCatchBlockNodeInfo> tryCatchBlocks
     ) {
-        if (tryCatchBlock.getOnlyCopyNotProcess()) {
-            AbstractInsnNode start = new LabelNode();
-            AbstractInsnNode end = new LabelNode();
-            InsnList insnList = new InsnList();
-            insnList.add(start);
-            insnList.add(end);
-            return new FinallyBlockInfo(start, end);
-        }
-
         List<TryCatchBlockNodeInfo> sameDefaultHandler = new ArrayList<TryCatchBlockNodeInfo>();
         LabelNode defaultHandler = null;
         boolean afterStartBlock = false;
@@ -469,29 +448,42 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
         TryCatchBlockNodeInfo nextIntervalWithSameDefaultHandler = sameDefaultHandler.get(1);
         AbstractInsnNode startFinallyChain = tryCatchBlock.getNode().end;
-        AbstractInsnNode endFinallyChainExclusive = skipLastGotoIfNeeded(nextIntervalWithSameDefaultHandler.getNode().start);
+        AbstractInsnNode meaningful = getNextMeaningful(startFinallyChain);
+        assert meaningful != null : "Can't find meaningful in finally block" + startFinallyChain;
+
+        Integer finallyDeep = getConstant(meaningful);
+        AbstractInsnNode endFinallyChainExclusive = nextIntervalWithSameDefaultHandler.getNode().start;
+        AbstractInsnNode current = meaningful.getNext();
+        while (endFinallyChainExclusive != current) {
+            current = current.getNext();
+            if (InlineCodegenUtil.isFinallyEnd(current)) {
+                Integer currentDeep = getConstant(current.getPrevious());
+                if (currentDeep.equals(finallyDeep)) {
+                    endFinallyChainExclusive = current.getNext();
+                    break;
+                }
+            }
+        }
 
         FinallyBlockInfo finallyInfo = new FinallyBlockInfo(startFinallyChain.getNext(), endFinallyChainExclusive);
 
-        if (inlineFun.instructions.indexOf(finallyInfo.startIns) > inlineFun.instructions.indexOf(finallyInfo.endInsExclusive)) {
-            throw new AssertionError("Inconsistent finally: block end occurs before start " + traceInterval(finallyInfo.endInsExclusive, finallyInfo.startIns));
-        }
+        checkFinally(finallyInfo);
 
         return finallyInfo;
     }
 
-    @NotNull
-    private static AbstractInsnNode skipLastGotoIfNeeded(
-            @NotNull AbstractInsnNode lastFinallyInsExclusive
-    ) {
+    private void checkFinally(FinallyBlockInfo finallyInfo) {
+        checkFinally(finallyInfo.startIns, finallyInfo.endInsExclusive);
+    }
 
-        AbstractInsnNode prevLast = getPrevNoLineNumberOrLabel(lastFinallyInsExclusive, true);
-        assert prevLast != null : "Empty finally block: " + lastFinallyInsExclusive;
+    private void checkFinally(IntervalWithHandler intervalWithHandler) {
+        checkFinally(intervalWithHandler.getStartLabel(), intervalWithHandler.getEndLabel());
+    }
 
-        if (InlineCodegenUtil.isGoToTryCatchBlockEnd(prevLast)) {
-            return prevLast.getPrevious();
+    private void checkFinally(AbstractInsnNode startIns, AbstractInsnNode endInsExclusive) {
+        if (inlineFun.instructions.indexOf(startIns) >= inlineFun.instructions.indexOf(endInsExclusive)) {
+            throw new AssertionError("Inconsistent finally: block end occurs before start " + traceInterval(endInsExclusive, startIns));
         }
-        return lastFinallyInsExclusive;
     }
 
     @NotNull
@@ -529,26 +521,11 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         return result;
     }
 
-    private static void substituteReturnValueInFinally(
-            int nonLocalVarIndex,
-            @NotNull Type nonLocalReturnType,
-            @NotNull MethodNode finallyBlockCopy,
-            @NotNull Type localReturnType,
-            boolean doPop
-    ) {
-        if (doPop && localReturnType != Type.VOID_TYPE) {
-            AsmUtil.pop(finallyBlockCopy, localReturnType);
-        }
-        if (nonLocalReturnType != Type.VOID_TYPE) {
-            finallyBlockCopy.visitVarInsn(nonLocalReturnType.getOpcode(Opcodes.ILOAD), nonLocalVarIndex);
-        }
-    }
-
     @Nullable
-    private static AbstractInsnNode getPrevNoLineNumberOrLabel(@NotNull AbstractInsnNode node, boolean strict) {
-        AbstractInsnNode result = strict ? node.getPrevious() : node;
-        while (isLineNumberOrLabel(result)) {
-            result = result.getPrevious();
+    private static AbstractInsnNode getNextMeaningful(@NotNull AbstractInsnNode node) {
+        AbstractInsnNode result = node.getNext();
+        while (result != null && !CommonPackage.getIsMeaningful(result)) {
+            result = result.getNext();
         }
         return result;
     }

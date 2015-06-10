@@ -105,8 +105,18 @@ public class MethodInliner {
             boolean remapReturn,
             @NotNull LabelOwner labelOwner
     ) {
+        return doInline(adapter, remapper, remapReturn, labelOwner, 0);
+    }
+
+    private InlineResult doInline(
+            @NotNull MethodVisitor adapter,
+            @NotNull LocalVarRemapper remapper,
+            boolean remapReturn,
+            @NotNull LabelOwner labelOwner,
+            int finallyDeepShift
+    ) {
         //analyze body
-        MethodNode transformedNode = markPlacesForInlineAndRemoveInlinable(node);
+        MethodNode transformedNode = markPlacesForInlineAndRemoveInlinable(node, finallyDeepShift);
 
         //substitute returns with "goto end" instruction to keep non local returns in lambdas
         Label end = new Label();
@@ -234,7 +244,7 @@ public class MethodInliner {
                                                               mapper);
 
                     LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
-                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info);//TODO add skipped this and receiver
+                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDeep);//TODO add skipped this and receiver
                     result.addAllClassesToRemove(lambdaResult);
 
                     //return value boxing/unboxing
@@ -301,7 +311,7 @@ public class MethodInliner {
     }
 
     @NotNull
-    public MethodNode prepareNode(@NotNull MethodNode node) {
+    public MethodNode prepareNode(@NotNull MethodNode node, int finallyDeepShift) {
         final int capturedParamsSize = parameters.getCaptured().size();
         final int realParametersSize = parameters.getReal().size();
         Type[] types = Type.getArgumentTypes(node.desc);
@@ -354,13 +364,14 @@ public class MethodInliner {
         node.accept(transformedNode);
 
         transformCaptured(transformedNode);
+        transformFinallyDeepIndex(transformedNode, finallyDeepShift);
 
         return transformedNode;
     }
 
     @NotNull
-    protected MethodNode markPlacesForInlineAndRemoveInlinable(@NotNull MethodNode node) {
-        node = prepareNode(node);
+    protected MethodNode markPlacesForInlineAndRemoveInlinable(@NotNull MethodNode node, int finallyDeepShift) {
+        node = prepareNode(node, finallyDeepShift);
 
         Analyzer<SourceValue> analyzer = new Analyzer<SourceValue>(new SourceInterpreter()) {
             @NotNull
@@ -395,6 +406,7 @@ public class MethodInliner {
         int index = 0;
 
         boolean awaitClassReification = false;
+        int currentFinallyDeep = 0;
 
         while (cur != null) {
             Frame<SourceValue> frame = sources[index];
@@ -404,6 +416,11 @@ public class MethodInliner {
                     awaitClassReification = true;
                 }
                 else if (cur.getType() == AbstractInsnNode.METHOD_INSN) {
+                    if (InlineCodegenUtil.isFinallyStart(cur)) {
+                        //TODO deep index calc could be more precise
+                        currentFinallyDeep = InlineCodegenUtil.getConstant(cur.getPrevious());
+                    }
+
                     MethodInsnNode methodInsnNode = (MethodInsnNode) cur;
                     String owner = methodInsnNode.owner;
                     String desc = methodInsnNode.desc;
@@ -426,7 +443,7 @@ public class MethodInliner {
                             }
                         }
 
-                        invokeCalls.add(new InvokeCall(varIndex, lambdaInfo));
+                        invokeCalls.add(new InvokeCall(varIndex, lambdaInfo, currentFinallyDeep));
                     }
                     else if (isAnonymousConstructorCall(owner, name)) {
                         Map<Integer, LambdaInfo> lambdaMapping = new HashMap<Integer, LambdaInfo>();
@@ -585,6 +602,23 @@ public class MethodInliner {
         }
     }
 
+    private void transformFinallyDeepIndex(@NotNull MethodNode node, int finallyDeepShift) {
+        if (finallyDeepShift == 0) {
+            return;
+        }
+
+        AbstractInsnNode cur = node.instructions.getFirst();
+        while (cur != null) {
+            if (cur instanceof MethodInsnNode && InlineCodegenUtil.isFinallyMarker(cur)) {
+                AbstractInsnNode constant = cur.getPrevious();
+                int curDeep = InlineCodegenUtil.getConstant(constant);
+                node.instructions.insert(constant, new LdcInsnNode(curDeep + finallyDeepShift));
+                node.instructions.remove(constant);
+            }
+            cur = cur.getNext();
+        }
+    }
+
     @NotNull
     public static List<AbstractInsnNode> getCapturedFieldAccessChain(@NotNull VarInsnNode aload0) {
         List<AbstractInsnNode> fieldAccessChain = new ArrayList<AbstractInsnNode>();
@@ -701,12 +735,18 @@ public class MethodInliner {
                 //genetate finally block before nonLocalReturn flag/return/goto
                 LabelNode label = new LabelNode();
                 instructions.insert(insnNode, label);
-                result.add(new PointForExternalFinallyBlocks(isLocalReturn ? insnNode : insnNode.getPrevious(), getReturnType(insnNode.getOpcode()),
+                result.add(new PointForExternalFinallyBlocks(getInstructionToInsertFinallyBefore(insnNode, isLocalReturn),
+                                                             getReturnType(insnNode.getOpcode()),
                                                              label));
             }
             insnNode = insnNode.getNext();
         }
         return result;
+    }
+
+    @NotNull
+    private static AbstractInsnNode getInstructionToInsertFinallyBefore(@NotNull AbstractInsnNode nonLocalReturnOrJump, boolean isLocal)  {
+        return isLocal ? nonLocalReturnOrJump : nonLocalReturnOrJump.getPrevious();
     }
 
     //Place to insert finally blocks from try blocks that wraps inline fun call

@@ -21,9 +21,11 @@ import org.jetbrains.annotations.Nullable;
 class InvokeCall {
     private final int index;
     public final LambdaInfo lambdaInfo;
+    public final int finallyDeep;
 
-    InvokeCall(int index, @Nullable LambdaInfo lambdaInfo) {
+    InvokeCall(int index, @Nullable LambdaInfo lambdaInfo, int finallyDeep) {
         this.index = index;
         this.lambdaInfo = lambdaInfo;
+        this.finallyDeep = finallyDeep;
     }
 }

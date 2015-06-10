@@ -558,6 +558,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally"), Pattern.compile("^(.+)\\.1.kt$"), true);
             }
 
+            @TestMetadata("kt6956.1.kt")
+            public void testKt6956() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt6956.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
             @TestMetadata("kt7273.1.kt")
             public void testKt7273() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/kt7273.1.kt");
@@ -584,6 +590,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                     doTestMultiFileWithInlineCheck(fileName);
                 }
 
+                @TestMetadata("callSiteComplex.1.kt")
+                public void testCallSiteComplex() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/callSiteComplex.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
                 @TestMetadata("exceptionTableSplit.1.kt")
                 public void testExceptionTableSplit() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplit.1.kt");
@@ -593,6 +605,69 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 @TestMetadata("exceptionTableSplitNoReturn.1.kt")
                 public void testExceptionTableSplitNoReturn() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/exceptionTableSplitNoReturn.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("finallyInFinally.1.kt")
+                public void testFinallyInFinally() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite/finallyInFinally.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Chained extends AbstractBlackBoxInlineCodegenTest {
+                public void testAllFilesPresentInChained() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained"), Pattern.compile("^(.+)\\.1.kt$"), true);
+                }
+
+                @TestMetadata("finallyInFinally.1.kt")
+                public void testFinallyInFinally() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/finallyInFinally.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("finallyInFinally2.1.kt")
+                public void testFinallyInFinally2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/finallyInFinally2.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("intReturn.1.kt")
+                public void testIntReturn() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturn.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("intReturnComplex.1.kt")
+                public void testIntReturnComplex() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("intReturnComplex2.1.kt")
+                public void testIntReturnComplex2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex2.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("intReturnComplex3.1.kt")
+                public void testIntReturnComplex3() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex3.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("intReturnComplex4.1.kt")
+                public void testIntReturnComplex4() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/intReturnComplex4.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("nestedLambda.1.kt")
+                public void testNestedLambda() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained/nestedLambda.1.kt");
                     doTestMultiFileWithInlineCheck(fileName);
                 }
             }
@@ -614,6 +689,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 @TestMetadata("intReturn.1.kt")
                 public void testIntReturn() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/intReturn.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("intReturnComplex.1.kt")
+                public void testIntReturnComplex() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/intReturnComplex.1.kt");
                     doTestMultiFileWithInlineCheck(fileName);
                 }
 
@@ -644,6 +725,18 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
                 @TestMetadata("returnInTryAndFinally.1.kt")
                 public void testReturnInTryAndFinally() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/returnInTryAndFinally.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("severalInTry.1.kt")
+                public void testSeveralInTry() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/severalInTry.1.kt");
+                    doTestMultiFileWithInlineCheck(fileName);
+                }
+
+                @TestMetadata("severalInTryComplex.1.kt")
+                public void testSeveralInTryComplex() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite/severalInTryComplex.1.kt");
                     doTestMultiFileWithInlineCheck(fileName);
                 }
 
