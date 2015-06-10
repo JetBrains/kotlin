@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.ModifiersChecker.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.DescriptorResolver.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.scopes.WritableScopeImpl
 import org.jetbrains.kotlin.resolve.source.toSourceElement
@@ -166,9 +167,9 @@ class FunctionDescriptorResolver(
                 modality,
                 visibility
         )
-        receiverType?.let { AnnotationResolver.resolveAnnotationsArguments(it.getAnnotations()) }
+        receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.getAnnotations()) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
-            AnnotationResolver.resolveAnnotationsArguments(valueParameterDescriptor.getType().getAnnotations())
+            ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.getType().getAnnotations())
         }
     }
 

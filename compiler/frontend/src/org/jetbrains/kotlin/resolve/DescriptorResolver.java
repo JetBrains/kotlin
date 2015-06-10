@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.WritableScope;
@@ -613,7 +614,7 @@ public class DescriptorResolver {
         );
         trace.record(BindingContext.VALUE_PARAMETER, parameter, variableDescriptor);
         // Type annotations also should be resolved
-        AnnotationResolver.resolveAnnotationsArguments(type.getAnnotations());
+        ForceResolveUtil.forceResolveAllContents(type.getAnnotations());
         return variableDescriptor;
     }
 
@@ -657,7 +658,7 @@ public class DescriptorResolver {
             result = variableDescriptor;
         }
         // Type annotations also should be resolved
-        AnnotationResolver.resolveAnnotationsArguments(type.getAnnotations());
+        ForceResolveUtil.forceResolveAllContents(type.getAnnotations());
         return result;
     }
 

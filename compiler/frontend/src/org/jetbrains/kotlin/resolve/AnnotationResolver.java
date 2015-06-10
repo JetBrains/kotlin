@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.constants.ArrayValue;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -153,7 +154,7 @@ public class AnnotationResolver {
                 descriptor = new LazyAnnotationDescriptor(new LazyAnnotationsContextImpl(this, storageManager, trace, scope), entryElement);
             }
             if (shouldResolveArguments) {
-                resolveAnnotationArguments(descriptor);
+                ForceResolveUtil.forceResolveAllContents(descriptor);
             }
 
             result.add(descriptor);
@@ -209,18 +210,6 @@ public class AnnotationResolver {
                 DataFlowInfo.EMPTY,
                 true
         );
-    }
-
-    public static void resolveAnnotationsArguments(@NotNull Annotations annotations) {
-        for (AnnotationDescriptor annotationDescriptor : annotations) {
-            resolveAnnotationArguments(annotationDescriptor);
-        }
-    }
-
-    private static void resolveAnnotationArguments(@NotNull AnnotationDescriptor annotationDescriptor) {
-        if (annotationDescriptor instanceof LazyAnnotationDescriptor) {
-            ((LazyAnnotationDescriptor) annotationDescriptor).forceResolveAllContents();
-        }
     }
 
     @NotNull

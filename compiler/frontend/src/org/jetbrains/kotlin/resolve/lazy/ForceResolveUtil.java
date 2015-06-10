@@ -36,7 +36,7 @@ public class ForceResolveUtil {
 
     private ForceResolveUtil() {}
 
-    public static <T extends DeclarationDescriptor> T forceResolveAllContents(@NotNull T descriptor) {
+    public static <T> T forceResolveAllContents(@NotNull T descriptor) {
         doForceResolveAllContents(descriptor);
         return descriptor;
     }
@@ -63,7 +63,6 @@ public class ForceResolveUtil {
 
     public static void forceResolveAllContents(@NotNull Annotations annotations) {
         doForceResolveAllContents(annotations);
-        AnnotationResolver.resolveAnnotationsArguments(annotations);
         for (AnnotationDescriptor annotation : annotations) {
             doForceResolveAllContents(annotation);
         }

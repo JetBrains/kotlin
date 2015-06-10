@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.EXPECTED_RETURN_TYPE
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.CommonSupertypes
@@ -91,7 +92,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
             )
         }
         // Necessary for local functions
-        AnnotationResolver.resolveAnnotationsArguments(functionDescriptor.getAnnotations());
+        ForceResolveUtil.forceResolveAllContents(functionDescriptor.getAnnotations());
 
         val functionInnerScope = FunctionDescriptorUtil.getFunctionInnerScope(context.scope, functionDescriptor, context.trace)
         components.expressionTypingServices.checkFunctionReturnType(
@@ -168,7 +169,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
                 initializeFunctionDescriptorAndExplicitReturnType(context.scope.getContainingDeclaration(), context.scope, functionLiteral,
                                                                   functionDescriptor, context.trace, context.expectedType)
         for (parameterDescriptor in functionDescriptor.getValueParameters()) {
-            AnnotationResolver.resolveAnnotationsArguments(parameterDescriptor.getAnnotations())
+            ForceResolveUtil.forceResolveAllContents(parameterDescriptor.getAnnotations())
         }
         BindingContextUtils.recordFunctionDeclarationToDescriptor(context.trace, functionLiteral, functionDescriptor)
         return functionDescriptor

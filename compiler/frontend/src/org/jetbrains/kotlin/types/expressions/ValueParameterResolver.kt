@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.TypeUtils
@@ -49,7 +50,7 @@ public class ValueParameterResolver(
             context: ExpressionTypingContext
     ) {
         for ((descriptor, parameter) in valueParameterDescriptors zip valueParameters) {
-            AnnotationResolver.resolveAnnotationsArguments(descriptor.getAnnotations())
+            ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())
             resolveDefaultValue(descriptor, parameter, context)
         }
     }

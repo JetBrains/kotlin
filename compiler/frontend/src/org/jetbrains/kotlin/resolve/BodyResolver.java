@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
+import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
@@ -159,7 +160,7 @@ public class BodyResolver {
             @NotNull final ConstructorDescriptor descriptor,
             @NotNull JetScope declaringScope
     ) {
-        AnnotationResolver.resolveAnnotationsArguments(descriptor.getAnnotations());
+        ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
 
         final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor, additionalCheckerProvider.getCallChecker());
         resolveFunctionBody(c, trace, constructor, descriptor, declaringScope,
@@ -505,7 +506,7 @@ public class BodyResolver {
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
             if (unsubstitutedPrimaryConstructor != null) {
-                AnnotationResolver.resolveAnnotationsArguments(unsubstitutedPrimaryConstructor.getAnnotations());
+                ForceResolveUtil.forceResolveAllContents(unsubstitutedPrimaryConstructor.getAnnotations());
 
                 WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(),
                                                                                     unsubstitutedPrimaryConstructor);
@@ -559,7 +560,7 @@ public class BodyResolver {
                     resolvePropertyDelegate(c, property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberDeclarationResolution(), propertyScope);
                 }
 
-                AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor.getAnnotations());
+                ForceResolveUtil.forceResolveAllContents(propertyDescriptor.getAnnotations());
 
                 resolvePropertyAccessors(c, property, propertyDescriptor);
                 processed.add(property);
@@ -608,7 +609,7 @@ public class BodyResolver {
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         if (getter != null && getterDescriptor != null) {
             JetScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
-            AnnotationResolver.resolveAnnotationsArguments(getterDescriptor.getAnnotations());
+            ForceResolveUtil.forceResolveAllContents(getterDescriptor.getAnnotations());
             resolveFunctionBody(c, fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
         }
 
@@ -616,7 +617,7 @@ public class BodyResolver {
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
         if (setter != null && setterDescriptor != null) {
             JetScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
-            AnnotationResolver.resolveAnnotationsArguments(setterDescriptor.getAnnotations());
+            ForceResolveUtil.forceResolveAllContents(setterDescriptor.getAnnotations());
             resolveFunctionBody(c, fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
         }
     }
