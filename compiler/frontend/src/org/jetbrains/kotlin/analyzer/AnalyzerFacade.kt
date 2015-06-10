@@ -146,7 +146,7 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
 
                 val builtinsModule = KotlinBuiltIns.getInstance().getBuiltInsModule()
                 module.dependencyOnBuiltins().adjustDependencies(builtinsModule, dependenciesDescriptors)
-                dependenciesDescriptors.forEach { currentModule.addDependencyOnModule(it) }
+                currentModule.setDependencies(dependenciesDescriptors)
             }
         }
 
@@ -163,8 +163,6 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
         }
 
         addFriends()
-
-        resolverForProject.descriptorByModule.values().forEach { it.seal() }
 
         fun initializeResolverForProject() {
             modules.forEach {

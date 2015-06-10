@@ -51,14 +51,11 @@ public trait MutableModuleContext: ModuleContext {
     override val module: ModuleDescriptorImpl
 
     public fun setDependencies(vararg dependencies: ModuleDescriptorImpl) {
-        setDependencies(dependencies.toList())
+        module.setDependencies(*dependencies)
     }
 
     public fun setDependencies(dependencies: List<ModuleDescriptorImpl>) {
-        for (dependency in dependencies) {
-            module.addDependencyOnModule(dependency)
-        }
-        module.seal()
+        module.setDependencies(dependencies)
     }
 
     public fun initializeModuleContents(packageFragmentProvider: PackageFragmentProvider) {

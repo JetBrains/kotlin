@@ -86,9 +86,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
                 .sure { "No package fragment provider was created" }
 
         module.initialize(provider)
-        module.addDependencyOnModule(module)
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
-        module.seal()
+        module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
 
         return module
     }

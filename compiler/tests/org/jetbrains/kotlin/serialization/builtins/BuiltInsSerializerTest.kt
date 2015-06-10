@@ -48,9 +48,7 @@ public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         }
 
         module.initialize(packageFragmentProvider)
-        module.addDependencyOnModule(module)
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
-        module.seal()
+        module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
 
         RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
                 module.getPackage(TEST_PACKAGE_FQNAME)!!,

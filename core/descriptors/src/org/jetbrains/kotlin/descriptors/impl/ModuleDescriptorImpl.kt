@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.StorageManager
-import java.util.ArrayList
+import org.jetbrains.kotlin.utils.sure
 import java.util.LinkedHashSet
 import kotlin.properties.Delegates
 
@@ -39,31 +39,21 @@ public class ModuleDescriptorImpl(
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }
     }
-    private var isSealed = false
 
-    /*
-     * Sealed module cannot have its dependencies modified. Seal the module after you're done configuring it.
-     * Module will be sealed automatically as soon as you query its contents.
-     */
-    public fun seal() {
-        if (isSealed) return
-
-        assert(this in dependencies) { "Module $id is not contained in his own dependencies, this is probably a misconfiguration" }
-        isSealed = true
-    }
-
-    private val dependencies: MutableList<ModuleDescriptorImpl> = ArrayList()
+    private var dependencies: ModuleDependencies? = null
     private var packageFragmentProviderForModuleContent: PackageFragmentProvider? = null
 
     private val packageFragmentProviderForWholeModuleWithDependencies by Delegates.lazy {
-        seal()
-        dependencies.forEach {
+        val moduleDependencies = dependencies.sure { "Dependencies of module $id were not set before querying module content" }
+        val dependenciesDescriptors = moduleDependencies.descriptors
+        assert(this in dependenciesDescriptors) { "Module ${id} is not contained in his own dependencies, this is probably a misconfiguration" }
+        dependenciesDescriptors.forEach {
             dependency ->
             assert(dependency.isInitialized) {
                 "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
             }
         }
-        CompositePackageFragmentProvider(dependencies.map {
+        CompositePackageFragmentProvider(dependenciesDescriptors.map {
             it.packageFragmentProviderForModuleContent!!
         })
     }
@@ -71,12 +61,17 @@ public class ModuleDescriptorImpl(
     public val isInitialized: Boolean
         get() = packageFragmentProviderForModuleContent != null
 
-    public fun addDependencyOnModule(dependency: ModuleDescriptorImpl) {
-        assert(!isSealed) { "Can't modify dependencies of sealed module $id" }
-        assert(dependency !in dependencies) {
-            "Trying to add dependency on module ${dependency.id} a second time for module ${this.id}, this is probably a misconfiguration"
-        }
-        dependencies.add(dependency)
+    public fun setDependencies(dependencies: ModuleDependencies) {
+        assert(this.dependencies == null) { "Dependencies of $id were already set" }
+        this.dependencies = dependencies
+    }
+
+    public fun setDependencies(vararg descriptors: ModuleDescriptorImpl) {
+        setDependencies(descriptors.toList())
+    }
+
+    public fun setDependencies(descriptors: List<ModuleDescriptorImpl>) {
+        setDependencies(ModuleDependenciesImpl(descriptors))
     }
 
     private val id: String
@@ -84,7 +79,6 @@ public class ModuleDescriptorImpl(
 
     /*
      * Call initialize() to set module contents. Uninitialized module cannot be queried for its contents.
-     * Initialize() and seal() can be called in any order.
      */
     public fun initialize(providerForModuleContent: PackageFragmentProvider) {
         assert(!isInitialized) { "Attempt to initialize module $id twice" }
@@ -106,10 +100,15 @@ public class ModuleDescriptorImpl(
 
     public fun addFriend(friend: ModuleDescriptorImpl): Unit {
         assert(friend != this) { "Attempt to make module $id a friend to itself" }
-        assert(!isSealed) { "Attempt to add friend module ${friend.id} to sealed module $id" }
         friendModules.add(friend)
     }
 
     override val builtIns: KotlinBuiltIns
         get() = KotlinBuiltIns.getInstance()
+}
+
+public class ModuleDependenciesImpl(override val descriptors: List<ModuleDescriptorImpl>) : ModuleDependencies
+
+public interface ModuleDependencies {
+    public val descriptors: List<ModuleDescriptorImpl>
 }

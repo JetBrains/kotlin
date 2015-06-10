@@ -327,13 +327,14 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
             if (testModule == null) continue;
 
             ModuleDescriptorImpl module = modules.get(testModule);
-            module.addDependencyOnModule(module);
+            List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();
+            dependencies.add(module);
             for (TestModule dependency : testModule.getDependencies()) {
-                module.addDependencyOnModule(modules.get(dependency));
+                dependencies.add(modules.get(dependency));
             }
 
-            module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-            module.seal();
+            dependencies.add(KotlinBuiltIns.getInstance().getBuiltInsModule());
+            module.setDependencies(dependencies);
         }
 
         return modules;
@@ -349,9 +350,7 @@ public abstract class AbstractJetDiagnosticsTest extends BaseDiagnosticsTest {
     @NotNull
     protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
         ModuleDescriptorImpl moduleDescriptor = createModule("<test-module>", storageManager);
-        moduleDescriptor.addDependencyOnModule(moduleDescriptor);
-        moduleDescriptor.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-        moduleDescriptor.seal();
+        moduleDescriptor.setDependencies(moduleDescriptor, KotlinBuiltIns.getInstance().getBuiltInsModule());
         return moduleDescriptor;
     }
 

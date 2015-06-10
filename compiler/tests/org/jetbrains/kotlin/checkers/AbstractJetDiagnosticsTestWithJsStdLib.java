@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.storage.StorageManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -81,15 +82,15 @@ public abstract class AbstractJetDiagnosticsTestWithJsStdLib extends AbstractJet
     protected ModuleDescriptorImpl createSealedModule(@NotNull StorageManager storageManager) {
         ModuleDescriptorImpl module = createModule("<kotlin-js-test-module>", storageManager);
 
-        module.addDependencyOnModule(module);
+        List<ModuleDescriptorImpl> dependencies = new ArrayList<ModuleDescriptorImpl>();;
+        dependencies.add(module);
 
-        for(ModuleDescriptorImpl moduleDescriptor : config.getModuleDescriptors()) {
-            module.addDependencyOnModule(moduleDescriptor);
+        for (ModuleDescriptorImpl moduleDescriptor : config.getModuleDescriptors()) {
+            dependencies.add(moduleDescriptor);
         }
 
-        module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule());
-
-        module.seal();
+        dependencies.add(KotlinBuiltIns.getInstance().getBuiltInsModule());
+        module.setDependencies(dependencies);
 
         return module;
     }

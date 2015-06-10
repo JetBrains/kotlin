@@ -126,8 +126,7 @@ public class KotlinBuiltIns {
         );
 
         builtInsModule.initialize(packageFragmentProvider);
-        builtInsModule.addDependencyOnModule(builtInsModule);
-        builtInsModule.seal();
+        builtInsModule.setDependencies(builtInsModule);
 
         builtinsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
 

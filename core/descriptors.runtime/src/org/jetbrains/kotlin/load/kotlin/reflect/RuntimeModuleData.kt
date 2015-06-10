@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForRuntimeDescriptorLoader
 import org.jetbrains.kotlin.name.Name
@@ -36,9 +36,7 @@ public class RuntimeModuleData private constructor(private val injector: Injecto
             val storageManager = LockBasedStorageManager()
             val module = ModuleDescriptorImpl(Name.special("<runtime module for $classLoader>"), storageManager,
                                               ModuleParameters(listOf(), JavaToKotlinClassMap.INSTANCE))
-            module.addDependencyOnModule(module)
-            module.addDependencyOnModule(KotlinBuiltIns.getInstance().getBuiltInsModule())
-            module.seal()
+            module.setDependencies(module, KotlinBuiltIns.getInstance().getBuiltInsModule())
             val injector = InjectorForRuntimeDescriptorLoader(classLoader, module, storageManager)
             module.initialize(injector.getJavaDescriptorResolver().packageFragmentProvider)
             return RuntimeModuleData(injector)
