@@ -73,7 +73,11 @@ public class MockLibraryUtil {
             File contentDir = JetTestUtils.tmpDir("testLibrary-" + jarName);
 
             File classesDir = new File(contentDir, "classes");
-            compileKotlin(sourcesPath, classesDir, extraClasspath);
+
+            List<File> kotlinFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), new File(sourcesPath));
+            if (!kotlinFiles.isEmpty()) {
+                compileKotlin(sourcesPath, classesDir, extraClasspath);
+            }
 
             List<File> javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), new File(sourcesPath));
             if (!javaFiles.isEmpty()) {
