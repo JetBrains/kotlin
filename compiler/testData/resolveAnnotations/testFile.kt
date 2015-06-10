@@ -3,6 +3,7 @@
 package test
 
 import test.MyEnum.*
+import kotlin.reflect.KClass
 
 ANNOTATION class MyClass @ANNOTATION constructor(@ANNOTATION param: Int, @ANNOTATION val consProp: Int) {
     ANNOTATION companion object {
@@ -48,7 +49,7 @@ annotation class AnnStringVararg(vararg a: String)
 annotation class AnnStringArray(a: Array<String>)
 annotation class AnnArrayOfEnum(a: Array<MyEnum>)
 annotation class AnnAnn(a: AnnInt)
-annotation class AnnClass(a: Class<*>)
+annotation class AnnClass(a: KClass<*>)
 
 enum class MyEnum {
   A

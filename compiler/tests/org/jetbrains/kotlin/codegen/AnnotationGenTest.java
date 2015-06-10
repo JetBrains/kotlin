@@ -307,39 +307,6 @@ public class AnnotationGenTest extends CodegenTestCase {
         assertEquals("239", cClass.getDeclaredMethod("c").invoke(invoke));
     }
 
-    public void testAnnotationClassWithClassProperty()
-            throws
-            NoSuchFieldException,
-            NoSuchMethodException,
-            ClassNotFoundException,
-            IllegalAccessException,
-            InstantiationException,
-            InvocationTargetException {
-        loadText("import java.lang.annotation.*\n" +
-                 "" +
-                 "Retention(RetentionPolicy.RUNTIME) annotation class A(val a: java.lang.Class<*>)\n" +
-                 "" +
-                 "A(javaClass<String>()) class B()");
-        Class aClass = generateClass("A");
-
-        Retention annotation = (Retention)aClass.getAnnotation(Retention.class);
-        RetentionPolicy value = annotation.value();
-        assertEquals(RetentionPolicy.RUNTIME, value);
-
-        Method[] methods = aClass.getDeclaredMethods();
-        assertEquals(1, methods.length);
-        assertEquals("a", methods[0].getName());
-        assertEquals(Class.class, methods[0].getReturnType());
-        assertEquals(0, methods[0].getParameterTypes().length);
-        assertTrue(aClass.isAnnotation());
-
-        Class<?> bClass = aClass.getClassLoader().loadClass("B");
-        Annotation bClassAnnotation = bClass.getAnnotation(aClass);
-        assertNotNull(bClassAnnotation);
-
-        assertEquals(String.class, methods[0].invoke(bClassAnnotation));
-    }
-
     public void testAnnotationClassWithStringArrayProperty()
             throws
             NoSuchFieldException,

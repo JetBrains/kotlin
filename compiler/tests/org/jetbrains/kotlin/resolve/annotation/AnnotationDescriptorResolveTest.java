@@ -86,8 +86,8 @@ public class AnnotationDescriptorResolveTest extends AbstractAnnotationDescripto
     }
 
     public void testJavaClassAnnotation() throws Exception {
-        String content = getContent("AnnClass(javaClass<MyClass>())");
-        String expectedAnnotation = "AnnClass(a = javaClass<MyClass>(): Class<MyClass>)";
+        String content = getContent("AnnClass(MyClass::class)");
+        String expectedAnnotation = "AnnClass(a = MyClass::class: KClass<MyClass>)";
         doTest(content, expectedAnnotation);
     }
 }

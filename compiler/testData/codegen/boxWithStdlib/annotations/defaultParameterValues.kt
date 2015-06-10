@@ -1,5 +1,7 @@
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
+import kotlin.reflect.KClass
+import kotlin.reflect.jvm.java
 
 Retention(RetentionPolicy.RUNTIME)
 annotation class Ann(
@@ -7,7 +9,7 @@ annotation class Ann(
         val s: String = "a",
         val a: Ann2 = Ann2(),
         val e: MyEnum = MyEnum.A,
-        val c: Class<*> = javaClass<A>(),
+        val c: KClass<*> = A::class,
         val ia: IntArray = intArray(1, 2),
         val sa: Array<String> = array("a", "b")
 )
@@ -20,7 +22,7 @@ fun box(): String {
     val annSimpleName = ann.a.annotationType().getSimpleName()
     if (annSimpleName != "Ann2") return "fail: annotation parameter a should be of class Ann2, but was $annSimpleName"
     if (ann.e != MyEnum.A) return "fail: annotation parameter e should be MyEnum.A, but was ${ann.e}"
-    if (ann.c != javaClass<A>()) return "fail: annotation parameter c should be of class A, but was ${ann.c}"
+    if (ann.c.java != javaClass<A>()) return "fail: annotation parameter c should be of class A, but was ${ann.c}"
     if (ann.ia[0] != 1 || ann.ia[1] != 2) return "fail: annotation parameter ia should be [1, 2], but was ${ann.ia}"
     if (ann.sa[0] != "a" || ann.sa[1] != "b") return "fail: annotation parameter ia should be [\"a\", \"b\"], but was ${ann.sa}"
     return "OK"
