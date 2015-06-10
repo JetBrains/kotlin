@@ -38,9 +38,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Convert concatenation to template") {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
         if (element.getOperationToken() != JetTokens.PLUS) return false
-
-        val elementType = BindingContextUtils.getRecordedTypeInfo(element, element.analyze())?.type
-        if (!KotlinBuiltIns.isString(elementType)) return false
+        if (!KotlinBuiltIns.isString(element.analyze().getType(element))) return false
 
         val left = element.getLeft() ?: return false
         val right = element.getRight() ?: return false
@@ -68,20 +66,21 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
         }
         else {
             val leftText = buildText(left, needsBraces)
-            return "\"" + leftText + right + "\""
+            return "\"$leftText$right\""
         }
     }
 
-    private fun buildText(expr: JetExpression?, needsBraces: Boolean): String {
-        val expression = JetPsiUtil.deparenthesize(expr)
-        val expressionText = expression?.getText() ?: ""
+    private fun buildText(expr: JetExpression?, forceBraces: Boolean): String {
+        if (expr == null) return ""
+        val expression = JetPsiUtil.safeDeparenthesize(expr)
+        val expressionText = expression.getText()
         return when (expression) {
             is JetConstantExpression -> {
-                val context = expression.analyze()
-                val constant = ConstantExpressionEvaluator.evaluate(expression, DelegatingBindingTrace(context, "Trace for evaluating constant"), null)
+                val bindingContext = expression.analyze()
+                val constant = ConstantExpressionEvaluator.getConstant(expression, bindingContext)
                 if (constant is IntegerValueTypeConstant) {
-                    val elementType = BindingContextUtils.getRecordedTypeInfo(expression, context)?.type!!
-                    constant.getValue(elementType).toString()
+                    val type = bindingContext.getType(expression)!!
+                    constant.getValue(type).toString()
                 }
                 else {
                     constant?.getValue().toString()
@@ -96,8 +95,8 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
                 else {
                     StringUtil.unquoteString(expressionText)
                 }
-                if (needsBraces && base.endsWith('$')) {
-                    base.substring(0, base.length() - 1) + "\\$"
+                if (forceBraces && base.endsWith('$')) {
+                    base.dropLast(1) + "\\$"
                 }
                 else {
                     base
@@ -105,7 +104,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
             }
 
             is JetSimpleNameExpression ->
-                if (needsBraces) "\${" + expressionText + "}" else "\$" + expressionText
+                "$" + (if (forceBraces) "{$expressionText}" else expressionText)
 
             null -> ""
 
