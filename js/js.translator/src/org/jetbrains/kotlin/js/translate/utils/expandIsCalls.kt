@@ -20,9 +20,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck
 import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.or
-import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.typeOfIs
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.isNullCheck
+import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import java.util.*
 
 fun expandIsCalls(node: JsNode, context: TranslationContext) {
@@ -71,9 +69,16 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
             TypeCheck.INSTANCEOF ->
                 context.namer().isInstanceOf(argument, calleeArgument)
 
-            // Kotlin.orNull(calleeArgument)(argument) -> argument === null || calleeArgument(argument)
-            TypeCheck.OR_NULL ->
-                or(isNullCheck(argument), JsInvocation(calleeArgument, argument))
+            // Kotlin.orNull(calleeArgument)(argument) -> (tmp = argument) == null || calleeArgument(tmp)
+            TypeCheck.OR_NULL -> {
+                val currentScope = scopes.peek()
+                val tmp = currentScope.declareTemporary()
+                val statementContext = lastStatementLevelContext
+                statementContext.addPrevious(newVar(tmp, null))
+                val assignment = assignment(tmp.makeRef(), argument)
+                val tmpIsNull = TranslationUtils.isNullCheck(assignment)
+                or(tmpIsNull, JsInvocation(calleeArgument, tmp.makeRef()))
+            }
 
             else ->
                 null
