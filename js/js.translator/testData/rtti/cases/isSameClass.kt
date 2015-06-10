@@ -4,4 +4,7 @@ class A() {
 
 }
 
-fun box() = (A() is A)
+fun box(): String {
+    assertEquals(true, A() is A)
+    return "OK"
+}

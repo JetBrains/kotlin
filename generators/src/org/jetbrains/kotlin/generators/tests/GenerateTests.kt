@@ -1076,6 +1076,10 @@ fun main(args: Array<String>) {
         testClass<AbstractReifiedTest>() {
             model("reified/cases")
         }
+
+        testClass(javaClass<AbstractRttiTest>()) {
+            model("rtti/cases")
+        }
     }
 
     testGroup("js/js.tests/test", "compiler/testData") {
