@@ -193,23 +193,22 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected abstract fun doComplete()
 
-    // set is used only for completion in code fragments
-    private var alreadyAddedDescriptors: Collection<DeclarationDescriptor> by Delegates.notNull()
+    protected abstract val descriptorKindFilter: DescriptorKindFilter?
 
-    protected fun getReferenceVariants(kindFilter: DescriptorKindFilter, runtimeReceiverType: Boolean): Collection<DeclarationDescriptor> {
-        val descriptors = referenceVariantsHelper.getReferenceVariants(reference!!.expression, kindFilter, runtimeReceiverType, prefixMatcher.asNameFilter())
-        if (!runtimeReceiverType) {
-            if (position.getContainingFile() is JetCodeFragment) {
-                alreadyAddedDescriptors = descriptors
-            }
-            return descriptors
+    // set is used only for completion in code fragments
+    protected val referenceVariants: Collection<DeclarationDescriptor> by Delegates.lazy {
+        if (descriptorKindFilter != null) {
+            referenceVariantsHelper.getReferenceVariants(reference!!.expression, descriptorKindFilter!!, false, prefixMatcher.asNameFilter())
         }
         else {
-            return descriptors.filter { desc ->
-                !alreadyAddedDescriptors.any {
-                    comparePossiblyOverridingDescriptors(project, it, desc)
-                }
-            }
+            emptyList()
+        }
+    }
+
+    protected fun getRuntimeReceiverTypeReferenceVariants(): Collection<DeclarationDescriptor> {
+        val descriptors = referenceVariantsHelper.getReferenceVariants(reference!!.expression, descriptorKindFilter!!, true, prefixMatcher.asNameFilter())
+        return descriptors.filter { descriptor ->
+            referenceVariants.none { comparePossiblyOverridingDescriptors(project, it, descriptor) }
         }
     }
 
@@ -255,6 +254,20 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     public val completionKind: CompletionKind = calcCompletionKind()
 
+    protected override val descriptorKindFilter = when (completionKind) {
+        CompletionKind.TYPES ->
+            DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry
+
+        CompletionKind.ANNOTATION_TYPES,  CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME ->
+            DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude
+
+        CompletionKind.ALL ->
+            DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK)
+
+        CompletionKind.NAMED_PARAMETERS_ONLY, CompletionKind.KEYWORDS_ONLY ->
+            null
+    }
+
     private fun calcCompletionKind(): CompletionKind {
         if (NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
             return CompletionKind.NAMED_PARAMETERS_ONLY
@@ -293,20 +306,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         assert(parameters.getCompletionType() == CompletionType.BASIC)
 
         if (completionKind != CompletionKind.NAMED_PARAMETERS_ONLY) {
-            val kindFilter = when (completionKind) {
-                CompletionKind.TYPES ->
-                    DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry
-
-                CompletionKind.ANNOTATION_TYPES,  CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME ->
-                    DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude
-
-                else ->
-                    DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK)
-            }
-
-            if (completionKind != CompletionKind.KEYWORDS_ONLY) {
-                addReferenceVariants(kindFilter, runtimeReceiverType = false)
-            }
+            collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
@@ -350,7 +350,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
                 if (position.getContainingFile() is JetCodeFragment) {
                     flushToResultSet()
-                    addReferenceVariants(kindFilter, runtimeReceiverType = true)
+                    collector.addDescriptorElements(getRuntimeReceiverTypeReferenceVariants(), suppressAutoInsertion = false, withReceiverCast = true)
                 }
             }
         }
@@ -387,20 +387,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
         }
     }
-
-    private fun addReferenceVariants(kindFilter: DescriptorKindFilter, runtimeReceiverType: Boolean) {
-        collector.addDescriptorElements(
-                getReferenceVariants(kindFilter, runtimeReceiverType),
-                suppressAutoInsertion = false,
-                withReceiverCast = runtimeReceiverType)
-    }
 }
 
 class SmartCompletionSession(configuration: CompletionSessionConfiguration, parameters: CompletionParameters, resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
     // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
-    private val DESCRIPTOR_KIND_MASK = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+    override val descriptorKindFilter: DescriptorKindFilter? = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
     override fun doComplete() {
         if (NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
@@ -423,14 +416,16 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                 if (reference != null) {
                     val filter = result.declarationFilter
                     if (filter != null) {
-                        getReferenceVariants(DESCRIPTOR_KIND_MASK, runtimeReceiverType = false).forEach { collector.addElements(filter(it)) }
+                        referenceVariants.forEach { collector.addElements(filter(it)) }
                         flushToResultSet()
 
                         processNonImported { collector.addElements(filter(it)) }
                         flushToResultSet()
 
                         if (position.getContainingFile() is JetCodeFragment) {
-                            getReferenceVariants(DESCRIPTOR_KIND_MASK, runtimeReceiverType = true).forEach { collector.addElements(filter(it).map { it.withReceiverCast() }) }
+                            getRuntimeReceiverTypeReferenceVariants().forEach {
+                                collector.addElements(filter(it).map { it.withReceiverCast() })
+                            }
                             flushToResultSet()
                         }
                     }
@@ -461,7 +456,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
                         override fun getSpreadElement(): LeafPsiElement? = null
                         override fun isExternal() = false
                     }
-                    val dummyArguments = call!!.getValueArguments() + listOf(dummyArgument)
+                    val dummyArguments = call.getValueArguments() + listOf(dummyArgument)
                     val dummyCall = object : DelegatingCall(call) {
                         override fun getValueArguments() = dummyArguments
                         override fun getFunctionLiteralArguments() = listOf(dummyArgument)

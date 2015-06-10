@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
 class KDocCompletionContributor(): CompletionContributor() {
     init {
@@ -57,6 +58,8 @@ object KDocNameCompletionProvider: CompletionProvider<CompletionParameters>() {
 
 class KDocNameCompletionSession(parameters: CompletionParameters,
                                 resultSet: CompletionResultSet): CompletionSessionBase(CompletionSessionConfiguration(parameters), parameters, resultSet) {
+    override val descriptorKindFilter: DescriptorKindFilter? get() = null
+
     override fun doComplete() {
         val position = parameters.getPosition().getParentOfType<KDocName>(false) ?: return
         val declaration = position.getContainingDoc().getOwner() ?: return
