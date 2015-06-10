@@ -142,4 +142,10 @@ public class ReifiedTestGenerated extends AbstractReifiedTest {
         String fileName = KotlinTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/vararg.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("withInlineTurnedOff.kt")
+    public void testWithInlineTurnedOff() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/reified/cases/withInlineTurnedOff.kt");
+        doTest(fileName);
+    }
 }
