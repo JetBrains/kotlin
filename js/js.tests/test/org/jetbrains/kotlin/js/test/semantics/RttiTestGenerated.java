@@ -77,6 +77,18 @@ public class RttiTestGenerated extends AbstractRttiTest {
         doTest(fileName);
     }
 
+    @TestMetadata("sideEffectMethod.kt")
+    public void testSideEffectMethod() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/sideEffectMethod.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("sideEffectProperty.kt")
+    public void testSideEffectProperty() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/sideEffectProperty.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("stdlibEmptyListClass.kt")
     public void testStdlibEmptyListClass() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/stdlibEmptyListClass.kt");
