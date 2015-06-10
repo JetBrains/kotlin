@@ -47,6 +47,7 @@ import com.intellij.util.io.BooleanDataDescriptor
 import java.util.ArrayList
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
+import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.utils.Printer
 import java.io.DataInputStream
 
@@ -60,20 +61,28 @@ class CacheFormatVersion(targetDataRoot: File) {
         // Change this when incremental cache format changes
         private val INCREMENTAL_CACHE_OWN_VERSION = 2
         private val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
+
+        private val NON_INCREMENTAL_MODE_PSEUDO_VERSION = Int.MAX_VALUE
+
         val FORMAT_VERSION_FILE_PATH: String = "$CACHE_DIRECTORY_NAME/format-version.txt"
     }
 
     private val file = File(targetDataRoot, FORMAT_VERSION_FILE_PATH)
 
+    private fun actualCacheFormatVersion() = if (IncrementalCompilation.ENABLED) CACHE_FORMAT_VERSION else NON_INCREMENTAL_MODE_PSEUDO_VERSION
+
     public fun isIncompatible(): Boolean {
         if (!file.exists()) return false
 
-        return file.readText().toInt() != CACHE_FORMAT_VERSION
+        val versionNumber = file.readText().toInt()
+        val expectedVersionNumber = actualCacheFormatVersion()
+
+        return versionNumber != expectedVersionNumber
     }
 
     fun saveIfNeeded() {
         if (!file.exists()) {
-            file.writeText(CACHE_FORMAT_VERSION.toString())
+            file.writeText(actualCacheFormatVersion().toString())
         }
     }
 
@@ -126,9 +135,11 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 else -> DO_NOTHING
             }
 
-    public fun saveFileToCache(sourceFiles: Collection<File>, kotlinClass: LocalFileKotlinClass): RecompilationDecision {
+    public fun saveCacheFormatVersion() {
         cacheFormatVersion.saveIfNeeded()
+    }
 
+    public fun saveFileToCache(sourceFiles: Collection<File>, kotlinClass: LocalFileKotlinClass): RecompilationDecision {
         val fileBytes = kotlinClass.getFileContents()
         val className = JvmClassName.byClassId(kotlinClass.getClassId())
         val header = kotlinClass.getClassHeader()
