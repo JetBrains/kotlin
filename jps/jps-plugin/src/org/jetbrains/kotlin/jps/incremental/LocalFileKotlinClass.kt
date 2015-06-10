@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import java.io.File
 
-class LocalFileKotlinClass private(
+class LocalFileKotlinClass private constructor(
         private val file: File,
         private val fileContents: ByteArray,
         className: ClassId,
