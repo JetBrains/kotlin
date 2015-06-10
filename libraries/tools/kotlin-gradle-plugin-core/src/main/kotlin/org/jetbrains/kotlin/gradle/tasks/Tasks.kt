@@ -55,7 +55,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
 
-    [TaskAction]
+    @TaskAction
     override fun compile() {
         getLogger().debug("Starting ${javaClass} task")
         val args = createBlankArgs()
@@ -350,7 +350,7 @@ private fun <T: Any> ExtraPropertiesExtension.getOrNull(id: String): T? {
 }
 
 fun getAnnotations(project: Project, logger: Logger): Collection<File> {
-    [suppress("UNCHECKED_CAST")]
+    @suppress("UNCHECKED_CAST")
     val annotations = project.getExtensions().getByName(DEFAULT_ANNOTATIONS) as Collection<File>
 
     if (!annotations.isEmpty()) {
