@@ -1,6 +1,6 @@
 class A {
     public fun foo(p: Int) {
-        println("p = [" + p + "]")
+        println("p = [$p]")
     }
 
     synchronized public fun foo() {

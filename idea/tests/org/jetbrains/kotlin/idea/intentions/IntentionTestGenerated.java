@@ -4167,6 +4167,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToStringTemplate/tricky.kt");
             doTest(fileName);
         }
+
     }
 
     @TestMetadata("idea/testData/intentions/declarations")

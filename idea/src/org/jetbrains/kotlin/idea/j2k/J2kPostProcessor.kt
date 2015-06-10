@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
+import org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateIntention
 import org.jetbrains.kotlin.idea.intentions.IfNullToElvisIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.SimplifyNegatedBinaryExpressionIntention
@@ -156,6 +157,17 @@ public class J2kPostProcessor(private val formatCode: Boolean) : PostProcessor {
                         }
                     }
 
+                }
+            }
+
+            override fun visitBinaryExpression(expression: JetBinaryExpression) {
+                val intention = ConvertToStringTemplateIntention()
+                if (intention.isApplicableTo(expression) && intention.isConversionResultSimple(expression)) {
+                    val result = intention.applyTo(expression)
+                    result.accept(this)
+                }
+                else {
+                    super.visitBinaryExpression(expression)
                 }
             }
         })

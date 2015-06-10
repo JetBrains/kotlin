@@ -933,6 +933,13 @@
                      level="INFO"
         />
 
+      <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.ConvertToStringTemplateInspection"
+                       displayName="Convert string concatenation to string template"
+                       groupName="Kotlin"
+                       enabledByDefault="true"
+                       level="INFO"
+          />
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.intentions.conventionNameCalls.ExplicitGetInspection"
                      displayName="Explicit 'get'"
                      groupName="Kotlin"

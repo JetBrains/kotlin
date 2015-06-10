@@ -5,7 +5,7 @@ interface I {
 
 open class A : I {
     override fun foo(i: Int, c: Char, s: String) {
-        println("foo" + i + c + s)
+        println("foo$i$c$s")
     }
 
     public fun foo(i: Int, c: Char) {

@@ -33,11 +33,18 @@ import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.psi.JetElement
 
 public abstract class IntentionBasedInspection<TElement : JetElement>(
-        protected val intentions: List<JetSelfTargetingRangeIntention<TElement>>,
+        protected val intentions: List<IntentionBasedInspection.IntentionData<TElement>>,
         protected val problemText: String?,
         protected val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {
-    constructor(intention: JetSelfTargetingRangeIntention<TElement>) : this(listOf(intention), null, intention.elementType)
+
+    constructor(intention: JetSelfTargetingRangeIntention<TElement>, additionalChecker: (TElement) -> Boolean = { true })
+        : this(listOf(IntentionData(intention, additionalChecker)), null, intention.elementType)
+
+    public data class IntentionData<TElement : JetElement>(
+            val intention: JetSelfTargetingRangeIntention<TElement>,
+            val additionalChecker: (TElement) -> Boolean = { true }
+    )
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : PsiElementVisitor() {
@@ -49,16 +56,17 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
 
                 val ranges = intentions
                         .map {
-                            it.applicabilityRange(targetElement)?.let { range ->
+                            val range = it.intention.applicabilityRange(targetElement)?.let { range ->
                                 val elementRange = targetElement.getTextRange()
                                 assert(range in elementRange) { "Wrong applicabilityRange() result for $it - should be within element's range" }
                                 range.shiftRight(-elementRange.getStartOffset())
                             }
+                            if (range != null && it.additionalChecker(targetElement)) range else null
                         }
                         .filterNotNull()
                 if (ranges.isEmpty()) return
 
-                val fixes = intentions.map { IntentionBasedQuickFix(it, targetElement) }.toTypedArray()
+                val fixes = intentions.map { IntentionBasedQuickFix(it.intention, it.additionalChecker, targetElement) }.toTypedArray()
                 val rangeInElement = ranges.fold(ranges.first()) { result, range -> result.union(range) }
                 holder.registerProblem(targetElement, problemText ?: fixes.first().getName(), problemHighlightType, rangeInElement, *fixes)
             }
@@ -71,8 +79,10 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
     /* we implement IntentionAction to provide isAvailable which will be used to hide outdated items and make sure we never call 'invoke' for such item */
     private class IntentionBasedQuickFix<TElement : JetElement>(
             val intention: JetSelfTargetingRangeIntention<TElement>,
+            val additionalChecker: (TElement) -> Boolean,
             targetElement: TElement
     ): LocalQuickFixOnPsiElement(targetElement), IntentionAction {
+
         // store text into variable because intention instance is shared and may change its text later
         private val _text = intention.getText()
 
@@ -86,7 +96,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
 
         override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
             assert(startElement == endElement)
-            return intention.applicabilityRange(startElement as TElement) != null
+            return intention.applicabilityRange(startElement as TElement) != null && additionalChecker(startElement)
         }
 
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {

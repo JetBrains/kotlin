@@ -1,0 +1,114 @@
+<problems>
+    <problem>
+        <file>noBracesSimpleFollowedByDot.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="noBracesSimpleFollowedByDot.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>noBracesForLastSimpleExpression.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="noBracesForLastSimpleExpression.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>multilineString.kt</file>
+        <line>3</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="multilineString.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>interpolateStringWithInt.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="interpolateStringWithInt.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>interpolateStringWithFloat.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="interpolateStringWithFloat.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>interpolateDollarSign.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="interpolateDollarSign.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>interpolateChar.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="interpolateChar.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>interpolate2Vals.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="interpolate2Vals.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>interpolate2StringConstants.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="interpolate2StringConstants.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>combinesNonStringsAsStrings2.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="combinesNonStringsAsStrings2.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>combinesNonStringsAsStrings.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="combinesNonStringsAsStrings.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>combineEmptyStrings.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="combineEmptyStrings.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>backslashNMultilineString.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="backslashNMultilineString.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+    <problem>
+        <file>doesNotCorruptExistingTemplate.kt</file>
+        <line>4</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="doesNotCorruptExistingTemplate.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert string concatenation to string template</problem_class>
+        <description>Convert concatenation to template</description>
+    </problem>
+</problems>

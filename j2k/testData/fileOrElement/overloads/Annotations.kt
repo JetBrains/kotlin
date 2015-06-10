@@ -30,6 +30,6 @@ class A {
     }
 
     public fun f(p: Int) {
-        println("p = " + p)
+        println("p = $p")
     }
 }

@@ -16,57 +16,69 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import org.jetbrains.kotlin.psi.JetBinaryExpression
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.resolve.BindingContextUtils
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetPsiFactory
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
-import org.jetbrains.kotlin.psi.JetConstantExpression
-import org.jetbrains.kotlin.psi.JetStringTemplateExpression
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
-import org.jetbrains.kotlin.lexer.JetTokens
-import org.jetbrains.kotlin.psi.JetPsiUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiUtilCore
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
+public class ConvertToStringTemplateInspection : IntentionBasedInspection<JetBinaryExpression>(
+        ConvertToStringTemplateIntention(),
+        { ConvertToStringTemplateIntention().isConversionResultSimple(it) }
+)
 
 public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependentIntention<JetBinaryExpression>(javaClass(), "Convert concatenation to template") {
     override fun isApplicableTo(element: JetBinaryExpression): Boolean {
-        if (element.getOperationToken() != JetTokens.PLUS) return false
-        if (!KotlinBuiltIns.isString(element.analyze().getType(element))) return false
+        if (!isApplicableToNoParentCheck(element)) return false
 
-        val left = element.getLeft() ?: return false
-        val right = element.getRight() ?: return false
-        return !PsiUtilCore.hasErrorElementChild(left) && !PsiUtilCore.hasErrorElementChild(right)
+        val parent = element.getParent()
+        if (parent is JetBinaryExpression && isApplicableToNoParentCheck(parent)) return false
+
+        return true
     }
 
     override fun applyTo(element: JetBinaryExpression, editor: Editor) {
-        val parent = element.getParent()
-        if (parent is JetBinaryExpression && isApplicableTo(parent)) {
-            return applyTo(parent, editor)
-        }
-
-        val rightText = buildText(element.getRight(), false)
-        val text = fold(element.getLeft(), rightText)
-
-        element.replace(JetPsiFactory(element).createExpression(text))
+        applyTo(element)
     }
 
-    private fun fold(left: JetExpression?, right: String): String {
-        val needsBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
+    public fun applyTo(element: JetBinaryExpression): JetStringTemplateExpression {
+        return element.replaced(buildReplacement(element))
+    }
 
-        if (left is JetBinaryExpression && isApplicableTo(left)) {
-            val leftRight = buildText(left.getRight(), needsBraces)
-            return fold(left.getLeft(), leftRight + right)
+    public fun isConversionResultSimple(expression: JetBinaryExpression): Boolean {
+        return buildReplacement(expression).getEntries().none { it is JetBlockStringTemplateEntry }
+    }
+
+    private fun isApplicableToNoParentCheck(expression: JetBinaryExpression): Boolean {
+        if (expression.getOperationToken() != JetTokens.PLUS) return false
+        if (!KotlinBuiltIns.isString(expression.analyze().getType(expression))) return false
+
+        val left = expression.getLeft() ?: return false
+        val right = expression.getRight() ?: return false
+        return !PsiUtilCore.hasErrorElementChild(left) && !PsiUtilCore.hasErrorElementChild(right)
+    }
+
+    private fun buildReplacement(expression: JetBinaryExpression): JetStringTemplateExpression {
+        val rightText = buildText(expression.getRight(), false)
+        return fold(expression.getLeft(), rightText, JetPsiFactory(expression))
+    }
+
+    private fun fold(left: JetExpression?, right: String, factory: JetPsiFactory): JetStringTemplateExpression {
+        val forceBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
+
+        if (left is JetBinaryExpression && isApplicableToNoParentCheck(left)) {
+            val leftRight = buildText(left.getRight(), forceBraces)
+            return fold(left.getLeft(), leftRight + right, factory)
         }
         else {
-            val leftText = buildText(left, needsBraces)
-            return "\"$leftText$right\""
+            val leftText = buildText(left, forceBraces)
+            return factory.createExpression("\"$leftText$right\"") as JetStringTemplateExpression
         }
     }
 
