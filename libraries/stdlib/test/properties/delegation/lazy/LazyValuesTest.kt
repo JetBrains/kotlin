@@ -30,6 +30,10 @@ class LazyValuesTest(): DelegationTestBase() {
     test fun testVolatileLazyVal() {
         doTest(TestVolatileLazyVal())
     }
+
+    test fun testIdentityEqualsIsUsedToUnescapeLazyVal() {
+        doTest(TestIdentityEqualsIsUsedToUnescapeLazyVal())
+    }
 }
 
 class TestLazyVal: WithBox {
@@ -140,5 +144,24 @@ class TestAtomicNullableLazyVal: WithBox {
     fun foo(): String? {
         resultB++
         return null
+    }
+}
+
+class TestIdentityEqualsIsUsedToUnescapeLazyVal: WithBox {
+    var equalsCalled = 0
+    val a by Delegates.lazy { ClassWithCustomEquality { equalsCalled++ } }
+
+    override fun box(): String {
+        a
+        a
+        if (equalsCalled > 0) return "fail: equals called $equalsCalled times."
+        return "OK"
+    }
+}
+
+private class ClassWithCustomEquality(private val onEqualsCalled: () -> Unit) {
+    override fun equals(other: Any?): Boolean {
+        onEqualsCalled()
+        return super.equals(other)
     }
 }

@@ -158,7 +158,7 @@ private fun escape(value: Any?): Any {
 }
 
 private fun unescape(value: Any?): Any? {
-    return if (value == NULL_VALUE) null else value
+    return if (value === NULL_VALUE) null else value
 }
 
 private class LazyVal<T>(private val initializer: () -> T) : ReadOnlyProperty<Any?, T> {
