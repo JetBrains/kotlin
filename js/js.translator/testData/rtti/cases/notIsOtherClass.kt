@@ -8,4 +8,7 @@ class B() : A() {
 
 }
 
-fun box() = (A() !is B)
+fun box(): String {
+    assertEquals(true, A() !is B)
+    return "OK"
+}

@@ -61,3 +61,5 @@ abstract class AbstractSuperTest : AbstractBlackBoxTest("super/")
 abstract class AbstractLocalClassesTest : AbstractBlackBoxTest("localClasses/")
 
 abstract class AbstractNonLocalReturnsTest : KotlinJSMultiFileTest("inline.generated/nonLocalReturns/")
+
+public abstract class AbstractRttiTest : SingleFileTranslationTest("rtti/")
