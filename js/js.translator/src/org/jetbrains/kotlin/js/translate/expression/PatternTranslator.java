@@ -16,18 +16,19 @@
 
 package org.jetbrains.kotlin.js.translate.expression;
 
-import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.JsExpression;
+import com.google.dart.compiler.backend.js.ast.JsInvocation;
+import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
-import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
@@ -35,8 +36,8 @@ import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 
-import static org.jetbrains.kotlin.js.translate.utils.BindingUtils.getTypeByReference;
-import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.equality;
+import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 
 public final class PatternTranslator extends AbstractTranslator {
 
@@ -65,17 +66,20 @@ public final class PatternTranslator extends AbstractTranslator {
     public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull KtTypeReference typeReference) {
         KotlinType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
         JsExpression checkFunReference = getIsTypeCheckCallable(type);
-        JsInvocation isCheck = new JsInvocation(checkFunReference, subject);
-
-        if (isNullable(typeReference)) {
-            return addNullCheck(subject, isCheck);
-        }
-
-        return isCheck;
+        return new JsInvocation(checkFunReference, subject);
     }
 
     @NotNull
     public JsExpression getIsTypeCheckCallable(@NotNull KotlinType type) {
+        JsExpression callable = doGetIsTypeCheckCallable(type);
+
+        if (type.isMarkedNullable()) return namer().orNull(callable);
+
+        return callable;
+    }
+
+    @NotNull
+    private JsExpression doGetIsTypeCheckCallable(@NotNull KotlinType type) {
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
         if (builtinCheck != null) return builtinCheck;
 
@@ -135,15 +139,6 @@ public final class PatternTranslator extends AbstractTranslator {
         JsExpression alias = context().getAliasForDescriptor(typeParameter);
         assert alias != null: "No alias found for reified type parameter: " + typeParameter;
         return alias;
-    }
-
-    @NotNull
-    private static JsExpression addNullCheck(@NotNull JsExpression expressionToMatch, @NotNull JsInvocation isCheck) {
-        return or(TranslationUtils.isNullCheck(expressionToMatch), isCheck);
-    }
-
-    private boolean isNullable(KtTypeReference typeReference) {
-        return getTypeByReference(bindingContext(), typeReference).isMarkedNullable();
     }
 
     @NotNull
