@@ -146,6 +146,8 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_BREAKS = new CountNodesDirective<JsBreak>("CHECK_BREAKS_COUNT", JsBreak.class);
 
+    private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<JsNullLiteral>("CHECK_NULLS_COUNT", JsNullLiteral.class);
+
     private static final DirectiveHandler HAS_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_INLINE_METADATA") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -175,6 +177,7 @@ public class DirectiveTestUtils {
             COUNT_LABELS,
             COUNT_VARS,
             COUNT_BREAKS,
+            COUNT_NULLS,
             HAS_INLINE_METADATA,
             HAS_NO_INLINE_METADATA
     );
