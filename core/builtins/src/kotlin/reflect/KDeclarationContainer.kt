@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package kotlin.reflect.jvm.internal
+package kotlin.reflect
 
-import kotlin.jvm.internal.FunctionImpl
-
-abstract class KFunctionImpl<out R> : FunctionImpl()
+/**
+ * Represents an entity which may contain declarations of any other entities,
+ * such as a class or a package.
+ */
+public interface KDeclarationContainer

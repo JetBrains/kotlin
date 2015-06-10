@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -46,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
@@ -53,6 +55,7 @@ import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticC
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.DiagnosticsPackage.OtherOrigin;
+import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class ClosureCodegen extends MemberCodegen<JetElement> {
@@ -61,6 +64,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     private final SamType samType;
     private final JetType superClassType;
     private final List<JetType> superInterfaceTypes;
+    private final FunctionDescriptor functionReferenceTarget;
     private final FunctionGenerationStrategy strategy;
     private final CalculatedClosure closure;
     private final Type asmType;
@@ -76,6 +80,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             @Nullable SamType samType,
             @NotNull ClosureContext context,
             @NotNull KotlinSyntheticClass.Kind syntheticClassKind,
+            @Nullable FunctionDescriptor functionReferenceTarget,
             @NotNull FunctionGenerationStrategy strategy,
             @NotNull MemberCodegen<?> parentCodegen,
             @NotNull ClassBuilder classBuilder
@@ -86,6 +91,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         this.classDescriptor = context.getContextDescriptor();
         this.samType = samType;
         this.syntheticClassKind = syntheticClassKind;
+        this.functionReferenceTarget = functionReferenceTarget;
         this.strategy = strategy;
 
         if (samType == null) {
@@ -189,7 +195,11 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             functionCodegen.generateBridges(descriptorForBridges);
         }
 
-        this.constructor = generateConstructor(superClassAsmType);
+        if (functionReferenceTarget != null) {
+            generateFunctionReferenceMethods(functionReferenceTarget);
+        }
+
+        this.constructor = generateConstructor();
 
         if (isConst(closure)) {
             generateConstInstance();
@@ -214,10 +224,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
     }
 
     @NotNull
-    public StackValue putInstanceOnStack(
-            @NotNull final ExpressionCodegen codegen,
-            @Nullable final FunctionDescriptor functionReferenceTarget
-    ) {
+    public StackValue putInstanceOnStack(@NotNull final ExpressionCodegen codegen) {
         return StackValue.operation(asmType, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -267,7 +274,8 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         MethodVisitor mv = v.newMethod(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
-        v.newField(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(), null, null);
+        v.newField(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(),
+                   null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             mv.visitCode();
@@ -316,8 +324,78 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         FunctionCodegen.endVisit(mv, "bridge", element);
     }
 
+    private void generateFunctionReferenceMethods(@NotNull FunctionDescriptor descriptor) {
+        int flags = ACC_PUBLIC | ACC_FINAL;
+        boolean generateBody = state.getClassBuilderMode() == ClassBuilderMode.FULL;
+
+        {
+            MethodVisitor mv =
+                    v.newMethod(NO_ORIGIN, flags, "getOwner", Type.getMethodDescriptor(K_DECLARATION_CONTAINER_TYPE), null, null);
+            if (generateBody) {
+                mv.visitCode();
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                generateFunctionReferenceDeclarationContainer(iv, descriptor, typeMapper);
+                iv.areturn(K_DECLARATION_CONTAINER_TYPE);
+                FunctionCodegen.endVisit(iv, "function reference getOwner", element);
+            }
+        }
+
+        {
+            MethodVisitor mv =
+                    v.newMethod(NO_ORIGIN, flags, "getName", Type.getMethodDescriptor(JAVA_STRING_TYPE), null, null);
+            if (generateBody) {
+                mv.visitCode();
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                iv.aconst(descriptor.getName().asString());
+                iv.areturn(JAVA_STRING_TYPE);
+                FunctionCodegen.endVisit(iv, "function reference getName", element);
+            }
+        }
+
+        {
+            MethodVisitor mv = v.newMethod(NO_ORIGIN, flags, "getSignature", Type.getMethodDescriptor(JAVA_STRING_TYPE), null, null);
+            if (generateBody) {
+                mv.visitCode();
+                InstructionAdapter iv = new InstructionAdapter(mv);
+                Method method = typeMapper.mapSignature(descriptor).getAsmMethod();
+                iv.aconst(method.getName() + method.getDescriptor());
+                iv.areturn(JAVA_STRING_TYPE);
+                FunctionCodegen.endVisit(iv, "function reference getSignature", element);
+            }
+        }
+    }
+
+    private static void generateFunctionReferenceDeclarationContainer(
+            @NotNull InstructionAdapter iv,
+            @NotNull FunctionDescriptor descriptor,
+            @NotNull JetTypeMapper typeMapper
+    ) {
+        DeclarationDescriptor container = descriptor.getContainingDeclaration();
+        if (container instanceof ClassDescriptor) {
+            // TODO: getDefaultType() here is wrong and won't work for arrays
+            StackValue value = generateClassLiteralReference(typeMapper, ((ClassDescriptor) container).getDefaultType());
+            value.put(K_CLASS_TYPE, iv);
+        }
+        else if (container instanceof PackageFragmentDescriptor) {
+            String packageClassInternalName = PackageClassUtils.getPackageClassInternalName(
+                    ((PackageFragmentDescriptor) container).getFqName()
+            );
+            iv.getstatic(packageClassInternalName, JvmAbi.KOTLIN_PACKAGE_FIELD_NAME, K_PACKAGE_TYPE.getDescriptor());
+        }
+        else if (container instanceof ScriptDescriptor) {
+            // TODO: correct container for scripts (KScript?)
+            StackValue value = generateClassLiteralReference(
+                    typeMapper, ((ScriptDescriptor) container).getClassDescriptor().getDefaultType()
+            );
+            value.put(K_CLASS_TYPE, iv);
+        }
+        else {
+            iv.aconst(null);
+        }
+    }
+
     @NotNull
-    private Method generateConstructor(@NotNull Type superClassAsmType) {
+    private Method generateConstructor() {
         List<FieldInfo> args = calculateConstructorParameters(typeMapper, closure, asmType);
 
         Type[] argTypes = fieldListToTypeArray(args);
