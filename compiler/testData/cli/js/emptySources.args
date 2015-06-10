@@ -1,0 +1,4 @@
+$TEMP_DIR$
+-no-stdlib
+-output
+$TESTDATA_DIR$

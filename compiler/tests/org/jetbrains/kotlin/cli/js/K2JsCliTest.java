@@ -38,6 +38,20 @@ public class K2JsCliTest extends CliBaseTest {
     }
 
     @Test
+    public void nonExistingSourcePath() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
+    }
+
+    @Test
+    public void emptySources() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertFalse(new File(tmpdir.getTmpDir(), "out.js").exists());
+    }
+
+    @Test
     public void outputPrefixFileNotFound() throws Exception {
         executeCompilerCompareOutputJS();
 

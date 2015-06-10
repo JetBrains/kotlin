@@ -4,7 +4,6 @@ Buildfile: [TestData]/build.xml
 build:
     [mkdir] Created dir: [Temp]/classes
     [javac] Compiling 1 source file to [Temp]/classes
-    [javac] Compiling [[TestData]] => [[Temp]/classes]
     [javac] Running javac...
     [javac] [TestData]/J.java:3: package kotlin does not exist
     [javac] import kotlin.Unit;
