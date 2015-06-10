@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import java.util.ArrayList
 import java.util.HashMap
 
-class Converter private(
+class Converter private constructor(
         private val elementToConvert: PsiElement,
         val settings: ConverterSettings,
         val inConversionScope: (PsiElement) -> Boolean,

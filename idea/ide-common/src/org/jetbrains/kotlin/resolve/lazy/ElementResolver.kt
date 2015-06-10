@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-public abstract class ElementResolver protected(
+public abstract class ElementResolver protected constructor(
         public val resolveSession: ResolveSession
 ) {
 

@@ -35,14 +35,14 @@ public trait AccessTarget {
     public object BlackBox: AccessTarget
 }
 
-public abstract class AccessValueInstruction protected (
+public abstract class AccessValueInstruction protected constructor(
         element: JetElement,
         lexicalScope: LexicalScope,
         public val target: AccessTarget,
         override val receiverValues: Map<PseudoValue, ReceiverValue>
 ) : InstructionWithNext(element, lexicalScope), InstructionWithReceivers
 
-public class ReadValueInstruction private (
+public class ReadValueInstruction private constructor(
         element: JetElement,
         lexicalScope: LexicalScope,
         target: AccessTarget,

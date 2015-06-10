@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class MonitorInstruction private (private val opcode: Int) : IntrinsicMethod() {
+public class MonitorInstruction private constructor(private val opcode: Int) : IntrinsicMethod() {
     companion object {
         public val MONITOR_ENTER: MonitorInstruction = MonitorInstruction(Opcodes.MONITORENTER)
         public val MONITOR_EXIT: MonitorInstruction = MonitorInstruction(Opcodes.MONITOREXIT)

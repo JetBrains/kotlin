@@ -90,7 +90,7 @@ import java.util.Comparator
 import kotlin.platform.platformStatic
 import kotlin.properties.Delegates
 
-public class KotlinCoreEnvironment private(
+public class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable, 
         applicationEnvironment: JavaCoreApplicationEnvironment, 
         configuration: CompilerConfiguration

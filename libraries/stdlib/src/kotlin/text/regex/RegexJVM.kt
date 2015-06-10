@@ -88,7 +88,7 @@ public data class MatchGroup(public val value: String, public val range: IntRang
  *
  * For pattern syntax reference see [java.util.regex.Pattern]
  */
-public class Regex internal (private val nativePattern: Pattern) {
+public class Regex internal constructor(private val nativePattern: Pattern) {
 
 
     /** Creates a regular expression from the specified [pattern] string and the default options.  */

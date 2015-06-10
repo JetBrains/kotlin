@@ -31,7 +31,7 @@ import com.intellij.openapi.vfs.VirtualFilePropertyEvent
 import com.intellij.openapi.util.SimpleModificationTracker
 import kotlin.platform.platformStatic
 
-class ModuleTypeCacheManager private (project: Project) {
+class ModuleTypeCacheManager private constructor(project: Project) {
     companion object {
         platformStatic fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<ModuleTypeCacheManager>())
     }

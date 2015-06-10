@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.utils.fileUtils.readTextOrEmpty
 import java.io.File
 import java.util.ArrayList
 
-public abstract class TranslationResult protected (public val diagnostics: Diagnostics) {
+public abstract class TranslationResult protected constructor(public val diagnostics: Diagnostics) {
 
     public class Fail(diagnostics: Diagnostics) : TranslationResult(diagnostics)
 

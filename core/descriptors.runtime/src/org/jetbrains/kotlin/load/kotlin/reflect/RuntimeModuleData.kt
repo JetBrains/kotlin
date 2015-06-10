@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-public class RuntimeModuleData private(private val injector: InjectorForRuntimeDescriptorLoader) {
+public class RuntimeModuleData private constructor(private val injector: InjectorForRuntimeDescriptorLoader) {
     public val module: ModuleDescriptor get() = injector.getModuleDescriptor()
 
     public val localClassResolver: LocalClassResolver get() = injector.getDeserializationComponentsForJava().components.localClassResolver

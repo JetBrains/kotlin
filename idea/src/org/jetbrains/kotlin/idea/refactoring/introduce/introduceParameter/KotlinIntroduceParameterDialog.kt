@@ -46,7 +46,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-public class KotlinIntroduceParameterDialog private (
+public class KotlinIntroduceParameterDialog private constructor(
         project: Project,
         val editor: Editor,
         val descriptor: IntroduceParameterDescriptor,

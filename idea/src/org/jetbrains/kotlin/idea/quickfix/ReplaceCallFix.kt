@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.psi.*
 
-public abstract class ReplaceCallFix protected (val psiElement: PsiElement) : IntentionAction {
+public abstract class ReplaceCallFix protected constructor(val psiElement: PsiElement) : IntentionAction {
 
     override fun getFamilyName(): String = getText()
 

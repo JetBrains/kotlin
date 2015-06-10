@@ -22,7 +22,11 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import java.lang.ref.WeakReference
 import kotlin.platform.platformStatic
 
-public open class MappedExtensionProvider<T, R> protected (private val epName: ExtensionPointName<T>, private val map: (List<T>) -> R) {
+public open class MappedExtensionProvider<T, R>
+protected constructor(
+        private val epName: ExtensionPointName<T>,
+        private val map: (List<T>) -> R
+) {
     private var cached = WeakReference<Pair<Application, R>>(null)
 
     public fun get(): R {

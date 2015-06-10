@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-abstract class DescriptorBasedProperty private(
+abstract class DescriptorBasedProperty private constructor(
         container: KCallableContainerImpl,
         name: String,
         receiverParameterDesc: String?,

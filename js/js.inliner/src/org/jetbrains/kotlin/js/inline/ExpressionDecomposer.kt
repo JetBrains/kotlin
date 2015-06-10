@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer
  * It's desirable to create temporary var only if node can have side effect,
  * and precedes inline call (in JavaScript evaluation order).
  */
-class ExpressionDecomposer private (
+class ExpressionDecomposer private constructor(
         private val scope: JsScope,
         private val containsExtractable: Set<JsNode>,
         private val containsNodeWithSideEffect: Set<JsNode>

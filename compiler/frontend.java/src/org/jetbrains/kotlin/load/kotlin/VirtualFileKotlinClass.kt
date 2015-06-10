@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.rethrow
 import java.io.FileNotFoundException
 import java.io.IOException
 
-public class VirtualFileKotlinClass private(
+public class VirtualFileKotlinClass private constructor(
         public val file: VirtualFile,
         className: ClassId,
         classHeader: KotlinClassHeader,

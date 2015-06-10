@@ -115,7 +115,11 @@ fun LookupElement.addTailAndNameSimilarity(
     return lookupElement
 }
 
-class ExpectedInfoClassification private(val substitutor: TypeSubstitutor?, val makeNotNullable: Boolean) {
+class ExpectedInfoClassification
+private constructor(
+        val substitutor: TypeSubstitutor?,
+        val makeNotNullable: Boolean
+) {
     companion object {
         val notMatches = ExpectedInfoClassification(null, false)
         fun matches(substitutor: TypeSubstitutor) = ExpectedInfoClassification(substitutor, false)

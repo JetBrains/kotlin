@@ -29,7 +29,11 @@ import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.*
 
 import kotlin.platform.platformStatic
 
-class FunctionInlineMutator private (private val call: JsInvocation, private val inliningContext: InliningContext) {
+class FunctionInlineMutator
+private constructor(
+        private val call: JsInvocation,
+        private val inliningContext: InliningContext
+) {
     private val invokedFunction: JsFunction
     private val isResultNeeded: Boolean
     private val namingContext: NamingContext

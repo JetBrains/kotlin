@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.JetFile
 import javax.swing.*
 import org.jetbrains.kotlin.psi.JetClassOrObject
 
-public class KotlinLightClassForPackage private(
+public class KotlinLightClassForPackage private constructor(
         manager: PsiManager,
         private val packageFqName: FqName,
         private val searchScope: GlobalSearchScope,

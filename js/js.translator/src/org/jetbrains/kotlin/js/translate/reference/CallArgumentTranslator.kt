@@ -38,7 +38,7 @@ import java.util.ArrayList
 import java.util.Collections
 import kotlin.platform.platformStatic
 
-public class CallArgumentTranslator private (
+public class CallArgumentTranslator private constructor(
         private val resolvedCall: ResolvedCall<*>,
         private val receiver: JsExpression?,
         context: TranslationContext

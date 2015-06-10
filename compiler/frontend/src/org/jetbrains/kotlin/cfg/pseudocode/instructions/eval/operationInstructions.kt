@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate
 
-public abstract class OperationInstruction protected(
+public abstract class OperationInstruction protected constructor(
         element: JetElement,
         lexicalScope: LexicalScope,
         override val inputValues: List<PseudoValue>
@@ -58,7 +58,7 @@ trait StrictlyValuedOperationInstruction: OperationInstruction {
         get() = resultValue!!
 }
 
-public class CallInstruction private(
+public class CallInstruction private constructor(
         element: JetElement,
         lexicalScope: LexicalScope,
         val resolvedCall: ResolvedCall<*>,
@@ -152,7 +152,7 @@ public enum class MagicKind(val sideEffectFree: Boolean = false) {
 }
 
 // Merges values produced by alternative control-flow paths (such as 'if' branches)
-class MergeInstruction private(
+class MergeInstruction private constructor(
         element: JetElement,
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>

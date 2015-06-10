@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.types.JetType
 
-public class CompositeBindingContext private (
+public class CompositeBindingContext private constructor(
         private val delegates: List<BindingContext>
 ) : BindingContext {
     override fun getType(expression: JetExpression): JetType? {

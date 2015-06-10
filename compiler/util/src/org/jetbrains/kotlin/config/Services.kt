@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.config
 
 import java.util.HashMap
 
-public class Services private(private val map: Map<Class<*>, Any>) {
+public class Services private constructor(private val map: Map<Class<*>, Any>) {
     companion object {
         public val EMPTY: Services = Builder().build()
     }

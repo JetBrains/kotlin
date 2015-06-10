@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.psiUtil.*
 import java.util.ArrayList
 
-data class DataForConversion private(
+data class DataForConversion private constructor(
         val elementsAndTexts: Collection<Any> /* list consisting of PsiElement's to convert and plain String's */,
         val importsAndPackage: String
 ) {

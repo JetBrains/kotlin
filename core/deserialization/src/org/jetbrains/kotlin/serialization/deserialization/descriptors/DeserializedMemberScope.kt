@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.Callable.CallableKind
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import java.util.*
 
-public abstract class DeserializedMemberScope protected(
+public abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         membersList: Collection<ProtoBuf.Callable>
 ) : JetScope {

@@ -36,11 +36,13 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 
-public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider> protected(
+public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider>
+protected constructor(
         protected val c: LazyClassContext,
         protected val declarationProvider: DP,
         protected val thisDescriptor: D,
-        protected val trace: BindingTrace) : JetScope {
+        protected val trace: BindingTrace
+) : JetScope {
 
     protected val storageManager: StorageManager = c.storageManager
     private val classDescriptors: MemoizedFunctionToNotNull<Name, List<ClassDescriptor>> = storageManager.createMemoizedFunction { resolveClassDescriptor(it) }

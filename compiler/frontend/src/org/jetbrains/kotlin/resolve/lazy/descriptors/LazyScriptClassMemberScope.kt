@@ -31,7 +31,7 @@ import java.util.Collections
 import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
 
 // SCRIPT: Members of a script class
-public class LazyScriptClassMemberScope protected(
+public class LazyScriptClassMemberScope protected constructor(
         private val resolveSession: ResolveSession,
         declarationProvider: ClassMemberDeclarationProvider,
         thisClass: LazyClassDescriptor,

@@ -39,7 +39,7 @@ private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf(
         javaClass<Class<*>>(), javaClass<String>()
 )
 
-public class ReflectKotlinClass private(
+public class ReflectKotlinClass private constructor(
         private val klass: Class<*>,
         private val classHeader: KotlinClassHeader
 ) : KotlinJvmBinaryClass {

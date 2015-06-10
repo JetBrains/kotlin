@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
 
-public class JetTopLevelExtensionsByReceiverTypeIndex private() : StringStubIndexExtension<JetCallableDeclaration>() {
+public class JetTopLevelExtensionsByReceiverTypeIndex private constructor() : StringStubIndexExtension<JetCallableDeclaration>() {
 
     override fun getKey() = KEY
 
