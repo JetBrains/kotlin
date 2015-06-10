@@ -61,11 +61,6 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         private val javaInspection = UnusedDeclarationInspection()
 
         public fun isEntryPoint(declaration: JetNamedDeclaration): Boolean {
-            // TODO Workaround for EA-64030 - IOE: PsiJavaParserFacadeImpl.createAnnotationFromText
-            // This should be fixed on IDEA side: ClsAnnotation should not throw exceptions when annotation class has Java keyword
-            if (declaration.getAnnotationEntries().any { it.getTypeReference().getText().endsWith("native") }) return false
-            if (ProjectStructureUtil.isJsKotlinModule(declaration.getContainingJetFile())) return false
-
             val lightElement: PsiElement? = when (declaration) {
                 is JetClassOrObject -> declaration.toLightClass()
                 is JetNamedFunction, is JetSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as JetFunction)
