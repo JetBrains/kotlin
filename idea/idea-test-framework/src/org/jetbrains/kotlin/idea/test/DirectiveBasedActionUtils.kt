@@ -16,77 +16,52 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.google.common.base.Function
-import com.google.common.base.Predicate
-import com.google.common.collect.Collections2
-import com.google.common.collect.Lists
-import com.google.common.collect.Ordering
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
-import java.util.Arrays
-import java.util.Collections
-
 public object DirectiveBasedActionUtils {
-
     public fun checkForUnexpectedErrors(file: JetFile) {
-        if (!InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// DISABLE-ERRORS").isEmpty()) {
+        if (InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// DISABLE-ERRORS").isNotEmpty()) {
             return
         }
 
-        val diagnostics = file.analyzeFully().getDiagnostics().all()
-        val errorDiagnostics = Collections2.filter(diagnostics, object : Predicate<Diagnostic> {
-            override fun apply(diagnostic: Diagnostic?): Boolean {
-                assert((diagnostic != null))
-                return diagnostic!!.getSeverity() == Severity.ERROR
-            }
-        })
-        val actualErrorStrings = Collections2.transform(errorDiagnostics, object : Function<Diagnostic, String> {
-            override fun apply(diagnostic: Diagnostic?): String? {
-                assert((diagnostic != null))
-                return IdeErrorMessages.render(diagnostic)
-            }
-        })
+        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ERROR:").sort()
 
-        val expectedErrorStrings = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ERROR:")
-        Collections.sort(expectedErrorStrings)
+        val actualErrors = file.analyzeFully().getDiagnostics()
+                .filter { it.getSeverity() == Severity.ERROR }
+                .map {  IdeErrorMessages.render(it) }
+                .sort()
 
-        UsefulTestCase.assertOrderedEquals("All actual errors should be mentioned in test data with // ERROR: directive. But no unnecessary errors should be me mentioned", Ordering.natural<Comparable>().sortedCopy(actualErrorStrings), expectedErrorStrings)
+        UsefulTestCase.assertOrderedEquals("All actual errors should be mentioned in test data with // ERROR: directive. But no unnecessary errors should be me mentioned",
+                                           actualErrors,
+                                           expectedErrors)
     }
 
     public fun checkAvailableActionsAreExpected(file: JetFile, availableActions: Collection<IntentionAction>) {
-        val validActions = Ordering.natural<Comparable>().sortedCopy(Lists.newArrayList(InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:")))
+        val expectedActions = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:").sort()
 
-        val actualActions = Ordering.natural<Comparable>().sortedCopy(Lists.newArrayList(Collections2.transform(availableActions, object : Function<IntentionAction, String> {
-            override fun apply(input: IntentionAction?): String? {
-                assert(input != null)
-                return input!!.getText()
-            }
-        })))
+        val actualActions = availableActions.map { it.getText() }.sort()
 
-        UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position. Use // ACTION: directive", filterOutIrrelevantActions(actualActions), filterOutIrrelevantActions(validActions))
+        UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position. Use // ACTION: directive",
+                                           filterOutIrrelevantActions(actualActions),
+                                           filterOutIrrelevantActions(expectedActions))
     }
 
-    private //TODO: hack, implemented because irrelevant actions behave in different ways on build server and locally
-            // this behaviour should be investigated and hack can be removed
-    fun filterOutIrrelevantActions(actions: Collection<String>): Collection<String> {
-        return Collections2.filter(actions, object : Predicate<String> {
-            override fun apply(input: String?): Boolean {
-                for (prefix in IRRELEVANT_ACTION_PREFIXES) {
-                    if (input!!.startsWith(prefix)) {
-                        return false
-                    }
-                }
-                return true
-            }
-        })
+    //TODO: hack, implemented because irrelevant actions behave in different ways on build server and locally
+    // this behaviour should be investigated and hack can be removed
+    private fun filterOutIrrelevantActions(actions: Collection<String>): Collection<String> {
+        return actions.filter { action -> IRRELEVANT_ACTION_PREFIXES.none { action.startsWith(it) } }
     }
 
-    private val IRRELEVANT_ACTION_PREFIXES = Arrays.asList("Disable ", "Edit intention settings", "Edit inspection profile setting", "Inject language or reference")
+    private val IRRELEVANT_ACTION_PREFIXES = listOf(
+            "Disable ",
+            "Edit intention settings",
+            "Edit inspection profile setting",
+            "Inject language or reference"
+    )
 }
