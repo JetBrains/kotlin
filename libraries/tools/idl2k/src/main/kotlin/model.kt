@@ -27,7 +27,7 @@ data class Repository(
         val enums: Map<String, EnumDefinition>
 )
 
-data class GenerateAttribute(val name: String, val type: String, val initializer: String?, val getterSetterNoImpl: Boolean, val readOnly: Boolean, val override: Boolean, var vararg: Boolean)
+data class GenerateAttribute(val name: String, val type: String, val initializer: String?, val getterSetterNoImpl: Boolean, val readOnly: Boolean, val override: Boolean, var vararg: Boolean, val static: Boolean)
 
 val GenerateAttribute.getterNoImpl: Boolean
     get() = getterSetterNoImpl
@@ -70,7 +70,8 @@ data class GenerateFunction(
         val name: String,
         val returnType: String,
         val arguments: List<GenerateAttribute>,
-        val nativeGetterOrSetter: NativeGetterOrSetter
+        val nativeGetterOrSetter: NativeGetterOrSetter,
+        val static: Boolean
 )
 
 data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute, val initTypeCall: GenerateFunctionCall?)

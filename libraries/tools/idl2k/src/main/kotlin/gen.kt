@@ -44,10 +44,12 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
                                 getterSetterNoImpl = false,
                                 override = false,
                                 readOnly = true,
-                                vararg = it.vararg
+                                vararg = it.vararg,
+                                static = it.static
                         )
                     },
-                    nativeGetterOrSetter = nativeGetterOrSetter
+                    nativeGetterOrSetter = nativeGetterOrSetter,
+                    static = function.static
             )
         }
 
@@ -90,7 +92,8 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
                 getterSetterNoImpl = putNoImpl,
                 readOnly = attribute.readOnly,
                 override = false,
-                vararg = attribute.vararg
+                vararg = attribute.vararg,
+                static = attribute.static
         )
 
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
@@ -103,7 +106,7 @@ private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefini
 
 private fun InterfaceDefinition.mapAttributes(repository: Repository) = attributes.map { generateAttribute(!dictionary, repository, it) }
 private fun InterfaceDefinition.mapOperations(repository: Repository) = operations.flatMap { generateFunctions(repository, it) }
-private fun Constant.mapConstant(repository: Repository) = GenerateAttribute(name, mapType(repository, type), value, false, true, false, false)
+private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), value, false, true, false, false, true)
 private fun emptyConstructor() = ExtendedAttribute(null, "Constructor", emptyList())
 
 fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {
@@ -158,7 +161,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
 
 fun generateConstructorAsFunction(repository: Repository, constructor: ExtendedAttribute) = generateFunction(
         repository,
-        Operation("", "Unit", constructor.arguments, emptyList()),
+        Operation("", "Unit", constructor.arguments, emptyList(), false),
         functionName = "",
         nativeGetterOrSetter = NativeGetterOrSetter.NONE)
 

@@ -64,12 +64,13 @@ private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>,
 
 private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.map { it.replaceKeywords() }.join(", ")})"
 
-private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: Boolean) {
-    indent(1)
+private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: Boolean, level: Int = 1) {
+    indent(level)
 
     when (f.nativeGetterOrSetter) {
         NativeGetterOrSetter.GETTER -> append("nativeGetter ")
         NativeGetterOrSetter.SETTER -> append("nativeSetter ")
+        NativeGetterOrSetter.NONE -> {}
     }
 
     if (override) {
@@ -137,18 +138,28 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     val superFunctions = allSuperTypes.flatMap { it.memberFunctions }.distinct()
     val superSignatures = superAttributes.map { it.signature } merge superFunctions.map { it.signature }
 
-    iface.memberAttributes.filter { it !in superAttributes }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues().values().forEach { arg ->
+    iface.memberAttributes.filter { it !in superAttributes && !it.static }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues().values().forEach { arg ->
         renderAttributeDeclaration(arg, arg.signature in superSignatures)
     }
-    iface.memberFunctions.filter { it !in superFunctions }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
+    iface.memberFunctions.filter { it !in superFunctions && !it.static }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
         renderFunctionDeclaration(it, it.signature in superSignatures)
     }
-    if (iface.constants.isNotEmpty()) {
+
+    val staticAttributes = iface.memberAttributes.filter { it.static }
+    val staticFunctions = iface.memberFunctions.filter { it.static }
+
+    if (iface.constants.isNotEmpty() || staticAttributes.isNotEmpty() || staticFunctions.isNotEmpty()) {
         appendln()
         indent(1)
         appendln("companion object {")
         iface.constants.forEach {
             renderAttributeDeclaration(it, override = false, level = 2)
+        }
+        staticAttributes.forEach {
+            renderAttributeDeclaration(it, override = false, level = 2)
+        }
+        staticFunctions.forEach {
+            renderFunctionDeclaration(it, override = false, level = 2)
         }
         indent(1)
         appendln("}")
