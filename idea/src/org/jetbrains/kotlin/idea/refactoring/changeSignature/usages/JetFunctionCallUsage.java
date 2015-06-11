@@ -415,14 +415,12 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                 ValueArgument receiverArgument = argumentMap.get(newReceiverInfo.getOldIndex());
                 JetExpression extensionReceiverExpression = receiverArgument != null ? receiverArgument.getArgumentExpression() : null;
                 JetExpression defaultValueForCall = newReceiverInfo.getDefaultValueForCall();
-                String receiverText = extensionReceiverExpression != null
-                                      ? extensionReceiverExpression.getText()
-                                      : defaultValueForCall != null ? defaultValueForCall.getText() : "";
-                if (receiverText.isEmpty()) {
-                    receiverText = "_";
-                }
+                JetExpression receiver =
+                        extensionReceiverExpression != null ? psiFactory.createExpression(extensionReceiverExpression.getText())
+                        : defaultValueForCall != null ? defaultValueForCall
+                        : psiFactory.createExpression("_");
 
-                replacingElement = psiFactory.createExpression(receiverText + "." + element.getText());
+                replacingElement = PsiPackage.createExpressionByPattern(psiFactory, "$0.$1", receiver, element);
             }
 
             newElement = (JetElement) elementToReplace.replace(replacingElement);
