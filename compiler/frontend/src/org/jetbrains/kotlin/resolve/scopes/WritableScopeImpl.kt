@@ -45,8 +45,6 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
     private var variableOrClassDescriptors: MutableMap<Name, DeclarationDescriptor>? = null
 
-    private var propertyGroups: SetMultimap<Name, VariableDescriptor>? = null
-
     private var packageAliases: MutableMap<Name, PackageViewDescriptor>? = null
 
     private var labelsToDescriptors: MutableMap<Name, MutableList<DeclarationDescriptor>>? = null
@@ -123,17 +121,9 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     }
 
     override fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
-        addVariableDescriptor(variableDescriptor, false)
-    }
-
-    private fun addVariableDescriptor(variableDescriptor: VariableDescriptor, isProperty: Boolean) {
         checkMayWrite()
 
         val name = variableDescriptor.getName()
-        if (isProperty) {
-            checkForPropertyRedeclaration(name, variableDescriptor)
-            getPropertyGroups().put(name, variableDescriptor)
-        }
         if (variableDescriptor.getExtensionReceiverParameter() == null) {
             checkForRedeclaration(name, variableDescriptor)
             // TODO : Should this always happen?
@@ -146,26 +136,18 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     override fun getProperties(name: Name): Collection<VariableDescriptor> {
         checkMayRead()
 
-        val propertyGroupsByName = propertyGroups?.get(name) ?: return workerScope.getProperties(name)
-        return concatInOrder(propertyGroupsByName, workerScope.getProperties(name))
+        return workerScope.getProperties(name)
     }
 
     override fun getLocalVariable(name: Name): VariableDescriptor? {
         checkMayRead()
 
         val descriptor = variableOrClassDescriptors?.get(name)
-        if (descriptor is VariableDescriptor && propertyGroups?.get(name)?.contains(descriptor) != true) {
+        if (descriptor is VariableDescriptor) {
             return descriptor
         }
 
         return workerScope.getLocalVariable(name)
-    }
-
-    private fun getPropertyGroups(): SetMultimap<Name, VariableDescriptor> {
-        if (propertyGroups == null) {
-            propertyGroups = LinkedHashMultimap.create()
-        }
-        return propertyGroups!!
     }
 
     private fun getFunctionGroups(): SetMultimap<Name, FunctionDescriptor> {
@@ -197,19 +179,6 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         getVariableOrClassDescriptors().put(name, classifierDescriptor)
         explicitlyAddedDescriptors.add(classifierDescriptor)
         addToDeclared(classifierDescriptor)
-    }
-
-    private fun checkForPropertyRedeclaration(name: Name, variableDescriptor: VariableDescriptor) {
-        val properties = getPropertyGroups()[name]
-        val receiverParameter = variableDescriptor.getExtensionReceiverParameter()
-        for (oldProperty in properties) {
-            val receiverParameterForOldVariable = oldProperty.getExtensionReceiverParameter()
-            if (receiverParameter != null
-                    && receiverParameterForOldVariable != null
-                    && JetTypeChecker.DEFAULT.equalTypes(receiverParameter.getType(), receiverParameterForOldVariable.getType())) {
-                redeclarationHandler.handleRedeclaration(oldProperty, variableDescriptor)
-            }
-        }
     }
 
     private fun checkForRedeclaration(name: Name, classifierDescriptor: DeclarationDescriptor) {
