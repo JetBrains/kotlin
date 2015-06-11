@@ -3,6 +3,7 @@ package test.properties.delegation
 import org.junit.Test as test
 import java.util.HashMap
 import kotlin.properties.*
+import kotlin.test.*
 
 class MapDelegationTest(): DelegationTestBase() {
 
@@ -81,6 +82,9 @@ class TestMapVarWithDifferentTypes(): WithBox {
         if (b != 11) return "fail at 'b'"
         if (c != B(11)) return "fail at 'c'"
         if (d != null) return "fail at  'd'"
+
+        map["a"] = null
+        a // fails { a } // does not fail due to KT-8135
         return "OK"
     }
 }
