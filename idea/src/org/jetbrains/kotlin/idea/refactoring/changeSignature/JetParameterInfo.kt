@@ -57,6 +57,19 @@ public class JetParameterInfo(
 
                     defaultValueForCall!!.accept(
                             object : JetTreeVisitorVoid() {
+                                private fun selfParameterOrNull(parameter: DeclarationDescriptor?): ValueParameterDescriptor? {
+                                    return if (parameter is ValueParameterDescriptor &&
+                                               parameter.getContainingDeclaration() == functionDescriptor) parameter else null
+                                }
+
+                                private fun selfReceiverOrNull(receiver: ThisReceiver?): DeclarationDescriptor? {
+                                    return when (receiver) {
+                                        functionDescriptor.getExtensionReceiverParameter()?.getValue(),
+                                        functionDescriptor.getDispatchReceiverParameter()?.getValue()-> receiver?.getDeclarationDescriptor()
+                                        else -> null
+                                    }
+                                }
+
                                 private fun getRelevantDescriptor(
                                         expression: JetSimpleNameExpression,
                                         ref: JetReference
@@ -64,18 +77,24 @@ public class JetParameterInfo(
                                     val context = expression.analyze(BodyResolveMode.PARTIAL)
 
                                     val descriptor = ref.resolveToDescriptors(context).singleOrNull()
-                                    if (descriptor is ValueParameterDescriptor) return descriptor
+                                    if (descriptor is ValueParameterDescriptor) return selfParameterOrNull(descriptor)
 
                                     if (descriptor is PropertyDescriptor && functionDescriptor is ConstructorDescriptor) {
                                         val parameter = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor) as? JetParameter
-                                        return parameter?.let { context[BindingContext.VALUE_PARAMETER, it] }
+                                        return parameter?.let { selfParameterOrNull(context[BindingContext.VALUE_PARAMETER, it]) }
                                     }
 
                                     val resolvedCall = expression.getResolvedCall(context) ?: return null
-                                    (resolvedCall.getResultingDescriptor() as? ReceiverParameterDescriptor)?.let { return it }
+                                    (resolvedCall.getResultingDescriptor() as? ReceiverParameterDescriptor)?.let {
+                                        return when (it) {
+                                            functionDescriptor.getDispatchReceiverParameter(),
+                                            functionDescriptor.getExtensionReceiverParameter() -> it
+                                            else -> null
+                                        }
+                                    }
 
-                                    (resolvedCall.getExtensionReceiver() as? ThisReceiver)?.let { return it.getDeclarationDescriptor()  }
-                                    (resolvedCall.getDispatchReceiver() as? ThisReceiver)?.let { return it.getDeclarationDescriptor()  }
+                                    selfReceiverOrNull(resolvedCall.getExtensionReceiver() as? ThisReceiver)?.let { return it }
+                                    selfReceiverOrNull(resolvedCall.getDispatchReceiver() as? ThisReceiver)?.let { return it }
 
                                     return null
                                 }

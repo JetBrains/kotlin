@@ -120,7 +120,11 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                 return originalDescriptor.modify { methodDescriptor ->
                     if (!withDefaultValue) {
                         val parameters = callable.getValueParameters()
-                        parametersToRemove.map { parameters.indexOf(it) }.sortDescending().forEach { methodDescriptor.removeParameter(it) }
+                        val withReceiver = methodDescriptor.receiver != null
+                        parametersToRemove
+                                .map { parameters.indexOf(it) + if (withReceiver) 1 else 0 }
+                                .sortDescending()
+                                .forEach { methodDescriptor.removeParameter(it) }
                     }
 
                     val parameterInfo = JetParameterInfo(functionDescriptor = callableDescriptor,

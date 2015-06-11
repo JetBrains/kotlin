@@ -2401,6 +2401,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceSimpleParameterTest(fileName);
         }
 
+        @TestMetadata("foreignParameterRef.kt")
+        public void testForeignParameterRef() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/foreignParameterRef.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
         @TestMetadata("fun.kt")
         public void testFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/fun.kt");

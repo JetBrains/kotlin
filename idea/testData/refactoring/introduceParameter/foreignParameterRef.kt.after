@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+// WITH_DEFAULT_VALUE: false
+fun a() {
+    1.b(2.foo { it + this + 2 + 1 })
+}
+
+fun Int.foo(f: Int.(Int) -> Int) = this
+
+fun Int.b(i: Int) = i + 1
