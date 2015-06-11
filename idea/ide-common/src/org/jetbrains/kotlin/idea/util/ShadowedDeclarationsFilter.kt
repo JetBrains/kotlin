@@ -64,14 +64,17 @@ public class ShadowedDeclarationsFilter(
         val importedDeclarationsSet = importedDeclarations.toSet()
         val nonImportedDeclarations = declarations.filter { it !in importedDeclarationsSet }
 
+        val importedDeclarationsBySignature = importedDeclarationsSet.groupBy { signature(it) }
+
         val call = expression.getCall(bindingContext) ?: return nonImportedDeclarations
 
-        val notShadowed = nonImportedDeclarations
-                .groupBy { signature(it) to packageName(it) } // same signature non-imported declarations from different packages do not shadow each other
-                .values()
-                .flatMapTo(HashSet<DeclarationDescriptor>()) { group ->
-                    filterEqualSignatureGroup(group + importedDeclarations, call, descriptorsToImport = group)
-                }
+        val notShadowed = HashSet<DeclarationDescriptor>()
+        // same signature non-imported declarations from different packages do not shadow each other
+        for ((pair, group) in nonImportedDeclarations.groupBy { signature(it) to packageName(it) }) {
+            val imported = importedDeclarationsBySignature[pair.first]
+            val all = if (imported != null) group + imported else group
+            notShadowed.addAll(filterEqualSignatureGroup(all, call, descriptorsToImport = group))
+        }
         return declarations.filter { it in notShadowed }
     }
 
