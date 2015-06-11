@@ -17,18 +17,19 @@
 package org.jetbrains.kotlin.resolve.bindingContextUtil
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET
-import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
-import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
+import org.jetbrains.kotlin.resolve.BindingContext.FUNCTION
+import org.jetbrains.kotlin.resolve.BindingContext.LABEL_TARGET
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
+import org.jetbrains.kotlin.resolve.scopes.WritableScope
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 public fun JetReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
@@ -55,7 +56,9 @@ public fun JetExpression.isUsedAsStatement(context: BindingContext): Boolean = !
 public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordScopeAndDataFlowInfo(expression: JetExpression?) {
     if (expression == null) return
 
-    trace.record(BindingContext.RESOLUTION_SCOPE, expression, scope)
+    val scopeToRecord = if (scope is WritableScope) scope.takeSnapshot() else scope
+    trace.record(BindingContext.RESOLUTION_SCOPE, expression, scopeToRecord)
+
     val typeInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)
     if (typeInfo != null) {
         trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo.replaceDataFlowInfo(dataFlowInfo))

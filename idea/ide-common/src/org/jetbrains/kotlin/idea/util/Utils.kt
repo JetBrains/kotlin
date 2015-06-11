@@ -16,15 +16,8 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 public fun JetFunctionLiteral.findLabelAndCall(): Pair<Name?, JetCallExpression?> {
     val literalParent = (this.getParent() as JetFunctionLiteralExpression).getParent()
@@ -49,36 +42,5 @@ public fun JetFunctionLiteral.findLabelAndCall(): Pair<Name?, JetCallExpression?
         else -> {
             return Pair(null, null)
         }
-    }
-}
-
-// returns corrected resolution scope excluding variable inside its own initializer
-// will not be needed after correcting JetScope stored BindingContext (see KT-4822 Wrong scope is used for local variable name completion)
-public fun BindingContext.correctedResolutionScope(expression: JetExpression): JetScope? {
-    val scope = get(BindingContext.RESOLUTION_SCOPE, expression) ?: return null
-
-    val variablesToExclude = hashSetOf<VariableDescriptor>()
-    for (element in expression.parentsWithSelf) {
-        if (element is JetExpression) {
-            val declaration = element.getParent() as? JetVariableDeclaration ?: continue
-            if (element == declaration.getInitializer()) {
-                variablesToExclude.addIfNotNull(get(BindingContext.VARIABLE, declaration))
-            }
-        }
-    }
-
-    if (variablesToExclude.isEmpty()) return scope
-
-    return object : JetScope by scope {
-        override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-                = scope.getDescriptors(kindFilter, nameFilter).filter { it !in variablesToExclude }
-
-        //TODO: it's not correct!
-        override fun getLocalVariable(name: Name): VariableDescriptor? {
-            val variable = scope.getLocalVariable(name) ?: return null
-            return if (variable in variablesToExclude) null else variable
-        }
-
-        override fun getProperties(name: Name) = scope.getProperties(name).filter { it !in variablesToExclude }
     }
 }

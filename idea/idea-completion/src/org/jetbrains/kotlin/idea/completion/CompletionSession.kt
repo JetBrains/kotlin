@@ -198,11 +198,26 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     // set is used only for completion in code fragments
     protected val referenceVariants: Collection<DeclarationDescriptor> by Delegates.lazy {
         if (descriptorKindFilter != null) {
-            referenceVariantsHelper.getReferenceVariants(reference!!.expression, descriptorKindFilter!!, false, prefixMatcher.asNameFilter())
+            val expression = reference!!.expression
+            referenceVariantsHelper.getReferenceVariants(expression, descriptorKindFilter!!, false, prefixMatcher.asNameFilter())
+                    .excludeNonInitializedVariable(expression)
         }
         else {
             emptyList()
         }
+    }
+
+    // filters out variable inside its initializer
+    private fun Collection<DeclarationDescriptor>.excludeNonInitializedVariable(expression: JetExpression): Collection<DeclarationDescriptor> {
+        for (element in expression.parentsWithSelf) {
+            val parent = element.getParent()
+            if (parent is JetVariableDeclaration && element == parent.getInitializer()) {
+                val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parent]
+                return this.filter { it != descriptor }
+            }
+            if (element is JetDeclaration) break // we can use variable inside lambda or anonymous object located in its initializer
+        }
+        return this
     }
 
     protected fun getRuntimeReceiverTypeReferenceVariants(): Collection<DeclarationDescriptor> {

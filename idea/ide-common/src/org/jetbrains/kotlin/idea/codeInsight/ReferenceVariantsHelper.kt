@@ -75,7 +75,7 @@ public class ReferenceVariantsHelper(
             nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         val parent = expression.getParent()
-        val resolutionScope = context.correctedResolutionScope(expression) ?: return listOf()
+        val resolutionScope = context[BindingContext.RESOLUTION_SCOPE, expression] ?: return listOf()
         val containingDeclaration = resolutionScope.getContainingDeclaration()
 
         if (parent is JetImportDirective || parent is JetPackageDirective) {

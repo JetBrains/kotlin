@@ -27,6 +27,8 @@ public trait WritableScope : JetScope {
         READING
     }
 
+    public fun takeSnapshot(): JetScope
+
     public fun changeLockLevel(lockLevel: LockLevel): WritableScope
 
     public fun addLabeledDeclaration(descriptor: DeclarationDescriptor)

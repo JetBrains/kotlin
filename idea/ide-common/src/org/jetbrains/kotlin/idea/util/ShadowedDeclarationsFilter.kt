@@ -156,7 +156,7 @@ public class ShadowedDeclarationsFilter(
         }
 
         val calleeExpression = call.getCalleeExpression() ?: return descriptors
-        var resolutionScope = bindingContext.correctedResolutionScope(calleeExpression) ?: return descriptors
+        var resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, calleeExpression] ?: return descriptors
 
         if (descriptorsToImport.isNotEmpty()) {
             resolutionScope = ChainedScope(resolutionScope.getContainingDeclaration(), "Scope with explicitly imported descriptors",

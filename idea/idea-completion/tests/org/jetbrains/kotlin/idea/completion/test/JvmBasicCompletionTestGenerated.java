@@ -823,6 +823,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("NoLocalsDeclaredAhead.kt")
+        public void testNoLocalsDeclaredAhead() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoLocalsDeclaredAhead.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NoNestedClassAfterReceiver.kt")
         public void testNoNestedClassAfterReceiver() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/NoNestedClassAfterReceiver.kt");
@@ -1419,6 +1425,24 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("InInitializer3.kt")
             public void testInInitializer3() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/InInitializer3.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InInitializer4.kt")
+            public void testInInitializer4() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/InInitializer4.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InInitializer5.kt")
+            public void testInInitializer5() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/InInitializer5.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("InInitializer6.kt")
+            public void testInInitializer6() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/shadowing/InInitializer6.kt");
                 doTest(fileName);
             }
 

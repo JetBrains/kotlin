@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
 
 // Writes to: maps
 
-public class WritableScopeImpl(override val workerScope: JetScope,
+public class WritableScopeImpl(outerScope: JetScope,
                                private val ownerDeclarationDescriptor: DeclarationDescriptor,
                                protected val redeclarationHandler: RedeclarationHandler,
                                private val debugName: String)
@@ -40,9 +40,9 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
     private val explicitlyAddedDescriptors = SmartList<DeclarationDescriptor>()
 
-    private var functionGroups: MutableMap<Name, SmartList<FunctionDescriptor>>? = null
+    private var functionGroups: MutableMap<Name, SmartList<Int>>? = null
 
-    private var variableOrClassDescriptors: MutableMap<Name, DeclarationDescriptor>? = null
+    private var variableOrClassDescriptors: MutableMap<Name, SmartList<Int>>? = null //TODO: implement SmartIntList
 
     private var labelsToDescriptors: MutableMap<Name, SmartList<DeclarationDescriptor>>? = null
 
@@ -52,7 +52,11 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
     override fun getContainingDeclaration(): DeclarationDescriptor = ownerDeclarationDescriptor
 
+    private var lastSnapshot: Snapshot? = null
+
     private var lockLevel: WritableScope.LockLevel = WritableScope.LockLevel.WRITING
+
+    override val workerScope: JetScope = if (outerScope is WritableScope) outerScope.takeSnapshot() else outerScope
 
     override fun changeLockLevel(lockLevel: WritableScope.LockLevel): WritableScope {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
@@ -72,6 +76,14 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         if (lockLevel != WritableScope.LockLevel.WRITING && lockLevel != WritableScope.LockLevel.BOTH) {
             throw IllegalStateException("cannot write with lock level " + lockLevel + " at " + toString())
         }
+    }
+
+    override fun takeSnapshot(): JetScope {
+        checkMayRead()
+        if (lastSnapshot == null || lastSnapshot!!.descriptorLimit != explicitlyAddedDescriptors.size()) {
+            lastSnapshot = Snapshot(explicitlyAddedDescriptors.size())
+        }
+        return lastSnapshot!!
     }
 
     override fun getDescriptors(kindFilter: DescriptorKindFilter,
@@ -108,17 +120,18 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
         val name = descriptor.getName()
 
-        val originalDescriptor = variableOrClassDescriptors?.get(name)
+        val originalDescriptor = variableOrClassDescriptorByName(name)
         if (originalDescriptor != null) {
             redeclarationHandler.handleRedeclaration(originalDescriptor, descriptor)
         }
 
+        val descriptorIndex = addDescriptor(descriptor)
+
         if (variableOrClassDescriptors == null) {
             variableOrClassDescriptors = HashMap()
         }
-        variableOrClassDescriptors!!.put(name, descriptor)
+        variableOrClassDescriptors!!.getOrPut(descriptor.getName()) { SmartList() }.add(descriptorIndex)
 
-        explicitlyAddedDescriptors.add(descriptor)
     }
 
     override fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
@@ -128,7 +141,7 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     override fun getLocalVariable(name: Name): VariableDescriptor? {
         checkMayRead()
 
-        val descriptor = variableOrClassDescriptors?.get(name)
+        val descriptor = variableOrClassDescriptorByName(name)
         if (descriptor is VariableDescriptor) {
             return descriptor
         }
@@ -139,18 +152,18 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     override fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor) {
         checkMayWrite()
 
+        val descriptorIndex = addDescriptor(functionDescriptor)
+
         if (functionGroups == null) {
             functionGroups = HashMap(1)
         }
-        functionGroups!!.getOrPut(functionDescriptor.getName()) { SmartList() }.add(functionDescriptor)
-        explicitlyAddedDescriptors.add(functionDescriptor)
+        functionGroups!!.getOrPut(functionDescriptor.getName()) { SmartList() }.add(descriptorIndex)
     }
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
         checkMayRead()
 
-        val functionGroupByName = functionGroups?.get(name)
-        return concatInOrder(functionGroupByName, workerScope.getFunctions(name))
+        return concatInOrder(functionsByName(name), workerScope.getFunctions(name))
     }
 
     override fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
@@ -160,7 +173,7 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     override fun getClassifier(name: Name): ClassifierDescriptor? {
         checkMayRead()
 
-        return variableOrClassDescriptors?.get(name) as? ClassifierDescriptor
+        return variableOrClassDescriptorByName(name) as? ClassifierDescriptor
                ?: workerScope.getClassifier(name)
     }
 
@@ -191,6 +204,35 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = explicitlyAddedDescriptors
 
+    private fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = explicitlyAddedDescriptors.size()): DeclarationDescriptor? {
+        val descriptorIndices = variableOrClassDescriptors?.get(name) ?: return null
+        for (i in descriptorIndices.indices.reversed()) {
+            val descriptorIndex = descriptorIndices[i]
+            if (descriptorIndex < descriptorLimit) {
+                return descriptorIndex.descriptorByIndex()
+            }
+        }
+        return null
+    }
+
+    private fun functionsByName(name: Name, descriptorLimit: Int = explicitlyAddedDescriptors.size()): List<FunctionDescriptor>? {
+        val descriptorIndices = functionGroups?.get(name) ?: return null
+        for (i in descriptorIndices.indices.reversed()) {
+            val descriptorIndex = descriptorIndices[i]
+            if (descriptorIndex < descriptorLimit) {
+                return descriptorIndices.truncated(descriptorIndex + 1).map { it.descriptorByIndex() as FunctionDescriptor }
+            }
+        }
+        return null
+    }
+
+    private fun addDescriptor(descriptor: DeclarationDescriptor): Int {
+        explicitlyAddedDescriptors.add(descriptor)
+        return explicitlyAddedDescriptors.size() - 1
+    }
+
+    private fun Int.descriptorByIndex() = explicitlyAddedDescriptors[this]
+
     override fun toString(): String {
         return javaClass.getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration()
     }
@@ -206,5 +248,66 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
         p.popIndent()
         p.println("}")
+    }
+
+
+    private fun <T> List<T>.truncated(newSize: Int) = if (newSize == size()) this else subList(0, newSize)
+
+    private inner class Snapshot(val descriptorLimit: Int) : JetScope by this@WritableScopeImpl {
+        override fun getDescriptors(kindFilter: DescriptorKindFilter,
+                                    nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+            checkMayRead()
+            changeLockLevel(WritableScope.LockLevel.READING)
+
+            val workerResult = workerScope.getDescriptors(kindFilter, nameFilter)
+
+            if (descriptorLimit == 0) return workerResult
+
+            val result = ArrayList<DeclarationDescriptor>(workerResult.size() + descriptorLimit)
+            for (i in 0..descriptorLimit-1) {
+                result.add(explicitlyAddedDescriptors[i])
+            }
+            result.addAll(workerResult)
+            return result
+        }
+
+        override fun getLocalVariable(name: Name): VariableDescriptor? {
+            checkMayRead()
+
+            val descriptor = variableOrClassDescriptorByName(name, descriptorLimit)
+            if (descriptor is VariableDescriptor) {
+                return descriptor
+            }
+
+            return workerScope.getLocalVariable(name)
+        }
+
+        override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
+            checkMayRead()
+
+            return concatInOrder(functionsByName(name, descriptorLimit), workerScope.getFunctions(name))
+        }
+
+        override fun getClassifier(name: Name): ClassifierDescriptor? {
+            checkMayRead()
+
+            return variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
+                   ?: workerScope.getClassifier(name)
+        }
+
+        override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = explicitlyAddedDescriptors.truncated(descriptorLimit)
+
+        override fun printScopeStructure(p: Printer) {
+            p.println(javaClass.getSimpleName(), " {")
+            p.pushIndent()
+
+            p.println("descriptorLimit = ", descriptorLimit)
+
+            p.print("WritableScope = ")
+            this@WritableScopeImpl.printScopeStructure(p.withholdIndentOnce())
+
+            p.popIndent()
+            p.println("}")
+        }
     }
 }
