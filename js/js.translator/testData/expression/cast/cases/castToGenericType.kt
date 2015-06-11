@@ -43,17 +43,6 @@ fun test(f: () -> Unit) {
     }
 }
 
-fun fails(f: () -> Unit) {
-    try {
-        f()
-    }
-    catch(e: Exception) {
-        return
-    }
-
-    throw Exception("Expected an exception to be thrown from $f")
-}
-
 fun box(): String {
     val a = A("OK")
 
@@ -69,6 +58,7 @@ fun box(): String {
 
     test  { castNullableToNotNullT<A>(a) }
     fails { castNullableToNotNullT<A>(null) }
+    failsClassCast("castNullableToNotNullT<A>(null)") { castNullableToNotNullT<A>(null) }
 
     return "OK"
 }

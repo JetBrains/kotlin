@@ -36,6 +36,8 @@ var JsFunction.isLocal: Boolean by MetadataProperty(default = false)
 
 var JsParameter.hasDefaultValue: Boolean by MetadataProperty(default = false)
 
+var JsConditional.isUnsafeCast: Boolean by MetadataProperty(default = false)
+
 var JsInvocation.typeCheck: TypeCheck? by MetadataProperty(default = null)
 
 /**
