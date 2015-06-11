@@ -44,8 +44,6 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
     private var variableOrClassDescriptors: MutableMap<Name, DeclarationDescriptor>? = null
 
-    private var packageAliases: MutableMap<Name, PackageViewDescriptor>? = null
-
     private var labelsToDescriptors: MutableMap<Name, MutableList<DeclarationDescriptor>>? = null
 
     private var implicitReceiver: ReceiverParameterDescriptor? = null
@@ -127,12 +125,6 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         addVariableOrClassDescriptor(variableDescriptor)
     }
 
-    override fun getProperties(name: Name): Collection<VariableDescriptor> {
-        checkMayRead()
-
-        return workerScope.getProperties(name)
-    }
-
     override fun getLocalVariable(name: Name): VariableDescriptor? {
         checkMayRead()
 
@@ -170,13 +162,6 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
         return variableOrClassDescriptors?.get(name) as? ClassifierDescriptor
                ?: workerScope.getClassifier(name)
-    }
-
-    override fun getPackage(name: Name): PackageViewDescriptor? {
-        checkMayRead()
-
-        return packageAliases?.get(name)
-               ?: workerScope.getPackage(name)
     }
 
     override fun setImplicitReceiver(implicitReceiver: ReceiverParameterDescriptor) {
