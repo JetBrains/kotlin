@@ -37,13 +37,16 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.JetElement;
+import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetPsiFactory;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsPackage;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
 import java.util.*;
@@ -930,6 +933,12 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testThisReplacement() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
@@ -1037,9 +1046,16 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
     }
 
     private void compareEditorsWithExpectedData() throws Exception {
+        //noinspection ConstantConditions
+        boolean checkErrorsAfter = InTextDirectivesUtils.isDirectiveDefined(getPsiFile(editors.get(0).getDocument()).getText(),
+                                                                            "// CHECK_ERRORS_AFTER");
         for (Editor editor : editors) {
             setActiveEditor(editor);
-            checkResultByFile(getFile().getName().replace("Before.", "After."));
+            PsiFile currentFile = getFile();
+            checkResultByFile(currentFile.getName().replace("Before.", "After."));
+            if (checkErrorsAfter && currentFile instanceof JetFile) {
+                DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) currentFile);
+            }
         }
     }
 

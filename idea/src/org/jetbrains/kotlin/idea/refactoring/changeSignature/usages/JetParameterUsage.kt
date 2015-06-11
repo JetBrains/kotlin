@@ -37,7 +37,8 @@ public abstract class JetExplicitReferenceUsage<T: JetElement>(element: T) : Jet
 
     override fun processUsage(changeInfo: JetChangeInfo, element: T): Boolean {
         val newElement = JetPsiFactory(element.getProject()).createExpression(getReplacementText(changeInfo))
-        processReplacedElement(element.replace(newElement) as JetElement)
+        val elementToReplace = (element.getParent() as? JetThisExpression) ?: element
+        processReplacedElement(elementToReplace.replace(newElement) as JetElement)
         return false
     }
 }
