@@ -49,8 +49,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
-import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
-import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 
@@ -58,6 +56,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
     private static final Key<EditorNotificationPanel> KEY = Key.create("unsupported.abi.version");
@@ -196,11 +196,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
             Module module = ModuleUtilCore.findModuleForFile(file, project);
             if (module == null) return null;
 
-            KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
-            assert configurator != null : "Configurator should exists " + KotlinJavaModuleConfigurator.NAME;
-            if (!configurator.isConfigured(module)) {
-                return null;
-            }
+            if (!ConfigureKotlinInProjectUtils.isModuleConfigured(module)) return null;
 
             return checkAndCreate(project);
         }
@@ -275,8 +271,15 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
 
     @NotNull
     private static Collection<VirtualFile> collectBadRoots(@NotNull Project project) {
-        Collection<VirtualFile> badRoots = KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
-        badRoots.addAll(KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleForKotlinJs(project));
+        Collection<VirtualFile> badJVMRoots = KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
+        Collection<VirtualFile> badJSRoots = KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleForKotlinJs(project);
+
+        if (badJVMRoots.isEmpty() && badJSRoots.isEmpty()) return Collections.emptyList();
+
+        Collection<VirtualFile> badRoots = new HashSet<VirtualFile>();
+        badRoots.addAll(badJVMRoots);
+        badRoots.addAll(badJSRoots);
+
         return badRoots;
     }
 }
