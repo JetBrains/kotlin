@@ -14,159 +14,147 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.filters;
+package org.jetbrains.kotlin.idea.filters
 
-import com.intellij.execution.filters.Filter;
-import com.intellij.execution.filters.HyperlinkInfo;
-import com.intellij.execution.filters.OpenFileHyperlinkInfo;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.refactoring.MultiFileTestCase;
-import com.intellij.testFramework.PsiTestUtil;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.utils.UtilsPackage;
+import com.intellij.execution.filters.Filter
+import com.intellij.execution.filters.HyperlinkInfo
+import com.intellij.execution.filters.OpenFileHyperlinkInfo
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.refactoring.MultiFileTestCase
+import com.intellij.testFramework.PsiTestUtil
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.*
 
-import java.io.File;
+import java.io.File
 
-import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
-import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassName;
-import static org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.getPackagePartFqName;
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassName
+import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.getPackagePartFqName
 
-public class JetExceptionFilterTest extends MultiFileTestCase {
-    private VirtualFile rootDir;
+public class JetExceptionFilterTest : MultiFileTestCase() {
+    private var rootDir: VirtualFile? = null
 
-    @Override
-    protected void tearDown() throws Exception {
-        rootDir = null;
-        super.tearDown();
+    throws(Exception::class)
+    override fun tearDown() {
+        rootDir = null
+        super.tearDown()
     }
 
-    @Override
-    @NotNull
-    protected String getTestDataPath() {
-        return PluginTestCaseBase.getTestDataPathBase();
+    override fun getTestDataPath(): String {
+        return PluginTestCaseBase.getTestDataPathBase()
     }
 
-    @Override
-    @NotNull
-    protected String getTestRoot() {
-        return "/filters/exceptionFilter/";
+    override fun getTestRoot(): String {
+        return "/filters/exceptionFilter/"
     }
 
-    private void configure() {
+    private fun configure() {
         try {
-            String path = getTestDataPath() + getTestRoot() + getTestName(true);
+            val path = getTestDataPath() + getTestRoot() + getTestName(true)
 
-            rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, myFilesToDelete, false);
-            prepareProject(rootDir);
-            PsiDocumentManager.getInstance(myProject).commitAllDocuments();
+            rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, PlatformTestCase.myFilesToDelete, false)
+            prepareProject(rootDir)
+            PsiDocumentManager.getInstance(myProject).commitAllDocuments()
         }
-        catch (Exception e) {
-            throw UtilsPackage.rethrow(e);
+        catch (e: Exception) {
+            throw rethrow(e)
         }
+
     }
 
-    @NotNull
-    private static String createStackTraceElementLine(@NotNull String prefix, @NotNull String fileName, @NotNull String className, int lineNumber) {
+    private fun createStackTraceElementLine(prefix: String, fileName: String, className: String, lineNumber: Int): String {
         // Method name doesn't matter
-        String methodName = "foo";
+        val methodName = "foo"
 
         // File's last name appears in stack trace
-        String fileLastName = new File(fileName).getName();
+        val fileLastName = File(fileName).getName()
 
-        StackTraceElement element = new StackTraceElement(className, methodName, fileLastName, lineNumber);
-        return prefix + element + "\n";
+        val element = StackTraceElement(className, methodName, fileLastName, lineNumber)
+        return prefix + element + "\n"
     }
 
-    private void doTest(@NotNull String fileName, int lineNumber, @NotNull Function1<VirtualFile, String> className) {
-        doTest("\tat ", fileName, lineNumber, className);
+    private fun doTest(fileName: String, lineNumber: Int, className: Function1<VirtualFile, String>) {
+        doTest("\tat ", fileName, lineNumber, className)
     }
 
-    private void doTest(@NotNull String linePrefix, @NotNull String fileName, int lineNumber, @NotNull Function1<VirtualFile, String> className) {
+    private fun doTest(linePrefix: String, fileName: String, lineNumber: Int, className: Function1<VirtualFile, String>) {
         if (rootDir == null) {
-            configure();
+            configure()
         }
-        assert rootDir != null;
+        assert(rootDir != null)
 
-        Filter filter = new JetExceptionFilterFactory().create(GlobalSearchScope.allScope(myProject));
+        val filter = JetExceptionFilterFactory().create(GlobalSearchScope.allScope(myProject))
 
-        VirtualFile expectedFile = VfsUtilCore.findRelativeFile(fileName, rootDir);
-        assertNotNull(expectedFile);
+        val expectedFile = VfsUtilCore.findRelativeFile(fileName, rootDir)
+        TestCase.assertNotNull(expectedFile)
 
-        String line = createStackTraceElementLine(linePrefix, fileName, className.invoke(expectedFile), lineNumber);
-        Filter.Result result = filter.applyFilter(line, 0);
+        val line = createStackTraceElementLine(linePrefix, fileName, className.invoke(expectedFile), lineNumber)
+        val result = filter.applyFilter(line, 0)
 
-        assertNotNull(result);
-        HyperlinkInfo info = result.getFirstHyperlinkInfo();
-        assertNotNull(info);
-        assertInstanceOf(info, OpenFileHyperlinkInfo.class);
-        OpenFileDescriptor descriptor = ((OpenFileHyperlinkInfo) info).getDescriptor();
-        assertNotNull(descriptor);
+        TestCase.assertNotNull(result)
+        val info = result.getFirstHyperlinkInfo()
+        TestCase.assertNotNull(info)
+        UsefulTestCase.assertInstanceOf(info, javaClass<OpenFileHyperlinkInfo>())
+        val descriptor = (info as OpenFileHyperlinkInfo).getDescriptor()
+        TestCase.assertNotNull(descriptor)
 
-        assertEquals(expectedFile, descriptor.getFile());
+        TestCase.assertEquals(expectedFile, descriptor.getFile())
 
-        Document document = FileDocumentManager.getInstance().getDocument(expectedFile);
-        assertNotNull(document);
-        int expectedOffset = document.getLineStartOffset(lineNumber - 1);
-        assertEquals(expectedOffset, descriptor.getOffset());
+        val document = FileDocumentManager.getInstance().getDocument(expectedFile)
+        TestCase.assertNotNull(document)
+        val expectedOffset = document.getLineStartOffset(lineNumber - 1)
+        TestCase.assertEquals(expectedOffset, descriptor.getOffset())
     }
 
-    public void testBreakpointReachedAt() {
-        doTest("Breakpoint reached at ", "breakpointReachedAt.kt", 2, new Function1<VirtualFile, String>() {
-            @Override
-            public String invoke(VirtualFile file) {
-                return getPackageClassName(FqName.ROOT);
+    public fun testBreakpointReachedAt() {
+        doTest("Breakpoint reached at ", "breakpointReachedAt.kt", 2, object : Function1<VirtualFile, String> {
+            override fun invoke(file: VirtualFile): String {
+                return getPackageClassName(FqName.ROOT)
             }
-        });
+        })
     }
 
-    public void testSimple() {
-        doTest("simple.kt", 2, new Function1<VirtualFile, String>() {
-            @Override
-            public String invoke(VirtualFile file) {
-                return getPackageClassName(FqName.ROOT);
+    public fun testSimple() {
+        doTest("simple.kt", 2, object : Function1<VirtualFile, String> {
+            override fun invoke(file: VirtualFile): String {
+                return getPackageClassName(FqName.ROOT)
             }
-        });
+        })
     }
 
-    public void testKt2489() {
-        final FqName packageClassFqName = getPackageClassFqName(FqName.ROOT);
-        doTest("a.kt", 3, new Function1<VirtualFile, String>() {
-            @Override
-            public String invoke(VirtualFile file) {
-                return getPackagePartFqName(packageClassFqName, file) + "$a$f$1";
+    public fun testKt2489() {
+        val packageClassFqName = getPackageClassFqName(FqName.ROOT)
+        doTest("a.kt", 3, object : Function1<VirtualFile, String> {
+            override fun invoke(file: VirtualFile): String {
+                return getPackagePartFqName(packageClassFqName, file) + "$a$f$1"
             }
-        });
-        doTest("main.kt", 3, new Function1<VirtualFile, String>() {
-            @Override
-            public String invoke(VirtualFile file) {
-                return getPackagePartFqName(packageClassFqName, file) + "$main$f$1";
+        })
+        doTest("main.kt", 3, object : Function1<VirtualFile, String> {
+            override fun invoke(file: VirtualFile): String {
+                return getPackagePartFqName(packageClassFqName, file) + "$main$f$1"
             }
-        });
+        })
     }
 
-    public void testMultiSameName() {
-        final FqName packageClassFqName = getPackageClassFqName(new FqName("multiSameName"));
+    public fun testMultiSameName() {
+        val packageClassFqName = getPackageClassFqName(FqName("multiSameName"))
         // The order and the exact names do matter here
-        doTest("1/foo.kt", 4, new Function1<VirtualFile, String>() {
-            @Override
-            public String invoke(VirtualFile file) {
-                return getPackagePartFqName(packageClassFqName, file) + "$foo$f$1";
+        doTest("1/foo.kt", 4, object : Function1<VirtualFile, String> {
+            override fun invoke(file: VirtualFile): String {
+                return getPackagePartFqName(packageClassFqName, file) + "$foo$f$1"
             }
-        });
-        doTest("2/foo.kt", 4, new Function1<VirtualFile, String>() {
-            @Override
-            public String invoke(VirtualFile file) {
-                return getPackagePartFqName(packageClassFqName, file) + "$foo$f$1";
+        })
+        doTest("2/foo.kt", 4, object : Function1<VirtualFile, String> {
+            override fun invoke(file: VirtualFile): String {
+                return getPackagePartFqName(packageClassFqName, file) + "$foo$f$1"
             }
-        });
+        })
     }
 }
