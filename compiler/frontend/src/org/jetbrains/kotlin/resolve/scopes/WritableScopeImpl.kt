@@ -40,9 +40,9 @@ public class WritableScopeImpl(outerScope: JetScope,
 
     private val explicitlyAddedDescriptors = SmartList<DeclarationDescriptor>()
 
-    private var functionGroups: MutableMap<Name, SmartList<Int>>? = null
+    private var functionGroups: MutableMap<Name, IntList>? = null
 
-    private var variableOrClassDescriptors: MutableMap<Name, SmartList<Int>>? = null //TODO: implement SmartIntList
+    private var variableOrClassDescriptors: MutableMap<Name, IntList>? = null
 
     private var labelsToDescriptors: MutableMap<Name, SmartList<DeclarationDescriptor>>? = null
 
@@ -130,7 +130,8 @@ public class WritableScopeImpl(outerScope: JetScope,
         if (variableOrClassDescriptors == null) {
             variableOrClassDescriptors = HashMap()
         }
-        variableOrClassDescriptors!!.getOrPut(descriptor.getName()) { SmartList() }.add(descriptorIndex)
+        //TODO: could not use += because of KT-8050
+        variableOrClassDescriptors!![name] = variableOrClassDescriptors!![name] + descriptorIndex
 
     }
 
@@ -157,7 +158,9 @@ public class WritableScopeImpl(outerScope: JetScope,
         if (functionGroups == null) {
             functionGroups = HashMap(1)
         }
-        functionGroups!!.getOrPut(functionDescriptor.getName()) { SmartList() }.add(descriptorIndex)
+        val name = functionDescriptor.getName()
+        //TODO: could not use += because of KT-8050
+        functionGroups!![name] = functionGroups!![name] + descriptorIndex
     }
 
     override fun getFunctions(name: Name): Collection<FunctionDescriptor> {
@@ -205,23 +208,28 @@ public class WritableScopeImpl(outerScope: JetScope,
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = explicitlyAddedDescriptors
 
     private fun variableOrClassDescriptorByName(name: Name, descriptorLimit: Int = explicitlyAddedDescriptors.size()): DeclarationDescriptor? {
-        val descriptorIndices = variableOrClassDescriptors?.get(name) ?: return null
-        for (i in descriptorIndices.indices.reversed()) {
-            val descriptorIndex = descriptorIndices[i]
+        if (descriptorLimit == 0) return null
+
+        var list = variableOrClassDescriptors?.get(name)
+        while (list != null) {
+            val descriptorIndex = list.head
             if (descriptorIndex < descriptorLimit) {
                 return descriptorIndex.descriptorByIndex()
             }
+            list = list.tail
         }
         return null
     }
 
     private fun functionsByName(name: Name, descriptorLimit: Int = explicitlyAddedDescriptors.size()): List<FunctionDescriptor>? {
-        val descriptorIndices = functionGroups?.get(name) ?: return null
-        for (i in descriptorIndices.indices.reversed()) {
-            val descriptorIndex = descriptorIndices[i]
-            if (descriptorIndex < descriptorLimit) {
-                return descriptorIndices.truncated(descriptorIndex + 1).map { it.descriptorByIndex() as FunctionDescriptor }
+        if (descriptorLimit == 0) return null
+
+        var list = functionGroups?.get(name)
+        while (list != null) {
+            if (list.head < descriptorLimit) {
+                return list.toDescriptors<FunctionDescriptor>()
             }
+            list = list.tail
         }
         return null
     }
@@ -250,8 +258,19 @@ public class WritableScopeImpl(outerScope: JetScope,
         p.println("}")
     }
 
+    private class IntList(val head: Int, val tail: IntList?)
 
-    private fun <T> List<T>.truncated(newSize: Int) = if (newSize == size()) this else subList(0, newSize)
+    private fun IntList?.plus(value: Int) = IntList(value, this)
+
+    private fun <TDescriptor: DeclarationDescriptor> IntList.toDescriptors(): List<TDescriptor> {
+        val result = ArrayList<TDescriptor>(1)
+        var rest: IntList? = this
+        do {
+            result.add(rest!!.head.descriptorByIndex() as TDescriptor)
+            rest = rest.tail
+        } while (rest != null)
+        return result
+    }
 
     private inner class Snapshot(val descriptorLimit: Int) : JetScope by this@WritableScopeImpl {
         override fun getDescriptors(kindFilter: DescriptorKindFilter,
@@ -296,6 +315,8 @@ public class WritableScopeImpl(outerScope: JetScope,
         }
 
         override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = explicitlyAddedDescriptors.truncated(descriptorLimit)
+
+        private fun <T> List<T>.truncated(newSize: Int) = if (newSize == size()) this else subList(0, newSize)
 
         override fun printScopeStructure(p: Printer) {
             p.println(javaClass.getSimpleName(), " {")
