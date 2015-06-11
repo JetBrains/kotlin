@@ -39,7 +39,7 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 : AbstractScopeAdapter(), WritableScope {
 
     private val explicitlyAddedDescriptors = SmartList<DeclarationDescriptor>()
-    private val declaredDescriptorsAccessibleBySimpleName = HashMultimap.create<Name, DeclarationDescriptor>()
+    private val ownDeclaredDescriptors = ArrayList<DeclarationDescriptor>()
 
     private var functionGroups: SetMultimap<Name, FunctionDescriptor>? = null
 
@@ -122,7 +122,7 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         variableOrClassDescriptors!!.put(name, descriptor)
 
         explicitlyAddedDescriptors.add(descriptor)
-        declaredDescriptorsAccessibleBySimpleName.put(name, descriptor)
+        ownDeclaredDescriptors.add(descriptor)
     }
 
     override fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
@@ -206,8 +206,7 @@ public class WritableScopeImpl(override val workerScope: JetScope,
             super<AbstractScopeAdapter>.getImplicitReceiversHierarchy()
     }
 
-    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor>
-            = declaredDescriptorsAccessibleBySimpleName.values()
+    override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = ownDeclaredDescriptors
 
     override fun toString(): String {
         return javaClass.getSimpleName() + "@" + Integer.toHexString(System.identityHashCode(this)) + " " + debugName + " for " + getContainingDeclaration()
