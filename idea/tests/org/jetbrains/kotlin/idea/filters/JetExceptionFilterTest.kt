@@ -16,57 +16,41 @@
 
 package org.jetbrains.kotlin.idea.filters
 
-import com.intellij.execution.filters.Filter
-import com.intellij.execution.filters.HyperlinkInfo
 import com.intellij.execution.filters.OpenFileHyperlinkInfo
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.MultiFileTestCase
+import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
+import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.*
-
-import java.io.File
-
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.getPackagePartFqName
+import org.jetbrains.kotlin.name.FqName
+import java.io.File
 
 public class JetExceptionFilterTest : MultiFileTestCase() {
     private var rootDir: VirtualFile? = null
 
-    throws(Exception::class)
     override fun tearDown() {
         rootDir = null
         super.tearDown()
     }
 
-    override fun getTestDataPath(): String {
-        return PluginTestCaseBase.getTestDataPathBase()
-    }
-
-    override fun getTestRoot(): String {
-        return "/filters/exceptionFilter/"
-    }
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase()
+    override fun getTestRoot() = "/filters/exceptionFilter/"
 
     private fun configure() {
-        try {
-            val path = getTestDataPath() + getTestRoot() + getTestName(true)
+        val path = getTestDataPath() + getTestRoot() + getTestName(true)
 
-            rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, PlatformTestCase.myFilesToDelete, false)
-            prepareProject(rootDir)
-            PsiDocumentManager.getInstance(myProject).commitAllDocuments()
-        }
-        catch (e: Exception) {
-            throw rethrow(e)
-        }
-
+        rootDir = PsiTestUtil.createTestProjectStructure(myProject, myModule, path, PlatformTestCase.myFilesToDelete, false)
+        prepareProject(rootDir)
+        PsiDocumentManager.getInstance(myProject).commitAllDocuments()
     }
 
     private fun createStackTraceElementLine(prefix: String, fileName: String, className: String, lineNumber: Int): String {
@@ -80,11 +64,7 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
         return prefix + element + "\n"
     }
 
-    private fun doTest(fileName: String, lineNumber: Int, className: Function1<VirtualFile, String>) {
-        doTest("\tat ", fileName, lineNumber, className)
-    }
-
-    private fun doTest(linePrefix: String, fileName: String, lineNumber: Int, className: Function1<VirtualFile, String>) {
+    private fun doTest(fileName: String, lineNumber: Int, className: (VirtualFile) -> String, linePrefix: String = "\tat ") {
         if (rootDir == null) {
             configure()
         }
@@ -114,47 +94,23 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
     }
 
     public fun testBreakpointReachedAt() {
-        doTest("Breakpoint reached at ", "breakpointReachedAt.kt", 2, object : Function1<VirtualFile, String> {
-            override fun invoke(file: VirtualFile): String {
-                return getPackageClassName(FqName.ROOT)
-            }
-        })
+        doTest("breakpointReachedAt.kt", 2, { getPackageClassName(FqName.ROOT) }, linePrefix = "Breakpoint reached at ")
     }
 
     public fun testSimple() {
-        doTest("simple.kt", 2, object : Function1<VirtualFile, String> {
-            override fun invoke(file: VirtualFile): String {
-                return getPackageClassName(FqName.ROOT)
-            }
-        })
+        doTest("simple.kt", 2, { getPackageClassName(FqName.ROOT) })
     }
 
     public fun testKt2489() {
         val packageClassFqName = getPackageClassFqName(FqName.ROOT)
-        doTest("a.kt", 3, object : Function1<VirtualFile, String> {
-            override fun invoke(file: VirtualFile): String {
-                return getPackagePartFqName(packageClassFqName, file) + "$a$f$1"
-            }
-        })
-        doTest("main.kt", 3, object : Function1<VirtualFile, String> {
-            override fun invoke(file: VirtualFile): String {
-                return getPackagePartFqName(packageClassFqName, file) + "$main$f$1"
-            }
-        })
+        doTest("a.kt", 3, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$a\$f\$1" })
+        doTest("main.kt", 3, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$main\$f\$1" })
     }
 
     public fun testMultiSameName() {
         val packageClassFqName = getPackageClassFqName(FqName("multiSameName"))
         // The order and the exact names do matter here
-        doTest("1/foo.kt", 4, object : Function1<VirtualFile, String> {
-            override fun invoke(file: VirtualFile): String {
-                return getPackagePartFqName(packageClassFqName, file) + "$foo$f$1"
-            }
-        })
-        doTest("2/foo.kt", 4, object : Function1<VirtualFile, String> {
-            override fun invoke(file: VirtualFile): String {
-                return getPackagePartFqName(packageClassFqName, file) + "$foo$f$1"
-            }
-        })
+        doTest("1/foo.kt", 4, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
+        doTest("2/foo.kt", 4, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
     }
 }
