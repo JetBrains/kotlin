@@ -1,5 +1,5 @@
 fun foo() {
-    var xxx = <caret>
+    var xxx: Int = <caret>
 }
 
 // ABSENT: xxx
