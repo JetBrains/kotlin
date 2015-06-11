@@ -41,15 +41,27 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
-    @TestMetadata("castToNotNullType.kt")
-    public void testCastToNotNullType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNotNullType.kt");
+    @TestMetadata("castToNotNull.kt")
+    public void testCastToNotNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNotNull.kt");
         doTest(fileName);
     }
 
-    @TestMetadata("castToNullableType.kt")
-    public void testCastToNullableType() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNullableType.kt");
+    @TestMetadata("castToNullable.kt")
+    public void testCastToNullable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNullable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reifiedToNotNull.kt")
+    public void testReifiedToNotNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNotNull.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reifiedToNullable.kt")
+    public void testReifiedToNullable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable.kt");
         doTest(fileName);
     }
 

@@ -199,11 +199,16 @@
     Kotlin.IllegalStateException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.UnsupportedOperationException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.IndexOutOfBoundsException = createClassNowWithMessage(Kotlin.RuntimeException);
+    Kotlin.ClassCastException = createClassNowWithMessage(Kotlin.RuntimeException);
     Kotlin.IOException = createClassNowWithMessage(Kotlin.Exception);
     Kotlin.AssertionError = createClassNowWithMessage(Kotlin.Error);
 
     Kotlin.throwNPE = function (message) {
         throw new Kotlin.NullPointerException(message);
+    };
+
+    Kotlin.throwCCE = function () {
+        throw new Kotlin.ClassCastException("Illegal cast");
     };
 
     function throwAbstractFunctionInvocationError(funName) {

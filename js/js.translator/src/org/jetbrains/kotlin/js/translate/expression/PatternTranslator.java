@@ -16,20 +16,25 @@
 
 package org.jetbrains.kotlin.js.translate.expression;
 
+import com.google.dart.compiler.backend.js.ast.JsConditional;
 import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
+import org.jetbrains.kotlin.js.patterns.NamePredicate;
 import org.jetbrains.kotlin.js.translate.context.Namer;
+import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.general.Translation;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtIsExpression;
 import org.jetbrains.kotlin.psi.KtTypeReference;
@@ -48,6 +53,29 @@ public final class PatternTranslator extends AbstractTranslator {
 
     private PatternTranslator(@NotNull TranslationContext context) {
         super(context);
+    }
+
+    public static boolean isUnsafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
+        return expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_KEYWORD;
+    }
+
+    @NotNull
+    public JsExpression translateUnsafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
+        assert isUnsafeCast(expression): "Expected unsafe cast expression, got " + expression;
+        KtExpression left = expression.getLeft();
+        JsExpression expressionToCast = Translation.translateAsExpression(left, context());
+        TemporaryVariable temporary = context().declareTemporary(expressionToCast);
+
+        KtTypeReference typeReference = expression.getRight();
+        assert typeReference != null: "Unsafe cast must have type reference";
+        JsExpression isCheck = translateIsCheck(temporary.assignmentExpression(), typeReference);
+
+        Namer namer = context().namer();
+        JsExpression throwCCEFunRef = namer.throwClassCastExceptionFunRef();
+        JsExpression throwCCE = new JsInvocation(throwCCEFunRef);
+        JsConditional conditional = new JsConditional(isCheck, temporary.reference(), throwCCE);
+        MetadataProperties.setUnsafeCast(conditional, true);
+        return conditional;
     }
 
     @NotNull
