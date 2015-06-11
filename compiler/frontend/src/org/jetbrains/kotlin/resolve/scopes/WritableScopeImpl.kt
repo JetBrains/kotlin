@@ -40,11 +40,11 @@ public class WritableScopeImpl(override val workerScope: JetScope,
 
     private val explicitlyAddedDescriptors = SmartList<DeclarationDescriptor>()
 
-    private var functionGroups: SetMultimap<Name, FunctionDescriptor>? = null
+    private var functionGroups: MutableMap<Name, SmartList<FunctionDescriptor>>? = null
 
     private var variableOrClassDescriptors: MutableMap<Name, DeclarationDescriptor>? = null
 
-    private var labelsToDescriptors: MutableMap<Name, MutableList<DeclarationDescriptor>>? = null
+    private var labelsToDescriptors: MutableMap<Name, SmartList<DeclarationDescriptor>>? = null
 
     private var implicitReceiver: ReceiverParameterDescriptor? = null
 
@@ -100,7 +100,7 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         if (labelsToDescriptors == null) {
             labelsToDescriptors = HashMap()
         }
-        labelsToDescriptors!!.getOrPut(descriptor.getName()) { ArrayList(1) }.add(descriptor)
+        labelsToDescriptors!!.getOrPut(descriptor.getName()) { SmartList() }.add(descriptor)
     }
 
     private fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
@@ -140,9 +140,9 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         checkMayWrite()
 
         if (functionGroups == null) {
-            functionGroups = LinkedHashMultimap.create()
+            functionGroups = HashMap(1)
         }
-        functionGroups!!.put(functionDescriptor.getName(), functionDescriptor)
+        functionGroups!!.getOrPut(functionDescriptor.getName()) { SmartList() }.add(functionDescriptor)
         explicitlyAddedDescriptors.add(functionDescriptor)
     }
 
