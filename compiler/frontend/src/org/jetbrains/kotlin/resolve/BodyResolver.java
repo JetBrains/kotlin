@@ -159,7 +159,7 @@ public class BodyResolver {
             @NotNull final ConstructorDescriptor descriptor,
             @NotNull JetScope declaringScope
     ) {
-        AnnotationResolver.resolveAnnotationsArguments(constructor.getModifierList(), trace);
+        AnnotationResolver.resolveAnnotationsArguments(descriptor.getAnnotations());
 
         final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor, additionalCheckerProvider.getCallChecker());
         resolveFunctionBody(c, trace, constructor, descriptor, declaringScope,
@@ -504,13 +504,14 @@ public class BodyResolver {
             JetClassOrObject klass = entry.getKey();
             ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
             ConstructorDescriptor unsubstitutedPrimaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-
-            AnnotationResolver.resolveAnnotationsArguments(klass.getPrimaryConstructorModifierList(), trace);
-
             if (unsubstitutedPrimaryConstructor != null) {
-                WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(), unsubstitutedPrimaryConstructor);
-                valueParameterResolver.resolveValueParameters(klass.getPrimaryConstructorParameters(), unsubstitutedPrimaryConstructor.getValueParameters(),
-                                       parameterScope, c.getOuterDataFlowInfo(), trace);
+                AnnotationResolver.resolveAnnotationsArguments(unsubstitutedPrimaryConstructor.getAnnotations());
+
+                WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(),
+                                                                                    unsubstitutedPrimaryConstructor);
+                valueParameterResolver.resolveValueParameters(klass.getPrimaryConstructorParameters(),
+                                                              unsubstitutedPrimaryConstructor.getValueParameters(),
+                                                              parameterScope, c.getOuterDataFlowInfo(), trace);
             }
         }
     }
@@ -558,7 +559,7 @@ public class BodyResolver {
                     resolvePropertyDelegate(c, property, propertyDescriptor, delegateExpression, classDescriptor.getScopeForMemberDeclarationResolution(), propertyScope);
                 }
 
-                resolveAnnotationArguments(propertyScope, property);
+                AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor.getAnnotations());
 
                 resolvePropertyAccessors(c, property, propertyDescriptor);
                 processed.add(property);
@@ -586,7 +587,7 @@ public class BodyResolver {
                 resolvePropertyDelegate(c, property, propertyDescriptor, delegateExpression, propertyScope, propertyScope);
             }
 
-            resolveAnnotationArguments(propertyScope, property);
+            AnnotationResolver.resolveAnnotationsArguments(propertyDescriptor.getAnnotations());
 
             resolvePropertyAccessors(c, property, propertyDescriptor);
         }
@@ -609,7 +610,7 @@ public class BodyResolver {
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
         if (getter != null && getterDescriptor != null) {
             JetScope accessorScope = makeScopeForPropertyAccessor(c, getter, propertyDescriptor);
-            resolveAnnotationArguments(accessorScope, getter);
+            AnnotationResolver.resolveAnnotationsArguments(getterDescriptor.getAnnotations());
             resolveFunctionBody(c, fieldAccessTrackingTrace, getter, getterDescriptor, accessorScope);
         }
 
@@ -617,7 +618,7 @@ public class BodyResolver {
         PropertySetterDescriptor setterDescriptor = propertyDescriptor.getSetter();
         if (setter != null && setterDescriptor != null) {
             JetScope accessorScope = makeScopeForPropertyAccessor(c, setter, propertyDescriptor);
-            resolveAnnotationArguments(accessorScope, setter);
+            AnnotationResolver.resolveAnnotationsArguments(setterDescriptor.getAnnotations());
             resolveFunctionBody(c, fieldAccessTrackingTrace, setter, setterDescriptor, accessorScope);
         }
     }
@@ -775,10 +776,6 @@ public class BodyResolver {
 
         valueParameterResolver.resolveValueParameters(valueParameters, valueParameterDescriptors, scope,
                                                         c.getOuterDataFlowInfo(), trace);
-    }
-
-    private void resolveAnnotationArguments(@NotNull JetScope scope, @NotNull JetModifierListOwner owner) {
-        AnnotationResolver.resolveAnnotationsArguments(owner.getModifierList(), trace);
     }
 
     private static void computeDeferredType(JetType type) {

@@ -88,7 +88,7 @@ class FunctionDescriptorResolver(
     ): SimpleFunctionDescriptor {
         val functionDescriptor = functionConstructor(
                 containingDescriptor,
-                annotationResolver.resolveAnnotationsWithArguments(scope, function.getModifierList(), trace),
+                annotationResolver.resolveAnnotationsWithoutArguments(scope, function.getModifierList(), trace),
                 function.getNameAsSafeName(),
                 CallableMemberDescriptor.Kind.DECLARATION,
                 function.toSourceElement()
@@ -147,6 +147,7 @@ class FunctionDescriptorResolver(
                     typeResolver.resolveType(innerScope, receiverTypeRef, trace, true)
                 else
                     expectedFunctionType.getReceiverType()
+        receiverType?.let { AnnotationResolver.resolveAnnotationsArguments(it.getAnnotations()) }
 
 
         val valueParameterDescriptors = createValueParameterDescriptors(function, functionDescriptor, innerScope, trace, expectedFunctionType)
@@ -166,6 +167,9 @@ class FunctionDescriptorResolver(
                 modality,
                 visibility
         )
+        for (valueParameterDescriptor in valueParameterDescriptors) {
+            AnnotationResolver.resolveAnnotationsArguments(valueParameterDescriptor.getType().getAnnotations())
+        }
     }
 
     private fun createValueParameterDescriptors(
@@ -338,7 +342,7 @@ class FunctionDescriptorResolver(
                 checkConstructorParameterHasNoModifier(trace, valueParameter)
             }
 
-            val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptorWithAnnotationArguments(parameterScope, functionDescriptor,
+            val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptor(parameterScope, functionDescriptor,
                                                                                               valueParameter, i, type, trace)
             parameterScope.addVariableDescriptor(valueParameterDescriptor)
             result.add(valueParameterDescriptor)
