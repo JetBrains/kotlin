@@ -69,8 +69,9 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
     }
 
     val targets = unwrappedTargets
+    if (unwrappedCandidate in targets) return true
     // TODO: Investigate why PsiCompiledElement identity changes
-    if (targets.any { it.isEquivalentTo(unwrappedCandidate) }) return true
+    if (unwrappedCandidate is PsiCompiledElement && targets.any { it.isEquivalentTo(unwrappedCandidate) }) return true
 
     if (this is JetReference) {
         return targets.any {

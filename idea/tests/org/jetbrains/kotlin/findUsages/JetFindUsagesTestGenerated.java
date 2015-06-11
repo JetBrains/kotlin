@@ -507,6 +507,12 @@ public class JetFindUsagesTestGenerated extends AbstractJetFindUsagesTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localAndNonLocalClass.0.kt")
+            public void testLocalAndNonLocalClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/localAndNonLocalClass.0.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("primaryConstructorWithDefaultParams.0.kt")
             public void testPrimaryConstructorWithDefaultParams() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/findUsages/kotlin/findClassUsages/primaryConstructorWithDefaultParams.0.kt");
