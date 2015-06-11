@@ -57,8 +57,6 @@ public class AnnotationProcessingManager(
             project.getLogger().warn("Please do not use `$ANDROID_APT_PLUGIN_ID` with kapt.")
         }
 
-        generateJavaHackFile(aptWorkingDir, javaTask)
-
         val annotationProcessorFqNames = lookupAnnotationProcessors(aptFiles)
 
         val stubOutputDir = File(aptWorkingDir, WRAPPERS_DIRECTORY)
@@ -80,8 +78,8 @@ public class AnnotationProcessingManager(
         }
     }
 
-    private fun generateJavaHackFile(aptDir: File, javaTask: JavaCompile) {
-        val javaAptSourceDir = File(aptDir, "java_src")
+    fun generateJavaHackFile() {
+        val javaAptSourceDir = File(aptWorkingDir, "java_src")
         val javaHackPackageDir = File(javaAptSourceDir, GEN_ANNOTATION)
 
         javaHackPackageDir.mkdirs()
