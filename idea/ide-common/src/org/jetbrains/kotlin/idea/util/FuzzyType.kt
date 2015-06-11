@@ -47,18 +47,16 @@ class FuzzyType(
         val type: JetType,
         freeParameters: Collection<TypeParameterDescriptor>
 ) {
-    private val usedTypeParameters: HashSet<TypeParameterDescriptor>?
     public val freeParameters: Set<TypeParameterDescriptor>
 
     init {
         if (freeParameters.isNotEmpty()) {
-            usedTypeParameters = HashSet()
+            val usedTypeParameters = HashSet<TypeParameterDescriptor>()
             usedTypeParameters.addUsedTypeParameters(type)
             this.freeParameters = freeParameters.filter { it in usedTypeParameters }.toSet()
         }
         else {
-            usedTypeParameters = null
-            this.freeParameters = setOf()
+            this.freeParameters = emptySet()
         }
     }
 
@@ -67,7 +65,11 @@ class FuzzyType(
     override fun hashCode() = type.hashCode()
 
     private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(type: JetType) {
-        addIfNotNull(type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor)
+        val typeParameter = type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
+        if (typeParameter != null && add(typeParameter)) {
+            typeParameter.getLowerBounds().forEach { addUsedTypeParameters(it) }
+            typeParameter.getUpperBounds().forEach { addUsedTypeParameters(it) }
+        }
 
         for (argument in type.getArguments()) {
             addUsedTypeParameters(argument.getType())
@@ -96,7 +98,7 @@ class FuzzyType(
             }
         }
 
-        if (usedTypeParameters == null || usedTypeParameters.isEmpty()) {
+        if (freeParameters.isEmpty()) {
             return if (type.checkInheritance(otherType)) TypeSubstitutor.EMPTY else null
         }
 
@@ -112,7 +114,9 @@ class FuzzyType(
             MatchKind.IS_SUPERTYPE -> constraintSystem.addSubtypeConstraint(otherType, type, ConstraintPositionKind.SPECIAL.position())
         }
 
-        if (constraintSystem.getStatus().isSuccessful() && ConstraintsUtil.checkBoundsAreSatisfied(constraintSystem, true)) {
+        constraintSystem.processDeclaredBoundConstraints()
+
+        if (!constraintSystem.getStatus().hasContradiction()) {
             // currently ConstraintSystem return successful status in case there are problems with nullability
             // that's why we have to check subtyping manually
             val substitutor = constraintSystem.getResultingSubstitutor()
