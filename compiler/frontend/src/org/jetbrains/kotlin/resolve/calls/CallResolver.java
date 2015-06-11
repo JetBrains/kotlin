@@ -440,28 +440,17 @@ public class CallResolver {
         Call call = context.call;
         tracing.bindCall(context.trace, call);
 
-        OverloadResolutionResultsImpl<F> results = null;
         TemporaryBindingTrace traceToResolveCall = TemporaryBindingTrace.create(context.trace, "trace to resolve call", call);
-        if (!CallResolverUtil.isInvokeCallOnVariable(call)) {
-            ResolutionResultsCache.CachedData data = context.resolutionResultsCache.get(call);
-            if (data != null) {
-                DelegatingBindingTrace deltasTraceForResolve = data.getResolutionTrace();
-                deltasTraceForResolve.addOwnDataTo(traceToResolveCall);
-                //noinspection unchecked
-                results = (OverloadResolutionResultsImpl<F>) data.getResolutionResults();
-            }
+        BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
+
+        recordScopeAndDataFlowInfo(newContext, newContext.call.getCalleeExpression());
+        OverloadResolutionResultsImpl<F> results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
+        DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
+        if (deltasTraceForTypeInference != null) {
+            deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
         }
-        if (results == null) {
-            BasicCallResolutionContext newContext = context.replaceBindingTrace(traceToResolveCall);
-            recordScopeAndDataFlowInfo(newContext, newContext.call.getCalleeExpression());
-            results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
-            DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
-            if (deltasTraceForTypeInference != null) {
-                deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
-            }
-            completeTypeInferenceDependentOnFunctionLiterals(newContext, results, tracing);
-            cacheResults(context, results, traceToResolveCall, tracing);
-        }
+        completeTypeInferenceDependentOnFunctionLiterals(newContext, results, tracing);
+        cacheResults(context, results, traceToResolveCall, tracing);
         traceToResolveCall.commit();
 
         if (context.contextDependency == ContextDependency.INDEPENDENT) {
