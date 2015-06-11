@@ -150,17 +150,13 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         return workerScope.getLocalVariable(name)
     }
 
-    private fun getFunctionGroups(): SetMultimap<Name, FunctionDescriptor> {
-        if (functionGroups == null) {
-            functionGroups = LinkedHashMultimap.create()
-        }
-        return functionGroups!!
-    }
-
     override fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor) {
         checkMayWrite()
 
-        getFunctionGroups().put(functionDescriptor.getName(), functionDescriptor)
+        if (functionGroups == null) {
+            functionGroups = LinkedHashMultimap.create()
+        }
+        functionGroups!!.put(functionDescriptor.getName(), functionDescriptor)
         explicitlyAddedDescriptors.add(functionDescriptor)
     }
 
