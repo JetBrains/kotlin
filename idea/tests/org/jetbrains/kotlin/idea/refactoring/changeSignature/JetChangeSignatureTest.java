@@ -1110,7 +1110,7 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
             PsiFile currentFile = getFile();
             checkResultByFile(currentFile.getName().replace("Before.", "After."));
             if (checkErrorsAfter && currentFile instanceof JetFile) {
-                DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) currentFile);
+                DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) currentFile);
             }
         }
     }

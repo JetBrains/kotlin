@@ -219,13 +219,13 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             }
             else {
                 // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
-                DirectiveBasedActionUtils.checkAvailableActionsAreExpected((JetFile) getFile(), actions);
+                DirectiveBasedActionUtils.INSTANCE$.checkAvailableActionsAreExpected((JetFile) getFile(), actions);
             }
         }
     }
 
     public static void checkForUnexpectedErrors() {
-        DirectiveBasedActionUtils.checkForUnexpectedErrors((JetFile) getFile());
+        DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((JetFile) getFile());
     }
 
     @Override
