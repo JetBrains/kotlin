@@ -192,7 +192,7 @@ public class KotlinInplaceParameterIntroducer(
                 if (parameter == addedParameter) {
                     addedRange = range
                 }
-                else if (parameter in parametersToRemove) {
+                else if (parameter in parametersToRemove && !descriptor.withDefaultValue) {
                     rangesToRemove.add(range)
                 }
 
