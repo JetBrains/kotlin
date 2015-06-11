@@ -59,7 +59,7 @@ private val CACHE_DIRECTORY_NAME = "kotlin"
 class CacheFormatVersion(targetDataRoot: File) {
     companion object {
         // Change this when incremental cache format changes
-        private val INCREMENTAL_CACHE_OWN_VERSION = 2
+        private val INCREMENTAL_CACHE_OWN_VERSION = 3
         private val CACHE_FORMAT_VERSION: Int = INCREMENTAL_CACHE_OWN_VERSION * 1000000 + JvmAbi.VERSION
 
         private val NON_INCREMENTAL_MODE_PSEUDO_VERSION = Int.MAX_VALUE
