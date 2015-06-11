@@ -88,7 +88,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         if (arguments.freeArgs.isEmpty()) {
             messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "Specify at least one source file or directory", NO_LOCATION);
-            return ExitCode.INTERNAL_ERROR;
+            return ExitCode.COMPILATION_ERROR;
         }
 
         CompilerConfiguration configuration = new CompilerConfiguration();
@@ -108,7 +108,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         if (arguments.outputFile == null) {
             messageSeverityCollector.report(CompilerMessageSeverity.ERROR, "Specify output file via -output", CompilerMessageLocation.NO_LOCATION);
-            return ExitCode.INTERNAL_ERROR;
+            return ExitCode.COMPILATION_ERROR;
         }
 
         if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) {
