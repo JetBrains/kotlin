@@ -17,6 +17,7 @@ public object Delegates {
      * specified block of code. Supports lazy initialization semantics for properties.
      * @param initializer the function that returns the value of the property.
      */
+    deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(initializer)"))
     public fun lazy<T>(initializer: () -> T): ReadOnlyProperty<Any?, T> = LazyVal(initializer)
 
     /**
@@ -27,6 +28,7 @@ public object Delegates {
      *             the property delegate object itself is used as a lock.
      * @param initializer the function that returns the value of the property.
      */
+    deprecated("Use lazy {} instead in kotlin package", ReplaceWith("kotlin.lazy(initializer)"))
     public fun blockingLazy<T>(lock: Any? = null, initializer: () -> T): ReadOnlyProperty<Any?, T> = BlockingLazyVal(lock, initializer)
 
     /**

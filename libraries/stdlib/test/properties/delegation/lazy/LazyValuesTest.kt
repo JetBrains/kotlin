@@ -11,24 +11,34 @@ class LazyValuesTest(): DelegationTestBase() {
         doTest(TestLazyVal())
     }
 
+    test fun testUnsafeLazyVal() {
+        doTest(TestUnsafeLazyVal())
+    }
+
     test fun testNullableLazyVal() {
         doTest(TestNullableLazyVal())
     }
 
-    test fun testAtomicNullableLazyVal() {
-        doTest(TestAtomicNullableLazyVal())
+    test fun testUnsafeNullableLazyVal() {
+        doTest(TestUnsafeNullableLazyVal())
     }
 
-    test fun testAtomicLazyVal() {
-        doTest(TestAtomicLazyVal())
+    // deprecated lazy tests
+
+    test fun testUnsafeLazyValDeprecated() {
+        doTest(TestUnsafeLazyValDeprecated())
     }
 
-    test fun testVolatileNullableLazyVal() {
-        doTest(TestVolatileNullableLazyVal())
+    test fun testBlockingLazyValDeprecated() {
+        doTest(TestBlockingLazyValDeprecated())
     }
 
-    test fun testVolatileLazyVal() {
-        doTest(TestVolatileLazyVal())
+    test fun testUnsafeNullableLazyValDeprecated() {
+        doTest(TestUnsafeNullableLazyValDeprecated())
+    }
+
+    test fun testBlockingNullableLazyValDeprecated() {
+        doTest(TestBlockingNullableLazyValDeprecated())
     }
 
     test fun testIdentityEqualsIsUsedToUnescapeLazyVal() {
@@ -37,6 +47,80 @@ class LazyValuesTest(): DelegationTestBase() {
 }
 
 class TestLazyVal: WithBox {
+    var result = 0
+    val a by lazy {
+        ++result
+    }
+
+    override fun box(): String {
+        a
+        if (a != 1) return "fail: initializer should be invoked only once"
+        return "OK"
+    }
+}
+
+class TestUnsafeLazyVal: WithBox {
+    var result = 0
+    val a by lazy(LazyThreadSafetyMode.NONE) {
+        ++result
+    }
+
+    override fun box(): String {
+        a
+        if (a != 1) return "fail: initializer should be invoked only once"
+        return "OK"
+    }
+}
+
+class TestNullableLazyVal: WithBox {
+    var resultA = 0
+    var resultB = 0
+
+    val a: Int? by lazy { resultA++; null}
+    val b by lazy { foo() }
+
+    override fun box(): String {
+        a
+        b
+
+        if (a != null) return "fail: a should be null"
+        if (b != null) return "fail: a should be null"
+        if (resultA != 1) return "fail: initializer for a should be invoked only once"
+        if (resultB != 1) return "fail: initializer for b should be invoked only once"
+        return "OK"
+    }
+
+    fun foo(): String? {
+        resultB++
+        return null
+    }
+}
+
+class TestUnsafeNullableLazyVal: WithBox {
+    var resultA = 0
+    var resultB = 0
+
+    val a: Int? by lazy(LazyThreadSafetyMode.NONE) { resultA++; null}
+    val b by lazy(LazyThreadSafetyMode.NONE) { foo() }
+
+    override fun box(): String {
+        a
+        b
+
+        if (a != null) return "fail: a should be null"
+        if (b != null) return "fail: a should be null"
+        if (resultA != 1) return "fail: initializer for a should be invoked only once"
+        if (resultB != 1) return "fail: initializer for b should be invoked only once"
+        return "OK"
+    }
+
+    fun foo(): String? {
+        resultB++
+        return null
+    }
+}
+
+class TestUnsafeLazyValDeprecated: WithBox {
     var result = 0
     val a by Delegates.lazy {
         ++result
@@ -49,7 +133,20 @@ class TestLazyVal: WithBox {
     }
 }
 
-class TestNullableLazyVal: WithBox {
+class TestBlockingLazyValDeprecated: WithBox {
+    var result = 0
+    val a by Delegates.blockingLazy {
+        ++result
+    }
+
+    override fun box(): String {
+        a
+        if (a != 1) return "fail: initializer should be invoked only once"
+        return "OK"
+    }
+}
+
+class TestUnsafeNullableLazyValDeprecated : WithBox {
     var resultA = 0
     var resultB = 0
 
@@ -73,57 +170,7 @@ class TestNullableLazyVal: WithBox {
     }
 }
 
-class TestAtomicLazyVal: WithBox {
-    var result = 0
-    val a by Delegates.blockingLazy {
-        ++result
-    }
-
-    override fun box(): String {
-        a
-        if (a != 1) return "fail: initializer should be invoked only once"
-        return "OK"
-    }
-}
-
-class TestVolatileNullableLazyVal: WithBox {
-    var resultA = 0
-    var resultB = 0
-
-    val a: Int? by Delegates.blockingLazy { resultA++; null}
-    val b by Delegates.blockingLazy { foo() }
-
-    override fun box(): String {
-        a
-        b
-
-        if (a != null) return "fail: a should be null"
-        if (b != null) return "fail: a should be null"
-        if (resultA != 1) return "fail: initializer for a should be invoked only once"
-        if (resultB != 1) return "fail: initializer for b should be invoked only once"
-        return "OK"
-    }
-
-    fun foo(): String? {
-        resultB++
-        return null
-    }
-}
-
-class TestVolatileLazyVal: WithBox {
-    var result = 0
-    val a by Delegates.blockingLazy {
-        ++result
-    }
-
-    override fun box(): String {
-        a
-        if (a != 1) return "fail: initializer should be invoked only once"
-        return "OK"
-    }
-}
-
-class TestAtomicNullableLazyVal: WithBox {
+class TestBlockingNullableLazyValDeprecated: WithBox {
     var resultA = 0
     var resultB = 0
 
@@ -149,7 +196,7 @@ class TestAtomicNullableLazyVal: WithBox {
 
 class TestIdentityEqualsIsUsedToUnescapeLazyVal: WithBox {
     var equalsCalled = 0
-    val a by Delegates.lazy { ClassWithCustomEquality { equalsCalled++ } }
+    val a by lazy { ClassWithCustomEquality { equalsCalled++ } }
 
     override fun box(): String {
         a

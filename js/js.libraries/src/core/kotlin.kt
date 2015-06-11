@@ -50,3 +50,7 @@ public fun setOf<T>(value: T): Set<T> = hashSetOf(value)
  * specified value.
  */
 public fun mapOf<K, V>(keyValuePair: Pair<K, V>): Map<K, V> = hashMapOf(keyValuePair)
+
+
+public fun lazy<T>(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
