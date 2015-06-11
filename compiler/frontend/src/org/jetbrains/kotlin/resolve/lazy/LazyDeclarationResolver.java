@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.AnnotationResolver;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
@@ -210,6 +211,7 @@ public class LazyDeclarationResolver {
             throw new IllegalStateException("No descriptor resolved for " + declaration + ":\n" +
                                             PsiUtilPackage.getElementTextWithContext(declaration));
         }
+        AnnotationResolver.resolveAnnotationsArguments(result.getAnnotations());
         return result;
     }
 

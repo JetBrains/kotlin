@@ -43,7 +43,6 @@
         <project-root>../../..</project-root>
 
         <junit-version>4.11</junit-version>
-        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.16</surefire-version>
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>

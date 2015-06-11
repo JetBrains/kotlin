@@ -1,0 +1,128 @@
+<problems>
+    <problem>
+        <file>ValPropertyWithReturn.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="ValPropertyWithReturn.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+
+    <problem>
+        <file>ValProperty.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="ValProperty.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>StringTemplate.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="StringTemplate.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>StringLiteral.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="StringLiteral.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>Simple.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Simple.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>Return.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Return.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>QualifiedCall.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="QualifiedCall.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>NotAvailableOnDocComment.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="NotAvailableOnDocComment.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>NoDefaultImport.kt</file>
+        <line>2</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="NoDefaultImport.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>NoCompanionObjectImport.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="NoCompanionObjectImport.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>Imports.kt</file>
+        <line>5</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="Imports.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>If.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="If.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>ExpressionBody.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="ExpressionBody.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+
+    <problem>
+        <file>CommentInBody.kt</file>
+        <line>1</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="CommentInBody.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Add 'replaceWith' argument to 'deprecated' annotation</problem_class>
+        <description>Add 'replaceWith' argument to specify replacement pattern</description>
+    </problem>
+</problems>

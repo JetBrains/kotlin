@@ -106,6 +106,15 @@ public class AnnotationResolver {
     }
 
     @NotNull
+    public Annotations resolveAnnotationsWithoutArguments(
+            @NotNull JetScope scope,
+            @NotNull List<JetAnnotationEntry> annotationEntries,
+            @NotNull BindingTrace trace
+    ) {
+        return resolveAnnotationEntries(scope, annotationEntries, trace, false);
+    }
+
+    @NotNull
     public Annotations resolveAnnotationsWithArguments(
             @NotNull JetScope scope,
             @NotNull List<JetAnnotationEntry> annotationEntries,
@@ -144,7 +153,7 @@ public class AnnotationResolver {
                 descriptor = new LazyAnnotationDescriptor(new LazyAnnotationsContextImpl(this, storageManager, trace, scope), entryElement);
             }
             if (shouldResolveArguments) {
-                resolveAnnotationArguments(entryElement, trace);
+                resolveAnnotationArguments(descriptor);
             }
 
             result.add(descriptor);
@@ -202,30 +211,13 @@ public class AnnotationResolver {
         );
     }
 
-    public static void resolveAnnotationsArguments(@Nullable JetModifierList modifierList, @NotNull BindingTrace trace) {
-        if (modifierList == null) {
-            return;
-        }
-
-        for (JetAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
-            resolveAnnotationArguments(annotationEntry, trace);
-        }
-    }
-
-    public static void resolveAnnotationsArguments(@NotNull Annotations annotations, @NotNull BindingTrace trace) {
+    public static void resolveAnnotationsArguments(@NotNull Annotations annotations) {
         for (AnnotationDescriptor annotationDescriptor : annotations) {
-            JetAnnotationEntry annotationEntry = trace.getBindingContext().get(ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT, annotationDescriptor);
-            assert annotationEntry != null : "Cannot find annotation entry: " + annotationDescriptor;
-            resolveAnnotationArguments(annotationEntry, trace);
+            resolveAnnotationArguments(annotationDescriptor);
         }
     }
 
-    private static void resolveAnnotationArguments(
-            @NotNull JetAnnotationEntry annotationEntry,
-            @NotNull BindingTrace trace
-    ) {
-        AnnotationDescriptor annotationDescriptor = trace.getBindingContext().get(BindingContext.ANNOTATION, annotationEntry);
-        assert annotationDescriptor != null : "Annotation descriptor should be created before resolving arguments for " + annotationEntry.getText();
+    private static void resolveAnnotationArguments(@NotNull AnnotationDescriptor annotationDescriptor) {
         if (annotationDescriptor instanceof LazyAnnotationDescriptor) {
             ((LazyAnnotationDescriptor) annotationDescriptor).forceResolveAllContents();
         }

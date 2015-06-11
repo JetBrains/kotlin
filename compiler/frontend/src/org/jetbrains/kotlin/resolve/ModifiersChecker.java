@@ -393,11 +393,9 @@ public class ModifiersChecker {
 
     @NotNull
     public static Visibility getDefaultClassVisibility(@NotNull ClassDescriptor descriptor) {
-        if (isEnumEntry(descriptor)) {
+        if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) {
+            // should be be accessible where containing class is accessible by default
             return Visibilities.PUBLIC;
-        }
-        if (isCompanionObject(descriptor)) {
-            return ((ClassDescriptor) descriptor.getContainingDeclaration()).getVisibility();
         }
         return Visibilities.INTERNAL;
     }

@@ -1,0 +1,2 @@
+// !DIAGNOSTICS: -NO_VALUE_FOR_PARAMETER
+class Tree<T>(<!NOT_A_CLASS!>T<!> element<!SYNTAX!><!>, <!NOT_AN_ANNOTATION_CLASS!>Tree<T><!> left<!SYNTAX!><!>, <!NOT_AN_ANNOTATION_CLASS!>Tree<T><!> right<!SYNTAX!><!>) {}

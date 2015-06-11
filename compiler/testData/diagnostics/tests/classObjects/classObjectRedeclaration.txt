@@ -15,7 +15,7 @@ package test {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -36,7 +36,7 @@ package test {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Named {
+        public companion object Named {
             private constructor Named()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -57,7 +57,7 @@ package test {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Named {
+        public companion object Named {
             private constructor Named()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

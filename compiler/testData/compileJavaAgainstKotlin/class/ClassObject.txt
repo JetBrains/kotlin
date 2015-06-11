@@ -16,7 +16,7 @@ internal object PackageInner {
 internal final class WithClassObject {
     public constructor WithClassObject()
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         internal final val value: kotlin.Int
         internal final val valueWithGetter: kotlin.Int

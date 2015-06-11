@@ -19,7 +19,7 @@ internal final class A {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -53,7 +53,7 @@ internal final class A {
         }
     }
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -89,7 +89,7 @@ internal final class A {
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -126,7 +126,7 @@ internal final class A {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -177,7 +177,7 @@ internal final enum class E : kotlin.Enum<E> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -211,7 +211,7 @@ internal final enum class E : kotlin.Enum<E> {
         }
     }
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -247,7 +247,7 @@ internal final enum class E : kotlin.Enum<E> {
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -284,7 +284,7 @@ internal final enum class E : kotlin.Enum<E> {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -315,7 +315,7 @@ internal interface T {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -349,7 +349,7 @@ internal interface T {
         }
     }
 
-    internal companion object Companion {
+    public companion object Companion {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -385,7 +385,7 @@ internal interface T {
         public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -415,7 +415,7 @@ internal interface T {
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
 
-        internal companion object Companion {
+        public companion object Companion {
             private constructor Companion()
             public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
