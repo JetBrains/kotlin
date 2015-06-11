@@ -268,6 +268,63 @@ JetFile: PropertiesFollowedByInitializers.kt
         BLOCK
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('b8')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PROPERTY_ACCESSOR
+          PsiElement(get)('get')
+        PsiWhiteSpace(' ')
+        PROPERTY_ACCESSOR
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('a')
+            PsiWhiteSpace(' ')
+            PsiElement(abstract)('abstract')
+          PsiWhiteSpace(' ')
+          PsiElement(set)('set')
+      PsiWhiteSpace('\n  ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('b9')
+        PsiWhiteSpace(' ')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PROPERTY_ACCESSOR
+          PsiElement(get)('get')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Property getter or setter expected
+          PsiElement(AT)('@')
+          PsiElement(IDENTIFIER)('a')
+          PsiWhiteSpace(' ')
+          PsiElement(abstract)('abstract')
+      PsiWhiteSpace(' ')
+      FUN
+        PsiErrorElement:Expecting member declaration
+          <empty list>
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

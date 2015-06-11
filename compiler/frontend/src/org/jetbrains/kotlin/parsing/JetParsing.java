@@ -1389,7 +1389,7 @@ public class JetParsing extends AbstractJetParsing {
 
         if (!at(LPAR)) {
             // Account for Jet-114 (val a : int get {...})
-            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(LBRACKET, GET_KEYWORD, SET_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
+            TokenSet ACCESSOR_FIRST_OR_PROPERTY_END = TokenSet.orSet(MODIFIER_KEYWORDS, TokenSet.create(LBRACKET, AT, GET_KEYWORD, SET_KEYWORD, EOL_OR_SEMICOLON, RBRACE));
             if (!atSet(ACCESSOR_FIRST_OR_PROPERTY_END)) {
                 errorUntil("Accessor body expected", TokenSet.orSet(ACCESSOR_FIRST_OR_PROPERTY_END, TokenSet.create(LBRACE, LPAR, EQ)));
             }
