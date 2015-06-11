@@ -28,8 +28,10 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public abstract class KotlinFindUsagesHandler<T extends PsiElement> extends FindUsagesHandler {
     private final KotlinFindUsagesHandlerFactory factory;
@@ -115,4 +117,26 @@ public abstract class KotlinFindUsagesHandler<T extends PsiElement> extends Find
     protected abstract boolean searchReferences(
             @NotNull PsiElement element, @NotNull Processor<UsageInfo> processor, @NotNull FindUsagesOptions options
     );
+
+    @NotNull
+    @Override
+    public Collection<PsiReference> findReferencesToHighlight(@NotNull PsiElement target, @NotNull SearchScope searchScope
+    ) {
+        final List<PsiReference> results = new ArrayList<PsiReference>();
+        FindUsagesOptions options = getFindUsagesOptions();
+        options.searchScope = searchScope;
+        searchReferences(target,
+                         new Processor<UsageInfo>() {
+                             @Override
+                             public boolean process(UsageInfo info) {
+                                 PsiReference reference = info.getReference();
+                                 if (reference != null) {
+                                     results.add(reference);
+                                 }
+                                 return true;
+                             }
+                         },
+                         options);
+        return results;
+    }
 }
