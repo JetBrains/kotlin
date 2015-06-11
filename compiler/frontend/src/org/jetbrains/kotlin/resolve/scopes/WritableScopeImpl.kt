@@ -88,13 +88,6 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         return result
     }
 
-    private fun getLabelsToDescriptors(): MutableMap<Name, MutableList<DeclarationDescriptor>> {
-        if (labelsToDescriptors == null) {
-            labelsToDescriptors = HashMap()
-        }
-        return labelsToDescriptors!!
-    }
-
     override fun getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> {
         checkMayRead()
 
@@ -107,10 +100,10 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     override fun addLabeledDeclaration(descriptor: DeclarationDescriptor) {
         checkMayWrite()
 
-        val labelsToDescriptors = getLabelsToDescriptors()
-        val name = descriptor.getName()
-        var declarationDescriptors = labelsToDescriptors.getOrPut(name) { ArrayList() }
-        declarationDescriptors.add(descriptor)
+        if (labelsToDescriptors == null) {
+            labelsToDescriptors = HashMap()
+        }
+        labelsToDescriptors!!.getOrPut(descriptor.getName()) { ArrayList(1) }.add(descriptor)
     }
 
     private fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
