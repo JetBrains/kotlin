@@ -608,6 +608,10 @@ private fun Project.initKapt(
         kotlinTask.getLogger().kotlinDebug("kapt: Class file stubs are not used")
     }
 
+    kotlinTask.doFirst {
+        kaptManager.generateJavaHackFile()
+    }
+
     javaTask.doFirst {
         kaptManager.setupKapt()
         kotlinAfterJavaTask?.setClasspath(files(kotlinTask.getClasspath(), javaTask.getDestinationDir()))
