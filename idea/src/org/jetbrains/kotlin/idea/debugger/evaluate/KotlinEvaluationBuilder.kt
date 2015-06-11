@@ -222,8 +222,9 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
 
                         return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
-                                val breakpoints = virtualMachine.eventRequestManager().breakpointRequests()
-                                breakpoints?.forEach { it.disable() }
+                                val allRequests = virtualMachine.eventRequestManager().breakpointRequests() +
+                                                  virtualMachine.eventRequestManager().classPrepareRequests()
+                                allRequests.forEach { it.disable() }
 
                                 val eval = JDIEval(virtualMachine,
                                                    context.getClassLoader(),
@@ -236,7 +237,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                                         eval
                                 )
 
-                                breakpoints?.forEach { it.enable() }
+                                allRequests.forEach { it.enable() }
                             }
                         }
                     }
