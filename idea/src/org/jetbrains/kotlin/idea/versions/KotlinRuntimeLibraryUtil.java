@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.versions;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
@@ -32,11 +30,15 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.JarFileSystem;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.util.indexing.ID;
 import com.intellij.util.indexing.ScalarIndexExtension;
+import kotlin.KotlinPackage;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetPluginUtil;
@@ -45,30 +47,58 @@ import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil;
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
 
 import static com.intellij.util.PathUtil.getLocalFile;
 import static com.intellij.util.PathUtil.getLocalPath;
 import static org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification.showRuntimeJarNotFoundDialog;
 
 public class KotlinRuntimeLibraryUtil {
-    private KotlinRuntimeLibraryUtil() {}
+    private KotlinRuntimeLibraryUtil() {
+    }
 
     @NotNull
     public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleKotlinClasses(@NotNull Project project) {
-        return getLibraryRootsWithAbiIncompatibleVersion(project, KotlinAbiVersionIndex.INSTANCE$);
+        return getLibraryRootsWithAbiIncompatibleVersion(
+                project, KotlinAbiVersionIndex.INSTANCE$,
+                new Function1<Module, Boolean>() {
+                    @Override
+                    public Boolean invoke(@Nullable Module module) {
+                        return module != null && ProjectStructureUtil.isJavaKotlinModule(module);
+                    }
+                },
+                new Function1<Integer, Boolean>() {
+                    @Override
+                    public Boolean invoke(Integer abiVersion) {
+                        return !AbiVersionUtil.isAbiVersionCompatible(abiVersion);
+                    }
+                });
     }
 
     @NotNull
     public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleForKotlinJs(@NotNull Project project) {
-        return getLibraryRootsWithAbiIncompatibleVersion(project, KotlinJavaScriptAbiVersionIndex.INSTANCE$);
+        return getLibraryRootsWithAbiIncompatibleVersion(
+                project, KotlinJavaScriptAbiVersionIndex.INSTANCE$,
+                new Function1<Module, Boolean>() {
+                    @Override
+                    public Boolean invoke(@Nullable Module module) {
+                        return module != null && ProjectStructureUtil.isJsKotlinModule(module);
+                    }
+                },
+                new Function1<Integer, Boolean>() {
+                    @Override
+                    public Boolean invoke(Integer abiVersion) {
+                        return !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion);
+                    }
+                });
     }
 
 
@@ -287,16 +317,19 @@ public class KotlinRuntimeLibraryUtil {
     @NotNull
     private static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleVersion(
             @NotNull Project project,
-            @NotNull ScalarIndexExtension<Integer> index
+            @NotNull ScalarIndexExtension<Integer> index,
+            @NotNull Function1<Module, Boolean> checkModule,
+            @NotNull Function1<Integer, Boolean> checkAbiVersion
     ) {
         ID<Integer, Void> id = index.getName();
-        Collection<Integer> abiVersions = FileBasedIndex.getInstance().getAllKeys(id, project);
-        Set<Integer> badAbiVersions = Sets.newHashSet(Collections2.filter(abiVersions, new Predicate<Integer>() {
-            @Override
-            public boolean apply(Integer abiVersion) {
-                return !AbiVersionUtil.isAbiVersionCompatible(abiVersion);
-            }
-        }));
+
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+
+        List<Module> modulesToCheck = KotlinPackage.filter(modules, checkModule);
+        if (modulesToCheck.isEmpty()) return Collections.emptyList();
+
+        Collection<Integer> abiVersions = collectAllKeys(id, modulesToCheck);
+        Set<Integer> badAbiVersions = Sets.newHashSet(KotlinPackage.filter(abiVersions, checkAbiVersion));
         Set<VirtualFile> badRoots = Sets.newHashSet();
         ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
 
@@ -314,5 +347,17 @@ public class KotlinRuntimeLibraryUtil {
         }
 
         return badRoots;
+    }
+
+    @NotNull
+    private static Collection<Integer> collectAllKeys(@NotNull ID<Integer, Void> id, @NotNull List<Module> modules) {
+        Set<Integer> allKeys = new HashSet<Integer>();
+
+        for (Module module : modules) {
+            GlobalSearchScope scope = GlobalSearchScope.moduleWithLibrariesScope(module);
+            FileBasedIndex.getInstance().processAllKeys(id, new CommonProcessors.CollectProcessor<Integer>(allKeys), scope, null);
+        }
+
+        return allKeys;
     }
 }
