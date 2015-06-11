@@ -69,7 +69,7 @@ fun FunctionType(text : String) : FunctionType {
             parameterTypes = parameters.removeSurrounding("(", ")").split(',')
                     .map { it.trim() }
                     .filter { !it.isEmpty() }
-                    .map { Attribute(name = "", type = it.removePrefix("vararg "), vararg = it.startsWith("vararg ")) }
+                    .map { Attribute(name = "", type = it.removePrefix("vararg "), vararg = it.startsWith("vararg "), static = false) }
                     .toList(),
             returnType = returnType
     )
