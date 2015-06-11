@@ -148,6 +148,22 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_NULLS = new CountNodesDirective<JsNullLiteral>("CHECK_NULLS_COUNT", JsNullLiteral.class);
 
+    private static final DirectiveHandler NOT_REFERENCED = new DirectiveHandler("CHECK_NOT_REFERENCED") {
+        @Override
+        void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
+            final String reference = arguments.getPositionalArgument(0);
+
+            JsVisitor visitor = new RecursiveJsVisitor() {
+                @Override
+                public void visitNameRef(@NotNull JsNameRef nameRef) {
+                    assertNotEquals(reference, nameRef.toString());
+                }
+            };
+
+            visitor.accept(ast);
+        }
+    };
+
     private static final DirectiveHandler HAS_INLINE_METADATA = new DirectiveHandler("CHECK_HAS_INLINE_METADATA") {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
@@ -178,6 +194,7 @@ public class DirectiveTestUtils {
             COUNT_VARS,
             COUNT_BREAKS,
             COUNT_NULLS,
+            NOT_REFERENCED,
             HAS_INLINE_METADATA,
             HAS_NO_INLINE_METADATA
     );

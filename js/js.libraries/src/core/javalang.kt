@@ -27,6 +27,9 @@ public class NumberFormatException(message: String? = null) : RuntimeException(m
 @library
 public class NullPointerException(message: String? = null) : RuntimeException(message) {}
 
+library
+public class ClassCastException(message: String? = null) : RuntimeException(message) {}
+
 @library
 public class AssertionError(message: String? = null) : Error(message) {}
 

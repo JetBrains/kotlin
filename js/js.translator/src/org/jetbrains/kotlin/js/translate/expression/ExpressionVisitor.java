@@ -36,8 +36,6 @@ import org.jetbrains.kotlin.js.translate.operation.UnaryOperationTranslator;
 import org.jetbrains.kotlin.js.translate.reference.*;
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
-import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -392,25 +390,20 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitBinaryWithTypeRHSExpression(@NotNull KtBinaryExpressionWithTypeRHS expression,
-            @NotNull TranslationContext context) {
-        JsExpression jsExpression = Translation.translateAsExpression(expression.getLeft(), context);
+    public JsNode visitBinaryWithTypeRHSExpression(
+            @NotNull KtBinaryExpressionWithTypeRHS expression,
+            @NotNull TranslationContext context
+    ) {
+        JsExpression jsExpression;
 
-        if (expression.getOperationReference().getReferencedNameElementType() != KtTokens.AS_KEYWORD)
-            return jsExpression.source(expression);
-
-        KtTypeReference right = expression.getRight();
-        assert right != null;
-
-        KotlinType rightType = BindingContextUtils.getNotNull(context.bindingContext(), BindingContext.TYPE, right);
-        KotlinType leftType = BindingContextUtils.getTypeNotNull(context.bindingContext(), expression.getLeft());
-        if (TypeUtils.isNullableType(rightType) || !TypeUtils.isNullableType(leftType)) {
-            return jsExpression.source(expression);
+        if (PatternTranslator.isUnsafeCast(expression)) {
+            jsExpression = PatternTranslator.newInstance(context).translateUnsafeCast(expression);
+        }
+        else {
+            jsExpression = Translation.translateAsExpression(expression.getLeft(), context);
         }
 
-        // KT-2670
-        // we actually do not care for types in js
-        return TranslationUtils.sure(jsExpression, context).source(expression);
+        return jsExpression.source(expression);
     }
 
     private static String getReferencedName(KtSimpleNameExpression expression) {
