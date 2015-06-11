@@ -113,24 +113,27 @@ public class WritableScopeImpl(override val workerScope: JetScope,
         declarationDescriptors.add(descriptor)
     }
 
-    private fun getVariableOrClassDescriptors(): MutableMap<Name, DeclarationDescriptor> {
+    private fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
+        checkMayWrite()
+
+        val name = descriptor.getName()
+
+        val originalDescriptor = variableOrClassDescriptors?.get(name)
+        if (originalDescriptor != null) {
+            redeclarationHandler.handleRedeclaration(originalDescriptor, descriptor)
+        }
+
         if (variableOrClassDescriptors == null) {
             variableOrClassDescriptors = HashMap()
         }
-        return variableOrClassDescriptors!!
+        variableOrClassDescriptors!!.put(name, descriptor)
+
+        explicitlyAddedDescriptors.add(descriptor)
+        declaredDescriptorsAccessibleBySimpleName.put(name, descriptor)
     }
 
     override fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
-        checkMayWrite()
-
-        val name = variableDescriptor.getName()
-        if (variableDescriptor.getExtensionReceiverParameter() == null) {
-            checkForRedeclaration(name, variableDescriptor)
-            // TODO : Should this always happen?
-            getVariableOrClassDescriptors().put(name, variableDescriptor)
-        }
-        explicitlyAddedDescriptors.add(variableDescriptor)
-        addToDeclared(variableDescriptor)
+        addVariableOrClassDescriptor(variableDescriptor)
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> {
@@ -168,20 +171,7 @@ public class WritableScopeImpl(override val workerScope: JetScope,
     }
 
     override fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
-        checkMayWrite()
-
-        val name = classifierDescriptor.getName()
-        checkForRedeclaration(name, classifierDescriptor)
-        getVariableOrClassDescriptors().put(name, classifierDescriptor)
-        explicitlyAddedDescriptors.add(classifierDescriptor)
-        addToDeclared(classifierDescriptor)
-    }
-
-    private fun checkForRedeclaration(name: Name, classifierDescriptor: DeclarationDescriptor) {
-        val originalDescriptor = getVariableOrClassDescriptors()[name]
-        if (originalDescriptor != null) {
-            redeclarationHandler.handleRedeclaration(originalDescriptor, classifierDescriptor)
-        }
+        addVariableOrClassDescriptor(classifierDescriptor)
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? {
@@ -221,10 +211,6 @@ public class WritableScopeImpl(override val workerScope: JetScope,
             listOf(implicitReceiver!!) + super<AbstractScopeAdapter>.getImplicitReceiversHierarchy()
         else
             super<AbstractScopeAdapter>.getImplicitReceiversHierarchy()
-    }
-
-    private fun addToDeclared(descriptor: DeclarationDescriptor) {
-        declaredDescriptorsAccessibleBySimpleName.put(descriptor.getName(), descriptor)
     }
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor>
