@@ -1176,6 +1176,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/extensions"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("ComplexCapture.kt")
+            public void testComplexCapture() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/ComplexCapture.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ComplexCapture2.kt")
+            public void testComplexCapture2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/ComplexCapture2.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExtensionInExtendedClass.kt")
             public void testExtensionInExtendedClass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensions/ExtensionInExtendedClass.kt");
