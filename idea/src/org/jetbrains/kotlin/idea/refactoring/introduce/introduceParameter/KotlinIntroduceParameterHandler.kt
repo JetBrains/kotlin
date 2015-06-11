@@ -25,7 +25,12 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
+import com.intellij.refactoring.listeners.RefactoringEventListener
+import com.intellij.usageView.BaseUsageViewDescriptor
+import com.intellij.usageView.UsageInfo
+import com.intellij.usageView.UsageViewDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -143,7 +148,14 @@ fun IntroduceParameterDescriptor.performRefactoring() {
         val project = callable.getProject();
         val changeSignature = { runChangeSignature(project, callableDescriptor, config, callable.analyze(), callable, INTRODUCE_PARAMETER) }
         changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
-            occurrencesToReplace.forEach { occurrenceReplacer(it) }
+            try {
+                occurrencesToReplace.forEach { occurrenceReplacer(it) }
+            }
+            finally {
+                project.getMessageBus()
+                        .syncPublisher(RefactoringEventListener.REFACTORING_EVENT_TOPIC)
+                        .refactoringDone(INTRODUCE_PARAMETER_REFACTORING_ID, null)
+            }
         }
     }
 }
@@ -409,6 +421,8 @@ public open class KotlinIntroduceLambdaParameterHandler(
         ExtractionEngine(extractLambdaHelper).run(editor, extractionData)
     }
 }
+
+val INTRODUCE_PARAMETER_REFACTORING_ID: String = "kotlin.refactoring.introduceParameter"
 
 val INTRODUCE_PARAMETER: String = "Introduce Parameter"
 val INTRODUCE_LAMBDA_PARAMETER: String = "Introduce Lambda Parameter"

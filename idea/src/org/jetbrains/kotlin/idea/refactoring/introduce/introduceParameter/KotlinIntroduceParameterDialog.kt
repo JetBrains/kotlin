@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 
+import com.intellij.openapi.command.impl.FinishMarkAction
+import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
@@ -29,6 +31,7 @@ import com.intellij.usageView.BaseUsageViewDescriptor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.JetFileType
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinParameterTablePanel
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -89,9 +92,10 @@ public class KotlinIntroduceParameterDialog private constructor(
     private var defaultValueCheckBox: JCheckBox? = null
     private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, JetParameter>(descriptor.parametersToRemove.size())
     private var parameterTablePanel: KotlinParameterTablePanel? = null
+    private val commandName = if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER
 
     init {
-        setTitle(if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER)
+        setTitle(commandName)
         init()
 
         nameField.addDataChangedListener { validateButtons() }
@@ -269,6 +273,8 @@ public class KotlinIntroduceParameterDialog private constructor(
                         var newArgumentValue = descriptor.newArgumentValue
                         var newReplacer = descriptor.occurrenceReplacer
 
+                        val startMarkAction = StartMarkAction.start(editor, myProject, commandName)
+
                         lambdaExtractionDescriptor?.let { oldDescriptor ->
                             val newDescriptor = KotlinExtractFunctionDialog.createNewDescriptor(
                                     oldDescriptor,
@@ -316,12 +322,15 @@ public class KotlinIntroduceParameterDialog private constructor(
                                 occurrenceReplacer = newReplacer
                         )
 
-                        helper.configure(descriptorToRefactor).performRefactoring()
+                        val introduceParameter = { helper.configure(descriptorToRefactor).performRefactoring() }
+                        introduceParameter.runRefactoringWithPostprocessing(myProject, INTRODUCE_PARAMETER_REFACTORING_ID) {
+                            FinishMarkAction.finish(myProject, editor, startMarkAction)
+                        }
                     }
 
                     override fun createUsageViewDescriptor(usages: Array<out UsageInfo>) = BaseUsageViewDescriptor()
 
-                    override fun getCommandName() = if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER
+                    override fun getCommandName() = commandName
                 }
         )
     }
