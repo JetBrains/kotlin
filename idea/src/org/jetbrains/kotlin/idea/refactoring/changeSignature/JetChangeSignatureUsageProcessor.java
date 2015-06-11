@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -284,7 +285,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                         }
 
                         ReceiverValue receiverValue = resolvedCall.getExtensionReceiver();
-                        if (!(receiverValue instanceof ThisReceiver)) {
+                        if (!receiverValue.exists()) {
                             receiverValue = resolvedCall.getDispatchReceiver();
                         }
                         if (receiverValue instanceof ThisReceiver) {

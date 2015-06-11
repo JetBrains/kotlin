@@ -57,7 +57,10 @@ public class JetImplicitOuterThisToQualifiedThisUsage(
         callElement: JetElement,
         val targetDescriptor: DeclarationDescriptor
 ): JetImplicitReceiverUsage(callElement) {
-    override fun getNewReceiverText(): String = "this@${targetDescriptor.getName().asString()}"
+    override fun getNewReceiverText(): String {
+        val name = targetDescriptor.getName()
+        return if (name.isSpecial()) "this" else "this@${name.asString()}"
+    }
 
     override fun processReplacedElement(element: JetElement) {
         element.addToShorteningWaitSet(Options(removeThisLabels = true, removeThis = true))

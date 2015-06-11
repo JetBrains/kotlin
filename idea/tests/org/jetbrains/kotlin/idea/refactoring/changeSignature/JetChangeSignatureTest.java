@@ -341,11 +341,13 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         JetPsiFactory psiFactory = new JetPsiFactory(getProject());
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"abc\""), JetValVar.None, null)
+                                     -1, "s", KotlinBuiltIns.getInstance().getStringType(), null, psiFactory.createExpression("\"abc\""),
+                                     JetValVar.None, null)
         );
         changeInfo.addParameter(
                 new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
-                                     -1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null, psiFactory.createExpression("\"def\""), JetValVar.None, null)
+                                     -1, "o", KotlinBuiltIns.getInstance().getNullableAnyType(), null,
+                                     psiFactory.createExpression("\"def\""), JetValVar.None, null)
         );
         doTest(changeInfo);
     }
@@ -946,6 +948,30 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
                                                              -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
                                                              psiFactory.createExpression("1"), JetValVar.None, null);
         changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testReceiverToParameterExplicitReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
+    public void testReceiverToParameterImplicitReceivers() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
+    public void testParameterToReceiverExplicitReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
+        doTest(changeInfo);
+    }
+
+    public void testParameterToReceiverImplicitReceivers() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(changeInfo.getNewParameters()[0]);
         doTest(changeInfo);
     }
 
