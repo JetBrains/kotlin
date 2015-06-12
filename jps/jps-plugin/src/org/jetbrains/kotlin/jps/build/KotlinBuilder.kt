@@ -36,7 +36,6 @@ import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.cli.common.KotlinVersion
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation.NO_LOCATION
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -97,7 +96,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val messageCollector = MessageCollectorAdapter(context)
         // Workaround for Android Studio
         if (!JpsUtils.isJsKotlinModule(chunk.representativeTarget()) && !JavaBuilder.IS_ENABLED[context, true]) {
-            messageCollector.report(INFO, "Kotlin JPS plugin is disabled", NO_LOCATION)
+            messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION)
             return NOTHING_DONE
         }
 
@@ -113,7 +112,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return NOTHING_DONE
         }
 
-        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, NO_LOCATION)
+        messageCollector.report(INFO, "Kotlin JPS plugin version " + KotlinVersion.VERSION, CompilerMessageLocation.NO_LOCATION)
 
         val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getKotlinCache(it) }
 
@@ -226,7 +225,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             messageCollector.report(
                     INFO,
                     "Plugin loaded: ${argumentProvider.javaClass.getSimpleName()}",
-                    NO_LOCATION
+                    CompilerMessageLocation.NO_LOCATION
             )
         }
 
@@ -385,11 +384,13 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         if (chunk.getModules().size() > 1) {
             // We do not support circular dependencies, but if they are present, we do our best should not break the build,
             // so we simply yield a warning and report NOTHING_DONE
-            messageCollector.report(WARNING, "Circular dependencies are not supported. "
-                                             + "The following JS modules depend on each other: "
-                                             + chunk.getModules().map { it.getName() }.joinToString(", ")
-                                             + ". "
-                                             + "Kotlin is not compiled for these modules", NO_LOCATION)
+            messageCollector.report(
+                    WARNING,
+                    "Circular dependencies are not supported. The following JS modules depend on each other: "
+                    + chunk.getModules().map { it.getName() }.joinToString(", ") + ". "
+                    + "Kotlin is not compiled for these modules",
+                    CompilerMessageLocation.NO_LOCATION
+            )
             return null
         }
 
@@ -435,11 +436,13 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val outputItemCollector = OutputItemsCollectorImpl()
 
         if (chunk.getModules().size() > 1) {
-            messageCollector.report(WARNING, "Circular dependencies are only partially supported. "
-                                             + "The following modules depend on each other: "
-                                             + chunk.getModules().map { it.getName() }.joinToString(", ")
-                                             + ". "
-                                             + "Kotlin will compile them, but some strange effect may happen", NO_LOCATION)
+            messageCollector.report(
+                    WARNING,
+                    "Circular dependencies are only partially supported. The following modules depend on each other: "
+                    + chunk.getModules().map { it.getName() }.joinToString(", ") + ". "
+                    + "Kotlin will compile them, but some strange effect may happen",
+                    CompilerMessageLocation.NO_LOCATION
+            )
         }
 
         allCompiledFiles.addAll(filesToCompile.values())
@@ -482,19 +485,19 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     CompilerRunnerConstants.KOTLIN_COMPILER_NAME,
                     kind(severity),
                     prefix + message + renderLocationIfNeeded(location),
-                    location.getPath(),
+                    location.path,
                     -1, -1, -1,
-                    location.getLine().toLong(), location.getColumn().toLong()
+                    location.line.toLong(), location.column.toLong()
             ))
         }
 
         private fun renderLocationIfNeeded(location: CompilerMessageLocation): String {
-            if (location == NO_LOCATION) return ""
+            if (location == CompilerMessageLocation.NO_LOCATION) return ""
 
             // Sometimes we report errors in JavaScript library stubs, i.e. files like core/javautil.kt
             // IDEA can't find these files, and does not display paths in Messages View, so we add the position information
             // to the error message itself:
-            val pathname = "" + location.getPath()
+            val pathname = "" + location.path
             return if (File(pathname).exists()) "" else " (" + location + ")"
         }
 
