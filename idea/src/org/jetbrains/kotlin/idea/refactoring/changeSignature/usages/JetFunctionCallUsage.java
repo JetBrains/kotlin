@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
 import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
@@ -72,13 +73,7 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
     };
 
-    private static final Function1<JetElement, ShortenReferences.Options>
-            SHORTEN_ARGUMENTS_OPTIONS = new Function1<JetElement, ShortenReferences.Options>() {
-        @Override
-        public ShortenReferences.Options invoke(JetElement element) {
-            return new ShortenReferences.Options(true, true);
-        }
-    };
+    private static final ShortenReferences.Options SHORTEN_ARGUMENTS_OPTIONS = new ShortenReferences.Options(true, true);
 
     private final JetFunctionDefinitionUsage<?> callee;
     private final BindingContext context;
@@ -408,7 +403,10 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
                     }
                 }
         );
-        new ShortenReferences(SHORTEN_ARGUMENTS_OPTIONS).process(argumentsToShorten);
+
+        for (JetElement argument : argumentsToShorten) {
+            ShortenPackage.addToShorteningWaitSet(argument, SHORTEN_ARGUMENTS_OPTIONS);
+        }
 
         JetElement newElement = element;
         if (newReceiverInfo != originalReceiverInfo) {
