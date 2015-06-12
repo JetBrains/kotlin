@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream;
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
@@ -91,8 +91,7 @@ public class TestlibTest extends UsefulTestCase {
 
         addKotlinSourceRoot(configuration, JetTestUtils.getHomeDirectory() + "/libraries/stdlib/test");
         addKotlinSourceRoot(configuration, JetTestUtils.getHomeDirectory() + "/libraries/kunit/src");
-        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY,
-                          new MessageCollectorPlainTextToStream(System.out, MessageCollectorPlainTextToStream.NON_VERBOSE));
+        configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 

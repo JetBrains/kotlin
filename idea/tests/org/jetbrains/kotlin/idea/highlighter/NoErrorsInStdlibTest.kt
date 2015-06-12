@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
-import com.intellij.testFramework.LightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
-import com.intellij.openapi.vfs.VfsUtil
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorPlainTextToStream
 import com.intellij.openapi.projectRoots.Sdk
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import kotlin.test.assertEquals
-import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.diagnostics.Severity
-import kotlin.test.assertTrue
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.test.JetJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.psi.JetFile
 import java.io.File
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {
     public fun testNoErrors() {
@@ -49,12 +49,12 @@ public class NoErrorsInStdlibTest : JetLightCodeInsightFixtureTestCase() {
                     val errors = bindingContext.getDiagnostics().all().filter { it.getSeverity() == Severity.ERROR }
 
                     if (errors.isNotEmpty()) {
-                        System.err.println("${psiFile.getName()}: ${errors.size} errors")
+                        System.err.println("${psiFile.getName()}: ${errors.size()} errors")
                         AnalyzerWithCompilerReport.reportDiagnostics(
-                                bindingContext.getDiagnostics(), MessageCollectorPlainTextToStream.PLAIN_TEXT_TO_SYSTEM_ERR
+                                bindingContext.getDiagnostics(), PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR
                         )
 
-                        totalErrors += errors.size
+                        totalErrors += errors.size()
                     }
                 }
             }

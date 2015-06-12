@@ -14,26 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cli.common.messages;
+package org.jetbrains.kotlin.cli.jvm.repl;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer;
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-public class MessageCollectorToString implements MessageCollector {
-    private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    private final MessageCollector actualCollector = new MessageCollectorPlainTextToStream(new PrintStream(outputStream),
-                                                                                           MessageCollectorPlainTextToStream.NON_VERBOSE);
-
-    @Override
-    public void report(@NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location) {
-        actualCollector.report(severity, message, location);
-    }
-
+public class ReplMessageCollectorWrapper {
     private static final Charset UTF8 = Charset.forName("utf-8");
+
+    private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    private final MessageCollector actualCollector =
+            new PrintingMessageCollector(new PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, false);
+
+    @NotNull
+    public MessageCollector getMessageCollector() {
+        return actualCollector;
+    }
 
     @NotNull
     public String getString() {

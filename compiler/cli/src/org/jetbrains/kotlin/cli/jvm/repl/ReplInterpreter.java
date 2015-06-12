@@ -33,8 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorToString;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
@@ -238,10 +236,10 @@ public class ReplInterpreter {
         JetFile psiFile = (JetFile) psiFileFactory.trySetupPsiForFile(virtualFile, JetLanguage.INSTANCE, true, false);
         assert psiFile != null : "Script file not analyzed at line " + lineNumber + ": " + fullText;
 
-        MessageCollectorToString errorCollector = new MessageCollectorToString();
+        ReplMessageCollectorWrapper errorCollector = new ReplMessageCollectorWrapper();
 
         AnalyzerWithCompilerReport.SyntaxErrorReport syntaxErrorReport =
-                AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorCollector);
+                AnalyzerWithCompilerReport.reportSyntaxErrors(psiFile, errorCollector.getMessageCollector());
 
         if (syntaxErrorReport.isHasErrors() && syntaxErrorReport.isAllErrorsAtEof()) {
             previousIncompleteLines.add(line);
@@ -339,7 +337,7 @@ public class ReplInterpreter {
     }
 
     @Nullable
-    private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull MessageCollector messageCollector) {
+    private ScriptDescriptor doAnalyze(@NotNull JetFile psiFile, @NotNull ReplMessageCollectorWrapper messageCollector) {
         scriptDeclarationFactory.setDelegateFactory(
                 new FileBasedDeclarationProviderFactory(resolveSession.getStorageManager(), Collections.singletonList(psiFile)));
 
@@ -352,7 +350,9 @@ public class ReplInterpreter {
             trace.record(BindingContext.FILE_TO_PACKAGE_FRAGMENT, psiFile, resolveSession.getPackageFragment(FqName.ROOT));
         }
 
-        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(trace.getBindingContext().getDiagnostics(), messageCollector);
+        boolean hasErrors = AnalyzerWithCompilerReport.reportDiagnostics(
+                trace.getBindingContext().getDiagnostics(), messageCollector.getMessageCollector()
+        );
         if (hasErrors) {
             return null;
         }

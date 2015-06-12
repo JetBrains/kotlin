@@ -62,27 +62,13 @@ public final class AnalyzerWithCompilerReport {
         throw new IllegalStateException("Unknown severity: " + severity);
     }
 
-    @NotNull
     private static final DiagnosticFactory0<PsiErrorElement> SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create(Severity.ERROR);
 
-    private boolean hasErrors = false;
-    @NotNull
-    private final MessageCollector messageCollectorWrapper;
-    @Nullable
+    private final MessageSeverityCollector messageCollector;
     private AnalysisResult analysisResult = null;
 
-    public AnalyzerWithCompilerReport(@NotNull final MessageCollector collector) {
-        messageCollectorWrapper = new MessageCollector() {
-            @Override
-            public void report(@NotNull CompilerMessageSeverity severity,
-                    @NotNull String message,
-                    @NotNull CompilerMessageLocation location) {
-                if (CompilerMessageSeverity.ERRORS.contains(severity)) {
-                    hasErrors = true;
-                }
-                collector.report(severity, message, location);
-            }
-        };
+    public AnalyzerWithCompilerReport(@NotNull MessageCollector collector) {
+        messageCollector = new MessageSeverityCollector(collector);
     }
 
     private static boolean reportDiagnostic(@NotNull Diagnostic diagnostic, @NotNull MessageCollector messageCollector) {
@@ -114,7 +100,7 @@ public final class AnalyzerWithCompilerReport {
                         "Incomplete hierarchy should be reported with names of unresolved superclasses: " + fqName;
                 message.append("    ").append(fqName).append(", unresolved: ").append(unresolved).append("\n");
             }
-            messageCollectorWrapper.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
         }
     }
 
@@ -138,8 +124,7 @@ public final class AnalyzerWithCompilerReport {
                     message.append("    ").append(error).append("\n");
                 }
             }
-            messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                           message.toString(), CompilerMessageLocation.NO_LOCATION);
+            messageCollector.report(CompilerMessageSeverity.ERROR, message.toString(), CompilerMessageLocation.NO_LOCATION);
         }
     }
 
@@ -152,11 +137,12 @@ public final class AnalyzerWithCompilerReport {
             TraceBasedErrorReporter.AbiVersionErrorData data = bindingContext.get(TraceBasedErrorReporter.ABI_VERSION_ERRORS, kotlinClass);
             assert data != null;
             String path = toSystemDependentName(kotlinClass);
-            messageCollectorWrapper.report(CompilerMessageSeverity.ERROR,
-                                           "Class '" + JvmClassName.byClassId(data.getClassId()) +
-                                           "' was compiled with an incompatible version of Kotlin. " +
-                                           "Its ABI version is " + data.getActualVersion() + ", expected ABI version is " + JvmAbi.VERSION,
-                                           CompilerMessageLocation.create(path, 0, 0));
+            messageCollector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Class '" + JvmClassName.byClassId(data.getClassId()) + "' was compiled with an incompatible version of Kotlin. " +
+                    "Its ABI version is " + data.getActualVersion() + ", expected ABI version is " + JvmAbi.VERSION,
+                    CompilerMessageLocation.create(path, 0, 0)
+            );
         }
     }
 
@@ -170,7 +156,7 @@ public final class AnalyzerWithCompilerReport {
 
     private void reportSyntaxErrors(@NotNull Collection<JetFile> files) {
         for (JetFile file : files) {
-            reportSyntaxErrors(file, messageCollectorWrapper);
+            reportSyntaxErrors(file, messageCollector);
         }
     }
 
@@ -225,7 +211,7 @@ public final class AnalyzerWithCompilerReport {
     }
 
     public boolean hasErrors() {
-        return hasErrors;
+        return messageCollector.anyReported(CompilerMessageSeverity.ERROR);
     }
 
     public void analyzeAndReport(@NotNull Collection<JetFile> files, @NotNull Function0<AnalysisResult> analyzer) {
@@ -233,11 +219,10 @@ public final class AnalyzerWithCompilerReport {
         reportAbiVersionErrors();
         reportSyntaxErrors(files);
         //noinspection ConstantConditions
-        reportDiagnostics(analysisResult.getBindingContext().getDiagnostics(), messageCollectorWrapper);
+        reportDiagnostics(analysisResult.getBindingContext().getDiagnostics(), messageCollector);
         reportIncompleteHierarchies();
         reportAlternativeSignatureErrors();
     }
-
 
     private static class MyDiagnostic<E extends PsiElement> extends SimpleDiagnostic<E> {
         private final String message;

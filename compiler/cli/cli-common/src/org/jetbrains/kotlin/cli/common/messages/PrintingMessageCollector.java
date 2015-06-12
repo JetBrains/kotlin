@@ -21,6 +21,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.PrintStream;
 
 public class PrintingMessageCollector implements MessageCollector {
+    public static final MessageCollector PLAIN_TEXT_TO_SYSTEM_ERR =
+            new PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false);
+
     private final boolean verbose;
     private final PrintStream errStream;
     private final MessageRenderer messageRenderer;
