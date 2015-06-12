@@ -373,15 +373,13 @@ class GradleMessageCollector(val logger: Logger) : MessageCollector {
             })
             append(": ")
 
-            val path = location.getPath()
+            val (path, line, column) = location
             if (path != null) {
                 append(path)
                 append(": ")
-                append("(")
-                append(location.getLine())
-                append(", ")
-                append(location.getColumn())
-                append("): ")
+                if (line > 0 && column > 0) {
+                    append("($line, $column): ")
+                }
             }
 
             append(message)
