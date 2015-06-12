@@ -51,7 +51,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
     private JetScope scopeForInitializers; //contains members + primary constructor value parameters + map for backing fields
-    private JetScope scopeForMemberLookup;
+    private final JetScope scopeForMemberLookup;
     private final JetScope staticScope = new StaticScopeForKotlinClass(this);
 
     public MutableClassDescriptor(
@@ -70,8 +70,8 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
-        setScopeForMemberLookup(new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup", null, this)
-                                        .changeLockLevel(WritableScope.LockLevel.BOTH));
+        this.scopeForMemberLookup = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup", null, this)
+                                        .changeLockLevel(WritableScope.LockLevel.BOTH);
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler, "SupertypeResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
         this.mutableScopeForMemberResolution = new MutableScopeForMemberResolution();
@@ -252,10 +252,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         this.scopeForInitializers = new WritableScopeImpl(
                 scopeForMemberResolution, containingDeclaration, RedeclarationHandler.DO_NOTHING, "Initializers")
                     .changeLockLevel(WritableScope.LockLevel.BOTH);
-    }
-
-    public void setScopeForMemberLookup(@NotNull JetScope scopeForMemberLookup) {
-        this.scopeForMemberLookup = scopeForMemberLookup;
     }
 
     @Override

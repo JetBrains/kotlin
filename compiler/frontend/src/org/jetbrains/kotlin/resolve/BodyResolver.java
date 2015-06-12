@@ -508,7 +508,7 @@ public class BodyResolver {
             if (unsubstitutedPrimaryConstructor != null) {
                 ForceResolveUtil.forceResolveAllContents(unsubstitutedPrimaryConstructor.getAnnotations());
 
-                WritableScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(),
+                JetScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(),
                                                                                     unsubstitutedPrimaryConstructor);
                 valueParameterResolver.resolveValueParameters(klass.getPrimaryConstructorParameters(),
                                                               unsubstitutedPrimaryConstructor.getValueParameters(),
@@ -517,7 +517,7 @@ public class BodyResolver {
         }
     }
 
-    private static WritableScope getPrimaryConstructorParametersScope(
+    private static JetScope getPrimaryConstructorParametersScope(
             JetScope originalScope,
             ConstructorDescriptor unsubstitutedPrimaryConstructor
     ) {
