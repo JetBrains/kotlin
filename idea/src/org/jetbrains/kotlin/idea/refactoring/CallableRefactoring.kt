@@ -16,42 +16,35 @@
 
 package org.jetbrains.kotlin.idea.refactoring
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.resolve.BindingContext
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
-import org.jetbrains.kotlin.resolve.OverrideResolver
+import com.intellij.CommonBundle
+import com.intellij.ide.IdeBundle
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
+import com.intellij.psi.PsiElement
+import com.intellij.psi.search.searches.OverridingMethodsSearch
+import com.intellij.refactoring.RefactoringBundle
+import org.jetbrains.kotlin.asJava.namedUnwrappedElement
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
-import java.util.Collections
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
-import com.intellij.refactoring.RefactoringBundle
-import com.intellij.ide.IdeBundle
-import com.intellij.openapi.ui.Messages
-import com.intellij.CommonBundle
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.idea.JetBundle
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import java.util.HashSet
-import com.intellij.psi.search.searches.OverridingMethodsSearch
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.asJava.toLightMethods
-import org.jetbrains.kotlin.asJava.namedUnwrappedElement
-import org.jetbrains.kotlin.psi.JetCallableDeclaration
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.psi.JetBlockExpression
 import org.jetbrains.kotlin.psi.JetDeclarationWithBody
 import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetChangeSignature
-import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.OverrideResolver
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import java.util.Collections
+import java.util.HashSet
 
 public abstract class CallableRefactoring<T: CallableDescriptor>(
         val project: Project,
@@ -191,16 +184,18 @@ fun getAffectedCallables(project: Project, descriptorsForChange: Collection<Call
 }
 
 fun DeclarationDescriptor.getContainingScope(bindingContext: BindingContext): JetScope? {
-    val containingDescriptor = getContainingDeclaration() ?: return null
-    return when (containingDescriptor) {
-        is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution()
-        is FunctionDescriptor -> {
-            (DescriptorToSourceUtils.descriptorToDeclaration(containingDescriptor) as? JetDeclarationWithBody)?.let {
-                it.getBodyScope(bindingContext)
-            }
+    val declaration = DescriptorToSourceUtils.descriptorToDeclaration(this)
+    val block = declaration?.getParent() as? JetBlockExpression
+    if (block != null) {
+        return bindingContext[BindingContext.RESOLUTION_SCOPE, block.getStatements().last()]
+    }
+    else {
+        val containingDescriptor = getContainingDeclaration() ?: return null
+        return when (containingDescriptor) {
+            is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution()
+            is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
+            else -> null
         }
-        is PackageFragmentDescriptor -> containingDescriptor.getMemberScope()
-        else -> null
     }
 }
 
