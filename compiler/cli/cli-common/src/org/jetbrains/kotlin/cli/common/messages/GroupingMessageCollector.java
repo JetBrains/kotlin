@@ -20,8 +20,6 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
-
 public class GroupingMessageCollector implements MessageCollector {
 
     private final MessageCollector delegate;
@@ -48,12 +46,22 @@ public class GroupingMessageCollector implements MessageCollector {
     }
 
     public void flush() {
+        boolean hasError = false;
+
         for (String path : groupedMessages.keySet()) {
-            Collection<Message> messages = groupedMessages.get(path);
-            for (Message message : messages) {
-                delegate.report(message.severity, message.message, message.location);
+            for (Message message : groupedMessages.get(path)) {
+                hasError |= CompilerMessageSeverity.ERRORS.contains(message.severity);
             }
         }
+
+        for (String path : groupedMessages.keySet()) {
+            for (Message message : groupedMessages.get(path)) {
+                if (!hasError || CompilerMessageSeverity.ERRORS.contains(message.severity)) {
+                    delegate.report(message.severity, message.message, message.location);
+                }
+            }
+        }
+
         groupedMessages.clear();
     }
 

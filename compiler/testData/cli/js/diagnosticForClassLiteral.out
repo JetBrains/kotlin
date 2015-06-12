@@ -1,3 +1,2 @@
-WARNING: compiler/testData/cli/js/diagnosticForClassLiteral.kt: (6, 5) The expression is unused
 ERROR: compiler/testData/cli/js/diagnosticForClassLiteral.kt: (6, 5) Cannot translate (not supported yet): 'A::class'
 COMPILATION_ERROR

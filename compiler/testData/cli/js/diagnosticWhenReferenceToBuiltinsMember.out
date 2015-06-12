@@ -1,5 +1,3 @@
-WARNING: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (4, 5) The expression is unused
-WARNING: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (5, 5) The expression is unused
 ERROR: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (4, 5) Callable references for builtin members are not supported yet: 'Int::toByte'
 ERROR: compiler/testData/cli/js/diagnosticWhenReferenceToBuiltinsMember.kt: (5, 5) Callable references for builtin members are not supported yet: 'String::length'
 COMPILATION_ERROR
