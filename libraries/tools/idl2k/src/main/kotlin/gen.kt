@@ -10,32 +10,11 @@ private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet()
     }
 }
 
-fun String.isNullable() = endsWith(")?") || (endsWith("?") && !contains("->"))
-
-fun String.ensureNullable() = when {
-    this == "dynamic" -> this
-    isNullable() -> this
-    contains("->") -> "($this)?"
-    else -> "$this?"
-}
-
-fun String.dropNullable() = when {
-    endsWith(")?") -> this.removeSuffix("?").removeSurrounding("(", ")")
-    contains("->") -> this
-    endsWith("?") -> this.removeSuffix("?")
-    else -> this
-}
-
-fun String.copyNullabilityFrom(type: String) = when {
-    type.isNullable() -> ensureNullable()
-    else -> this
-}
-
 fun generateFunction(repository: Repository, function: Operation, functionName: String, nativeGetterOrSetter: NativeGetterOrSetter = function.getterOrSetter()): GenerateFunction =
         function.attributes.map { it.call }.toSet().let { attributes ->
             GenerateFunction(
                     name = functionName,
-                    returnType = mapType(repository, function.returnType).let { mapped -> if (nativeGetterOrSetter == NativeGetterOrSetter.GETTER) mapped.ensureNullable() else mapped },
+                    returnType = mapType(repository, function.returnType).let { mapped -> if (nativeGetterOrSetter == NativeGetterOrSetter.GETTER) mapped.toNullable() else mapped },
                     arguments = function.parameters.map {
                         GenerateAttribute(
                                 name = it.name,
@@ -61,16 +40,13 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
         NativeGetterOrSetter.SETTER -> generateFunction(repository, function, "set")
     }
     val callbackArgumentsAsLambdas = function.parameters.map {
-        val interfaceType = repository.interfaces[it.type.dropNullable()]
+        val parameterType = mapType(repository, it.type) as? SimpleType
+        val interfaceType = repository.interfaces[parameterType?.type]
         when {
             interfaceType == null -> it
             interfaceType.operations.size() != 1 -> it
             interfaceType.callback -> interfaceType.operations.single().let { callbackFunction ->
-                it.copy(type = callbackFunction.parameters
-                        .map { it.copy(type = mapType(repository, it.type)) }
-                        .map { it.formatFunctionTypePart() }
-                        .join(", ", "(", ") -> ${mapType(repository, callbackFunction.returnType)}")
-                        .copyNullabilityFrom(it.type))
+                it.copy(type = FunctionType(callbackFunction.parameters.map { it.copy(type = mapType(repository, it.type)) }, mapType(repository, callbackFunction.returnType), parameterType?.nullable ?: false))
             }
             else -> it
         }
@@ -161,7 +137,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
 
 fun generateConstructorAsFunction(repository: Repository, constructor: ExtendedAttribute) = generateFunction(
         repository,
-        Operation("", "Unit", constructor.arguments, emptyList(), false),
+        Operation("", UnitType, constructor.arguments, emptyList(), false),
         functionName = "",
         nativeGetterOrSetter = NativeGetterOrSetter.NONE)
 
@@ -187,7 +163,7 @@ fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
         secondaryConstructors = emptyList()
 )
 
-fun generateUnionTypeTraits(allUnionTypes: Iterable<UnionType>): List<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)
+fun generateUnionTypeTraits(allUnionTypes: Sequence<UnionType>): Sequence<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)
 
 fun mapDefinitions(repository: Repository, definitions: Iterable<InterfaceDefinition>) =
         definitions.filter { "NoInterfaceObject" !in it.extendedAttributes.map { it.call } }.map { generateTrait(repository, it) }
@@ -199,13 +175,14 @@ fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<Typede
     val anonymousUnionTypeTraits = generateUnionTypeTraits(anonymousUnionTypes)
     val anonymousUnionsMap = anonymousUnionTypeTraits.toMap { it.name }
 
-    val typedefsToBeGenerated = typedefs.filter { it.types.startsWith("Union<") }
-            .map { NamedValue(it.name, UnionType(it.namespace, splitUnionType(it.types))) }
-            .filter { it.value.memberTypes.all { type -> type in declaredTypes } }
+    val typedefsToBeGenerated = typedefs.filter { it.types is UnionType }
+            .map { NamedValue(it.name, it.types as UnionType) }
+            .filter { it.value.memberTypes.all { type -> type is SimpleType && type.type in declaredTypes } }
+
     val typedefsMarkersMap = typedefsToBeGenerated.groupBy { it.name }.mapValues { mapUnionType(it.value.first().value).copy(name = it.key) }
 
-    val typeNamesToUnions = anonymousUnionTypes.flatMap { unionType -> unionType.memberTypes.map { unionMember -> unionMember to unionType.name } }.toMultiMap() merge
-            typedefsToBeGenerated.flatMap { typedef -> typedef.value.memberTypes.map { unionMember -> unionMember to typedef.name } }.toMultiMap()
+    val typeNamesToUnions = anonymousUnionTypes.toList().flatMap { unionType -> unionType.memberTypes.filterIsInstance<SimpleType>().map { unionMember -> unionMember.type to unionType.name } }.toMultiMap() merge
+            typedefsToBeGenerated.flatMap { typedef -> typedef.value.memberTypes.filterIsInstance<SimpleType>().map { unionMember -> unionMember.type to typedef.name } }.toMultiMap()
 
     return GenerateUnionTypes(
             typeNamesToUnionsMap = typeNamesToUnions,

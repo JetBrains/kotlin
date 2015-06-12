@@ -19,7 +19,7 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, overri
     append(" ")
     append(arg.name)
     append(": ")
-    append(arg.type)
+    append(arg.type.render())
     if (arg.initializer != null) {
         append(" = ")
         append(arg.initializer.replaceWrongConstants(arg.type))
@@ -39,9 +39,9 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, overri
 private val keywords = setOf("interface")
 
 private fun String.parse() = if (this.startsWith("0x")) BigInteger(this.substring(2), 16) else BigInteger(this)
-private fun String.replaceWrongConstants(type: String) = when {
-    this == "noImpl" || type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong()) -> "noImpl"
-    type == "Double" && this.matches("[0-9]+".toRegex()) -> "${this}.0"
+private fun String.replaceWrongConstants(type: Type) = when {
+    this == "noImpl" || type is SimpleType && type.type == "Int" && parse() > BigInteger.valueOf(Int.MAX_VALUE.toLong()) -> "noImpl"
+    type is SimpleType && type.type == "Double" && this.matches("[0-9]+".toRegex()) -> "${this}.0"
     else -> this
 }
 private fun String.replaceKeywords() = if (this in keywords) this + "_" else this
@@ -54,7 +54,7 @@ private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>,
                 }
                 append(it.name.replaceKeywords())
                 append(": ")
-                append(it.type)
+                append(it.type.render())
                 if (!omitDefaults && it.initializer != null && it.initializer != "") {
                     append(" = ")
                     append(it.initializer.replaceWrongConstants(it.type))
@@ -82,7 +82,7 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
     }
     append("fun ${f.name.replaceKeywords()}(")
     renderArgumentsDeclaration(f.arguments, override)
-    appendln("): ${f.returnType} = noImpl")
+    appendln("): ${f.returnType.render()} = noImpl")
 }
 
 fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
@@ -177,7 +177,7 @@ fun betterFunction(f1: GenerateFunction, f2: GenerateFunction): GenerateFunction
         )
 
 private fun <F, T> Pair<F, F>.map(block: (F) -> T) = block(first) to block(second)
-private fun Pair<String, String>.betterType() = if (listOf("dynamic", "Any").any { first.contains(it) }) first else second
+private fun Pair<Type, Type>.betterType() = if (first is DynamicType || first is AnyType) first else second
 private fun Pair<String, String>.betterName() = if (((0..9).map { it.toString() } + listOf("arg")).none { first.toLowerCase().contains(it) }) first else second
 
 fun <K, V> List<Pair<K, V>>.toMultiMap(): Map<K, List<V>> = groupBy { it.first }.mapValues { it.value.map { it.second } }
