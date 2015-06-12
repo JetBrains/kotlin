@@ -134,8 +134,11 @@ class FunctionDescriptorResolver(
             trace: BindingTrace,
             expectedFunctionType: JetType
     ) {
-        val innerScope = WritableScopeImpl(scope, functionDescriptor, TraceBasedRedeclarationHandler(trace), "Function descriptor header scope")
-        innerScope.addLabeledDeclaration(functionDescriptor)
+        val innerScope = WritableScopeImpl(scope,
+                                           functionDescriptor,
+                                           TraceBasedRedeclarationHandler(trace),
+                                           "Function descriptor header scope",
+                                           labeledDeclaration = functionDescriptor)
 
         val typeParameterDescriptors = descriptorResolver.
                 resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, function.getTypeParameters(), trace)

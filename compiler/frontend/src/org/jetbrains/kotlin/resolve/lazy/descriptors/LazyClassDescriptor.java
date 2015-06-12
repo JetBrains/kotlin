@@ -265,8 +265,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @NotNull
     private JetScope computeScopeForMemberDeclarationResolution() {
-        WritableScopeImpl thisScope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, RedeclarationHandler.DO_NOTHING, "Scope with 'this' for " + getName());
-        thisScope.addLabeledDeclaration(this);
+        WritableScopeImpl thisScope = new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, RedeclarationHandler.DO_NOTHING,
+                                                            "Scope with 'this' for " + getName(), this);
         thisScope.setImplicitReceiver(this.getThisAsReceiverParameter());
         thisScope.changeLockLevel(WritableScope.LockLevel.READING);
 

@@ -80,7 +80,7 @@ public class FunctionDescriptorUtil {
             @NotNull FunctionDescriptor descriptor,
             @NotNull RedeclarationHandler redeclarationHandler
     ) {
-        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Function inner scope");
+        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Function inner scope", descriptor);
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
         if (receiver != null) {
             parameterScope.setImplicitReceiver(receiver);
@@ -91,7 +91,6 @@ public class FunctionDescriptorUtil {
         for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
             parameterScope.addVariableDescriptor(valueParameterDescriptor);
         }
-        parameterScope.addLabeledDeclaration(descriptor);
         parameterScope.changeLockLevel(WritableScope.LockLevel.READING);
         return parameterScope;
     }

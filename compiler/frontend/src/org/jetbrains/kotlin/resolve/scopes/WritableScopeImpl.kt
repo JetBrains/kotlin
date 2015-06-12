@@ -32,19 +32,19 @@ import org.jetbrains.kotlin.util.collectionUtils.concatInOrder
 
 // Writes to: maps
 
-public class WritableScopeImpl(outerScope: JetScope,
-                               private val ownerDeclarationDescriptor: DeclarationDescriptor,
-                               protected val redeclarationHandler: RedeclarationHandler,
-                               private val debugName: String)
-: AbstractScopeAdapter(), WritableScope {
+public class WritableScopeImpl @jvmOverloads constructor(
+        outerScope: JetScope,
+        private val ownerDeclarationDescriptor: DeclarationDescriptor,
+        protected val redeclarationHandler: RedeclarationHandler,
+        private val debugName: String,
+        private val labeledDeclaration: DeclarationDescriptor? = null
+) : AbstractScopeAdapter(), WritableScope {
 
     private val explicitlyAddedDescriptors = SmartList<DeclarationDescriptor>()
 
     private var functionGroups: MutableMap<Name, IntList>? = null
 
     private var variableOrClassDescriptors: MutableMap<Name, IntList>? = null
-
-    private var labelsToDescriptors: MutableMap<Name, SmartList<DeclarationDescriptor>>? = null
 
     private var implicitReceiver: ReceiverParameterDescriptor? = null
 
@@ -101,18 +101,10 @@ public class WritableScopeImpl(outerScope: JetScope,
         checkMayRead()
 
         val superResult = super<AbstractScopeAdapter>.getDeclarationsByLabel(labelName)
-        val declarationDescriptors = labelsToDescriptors?.get(labelName) ?: return superResult
-        if (superResult.isEmpty()) return declarationDescriptors
-        return declarationDescriptors + superResult
-    }
-
-    override fun addLabeledDeclaration(descriptor: DeclarationDescriptor) {
-        checkMayWrite()
-
-        if (labelsToDescriptors == null) {
-            labelsToDescriptors = HashMap()
-        }
-        labelsToDescriptors!!.getOrPut(descriptor.getName()) { SmartList() }.add(descriptor)
+        return if (labeledDeclaration != null && labeledDeclaration.getName() == labelName)
+            listOf(labeledDeclaration) + superResult
+        else
+            superResult
     }
 
     private fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {

@@ -126,10 +126,8 @@ public final class JetScopeUtils {
     ) {
         WritableScopeImpl result = new WritableScopeImpl(
                 outerScope, propertyDescriptor, redeclarationHandler,
-                "Property declaration inner scope");
-        if (addLabelForProperty) {
-            result.addLabeledDeclaration(propertyDescriptor);
-        }
+                "Property declaration inner scope",
+                addLabelForProperty ? propertyDescriptor : null);
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addClassifierDescriptor(typeParameterDescriptor);
         }

@@ -31,8 +31,6 @@ public trait WritableScope : JetScope {
 
     public fun changeLockLevel(lockLevel: LockLevel): WritableScope
 
-    public fun addLabeledDeclaration(descriptor: DeclarationDescriptor)
-
     public fun addVariableDescriptor(variableDescriptor: VariableDescriptor)
 
     public fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor)

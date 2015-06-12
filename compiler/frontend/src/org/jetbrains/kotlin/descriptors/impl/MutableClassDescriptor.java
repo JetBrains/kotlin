@@ -72,7 +72,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
-        setScopeForMemberLookup(new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup")
+        setScopeForMemberLookup(new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup", this)
                                         .changeLockLevel(WritableScope.LockLevel.BOTH));
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler, "SupertypeResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
@@ -84,7 +84,6 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         }
 
         this.scopeForMemberResolution = new ChainedScope(this, "MemberResolutionWithStatic", writableScopeForMemberResolution, staticScope);
-        writableScopeForMemberResolution.addLabeledDeclaration(this);
     }
 
     @Nullable
