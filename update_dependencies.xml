@@ -8,6 +8,8 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
+    <property name="idea.dir" value="ideaSDK"/>
+
     <condition property="os.tag" value="win.zip">
         <os family="windows"/>
     </condition>
@@ -550,16 +552,16 @@
 
             <property name="content.base.url" value="@{base.url}/artifacts/content"/>
 
-            <property name="core" value="ideaSDK/core"/>
-            <property name="core-analysis" value="ideaSDK/core-analysis"/>
-            <property name="jps" value="ideaSDK/jps"/>
+            <property name="core" value="${idea.dir}/core"/>
+            <property name="core-analysis" value="${idea.dir}/core-analysis"/>
+            <property name="jps" value="${idea.dir}/jps"/>
             <property name="jps-test" value="${jps}/test"/>
 
             <if>
                 <istrue value="${idea.sdk.fetch.needed}"/>
 
                 <then>
-                    <delete dir="ideaSDK" failonerror="false">
+                    <delete dir="${idea.dir}" failonerror="false">
                         <exclude name="config-idea/**"/>
                         <exclude name="system-idea/**"/>
                     </delete>
@@ -614,59 +616,59 @@
             <if>
                 <matches pattern=".+\.win\.zip" string="${idea.archive.name}"/>
                 <then>
-                    <unzip src="dependencies/download/${idea.archive.name}" dest="ideaSDK"/>
+                    <unzip src="dependencies/download/${idea.archive.name}" dest="${idea.dir}"/>
                 </then>
                 <elseif>
                     <matches pattern=".+\.mac\.zip" string="${idea.archive.name}"/>
                     <then>
-                        <unzip src="dependencies/download/${idea.archive.name}" dest="ideaSDK">
+                        <unzip src="dependencies/download/${idea.archive.name}" dest="${idea.dir}">
                             <cutdirsmapper dirs="2"/>
                         </unzip>
                         <!-- Java can't manipulate permissions -->
                         <exec executable="chmod">
                             <arg value="a+x"/>
-                            <arg path="ideaSDK/bin/fsnotifier"/>
-                            <arg path="ideaSDK/bin/inspect.sh"/>
-                            <arg path="ideaSDK/bin/printenv.py"/>
-                            <arg path="ideaSDK/bin/restarter"/>
+                            <arg path="${idea.dir}/bin/fsnotifier"/>
+                            <arg path="${idea.dir}/bin/inspect.sh"/>
+                            <arg path="${idea.dir}/bin/printenv.py"/>
+                            <arg path="${idea.dir}/bin/restarter"/>
                         </exec>
                     </then>
                 </elseif>
                 <else>
-                    <untar src="dependencies/download/${idea.archive.name}" dest="ideaSDK" compression="gzip">
+                    <untar src="dependencies/download/${idea.archive.name}" dest="${idea.dir}" compression="gzip">
                         <cutdirsmapper dirs="1"/>
                     </untar>
                     <!-- Java can't manipulate permissions -->
                     <exec executable="chmod">
                         <arg value="a+x"/>
-                        <arg path="ideaSDK/bin/fsnotifier"/>
-                        <arg path="ideaSDK/bin/fsnotifier64"/>
-                        <arg path="ideaSDK/bin/inspect.sh"/>
-                        <arg path="ideaSDK/bin/idea.sh"/>
+                        <arg path="${idea.dir}/bin/fsnotifier"/>
+                        <arg path="${idea.dir}/bin/fsnotifier64"/>
+                        <arg path="${idea.dir}/bin/inspect.sh"/>
+                        <arg path="${idea.dir}/bin/idea.sh"/>
                     </exec>
                 </else>
             </if>
 
-            <mkdir dir="ideaSDK/sources"/>
-            <copy file="dependencies/download/idea-sdk-sources.zip" tofile="ideaSDK/sources/sources.zip" overwrite="true"/>
+            <mkdir dir="${idea.dir}/sources"/>
+            <copy file="dependencies/download/idea-sdk-sources.zip" tofile="${idea.dir}/sources/sources.zip" overwrite="true"/>
 
-            <copy file="ideaSDK/lib/jdom.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/jna.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/log4j.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/xstream-1.4.3.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/jsr166e.jar" todir="${core}"/>
-            <copy file="ideaSDK/lib/asm-all.jar" todir="${core}"/>
+            <copy file="${idea.dir}/lib/jdom.jar" todir="${core}"/>
+            <copy file="${idea.dir}/lib/jna.jar" todir="${core}"/>
+            <copy file="${idea.dir}/lib/log4j.jar" todir="${core}"/>
+            <copy file="${idea.dir}/lib/xstream-1.4.3.jar" todir="${core}"/>
+            <copy file="${idea.dir}/lib/xpp3-1.1.4-min.jar" todir="${core}"/>
+            <copy file="${idea.dir}/lib/jsr166e.jar" todir="${core}"/>
+            <copy file="${idea.dir}/lib/asm-all.jar" todir="${core}"/>
 
             <!-- TODO temporary workaround since util-rt is not packaged into intellij-core.jar -->
-            <copy file="ideaSDK/lib/util.jar" todir="${core}"/>
+            <copy file="${idea.dir}/lib/util.jar" todir="${core}"/>
 
             <!--
                  This one needs to be deleted because otherwise it gets onto the classpath
                  together with junit-4.10.jar and the classloading goes crazy that breaks
                  many nice features of IDEA including diffs in the test console.
             -->
-            <delete file="ideaSDK/lib/junit.jar"/>
+            <delete file="${idea.dir}/lib/junit.jar"/>
 
             <build-protobuf-java-lite/>
         </sequential>
