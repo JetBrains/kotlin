@@ -81,8 +81,7 @@ public class LazyScriptDescriptor(
     override fun getScriptCodeDescriptor() = scriptCodeDescriptor()
 
     override fun getScopeForBodyResolution(): JetScope {
-        val parametersScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.DO_NOTHING, "Parameters of " + this)
-        parametersScope.setImplicitReceiver(implicitReceiver)
+        val parametersScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.DO_NOTHING, "Parameters of " + this, implicitReceiver)
         for (valueParameterDescriptor in getScriptCodeDescriptor().getValueParameters()) {
             parametersScope.addVariableDescriptor(valueParameterDescriptor)
         }

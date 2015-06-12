@@ -80,11 +80,8 @@ public class FunctionDescriptorUtil {
             @NotNull FunctionDescriptor descriptor,
             @NotNull RedeclarationHandler redeclarationHandler
     ) {
-        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Function inner scope", descriptor);
         ReceiverParameterDescriptor receiver = descriptor.getExtensionReceiverParameter();
-        if (receiver != null) {
-            parameterScope.setImplicitReceiver(receiver);
-        }
+        WritableScope parameterScope = new WritableScopeImpl(outerScope, descriptor, redeclarationHandler, "Function inner scope", receiver, descriptor);
         for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
             parameterScope.addClassifierDescriptor(typeParameter);
         }

@@ -37,24 +37,27 @@ public class WritableScopeImpl @jvmOverloads constructor(
         private val ownerDeclarationDescriptor: DeclarationDescriptor,
         private val redeclarationHandler: RedeclarationHandler,
         private val debugName: String,
+        implicitReceiver: ReceiverParameterDescriptor? = null,
         private val labeledDeclaration: DeclarationDescriptor? = null
 ) : AbstractScopeAdapter(), WritableScope {
+
+    override val workerScope: JetScope = if (outerScope is WritableScope) outerScope.takeSnapshot() else outerScope
 
     private val addedDescriptors = SmartList<DeclarationDescriptor>()
 
     private var functionsByName: MutableMap<Name, IntList>? = null
     private var variablesAndClassifiersByName: MutableMap<Name, IntList>? = null
 
-    private var implicitReceiver: ReceiverParameterDescriptor? = null
-    private var implicitReceiverHierarchy: List<ReceiverParameterDescriptor>? = null
-
-    override fun getContainingDeclaration(): DeclarationDescriptor = ownerDeclarationDescriptor
+    private val implicitReceiverHierarchy = if (implicitReceiver != null)
+        listOf(implicitReceiver) + super<AbstractScopeAdapter>.getImplicitReceiversHierarchy()
+    else
+        super<AbstractScopeAdapter>.getImplicitReceiversHierarchy()
 
     private var lastSnapshot: Snapshot? = null
 
     private var lockLevel: WritableScope.LockLevel = WritableScope.LockLevel.WRITING
 
-    override val workerScope: JetScope = if (outerScope is WritableScope) outerScope.takeSnapshot() else outerScope
+    override fun getContainingDeclaration() = ownerDeclarationDescriptor
 
     override fun changeLockLevel(lockLevel: WritableScope.LockLevel): WritableScope {
         if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
@@ -170,30 +173,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
                ?: workerScope.getClassifier(name)
     }
 
-    override fun setImplicitReceiver(implicitReceiver: ReceiverParameterDescriptor) {
-        checkMayWrite()
-
-        if (this.implicitReceiver != null) {
-            throw UnsupportedOperationException("Receiver redeclared")
-        }
-        this.implicitReceiver = implicitReceiver
-    }
-
-    override fun getImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-        checkMayRead()
-
-        if (implicitReceiverHierarchy == null) {
-            implicitReceiverHierarchy = computeImplicitReceiversHierarchy()
-        }
-        return implicitReceiverHierarchy!!
-    }
-
-    private fun computeImplicitReceiversHierarchy(): List<ReceiverParameterDescriptor> {
-        return if (implicitReceiver != null)
-            listOf(implicitReceiver!!) + super<AbstractScopeAdapter>.getImplicitReceiversHierarchy()
-        else
-            super<AbstractScopeAdapter>.getImplicitReceiversHierarchy()
-    }
+    override fun getImplicitReceiversHierarchy() = implicitReceiverHierarchy
 
     override fun getOwnDeclaredDescriptors(): Collection<DeclarationDescriptor> = addedDescriptors
 

@@ -127,12 +127,10 @@ public final class JetScopeUtils {
         WritableScopeImpl result = new WritableScopeImpl(
                 outerScope, propertyDescriptor, redeclarationHandler,
                 "Property declaration inner scope",
+                receiver,
                 addLabelForProperty ? propertyDescriptor : null);
         for (TypeParameterDescriptor typeParameterDescriptor : typeParameters) {
             result.addClassifierDescriptor(typeParameterDescriptor);
-        }
-        if (receiver != null) {
-            result.setImplicitReceiver(receiver);
         }
         result.changeLockLevel(WritableScope.LockLevel.READING);
         return result;

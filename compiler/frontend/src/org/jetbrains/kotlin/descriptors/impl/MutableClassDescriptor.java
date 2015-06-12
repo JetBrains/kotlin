@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.impl;
 
 import com.google.common.collect.Sets;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -26,10 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class MutableClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes {
     private final ClassKind kind;
@@ -48,7 +46,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     private final Set<PropertyDescriptor> properties = Sets.newLinkedHashSet();
     private final Set<SimpleFunctionDescriptor> functions = Sets.newLinkedHashSet();
 
-    private final WritableScope writableScopeForMemberResolution;
+    private final MutableScopeForMemberResolution mutableScopeForMemberResolution;
     private final JetScope scopeForMemberResolution;
     // This scope contains type parameters but does not contain inner classes
     private final WritableScope scopeForSupertypeResolution;
@@ -72,18 +70,17 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
 
         RedeclarationHandler redeclarationHandler = RedeclarationHandler.DO_NOTHING;
 
-        setScopeForMemberLookup(new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup", this)
+        setScopeForMemberLookup(new WritableScopeImpl(JetScope.Empty.INSTANCE$, this, redeclarationHandler, "MemberLookup", null, this)
                                         .changeLockLevel(WritableScope.LockLevel.BOTH));
         this.scopeForSupertypeResolution = new WritableScopeImpl(outerScope, this, redeclarationHandler, "SupertypeResolution")
                 .changeLockLevel(WritableScope.LockLevel.BOTH);
-        this.writableScopeForMemberResolution = new WritableScopeImpl(scopeForSupertypeResolution, this, redeclarationHandler, "MemberResolution")
-                .changeLockLevel(WritableScope.LockLevel.BOTH);
+        this.mutableScopeForMemberResolution = new MutableScopeForMemberResolution();
 
         if (kind == ClassKind.INTERFACE) {
             setUpScopeForInitializers(this);
         }
 
-        this.scopeForMemberResolution = new ChainedScope(this, "MemberResolutionWithStatic", writableScopeForMemberResolution, staticScope);
+        this.scopeForMemberResolution = new ChainedScope(this, "MemberResolutionWithStatic", mutableScopeForMemberResolution, staticScope);
     }
 
     @Nullable
@@ -227,7 +224,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         for (FunctionDescriptor functionDescriptor : getConstructors()) {
             ((ConstructorDescriptorImpl) functionDescriptor).setReturnType(getDefaultType());
         }
-        writableScopeForMemberResolution.setImplicitReceiver(getThisAsReceiverParameter());
+        mutableScopeForMemberResolution.setImplicitReceiver(getThisAsReceiverParameter());
     }
 
     @Override
@@ -280,5 +277,42 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
     @Override
     public String toString() {
         return DeclarationDescriptorImpl.toString(this);
+    }
+
+    private class MutableScopeForMemberResolution extends AbstractScopeAdapter {
+        private ReceiverParameterDescriptor implicitReceiver = null;
+        private List<ReceiverParameterDescriptor> implicitReceiversHierarchy = null;
+
+        @NotNull
+        @Override
+        protected JetScope getWorkerScope() {
+            return scopeForSupertypeResolution;
+        }
+
+        @NotNull
+        @Override
+        public DeclarationDescriptor getContainingDeclaration() {
+            return MutableClassDescriptor.this;
+        }
+
+        public void setImplicitReceiver(@NotNull ReceiverParameterDescriptor implicitReceiver) {
+            if (this.implicitReceiver != null) {
+                throw new UnsupportedOperationException("Receiver redeclared");
+            }
+            if (this.implicitReceiversHierarchy != null) {
+                throw new UnsupportedOperationException("Receiver hierarchy already computed");
+            }
+            this.implicitReceiver = implicitReceiver;
+            this.implicitReceiversHierarchy = KotlinPackage.plus(Collections.singletonList(implicitReceiver), super.getImplicitReceiversHierarchy());
+        }
+
+        @NotNull
+        @Override
+        public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
+            if (implicitReceiversHierarchy != null)
+                return implicitReceiversHierarchy;
+            else
+                return super.getImplicitReceiversHierarchy();
+        }
     }
 }
