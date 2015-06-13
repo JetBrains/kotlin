@@ -1,45 +1,19 @@
 @echo off
-rem based on scalac.bat from the Scala distribution
-rem ##########################################################################
-rem # Copyright 2002-2011, LAMP/EPFL
-rem # Copyright 2011-2015, JetBrains
-rem #
-rem # This is free software; see the distribution for copying conditions.
-rem # There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
-rem # PARTICULAR PURPOSE.
-rem ##########################################################################
 
-rem We adopt the following conventions:
-rem - System/user environment variables start with a letter
-rem - Local batch variables start with an underscore ('_')
+rem Copyright 2010-2015 JetBrains s.r.o.
+rem
+rem Licensed under the Apache License, Version 2.0 (the "License");
+rem you may not use this file except in compliance with the License.
+rem You may obtain a copy of the License at
+rem
+rem http://www.apache.org/licenses/LICENSE-2.0
+rem
+rem Unless required by applicable law or agreed to in writing, software
+rem distributed under the License is distributed on an "AS IS" BASIS,
+rem WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+rem See the License for the specific language governing permissions and
+rem limitations under the License.
 
-@setlocal
-call :set_home
+set KOTLIN_COMPILER=org.jetbrains.kotlin.cli.js.K2JSCompiler
 
-if not "%JAVA_HOME%"=="" (
-  if exist "%JAVA_HOME%\bin\java.exe" set "_JAVACMD=%JAVA_HOME%\bin\java.exe"
-)
-
-if "%_JAVACMD%"=="" set _JAVACMD=java
-
-rem We use the value of the JAVA_OPTS environment variable if defined
-set _JAVA_OPTS=-Xmx256M -Xms32M -noverify
-
-"%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
-  org.jetbrains.kotlin.preloading.Preloader "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
-  org.jetbrains.kotlin.cli.js.K2JSCompiler 4096 notime %*
-
-exit /b %ERRORLEVEL%
-goto end
-
-rem ##########################################################################
-rem # subroutines
-
-:set_home
-  set _BIN_DIR=
-  for %%i in (%~sf0) do set _BIN_DIR=%_BIN_DIR%%%~dpsi
-  set _KOTLIN_HOME=%_BIN_DIR%..
-goto :eof
-
-:end
-@endlocal
+call %~dps0kotlinc.bat %*
