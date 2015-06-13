@@ -73,17 +73,22 @@ public final class AnalyzerWithCompilerReport {
 
     private static boolean reportDiagnostic(@NotNull Diagnostic diagnostic, @NotNull MessageCollector messageCollector) {
         if (!diagnostic.isValid()) return false;
-        DiagnosticUtils.LineAndColumn lineAndColumn = DiagnosticUtils.getLineAndColumn(diagnostic);
+
         String render;
         if (diagnostic instanceof MyDiagnostic) {
-            render = ((MyDiagnostic)diagnostic).message;
+            render = ((MyDiagnostic) diagnostic).message;
         }
         else {
             render = DefaultErrorMessages.render(diagnostic);
         }
+
         PsiFile file = diagnostic.getPsiFile();
-        messageCollector.report(convertSeverity(diagnostic.getSeverity()), render,
-                MessageUtil.psiFileToMessageLocation(file, file.getName(), lineAndColumn.getLine(), lineAndColumn.getColumn()));
+        messageCollector.report(
+                convertSeverity(diagnostic.getSeverity()),
+                render,
+                MessageUtil.psiFileToMessageLocation(file, file.getName(), DiagnosticUtils.getLineAndColumn(diagnostic))
+        );
+
         return diagnostic.getSeverity() == Severity.ERROR;
     }
 
@@ -141,7 +146,7 @@ public final class AnalyzerWithCompilerReport {
                     CompilerMessageSeverity.ERROR,
                     "Class '" + JvmClassName.byClassId(data.getClassId()) + "' was compiled with an incompatible version of Kotlin. " +
                     "Its ABI version is " + data.getActualVersion() + ", expected ABI version is " + JvmAbi.VERSION,
-                    CompilerMessageLocation.create(path, -1, -1)
+                    CompilerMessageLocation.create(path, -1, -1, null)
             );
         }
     }

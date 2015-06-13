@@ -1,6 +1,10 @@
 >>> )(
-ERROR: /line1.kts: (1, 1) Expecting an element
-ERROR: /line1.kts: (1, 3) Expecting an expression
+/line1.kts:1:1: error: expecting an element
+)(
+^
+/line1.kts:1:3: error: expecting an expression
+)(
+  ^
 >>> fun foo() = 98
 >>> foo()
 98

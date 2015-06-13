@@ -1,19 +1,31 @@
-ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (15, 5) Accidental override: The following declarations have the same JVM signature (access$foo$0(LDerived;)V):
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:15:5: error: accidental override: The following declarations have the same JVM signature (access$foo$0(LDerived;)V):
     fun `access$foo$0`(d: Derived): kotlin.Unit
     fun foo(): kotlin.Unit
-ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (18, 9) Accidental override: The following declarations have the same JVM signature (access$getBar$1(LDerived;)I):
+    private fun foo() {}
+    ^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:18:9: error: accidental override: The following declarations have the same JVM signature (access$getBar$1(LDerived;)I):
     fun `access$getBar$1`(d: Derived): kotlin.Int
     fun <get-bar>(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (19, 9) Accidental override: The following declarations have the same JVM signature (access$setBar$1(LDerived;I)V):
+        get
+        ^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:19:9: error: accidental override: The following declarations have the same JVM signature (access$setBar$1(LDerived;I)V):
     fun `access$setBar$1`(d: Derived, i: kotlin.Int): kotlin.Unit
     fun <set-bar>(<set-?>: kotlin.Int): kotlin.Unit
-ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (21, 5) Accidental override: The following declarations have the same JVM signature (access$getBaz$2(LDerived;)I):
+        set
+        ^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:21:5: error: accidental override: The following declarations have the same JVM signature (access$getBaz$2(LDerived;)I):
     fun `access$getBaz$2`(d: Derived): kotlin.Int
     fun <get-baz>(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (23, 5) Accidental override: The following declarations have the same JVM signature (access$getBoo$3(LDerived;)I):
+    private var baz = 1
+    ^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:23:5: error: accidental override: The following declarations have the same JVM signature (access$getBoo$3(LDerived;)I):
     fun `access$getBoo$3`(d: Derived): kotlin.Int
     fun <get-boo>(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt: (27, 9) Accidental override: The following declarations have the same JVM signature (access$setBar1$4(LDerived;I)V):
+    private val boo = 1
+    ^
+compiler/testData/cli/jvm/syntheticAccessorSignatureClash.kt:27:9: error: accidental override: The following declarations have the same JVM signature (access$setBar1$4(LDerived;I)V):
     fun `access$setBar1$4`(d: Derived, i: kotlin.Int): kotlin.Unit
     fun <set-bar1>(<set-?>: kotlin.Int): kotlin.Unit
+        set
+        ^
 COMPILATION_ERROR

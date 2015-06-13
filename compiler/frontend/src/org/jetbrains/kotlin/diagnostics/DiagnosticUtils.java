@@ -128,16 +128,19 @@ public class DiagnosticUtils {
     }
 
     @NotNull
-    public static LineAndColumn offsetToLineAndColumn(Document document, int offset) {
+    public static LineAndColumn offsetToLineAndColumn(@Nullable Document document, int offset) {
         if (document == null) {
-            return new LineAndColumn(-1, offset);
+            return new LineAndColumn(-1, offset, null);
         }
 
         int lineNumber = document.getLineNumber(offset);
         int lineStartOffset = document.getLineStartOffset(lineNumber);
         int column = offset - lineStartOffset;
 
-        return new LineAndColumn(lineNumber + 1, column + 1);
+        int lineEndOffset = document.getLineEndOffset(lineNumber);
+        CharSequence lineContent = document.getCharsSequence().subSequence(lineStartOffset, lineEndOffset);
+
+        return new LineAndColumn(lineNumber + 1, column + 1, lineContent.toString());
     }
 
     public static void throwIfRunningOnServer(Throwable e) {
@@ -184,14 +187,16 @@ public class DiagnosticUtils {
 
     public static final class LineAndColumn {
 
-        public static final LineAndColumn NONE = new LineAndColumn(-1, -1);
+        public static final LineAndColumn NONE = new LineAndColumn(-1, -1, null);
 
         private final int line;
         private final int column;
+        private final String lineContent;
 
-        public LineAndColumn(int line, int column) {
+        public LineAndColumn(int line, int column, @Nullable String lineContent) {
             this.line = line;
             this.column = column;
+            this.lineContent = lineContent;
         }
 
         public int getLine() {
@@ -200,6 +205,11 @@ public class DiagnosticUtils {
 
         public int getColumn() {
             return column;
+        }
+
+        @Nullable
+        public String getLineContent() {
+            return lineContent;
         }
 
         // NOTE: This method is used for presenting positions to the user

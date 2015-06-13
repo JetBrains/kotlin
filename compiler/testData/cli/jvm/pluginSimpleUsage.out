@@ -1,4 +1,4 @@
-ERROR: Required plugin option not present: org.jetbrains.kotlin.android:androidRes
+error: required plugin option not present: org.jetbrains.kotlin.android:androidRes
 
 Plugin "org.jetbrains.kotlin.android" usage:
   androidRes <path>          Android resources path (required, multiple)

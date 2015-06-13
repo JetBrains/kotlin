@@ -1,5 +1,7 @@
 
 ERR:
-ERROR: test.kt: (4, 20) Expecting an element
+test.kt:4:20: error: expecting an element
+    val s = System.in
+                   ^
 
 Return code: 1

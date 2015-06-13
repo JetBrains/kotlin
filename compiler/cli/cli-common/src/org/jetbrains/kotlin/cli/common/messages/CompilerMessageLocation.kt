@@ -21,15 +21,21 @@ import kotlin.platform.platformStatic
 public data class CompilerMessageLocation private constructor(
         public val path: String?,
         public val line: Int,
-        public val column: Int
+        public val column: Int,
+        public val lineContent: String?
 ) {
     override fun toString(): String =
             path + (if (line != -1 || column != -1) " (" + line + ":" + column + ")" else "")
 
     companion object {
-        public platformStatic val NO_LOCATION: CompilerMessageLocation = CompilerMessageLocation(null, -1, -1)
+        public platformStatic val NO_LOCATION: CompilerMessageLocation = CompilerMessageLocation(null, -1, -1, null)
 
-        public platformStatic fun create(path: String?, line: Int, column: Int): CompilerMessageLocation =
-                if (path == null) NO_LOCATION else CompilerMessageLocation(path, line, column)
+        public platformStatic fun create(
+                path: String?,
+                line: Int,
+                column: Int,
+                lineContent: String?
+        ): CompilerMessageLocation =
+                if (path == null) NO_LOCATION else CompilerMessageLocation(path, line, column, lineContent)
     }
 }

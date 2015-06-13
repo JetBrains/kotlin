@@ -1,28 +1,46 @@
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (6, 5) Accidental override: The following declarations have the same JVM signature (getX()I):
+compiler/testData/cli/jvm/signatureClash.kt:6:5: error: accidental override: The following declarations have the same JVM signature (getX()I):
     fun getX(): kotlin.Int
     fun <get-x>(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (8, 5) Platform declaration clash: The following declarations have the same JVM signature (getA()I):
+    fun getX() = 1
+    ^
+compiler/testData/cli/jvm/signatureClash.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
     fun getA(): kotlin.Int
     fun <get-a>(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (9, 5) Platform declaration clash: The following declarations have the same JVM signature (getA()I):
+    fun getA(): Int = 1
+    ^
+compiler/testData/cli/jvm/signatureClash.kt:9:5: error: platform declaration clash: The following declarations have the same JVM signature (getA()I):
     fun getA(): kotlin.Int
     fun <get-a>(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (12, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
+    val a: Int = 1
+    ^
+compiler/testData/cli/jvm/signatureClash.kt:12:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
     fun <get-b>(): kotlin.Int
     fun getB(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (13, 1) Platform declaration clash: The following declarations have the same JVM signature (getB()I):
+fun getB(): Int = 1
+^
+compiler/testData/cli/jvm/signatureClash.kt:13:1: error: platform declaration clash: The following declarations have the same JVM signature (getB()I):
     fun <get-b>(): kotlin.Int
     fun getB(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (19, 7) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
+val b: Int = 1
+^
+compiler/testData/cli/jvm/signatureClash.kt:19:7: error: platform declaration clash: The following declarations have the same JVM signature (getTr()I):
     fun <get-tr>(): kotlin.Int
     fun getTr(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (20, 5) Platform declaration clash: The following declarations have the same JVM signature (getTr()I):
+class SubTr : Tr {
+      ^
+compiler/testData/cli/jvm/signatureClash.kt:20:5: error: platform declaration clash: The following declarations have the same JVM signature (getTr()I):
     fun <get-tr>(): kotlin.Int
     fun getTr(): kotlin.Int
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (24, 7) Platform declaration clash: The following declarations have the same JVM signature (access$f$0(LC;)V):
+    val tr = 1
+    ^
+compiler/testData/cli/jvm/signatureClash.kt:24:7: error: platform declaration clash: The following declarations have the same JVM signature (access$f$0(LC;)V):
     fun `access$f$0`(c: C): kotlin.Unit
     fun f(): kotlin.Unit
-ERROR: compiler/testData/cli/jvm/signatureClash.kt: (26, 5) Platform declaration clash: The following declarations have the same JVM signature (access$f$0(LC;)V):
+class C {
+      ^
+compiler/testData/cli/jvm/signatureClash.kt:26:5: error: platform declaration clash: The following declarations have the same JVM signature (access$f$0(LC;)V):
     fun `access$f$0`(c: C): kotlin.Unit
     fun f(): kotlin.Unit
+    fun `access$f$0`(c: C) {}
+    ^
 COMPILATION_ERROR

@@ -1,2 +1,2 @@
-WARNING: Duplicate source root: compiler/testData/cli/jvm/simple.kt
+warning: duplicate source root: compiler/testData/cli/jvm/simple.kt
 OK

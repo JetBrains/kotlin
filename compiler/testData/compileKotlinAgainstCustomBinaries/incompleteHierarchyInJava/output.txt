@@ -1,5 +1,7 @@
-ERROR: compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyInJava/source.kt: (5, 22) Unresolved reference: foo
-ERROR: The following classes have incomplete hierarchies:
+compiler/testData/compileKotlinAgainstCustomBinaries/incompleteHierarchyInJava/source.kt:5:22: error: unresolved reference: foo
+fun bar() = SubSub().foo()
+                     ^
+error: the following classes have incomplete hierarchies:
     test.Sub, unresolved: [Super]
 
 COMPILATION_ERROR

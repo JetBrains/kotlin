@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.cli.common.messages;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.LineSeparator;
+import kotlin.KotlinPackage;
 import kotlin.io.IoPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,6 +80,8 @@ public interface MessageRenderer {
     };
 
     abstract class PlainText implements MessageRenderer {
+        private static final String LINE_SEPARATOR = LineSeparator.getSystemLineSeparator().getSeparatorString();
+
         @Override
         public String renderPreamble() {
             return "";
@@ -88,22 +92,54 @@ public interface MessageRenderer {
                 @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
         ) {
             StringBuilder result = new StringBuilder();
-            result.append(severity).append(": ");
+
+            int line = location.getLine();
+            int column = location.getColumn();
+            String lineContent = location.getLineContent();
 
             String path = getPath(location);
             if (path != null) {
                 result.append(path);
-                result.append(": ");
-                if (location.getLine() > 0 && location.getColumn() > 0) {
-                    result.append("(");
-                    result.append(location.getLine()).append(", ").append(location.getColumn());
-                    result.append(") ");
+                result.append(":");
+                if (line > 0) {
+                    result.append(line).append(":");
+                    if (column > 0) {
+                        result.append(column).append(":");
+                    }
                 }
+                result.append(" ");
             }
 
-            result.append(message);
+            result.append(severity.name().toLowerCase());
+            result.append(": ");
+
+            result.append(decapitalizeIfNeeded(message));
+
+            if (lineContent != null && 1 <= column && column <= lineContent.length() + 1) {
+                result.append(LINE_SEPARATOR);
+                result.append(lineContent);
+                result.append(LINE_SEPARATOR);
+                result.append(KotlinPackage.repeat(" ", column - 1));
+                result.append("^");
+            }
 
             return result.toString();
+        }
+
+        @NotNull
+        private static String decapitalizeIfNeeded(@NotNull String message) {
+            // TODO: invent something more clever
+            // An ad-hoc heuristic to prevent decapitalization of some names
+            if (message.startsWith("Java") || message.startsWith("Kotlin")) {
+                return message;
+            }
+
+            // For abbreviations and capitalized text
+            if (message.length() >= 2 && Character.isUpperCase(message.charAt(0)) && Character.isUpperCase(message.charAt(1))) {
+                return message;
+            }
+
+            return KotlinPackage.decapitalize(message);
         }
 
         @Nullable

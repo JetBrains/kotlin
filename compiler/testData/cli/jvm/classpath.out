@@ -1,6 +1,16 @@
-WARNING: compiler/testData/cli/jvm/classpath.kt: (8, 9) Variable 'a' is never used
-WARNING: compiler/testData/cli/jvm/classpath.kt: (9, 9) Variable 'c' is never used
-WARNING: compiler/testData/cli/jvm/classpath.kt: (10, 9) Variable 'e' is never used
-WARNING: compiler/testData/cli/jvm/classpath.kt: (11, 9) Variable 'f' is never used
-WARNING: compiler/testData/cli/jvm/classpath.kt: (12, 9) Variable 'j' is never used
+compiler/testData/cli/jvm/classpath.kt:8:9: warning: variable 'a' is never used
+    val a = Big5() // charsets.jar
+        ^
+compiler/testData/cli/jvm/classpath.kt:9:9: warning: variable 'c' is never used
+    val c = DNSNameService() // dnsns.ajr
+        ^
+compiler/testData/cli/jvm/classpath.kt:10:9: warning: variable 'e' is never used
+    val e : Cipher? = null // jce.jar
+        ^
+compiler/testData/cli/jvm/classpath.kt:11:9: warning: variable 'f' is never used
+    val f : SunJCE? = null // sunjce_provider.jar
+        ^
+compiler/testData/cli/jvm/classpath.kt:12:9: warning: variable 'j' is never used
+    val j : ByteBuffered? = null // rt.jar
+        ^
 OK

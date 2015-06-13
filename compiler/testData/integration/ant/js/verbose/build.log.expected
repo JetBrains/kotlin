@@ -3,8 +3,8 @@ Buildfile: [TestData]/build.xml
 
 build:
 [kotlin2js] Compiling [[TestData]/root1] => [[Temp]/out.js]
-[kotlin2js] LOGGING: Compiling source files: [TestData]/root1/foo.kt
-[kotlin2js] OUTPUT: Output:
+[kotlin2js] logging: compiling source files: [TestData]/root1/foo.kt
+[kotlin2js] output: output:
 [kotlin2js] [Temp]/out.js
 [kotlin2js] Sources:
 [kotlin2js] [TestData]/root1/foo.kt

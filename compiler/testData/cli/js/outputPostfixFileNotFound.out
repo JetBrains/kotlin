@@ -1,2 +1,2 @@
-ERROR: Output postfix file 'not/existing/path' not found
+error: output postfix file 'not/existing/path' not found
 COMPILATION_ERROR

@@ -1,2 +1,2 @@
-ERROR: Path 'not/existing/path' does not exist
+error: path 'not/existing/path' does not exist
 COMPILATION_ERROR
