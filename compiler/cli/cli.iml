@@ -13,6 +13,7 @@
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="library" name="intellij-core" level="project" />
     <orderEntry type="module" module-name="js.translator" />
+    <orderEntry type="library" name="jansi" level="project" />
     <orderEntry type="library" name="jline" level="project" />
     <orderEntry type="module" module-name="cli-common" exported="" />
     <orderEntry type="module" module-name="backend-common" />

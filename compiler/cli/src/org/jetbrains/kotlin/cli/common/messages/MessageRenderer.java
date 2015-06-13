@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.cli.common.messages;
 
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.LineSeparator;
 import kotlin.KotlinPackage;
 import kotlin.io.IoPackage;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.internal.CLibrary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,6 +83,12 @@ public interface MessageRenderer {
     };
 
     abstract class PlainText implements MessageRenderer {
+        // AnsiConsole doesn't check isatty() for stderr (see https://github.com/fusesource/jansi/pull/35).
+        // TODO: investigate why ANSI escape codes on Windows only work in REPL for some reason
+        private static final boolean COLOR_ENABLED =
+                !SystemInfo.isWindows &&
+                CLibrary.isatty(CLibrary.STDERR_FILENO) != 0;
+
         private static final String LINE_SEPARATOR = LineSeparator.getSystemLineSeparator().getSeparatorString();
 
         @Override
@@ -110,10 +119,30 @@ public interface MessageRenderer {
                 result.append(" ");
             }
 
-            result.append(severity.name().toLowerCase());
-            result.append(": ");
+            if (COLOR_ENABLED) {
+                Ansi ansi = Ansi.ansi()
+                        .bold()
+                        .fg(severityColor(severity))
+                        .a(severity.name().toLowerCase())
+                        .a(": ")
+                        .reset()
+                        .bold();
 
-            result.append(decapitalizeIfNeeded(message));
+                // Only make the first line of the message bold. Otherwise long overload ambiguity errors or exceptions are hard to read
+                String decapitalized = decapitalizeIfNeeded(message);
+                int firstNewline = decapitalized.indexOf(LINE_SEPARATOR);
+                if (firstNewline < 0) {
+                    result.append(ansi.a(decapitalized).reset());
+                }
+                else {
+                    result.append(ansi.a(decapitalized.substring(0, firstNewline)).reset().a(decapitalized.substring(firstNewline)));
+                }
+            }
+            else {
+                result.append(severity.name().toLowerCase());
+                result.append(": ");
+                result.append(decapitalizeIfNeeded(message));
+            }
 
             if (lineContent != null && 1 <= column && column <= lineContent.length() + 1) {
                 result.append(LINE_SEPARATOR);
@@ -140,6 +169,26 @@ public interface MessageRenderer {
             }
 
             return KotlinPackage.decapitalize(message);
+        }
+
+        @NotNull
+        private static Ansi.Color severityColor(@NotNull CompilerMessageSeverity severity) {
+            switch (severity) {
+                case EXCEPTION:
+                    return Ansi.Color.RED;
+                case ERROR:
+                    return Ansi.Color.RED;
+                case WARNING:
+                    return Ansi.Color.YELLOW;
+                case INFO:
+                    return Ansi.Color.BLUE;
+                case LOGGING:
+                    return Ansi.Color.BLUE;
+                case OUTPUT:
+                    return Ansi.Color.BLUE;
+                default:
+                    throw new UnsupportedOperationException("Unknown severity: " + severity);
+            }
         }
 
         @Nullable

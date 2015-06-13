@@ -61,8 +61,8 @@
         <pathelement location="${protobuf.jar}"/>
 
         <fileset dir="${basedir}/lib" includes="**/*.jar"/>
-        <fileset dir="${dependencies.dir}" includes="jline.jar"/>
         <fileset dir="${dependencies.dir}" includes="jansi.jar"/>
+        <fileset dir="${dependencies.dir}" includes="jline.jar"/>
         <fileset dir="${dependencies.dir}" includes="cli-parser-1.1.1.jar"/>
         <fileset dir="${basedir}/ideaSDK/jps" includes="jps-model.jar"/>
     </path>

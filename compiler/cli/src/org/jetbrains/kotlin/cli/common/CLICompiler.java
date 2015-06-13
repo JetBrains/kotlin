@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import com.sampullara.cli.Args;
+import org.fusesource.jansi.AnsiConsole;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
@@ -120,15 +121,16 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             return OK;
         }
 
-        errStream.print(messageRenderer.renderPreamble());
-
         MessageCollector collector = new PrintingMessageCollector(errStream, messageRenderer, arguments.verbose);
 
         try {
+            AnsiConsole.systemInstall();
+            errStream.print(messageRenderer.renderPreamble());
             return exec(collector, services, arguments);
         }
         finally {
             errStream.print(messageRenderer.renderConclusion());
+            AnsiConsole.systemUninstall();
         }
     }
 
