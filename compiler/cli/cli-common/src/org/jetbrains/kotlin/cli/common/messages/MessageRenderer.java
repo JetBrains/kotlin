@@ -87,9 +87,23 @@ public interface MessageRenderer {
         public String render(
                 @NotNull CompilerMessageSeverity severity, @NotNull String message, @NotNull CompilerMessageLocation location
         ) {
+            StringBuilder result = new StringBuilder();
+            result.append(severity).append(": ");
+
             String path = getPath(location);
-            String position = path == null ? "" : path + ": (" + (location.getLine() + ", " + location.getColumn()) + ") ";
-            return severity + ": " + position + message;
+            if (path != null) {
+                result.append(path);
+                result.append(": ");
+                if (location.getLine() > 0 && location.getColumn() > 0) {
+                    result.append("(");
+                    result.append(location.getLine()).append(", ").append(location.getColumn());
+                    result.append(") ");
+                }
+            }
+
+            result.append(message);
+
+            return result.toString();
         }
 
         @Nullable
