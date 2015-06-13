@@ -51,17 +51,11 @@ declare -a kotlin_args
 while [ $# -gt 0 ]; do
   case "$1" in
     -D*)
-      # pass to kotlin as well: otherwise we lose it sometimes when we
-      # need it, e.g. communicating with a server compiler.
       java_args=("${java_args[@]}" "$1")
-      kotlin_args=("${kotlin_args[@]}" "$1")
       shift
       ;;
     -J*)
-      # as with -D, pass to kotlin even though it will almost
-      # never be used.
       java_args=("${java_args[@]}" "${1:2}")
-      kotlin_args=("${kotlin_args[@]}" "$1")
       shift
       ;;
     *)
