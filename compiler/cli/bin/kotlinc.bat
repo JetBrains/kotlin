@@ -13,10 +13,10 @@ rem We adopt the following conventions:
 rem - System/user environment variables start with a letter
 rem - Local batch variables start with an underscore ('_')
 
-@setlocal
+setlocal
 call :set_home
 
-if "%KOTLIN_COMPILER%"=="" set KOTLIN_COMPILER=org.jetbrains.kotlin.cli.jvm.K2JVMCompiler 
+if "%_KOTLIN_COMPILER%"=="" set _KOTLIN_COMPILER=org.jetbrains.kotlin.cli.jvm.K2JVMCompiler 
 
 if not "%JAVA_HOME%"=="" (
   if exist "%JAVA_HOME%\bin\java.exe" set "_JAVACMD=%JAVA_HOME%\bin\java.exe"
@@ -25,11 +25,16 @@ if not "%JAVA_HOME%"=="" (
 if "%_JAVACMD%"=="" set _JAVACMD=java
 
 rem We use the value of the JAVA_OPTS environment variable if defined
-set _JAVA_OPTS=-Xmx256M -Xms32M -noverify
+set _JAVA_OPTS=-Xmx256M -Xms32M
 
-"%_JAVACMD%" %_JAVA_OPTS% -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
-  org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
-  %KOTLIN_COMPILER% %*
+if not "%_KOTLIN_RUNNER%"=="" (
+  "%_JAVACMD%" %_JAVA_OPTS% "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
+    org.jetbrains.kotlin.runner.Main %*
+) else (
+  "%_JAVACMD%" %_JAVA_OPTS% -noverify -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
+    org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar" ^
+    %_KOTLIN_COMPILER% %*
+)
 
 exit /b %ERRORLEVEL%
 goto end
@@ -44,5 +49,5 @@ rem # subroutines
 goto :eof
 
 :end
-@endlocal
+endlocal
 

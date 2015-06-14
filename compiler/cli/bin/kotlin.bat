@@ -15,6 +15,6 @@ rem See the License for the specific language governing permissions and
 rem limitations under the License.
 
 setlocal
-set _KOTLIN_COMPILER=org.jetbrains.kotlin.cli.js.K2JSCompiler
+set _KOTLIN_RUNNER=1
 
 call %~dps0kotlinc.bat %*
