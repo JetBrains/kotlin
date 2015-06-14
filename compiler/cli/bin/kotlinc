@@ -16,24 +16,18 @@ case "`uname`" in
     CYGWIN*) cygwin=true ;;
 esac
 
-# Finding the root folder for this Kotlin distribution
-SOURCE=$0;
-SCRIPT=`basename "$SOURCE"`;
-while [ -h "$SOURCE" ]; do
-    SCRIPT=`basename "$SOURCE"`;
-    LOOKUP=`ls -ld "$SOURCE"`;
-    TARGET=`expr "$LOOKUP" : '.*-> \(.*\)$'`;
-    if expr "${TARGET:-.}/" : '/.*/$' > /dev/null; then
-        SOURCE=${TARGET:-.};
-    else
-        SOURCE=`dirname "$SOURCE"`/${TARGET:-.};
-    fi;
-done;
+# Based on findScalaHome() from scalac script
+findKotlinHome() {
+    local source="${BASH_SOURCE[0]}"
+    while [ -h "$source" ] ; do
+        local linked="$(readlink "$source")"
+        local dir="$(cd -P $(dirname "$source") && cd -P $(dirname "$linked") && pwd)"
+        source="$dir/$(basename "$linked")"
+    done
+    (cd -P "$(dirname "$source")/.." && pwd)
+}
 
-# see #2092
-KOTLIN_HOME=`dirname "$SOURCE"`
-KOTLIN_HOME=`cd "$KOTLIN_HOME"; pwd -P`
-KOTLIN_HOME=`cd "$KOTLIN_HOME"/..; pwd`
+KOTLIN_HOME="$(findKotlinHome)"
 
 if $cygwin; then
     # Remove spaces from KOTLIN_HOME on windows
