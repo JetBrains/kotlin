@@ -77,5 +77,5 @@ public class ConvertToConcatenatedStringIntention : JetSelfTargetingOffsetIndepe
 
     private fun String.quote(quote: String) = quote + this + quote
 
-    private fun JetExpression.isStringExpression() = KotlinBuiltIns.isString(BindingContextUtils.getRecordedTypeInfo(this, analyze())?.type)
+    private fun JetExpression.isStringExpression() = KotlinBuiltIns.isString(analyze().getType(this))
 }
