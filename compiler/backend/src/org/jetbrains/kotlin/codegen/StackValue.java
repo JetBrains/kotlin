@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.psi.JetArrayAccessExpression;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -198,10 +197,9 @@ public abstract class StackValue {
             Type type,
             ResolvedCall<FunctionDescriptor> getter,
             ResolvedCall<FunctionDescriptor> setter,
-            ExpressionCodegen codegen,
-            GenerationState state
+            ExpressionCodegen codegen
     ) {
-        return new CollectionElement(collectionElementReceiver, type, getter, setter, codegen, state);
+        return new CollectionElement(collectionElementReceiver, type, getter, setter, codegen);
     }
 
     @NotNull
@@ -459,14 +457,13 @@ public abstract class StackValue {
             @NotNull Type type,
             @NotNull StackValue stackValue,
             int delta,
-            @NotNull Callable method,
             ResolvedCall resolvedCall,
             @NotNull ExpressionCodegen codegen
     ) {
         if (stackValue instanceof StackValue.Local && Type.INT_TYPE == stackValue.type) {
             return preIncrementForLocalVar(((StackValue.Local) stackValue).index, delta);
         }
-        return new PrefixIncrement(type, stackValue, delta, method, resolvedCall, codegen);
+        return new PrefixIncrement(type, stackValue, resolvedCall, codegen);
     }
 
     public static StackValue receiver(
@@ -712,10 +709,6 @@ public abstract class StackValue {
         private final Callable callable;
         private final boolean isGetter;
         private final ExpressionCodegen codegen;
-        private final JetExpression array;
-        private final Type arrayType;
-        private final JetArrayAccessExpression expression;
-        private final Type[] argumentTypes;
         private final ArgumentGenerator argumentGenerator;
         private final List<ResolvedValueArgument> valueArguments;
         private final FrameMap frame;
@@ -731,11 +724,7 @@ public abstract class StackValue {
                 boolean isGetter,
                 @NotNull ExpressionCodegen codegen,
                 ArgumentGenerator argumentGenerator,
-                List<ResolvedValueArgument> valueArguments,
-                JetExpression array,
-                Type arrayType,
-                JetArrayAccessExpression expression,
-                Type[] argumentTypes
+                List<ResolvedValueArgument> valueArguments
         ) {
             super(OBJECT_TYPE);
             this.callable = callable;
@@ -747,33 +736,15 @@ public abstract class StackValue {
             this.argumentGenerator = argumentGenerator;
             this.valueArguments = valueArguments;
             this.codegen = codegen;
-            this.array = array;
-            this.arrayType = arrayType;
-            this.expression = expression;
-            this.argumentTypes = argumentTypes;
             this.frame = codegen.myFrameMap;
         }
 
         @Override
-        public void putSelector(
-                @NotNull Type type, @NotNull InstructionAdapter v
-        ) {
+        public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
             ResolvedCall<?> call = isGetter ? resolvedGetCall : resolvedSetCall;
-            if (callable instanceof Callable) {
-                StackValue newReceiver = StackValue.receiver(call, receiver, codegen, (Callable) callable);
-                newReceiver.put(newReceiver.type, v);
-                argumentGenerator.generate(valueArguments);
-            }
-            else {
-                codegen.gen(array, arrayType); // intrinsic method
-
-                int index = call.getExtensionReceiver().exists() ? 1 : 0;
-
-                for (JetExpression jetExpression : expression.getIndexExpressions()) {
-                    codegen.gen(jetExpression, argumentTypes[index]);
-                    index++;
-                }
-            }
+            StackValue newReceiver = StackValue.receiver(call, receiver, codegen, callable);
+            newReceiver.put(newReceiver.type, v);
+            argumentGenerator.generate(valueArguments);
         }
 
         @Override
@@ -782,7 +753,8 @@ public abstract class StackValue {
         }
 
         public void dupReceiver(@NotNull InstructionAdapter v) {
-            if (isStandardStack(resolvedGetCall, 1) && isStandardStack(resolvedSetCall, 2)) {
+            if (CollectionElement.isStandardStack(codegen.typeMapper, resolvedGetCall, 1) &&
+                CollectionElement.isStandardStack(codegen.typeMapper, resolvedSetCall, 2)) {
                 v.dup2();   // collection and index
                 return;
             }
@@ -869,67 +841,31 @@ public abstract class StackValue {
 
             mark.dropTo();
         }
-
-        private boolean isStandardStack(ResolvedCall<?> call, int valueParamsSize) {
-            if (call == null) {
-                return true;
-            }
-
-            List<ValueParameterDescriptor> valueParameters = call.getResultingDescriptor().getValueParameters();
-            if (valueParameters.size() != valueParamsSize) {
-                return false;
-            }
-
-            for (ValueParameterDescriptor valueParameter : valueParameters) {
-                if (codegen.typeMapper.mapType(valueParameter.getType()).getSize() != 1) {
-                    return false;
-                }
-            }
-
-            if (call.getDispatchReceiver().exists()) {
-                if (call.getExtensionReceiver().exists()) {
-                    return false;
-                }
-            }
-            else {
-                if (codegen.typeMapper.mapType(call.getResultingDescriptor().getExtensionReceiverParameter().getType())
-                            .getSize() != 1) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
     }
 
     public static class CollectionElement extends StackValueWithSimpleReceiver {
         private final Callable getter;
         private final Callable setter;
         private final ExpressionCodegen codegen;
-        private final GenerationState state;
         private final ResolvedCall<FunctionDescriptor> resolvedGetCall;
         private final ResolvedCall<FunctionDescriptor> resolvedSetCall;
         private final FunctionDescriptor setterDescriptor;
         private final FunctionDescriptor getterDescriptor;
 
         public CollectionElement(
-                StackValue collectionElementReceiver,
-                Type type,
-                ResolvedCall<FunctionDescriptor> resolvedGetCall,
-                ResolvedCall<FunctionDescriptor> resolvedSetCall,
-                ExpressionCodegen codegen,
-                GenerationState state
+                @NotNull StackValue collectionElementReceiver,
+                @NotNull Type type,
+                @Nullable ResolvedCall<FunctionDescriptor> resolvedGetCall,
+                @Nullable ResolvedCall<FunctionDescriptor> resolvedSetCall,
+                @NotNull ExpressionCodegen codegen
         ) {
             super(type, false, false, collectionElementReceiver, true);
             this.resolvedGetCall = resolvedGetCall;
             this.resolvedSetCall = resolvedSetCall;
-            this.state = state;
             this.setterDescriptor = resolvedSetCall == null ? null : resolvedSetCall.getResultingDescriptor();
             this.getterDescriptor = resolvedGetCall == null ? null : resolvedGetCall.getResultingDescriptor();
-            this.setter =
-                    resolvedSetCall == null ? null : (Callable) codegen.resolveToCallable(setterDescriptor, false, resolvedSetCall);
-            this.getter =
-                    resolvedGetCall == null ? null : (Callable) codegen.resolveToCallable(getterDescriptor, false, resolvedGetCall);
+            this.setter = resolvedSetCall == null ? null : codegen.resolveToCallable(setterDescriptor, false, resolvedSetCall);
+            this.getter = resolvedGetCall == null ? null : codegen.resolveToCallable(getterDescriptor, false, resolvedGetCall);
             this.codegen = codegen;
         }
 
@@ -945,7 +881,7 @@ public abstract class StackValue {
 
         @Override
         public int receiverSize() {
-            if (isStandardStack(resolvedGetCall, 1) && isStandardStack(resolvedSetCall, 2)) {
+            if (isStandardStack(codegen.typeMapper, resolvedGetCall, 1) && isStandardStack(codegen.typeMapper, resolvedSetCall, 2)) {
                 return 2;
             }
             else {
@@ -953,7 +889,7 @@ public abstract class StackValue {
             }
         }
 
-        private boolean isStandardStack(ResolvedCall<?> call, int valueParamsSize) {
+        public static boolean isStandardStack(@NotNull JetTypeMapper typeMapper, @Nullable ResolvedCall<?> call, int valueParamsSize) {
             if (call == null) {
                 return true;
             }
@@ -964,7 +900,7 @@ public abstract class StackValue {
             }
 
             for (ValueParameterDescriptor valueParameter : valueParameters) {
-                if (codegen.typeMapper.mapType(valueParameter.getType()).getSize() != 1) {
+                if (typeMapper.mapType(valueParameter.getType()).getSize() != 1) {
                     return false;
                 }
             }
@@ -975,8 +911,8 @@ public abstract class StackValue {
                 }
             }
             else {
-                if (codegen.typeMapper.mapType(call.getResultingDescriptor().getExtensionReceiverParameter().getType())
-                            .getSize() != 1) {
+                //noinspection ConstantConditions
+                if (typeMapper.mapType(call.getResultingDescriptor().getExtensionReceiverParameter().getType()).getSize() != 1) {
                     return false;
                 }
             }
@@ -1264,8 +1200,6 @@ public abstract class StackValue {
     }
 
     private static class PrefixIncrement extends StackValue {
-        private final int delta;
-        private final Callable callable;
         private final ResolvedCall resolvedCall;
         private final ExpressionCodegen codegen;
         private StackValue value;
@@ -1273,15 +1207,11 @@ public abstract class StackValue {
         public PrefixIncrement(
                 @NotNull Type type,
                 @NotNull StackValue value,
-                int delta,
-                @NotNull Callable callable,
                 ResolvedCall resolvedCall,
                 @NotNull ExpressionCodegen codegen
         ) {
             super(type);
             this.value = value;
-            this.delta = delta;
-            this.callable = callable;
             this.resolvedCall = resolvedCall;
             this.codegen = codegen;
         }
@@ -1291,13 +1221,7 @@ public abstract class StackValue {
             value = StackValue.complexReceiver(value, true, false, true);
             value.put(this.type, v);
 
-            if (callable instanceof Callable) {
-                value.store(codegen.invokeFunction(resolvedCall, StackValue.onStack(this.type)), v, true);
-            }
-            else {
-                genIncrement(this.type, delta, v);
-                value.store(StackValue.onStack(this.type), v, true);
-            }
+            value.store(codegen.invokeFunction(resolvedCall, StackValue.onStack(this.type)), v, true);
 
             value.put(this.type, v, true);
             coerceTo(type, v);

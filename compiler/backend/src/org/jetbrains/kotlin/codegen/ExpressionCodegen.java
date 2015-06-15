@@ -93,9 +93,7 @@ import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinSyntheticClass;
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.BindingContextUtils.getDelegationConstructorCall;
-import static org.jetbrains.kotlin.resolve.BindingContextUtils.getNotNull;
-import static org.jetbrains.kotlin.resolve.BindingContextUtils.isVarCapturedInClosure;
+import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCall;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
@@ -3182,8 +3180,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         int increment = operationName.equals("inc") ? 1 : -1;
         Type type = expressionType(expression.getBaseExpression());
         StackValue value = gen(expression.getBaseExpression());
-        Callable callable = resolveToCallable((FunctionDescriptor) op, false, resolvedCall);
-        return StackValue.preIncrement(type, value, increment, callable, resolvedCall, this);
+        return StackValue.preIncrement(type, value, increment, resolvedCall, this);
     }
 
     @Override
@@ -3458,41 +3455,35 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
             boolean isGetter = "get".equals(operationDescriptor.getName().asString());
 
-
             Callable callable = resolveToCallable(operationDescriptor, false, isGetter ? resolvedGetCall : resolvedSetCall);
             Callable callableMethod = resolveToCallableMethod(operationDescriptor, false, context);
             Type[] argumentTypes = callableMethod.getParameterTypes();
 
-            StackValue collectionElementReceiver =
-                    createCollectionElementReceiver(expression, receiver, array, arrayType, operationDescriptor, isGetter, resolvedGetCall, resolvedSetCall,
-                                                    callable,
-                                                    argumentTypes);
+            StackValue collectionElementReceiver = createCollectionElementReceiver(
+                    expression, receiver, operationDescriptor, isGetter, resolvedGetCall, resolvedSetCall, callable
+            );
 
             Type elementType = isGetter ? callableMethod.getReturnType() : ArrayUtil.getLastElement(argumentTypes);
-            return StackValue.collectionElement(collectionElementReceiver, elementType, resolvedGetCall, resolvedSetCall, this, state);
+            return StackValue.collectionElement(collectionElementReceiver, elementType, resolvedGetCall, resolvedSetCall, this);
         }
     }
 
+    @NotNull
     private StackValue createCollectionElementReceiver(
             @NotNull JetArrayAccessExpression expression,
             @NotNull StackValue receiver,
-            @NotNull JetExpression array,
-            @NotNull Type arrayType,
             @NotNull FunctionDescriptor operationDescriptor,
             boolean isGetter,
-             ResolvedCall<FunctionDescriptor> resolvedGetCall,
+            ResolvedCall<FunctionDescriptor> resolvedGetCall,
             ResolvedCall<FunctionDescriptor> resolvedSetCall,
-            @NotNull Callable callable,
-            @NotNull Type[] argumentTypes
+            @NotNull Callable callable
     ) {
-
         ResolvedCall<FunctionDescriptor> resolvedCall = isGetter ? resolvedGetCall : resolvedSetCall;
         assert resolvedCall != null : "couldn't find resolved call: " + expression.getText();
 
-        ArgumentGenerator argumentGenerator =
-                new CallBasedArgumentGenerator(this, defaultCallGenerator,
-                                               resolvedCall.getResultingDescriptor().getValueParameters(),
-                                               callable.getValueParameterTypes());
+        ArgumentGenerator argumentGenerator = new CallBasedArgumentGenerator(
+                this, defaultCallGenerator, resolvedCall.getResultingDescriptor().getValueParameters(), callable.getValueParameterTypes()
+        );
 
         List<ResolvedValueArgument> valueArguments = resolvedCall.getValueArgumentsByIndex();
         assert valueArguments != null : "Failed to arrange value arguments by index: " + operationDescriptor;
@@ -3503,9 +3494,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             valueArguments.remove(valueArguments.size() - 1);
         }
 
-        return new StackValue.CollectionElementReceiver(callable, receiver, resolvedGetCall, resolvedSetCall, isGetter, this,
-                                                        argumentGenerator, valueArguments, array, arrayType, expression, argumentTypes);
-
+        return new StackValue.CollectionElementReceiver(
+                callable, receiver, resolvedGetCall, resolvedSetCall, isGetter, this, argumentGenerator, valueArguments
+        );
     }
 
     @Override
