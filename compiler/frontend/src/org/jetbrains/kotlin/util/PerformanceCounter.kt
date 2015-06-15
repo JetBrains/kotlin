@@ -47,7 +47,10 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
         public fun currentThreadCpuTime(): Long = threadMxBean.getCurrentThreadUserTime()
 
         public fun report(consumer: (String) -> Unit) {
-            allCounters.forEach { it.report(consumer) }
+            val countersCopy = synchronized(allCounters) {
+                allCounters.toTypedArray()
+            }
+            countersCopy.forEach { it.report(consumer) }
         }
     }
 
@@ -55,7 +58,9 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
     private var totalTimeNanos: Long = 0
 
     init {
-        allCounters.add(this)
+        synchronized(allCounters) {
+            allCounters.add(this)
+        }
     }
 
     public fun increment() {
