@@ -182,11 +182,11 @@ public class WritableScopeImpl @jvmOverloads constructor(
 
         var list = variablesAndClassifiersByName?.get(name)
         while (list != null) {
-            val descriptorIndex = list.head
+            val descriptorIndex = list.last
             if (descriptorIndex < descriptorLimit) {
                 return descriptorIndex.descriptorByIndex()
             }
-            list = list.tail
+            list = list.prev
         }
         return null
     }
@@ -196,10 +196,10 @@ public class WritableScopeImpl @jvmOverloads constructor(
 
         var list = functionsByName?.get(name)
         while (list != null) {
-            if (list.head < descriptorLimit) {
+            if (list.last < descriptorLimit) {
                 return list.toDescriptors<FunctionDescriptor>()
             }
-            list = list.tail
+            list = list.prev
         }
         return null
     }
@@ -228,7 +228,7 @@ public class WritableScopeImpl @jvmOverloads constructor(
         p.println("}")
     }
 
-    private class IntList(val head: Int, val tail: IntList?)
+    private class IntList(val last: Int, val prev: IntList?)
 
     private fun IntList?.plus(value: Int) = IntList(value, this)
 
@@ -236,15 +236,14 @@ public class WritableScopeImpl @jvmOverloads constructor(
         val result = ArrayList<TDescriptor>(1)
         var rest: IntList? = this
         do {
-            result.add(rest!!.head.descriptorByIndex() as TDescriptor)
-            rest = rest.tail
+            result.add(rest!!.last.descriptorByIndex() as TDescriptor)
+            rest = rest.prev
         } while (rest != null)
         return result
     }
 
     private inner class Snapshot(val descriptorLimit: Int) : JetScope by this@WritableScopeImpl {
-        override fun getDescriptors(kindFilter: DescriptorKindFilter,
-                                    nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
+        override fun getDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
             checkMayRead()
             changeLockLevel(WritableScope.LockLevel.READING)
 

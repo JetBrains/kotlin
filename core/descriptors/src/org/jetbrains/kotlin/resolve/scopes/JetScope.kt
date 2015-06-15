@@ -49,8 +49,10 @@ public trait JetScope {
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
-    public fun getDescriptors(kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
-                              nameFilter: (Name) -> Boolean = ALL_NAME_FILTER): Collection<DeclarationDescriptor>
+    public fun getDescriptors(
+            kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
+            nameFilter: (Name) -> Boolean = ALL_NAME_FILTER
+    ): Collection<DeclarationDescriptor>
 
     /**
      * Adds receivers to the list in order of locality, so that the closest (the most local) receiver goes first
