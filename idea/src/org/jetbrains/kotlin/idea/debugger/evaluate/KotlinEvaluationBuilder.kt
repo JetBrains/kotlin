@@ -217,7 +217,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
                     if (name == compiledData.funName) {
                         val argumentTypes = Type.getArgumentTypes(desc)
-                        val args = context.getArgumentsForEval4j(compiledData.parameters.getParameterNames(), argumentTypes)
+                        val args = context.getArgumentsForEval4j(compiledData.parameters, argumentTypes)
 
                         return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                             override fun visitEnd() {
@@ -307,9 +307,11 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             }
         }
 
-        private fun EvaluationContextImpl.getArgumentsForEval4j(parameterNames: List<String>, parameterTypes: Array<Type>): List<Value> {
+        private fun EvaluationContextImpl.getArgumentsForEval4j(parameters: ParametersDescriptor, parameterTypes: Array<Type>): List<Value> {
             val frameVisitor = FrameVisitor(this)
-            return parameterNames.zip(parameterTypes).map { frameVisitor.findValue(it.first, it.second, checkType = false, failIfNotFound = true)!! }
+            return parameters.zip(parameterTypes).map {
+                frameVisitor.findValue(it.first.callText, it.second, checkType = false, failIfNotFound = true)!!
+            }
         }
 
         private fun createClassFileFactory(
@@ -353,9 +355,8 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                 val valueParameters = extractedFunction.getValueParameters()
                 var paramIndex = 0
                 for (param in parameters) {
-                    val (callText, type) = param
 
-                    if (callText.contains(THIS_NAME)) continue
+                    if (param.callText.contains(THIS_NAME)) continue
 
                     val valueParameter = valueParameters[paramIndex++]
 
@@ -368,7 +369,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         exception("An exception occurs during Evaluate Expression Action")
                     }
 
-                    state.getBindingTrace().recordAnonymousType(paramRef, callText, frameVisitor)
+                    state.getBindingTrace().recordAnonymousType(paramRef, param.callText, frameVisitor)
                 }
 
                 KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION)

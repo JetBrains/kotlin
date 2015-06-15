@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.apache.log4j.Logger
+import org.jetbrains.eval4j.Value
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 class KotlinEvaluateExpressionCache(val project: Project) {
@@ -92,15 +93,15 @@ class KotlinEvaluateExpressionCache(val project: Project) {
             val parameters: ParametersDescriptor
     )
 
-    class ParametersDescriptor : Iterable<Pair<String, JetType>> {
-        private val list = ArrayList<Pair<String, JetType>>()
+    class ParametersDescriptor : Iterable<Parameter> {
+        private val list = ArrayList<Parameter>()
 
-        fun add(name: String, jetType: JetType) {
-            list.add(name to jetType)
+        fun add(name: String, jetType: JetType, value: Value? = null) {
+            list.add(Parameter(name, jetType, value))
         }
-
-        fun getParameterNames() = list.map { it.first }
 
         override fun iterator() = list.iterator()
     }
+
+    data class Parameter(val callText: String, val type: JetType, val value: Value? = null)
 }
