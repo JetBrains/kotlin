@@ -94,23 +94,20 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         GenerateDefinitionKind.TRAIT -> append("interface ")
     }
 
+    append(iface.name)
+    if (iface.constructor != null && iface.constructor.arguments.isNotEmpty()) {
+        append("(")
+        renderArgumentsDeclaration(iface.constructor.arguments.map { it.dynamicIfUnknownType(allTypes.keySet()) }, false)
+        append(")")
+    }
+
     val allSuperTypes = iface.allSuperTypes(allTypes)
     val allSuperTypesNames = allSuperTypes.map { it.name }.toSet()
 
-    append(iface.name)
-    val primary = iface.primaryConstructor
-    if (primary != null) {
-        if (primary.constructor.arguments.isNotEmpty() || iface.secondaryConstructors.isNotEmpty()) {
-            append("(")
-            renderArgumentsDeclaration(primary.constructor.arguments.dynamicIfUnknownType(allTypes.keySet()), false)
-            append(")")
-        }
-    }
-
-    val superCallName = primary?.initTypeCall?.name
+    val superCalls = iface.superConstructorCalls.map { it.name }.toSet()
     val superTypesWithCalls =
-            listOf(primary?.initTypeCall).filterNotNull().map { renderCall(it) } +
-                    iface.superTypes.filter { it != superCallName && it in allSuperTypesNames } +
+            iface.superConstructorCalls.map { renderCall(it) } +
+                    iface.superTypes.filter { it !in superCalls && it in allSuperTypesNames } +
                     (typeNamesToUnions[iface.name] ?: emptyList())
 
     if (superTypesWithCalls.isNotEmpty()) {
@@ -118,20 +115,6 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     }
 
     appendln (" {")
-
-    iface.secondaryConstructors.forEach { secondary ->
-        indent(1)
-        append("constructor(")
-        renderArgumentsDeclaration(secondary.constructor.arguments.dynamicIfUnknownType(allTypes.keySet()), false)
-        append(")")
-
-        if (secondary.initTypeCall != null) {
-            append(" : ")
-            append(renderCall(secondary.initTypeCall))
-        }
-
-        appendln()
-    }
 
     val superAttributes = allSuperTypes.flatMap { it.memberAttributes }.distinct()
     val superFunctions = allSuperTypes.flatMap { it.memberFunctions }.distinct()

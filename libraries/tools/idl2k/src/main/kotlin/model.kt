@@ -41,7 +41,6 @@ val GenerateAttribute.signature: String
     get() = "$name:${type.typeSignature}"
 
 fun GenerateAttribute.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<String> = standardTypes()) = copy(type = type.dynamicIfUnknownType(allTypes, standardTypes))
-fun List<GenerateAttribute>.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<String> = standardTypes()) = map { it.dynamicIfUnknownType(allTypes, standardTypes) }
 
 enum class NativeGetterOrSetter {
     NONE,
@@ -73,7 +72,6 @@ data class GenerateFunction(
         val nativeGetterOrSetter: NativeGetterOrSetter
 )
 
-data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute, val initTypeCall: GenerateFunctionCall?)
 data class GenerateTraitOrClass(
         val name: String,
         val namespace: String,
@@ -82,9 +80,14 @@ data class GenerateTraitOrClass(
         val memberAttributes: List<GenerateAttribute>,
         val memberFunctions: List<GenerateFunction>,
         val constants: List<GenerateAttribute>,
-        val primaryConstructor: ConstructorWithSuperTypeCall?,
-        val secondaryConstructors: List<ConstructorWithSuperTypeCall>
-)
+        val constructor: GenerateFunction?,
+        val superConstructorCalls: List<GenerateFunctionCall>
+) {
+    init {
+        assert(superConstructorCalls.size() <= 1, "It shoould be zero or one super constructors")
+    }
+}
+
 
 val GenerateFunction.signature: String
     get() = arguments.map { it.type.typeSignature }.joinToString(", ", "$name(", ")")
@@ -93,9 +96,9 @@ fun GenerateFunction.dynamicIfUnknownType(allTypes : Set<String>) = standardType
     copy(returnType = returnType.dynamicIfUnknownType(allTypes, standardTypes), arguments = arguments.map { it.dynamicIfUnknownType(allTypes, standardTypes) })
 }
 
-fun InterfaceDefinition.findExtendedAttributes(name: String) = extendedAttributes.filter { it.call == name }
-fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttributes(name)?.isNotEmpty() ?: false
-fun InterfaceDefinition.findConstructors() = findExtendedAttributes("Constructor")
+fun InterfaceDefinition.findExtendedAttribute(name: String) = extendedAttributes.firstOrNull { it.call == name }
+fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttribute(name) ?: null != null
+fun InterfaceDefinition.findConstructor() = findExtendedAttribute("Constructor")
 
 data class GenerateUnionTypes(
         val typeNamesToUnionsMap: Map<String, List<String>>,

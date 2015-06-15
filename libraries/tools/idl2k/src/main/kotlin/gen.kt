@@ -26,7 +26,7 @@ fun String.dropNullable() = when {
     else -> this
 }
 
-fun String.copyNullabilityFrom(type: String) = when {
+fun String.copyNullabilityFrom(type : String) = when {
     type.isNullable() -> ensureNullable()
     else -> this
 }
@@ -94,85 +94,54 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
         )
 
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
-private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructors: List<ExtendedAttribute> = iface.findConstructors()): GenerateDefinitionKind =
-        if (iface.dictionary || constructors.isNotEmpty() || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }) {
+private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructor: ExtendedAttribute? = iface.findConstructor()): GenerateDefinitionKind =
+        if (iface.dictionary || constructor != null || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }) {
             GenerateDefinitionKind.CLASS
-        } else {
+        }
+        else {
             GenerateDefinitionKind.TRAIT
         }
 
 private fun InterfaceDefinition.mapAttributes(repository: Repository) = attributes.map { generateAttribute(!dictionary, repository, it) }
 private fun InterfaceDefinition.mapOperations(repository: Repository) = operations.flatMap { generateFunctions(repository, it) }
-private fun Constant.mapConstant(repository: Repository) = GenerateAttribute(name, mapType(repository, type), value, false, true, false, false)
-private fun emptyConstructor() = ExtendedAttribute(null, "Constructor", emptyList())
+private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), value, false, true, false, false)
 
 fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {
-    val superClasses = iface.superTypes
+    val constructor = iface.findConstructor()
+    val constructorFunction = generateFunction(repository, Operation("", "Unit", constructor?.arguments ?: emptyList(), emptyList()), functionName = "", nativeGetterOrSetter = NativeGetterOrSetter.NONE)
+    val constructorArgumentNames = constructorFunction.arguments.map { it.name }.toSet()
+
+    val constructorSuperCalls = iface.superTypes
             .map { repository.interfaces[it] }
             .filterNotNull()
             .filter { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }
+            .map {
+                val superConstructor = it.findConstructor()
+                GenerateFunctionCall(
+                        name = it.name,
+                        arguments = if (superConstructor == null) {
+                            emptyList()
+                        } else {
+                            superConstructor.arguments.map { arg ->
+                                if (arg.name in constructorArgumentNames) arg.name else "noImpl"
+                            }
+                        }
+                )
+            }
 
-    assert(superClasses.size() <= 1) { "Type ${iface.name} should have one or zero super classes but found ${superClasses.map { it.name }}" }
-    val superClass = superClasses.singleOrNull()
-    val superConstructor = superClass?.findConstructors()?.firstOrNull()
-
-    val declaredConstructors = iface.findConstructors()
-    val entityKind = resolveDefinitionKind(repository, iface, declaredConstructors)
+    val entityKind = resolveDefinitionKind(repository, iface, constructor)
     val extensions = repository.externals[iface.name]?.map { repository.interfaces[it] }?.filterNotNull() ?: emptyList()
-
-    val primaryConstructor = when {
-        declaredConstructors.size() == 1 -> declaredConstructors.single()
-        declaredConstructors.isEmpty() && entityKind == GenerateDefinitionKind.CLASS -> emptyConstructor()
-        else -> declaredConstructors.firstOrNull { it.arguments.isEmpty() }
-    }
-    val secondaryConstructors = declaredConstructors.filter { it != primaryConstructor }
-
-    val primaryConstructorWithCall = if (primaryConstructor != null) {
-        val constructorAsFunction = generateConstructorAsFunction(repository, primaryConstructor)
-        val superCall = when {
-            superClass != null -> superOrPrimaryConstructorCall(constructorAsFunction, superClass.name, superConstructor ?: emptyConstructor())
-            else -> null
-        }
-
-        ConstructorWithSuperTypeCall(constructorAsFunction, primaryConstructor, superCall)
-    } else null
-
-    val secondaryConstructorsWithCall = secondaryConstructors.map { secondaryConstructor ->
-        val constructorAsFunction = generateConstructorAsFunction(repository, secondaryConstructor)
-        val initCall = when {
-            primaryConstructorWithCall != null -> superOrPrimaryConstructorCall(constructorAsFunction, "this", primaryConstructorWithCall.constructorAttribute)
-            else -> superOrPrimaryConstructorCall(constructorAsFunction, "super", superConstructor ?: emptyConstructor())
-        }
-
-        ConstructorWithSuperTypeCall(constructorAsFunction, secondaryConstructor, initCall)
-    }
 
     return GenerateTraitOrClass(iface.name, iface.namespace, entityKind, iface.superTypes,
             memberAttributes = (iface.mapAttributes(repository) + extensions.flatMap { it.mapAttributes(repository) }).distinct().toList(),
             memberFunctions = (iface.mapOperations(repository) + extensions.flatMap { it.mapOperations(repository) }).distinct().toList(),
-            constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
-            primaryConstructor = primaryConstructorWithCall,
-            secondaryConstructors = secondaryConstructorsWithCall
+            constants = (iface.constants.map {it.mapConstant(repository)} + extensions.flatMap { it.constants.map {it.mapConstant(repository)} }.distinct().toList()),
+            constructor = constructorFunction,
+            superConstructorCalls = constructorSuperCalls
     )
 }
 
-fun generateConstructorAsFunction(repository: Repository, constructor: ExtendedAttribute) = generateFunction(
-        repository,
-        Operation("", "Unit", constructor.arguments, emptyList()),
-        functionName = "",
-        nativeGetterOrSetter = NativeGetterOrSetter.NONE)
-
-fun superOrPrimaryConstructorCall(constructorAsFunction: GenerateFunction, superClassName: String, superOrPrimaryConstructor: ExtendedAttribute): GenerateFunctionCall {
-    val constructorArgumentNames = constructorAsFunction.arguments.map { it.name }.toSet()
-    return GenerateFunctionCall(
-            name = superClassName,
-            arguments = superOrPrimaryConstructor.arguments.map { arg ->
-                if (arg.name in constructorArgumentNames) arg.name else "noImpl"
-            }
-    )
-}
-
-fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
+fun mapUnionType(it : UnionType) = GenerateTraitOrClass(
         name = it.name,
         namespace = it.namespace,
         kind = GenerateDefinitionKind.TRAIT,
@@ -180,16 +149,16 @@ fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
         memberAttributes = emptyList(),
         memberFunctions = emptyList(),
         constants = emptyList(),
-        primaryConstructor = null,
-        secondaryConstructors = emptyList()
+        constructor = null,
+        superConstructorCalls = emptyList()
 )
 
-fun generateUnionTypeTraits(allUnionTypes: Iterable<UnionType>): List<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)
+fun generateUnionTypeTraits(allUnionTypes : Iterable<UnionType>): List<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)
 
 fun mapDefinitions(repository: Repository, definitions: Iterable<InterfaceDefinition>) =
         definitions.filter { "NoInterfaceObject" !in it.extendedAttributes.map { it.call } }.map { generateTrait(repository, it) }
 
-fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<TypedefDefinition>): GenerateUnionTypes {
+fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<TypedefDefinition>) : GenerateUnionTypes {
     val declaredTypes = ifaces.toMap { it.name }
 
     val anonymousUnionTypes = collectUnionTypes(declaredTypes)

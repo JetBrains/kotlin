@@ -60,7 +60,7 @@ data class FunctionType(val parameterTypes : List<Attribute>, val returnType : S
 val FunctionType.arity : Int
     get() = parameterTypes.size()
 val FunctionType.text : String
-    get() = "(${parameterTypes.map { it.formatFunctionTypePart() }.join(", ")}) -> $returnType"
+    get() = "(${parameterTypes.map { it.formatFunctionTypePart() }.join(", ")}) -> ${returnType}"
 
 fun FunctionType(text : String) : FunctionType {
     val (parameters, returnType) = text.split("->".toRegex()).map { it.trim() }.filter { it != "" }
@@ -135,13 +135,12 @@ private fun mapTypedef(repository: Repository, type: String): String {
 private fun splitUnionType(unionType: String) =
         unionType.replace("Union<".toRegex(), "").replace("[>]+".toRegex(), "").split("\\s*,\\s*".toRegex()).distinct().map {it.replace("\\?$".toRegex(), "")}
 
-private fun GenerateFunction.allTypes() = sequenceOf(returnType) + arguments.asSequence().map { it.type }
+private fun GenerateFunction?.allTypes() = if (this != null) sequenceOf(returnType) + arguments.asSequence().map { it.type } else emptySequence()
 
 private fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
         allTypes.values().asSequence()
                 .flatMap {
-                    it.secondaryConstructors.asSequence().flatMap { it.constructor.allTypes() } +
-                    sequenceOf(it.primaryConstructor).filterNotNull().flatMap { it.constructor.allTypes() } +
+                    it.constructor.allTypes() +
                             it.memberAttributes.asSequence().map { it.type } +
                             it.memberFunctions.asSequence().flatMap { it.allTypes() }
                 }
