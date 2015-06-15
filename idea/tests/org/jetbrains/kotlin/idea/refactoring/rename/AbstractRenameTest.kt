@@ -22,10 +22,13 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
@@ -39,6 +42,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.search.allScope
+import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.name.*
@@ -93,6 +97,20 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             if (hintDirective != null) {
                 Assert.fail("""Hint "$hintDirective" was expected""")
+            }
+
+            if (renameObject["checkErrorsAfter"]?.getAsBoolean() ?: false) {
+                val psiManager = PsiManager.getInstance(myProject)
+                val visitor = object : VirtualFileVisitor<Any>() {
+                    override fun visitFile(file: VirtualFile): Boolean {
+                        (psiManager.findFile(file) as? JetFile)?.let { DirectiveBasedActionUtils.checkForUnexpectedErrors(it) }
+                        return true
+                    }
+                }
+
+                for (sourceRoot in ModuleRootManager.getInstance(myModule).getSourceRoots()) {
+                    VfsUtilCore.visitChildrenRecursively(sourceRoot, visitor)
+                }
             }
         }
         catch (e : Exception) {

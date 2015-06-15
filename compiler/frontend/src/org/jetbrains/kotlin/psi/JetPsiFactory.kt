@@ -331,8 +331,8 @@ public class JetPsiFactory(private val project: Project) {
     public fun createLabeledExpression(labelName: String): JetLabeledExpression
         = createExpression("$labelName@ 1") as JetLabeledExpression
 
-    public fun createFieldIdentifier(fieldName: String): JetExpression {
-        return createExpression("$" + fieldName)
+    public fun createFieldIdentifier(fieldName: String): PsiElement {
+        return (createExpression("$" + fieldName) as JetNameReferenceExpression).getReferencedNameElement()
     }
 
     public fun createTypeCodeFragment(text: String, context: PsiElement?): JetTypeCodeFragment {

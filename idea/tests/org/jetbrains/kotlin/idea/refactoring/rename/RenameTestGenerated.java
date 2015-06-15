@@ -137,6 +137,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("renameFieldIdentifier/fieldIdentifier.test")
+    public void testRenameFieldIdentifier_FieldIdentifier() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameFieldIdentifier/fieldIdentifier.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("renameGet/get.test")
     public void testRenameGet_Get() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/renameGet/get.test");
