@@ -1249,19 +1249,17 @@ public abstract class StackValue {
         ) {
             CallableDescriptor descriptor = resolvedCall.getResultingDescriptor();
 
-            ReceiverParameterDescriptor dispatchReceiver = descriptor.getDispatchReceiverParameter();
+            Type dispatchReceiverType = smartDispatchReceiverType(descriptor, typeMapper);
             ReceiverParameterDescriptor extensionReceiver = descriptor.getExtensionReceiverParameter();
 
             if (extensionReceiver != null) {
                 return callableMethod != null ? callableMethod.getExtensionReceiverType() : typeMapper.mapType(extensionReceiver.getType());
             }
-            else if (dispatchReceiver != null) {
+            else if (dispatchReceiverType != null) {
                 if (AnnotationsPackage.isPlatformStaticInObjectOrClass(descriptor)) {
                     return Type.VOID_TYPE;
                 }
-                else {
-                    return callableMethod != null ? callableMethod.getDispatchReceiverType() : typeMapper.mapType(dispatchReceiver.getType());
-                }
+                return callableMethod != null ? callableMethod.getDispatchReceiverType() : dispatchReceiverType;
             }
             else if (isLocalFunCall(callableMethod)) {
                 return callableMethod.getGenerateCalleeType();
@@ -1270,6 +1268,22 @@ public abstract class StackValue {
             return Type.VOID_TYPE;
         }
 
+        /**
+         * Extracts the receiver from the resolved call, workarounding the fact that ResolvedCall#dispatchReceiver doesn't have
+         * all the needed information, for example there's no way to find out whether or not a smart cast was applied to the receiver.
+         */
+        @Nullable
+        private static Type smartDispatchReceiverType(@NotNull CallableDescriptor descriptor, @NotNull JetTypeMapper typeMapper) {
+            ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
+            if (dispatchReceiverParameter == null) return null;
+
+            DeclarationDescriptor container = descriptor.getContainingDeclaration();
+            if (container instanceof ClassDescriptor) {
+                return typeMapper.mapClass((ClassDescriptor) container);
+            }
+
+            return typeMapper.mapType(dispatchReceiverParameter);
+        }
 
         @Override
         public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
