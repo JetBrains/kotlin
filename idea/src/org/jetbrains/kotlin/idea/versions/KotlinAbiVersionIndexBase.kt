@@ -33,7 +33,7 @@ abstract class KotlinAbiVersionIndexBase<T>(private val classOfIndex: Class<T>) 
 
     override fun dependsOnFileContent() = true
 
-    private val LOG = Logger.getInstance(classOfIndex)
+    protected val LOG: Logger = Logger.getInstance(classOfIndex)
 
     protected inline fun tryBlock(inputData: FileContent, body: () -> Unit) {
         try {
