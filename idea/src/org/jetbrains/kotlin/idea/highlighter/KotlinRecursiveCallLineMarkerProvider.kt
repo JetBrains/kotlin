@@ -27,6 +27,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -77,17 +78,9 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
         if (resolvedCall.getCandidateDescriptor().getOriginal() != enclosingFunctionDescriptor) return false
 
         fun isDifferentReceiver(receiver: ReceiverValue): Boolean {
-            val receiverOwner =
-                    when (receiver) {
-                        is ExpressionReceiver -> {
-                            val thisRef = (JetPsiUtil.deparenthesize(receiver.getExpression()) as?
-                                    JetThisExpression)?.getInstanceReference() ?: return true
-                            bindingContext[BindingContext.REFERENCE_TARGET, thisRef] ?: return true
-                        }
+            if (receiver == ReceiverValue.NO_RECEIVER) return false
 
-                        is ThisReceiver -> receiver.getDeclarationDescriptor()
-                        else -> return false
-                    }
+            val receiverOwner = receiver.getThisReceiverOwner(bindingContext) ?: return true
 
             return when (receiverOwner) {
                 is SimpleFunctionDescriptor -> receiverOwner != enclosingFunctionDescriptor
