@@ -89,8 +89,6 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             renderCompanionObjectName = true
         }
 
-        private val MIX_KOTLIN_TO_JAVA_RENDERER = DESCRIPTOR_RENDERER.withOptions { withDefinedIn = false }
-
         private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
             if (element is JetDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
