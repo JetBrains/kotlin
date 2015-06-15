@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 import com.google.common.collect.Sets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
+import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.DescriptorResolver;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
+import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.JetType;
 
 import java.util.Set;
@@ -66,7 +68,9 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
 
         JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
         if (extendsBound != null) {
-            upperBounds.add(resolveBoundType(extendsBound));
+            JetType boundType = c.getDescriptorResolver().resolveTypeParameterExtendsBound(
+                    this, extendsBound, getContainingDeclaration().getScopeForClassHeaderResolution(), c.getTrace());
+            upperBounds.add(boundType);
         }
 
         resolveUpperBoundsFromWhereClause(upperBounds);

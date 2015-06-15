@@ -457,6 +457,20 @@ public class DescriptorResolver {
         }
     }
 
+    public JetType resolveTypeParameterExtendsBound(
+            @NotNull TypeParameterDescriptor typeParameterDescriptor,
+            @NotNull JetTypeReference extendsBound,
+            JetScope scope,
+            BindingTrace trace
+    ) {
+        JetType type = typeResolver.resolveType(scope, extendsBound, trace, false);
+        if (type.getConstructor().equals(typeParameterDescriptor.getTypeConstructor())) {
+            trace.report(Errors.CYCLIC_GENERIC_UPPER_BOUND.on(extendsBound));
+            type = ErrorUtils.createErrorType("Cyclic upper bound: " + type);
+        }
+        return type;
+    }
+
     public void resolveGenericBounds(
             @NotNull JetTypeParameterListOwner declaration,
             @NotNull DeclarationDescriptor descriptor,
@@ -476,11 +490,7 @@ public class DescriptorResolver {
 
             JetTypeReference extendsBound = jetTypeParameter.getExtendsBound();
             if (extendsBound != null) {
-                JetType type = typeResolver.resolveType(scope, extendsBound, trace, false);
-                if (type.getConstructor().equals(typeParameterDescriptor.getTypeConstructor())) {
-                    trace.report(Errors.CYCLIC_GENERIC_UPPER_BOUND.on(extendsBound));
-                    type = ErrorUtils.createErrorType("Cyclic upper bound: " + type);
-                }
+                JetType type = resolveTypeParameterExtendsBound(typeParameterDescriptor, extendsBound, scope, trace);
                 typeParameterDescriptor.addUpperBound(type);
                 deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type));
             }

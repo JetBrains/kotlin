@@ -216,7 +216,7 @@ public class TypeResolver(
                 if (baseType.isNullable() || innerType is JetNullableType || innerType is JetDynamicType) {
                     c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
                 }
-                else if (!baseType.isBare() && TypeUtils.hasNullableSuperType(baseType.getActualType())) {
+                else if (c.checkBounds && !baseType.isBare() && TypeUtils.hasNullableSuperType(baseType.getActualType())) {
                     c.trace.report(BASE_WITH_NULLABLE_UPPER_BOUND.on(nullableType, baseType.getActualType()))
                 }
                 result = baseType.makeNullable()

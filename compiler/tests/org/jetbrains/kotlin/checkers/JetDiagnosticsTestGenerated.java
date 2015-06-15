@@ -10260,6 +10260,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("itselfAsUpperBoundInClass.kt")
+            public void testItselfAsUpperBoundInClass() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/itselfAsUpperBoundInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("itselfAsUpperBoundInClassNotNull.kt")
+            public void testItselfAsUpperBoundInClassNotNull() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/itselfAsUpperBoundInClassNotNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("itselfAsUpperBoundLocal.kt")
             public void testItselfAsUpperBoundLocal() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/regressions/itselfAsUpperBoundLocal.kt");
