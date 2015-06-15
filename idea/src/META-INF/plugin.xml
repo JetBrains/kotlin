@@ -439,7 +439,6 @@
 
     <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider"/>
     <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider"/>
-    <library.presentationProvider implementation="org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryPresentationProvider"/>
 
     <typeHierarchyProvider language="jet" implementationClass="org.jetbrains.kotlin.idea.hierarchy.KotlinTypeHierarchyProvider"/>
     <callHierarchyProvider
