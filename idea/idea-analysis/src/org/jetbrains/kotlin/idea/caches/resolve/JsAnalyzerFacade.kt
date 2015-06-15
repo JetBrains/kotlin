@@ -22,6 +22,7 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForLazyResolve
@@ -36,9 +37,9 @@ import org.jetbrains.kotlin.types.DynamicTypesAllowed
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
 public class JsResolverForModule(
-        override val lazyResolveSession: ResolveSession
+        override val lazyResolveSession: ResolveSession,
+        override val packageFragmentProvider: PackageFragmentProvider
 ) : ResolverForModule
-
 
 public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAnalysisParameters> {
 
@@ -72,8 +73,7 @@ public object JsAnalyzerFacade : AnalyzerFacade<JsResolverForModule, PlatformAna
             }
         }
 
-        moduleDescriptor.initialize(packageFragmentProvider)
-        return JsResolverForModule(resolveSession)
+        return JsResolverForModule(resolveSession, packageFragmentProvider)
     }
 
     override val moduleParameters: ModuleParameters

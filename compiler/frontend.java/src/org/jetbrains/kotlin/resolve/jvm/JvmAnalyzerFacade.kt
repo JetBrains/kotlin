@@ -21,6 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.di.InjectorForLazyResolveWithJava
@@ -36,6 +37,7 @@ import kotlin.platform.platformStatic
 
 public class JvmResolverForModule(
         override val lazyResolveSession: ResolveSession,
+        override val packageFragmentProvider: PackageFragmentProvider,
         public val javaDescriptorResolver: JavaDescriptorResolver
 ) : ResolverForModule
 
@@ -75,8 +77,7 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmResolverForModule, JvmPlatfo
         val resolveSession = injector.getResolveSession()!!
         val javaDescriptorResolver = injector.getJavaDescriptorResolver()!!
         val providersForModule = listOf(resolveSession.getPackageFragmentProvider(), javaDescriptorResolver.packageFragmentProvider)
-        moduleDescriptor.initialize(CompositePackageFragmentProvider(providersForModule))
-        return JvmResolverForModule(resolveSession, javaDescriptorResolver)
+        return JvmResolverForModule(resolveSession, CompositePackageFragmentProvider(providersForModule), javaDescriptorResolver)
     }
 
     override val moduleParameters: ModuleParameters

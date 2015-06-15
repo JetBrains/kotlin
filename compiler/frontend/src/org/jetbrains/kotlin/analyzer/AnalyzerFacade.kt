@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.LazyModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
@@ -34,6 +35,7 @@ import kotlin.properties.Delegates
 
 public trait ResolverForModule {
     public val lazyResolveSession: ResolveSession
+    public val packageFragmentProvider: PackageFragmentProvider
 }
 
 public trait ResolverForProject<M : ModuleInfo,out R : ResolverForModule> {
@@ -178,7 +180,7 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
                         module, descriptor, projectContext.withModule(descriptor),
                         modulesContent(module), platformParameters, resolverForProject
                 )
-                assert(descriptor.isInitialized, "ModuleDescriptorImpl#initialize() should be called in createResolverForModule")
+                descriptor.initialize(resolverForModule.packageFragmentProvider)
                 resolverForProject.resolverByModuleDescriptor[descriptor] = resolverForModule
             }
         }
