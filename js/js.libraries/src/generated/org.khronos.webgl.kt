@@ -91,7 +91,7 @@ native public interface WebGLRenderingContext : RenderingContext {
         set(value) = noImpl
     fun getContextAttributes(): WebGLContextAttributes? = noImpl
     fun isContextLost(): Boolean = noImpl
-    fun getSupportedExtensions(): Array<dynamic> = noImpl
+    fun getSupportedExtensions(): Array<String>? = noImpl
     fun getExtension(name: String): dynamic = noImpl
     fun activeTexture(texture: Int): Unit = noImpl
     fun attachShader(program: WebGLProgram?, shader: WebGLShader?): Unit = noImpl
@@ -150,7 +150,7 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun generateMipmap(target: Int): Unit = noImpl
     fun getActiveAttrib(program: WebGLProgram?, index: Int): WebGLActiveInfo? = noImpl
     fun getActiveUniform(program: WebGLProgram?, index: Int): WebGLActiveInfo? = noImpl
-    fun getAttachedShaders(program: WebGLProgram?): Array<dynamic> = noImpl
+    fun getAttachedShaders(program: WebGLProgram?): Array<WebGLShader>? = noImpl
     fun getAttribLocation(program: WebGLProgram?, name: String): Int = noImpl
     fun getBufferParameter(target: Int, pname: Int): Any? = noImpl
     fun getParameter(pname: Int): Any? = noImpl
@@ -560,6 +560,10 @@ native public open class ArrayBuffer(length: Int) : Transferable {
         get() = noImpl
         set(value) = noImpl
     fun slice(begin: Int, end: Int = noImpl): ArrayBuffer = noImpl
+
+    companion object {
+        fun isView(value: Any?): Boolean = noImpl
+    }
 }
 
 native public open class Int8Array : ArrayBufferView {

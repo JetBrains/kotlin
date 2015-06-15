@@ -21,9 +21,6 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 
 native public open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget {
-    var permission: String
-        get() = noImpl
-        set(value) = noImpl
     var onclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -67,6 +64,13 @@ native public open class Notification(title: String, options: NotificationOption
         get() = noImpl
         set(value) = noImpl
     fun close(): Unit = noImpl
+
+    companion object {
+        var permission: String
+            get() = noImpl
+            set(value) = noImpl
+        fun requestPermission(callback: (String) -> Unit = noImpl): Unit = noImpl
+    }
 }
 
 native public open class NotificationOptions {

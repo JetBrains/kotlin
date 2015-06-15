@@ -57,6 +57,14 @@ native public open class URL(url: String, base: String = noImpl) {
     var hash: String
         get() = noImpl
         set(value) = noImpl
+
+    companion object {
+        fun domainToASCII(domain: String): String = noImpl
+        fun domainToUnicode(domain: String): String = noImpl
+        fun createObjectURL(blob: Blob): String = noImpl
+        fun createFor(blob: Blob): String = noImpl
+        fun revokeObjectURL(url: String): Unit = noImpl
+    }
 }
 
 native public open class URLSearchParams(init: dynamic = "") {
