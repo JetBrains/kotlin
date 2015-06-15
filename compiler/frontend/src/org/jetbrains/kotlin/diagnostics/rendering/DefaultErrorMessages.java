@@ -604,7 +604,6 @@ public class DefaultErrorMessages {
         MAP.put(ANNOTATION_CLASS_WITH_BODY, "Body is not allowed for annotation class");
         MAP.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member");
         MAP.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable");
-        MAP.put(JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION, "java.lang.Class as annotation parameter is deprecated. Use KClass instead");
         MAP.put(ILLEGAL_ANNOTATION_KEYWORD, "''annotation'' keyword is only applicable for class");
         MAP.put(ANNOTATION_PARAMETER_MUST_BE_CONST, "An annotation parameter must be a compile-time constant");
         MAP.put(ANNOTATION_PARAMETER_MUST_BE_ENUM_CONST, "An enum annotation parameter must be a enum constant");

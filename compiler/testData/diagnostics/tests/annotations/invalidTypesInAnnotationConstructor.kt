@@ -1,4 +1,3 @@
-// !DIAGNOSTICS: -JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION
 package test
 
 import java.lang.annotation.RetentionPolicy

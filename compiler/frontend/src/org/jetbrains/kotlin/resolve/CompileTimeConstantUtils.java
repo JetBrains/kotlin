@@ -35,14 +35,12 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeProjection;
 import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilPackage;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER;
-import static org.jetbrains.kotlin.diagnostics.Errors.JAVA_LANG_CLASS_PARAMETER_IN_ANNOTATION;
 import static org.jetbrains.kotlin.diagnostics.Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER;
 import static org.jetbrains.kotlin.resolve.BindingContext.VALUE_PARAMETER;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isAnnotationClass;
