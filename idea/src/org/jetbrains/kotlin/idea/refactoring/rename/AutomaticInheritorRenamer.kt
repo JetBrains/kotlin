@@ -35,7 +35,7 @@ public class AutomaticInheritorRenamer(klass: JetClass, newName: String): Automa
         val lightClass = LightClassUtil.getPsiClass(klass)
         if (lightClass != null) {
             for (inheritorLightClass in ClassInheritorsSearch.search(lightClass, true).findAll()) {
-                if (inheritorLightClass.getName() != null) {
+                if ((inheritorLightClass.unwrapped as? PsiNamedElement)?.getName() != null) {
                     myElements.add(inheritorLightClass.unwrapped as PsiNamedElement)
                 }
             }
