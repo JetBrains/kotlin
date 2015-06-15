@@ -1,6 +1,4 @@
 // "Change 'foo' function return type to '([ERROR : NoSuchType]) -> Int'" "false"
-// ACTION: Disable 'Make Types Implicit In Lambda (May Break Code)'
-// ACTION: Edit intention settings
 // ACTION: Create annotation 'NoSuchType'
 // ACTION: Create class 'NoSuchType'
 // ACTION: Create enum 'NoSuchType'

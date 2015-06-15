@@ -1,10 +1,6 @@
 // "Change 'AA.contains' function return type to 'Int'" "false"
 // ACTION: Change 'AAA.g' function return type to 'Boolean'
 // ACTION: Convert to expression body
-// ACTION: Disable 'Convert to Expression Body'
-// ACTION: Disable 'Replace Overloaded Operator With Function Call'
-// ACTION: Edit intention settings
-// ACTION: Edit intention settings
 // ACTION: Replace overloaded operator with function call
 // ERROR: <html>Type mismatch.<table><tr><td>Required:</td><td>kotlin.Int</td></tr><tr><td>Found:</td><td>kotlin.Boolean</td></tr></table></html>
 interface A {

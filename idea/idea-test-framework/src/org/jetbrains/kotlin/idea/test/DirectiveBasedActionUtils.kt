@@ -45,18 +45,23 @@ public object DirectiveBasedActionUtils {
     public fun checkAvailableActionsAreExpected(file: JetFile, availableActions: Collection<IntentionAction>) {
         val expectedActions = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:").sort()
 
+        UsefulTestCase.assertEmpty("Irrelevant actions should not be specified in ACTION directive for they are not checked anyway",
+                                   expectedActions.filter { isIrrelevantAction(it) })
+
         val actualActions = availableActions.map { it.getText() }.sort()
 
         UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position. Use // ACTION: directive",
                                            filterOutIrrelevantActions(actualActions),
-                                           filterOutIrrelevantActions(expectedActions))
+                                           expectedActions)
     }
 
     //TODO: hack, implemented because irrelevant actions behave in different ways on build server and locally
     // this behaviour should be investigated and hack can be removed
     private fun filterOutIrrelevantActions(actions: Collection<String>): Collection<String> {
-        return actions.filter { action -> IRRELEVANT_ACTION_PREFIXES.none { action.startsWith(it) } }
+        return actions.filter { !isIrrelevantAction(it) }
     }
+
+    private fun isIrrelevantAction(action: String) = IRRELEVANT_ACTION_PREFIXES.any { action.startsWith(it) }
 
     private val IRRELEVANT_ACTION_PREFIXES = listOf(
             "Disable ",

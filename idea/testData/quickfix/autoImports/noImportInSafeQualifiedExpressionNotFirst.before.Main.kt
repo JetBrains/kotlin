@@ -1,9 +1,7 @@
 // "class com.intellij.codeInsight.daemon.impl.quickfix.ImportClassFixBase" "false"
 // ERROR: Unresolved reference: SomeTest
 // ACTION: Create class 'SomeTest'
-// ACTION: Edit intention settings
 // ACTION: Replace safe access expression with 'if' expression
-// ACTION: Disable 'Replace Safe Access Expression with 'if' Expression'
 
 package testing
 
