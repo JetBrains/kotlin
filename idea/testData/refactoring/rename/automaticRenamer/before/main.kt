@@ -11,6 +11,9 @@ fun main(args: Array<String>) {
     val someVerySpecialFoo: Foo = Foo()
     val fooAnother: Foo = Foo()
 
+    val anonymous = object : Foo() {
+    }
+
     val (foo1: Foo, foos: List<Foo>) = Pair(Foo(), listOf<Foo>())
 
     try {
