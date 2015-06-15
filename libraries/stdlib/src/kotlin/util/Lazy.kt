@@ -38,45 +38,36 @@ public enum class LazyThreadSafetyMode {
 }
 
 
-private object NULL_VALUE {}
+private object UNINITIALIZED_VALUE
 
-private fun escape(value: Any?): Any {
-    return value ?: NULL_VALUE
-}
-
-private fun unescape(value: Any?): Any? {
-    return if (value === NULL_VALUE) null else value
-}
-
-
-private class LazyImpl<out T>(initializer: () -> T, private val lockObj: Any) : Lazy<T> {
+private class LazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private var initializer: (() -> T)? = initializer
-    private volatile var _value: Any? = null
+    private volatile var _value: Any? = UNINITIALIZED_VALUE
 
     public override val value: T
         get() {
             val _v1 = _value
-            if (_v1 != null) {
-                return unescape(_v1) as T
+            if (_v1 !== UNINITIALIZED_VALUE) {
+                return _v1 as T
             }
 
-            return synchronized(lockObj) {
+            return synchronized(this) {
                 val _v2 = _value
-                if (_v2 != null) {
-                     unescape(_v2) as T
+                if (_v2 !== UNINITIALIZED_VALUE) {
+                     _v2 as T
                 }
                 else {
                     val typedValue = initializer!!()
-                    _value = escape(typedValue)
+                    _value = typedValue
                     initializer = null
                     typedValue
                 }
             }
         }
 
-    override val valueCreated: Boolean = _value == null
+    override val valueCreated: Boolean = _value !== UNINITIALIZED_VALUE
 
-    override fun toString(): String = if (valueCreated) value.toString() else "Lazy value not created yet."
+    override fun toString(): String = if (valueCreated) value.toString() else "Lazy value not initialized yet."
 }
 
 
@@ -84,18 +75,18 @@ private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private var initializer: (() -> T)? = initializer
 
 
-    private var _value: Any? = null
+    private var _value: Any? = UNINITIALIZED_VALUE
 
     override val value: T
         get() {
-            if (_value == null) {
-                _value = escape(initializer!!())
+            if (_value === UNINITIALIZED_VALUE) {
+                _value = initializer!!()
                 initializer == null
             }
-            return unescape(_value) as T
+            return _value as T
         }
 
-    override val valueCreated: Boolean = _value == null
+    override val valueCreated: Boolean = _value !== UNINITIALIZED_VALUE
 
-    override fun toString(): String = if (valueCreated) value.toString() else "Lazy value not created yet."
+    override fun toString(): String = if (valueCreated) value.toString() else "Lazy value not initialized yet."
 }
