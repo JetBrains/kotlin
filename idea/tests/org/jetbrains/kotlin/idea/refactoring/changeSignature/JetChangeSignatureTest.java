@@ -939,6 +939,16 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testPrimaryConstructorByRef() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetPsiFactory psiFactory = new JetPsiFactory(getProject());
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "n", KotlinBuiltIns.getInstance().getIntType(), null,
+                                                             psiFactory.createExpression("1"), JetValVar.None, null);
+        changeInfo.addParameter(newParameter);
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
