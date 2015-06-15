@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JsCompiler
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner.runK2JvmCompiler
@@ -94,6 +95,24 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         val messageCollector = MessageCollectorAdapter(context)
+        try {
+            return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
+        } catch (e: Throwable) {
+            messageCollector.report(
+                    CompilerMessageSeverity.EXCEPTION,
+                    OutputMessageUtil.renderException(e),
+                    CompilerMessageLocation.NO_LOCATION
+            )
+            return ABORT
+        }
+    }
+
+    private fun doBuild(
+            chunk: ModuleChunk,
+            context: CompileContext,
+            dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
+            messageCollector: MessageCollectorAdapter, outputConsumer: ModuleLevelBuilder.OutputConsumer
+    ): ModuleLevelBuilder.ExitCode {
         // Workaround for Android Studio
         if (!JpsUtils.isJsKotlinModule(chunk.representativeTarget()) && !JavaBuilder.IS_ENABLED[context, true]) {
             messageCollector.report(INFO, "Kotlin JPS plugin is disabled", CompilerMessageLocation.NO_LOCATION)
