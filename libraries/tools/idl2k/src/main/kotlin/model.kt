@@ -16,8 +16,6 @@
 
 package org.jetbrains.idl2k
 
-import java.util.HashSet
-
 data class NamedValue<V>(val name: String, val value: V)
 
 data class Repository(

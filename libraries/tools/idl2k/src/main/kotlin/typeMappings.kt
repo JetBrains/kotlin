@@ -46,10 +46,10 @@ private val typeMapper = mapOf(
 )
 
 
-fun GenerateTraitOrClass.allSuperTypes(all: Map<String, GenerateTraitOrClass>) = HashSet<GenerateTraitOrClass>().let { result -> allSuperTypesImpl(listOf(this), all, result); result.toList() }
+fun GenerateTraitOrClass.allSuperTypes(all: Map<String, GenerateTraitOrClass>) = LinkedHashSet<GenerateTraitOrClass>().let { result -> allSuperTypesImpl(listOf(this), all, result); result.toList() }
 
 tailRecursive
-fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String, GenerateTraitOrClass>, result: HashSet<GenerateTraitOrClass>) {
+fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String, GenerateTraitOrClass>, result: MutableSet<GenerateTraitOrClass>) {
     if (roots.isNotEmpty()) {
         allSuperTypesImpl(roots.flatMap { it.superTypes }.map { all[it] }.filterNotNull().filter { result.add(it) }, all, result)
     }
