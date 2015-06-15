@@ -37,31 +37,61 @@
 
     <property file="${dependencies.info.file}" prefix="dependencies.info.prev"/>
 
-    <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
+    <target name="update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
+        <execute_update_with_idea_maven_artifacts
+            base.url="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
+            idea.maven.version="${ideaVersion}"/>
+    </target>
+
+    <!-- deprecated -->
+    <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
+        <execute_update_with_idea_maven_artifacts
+            base.url="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
+            idea.maven.version="${ideaVersion}"/>
+    </target>
+
+    <target name="jb_update_continuous_141" depends="fetch-third-party,fetch-annotations">
+        <execute_update_with_idea_maven_artifacts
+            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            idea.maven.version="141-SNAPSHOT"/>
+    </target>
+
+    <target name="jb_update_continuous_142" depends="fetch-third-party,fetch-annotations">
+        <execute_update_with_idea_maven_artifacts
+            base.url="https://www.jetbrains.com/intellij-repository/snapshots/com/jetbrains/intellij/idea"
+            idea.maven.version="142-SNAPSHOT"/>
+    </target>
+
+    <!-- deprecated -->
+    <target name="update_old" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
         <execute_update_with_id_resolve
             teamcity.server.url="https://teamcity.jetbrains.com"
             build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}"/>
     </target>
 
-    <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
+    <!-- deprecated -->
+    <target name="jb_update_old" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
         <execute_update_with_id_resolve
             teamcity.server.url="http://buildserver.labs.intellij.net"
             build.locator.request="buildType:bt3498,status:SUCCESS,branch:/idea/${ideaVersion}"/>
     </target>
 
-    <target name="jb_update_continuous_139" depends="fetch-third-party,fetch-annotations">
+    <!-- deprecated -->
+    <target name="jb_update_continuous_139_old" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_id_resolve
             teamcity.server.url="http://buildserver.labs.intellij.net"
             build.locator.request="buildType:ijplatform_IjPlatformMaster_IdeaTrunk_CommunityDist,status:SUCCESS"/>
     </target>
 
-    <target name="jb_update_continuous_141" depends="fetch-third-party,fetch-annotations">
+    <!-- deprecated -->
+    <target name="jb_update_continuous_141_old" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_id_resolve
             teamcity.server.url="http://buildserver.labs.intellij.net"
             build.locator.request="buildType:ijplatform_IjPlatform141_IdeaTrunk_CommunityDist,status:SUCCESS"/>
     </target>
 
-    <target name="jb_update_continuous_142" depends="fetch-third-party,fetch-annotations">
+    <!-- deprecated -->
+    <target name="jb_update_continuous_142_old" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_id_resolve
             teamcity.server.url="http://buildserver.labs.intellij.net"
             build.locator.request="buildType:bt662,status:SUCCESS"/>
@@ -442,6 +472,33 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="execute_update_with_idea_maven_artifacts">
+        <attribute name="base.url"/>
+        <attribute name="idea.maven.version"/>
+
+        <sequential>
+            <loadresource property="execute.build.id">
+                <url url="@{base.url}/BUILD/@{idea.maven.version}/BUILD-@{idea.maven.version}.txt"/>
+            </loadresource>
+
+            <if>
+                <equals arg1="${dependencies.info.prev.idea.build.id}" arg2="${execute.build.id}"/>
+                <then>
+                    <echo message="IDEA build id: ${execute.build.id}. Already downloaded."/>
+                </then>
+                <else>
+                    <echo message="IDEA build id: ${execute.build.id}, previous build id: ${dependencies.info.prev.idea.build.id}"/>
+                    <execute_update_maven maven.version="@{idea.maven.version}" base.repository.url="@{base.url}"/>
+
+                    <propertyfile file="${dependencies.info.file}">
+                        <entry key="idea.build.id" value="${execute.build.id}"/>
+                    </propertyfile>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
+    <!-- deprecated -->
     <macrodef name="execute_update_with_id_resolve">
         <attribute name="teamcity.server.url"/>
         <attribute name="build.locator.request"/>
@@ -672,35 +729,35 @@
         <sequential>
             <mkdir dir="@{download.dir}"/>
 
-            <get src="@{base.repository.url}/ideaIC/${ideaVersion}/ideaIC-${ideaVersion}-sources.zip"
-                 dest="@{download.dir}/ideaIC-${ideaVersion}-sources.zip" usetimestamp="true"/>
+            <get src="@{base.repository.url}/ideaIC/@{maven.version}/ideaIC-@{maven.version}-sources.zip"
+                 dest="@{download.dir}/ideaIC-@{maven.version}-sources.zip" usetimestamp="true"/>
 
-            <get src="@{base.repository.url}/ideaIC/${ideaVersion}/ideaIC-${ideaVersion}.zip"
-                 dest="@{download.dir}/ideaIC-${ideaVersion}.zip" usetimestamp="true"/>
+            <get src="@{base.repository.url}/ideaIC/@{maven.version}/ideaIC-@{maven.version}.zip"
+                 dest="@{download.dir}/ideaIC-@{maven.version}.zip" usetimestamp="true"/>
 
             <download_and_unzip
-                dir="@{download.dir}/intellij-core-${ideaVersion}"
-                url="@{base.repository.url}/intellij-core/${ideaVersion}/intellij-core-${ideaVersion}.zip"
+                dir="@{download.dir}/intellij-core-@{maven.version}"
+                url="@{base.repository.url}/intellij-core/@{maven.version}/intellij-core-@{maven.version}.zip"
                 usetimestamp="true"/>
 
-            <get src="@{base.repository.url}/jps-build-test/${ideaVersion}/jps-build-test-${ideaVersion}.jar"
-                 dest="@{download.dir}/jps-build-test-${ideaVersion}.jar" usetimestamp="true"/>
+            <get src="@{base.repository.url}/jps-build-test/@{maven.version}/jps-build-test-@{maven.version}.jar"
+                 dest="@{download.dir}/jps-build-test-@{maven.version}.jar" usetimestamp="true"/>
 
             <download_and_unzip
-                dir="@{download.dir}/jps-standalone-${ideaVersion}"
-                url="@{base.repository.url}/jps-standalone/${ideaVersion}/jps-standalone-${ideaVersion}.zip"
+                dir="@{download.dir}/jps-standalone-@{maven.version}"
+                url="@{base.repository.url}/jps-standalone/@{maven.version}/jps-standalone-@{maven.version}.zip"
                 usetimestamp="true"/>
 
             <unpack_idea_sdk
                 idea.dir="${idea.dir}"
                 idea.sdk.fetch.needed="${idea.sdk.fetch.needed}"
 
-                download.dir.intellij-core="@{download.dir}/intellij-core-${ideaVersion}"
-                download.dir.jps-standalone="@{download.dir}/jps-standalone-${ideaVersion}"
-                download.file.archive.idea="@{download.dir}/ideaIC-${ideaVersion}.zip"
+                download.dir.intellij-core="@{download.dir}/intellij-core-@{maven.version}"
+                download.dir.jps-standalone="@{download.dir}/jps-standalone-@{maven.version}"
+                download.file.archive.idea="@{download.dir}/ideaIC-@{maven.version}.zip"
                 download.file.archive.idea.win.only="true"
-                download.file.archive.sources="@{download.dir}/ideaIC-${ideaVersion}-sources.zip"
-                download.file.archive.jps-build-test="@{download.dir}/jps-build-test-${ideaVersion}.jar"/>
+                download.file.archive.sources="@{download.dir}/ideaIC-@{maven.version}-sources.zip"
+                download.file.archive.jps-build-test="@{download.dir}/jps-build-test-@{maven.version}.jar"/>
         </sequential>
     </macrodef>
 
@@ -727,6 +784,7 @@
         </sequential>
     </macrodef>
 
+    <!-- deprecated -->
     <macrodef name="execute_update">
         <attribute name="base.url"/>
 
