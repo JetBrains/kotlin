@@ -276,8 +276,7 @@ public class KotlinToJVMBytecodeCompiler {
             }
             //noinspection UnnecessaryFullyQualifiedName
             classLoader = new GeneratedClassLoader(state.getFactory(),
-                                                   new URLClassLoader(classPaths.toArray(new URL[classPaths.size()]),
-                                                                      kotlin.KotlinPackage.class.getClassLoader())
+                                                   new URLClassLoader(classPaths.toArray(new URL[classPaths.size()]), null)
             );
 
             FqName nameForScript = ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0).getScript());
