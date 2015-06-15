@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.deleteSingle
 import org.jetbrains.kotlin.idea.core.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -68,7 +69,7 @@ trait Mover: (originalElement: JetNamedDeclaration, targetFile: JetFile) -> JetN
     object Default: Mover {
         override fun invoke(originalElement: JetNamedDeclaration, targetFile: JetFile): JetNamedDeclaration {
             val newElement = targetFile.add(originalElement) as JetNamedDeclaration
-            originalElement.delete()
+            originalElement.deleteSingle()
             return newElement
         }
     }

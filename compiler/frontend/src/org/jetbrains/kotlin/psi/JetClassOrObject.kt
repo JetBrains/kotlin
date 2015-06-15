@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
+import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.CheckUtil
+import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.stubs.IStubElementType
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.lexer.JetTokens
@@ -62,4 +65,16 @@ abstract public class JetClassOrObject : JetTypeParameterListOwnerStub<KotlinCla
     public fun getSecondaryConstructors(): List<JetSecondaryConstructor> = getBody()?.getSecondaryConstructors().orEmpty()
 
     public fun isAnnotation(): Boolean = hasModifier(JetTokens.ANNOTATION_KEYWORD)
+
+    public override fun delete() {
+        CheckUtil.checkWritable(this);
+
+        val file = getContainingJetFile();
+        if (!isTopLevel() || file.getDeclarations().size() > 1) {
+            CodeEditUtil.removeChild(getParent().getNode(), getNode());
+        }
+        else {
+            file.delete();
+        }
+    }
 }

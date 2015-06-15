@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
 import org.jetbrains.kotlin.idea.references.JetReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.deleteElementAndCleanParent
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
@@ -325,19 +325,5 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
             else -> super.getElementsToSearch(element, module, allElementsToDelete)
         }
-    }
-
-    override fun getAdditionalElementsToDelete(
-            element: PsiElement,
-            allElementsToDelete: MutableCollection<PsiElement>,
-            askUser: Boolean
-    ): Collection<PsiElement> {
-        val filesToDelete = allElementsToDelete
-                .filter { it is JetNamedDeclaration && it.getContainingJetFile() == it.getParent() }
-                .groupBy { (it as JetNamedDeclaration).getContainingJetFile() }
-                .filter { it.getKey().getDeclarations().size() == it.getValue().size() }
-                .keySet()
-        return super.getAdditionalElementsToDelete(element, allElementsToDelete, askUser)?.let { it + filesToDelete }
-               ?: filesToDelete
     }
 }

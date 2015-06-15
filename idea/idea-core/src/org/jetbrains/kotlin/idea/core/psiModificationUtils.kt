@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil
@@ -148,4 +149,8 @@ private fun deleteElementWithDelimiters(element: PsiElement) {
     val parent = element.getParent()
 
     parent.deleteChildRange(from, to)
+}
+
+public fun PsiElement.deleteSingle() {
+    CodeEditUtil.removeChild(getParent()?.getNode() ?: return, getNode() ?: return)
 }
