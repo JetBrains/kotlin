@@ -65,6 +65,18 @@ public class HighlightExitPointsTestGenerated extends AbstractHighlightExitPoint
         doTest(fileName);
     }
 
+    @TestMetadata("invalidReturn.kt")
+    public void testInvalidReturn() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/invalidReturn.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("invalidThrow.kt")
+    public void testInvalidThrow() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/invalidThrow.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("localFunction1.kt")
     public void testLocalFunction1() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/exitPoints/localFunction1.kt");
