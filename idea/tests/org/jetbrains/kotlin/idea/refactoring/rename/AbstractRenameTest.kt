@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.intellij.codeInsight.TargetElementUtilBase
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
@@ -138,7 +139,14 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val marker = psiFile.getText().indexOf(MARKER_TEXT)
             assert(marker != -1)
 
-            val toRename = psiFile.findElementAt(marker + MARKER_TEXT.length())!!.getNonStrictParentOfType<PsiNamedElement>()!!
+            val toRename = if (renameParamsObject["byRef"]?.getAsBoolean() ?: false) {
+                val editor = createEditor(mainFile)
+                editor.getCaretModel().moveToOffset(marker + MARKER_TEXT.length())
+                TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted())!!
+            }
+            else {
+                psiFile.findElementAt(marker + MARKER_TEXT.length())!!.getNonStrictParentOfType<PsiNamedElement>()!!
+            }
             val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
 
             runRenameProcessor(context, newName, substitution, true, true)
