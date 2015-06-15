@@ -17,13 +17,17 @@
 package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.JetThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 
 public enum class CallType {
     NORMAL,
@@ -102,3 +106,15 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
     }
 }
 
+public fun ReceiverValue.getThisReceiverOwner(bindingContext: BindingContext): DeclarationDescriptor? {
+    return when (this) {
+        is ExpressionReceiver -> {
+            val thisRef = (JetPsiUtil.deparenthesize(this.getExpression()) as? JetThisExpression)?.getInstanceReference() ?: return null
+            bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
+        }
+
+        is ThisReceiver -> this.getDeclarationDescriptor()
+
+        else -> null
+    }
+}

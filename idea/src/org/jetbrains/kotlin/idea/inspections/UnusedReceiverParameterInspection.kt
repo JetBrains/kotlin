@@ -19,16 +19,23 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import kotlin.properties.Delegates
 
 public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
@@ -52,10 +59,9 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
 
                         val bindingContext = element.analyze()
                         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
-                        if ((resolvedCall.getDispatchReceiver() as? ExtensionReceiver)?.getDeclarationDescriptor() == callable) {
-                            used = true
-                        }
-                        else if (((resolvedCall.getExtensionReceiver() as? ExtensionReceiver)?.getDeclarationDescriptor() == callable)) {
+
+                        if (resolvedCall.getDispatchReceiver().getThisReceiverOwner(bindingContext) == callable ||
+                            resolvedCall.getExtensionReceiver().getThisReceiverOwner(bindingContext) == callable) {
                             used = true
                         }
                         else if ((resolvedCall.getCandidateDescriptor() as? ReceiverParameterDescriptor)?.getContainingDeclaration() == callable) {
