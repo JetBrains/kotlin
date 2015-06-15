@@ -504,8 +504,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             for (PropertyDescriptor propertyDescriptor : properties) {
                 Type asmType = typeMapper.mapType(propertyDescriptor);
 
-                genPropertyOnStack(iv, context, propertyDescriptor, 0);
-                genPropertyOnStack(iv, context, propertyDescriptor, 2);
+                Type thisPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, 0);
+                StackValue.coerce(thisPropertyType, asmType, iv);
+
+                Type otherPropertyType = genPropertyOnStack(iv, context, propertyDescriptor, 2);
+                StackValue.coerce(otherPropertyType, asmType, iv);
 
                 if (asmType.getSort() == Type.ARRAY) {
                     Type elementType = correctElementType(asmType);
@@ -565,10 +568,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.mul(Type.INT_TYPE);
                 }
 
-                genPropertyOnStack(iv, context, propertyDescriptor, 0);
+                Type propertyType = genPropertyOnStack(iv, context, propertyDescriptor, 0);
+                Type asmType = typeMapper.mapType(propertyDescriptor);
+                StackValue.coerce(propertyType, asmType, iv);
 
                 Label ifNull = null;
-                Type asmType = typeMapper.mapType(propertyDescriptor);
                 if (!isPrimitive(asmType)) {
                     ifNull = new Label();
                     iv.dup();
@@ -688,7 +692,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                 bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, descriptorToDeclaration(parameter));
                         assert property != null : "Property descriptor is not found for primary constructor parameter: " + parameter;
 
-                        genPropertyOnStack(iv, context, property, 0);
+                        Type propertyType = genPropertyOnStack(iv, context, property, 0);
+                        StackValue.coerce(propertyType, componentType, iv);
                     }
                     iv.areturn(componentType);
                 }
