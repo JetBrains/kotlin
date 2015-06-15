@@ -537,7 +537,10 @@
 
         <attribute name="download.dir.intellij-core"/>
         <attribute name="download.dir.jps-standalone"/>
+
         <attribute name="download.file.archive.idea"/>
+        <attribute name="download.file.archive.idea.win.only"/>
+
         <attribute name="download.file.archive.sources"/>
         <attribute name="download.file.archive.jps-build-test"/>
 
@@ -557,7 +560,10 @@
                     </delete>
 
                     <if>
-                        <matches pattern=".+\.win\.zip" string="${idea.archive.name}"/>
+                        <or>
+                            <matches pattern=".+\.win\.zip" string="${idea.archive.name}"/>
+                            <istrue value="@{download.file.archive.idea.win.only}"/>
+                        </or>
                         <then>
                             <unzip src="@{download.file.archive.idea}" dest="@{idea.dir}"/>
                         </then>
@@ -659,6 +665,70 @@
         </sequential>
     </macrodef>
 
+    <macrodef name="execute_update_maven">
+        <attribute name="maven.version"/>
+        <attribute name="base.repository.url"/>
+
+        <attribute name="download.dir" default="dependencies/download/@{maven.version}"/>
+
+        <sequential>
+            <mkdir dir="@{download.dir}"/>
+
+            <get src="@{base.repository.url}/ideaIC/${ideaVersion}/ideaIC-${ideaVersion}-sources.zip"
+                 dest="@{download.dir}/ideaIC-${ideaVersion}-sources.zip" usetimestamp="true"/>
+
+            <get src="@{base.repository.url}/ideaIC/${ideaVersion}/ideaIC-${ideaVersion}.zip"
+                 dest="@{download.dir}/ideaIC-${ideaVersion}.zip" usetimestamp="true"/>
+
+            <download_and_unzip
+                dir="@{download.dir}/intellij-core-${ideaVersion}"
+                url="@{base.repository.url}/intellij-core/${ideaVersion}/intellij-core-${ideaVersion}.zip"
+                usetimestamp="true"/>
+
+            <get src="@{base.repository.url}/jps-build-test/${ideaVersion}/jps-build-test-${ideaVersion}.jar"
+                 dest="@{download.dir}/jps-build-test-${ideaVersion}.jar" usetimestamp="true"/>
+
+            <download_and_unzip
+                dir="@{download.dir}/jps-standalone-${ideaVersion}"
+                url="@{base.repository.url}/jps-standalone/${ideaVersion}/jps-standalone-${ideaVersion}.zip"
+                usetimestamp="true"/>
+
+            <unpack_idea_sdk
+                idea.dir="${idea.dir}"
+                idea.sdk.fetch.needed="${idea.sdk.fetch.needed}"
+
+                download.dir.intellij-core="@{download.dir}/intellij-core-${ideaVersion}"
+                download.dir.jps-standalone="@{download.dir}/jps-standalone-${ideaVersion}"
+                download.file.archive.idea="@{download.dir}/ideaIC-${ideaVersion}.zip"
+                download.file.archive.idea.win.only="true"
+                download.file.archive.sources="@{download.dir}/ideaIC-${ideaVersion}-sources.zip"
+                download.file.archive.jps-build-test="@{download.dir}/jps-build-test-${ideaVersion}.jar"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="download_and_unzip">
+        <attribute name="url"/>
+        <attribute name="dir"/>
+        <attribute name="usetimestamp"/>
+
+        <sequential>
+            <get src="@{url}" dest="@{dir}.zip" usetimestamp="@{usetimestamp}"/>
+
+            <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>
+            <if>
+                <not>
+                    <available file="@{dir}" type="dir"/>
+                </not>
+                <then>
+                    <unzip src="@{dir}.zip" dest="@{dir}"/>
+                </then>
+                <else>
+                    <echo message="Folder exist - so not unpacked @{dir}"/>
+                </else>
+            </if>
+        </sequential>
+    </macrodef>
+
     <macrodef name="execute_update">
         <attribute name="base.url"/>
 
@@ -726,6 +796,7 @@
                 download.dir.intellij-core="${core.dir}"
                 download.dir.jps-standalone="${jps.extracted.dir}"
                 download.file.archive.idea="${idea.download.dir}/${idea.archive.name}"
+                download.file.archive.idea.win.only="false"
                 download.file.archive.sources="${idea.download.dir}/idea-sdk-sources.zip"
                 download.file.archive.jps-build-test="${idea.download.dir}/jps-build-test.jar"/>
         </sequential>
