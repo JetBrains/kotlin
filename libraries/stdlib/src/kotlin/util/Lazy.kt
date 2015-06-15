@@ -1,17 +1,39 @@
 package kotlin
 
 
-
+/**
+ * Represents a value with lazy initialization.
+ */
 public interface Lazy<out T> {
+    /** Gets the lazily initialized value of the current Lazy instance. */
     public val value: T
+    /** Returns `true` if a value for this Lazy instance has been already initialized. */
     public val valueCreated: Boolean
 }
 
+/**
+ * An extension to delegate a read-only property of type [T] to an instance of [Lazy].
+ *
+ * This extension allows to use instances of Lazy for property delegation:
+ * `val property: String by lazy { initializer }`
+ */
 public fun <T> Lazy<T>.get(thisRef: Any?, property: PropertyMetadata): T = value
 
-
+/**
+ * Specifies how a [Lazy] instance synchronizes access among multiple threads.
+ */
 public enum class LazyThreadSafetyMode {
+
+    /**
+     * Locks are used to ensure that only a single thread can initialize the [Lazy] instance.
+     */
     SYNCHRONIZED,
+
+    /**
+     * No locks are used to synchronize the access to the [Lazy] instance value; if the instance is accessed from multiple threads, its behavior is undefined.
+     *
+     * This mode should be used only when high performance is crucial and the [Lazy] instance is guaranteed never to be initialized from more than one thread.
+     */
     NONE,
 }
 
