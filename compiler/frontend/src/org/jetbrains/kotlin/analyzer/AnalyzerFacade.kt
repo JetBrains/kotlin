@@ -23,12 +23,15 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.LazyModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
+import org.jetbrains.kotlin.storage.StorageManager
 import java.util.ArrayList
 import java.util.HashMap
 import kotlin.properties.Delegates
@@ -56,7 +59,7 @@ public class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
         val descriptorByModule: Map<M, ModuleDescriptorImpl>,
         val delegateResolver: ResolverForProject<M, R> = EmptyResolverForProject()
 ) : ResolverForProject<M, R> {
-    val resolverByModuleDescriptor: MutableMap<ModuleDescriptor, R> = HashMap()
+    val resolverByModuleDescriptor: MutableMap<ModuleDescriptor, () -> R> = HashMap()
 
     override val allModules: Collection<M> by Delegates.lazy {
         (descriptorByModule.keySet() + delegateResolver.allModules).toSet()
@@ -69,7 +72,8 @@ public class ResolverForProjectImpl<M : ModuleInfo, R : ResolverForModule>(
     }
 
     override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): R {
-        return resolverByModuleDescriptor[descriptor] ?: return delegateResolver.resolverForModuleDescriptor(descriptor)
+        val computation = resolverByModuleDescriptor[descriptor] ?: return delegateResolver.resolverForModuleDescriptor(descriptor)
+        return computation()
     }
 
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
@@ -127,11 +131,12 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
             delegateResolver: ResolverForProject<M, A> = EmptyResolverForProject()
     ): ResolverForProject<M, A> {
 
+        val storageManager = projectContext.storageManager
         fun createResolverForProject(): ResolverForProjectImpl<M, A> {
             val descriptorByModule = HashMap<M, ModuleDescriptorImpl>()
             modules.forEach {
                 module ->
-                descriptorByModule[module] = ModuleDescriptorImpl(module.name, projectContext.storageManager, moduleParameters)
+                descriptorByModule[module] = ModuleDescriptorImpl(module.name, storageManager, moduleParameters)
             }
             return ResolverForProjectImpl(descriptorByModule, delegateResolver)
         }
@@ -153,7 +158,7 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
             modules.forEach {
                 module ->
                 resolverForProject.descriptorForModule(module).setDependencies(
-                        LazyModuleDependencies(projectContext.storageManager) { computeDependencyDescriptors(module) }
+                        LazyModuleDependencies(storageManager) { computeDependencyDescriptors(module) }
                 )
             }
         }
@@ -176,12 +181,15 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
             modules.forEach {
                 module ->
                 val descriptor = resolverForProject.descriptorForModule(module)
-                val resolverForModule = createResolverForModule(
-                        module, descriptor, projectContext.withModule(descriptor),
-                        modulesContent(module), platformParameters, resolverForProject
-                )
-                descriptor.initialize(resolverForModule.packageFragmentProvider)
-                resolverForProject.resolverByModuleDescriptor[descriptor] = resolverForModule
+                val computeResolverForModule = storageManager.createLazyValue {
+                    createResolverForModule(
+                            module, descriptor, projectContext.withModule(descriptor),
+                            modulesContent(module), platformParameters, resolverForProject
+                    )
+                }
+
+                descriptor.initialize(DelegatingPackageFragmentProvider { computeResolverForModule().packageFragmentProvider })
+                resolverForProject.resolverByModuleDescriptor[descriptor] = computeResolverForModule
             }
         }
 
@@ -198,4 +206,18 @@ public trait AnalyzerFacade<A : ResolverForModule, in P : PlatformAnalysisParame
     ): A
 
     public val moduleParameters: ModuleParameters
+}
+
+//NOTE: relies on delegate to be lazily computed and cached
+private class DelegatingPackageFragmentProvider(
+        private val delegate: () -> PackageFragmentProvider
+) : PackageFragmentProvider {
+
+    override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
+        return delegate().getPackageFragments(fqName)
+    }
+
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
+        return delegate().getSubPackagesOf(fqName, nameFilter)
+    }
 }
