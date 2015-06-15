@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
-import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
+import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
 
