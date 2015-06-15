@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
+import java.util.*
 
 fun getFunctionForExtractedFragment(
         codeFragment: JetCodeFragment,
@@ -83,17 +84,17 @@ fun getFunctionForExtractedFragment(
 
         addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
 
-        val newDebugExpression = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
-        if (newDebugExpression == null) return null
+        val newDebugExpressions = addDebugExpressionBeforeContextElement(codeFragment, contextElement)
+        if (newDebugExpressions.isEmpty()) return null
 
         val targetSibling = tmpFile.getDeclarations().firstOrNull()
         if (targetSibling == null) return null
 
-        val options = ExtractionOptions(inferUnitTypeForUnusedValues = false, 
+        val options = ExtractionOptions(inferUnitTypeForUnusedValues = false,
                                         enableListBoxing = true,
                                         allowSpecialClassNames = true,
                                         captureLocalFunctions = true)
-        val analysisResult = ExtractionData(tmpFile, newDebugExpression.toRange(), targetSibling, null, options).performAnalysis()
+        val analysisResult = ExtractionData(tmpFile, newDebugExpressions.toRange(), targetSibling, null, options).performAnalysis()
         if (analysisResult.status != Status.SUCCESS) {
             throw EvaluateExceptionUtil.createEvaluateException(getErrorMessageForExtractFunctionResult(analysisResult))
         }
@@ -175,7 +176,7 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextEle
     return parent
 }
 
-private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contextElement: PsiElement): JetExpression? {
+private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment, contextElement: PsiElement): List<JetExpression> {
     val psiFactory = JetPsiFactory(codeFragment)
 
     fun insertNewInitializer(classBody: JetClassBody): PsiElement? {
@@ -234,19 +235,32 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
     }
 
     val parent = elementBefore?.getParent()
-    if (parent == null || elementBefore == null) return null
+    if (parent == null || elementBefore == null) return emptyList()
 
     parent.addBefore(psiFactory.createNewLine(), elementBefore)
 
-    val debugExpression = codeFragment.getContentElement()
-    if (debugExpression == null) return null
+    val debugExpression = codeFragment.getContentElement() ?: return emptyList()
 
-    val newDebugExpression = parent.addBefore(debugExpression, elementBefore)
-    if (newDebugExpression == null) return null
+    val expressions = ArrayList<JetExpression>()
 
-    parent.addBefore(psiFactory.createNewLine(), elementBefore)
+    fun insertExpression(expr: JetExpression) {
+        val newDebugExpression = parent.addBefore(expr, elementBefore) ?: return
 
-    return newDebugExpression as JetExpression
+        expressions.add(newDebugExpression as JetExpression)
+
+        parent.addBefore(psiFactory.createNewLine(), elementBefore)
+    }
+
+    when (debugExpression) {
+        is JetBlockExpression -> {
+            for (statement in debugExpression.getStatements()) {
+                insertExpression(statement)
+            }
+        }
+        is JetExpression -> insertExpression(debugExpression)
+    }
+
+    return expressions
 }
 
 private fun replaceByRunFunction(expression: JetExpression): JetCallExpression {
