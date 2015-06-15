@@ -350,18 +350,20 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
             return null;
         }
 
-        ClsClassImpl javaClsClass = createClsJavaClassFromVirtualFile(file, virtualFile);
+        JetClassOrObject classOrObject = singleOrNull(filterIsInstance(file.getDeclarations(), JetClassOrObject.class));
+
+        ClsClassImpl javaClsClass = createClsJavaClassFromVirtualFile(file, virtualFile, classOrObject);
         if (javaClsClass == null) {
             return null;
         }
-        JetClassOrObject declaration = singleOrNull(filterIsInstance(file.getDeclarations(), JetClassOrObject.class));
-        return new KotlinLightClassForDecompiledDeclaration(javaClsClass, declaration);
+        return new KotlinLightClassForDecompiledDeclaration(javaClsClass, classOrObject);
     }
 
     @Nullable
     private static ClsClassImpl createClsJavaClassFromVirtualFile(
             @NotNull final JetFile decompiledKotlinFile,
-            @NotNull VirtualFile virtualFile
+            @NotNull VirtualFile virtualFile,
+            @Nullable final JetClassOrObject decompiledClassOrObject
     ) {
         final PsiJavaFileStubImpl javaFileStub = getOrCreateJavaFileStub(virtualFile);
         if (javaFileStub == null) {
@@ -369,6 +371,15 @@ public class IDELightClassGenerationSupport extends LightClassGenerationSupport 
         }
         PsiManager manager = PsiManager.getInstance(decompiledKotlinFile.getProject());
         ClsFileImpl fakeFile = new ClsFileImpl((PsiManagerImpl) manager, new ClassFileViewProvider(manager, virtualFile)) {
+            @NotNull
+            @Override
+            public PsiElement getNavigationElement() {
+                if (decompiledClassOrObject != null) {
+                    return decompiledClassOrObject.getNavigationElement().getContainingFile();
+                }
+                return super.getNavigationElement();
+            }
+
             @NotNull
             @Override
             public PsiClassHolderFileStub getStub() {

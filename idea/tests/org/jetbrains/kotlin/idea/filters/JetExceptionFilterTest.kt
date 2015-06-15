@@ -16,10 +16,17 @@
 
 package org.jetbrains.kotlin.idea.filters
 
+import com.intellij.execution.filters.FileHyperlinkInfo
 import com.intellij.execution.filters.OpenFileHyperlinkInfo
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.MultiFileTestCase
@@ -32,6 +39,7 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils.getPackagePartFqName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
 
 public class JetExceptionFilterTest : MultiFileTestCase() {
@@ -64,7 +72,7 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
         return prefix + element + "\n"
     }
 
-    private fun doTest(fileName: String, lineNumber: Int, className: (VirtualFile) -> String, linePrefix: String = "\tat ") {
+    private fun doTest(relativePath: String, lineNumber: Int, className: (VirtualFile) -> String, linePrefix: String = "\tat ", libRootUrl: String? = null) {
         if (rootDir == null) {
             configure()
         }
@@ -72,17 +80,22 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
 
         val filter = JetExceptionFilterFactory().create(GlobalSearchScope.allScope(myProject))
 
-        val expectedFile = VfsUtilCore.findRelativeFile(fileName, rootDir)
+        val expectedFile = if (libRootUrl != null) {
+            VirtualFileManager.getInstance().findFileByUrl(libRootUrl + relativePath);
+        }
+        else {
+            VfsUtilCore.findRelativeFile(relativePath, rootDir);
+        }
         TestCase.assertNotNull(expectedFile)
 
-        val line = createStackTraceElementLine(linePrefix, fileName, className.invoke(expectedFile), lineNumber)
+        val line = createStackTraceElementLine(linePrefix, relativePath, className(expectedFile), lineNumber)
         val result = filter.applyFilter(line, 0)
 
         TestCase.assertNotNull(result)
         val info = result.getFirstHyperlinkInfo()
         TestCase.assertNotNull(info)
-        UsefulTestCase.assertInstanceOf(info, javaClass<OpenFileHyperlinkInfo>())
-        val descriptor = (info as OpenFileHyperlinkInfo).getDescriptor()
+        info as FileHyperlinkInfo
+        val descriptor = info.getDescriptor()
         TestCase.assertNotNull(descriptor)
 
         TestCase.assertEquals(expectedFile, descriptor.getFile())
@@ -112,5 +125,28 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
         // The order and the exact names do matter here
         doTest("1/foo.kt", 4, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
         doTest("2/foo.kt", 4, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
+    }
+
+    public fun testLibrarySources() {
+        val mockLibrary = MockLibraryUtil.compileLibraryToJar(getTestDataPath() + getTestRoot() + "mockLibrary", "mockLibrary", true)
+
+        val libRootUrl = "jar://" + FileUtilRt.toSystemIndependentName(mockLibrary.getAbsolutePath()) + "!/"
+
+        ApplicationManager.getApplication().runWriteAction {
+            val moduleModel = ModuleRootManager.getInstance(myModule).getModifiableModel()
+            with(moduleModel.getModuleLibraryTable().getModifiableModel().createLibrary("mockLibrary").getModifiableModel()) {
+                addRoot(libRootUrl, OrderRootType.CLASSES)
+                addRoot(libRootUrl + "src/", OrderRootType.SOURCES)
+                commit()
+            }
+            moduleModel.commit()
+        }
+
+        val packageClassFqName = FqName("test.TestPackage")
+
+        doTest("src/lib.kt", 3, { "test.Foo" }, libRootUrl = libRootUrl)
+        doTest("src/lib.kt", 4, { "test.Foo" }, libRootUrl = libRootUrl)
+        doTest("src/lib.kt", 9, { "" + getPackagePartFqName(packageClassFqName, it) }, libRootUrl = libRootUrl)
+        doTest("src/other.kt", 4, { "" + getPackagePartFqName(packageClassFqName, it) }, libRootUrl = libRootUrl)
     }
 }
