@@ -131,10 +131,10 @@ native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: 
     var source: UnionMessagePortOrServiceWorker?
         get() = noImpl
         set(value) = noImpl
-    var ports: Array<dynamic>
+    var ports: Array<MessagePort>?
         get() = noImpl
         set(value) = noImpl
-    fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Array<dynamic>): Unit = noImpl
+    fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
 native public open class ServiceWorkerMessageEventInit : EventInit() {
@@ -218,10 +218,10 @@ native public open class ExtendableMessageEvent(type: String, eventInitDict: Ext
     var source: UnionClientOrMessagePortOrServiceWorker?
         get() = noImpl
         set(value) = noImpl
-    var ports: Array<dynamic>
+    var ports: Array<MessagePort>?
         get() = noImpl
         set(value) = noImpl
-    fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Array<dynamic>): Unit = noImpl
+    fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
 native public open class ExtendableMessageEventInit : ExtendableEventInit() {
@@ -265,9 +265,6 @@ native public interface CacheStorage {
 }
 
 native public open class FunctionalEvent : ExtendableEvent(noImpl, noImpl) {
-}
-
-native public marker interface UnionMessagePortOrServiceWorker {
 }
 
 native public marker interface UnionClientOrMessagePortOrServiceWorker {

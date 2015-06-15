@@ -890,5 +890,9 @@ native public interface PseudoElement : GeometryNode {
 }
 
 native public interface CSS {
+
+    companion object {
+        fun escape(ident: String): String = noImpl
+    }
 }
 

@@ -291,7 +291,7 @@ native public open class Document : Node, GeometryNode {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic, dynamic, String, Int, Int, Any?) -> dynamic)?
+    var onerror: ((dynamic, String, Int, Int, Any?) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -646,7 +646,7 @@ native public interface HTMLElement : Element {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic, dynamic, String, Int, Int, Any?) -> dynamic)?
+    var onerror: ((dynamic, String, Int, Int, Any?) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -3307,7 +3307,7 @@ native public interface Window : EventTarget, UnionMessagePortOrWindow {
     var onended: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic, dynamic, String, Int, Int, Any?) -> dynamic)?
+    var onerror: ((dynamic, String, Int, Int, Any?) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onfocus: ((Event) -> dynamic)?
@@ -3822,10 +3822,10 @@ native public open class MessageEvent(type: String, eventInitDict: MessageEventI
     var source: UnionMessagePortOrWindow?
         get() = noImpl
         set(value) = noImpl
-    var ports: Array<dynamic>
+    var ports: Array<MessagePort>?
         get() = noImpl
         set(value) = noImpl
-    fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrWindow, portsArg: Array<dynamic>): Unit = noImpl
+    fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrWindow, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
 native public open class MessageEventInit : EventInit() {
@@ -3977,7 +3977,7 @@ native public interface WorkerGlobalScope : EventTarget {
     var location: WorkerLocation
         get() = noImpl
         set(value) = noImpl
-    var onerror: ((dynamic, dynamic, String, Int, Int, Any?) -> dynamic)?
+    var onerror: ((dynamic, String, Int, Int, Any?) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onlanguagechange: ((Event) -> dynamic)?
@@ -5300,6 +5300,9 @@ native public marker interface UnionMessagePortOrWindow {
 }
 
 native public marker interface UnionElementOrProcessingInstruction {
+}
+
+native public marker interface UnionMessagePortOrServiceWorker {
 }
 
 native public marker interface ArrayBufferView {

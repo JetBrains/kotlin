@@ -106,6 +106,11 @@ native public open class Response(body: dynamic = noImpl, init: ResponseInit = n
     fun formData(): dynamic = noImpl
     fun json(): dynamic = noImpl
     fun text(): dynamic = noImpl
+
+    companion object {
+        fun error(): Response = noImpl
+        fun redirect(url: String, status: Short = 302): Response = noImpl
+    }
 }
 
 native public open class ResponseInit {
