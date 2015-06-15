@@ -2810,7 +2810,8 @@ native public open class CanvasRenderingContext2DSettings {
     var alpha: Boolean = true
 }
 
-native public open class CanvasRenderingContext2D : RenderingContext, CanvasImageSource, ImageBitmapSource {
+native public open class CanvasRenderingContext2D() : RenderingContext, CanvasImageSource, ImageBitmapSource {
+    constructor(width: Int, height: Int) : this()
     var canvas: HTMLCanvasElement
         get() = noImpl
         set(value) = noImpl
@@ -2994,7 +2995,9 @@ native public open class HitRegionOptions {
     var role: String? = null
 }
 
-native public open class ImageData(sw: Int, sh: Int) : ImageBitmapSource {
+native public open class ImageData : ImageBitmapSource {
+    constructor(sw: Int, sh: Int) : super()
+    constructor(data: Uint8ClampedArray, sw: Int, sh: Int = noImpl) : super()
     var width: Int
         get() = noImpl
         set(value) = noImpl
@@ -3038,7 +3041,10 @@ native public open class DrawingStyle(scope: Element = noImpl) {
     fun getLineDash(): Array<Double> = noImpl
 }
 
-native public open class Path2D {
+native public open class Path2D() {
+    constructor(path: Path2D) : this()
+    constructor(paths: Array<Path2D>, fillRule: String = "nonzero") : this()
+    constructor(d: String) : this()
     fun addPath(path: Path2D, transformation: SVGMatrix? = null): Unit = noImpl
     fun addPathByStrokingPath(path: Path2D, styles: dynamic, transformation: SVGMatrix? = null): Unit = noImpl
     fun addText(text: String, styles: dynamic, transformation: SVGMatrix?, x: Double, y: Double, maxWidth: Double = noImpl): Unit = noImpl
@@ -5030,7 +5036,9 @@ native public open class DOMPointReadOnly(x: Double, y: Double, z: Double, w: Do
     fun matrixTransform(matrix: DOMMatrixReadOnly): DOMPoint = noImpl
 }
 
-native public open class DOMPoint(point: DOMPointInit = noImpl) : DOMPointReadOnly(noImpl, noImpl, noImpl, noImpl) {
+native public open class DOMPoint : DOMPointReadOnly {
+    constructor(point: DOMPointInit = noImpl) : super(noImpl, noImpl, noImpl, noImpl)
+    constructor(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0, w: Double = 1.0) : super(x, y, z, w)
 }
 
 native public open class DOMPointInit {
@@ -5077,7 +5085,9 @@ native public open class DOMRectInit {
     var height: Double = 0.0
 }
 
-native public open class DOMQuad(p1: DOMPointInit = noImpl, p2: DOMPointInit = noImpl, p3: DOMPointInit = noImpl, p4: DOMPointInit = noImpl) {
+native public open class DOMQuad {
+    constructor(p1: DOMPointInit = noImpl, p2: DOMPointInit = noImpl, p3: DOMPointInit = noImpl, p4: DOMPointInit = noImpl) : super()
+    constructor(rect: DOMRectInit = noImpl) : super()
     var p1: DOMPoint
         get() = noImpl
         set(value) = noImpl
@@ -5186,7 +5196,12 @@ native public open class DOMMatrixReadOnly(numberSequence: Array<Double>) {
     fun toFloat64Array(): Float64Array = noImpl
 }
 
-native public open class DOMMatrix : DOMMatrixReadOnly(noImpl) {
+native public open class DOMMatrix() : DOMMatrixReadOnly(noImpl) {
+    constructor(transformList: String) : this()
+    constructor(other: DOMMatrixReadOnly) : this()
+    constructor(array32: Float32Array) : this()
+    constructor(array64: Float64Array) : this()
+    constructor(numberSequence: Array<Double>) : this()
     fun multiplySelf(other: DOMMatrix): DOMMatrix = noImpl
     fun preMultiplySelf(other: DOMMatrix): DOMMatrix = noImpl
     fun translateSelf(tx: Double, ty: Double, tz: Double = 0.0): DOMMatrix = noImpl

@@ -20,7 +20,8 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class Blob : ImageBitmapSource {
+native public open class Blob() : ImageBitmapSource {
+    constructor(blobParts: Array<dynamic>, options: BlobPropertyBag = noImpl) : this()
     var size: Long
         get() = noImpl
         set(value) = noImpl

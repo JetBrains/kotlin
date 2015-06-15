@@ -562,7 +562,11 @@ native public open class ArrayBuffer(length: Int) : Transferable {
     fun slice(begin: Int, end: Int = noImpl): ArrayBuffer = noImpl
 }
 
-native public open class Int8Array(length: Int) : ArrayBufferView {
+native public open class Int8Array : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Int8Array) : super()
+    constructor(array: Array<Byte>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -586,7 +590,11 @@ native public open class Int8Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Uint8Array(length: Int) : ArrayBufferView {
+native public open class Uint8Array : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Uint8Array) : super()
+    constructor(array: Array<Byte>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -610,7 +618,11 @@ native public open class Uint8Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Uint8ClampedArray(length: Int) : ArrayBufferView {
+native public open class Uint8ClampedArray : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Uint8ClampedArray) : super()
+    constructor(array: Array<Byte>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -634,7 +646,11 @@ native public open class Uint8ClampedArray(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Int16Array(length: Int) : ArrayBufferView {
+native public open class Int16Array : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Int16Array) : super()
+    constructor(array: Array<Short>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -658,7 +674,11 @@ native public open class Int16Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Uint16Array(length: Int) : ArrayBufferView {
+native public open class Uint16Array : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Uint16Array) : super()
+    constructor(array: Array<Short>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -682,7 +702,11 @@ native public open class Uint16Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Int32Array(length: Int) : ArrayBufferView {
+native public open class Int32Array : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Int32Array) : super()
+    constructor(array: Array<Int>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -706,7 +730,11 @@ native public open class Int32Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Uint32Array(length: Int) : ArrayBufferView {
+native public open class Uint32Array : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Uint32Array) : super()
+    constructor(array: Array<Int>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -730,7 +758,11 @@ native public open class Uint32Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Float32Array(length: Int) : ArrayBufferView {
+native public open class Float32Array : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Float32Array) : super()
+    constructor(array: Array<Float>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
@@ -754,7 +786,11 @@ native public open class Float32Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Float64Array(length: Int) : ArrayBufferView {
+native public open class Float64Array : ArrayBufferView {
+    constructor(length: Int) : super()
+    constructor(array: Float64Array) : super()
+    constructor(array: Array<Double>) : super()
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl) : super()
     var length: Int
         get() = noImpl
         set(value) = noImpl
