@@ -259,6 +259,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             doTest(fileName);
         }
 
+        @TestMetadata("OutInField.kt")
+        public void testOutInField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutInField.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OutInInPosition.kt")
         public void testOutInInPosition() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OutInInPosition.kt");
