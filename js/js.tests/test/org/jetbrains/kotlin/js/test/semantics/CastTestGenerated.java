@@ -35,6 +35,12 @@ public class CastTestGenerated extends AbstractCastTest {
         JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/expression/cast/cases"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("castToAny.kt")
+    public void testCastToAny() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToAny.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("castToGenericType.kt")
     public void testCastToGenericType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToGenericType.kt");
