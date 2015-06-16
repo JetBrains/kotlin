@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.*
 import com.intellij.psi.javadoc.PsiDocComment
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.j2k.ast.CommentsAndSpacesInheritance
 import org.jetbrains.kotlin.j2k.ast.Element
 import org.jetbrains.kotlin.j2k.ast.SpacesInheritance
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.LinkedHashSet
@@ -122,13 +122,13 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
         val notInsideElements = HashSet<PsiElement>()
         var prefix = Prefix.Empty
-        val postfixElements = ArrayList<PsiElement>(1)
+        var postfix = emptyList<PsiElement>()
         for ((prototype, inheritance) in element.prototypes!!) {
             assert(prototype !is PsiComment)
             assert(prototype !is PsiWhiteSpace)
             if (!topElement.isAncestor(prototype)) continue
             prefix += collectPrefixElements(prototype, inheritance, notInsideElements)
-            postfixElements.collectPostfixElements(prototype, inheritance, notInsideElements)
+            postfix += collectPostfixElements(prototype, inheritance, notInsideElements)
         }
 
         if (prefix.lineBreaksBefore > 0) {
@@ -155,15 +155,23 @@ class CodeBuilder(private val topElement: PsiElement?) {
             }
         }
 
-        postfixElements.forEach { appendCommentOrWhiteSpace(it) }
+        postfix.forEach { appendCommentOrWhiteSpace(it) }
 
         element.postGenerateCode(this)
 
         return this
     }
 
-    private data class Prefix(val elements: Collection<PsiElement>, val lineBreaksBefore: Int) {
-        fun plus(other: Prefix) = Prefix(elements + other.elements, Math.max(lineBreaksBefore, other.lineBreaksBefore))
+    private data class Prefix(val elements: List<PsiElement>, val lineBreaksBefore: Int) {
+        fun plus(other: Prefix): Prefix {
+            return when {
+                isEmpty() -> other
+                other.isEmpty() -> this
+                else -> Prefix(elements + other.elements, Math.max(lineBreaksBefore, other.lineBreaksBefore))
+            }
+        }
+
+        private fun isEmpty() = elements.isEmpty() && lineBreaksBefore == 0
 
         companion object {
             val Empty = Prefix(emptyList(), 0)
@@ -175,8 +183,8 @@ class CodeBuilder(private val topElement: PsiElement?) {
             inheritance: CommentsAndSpacesInheritance,
             notInsideElements: MutableSet<PsiElement>
     ): Prefix {
-        val before = ArrayList<PsiElement>(1).collectCommentsAndSpacesBefore(element)
-        val atStart = ArrayList<PsiElement>(1).collectCommentsAndSpacesAtStart(element)
+        val before = SmartList<PsiElement>().collectCommentsAndSpacesBefore(element)
+        val atStart = SmartList<PsiElement>().collectCommentsAndSpacesAtStart(element)
         notInsideElements.addAll(atStart)
 
         if (inheritance.spacesBefore == SpacesInheritance.NONE && !inheritance.commentsBefore) return Prefix.Empty
@@ -210,13 +218,17 @@ class CodeBuilder(private val topElement: PsiElement?) {
         return Prefix(elements, lineBreaks)
     }
 
-    private fun MutableList<PsiElement>.collectPostfixElements(element: PsiElement, inheritance: CommentsAndSpacesInheritance, notInsideElements: MutableSet<PsiElement>) {
-        val atEnd = ArrayList<PsiElement>(1).collectCommentsAndSpacesAtEnd(element)
+    private fun collectPostfixElements(
+            element: PsiElement,
+            inheritance: CommentsAndSpacesInheritance,
+            notInsideElements: MutableSet<PsiElement>
+    ): List<PsiElement> {
+        val atEnd = SmartList<PsiElement>().collectCommentsAndSpacesAtEnd(element)
         notInsideElements.addAll(atEnd)
 
-        if (!inheritance.commentsAfter) return
+        if (!inheritance.commentsAfter) return emptyList()
 
-        val after = ArrayList<PsiElement>(1).collectCommentsAndSpacesAfter(element)
+        val after = SmartList<PsiElement>().collectCommentsAndSpacesAfter(element)
         if (after.isNotEmpty()) {
             val last = after.last()
             if (last is PsiWhiteSpace) {
@@ -224,11 +236,9 @@ class CodeBuilder(private val topElement: PsiElement?) {
             }
         }
 
-        addAll(atEnd.reverse())
-        addAll(after)
-
-        commentsAndSpacesUsed.addAll(atEnd)
-        commentsAndSpacesUsed.addAll(after)
+        val result = atEnd.reverse() + after
+        commentsAndSpacesUsed.addAll(result)
+        return result
     }
 
     private fun MutableList<PsiElement>.collectCommentsAndSpacesBefore(element: PsiElement): MutableList<PsiElement> {
@@ -304,20 +314,44 @@ class CodeBuilder(private val topElement: PsiElement?) {
         return this
     }
 
-    private fun PsiElement.isCommentOrSpace() = this is PsiComment || this is PsiWhiteSpace
+    private companion object {
+        fun<T> List<T>.plus(other: List<T>): List<T> {
+            when {
+                isEmpty() -> return other
 
-    private fun PsiElement.isEndOfLineComment() = this is PsiComment && getTokenType() == JavaTokenType.END_OF_LINE_COMMENT
+                other.isEmpty() -> return this
 
-    private fun PsiElement.isEmptyElement() = getFirstChild() == null && getTextLength() == 0
+                else -> {
+                    val result = ArrayList<T>(size() + other.size())
+                    result.addAll(this)
+                    result.addAll(other)
+                    return result
+                }
+            }
+        }
 
-    private fun PsiWhiteSpace.newLinesCount() = StringUtil.getLineBreakCount(getText()!!)
+        fun<T> List<T>.reverse(): List<T> {
+            return if (size() <= 1)
+                this
+            else
+                (this as Iterable<T>).reverse()
+        }
 
-    private fun PsiWhiteSpace.hasNewLines() = StringUtil.containsLineBreak(getText()!!)
+        fun PsiElement.isCommentOrSpace() = this is PsiComment || this is PsiWhiteSpace
 
-    private fun CharSequence.trailingLineBreakCount(): Int {
-        val index = ((length()-1 downTo 0).firstOrNull { val c = this[it]; c != '\n' && c != '\r' } ?: -1) + 1
-        if (index == length()) return 0
-        return StringUtil.getLineBreakCount(subSequence(index, length()))
+        fun PsiElement.isEndOfLineComment() = this is PsiComment && getTokenType() == JavaTokenType.END_OF_LINE_COMMENT
+
+        fun PsiElement.isEmptyElement() = getFirstChild() == null && getTextLength() == 0
+
+        fun PsiWhiteSpace.newLinesCount() = StringUtil.getLineBreakCount(getText()!!)
+
+        fun PsiWhiteSpace.hasNewLines() = StringUtil.containsLineBreak(getText()!!)
+
+        fun CharSequence.trailingLineBreakCount(): Int {
+            val index = ((length()-1 downTo 0).firstOrNull { val c = this[it]; c != '\n' && c != '\r' } ?: -1) + 1
+            if (index == length()) return 0
+            return StringUtil.getLineBreakCount(subSequence(index, length()))
+        }
     }
 }
 
