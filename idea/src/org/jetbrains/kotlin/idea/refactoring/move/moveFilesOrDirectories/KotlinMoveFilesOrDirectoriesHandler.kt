@@ -50,10 +50,4 @@ public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler
             callback?.refactoringCompleted()
         }
     }
-
-    companion object {
-        public fun isMovableClass(clazz: JetClassOrObject): Boolean {
-            return clazz.isTopLevel() && clazz.getContainingJetFile().getDeclarations().all { it !is JetClassOrObject || it == clazz }
-        }
-    }
 }
