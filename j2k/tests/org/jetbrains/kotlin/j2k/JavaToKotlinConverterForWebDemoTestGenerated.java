@@ -1162,6 +1162,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("lineBreaksBetweenParameters.java")
+        public void testLineBreaksBetweenParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/lineBreaksBetweenParameters.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("methodCallInFactoryFun.java")
         public void testMethodCallInFactoryFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/constructors/methodCallInFactoryFun.java");
@@ -2221,6 +2227,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("internal.java")
         public void testInternal() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/internal.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lineBreaksBetweenParameters.java")
+        public void testLineBreaksBetweenParameters() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/function/lineBreaksBetweenParameters.java");
             doTest(fileName);
         }
 

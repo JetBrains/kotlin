@@ -24,8 +24,8 @@ fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inherit
     return this
 }
 
-fun <TElement: Element> TElement.assignPrototypes(prototypes: List<PsiElement>, inheritance: CommentsAndSpacesInheritance): TElement {
-    this.prototypes = prototypes.map { PrototypeInfo(it, inheritance) }
+fun <TElement: Element> TElement.assignPrototypes(vararg prototypes: PrototypeInfo): TElement {
+    this.prototypes = prototypes.asList()
     return this
 }
 

@@ -545,7 +545,7 @@ class Converter private constructor(
             Nullability.Nullable -> type = type.toNullableType()
         }
         return Parameter(parameter.declarationIdentifier(), type, varValModifier,
-                         convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter)
+                         convertAnnotations(parameter), modifiers, defaultValue).assignPrototype(parameter, CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.LINE_BREAKS))
     }
 
     public fun convertIdentifier(identifier: PsiIdentifier?): Identifier {
