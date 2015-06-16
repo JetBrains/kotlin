@@ -1,5 +1,7 @@
 package kotlin
 
+import java.io.Serializable
+
 
 /**
  * Represents a value with lazy initialization.
@@ -40,11 +42,11 @@ public enum class LazyThreadSafetyMode {
 
 private object UNINITIALIZED_VALUE
 
-private class LazyImpl<out T>(initializer: () -> T) : Lazy<T> {
+private class LazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
     private volatile var _value: Any? = UNINITIALIZED_VALUE
 
-    public override val value: T
+    override val value: T
         get() {
             val _v1 = _value
             if (_v1 !== UNINITIALIZED_VALUE) {
@@ -65,16 +67,16 @@ private class LazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             }
         }
 
-    override val valueCreated: Boolean = _value !== UNINITIALIZED_VALUE
+    override val valueCreated: Boolean get() = _value !== UNINITIALIZED_VALUE
 
     override fun toString(): String = if (valueCreated) value.toString() else "Lazy value not initialized yet."
+
+    private fun writeReplace(): Any = InitializedLazyImpl(value)
 }
 
 
-private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
+private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
     private var initializer: (() -> T)? = initializer
-
-
     private var _value: Any? = UNINITIALIZED_VALUE
 
     override val value: T
@@ -86,7 +88,17 @@ private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
             return _value as T
         }
 
-    override val valueCreated: Boolean = _value !== UNINITIALIZED_VALUE
+    override val valueCreated: Boolean get() = _value !== UNINITIALIZED_VALUE
 
     override fun toString(): String = if (valueCreated) value.toString() else "Lazy value not initialized yet."
+
+    private fun writeReplace(): Any = InitializedLazyImpl(value)
+}
+
+private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>, Serializable {
+
+    override val valueCreated: Boolean get() = true
+
+    override fun toString(): String = value.toString()
+
 }

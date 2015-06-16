@@ -154,19 +154,23 @@ class CollectionJVMTest {
     test fun emptyMapIsSerializable() = testSingletonSerialization(emptyMap<Any, Any>())
 
     private fun testSingletonSerialization(value: Any) {
-        val outputStream = ByteArrayOutputStream()
-        val objectOuputStream = ObjectOutputStream(outputStream)
+        val result = serializeAndDeserialize(value)
 
-        objectOuputStream.writeObject(value)
-        objectOuputStream.close()
+        assertEquals(value, result)
+        assertTrue(value === result)
+    }
+
+    private fun serializeAndDeserialize<T>(value: T): T {
+        val outputStream = ByteArrayOutputStream()
+        val objectOutputStream = ObjectOutputStream(outputStream)
+
+        objectOutputStream.writeObject(value)
+        objectOutputStream.close()
         outputStream.close()
 
         val inputStream = ByteArrayInputStream(outputStream.toByteArray())
         val inputObjectStream = ObjectInputStream(inputStream)
-        val result = inputObjectStream.readObject()
-
-        assertEquals(value, result)
-        assertTrue(value === result)
+        return inputObjectStream.readObject() as T
     }
 }
 
