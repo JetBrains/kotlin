@@ -28,6 +28,14 @@ import foo.bar.* as
 import foo.bar. ;
 import foo.bar.* as bar ;
 import foo.bar.* as ;
+import *
+import -
+import ^_^
+import .
+import ---; import +++
+import ..{...
+import ..}...
+import foo
 
 fun foo() {
 

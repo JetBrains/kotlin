@@ -1,0 +1,4 @@
+package
+
+package test {
+}

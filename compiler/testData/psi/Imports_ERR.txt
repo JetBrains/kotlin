@@ -317,6 +317,71 @@ JetFile: Imports_ERR.kt
         PsiElement(as)('as')
       PsiWhiteSpace(' ')
       PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(MUL)('*')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(MINUS)('-')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(BAD_CHARACTER)('^')
+        PsiElement(IDENTIFIER)('_')
+        PsiElement(BAD_CHARACTER)('^')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(DOT)('.')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(MINUSMINUS)('--')
+        PsiElement(MINUS)('-')
+    PsiElement(SEMICOLON)(';')
+    PsiWhiteSpace(' ')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(PLUSPLUS)('++')
+        PsiElement(PLUS)('+')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(RANGE)('..')
+        PsiElement(LBRACE)('{')
+        PsiElement(RANGE)('..')
+        PsiElement(DOT)('.')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      PsiErrorElement:Expecting qualified name
+        PsiElement(RANGE)('..')
+        PsiElement(RBRACE)('}')
+        PsiElement(RANGE)('..')
+        PsiElement(DOT)('.')
+    PsiWhiteSpace('\n')
+    IMPORT_DIRECTIVE
+      PsiElement(import)('import')
+      PsiWhiteSpace(' ')
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('foo')
   PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')

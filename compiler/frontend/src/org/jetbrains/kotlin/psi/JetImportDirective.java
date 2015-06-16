@@ -100,8 +100,6 @@ public class JetImportDirective extends JetElementImplStub<KotlinImportDirective
     @Nullable
     @IfNotParsed
     public ImportPath getImportPath() {
-        if (!isValidImport()) return null;
-
         FqName importFqn = fqNameFromExpression(getImportedReference());
         if (importFqn == null) {
             return null;
@@ -134,8 +132,13 @@ public class JetImportDirective extends JetElementImplStub<KotlinImportDirective
             JetDotQualifiedExpression dotQualifiedExpression = (JetDotQualifiedExpression) expression;
             FqName parentFqn = fqNameFromExpression(dotQualifiedExpression.getReceiverExpression());
             Name child = nameFromExpression(dotQualifiedExpression.getSelectorExpression());
-
-            return parentFqn != null && child != null ? parentFqn.child(child) : null;
+            if (child == null) {
+                return parentFqn;
+            }
+            if (parentFqn != null) {
+                return parentFqn.child(child);
+            }
+            return null;
         }
         else if (expression instanceof JetSimpleNameExpression) {
             JetSimpleNameExpression simpleNameExpression = (JetSimpleNameExpression) expression;

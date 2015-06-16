@@ -286,10 +286,18 @@ public class JetParsing extends AbstractJetParsing {
             return;
         }
 
-        PsiBuilder.Marker qualifiedName = mark();
+        if (!at(IDENTIFIER)) {
+            PsiBuilder.Marker error = mark();
+            skipUntil(TokenSet.create(EOL_OR_SEMICOLON));
+            error.error("Expecting qualified name");
+            importDirective.done(IMPORT_DIRECTIVE);
+            consumeIf(SEMICOLON);
+            return;
+        }
 
+        PsiBuilder.Marker qualifiedName = mark();
         PsiBuilder.Marker reference = mark();
-        expect(IDENTIFIER, "Expecting qualified name");
+        advance(); // IDENTIFIER
         reference.done(REFERENCE_EXPRESSION);
 
         while (at(DOT) && lookahead(1) != MUL) {
