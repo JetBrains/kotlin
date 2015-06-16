@@ -325,12 +325,6 @@ public class JetPsiCheckerTestGenerated extends AbstractJetPsiCheckerTest {
             doTest(fileName);
         }
 
-        @TestMetadata("unmetTraitRequirements.kt")
-        public void testUnmetTraitRequirements() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/unmetTraitRequirements.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("UnreachableCode.kt")
         public void testUnreachableCode() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/checker/UnreachableCode.kt");

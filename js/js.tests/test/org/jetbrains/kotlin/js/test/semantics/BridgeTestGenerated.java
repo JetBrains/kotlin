@@ -101,12 +101,6 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
         doTest(fileName);
     }
 
-    @TestMetadata("fakeOverrideInTraitWithRequiredFromTraitImpl.kt")
-    public void testFakeOverrideInTraitWithRequiredFromTraitImpl() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeOverrideInTraitWithRequiredFromTraitImpl.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("fakeOverrideOfPropertySetterInTraitImpl.kt")
     public void testFakeOverrideOfPropertySetterInTraitImpl() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/fakeOverrideOfPropertySetterInTraitImpl.kt");
@@ -284,12 +278,6 @@ public class BridgeTestGenerated extends AbstractBridgeTest {
     @TestMetadata("traitImplInheritsTraitImpl.kt")
     public void testTraitImplInheritsTraitImpl() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/traitImplInheritsTraitImpl.kt");
-        doTest(fileName);
-    }
-
-    @TestMetadata("traitWithRequiredCovariantOverride.kt")
-    public void testTraitWithRequiredCovariantOverride() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/bridges/traitWithRequiredCovariantOverride.kt");
         doTest(fileName);
     }
 

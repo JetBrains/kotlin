@@ -44,10 +44,6 @@ public final class ClassInheritanceTest extends SingleFileTranslationTest {
         checkFooBoxIsOk();
     }
 
-    public void testCrazyInheritance() throws Exception {
-        checkFooBoxIsOk();
-    }
-
     public void testValOverride() throws Exception {
         fooBoxTest();
     }

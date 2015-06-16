@@ -437,10 +437,15 @@ public abstract class StackValue {
         return new CoercionValue(value, castType);
     }
 
-    public static StackValue thisOrOuter(@NotNull ExpressionCodegen codegen, @NotNull ClassDescriptor descriptor, boolean isSuper, boolean isExplicit) {
-        // Coerce this/super for traits to support traits with required classes.
+    @NotNull
+    public static StackValue thisOrOuter(
+            @NotNull ExpressionCodegen codegen,
+            @NotNull ClassDescriptor descriptor,
+            boolean isSuper,
+            boolean isExplicit
+    ) {
         // Coerce explicit 'this' for the case when it is smart cast.
-        // Do not coerce for other classes due to the 'protected' access issues (JVMS 7, 4.9.2 Structural Constraints).
+        // Do not coerce for other cases due to the 'protected' access issues (JVMS 7, 4.9.2 Structural Constraints).
         boolean coerceType = descriptor.getKind() == ClassKind.INTERFACE || (isExplicit && !isSuper);
         return new ThisOuter(codegen, descriptor, isSuper, coerceType);
     }

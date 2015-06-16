@@ -21,16 +21,15 @@ import com.google.common.collect.Multimap
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_OBJECT
 import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_TRAIT
 import org.jetbrains.kotlin.diagnostics.Errors.MANY_COMPANION_OBJECTS
-import org.jetbrains.kotlin.diagnostics.Errors.CONSTRUCTOR_IN_OBJECT
 import org.jetbrains.kotlin.diagnostics.Errors.UNSUPPORTED
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
-import org.jetbrains.kotlin.resolve.resolveUtil.checkTraitRequirements
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import java.util.ArrayList
 import javax.inject.Inject
@@ -243,8 +242,6 @@ public class LazyTopDownAnalyzer {
 
         declarationResolver!!.checkRedeclarationsInPackages(topLevelDescriptorProvider!!, topLevelFqNames)
         declarationResolver!!.checkRedeclarations(c)
-
-        checkTraitRequirements(c.getDeclaredClasses(), trace!!)
 
         overrideResolver!!.check(c)
 

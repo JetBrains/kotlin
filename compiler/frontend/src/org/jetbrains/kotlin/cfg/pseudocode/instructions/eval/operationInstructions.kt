@@ -16,17 +16,17 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValueFactory
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.cfg.pseudocode.TypePredicate
+import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 public abstract class OperationInstruction protected constructor(
         element: JetElement,
@@ -51,11 +51,6 @@ public abstract class OperationInstruction protected constructor(
     protected fun setResult(factory: PseudoValueFactory?, valueElement: JetElement? = element): OperationInstruction {
         return setResult(factory?.newValue(valueElement, this))
     }
-}
-
-trait StrictlyValuedOperationInstruction: OperationInstruction {
-    override val outputValue: PseudoValue
-        get() = resultValue!!
 }
 
 public class CallInstruction private constructor(
@@ -103,8 +98,11 @@ public class MagicInstruction(
         inputValues: List<PseudoValue>,
         val expectedTypes: Map<PseudoValue, TypePredicate>,
         val kind: MagicKind
-) : OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
+) : OperationInstruction(element, lexicalScope, inputValues) {
     public val synthetic: Boolean get() = outputValue.element == null
+
+    override val outputValue: PseudoValue
+        get() = resultValue!!
 
     override fun accept(visitor: InstructionVisitor) = visitor.visitMagic(this)
 
@@ -156,7 +154,10 @@ class MergeInstruction private constructor(
         element: JetElement,
         lexicalScope: LexicalScope,
         inputValues: List<PseudoValue>
-): OperationInstruction(element, lexicalScope, inputValues), StrictlyValuedOperationInstruction {
+): OperationInstruction(element, lexicalScope, inputValues) {
+    override val outputValue: PseudoValue
+        get() = resultValue!!
+
     override fun accept(visitor: InstructionVisitor) = visitor.visitMerge(this)
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitMerge(this)

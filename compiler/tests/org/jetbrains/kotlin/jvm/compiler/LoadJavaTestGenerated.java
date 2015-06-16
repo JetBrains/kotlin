@@ -3985,12 +3985,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
-            @TestMetadata("NoDelegationForFunctionInheritedFromTraitSuperClass.kt")
-            public void testNoDelegationForFunctionInheritedFromTraitSuperClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/NoDelegationForFunctionInheritedFromTraitSuperClass.kt");
-                doTestCompiledKotlin(fileName);
-            }
-
             @TestMetadata("NoSamAdapter.kt")
             public void testNoSamAdapter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/fun/NoSamAdapter.kt");

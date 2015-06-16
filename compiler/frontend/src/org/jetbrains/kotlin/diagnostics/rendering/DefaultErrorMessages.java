@@ -296,7 +296,6 @@ public class DefaultErrorMessages {
         MAP.put(DELEGATION_IN_TRAIT, "Interfaces cannot use delegation");
         MAP.put(DELEGATION_NOT_TO_TRAIT, "Only interfaces can be delegated to");
         MAP.put(DEPRECATED_TRAIT_KEYWORD, "'trait' keyword is deprecated, use 'interface' instead");
-        MAP.put(UNMET_TRAIT_REQUIREMENT, "Super interface ''{0}'' requires subclasses to extend ''{1}''", NAME, NAME);
         MAP.put(NO_CONSTRUCTOR, "This class does not have a constructor");
         MAP.put(NOT_A_CLASS, "Not a class");
         MAP.put(ILLEGAL_ESCAPE_SEQUENCE, "Illegal escape sequence");
@@ -428,7 +427,7 @@ public class DefaultErrorMessages {
         MAP.put(SUPERTYPE_INITIALIZED_IN_TRAIT, "Interfaces cannot initialize supertypes");
         MAP.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes");
         MAP.put(CONSTRUCTOR_IN_TRAIT, "An interface may not have a constructor");
-        MAP.put(TRAIT_WITH_SUPERCLASS, "Specifying a required base class for interface implementations is deprecated");
+        MAP.put(TRAIT_WITH_SUPERCLASS, "An interface cannot inherit from a class");
         MAP.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice");
         MAP.put(FINAL_SUPERTYPE, "This type is final, so it cannot be inherited from");
         MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");

@@ -187,7 +187,7 @@ public native trait HTMLOptionsCollection {
 }
 
 deprecated("Use declarations from org.w3c.dom instead")
-public native trait HTMLDocument : Document {
+public native class HTMLDocument : Document() {
     public native fun open(): Unit
     public native fun write(text: String): Unit
     public native fun writeln(text: String): Unit

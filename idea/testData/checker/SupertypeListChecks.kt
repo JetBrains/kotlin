@@ -24,11 +24,11 @@ interface T2<T> {}
 interface Test<error>()</error> {
 }
 
-interface Test1 : <warning>C2</warning><error>()</error> {}
+interface Test1 : <error>C2</error><error>()</error> {}
 
-interface Test2 : <warning>C2</warning> {}
+interface Test2 : <error>C2</error> {}
 
-interface Test3 : <warning>C2</warning>, <error>C3</error> {}
+interface Test3 : <error>C2</error>, <error>C3</error> {}
 
 interface Test4 : T1 {}
 

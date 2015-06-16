@@ -66,10 +66,11 @@ class BridgeTest : TestCase() {
      *    is either reachable from D or is reachable from any abstract super-declaration of F (or both). This condition is effectively
      *    equivalent to the compiler guarantee that each class inherits not more than one implementation of each function.
      *
-     * NOTE: abstract fake overrides CAN have concrete super-declarations! (traits with required classes)
-     *
-     * NOTE 2: the graph validation procedure probably doesn't cover all the possible cases compared to the analogous code in the compiler.
+     * NOTE: the graph validation procedure probably doesn't cover all the possible cases compared to the analogous code in the compiler.
      *         There may be bugs here and they should be fixed accordingly.
+     *
+     * TODO: also verify that no abstract fake override has a concrete super-declaration.
+     *       This was previously possible via traits with required classes.
      */
     private fun graph(vararg edges: Pair<Fun, Fun>) {
         for ((from, to) in edges) {

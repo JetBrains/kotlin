@@ -24,8 +24,8 @@ class LI : ListTag() {}
 public fun ListTag.item(body: LI.() -> Unit): Unit {}
 fun HtmlTag.a(contents: A.() -> Unit) {}
 
-interface A : HtmlTag {
-    public var text: String
+abstract class A : HtmlTag() {
+    public abstract var text: String
 }
 
 fun listOf(vararg strings: String): List<String> {

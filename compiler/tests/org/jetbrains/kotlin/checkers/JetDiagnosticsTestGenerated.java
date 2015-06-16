@@ -13412,56 +13412,8 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TraitWithRequired extends AbstractJetDiagnosticsTest {
-            @TestMetadata("abstractClass.kt")
-            public void testAbstractClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/abstractClass.kt");
-                doTest(fileName);
-            }
-
             public void testAllFilesPresentInTraitWithRequired() throws Exception {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/traitWithRequired"), Pattern.compile("^(.+)\\.kt$"), true);
-            }
-
-            @TestMetadata("anonymousObjectExtendsTraitWithRequired.kt")
-            public void testAnonymousObjectExtendsTraitWithRequired() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/anonymousObjectExtendsTraitWithRequired.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("differentGenericArguments.kt")
-            public void testDifferentGenericArguments() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/differentGenericArguments.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt3006.kt")
-            public void testKt3006() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/kt3006.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("manyRequirementsDisallowed.kt")
-            public void testManyRequirementsDisallowed() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/manyRequirementsDisallowed.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("manyTraitsRequireSameClass.kt")
-            public void testManyTraitsRequireSameClass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/manyTraitsRequireSameClass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("requirementFulfilledBySubclass.kt")
-            public void testRequirementFulfilledBySubclass() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/requirementFulfilledBySubclass.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("traitExtendsTraitWithRequired.kt")
-            public void testTraitExtendsTraitWithRequired() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/traitExtendsTraitWithRequired.kt");
-                doTest(fileName);
             }
 
             @TestMetadata("traitRequiresAny.kt")
@@ -13473,12 +13425,6 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("traitSupertypeList.kt")
             public void testTraitSupertypeList() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/traitSupertypeList.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("uninheritableTraitDifferentGenericArguments.kt")
-            public void testUninheritableTraitDifferentGenericArguments() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/traitWithRequired/uninheritableTraitDifferentGenericArguments.kt");
                 doTest(fileName);
             }
         }

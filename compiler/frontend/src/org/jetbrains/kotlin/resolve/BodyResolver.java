@@ -426,6 +426,8 @@ public class BodyResolver {
             JetTypeReference typeReference = entry.getKey();
             JetType supertype = entry.getValue();
 
+            boolean addSupertype = true;
+
             ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(supertype);
             if (classDescriptor != null) {
                 if (ErrorUtils.isError(classDescriptor)) continue;
@@ -433,11 +435,14 @@ public class BodyResolver {
                 if (classDescriptor.getKind() != ClassKind.INTERFACE) {
                     if (supertypeOwner.getKind() == ClassKind.ENUM_CLASS) {
                         trace.report(CLASS_IN_SUPERTYPE_FOR_ENUM.on(typeReference));
+                        addSupertype = false;
                     }
                     else if (supertypeOwner.getKind() == ClassKind.INTERFACE &&
                              !classAppeared && !TypesPackage.isDynamic(supertype) /* avoid duplicate diagnostics */) {
                         trace.report(TRAIT_WITH_SUPERCLASS.on(typeReference));
+                        addSupertype = false;
                     }
+
                     if (classAppeared) {
                         trace.report(MANY_CLASSES_IN_SUPERTYPE_LIST.on(typeReference));
                     }
@@ -451,7 +456,7 @@ public class BodyResolver {
             }
 
             TypeConstructor constructor = supertype.getConstructor();
-            if (!typeConstructors.add(constructor)) {
+            if (addSupertype && !typeConstructors.add(constructor)) {
                 trace.report(SUPERTYPE_APPEARS_TWICE.on(typeReference));
             }
 
