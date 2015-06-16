@@ -1622,6 +1622,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("multipleTypes.kt")
+                public void testMultipleTypes() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/multipleTypes.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("nonNullableTypes.kt")
                 public void testNonNullableTypes() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/candidateTypes/nonNullableTypes.kt");

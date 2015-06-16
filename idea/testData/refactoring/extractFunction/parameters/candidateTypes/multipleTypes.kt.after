@@ -1,0 +1,16 @@
+// PARAM_TYPES: kotlin.String
+// PARAM_DESCRIPTOR: value-parameter val p: kotlin.Any defined in foo
+
+fun foo(p: Any) {
+    if (p is String) {
+        __dummyTestFun__(p)
+    }
+}
+
+private fun __dummyTestFun__(p: String) {
+    f(p)
+    g(p)
+}
+
+fun f(s: String){}
+fun g(o: Any){}

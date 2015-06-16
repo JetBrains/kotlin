@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.DFS.CollectingNodeHandler
 import org.jetbrains.kotlin.utils.DFS.Neighbors
@@ -512,7 +513,7 @@ private class MutableParameter(
 
     private val defaultType: JetType by Delegates.lazy {
         writable = false
-        CommonSupertypes.commonSupertype(defaultTypes)
+        TypeUtils.intersect(JetTypeChecker.DEFAULT, defaultTypes)
     }
 
     private val parameterTypeCandidates: List<JetType> by Delegates.lazy {
