@@ -144,15 +144,29 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
 
         GroupingMessageCollector groupingCollector = new GroupingMessageCollector(messageCollector);
         try {
-            Disposable rootDisposable = Disposer.newDisposable();
-            try {
-                MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
-                ExitCode code = doExecute(arguments, services, severityCollector, rootDisposable);
-                return severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
+            ExitCode exitCode = OK;
+
+            int repeatCount = 1;
+            if (arguments.repeat != null) {
+                try {
+                    repeatCount = Integer.parseInt(arguments.repeat);
+                }
+                catch (NumberFormatException ignored) {
+                }
             }
-            finally {
-                Disposer.dispose(rootDisposable);
+
+            for (int i = 0; i < repeatCount; i++) {
+                Disposable rootDisposable = Disposer.newDisposable();
+                try {
+                    MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
+                    ExitCode code = doExecute(arguments, services, severityCollector, rootDisposable);
+                    exitCode = severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
+                }
+                finally {
+                    Disposer.dispose(rootDisposable);
+                }
             }
+            return exitCode;
         }
         catch (Throwable t) {
             groupingCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(t),
