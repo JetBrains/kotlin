@@ -935,6 +935,12 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedStaticClass.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("protectedSuperMethod.kt")
+            public void testProtectedSuperMethod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedSuperMethod.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/boxAgainstJava/visibility/protectedStatic")

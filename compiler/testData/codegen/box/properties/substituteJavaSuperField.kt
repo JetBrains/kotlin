@@ -5,11 +5,15 @@ public abstract class Test<F> {
 }
 
 // FILE: test.kt
+// See KT-5445: Bad access to protected data in getfield
 
 class A : Test<String>() {
     fun foo(): String? = value
+    fun bar(): String? = this.value
 }
 
 fun box(): String {
-    return if (A().foo() == null) "OK" else "Fail"
+    if (A().foo() != null) return "Fail 1"
+    if (A().bar() != null) return "Fail 2"
+    return "OK"
 }
