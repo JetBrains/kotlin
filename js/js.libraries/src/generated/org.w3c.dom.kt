@@ -4578,7 +4578,7 @@ native public open class DOMPointReadOnly(x: Double, y: Double, z: Double, w: Do
 }
 
 native public open class DOMPoint : DOMPointReadOnly {
-    constructor(point: DOMPointInit = noImpl) : super(noImpl, noImpl, noImpl, noImpl)
+    constructor(point: DOMPointInit) : super(noImpl, noImpl, noImpl, noImpl)
     constructor(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0, w: Double = 1.0) : super(x, y, z, w)
     override var x: Double
         get() = noImpl
@@ -4644,7 +4644,7 @@ native public open class DOMRectInit {
 
 native public open class DOMQuad {
     constructor(p1: DOMPointInit = noImpl, p2: DOMPointInit = noImpl, p3: DOMPointInit = noImpl, p4: DOMPointInit = noImpl)
-    constructor(rect: DOMRectInit = noImpl)
+    constructor(rect: DOMRectInit)
     open val p1: DOMPoint
         get() = noImpl
     open val p2: DOMPoint

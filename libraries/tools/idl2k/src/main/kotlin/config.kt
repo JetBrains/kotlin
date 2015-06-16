@@ -52,7 +52,7 @@ val relocations = mapOf(
         "EventListener" to "org.w3c.dom.events"
 )
 
-val commentOutDeclarations = listOf(
+val commentOutDeclarations = setOf(
         "MouseEvent.screenX: Double", "MouseEvent.screenY: Double",
         "MouseEvent.clientX: Double", "MouseEvent.clientY: Double",
         "MouseEvent.x: Double", "MouseEvent.y: Double",
@@ -67,4 +67,9 @@ val commentOutDeclarations = listOf(
         "HTMLPropertiesCollection.get",
 
         "SVGElement.id"
-).toSet()
+)
+
+val requiredArguments = setOf(
+        "DOMPoint.constructor.point",
+        "DOMQuad.constructor.rect"
+)

@@ -138,8 +138,8 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
 
 fun generateConstructorAsFunction(repository: Repository, constructor: ExtendedAttribute) = generateFunction(
         repository,
-        Operation("", UnitType, constructor.arguments, emptyList(), false),
-        functionName = "",
+        Operation("constructor", UnitType, constructor.arguments, emptyList(), false),
+        functionName = "constructor",
         nativeGetterOrSetter = NativeGetterOrSetter.NONE)
 
 fun superOrPrimaryConstructorCall(constructorAsFunction: GenerateFunction, superClassName: String, superOrPrimaryConstructor: ExtendedAttribute): GenerateFunctionCall {
