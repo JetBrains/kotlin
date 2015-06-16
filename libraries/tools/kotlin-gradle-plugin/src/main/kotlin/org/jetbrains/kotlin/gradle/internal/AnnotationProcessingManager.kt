@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import com.android.build.gradle.BaseExtension
+import org.gradle.api.UnknownDomainObjectException
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
@@ -34,7 +36,8 @@ public class AnnotationProcessingManager(
         private val aptFiles: Set<File>,
         private val aptOutputDir: File,
         private val aptWorkingDir: File,
-        private val coreClassLoader: ClassLoader) {
+        private val coreClassLoader: ClassLoader,
+        private val androidVariant: Any? = null) {
 
     private val project = task.getProject()
 
@@ -98,7 +101,7 @@ public class AnnotationProcessingManager(
 
     private fun appendAdditionalComplerArgs() {
         val kaptExtension = project.getExtensions().getByType(javaClass<KaptExtension>())
-        val args = kaptExtension.getAdditionalCompilerArgs()
+        val args = kaptExtension.getAdditionalArguments(project, androidVariant, getAndroidExtension())
         if (args.isEmpty()) return
 
         javaTask.modifyCompilerArguments { list ->
@@ -136,6 +139,14 @@ public class AnnotationProcessingManager(
     private fun addWrappersToCompilerArgs(javaTask: JavaCompile, wrapperFqNames: String) {
         javaTask.addCompilerArgument("-processor") { prevValue ->
             if (prevValue != null) "$prevValue,$wrapperFqNames" else wrapperFqNames
+        }
+    }
+
+    private fun getAndroidExtension(): BaseExtension? {
+        try {
+            return project.getExtensions().getByName("android") as BaseExtension
+        } catch (e: UnknownDomainObjectException) {
+            return null
         }
     }
 

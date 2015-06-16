@@ -442,7 +442,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             if (javaTask is JavaCompile && aptFiles.isNotEmpty()) {
                 val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, variantDataName,
-                        aptFiles.toSet(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
+                        aptFiles.toSet(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader, variantData)
 
                 kotlinTask.storeKaptAnnotationsFile(kaptManager)
 
@@ -626,21 +626,23 @@ private fun Project.initKapt(
 
 private fun Project.createKotlinAfterJavaTask(
         javaTask: AbstractCompile,
-        kotlinDestinationDir: File,
+        kotlinOutputDir: File,
         taskFactory: (suffix: String) -> AbstractCompile
 ): AbstractCompile {
-    val kotlinTaskAfterJava = taskFactory("AfterJava")
-    kotlinTaskAfterJava.setProperty("kotlinDestinationDir", kotlinDestinationDir)
-    kotlinTaskAfterJava.setDestinationDir(javaTask.getDestinationDir())
-    kotlinTaskAfterJava.setClasspath(javaTask.getClasspath())
+    val kotlinAfterJavaTask = with (taskFactory("AfterJava")) {
+        setProperty("kotlinDestinationDir", kotlinOutputDir)
+        setDestinationDir(javaTask.getDestinationDir())
+        setClasspath(javaTask.getClasspath())
+        dependsOn(javaTask.getDependsOn(), javaTask)
+        this
+    }
 
-    getTasks().filter {
-        javaTask in it.getTaskDependencies().getDependencies(it)
-    }.forEach { it.dependsOn(kotlinTaskAfterJava) }
+    val dependsOnJava = getTasks().filter { javaTask in it.getDependsOn() && it != kotlinAfterJavaTask }
+    for (task in dependsOnJava) {
+        task.dependsOn(kotlinAfterJavaTask)
+    }
 
-    kotlinTaskAfterJava.dependsOn(javaTask)
-
-    return kotlinTaskAfterJava
+    return kotlinAfterJavaTask
 }
 
 //copied from BasePlugin.getLocalVersion

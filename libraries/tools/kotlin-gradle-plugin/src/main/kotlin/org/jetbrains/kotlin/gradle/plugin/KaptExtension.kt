@@ -16,19 +16,45 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import groovy.lang.Closure
+import org.gradle.api.Project
+
 public open class KaptExtension {
 
     public open var generateStubs: Boolean = false
 
-    private val additionalCompilerArgs = arrayListOf<String>()
+    private var closure: Closure<*>? = null
 
-    public open fun arg(name: String, vararg values: String) {
+    public open fun arguments(closure: Closure<*>) {
+        this.closure = closure
+    }
+
+    fun getAdditionalArguments(project: Project, variant: Any?, android: Any?): List<String> {
+        val closureToExecute = closure ?: return emptyList()
+
+        val executor = KaptAdditionalArgumentsDelegate(project, variant, android)
+        executor.execute(closureToExecute)
+        return executor.additionalCompilerArgs
+    }
+}
+
+public open class KaptAdditionalArgumentsDelegate(
+        public open val project: Project,
+        public open val variant: Any?,
+        public open val android: Any?
+) {
+
+    val additionalCompilerArgs = arrayListOf<String>()
+
+    public open fun arg(name: Any, vararg values: Any) {
         val valuesString = if (values.isNotEmpty()) values.joinToString(" ", prefix = "=") else ""
         additionalCompilerArgs.add("-A$name$valuesString")
     }
 
-    public open fun getAdditionalCompilerArgs(): List<String> {
-        return additionalCompilerArgs.toList()
+    fun execute(closure: Closure<*>) {
+        closure.setResolveStrategy(Closure.DELEGATE_FIRST)
+        closure.setDelegate(this)
+        closure.call()
     }
 
 }
