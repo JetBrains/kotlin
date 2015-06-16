@@ -192,7 +192,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
         val firstSpace = before.lastOrNull() as? PsiWhiteSpace
         var lineBreaks = 0
         if (firstSpace != null) {
-            lineBreaks = firstSpace.newLinesCount()
+            lineBreaks = firstSpace.lineBreakCount()
             when (inheritance.spacesBefore) {
                 SpacesInheritance.NONE -> lineBreaks = 0
 
@@ -268,7 +268,7 @@ class CodeBuilder(private val topElement: PsiElement?) {
         val next = element.getNextSibling()
         if (next != null) {
             if (next.isCommentOrSpace()) {
-                if (next is PsiWhiteSpace && next.hasNewLines()) return this // do not attach anything on next line after element
+                if (next is PsiWhiteSpace && next.hasLineBreaks()) return this // do not attach anything on next line after element
                 if (next !in commentsAndSpacesUsed) {
                     add(next)
                     collectCommentsAndSpacesAfter(next)
@@ -343,9 +343,9 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
         fun PsiElement.isEmptyElement() = getFirstChild() == null && getTextLength() == 0
 
-        fun PsiWhiteSpace.newLinesCount() = StringUtil.getLineBreakCount(getText()!!)
+        fun PsiWhiteSpace.lineBreakCount() = StringUtil.getLineBreakCount(getText()!!)
 
-        fun PsiWhiteSpace.hasNewLines() = StringUtil.containsLineBreak(getText()!!)
+        fun PsiWhiteSpace.hasLineBreaks() = StringUtil.containsLineBreak(getText()!!)
 
         fun CharSequence.trailingLineBreakCount(): Int {
             val index = ((length()-1 downTo 0).firstOrNull { val c = this[it]; c != '\n' && c != '\r' } ?: -1) + 1
