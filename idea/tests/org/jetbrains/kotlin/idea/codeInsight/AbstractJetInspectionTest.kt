@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.analysis.AnalysisScope
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
+import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.InspectionManagerEx
 import com.intellij.codeInspection.ex.LocalInspectionToolWrapper
 import com.intellij.openapi.util.io.FileUtil
@@ -35,7 +36,21 @@ import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
 public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase() {
+    companion object {
+        val ENTRY_POINT_ANNOTATION = "test.anno.EntryPoint"
+    }
+
     override fun getProjectDescriptor(): LightProjectDescriptor = JetLightProjectDescriptor.INSTANCE
+
+    override fun setUp() {
+        super.setUp()
+        EntryPointsManagerBase.getInstance(getProject()).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
+    }
+
+    override fun tearDown() {
+        EntryPointsManagerBase.getInstance(getProject()).ADDITIONAL_ANNOTATIONS.remove(ENTRY_POINT_ANNOTATION)
+        super.tearDown()
+    }
 
     protected fun doTest(path: String) {
         val optionsFile = File(path)

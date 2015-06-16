@@ -20,6 +20,8 @@ import com.intellij.codeInsight.FileModificationService
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.deadCode.UnusedDeclarationInspection
+import com.intellij.codeInspection.ex.EntryPointsManager
+import com.intellij.codeInspection.ex.EntryPointsManagerBase
 import com.intellij.codeInspection.ex.EntryPointsManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
@@ -34,6 +36,7 @@ import com.intellij.refactoring.safeDelete.SafeDeleteHandler
 import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.awt.GridBagConstraints
@@ -65,10 +69,42 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             val lightElement: PsiElement? = when (declaration) {
                 is JetClassOrObject -> declaration.toLightClass()
                 is JetNamedFunction, is JetSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as JetFunction)
+                is JetProperty -> {
+                    // can't rely on light element, check annotation ourselves
+                    val descriptor = declaration.descriptor ?: return false
+                    val entryPointsManager = EntryPointsManager.getInstance(declaration.getProject()) as EntryPointsManagerBase
+                    return checkAnnotatedUsingPatterns(
+                            descriptor,
+                            entryPointsManager.getAdditionalAnnotations() + entryPointsManager.ADDITIONAL_ANNOTATIONS
+                    )
+                }
                 else -> return false
             }
             return lightElement != null && javaInspection.isEntryPoint(lightElement)
         }
+
+        // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
+        private fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
+            val annotationsPresent = annotated.getAnnotations()
+                    .map { it.getType() }
+                    .filter { !it.isError() }
+                    .map { it.getConstructor().getDeclarationDescriptor()?.let { DescriptorUtils.getFqName(it).asString() } }
+                    .filterNotNull()
+
+            if (annotationsPresent.isEmpty()) return false
+
+            for (pattern in annotationPatterns) {
+                val hasAnnotation = if (pattern.endsWith(".*")) {
+                    annotationsPresent.any { it.startsWith(pattern.dropLast(1)) }
+                } else {
+                    pattern in annotationsPresent
+                }
+                if (hasAnnotation) return true
+            }
+
+            return false
+        }
+
     }
 
     override fun runForWholeFile() = true
