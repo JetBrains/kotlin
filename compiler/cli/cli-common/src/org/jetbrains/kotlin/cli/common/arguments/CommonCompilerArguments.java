@@ -43,6 +43,11 @@ public abstract class CommonCompilerArguments {
     @Argument(value = "Xno-inline", description = "Disable method inlining")
     public boolean noInline;
 
+    // TODO Remove in 1.0
+    @Argument(value = "Xrepeat", description = "Repeat compilation (for performance analysis)")
+    @ValueDescription("<count>")
+    public String repeat;
+
     @Argument(value = "Xplugin", description = "Load plugins from the given classpath")
     @ValueDescription("<path>")
     public String[] pluginClasspaths;
