@@ -44,7 +44,7 @@
     </target>
 
     <!-- deprecated -->
-    <target name="jb_update" depends="fetch-third-party,fetch-annotations" description="Update dependencies">
+    <target name="jb_update" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_idea_maven_artifacts
             base.url="https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/idea"
             idea.maven.version="${ideaVersion}"/>
@@ -63,14 +63,14 @@
     </target>
 
     <!-- deprecated -->
-    <target name="update_old" depends="fetch-third-party,fetch-annotations" description="Update dependencies from public server">
+    <target name="update_old" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_id_resolve
             teamcity.server.url="https://teamcity.jetbrains.com"
             build.locator.request="buildType:bt410,status:SUCCESS,branch:idea/${ideaVersion}"/>
     </target>
 
     <!-- deprecated -->
-    <target name="jb_update_old" depends="fetch-third-party,fetch-annotations" description="Update dependencies from internal server">
+    <target name="jb_update_old" depends="fetch-third-party,fetch-annotations">
         <execute_update_with_id_resolve
             teamcity.server.url="http://buildserver.labs.intellij.net"
             build.locator.request="buildType:bt3498,status:SUCCESS,branch:/idea/${ideaVersion}"/>
