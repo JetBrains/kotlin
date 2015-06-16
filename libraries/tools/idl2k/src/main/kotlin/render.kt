@@ -98,6 +98,8 @@ private val GenerateAttribute.isVar: Boolean
 private fun GenerateAttribute.isCommented(parent: String) = "$parent.$name" in commentOutDeclarations || "$parent.$name: ${type.render()}" in commentOutDeclarations
 private fun GenerateFunction.isCommented(parent: String) =
         "$parent.$name" in commentOutDeclarations || "$parent.$name(${arguments.size()})" in commentOutDeclarations
+private fun GenerateAttribute.isRequiredFunctionArgument(owner: String, functionName: String) = "$owner.$functionName.$name" in requiredArguments
+private fun GenerateFunction.fixRequiredArguments(parent: String) = copy(arguments = arguments.map { arg -> arg.copy(initializer = if (arg.isRequiredFunctionArgument(parent, name)) null else arg.initializer) })
 
 fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
     append("native public ")
@@ -115,7 +117,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     append(iface.name)
     val primary = iface.primaryConstructor
     if (primary != null && (primary.constructor.arguments.isNotEmpty() || iface.secondaryConstructors.isNotEmpty())) {
-        renderArgumentsDeclaration(primary.constructor.arguments.dynamicIfUnknownType(allTypes.keySet()), false)
+        renderArgumentsDeclaration(primary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keySet()), false)
     }
 
     val superCallName = primary?.initTypeCall?.name
@@ -133,7 +135,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     iface.secondaryConstructors.forEach { secondary ->
         indent(false, 1)
         append("constructor")
-        renderArgumentsDeclaration(secondary.constructor.arguments.dynamicIfUnknownType(allTypes.keySet()), false)
+        renderArgumentsDeclaration(secondary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keySet()), false)
 
         if (secondary.initTypeCall != null) {
             append(" : ")
@@ -155,7 +157,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         renderAttributeDeclaration(arg, override = arg.signature in superSignatures, open = iface.kind == GenerateDefinitionKind.CLASS && arg.readOnly, commented = arg.isCommented(iface.name))
     }
     iface.memberFunctions.filter { it !in superFunctions && !it.static }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
-        renderFunctionDeclaration(it, it.signature in superSignatures, commented = it.isCommented(iface.name))
+        renderFunctionDeclaration(it.fixRequiredArguments(iface.name), it.signature in superSignatures, commented = it.isCommented(iface.name))
     }
 
     val staticAttributes = iface.memberAttributes.filter { it.static }
@@ -172,7 +174,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
             renderAttributeDeclaration(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
         }
         staticFunctions.forEach {
-            renderFunctionDeclaration(it, override = false, level = 2, commented = it.isCommented(iface.name))
+            renderFunctionDeclaration(it.fixRequiredArguments(iface.name), override = false, level = 2, commented = it.isCommented(iface.name))
         }
         indent(false, 1)
         appendln("}")
