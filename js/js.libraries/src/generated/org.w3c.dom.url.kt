@@ -24,9 +24,8 @@ native public open class URL(url: String, base: String = noImpl) {
     var href: String
         get() = noImpl
         set(value) = noImpl
-    var origin: String
+    open val origin: String
         get() = noImpl
-        set(value) = noImpl
     var protocol: String
         get() = noImpl
         set(value) = noImpl

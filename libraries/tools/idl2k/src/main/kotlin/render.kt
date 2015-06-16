@@ -8,11 +8,12 @@ private fun <O : Appendable> O.indent(level: Int) {
     }
 }
 
-private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, override: Boolean, level: Int = 1) {
+private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, override: Boolean, open: Boolean, level: Int = 1) {
     indent(level)
 
-    if (override) {
-        append("override ")
+    when {
+        override -> append("override ")
+        open -> append("open ")
     }
 
     append(if (arg.readOnly) "val" else "var")
@@ -85,6 +86,12 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
     appendln(": ${f.returnType.render()} = noImpl")
 }
 
+private fun List<GenerateAttribute>.hasNoVars() = none { it.isVar }
+private val GenerateAttribute.isVal: Boolean
+    get() = readOnly
+private val GenerateAttribute.isVar: Boolean
+    get() = !readOnly
+
 fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
     append("native public ")
     if (markerAnnotation) {
@@ -130,11 +137,15 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     }
 
     val superAttributes = allSuperTypes.flatMap { it.memberAttributes }.distinct()
+    val superAttributesByName = superAttributes.groupBy { it.name }
     val superFunctions = allSuperTypes.flatMap { it.memberFunctions }.distinct()
     val superSignatures = superAttributes.map { it.signature } merge superFunctions.map { it.signature }
 
-    iface.memberAttributes.filter { it !in superAttributes && !it.static }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues().values().forEach { arg ->
-        renderAttributeDeclaration(arg, arg.signature in superSignatures)
+    iface.memberAttributes
+            .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
+            .map { it.dynamicIfUnknownType(allTypes.keySet()) }
+            .groupBy { it.signature }.reduceValues().values().forEach { arg ->
+        renderAttributeDeclaration(arg, override = arg.signature in superSignatures, open = iface.kind == GenerateDefinitionKind.CLASS && arg.readOnly)
     }
     iface.memberFunctions.filter { it !in superFunctions && !it.static }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
         renderFunctionDeclaration(it, it.signature in superSignatures)
@@ -148,10 +159,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         indent(1)
         appendln("companion object {")
         iface.constants.forEach {
-            renderAttributeDeclaration(it, override = false, level = 2)
+            renderAttributeDeclaration(it, override = false, open = false, level = 2)
         }
         staticAttributes.forEach {
-            renderAttributeDeclaration(it, override = false, level = 2)
+            renderAttributeDeclaration(it, override = false, open = false, level = 2)
         }
         staticFunctions.forEach {
             renderFunctionDeclaration(it, override = false, level = 2)

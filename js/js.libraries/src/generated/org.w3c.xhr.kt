@@ -51,39 +51,31 @@ native public open class XMLHttpRequest : XMLHttpRequestEventTarget {
     var onreadystatechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var readyState: Short
+    open val readyState: Short
         get() = noImpl
-        set(value) = noImpl
     var timeout: Int
         get() = noImpl
         set(value) = noImpl
     var withCredentials: Boolean
         get() = noImpl
         set(value) = noImpl
-    var upload: XMLHttpRequestUpload
+    open val upload: XMLHttpRequestUpload
         get() = noImpl
-        set(value) = noImpl
-    var responseURL: String
+    open val responseURL: String
         get() = noImpl
-        set(value) = noImpl
-    var status: Short
+    open val status: Short
         get() = noImpl
-        set(value) = noImpl
-    var statusText: String
+    open val statusText: String
         get() = noImpl
-        set(value) = noImpl
     var responseType: String
         get() = noImpl
         set(value) = noImpl
-    var response: Any?
+    open val response: Any?
         get() = noImpl
-        set(value) = noImpl
-    var responseText: String
+    open val responseText: String
         get() = noImpl
-        set(value) = noImpl
-    var responseXML: Document?
+    open val responseXML: Document?
         get() = noImpl
-        set(value) = noImpl
     fun open(method: String, url: String): Unit = noImpl
     fun open(method: String, url: String, async: Boolean, username: String? = null, password: String? = null): Unit = noImpl
     fun setRequestHeader(name: String, value: String): Unit = noImpl
@@ -112,15 +104,12 @@ native public open class FormData(form: HTMLFormElement = noImpl) {
 }
 
 native public open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
-    var lengthComputable: Boolean
+    open val lengthComputable: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var loaded: Long
+    open val loaded: Long
         get() = noImpl
-        set(value) = noImpl
-    var total: Long
+    open val total: Long
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public open class ProgressEventInit : EventInit() {
