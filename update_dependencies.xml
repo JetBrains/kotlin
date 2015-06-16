@@ -8,8 +8,6 @@
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
-    <property name="idea.dir" value="ideaSDK"/>
-
     <condition property="os.tag" value="win.zip">
         <os family="windows"/>
     </condition>
@@ -31,6 +29,7 @@
         <os family="windows"/>
     </condition>
 
+    <property name="idea.dir" value="ideaSDK"/>
     <property name="idea.sdk.fetch.needed" value="true"/>
 
     <property name="dependencies.info.file" value="dependencies/dependencies.properties"/>
@@ -490,7 +489,7 @@
                 </then>
                 <else>
                     <echo message="IDEA build id: ${execute.build.id}, previous build id: ${dependencies.info.prev.idea.build.id}"/>
-                    <execute_update_maven maven.version="@{idea.maven.version}" base.repository.url="@{base.url}"/>
+                    <download_and_update_idea idea.maven.version="@{idea.maven.version}" base.repository.url="@{base.url}"/>
 
                     <propertyfile file="${dependencies.info.file}">
                         <entry key="idea.build.id" value="${execute.build.id}"/>
@@ -588,7 +587,7 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="unpack_idea_sdk">
+    <macrodef name="configure_idea_sdk_dir">
         <attribute name="idea.dir"/>
         <attribute name="idea.sdk.fetch.needed"/>
 
@@ -722,44 +721,45 @@
         </sequential>
     </macrodef>
 
-    <macrodef name="execute_update_maven">
-        <attribute name="maven.version"/>
+    <macrodef name="download_and_update_idea">
+        <attribute name="idea.maven.version"/>
         <attribute name="base.repository.url"/>
 
-        <attribute name="download.dir" default="dependencies/download/@{maven.version}"/>
+        <attribute name="download.dir" default="dependencies/idea"/>
 
         <sequential>
+            <delete dir="@{download.dir}"/>
             <mkdir dir="@{download.dir}"/>
 
-            <get src="@{base.repository.url}/ideaIC/@{maven.version}/ideaIC-@{maven.version}-sources.zip"
-                 dest="@{download.dir}/ideaIC-@{maven.version}-sources.zip" usetimestamp="true"/>
+            <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}-sources.zip"
+                 dest="@{download.dir}/ideaIC-@{idea.maven.version}-sources.zip" usetimestamp="true"/>
 
-            <get src="@{base.repository.url}/ideaIC/@{maven.version}/ideaIC-@{maven.version}.zip"
-                 dest="@{download.dir}/ideaIC-@{maven.version}.zip" usetimestamp="true"/>
-
-            <download_and_unzip
-                dir="@{download.dir}/intellij-core-@{maven.version}"
-                url="@{base.repository.url}/intellij-core/@{maven.version}/intellij-core-@{maven.version}.zip"
-                usetimestamp="true"/>
-
-            <get src="@{base.repository.url}/jps-build-test/@{maven.version}/jps-build-test-@{maven.version}.jar"
-                 dest="@{download.dir}/jps-build-test-@{maven.version}.jar" usetimestamp="true"/>
+            <get src="@{base.repository.url}/ideaIC/@{idea.maven.version}/ideaIC-@{idea.maven.version}.zip"
+                 dest="@{download.dir}/ideaIC-@{idea.maven.version}.zip" usetimestamp="true"/>
 
             <download_and_unzip
-                dir="@{download.dir}/jps-standalone-@{maven.version}"
-                url="@{base.repository.url}/jps-standalone/@{maven.version}/jps-standalone-@{maven.version}.zip"
+                dir="@{download.dir}/intellij-core-@{idea.maven.version}"
+                url="@{base.repository.url}/intellij-core/@{idea.maven.version}/intellij-core-@{idea.maven.version}.zip"
                 usetimestamp="true"/>
 
-            <unpack_idea_sdk
+            <get src="@{base.repository.url}/jps-build-test/@{idea.maven.version}/jps-build-test-@{idea.maven.version}.jar"
+                 dest="@{download.dir}/jps-build-test-@{idea.maven.version}.jar" usetimestamp="true"/>
+
+            <download_and_unzip
+                dir="@{download.dir}/jps-standalone-@{idea.maven.version}"
+                url="@{base.repository.url}/jps-standalone/@{idea.maven.version}/jps-standalone-@{idea.maven.version}.zip"
+                usetimestamp="true"/>
+
+            <configure_idea_sdk_dir
                 idea.dir="${idea.dir}"
                 idea.sdk.fetch.needed="${idea.sdk.fetch.needed}"
 
-                download.dir.intellij-core="@{download.dir}/intellij-core-@{maven.version}"
-                download.dir.jps-standalone="@{download.dir}/jps-standalone-@{maven.version}"
-                download.file.archive.idea="@{download.dir}/ideaIC-@{maven.version}.zip"
+                download.dir.intellij-core="@{download.dir}/intellij-core-@{idea.maven.version}"
+                download.dir.jps-standalone="@{download.dir}/jps-standalone-@{idea.maven.version}"
+                download.file.archive.idea="@{download.dir}/ideaIC-@{idea.maven.version}.zip"
                 download.file.archive.idea.win.only="true"
-                download.file.archive.sources="@{download.dir}/ideaIC-@{maven.version}-sources.zip"
-                download.file.archive.jps-build-test="@{download.dir}/jps-build-test-@{maven.version}.jar"/>
+                download.file.archive.sources="@{download.dir}/ideaIC-@{idea.maven.version}-sources.zip"
+                download.file.archive.jps-build-test="@{download.dir}/jps-build-test-@{idea.maven.version}.jar"/>
         </sequential>
     </macrodef>
 
@@ -810,7 +810,7 @@
             <echo message="IDEA archive file: ${idea.archive.name}"/>
 
             <property name="content.base.url" value="@{base.url}/artifacts/content"/>
-            <property name="idea.download.dir" value="dependencies/download/${execute.build.id}" />
+            <property name="idea.download.dir" value="dependencies/idea" />
             <property name="jps.extracted.dir" value="${idea.download.dir}/standalone-jps"/>
             <property name="core.dir" value="${idea.download.dir}/core"/>
 
@@ -818,6 +818,7 @@
                 <istrue value="${idea.sdk.fetch.needed}"/>
 
                 <then>
+                    <delete dir="${idea.download.dir}"/>
                     <mkdir dir="${idea.download.dir}"/>
 
                     <get src="${content.base.url}/jps/standalone-jps-IC-${idea.build.number}.zip"
@@ -847,7 +848,7 @@
                 </then>
             </if>
 
-            <unpack_idea_sdk
+            <configure_idea_sdk_dir
                 idea.dir="${idea.dir}"
                 idea.sdk.fetch.needed="${idea.sdk.fetch.needed}"
 
