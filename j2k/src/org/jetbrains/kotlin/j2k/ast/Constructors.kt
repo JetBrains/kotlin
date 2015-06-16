@@ -43,7 +43,7 @@ class PrimaryConstructor(
 
         // assign prototypes later because we don't know yet whether the body is empty or not
         converter.addPostUnfoldDeferredElementsAction {
-            val inheritance = CommentsAndSpacesInheritance(blankLinesBefore = false, commentsAfter = body!!.isEmpty, commentsInside = body.isEmpty)
+            val inheritance = CommentsAndSpacesInheritance(spacesBefore = SpacesInheritance.NONE, commentsAfter = body!!.isEmpty, commentsInside = body.isEmpty)
             signature.assignPrototypesFrom(this, inheritance)
         }
 

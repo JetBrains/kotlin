@@ -45,10 +45,16 @@ fun <TElement: Element> TElement.assignPrototypesFrom(element: Element, inherita
 
 data class PrototypeInfo(val element: PsiElement, val commentsAndSpacesInheritance: CommentsAndSpacesInheritance)
 
-data class CommentsAndSpacesInheritance(val blankLinesBefore: Boolean = true,
-                                        val commentsBefore: Boolean = true,
-                                        val commentsAfter: Boolean = true,
-                                        val commentsInside: Boolean = true)
+enum class SpacesInheritance {
+    NONE, BLANK_LINES_ONLY, LINE_BREAKS
+}
+
+data class CommentsAndSpacesInheritance(
+        val spacesBefore: SpacesInheritance = SpacesInheritance.BLANK_LINES_ONLY,
+        val commentsBefore: Boolean = true,
+        val commentsAfter: Boolean = true,
+        val commentsInside: Boolean = true
+)
 
 fun Element.canonicalCode(): String {
     val builder = CodeBuilder(null)

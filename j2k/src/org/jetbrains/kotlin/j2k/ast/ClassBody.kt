@@ -45,7 +45,7 @@ class ClassBody (
         else {
             val (constants, otherMembers) = membersFiltered.partition { it is EnumConstant }
 
-            builder.append(constants, ",\n")
+            builder.append(constants, ", ")
 
             if (otherMembers.isNotEmpty() || companionObjectMembers.isNotEmpty()) {
                 builder.append(";\n")
