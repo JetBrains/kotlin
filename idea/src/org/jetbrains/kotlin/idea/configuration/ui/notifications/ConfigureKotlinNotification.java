@@ -20,6 +20,7 @@ import com.intellij.notification.Notification;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
@@ -46,11 +47,18 @@ public class ConfigureKotlinNotification extends Notification {
             @Override
             public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                 if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtils.getConfiguratorByName(event.getDescription());
+                    final KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtils.getConfiguratorByName(event.getDescription());
                     if (configurator == null) {
                         throw new AssertionError("Missed action: " + event.getDescription());
                     }
-                    configurator.configure(project);
+                    // The user can often click the notification while building indices, and we want it to work right away, so we
+                    // should enable alternative resolve.
+                    DumbService.getInstance(project).withAlternativeResolveEnabled(new Runnable() {
+                        @Override
+                        public void run() {
+                            configurator.configure(project);
+                        }
+                    });
                     notification.expire();
                 }
             }
