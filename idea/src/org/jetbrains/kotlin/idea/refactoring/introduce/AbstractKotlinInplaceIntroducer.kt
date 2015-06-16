@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.awt.BorderLayout
 
 public abstract class AbstractKotlinInplaceIntroducer<D: JetNamedDeclaration>(
-        expression: JetExpression,
+        expression: JetExpression?,
         occurrences: Array<JetExpression>,
         title: String,
         project: Project,
@@ -58,7 +58,7 @@ public abstract class AbstractKotlinInplaceIntroducer<D: JetNamedDeclaration>(
             stopIntroduce(myEditor)
             myProject.executeWriteCommand(getCommandName(), getCommandName(), action)
             // myExprMarker was invalidated by stopIntroduce()
-            myExprMarker = createMarker(myExpr)
+            myExprMarker = myExpr?.let { createMarker(it) }
             startInplaceIntroduceTemplate()
         }
         finally {

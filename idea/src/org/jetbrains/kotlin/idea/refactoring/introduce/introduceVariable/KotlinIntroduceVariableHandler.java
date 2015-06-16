@@ -206,7 +206,6 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         expression, suggestedNames, allReplaces, commonContainer,
                         commonParent, replaceOccurrence, propertyRef, references,
                         reference, finalNoTypeInference, expressionType, bindingContext);
-                final boolean finalReplaceOccurrence = replaceOccurrence;
                 CommandProcessor.getInstance().executeCommand(project, new Runnable() {
                     @Override
                     public void run() {

@@ -42,7 +42,7 @@ import java.awt.BorderLayout
 
 public class KotlinVariableInplaceIntroducer(
         val addedVariable: JetProperty,
-        val originalExpression: JetExpression,
+        val originalExpression: JetExpression?,
         val occurrencesToReplace: Array<JetExpression>,
         val suggestedNames: Array<out String>,
         val isVar: Boolean,
