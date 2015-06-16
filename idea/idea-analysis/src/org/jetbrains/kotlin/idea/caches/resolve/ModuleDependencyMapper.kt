@@ -73,8 +73,10 @@ fun createModuleResolverProvider(
     val moduleDescriptors = modulesToCreateResolversFor.map { resolverForProject.descriptorForModule(it) }
     val resolveSessionsForBodyByDescriptor = moduleDescriptors.keysToMap {
         descriptor ->
-        val analyzer = resolverForProject.resolverForModuleDescriptor(descriptor)
-        ResolveSessionForBodies(project, analyzer.lazyResolveSession)
+        globalContext.storageManager.createLazyValue {
+            val analyzer = resolverForProject.resolverForModuleDescriptor(descriptor)
+            ResolveSessionForBodies(project, analyzer.lazyResolveSession)
+        }
     }
     return ModuleResolverProviderImpl(
             resolverForProject,
@@ -134,14 +136,15 @@ object EmptyModuleResolverProvider: ModuleResolverProvider {
 
 class ModuleResolverProviderImpl(
         override val resolverForProject: ResolverForProject<IdeaModuleInfo, ResolverForModule>,
-        private val bodiesResolveByDescriptor: Map<ModuleDescriptor, ResolveSessionForBodies>,
+        private val bodiesResolveByDescriptor: Map<ModuleDescriptor, () -> ResolveSessionForBodies>,
         val globalContext: GlobalContextImpl,
         val delegateProvider: ModuleResolverProvider = EmptyModuleResolverProvider
 ): ModuleResolverProvider {
     override val exceptionTracker: ExceptionTracker = globalContext.exceptionTracker
 
     override fun resolveSessionForBodiesByDescriptor(descriptor: ModuleDescriptor): ResolveSessionForBodies {
-        return bodiesResolveByDescriptor[descriptor] ?: delegateProvider.resolveSessionForBodiesByDescriptor(descriptor)
+        val computation = bodiesResolveByDescriptor[descriptor] ?: return delegateProvider.resolveSessionForBodiesByDescriptor(descriptor)
+        return computation()
     }
 
 }
