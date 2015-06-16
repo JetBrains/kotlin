@@ -25,6 +25,7 @@ import com.google.dart.compiler.backend.js.ast.*;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
@@ -116,6 +117,8 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression doGetIsTypeCheckCallable(@NotNull KotlinType type) {
+        if (KotlinBuiltIns.isAnyOrNullableAny(type)) return namer().isAny();
+
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
         if (builtinCheck != null) return builtinCheck;
 
