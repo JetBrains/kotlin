@@ -264,7 +264,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
     public enum class CompletionKind {
         KEYWORDS_ONLY,
-        NAMED_PARAMETERS_ONLY,
+        NAMED_ARGUMENTS_ONLY,
         ALL,
         TYPES,
         ANNOTATION_TYPES,
@@ -283,13 +283,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         CompletionKind.ALL ->
             DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK)
 
-        CompletionKind.NAMED_PARAMETERS_ONLY, CompletionKind.KEYWORDS_ONLY ->
+        CompletionKind.NAMED_ARGUMENTS_ONLY, CompletionKind.KEYWORDS_ONLY ->
             null
     }
 
     private fun calcCompletionKind(): CompletionKind {
-        if (NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
-            return CompletionKind.NAMED_PARAMETERS_ONLY
+        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
+            return CompletionKind.NAMED_ARGUMENTS_ONLY
         }
 
         if (reference == null) {
@@ -324,7 +324,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     override fun doComplete() {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
 
-        if (completionKind != CompletionKind.NAMED_PARAMETERS_ONLY) {
+        if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
             collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
@@ -374,7 +374,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
         }
 
-        NamedParametersCompletion.complete(position, collector, bindingContext)
+        NamedArgumentCompletion.complete(position, collector, bindingContext)
     }
 
     private object NonAnnotationClassifierExclude : DescriptorKindExclude {
@@ -415,8 +415,8 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
     override val descriptorKindFilter: DescriptorKindFilter? = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
     override fun doComplete() {
-        if (NamedParametersCompletion.isOnlyNamedParameterExpected(position)) {
-            NamedParametersCompletion.complete(position, collector, bindingContext)
+        if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
+            NamedArgumentCompletion.complete(position, collector, bindingContext)
             return
         }
 

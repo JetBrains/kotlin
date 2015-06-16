@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import java.util.*
 
-object NamedParametersCompletion {
+object NamedArgumentCompletion {
     private val positionFilter = AndFilter(
             LeafElementFilter(JetTokens.IDENTIFIER),
             OrFilter(
@@ -57,7 +57,7 @@ object NamedParametersCompletion {
             )
     )
 
-    public fun isOnlyNamedParameterExpected(position: PsiElement): Boolean {
+    public fun isOnlyNamedArgumentExpected(position: PsiElement): Boolean {
         if (!positionFilter.isAcceptable(position, position)) return false
 
         val thisArgument = position.getStrictParentOfType<JetValueArgument>()!!
@@ -99,7 +99,7 @@ object NamedParametersCompletion {
                             .withPresentableText("$name =")
                             .withTailText(" ${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(parameter.getType())}")
                             .withIcon(JetIcons.PARAMETER)
-                            .withInsertHandler(NamedParameterInsertHandler(parameter.getName()))
+                            .withInsertHandler(NamedArgumentInsertHandler(parameter.getName()))
                             .assignPriority(ItemPriority.NAMED_PARAMETER)
                     collector.addElement(lookupElement)
                 }
@@ -107,7 +107,7 @@ object NamedParametersCompletion {
         }
     }
 
-    private class NamedParameterInsertHandler(val parameterName: Name) : InsertHandler<LookupElement> {
+    private class NamedArgumentInsertHandler(val parameterName: Name) : InsertHandler<LookupElement> {
         override fun handleInsert(context: InsertionContext, item: LookupElement) {
             val editor = context.getEditor()
             val text = parameterName.render()

@@ -1309,95 +1309,95 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
-        @TestMetadata("idea/idea-completion/testData/basic/common/namedParameters")
+        @TestMetadata("idea/idea-completion/testData/basic/common/namedArguments")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class NamedParameters extends AbstractJvmBasicCompletionTest {
+        public static class NamedArguments extends AbstractJvmBasicCompletionTest {
             @TestMetadata("AfterBrace.kt")
             public void testAfterBrace() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/AfterBrace.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/AfterBrace.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("AfterComma.kt")
             public void testAfterComma() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/AfterComma.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/AfterComma.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("AfterVararg.kt")
             public void testAfterVararg() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/AfterVararg.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/AfterVararg.kt");
                 doTest(fileName);
             }
 
-            public void testAllFilesPresentInNamedParameters() throws Exception {
-                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/namedParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+            public void testAllFilesPresentInNamedArguments() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/namedArguments"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
             @TestMetadata("CompactTypeNames.kt")
             public void testCompactTypeNames() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/CompactTypeNames.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/CompactTypeNames.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("ForEmptyParametersFunction.kt")
             public void testForEmptyParametersFunction() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/ForEmptyParametersFunction.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/ForEmptyParametersFunction.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("InParameterExpression.kt")
             public void testInParameterExpression() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/InParameterExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/InParameterExpression.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("NamedParametersFromOverloads.kt")
-            public void testNamedParametersFromOverloads() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/NamedParametersFromOverloads.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("NamedParamsInConstructor.kt")
-            public void testNamedParamsInConstructor() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/NamedParamsInConstructor.kt");
+            @TestMetadata("NamedArgumentsFromOverloads.kt")
+            public void testNamedArgumentsFromOverloads() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NamedArgumentsFromOverloads.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("NoAlreadyUsedParameters.kt")
             public void testNoAlreadyUsedParameters() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/NoAlreadyUsedParameters.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NoAlreadyUsedParameters.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("NoParamsFromUnapplicableOverload.kt")
             public void testNoParamsFromUnapplicableOverload() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/NoParamsFromUnapplicableOverload.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NoParamsFromUnapplicableOverload.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("NotOnlyNamedParameters.kt")
-            public void testNotOnlyNamedParameters() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/NotOnlyNamedParameters.kt");
+            @TestMetadata("NotOnlyNamedArguments.kt")
+            public void testNotOnlyNamedArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotOnlyNamedArguments.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("NotOnlyNamedParameters2.kt")
-            public void testNotOnlyNamedParameters2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/NotOnlyNamedParameters2.kt");
+            @TestMetadata("NotOnlyNamedArguments2.kt")
+            public void testNotOnlyNamedArguments2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/NotOnlyNamedArguments2.kt");
                 doTest(fileName);
             }
 
-            @TestMetadata("OnlyNamedParameters.kt")
-            public void testOnlyNamedParameters() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/OnlyNamedParameters.kt");
+            @TestMetadata("OfConstructor.kt")
+            public void testOfConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/OfConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("OnlyNamedArguments.kt")
+            public void testOnlyNamedArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/OnlyNamedArguments.kt");
                 doTest(fileName);
             }
 
             @TestMetadata("WithParameterExpression.kt")
             public void testWithParameterExpression() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedParameters/WithParameterExpression.kt");
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/WithParameterExpression.kt");
                 doTest(fileName);
             }
         }
