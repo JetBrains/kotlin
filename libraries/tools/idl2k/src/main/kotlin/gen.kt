@@ -83,7 +83,7 @@ private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefini
 private fun InterfaceDefinition.mapAttributes(repository: Repository) = attributes.map { generateAttribute(!dictionary, repository, it) }
 private fun InterfaceDefinition.mapOperations(repository: Repository) = operations.flatMap { generateFunctions(repository, it) }
 private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), value, false, true, false, false, true)
-private fun emptyConstructor() = ExtendedAttribute(null, "Constructor", emptyList())
+private val EMPTY_CONSTRUCTOR = ExtendedAttribute(null, "Constructor", emptyList())
 
 fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {
     val superClasses = iface.superTypes
@@ -93,7 +93,7 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
 
     assert(superClasses.size() <= 1) { "Type ${iface.name} should have one or zero super classes but found ${superClasses.map { it.name }}" }
     val superClass = superClasses.singleOrNull()
-    val superConstructor = superClass?.findConstructors()?.firstOrNull()
+    val superConstructor = superClass?.findConstructors()?.firstOrNull() ?: EMPTY_CONSTRUCTOR
 
     val declaredConstructors = iface.findConstructors()
     val entityKind = resolveDefinitionKind(repository, iface, declaredConstructors)
@@ -101,26 +101,27 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
 
     val primaryConstructor = when {
         declaredConstructors.size() == 1 -> declaredConstructors.single()
-        declaredConstructors.isEmpty() && entityKind == GenerateDefinitionKind.CLASS -> emptyConstructor()
+        declaredConstructors.isEmpty() && entityKind == GenerateDefinitionKind.CLASS -> EMPTY_CONSTRUCTOR
         else -> declaredConstructors.firstOrNull { it.arguments.isEmpty() }
     }
     val secondaryConstructors = declaredConstructors.filter { it != primaryConstructor }
 
-    val primaryConstructorWithCall = if (primaryConstructor != null) {
-        val constructorAsFunction = generateConstructorAsFunction(repository, primaryConstructor)
+    val primaryConstructorWithCall = primaryConstructor?.let { constructor ->
+        val constructorAsFunction = generateConstructorAsFunction(repository, constructor)
         val superCall = when {
-            superClass != null -> superOrPrimaryConstructorCall(constructorAsFunction, superClass.name, superConstructor ?: emptyConstructor())
+            superClass != null -> superOrPrimaryConstructorCall(constructorAsFunction, superClass.name, superConstructor)
             else -> null
         }
 
-        ConstructorWithSuperTypeCall(constructorAsFunction, primaryConstructor, superCall)
-    } else null
+        ConstructorWithSuperTypeCall(constructorAsFunction, constructor, superCall)
+    }
 
     val secondaryConstructorsWithCall = secondaryConstructors.map { secondaryConstructor ->
         val constructorAsFunction = generateConstructorAsFunction(repository, secondaryConstructor)
         val initCall = when {
             primaryConstructorWithCall != null -> superOrPrimaryConstructorCall(constructorAsFunction, "this", primaryConstructorWithCall.constructorAttribute)
-            else -> superOrPrimaryConstructorCall(constructorAsFunction, "super", superConstructor ?: emptyConstructor())
+            superClass != null -> superOrPrimaryConstructorCall(constructorAsFunction, "super", superConstructor)
+            else -> null
         }
 
         ConstructorWithSuperTypeCall(constructorAsFunction, secondaryConstructor, initCall)
