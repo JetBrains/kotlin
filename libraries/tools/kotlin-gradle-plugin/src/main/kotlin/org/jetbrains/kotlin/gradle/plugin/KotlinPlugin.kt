@@ -585,7 +585,7 @@ private fun Project.initKapt(
         subpluginEnvironment: SubpluginEnvironment,
         taskFactory: (suffix: String) -> AbstractCompile
 ) {
-    val kaptExtension = getExtensions().kapt
+    val kaptExtension = getExtensions().getByType(javaClass<KaptExtension>())
     val kotlinAfterJavaTask: AbstractCompile?
 
     if (kaptExtension.generateStubs) {
@@ -642,9 +642,6 @@ private fun Project.createKotlinAfterJavaTask(
 
     return kotlinTaskAfterJava
 }
-
-private val ExtensionContainer.kapt: KaptExtension
-    get() = getByType(javaClass<KaptExtension>())
 
 //copied from BasePlugin.getLocalVersion
 private fun loadAndroidPluginVersion(): String? {
