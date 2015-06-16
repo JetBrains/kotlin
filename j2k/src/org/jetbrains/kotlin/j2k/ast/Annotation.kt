@@ -27,16 +27,18 @@ class Annotation(val name: Identifier, val arguments: List<Pair<Identifier?, Def
         else {
             builder.append(name)
                     .append("(")
-                    .append(arguments.map {
-                        {
-                            if (it.first != null) {
-                                builder append it.first!! append " = " append it.second
-                            }
-                            else {
-                                builder append it.second
-                            }
-                        }
-                    }, ", ")
+                    .buildList(
+                            generators = arguments.map {
+                                {
+                                    if (it.first != null) {
+                                        builder append it.first!! append " = " append it.second
+                                    }
+                                    else {
+                                        builder append it.second
+                                    }
+                                }
+                            },
+                            separator = ", ")
                     .append(")")
         }
     }

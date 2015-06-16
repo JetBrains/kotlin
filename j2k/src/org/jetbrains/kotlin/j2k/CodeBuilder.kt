@@ -30,7 +30,7 @@ import java.util.HashSet
 import java.util.LinkedHashSet
 import kotlin.platform.platformName
 
-fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
+fun<T> CodeBuilder.buildList(generators: Collection<() -> T>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
     if (generators.isNotEmpty()) {
         append(prefix)
         var first = true
@@ -48,7 +48,7 @@ fun<T> CodeBuilder.append(generators: Collection<() -> T>, separator: String, pr
 
 platformName("appendElements")
 fun CodeBuilder.append(elements: Collection<Element>, separator: String, prefix: String = "", suffix: String = ""): CodeBuilder {
-    return append(elements.filter { !it.isEmpty }.map { { append(it) } }, separator, prefix, suffix)
+    return buildList(elements.filter { !it.isEmpty }.map { { append(it) } }, separator, prefix, suffix)
 }
 
 class ElementCreationStackTraceRequiredException : RuntimeException()
