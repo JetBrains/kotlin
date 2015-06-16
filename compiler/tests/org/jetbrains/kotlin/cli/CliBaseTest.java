@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cli;
 
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
@@ -77,7 +78,14 @@ public class CliBaseTest {
     }
 
     public static String removePerfOutput(String output) {
-        return output.replaceAll("INFO: PERF:.+\n", "");
+        String[] lines = StringUtil.splitByLinesKeepSeparators(output);
+        StringBuilder result = new StringBuilder();
+        for (String line : lines) {
+            if (!line.contains("INFO: PERF:")) {
+                result.append(line);
+            }
+        }
+        return result.toString();
     }
 
     private void executeCompilerCompareOutput(@NotNull CLICompiler<?> compiler, @NotNull String testDataDir) throws Exception {
