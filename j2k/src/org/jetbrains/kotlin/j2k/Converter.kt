@@ -113,7 +113,7 @@ class Converter private constructor(
         is PsiExpression -> createDefaultCodeConverter().convertExpression(element)
         is PsiImportList -> convertImportList(element)
         is PsiImportStatementBase -> convertImport(element, false)
-        is PsiAnnotation -> annotationConverter.convertAnnotation(element, false, false)
+        is PsiAnnotation -> annotationConverter.convertAnnotation(element, withAt = false, newLineAfter = false)
         is PsiPackageStatement -> PackageStatement(quoteKeywords(element.getPackageName() ?: "")).assignPrototype(element)
         else -> null
     }
@@ -288,7 +288,7 @@ class Converter private constructor(
         classBody = ClassBody(constructorSignature, classBody.baseClassParams, classBody.members,
                               classBody.companionObjectMembers, classBody.lBrace, classBody.rBrace, classBody.isEnumBody)
 
-        val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), false, false).assignNoPrototype()
+        val annotationAnnotation = Annotation(Identifier("annotation").assignNoPrototype(), listOf(), withAt = false, newLineAfter = false).assignNoPrototype()
         return Class(psiClass.declarationIdentifier(),
                      convertAnnotations(psiClass) + Annotations(listOf(annotationAnnotation)),
                      convertModifiers(psiClass).without(Modifier.ABSTRACT),
@@ -581,7 +581,7 @@ class Converter private constructor(
             val convertedType = typeConverter.convertType(types[index], Nullability.NotNull)
             null to deferredElement<Expression> { ClassLiteralExpression(convertedType.assignPrototype(refElements[index])) }
         }
-        val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, false, true)
+        val annotation = Annotation(Identifier("throws").assignNoPrototype(), arguments, withAt = false, newLineAfter = true)
         return Annotations(listOf(annotation.assignPrototype(throwsList))).assignPrototype(throwsList)
     }
 

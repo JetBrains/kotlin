@@ -48,7 +48,7 @@ class AnnotationConverter(private val converter: Converter) {
                 if (child is PsiWhiteSpace) !child.isInSingleLine() else false
             }
 
-            annotations.map { convertAnnotation(it, owner is PsiLocalVariable, newLines) }.filterNotNull() //TODO: brackets are also needed for local classes
+            annotations.map { convertAnnotation(it, withAt = owner is PsiLocalVariable, newLineAfter = newLines) }.filterNotNull() //TODO: '@' is also needed for local classes
         }
         else {
             listOf()
@@ -70,14 +70,14 @@ class AnnotationConverter(private val converter: Converter) {
             LiteralExpression("\"" + StringUtil.escapeStringCharacters(deprecatedTag.content()) + "\"").assignNoPrototype()
         }
         return Annotation(Identifier("deprecated").assignPrototype(deprecatedTag.getNameElement()),
-                          listOf(null to deferredExpression), false, true)
+                          listOf(null to deferredExpression), withAt = false, newLineAfter = true)
                 .assignPrototype(deprecatedTag)
     }
 
     private fun convertModifiersToAnnotations(owner: PsiModifierListOwner): Annotations {
         val list = MODIFIER_TO_ANNOTATION
                 .filter { owner.hasModifierProperty(it.first) }
-                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), false, false).assignNoPrototype() }
+                .map { Annotation(Identifier(it.second).assignNoPrototype(), listOf(), withAt = false, newLineAfter = false).assignNoPrototype() }
         return Annotations(list).assignNoPrototype()
     }
 
