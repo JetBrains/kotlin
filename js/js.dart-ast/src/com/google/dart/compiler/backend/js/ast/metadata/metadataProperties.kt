@@ -62,5 +62,6 @@ var HasMetadata.sideEffects: Boolean by MetadataProperty(default = true)
 enum class TypeCheck {
     TYPEOF,
     INSTANCEOF,
-    OR_NULL
+    OR_NULL,
+    IS_ANY
 }
