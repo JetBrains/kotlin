@@ -21,88 +21,63 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 
 native public interface Performance {
-    var timing: PerformanceTiming
+    val timing: PerformanceTiming
         get() = noImpl
-        set(value) = noImpl
-    var navigation: PerformanceNavigation
+    val navigation: PerformanceNavigation
         get() = noImpl
-        set(value) = noImpl
     fun now(): Double = noImpl
 }
 
 native public interface PerformanceTiming {
-    var navigationStart: Long
+    val navigationStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var unloadEventStart: Long
+    val unloadEventStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var unloadEventEnd: Long
+    val unloadEventEnd: Long
         get() = noImpl
-        set(value) = noImpl
-    var redirectStart: Long
+    val redirectStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var redirectEnd: Long
+    val redirectEnd: Long
         get() = noImpl
-        set(value) = noImpl
-    var fetchStart: Long
+    val fetchStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var domainLookupStart: Long
+    val domainLookupStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var domainLookupEnd: Long
+    val domainLookupEnd: Long
         get() = noImpl
-        set(value) = noImpl
-    var connectStart: Long
+    val connectStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var connectEnd: Long
+    val connectEnd: Long
         get() = noImpl
-        set(value) = noImpl
-    var secureConnectionStart: Long
+    val secureConnectionStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var requestStart: Long
+    val requestStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var responseStart: Long
+    val responseStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var responseEnd: Long
+    val responseEnd: Long
         get() = noImpl
-        set(value) = noImpl
-    var domLoading: Long
+    val domLoading: Long
         get() = noImpl
-        set(value) = noImpl
-    var domInteractive: Long
+    val domInteractive: Long
         get() = noImpl
-        set(value) = noImpl
-    var domContentLoadedEventStart: Long
+    val domContentLoadedEventStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var domContentLoadedEventEnd: Long
+    val domContentLoadedEventEnd: Long
         get() = noImpl
-        set(value) = noImpl
-    var domComplete: Long
+    val domComplete: Long
         get() = noImpl
-        set(value) = noImpl
-    var loadEventStart: Long
+    val loadEventStart: Long
         get() = noImpl
-        set(value) = noImpl
-    var loadEventEnd: Long
+    val loadEventEnd: Long
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface PerformanceNavigation {
-    var type: Short
+    val type: Short
         get() = noImpl
-        set(value) = noImpl
-    var redirectCount: Short
+    val redirectCount: Short
         get() = noImpl
-        set(value) = noImpl
 
     companion object {
         val TYPE_NAVIGATE: Short = 0

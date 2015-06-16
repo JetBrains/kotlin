@@ -421,6 +421,14 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
         return defaultResult()
     }
 
+    override fun visitReadonlyMemberRest(ctx: ReadonlyMemberRestContext?): Definition? {
+        readOnly = true
+        visitChildren(ctx)
+        readOnly = false
+
+        return defaultResult()
+    }
+
     override fun visitStaticMember(ctx: WebIDLParser.StaticMemberContext): Definition {
         static = true
         visitChildren(ctx)

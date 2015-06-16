@@ -30,36 +30,26 @@ native public open class Headers(init: dynamic = noImpl) {
 }
 
 native public open class Request(input: dynamic, init: RequestInit = noImpl) {
-    var method: String
+    open val method: String
         get() = noImpl
-        set(value) = noImpl
-    var url: String
+    open val url: String
         get() = noImpl
-        set(value) = noImpl
-    var headers: Headers
+    open val headers: Headers
         get() = noImpl
-        set(value) = noImpl
-    var context: String
+    open val context: String
         get() = noImpl
-        set(value) = noImpl
-    var referrer: String
+    open val referrer: String
         get() = noImpl
-        set(value) = noImpl
-    var mode: String
+    open val mode: String
         get() = noImpl
-        set(value) = noImpl
-    var credentials: String
+    open val credentials: String
         get() = noImpl
-        set(value) = noImpl
-    var cache: String
+    open val cache: String
         get() = noImpl
-        set(value) = noImpl
-    var redirect: String
+    open val redirect: String
         get() = noImpl
-        set(value) = noImpl
-    var bodyUsed: Boolean
+    open val bodyUsed: Boolean
         get() = noImpl
-        set(value) = noImpl
     fun clone(): Request = noImpl
     fun arrayBuffer(): dynamic = noImpl
     fun blob(): dynamic = noImpl
@@ -79,27 +69,20 @@ native public open class RequestInit {
 }
 
 native public open class Response(body: dynamic = noImpl, init: ResponseInit = noImpl) {
-    var type: String
+    open val type: String
         get() = noImpl
-        set(value) = noImpl
-    var url: String
+    open val url: String
         get() = noImpl
-        set(value) = noImpl
-    var status: Short
+    open val status: Short
         get() = noImpl
-        set(value) = noImpl
-    var ok: Boolean
+    open val ok: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var statusText: String
+    open val statusText: String
         get() = noImpl
-        set(value) = noImpl
-    var headers: Headers
+    open val headers: Headers
         get() = noImpl
-        set(value) = noImpl
-    var bodyUsed: Boolean
+    open val bodyUsed: Boolean
         get() = noImpl
-        set(value) = noImpl
     fun clone(): Response = noImpl
     fun arrayBuffer(): dynamic = noImpl
     fun blob(): dynamic = noImpl

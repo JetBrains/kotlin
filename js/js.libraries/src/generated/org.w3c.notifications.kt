@@ -27,42 +27,30 @@ native public open class Notification(title: String, options: NotificationOption
     var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var title: String
+    open val title: String
         get() = noImpl
-        set(value) = noImpl
-    var dir: String
+    open val dir: String
         get() = noImpl
-        set(value) = noImpl
-    var lang: String
+    open val lang: String
         get() = noImpl
-        set(value) = noImpl
-    var body: String
+    open val body: String
         get() = noImpl
-        set(value) = noImpl
-    var tag: String
+    open val tag: String
         get() = noImpl
-        set(value) = noImpl
-    var icon: String
+    open val icon: String
         get() = noImpl
-        set(value) = noImpl
-    var sound: String
+    open val sound: String
         get() = noImpl
-        set(value) = noImpl
-    var renotify: Boolean
+    open val renotify: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var silent: Boolean
+    open val silent: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var noscreen: Boolean
+    open val noscreen: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var sticky: Boolean
+    open val sticky: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var data: Any?
+    open val data: Any?
         get() = noImpl
-        set(value) = noImpl
     fun close(): Unit = noImpl
 
     companion object {
@@ -93,9 +81,8 @@ native public open class GetNotificationOptions {
 }
 
 native public open class NotificationEvent(type: String, eventInitDict: NotificationEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
-    var notification: Notification
+    open val notification: Notification
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public open class NotificationEventInit : ExtendableEventInit() {

@@ -21,104 +21,73 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 
 native public open class MouseEvent(typeArg: String, mouseEventInitDict: MouseEventInit = noImpl) : UIEvent(noImpl, noImpl), UnionElementOrMouseEvent {
-    var screenX: Int
+    open val screenX: Int
         get() = noImpl
-        set(value) = noImpl
-    var screenY: Int
+    open val screenY: Int
         get() = noImpl
-        set(value) = noImpl
-    var clientX: Int
+    open val clientX: Int
         get() = noImpl
-        set(value) = noImpl
-    var clientY: Int
+    open val clientY: Int
         get() = noImpl
-        set(value) = noImpl
-    var ctrlKey: Boolean
+    open val ctrlKey: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var shiftKey: Boolean
+    open val shiftKey: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var altKey: Boolean
+    open val altKey: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var metaKey: Boolean
+    open val metaKey: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var button: Short
+    open val button: Short
         get() = noImpl
-        set(value) = noImpl
-    var relatedTarget: EventTarget?
+    open val relatedTarget: EventTarget?
         get() = noImpl
-        set(value) = noImpl
-    var buttons: Short
+    open val buttons: Short
         get() = noImpl
-        set(value) = noImpl
-    var region: String?
+    open val region: String?
         get() = noImpl
-        set(value) = noImpl
-//    var screenX: Double
+//    open val screenX: Double
 //        get() = noImpl
-//        set(value) = noImpl
-//    var screenY: Double
+//    open val screenY: Double
 //        get() = noImpl
-//        set(value) = noImpl
-    var pageX: Double
+    open val pageX: Double
         get() = noImpl
-        set(value) = noImpl
-    var pageY: Double
+    open val pageY: Double
         get() = noImpl
-        set(value) = noImpl
-//    var clientX: Double
+//    open val clientX: Double
 //        get() = noImpl
-//        set(value) = noImpl
-//    var clientY: Double
+//    open val clientY: Double
 //        get() = noImpl
-//        set(value) = noImpl
-//    var x: Double
+//    open val x: Double
 //        get() = noImpl
-//        set(value) = noImpl
-//    var y: Double
+//    open val y: Double
 //        get() = noImpl
-//        set(value) = noImpl
-    var offsetX: Double
+    open val offsetX: Double
         get() = noImpl
-        set(value) = noImpl
-    var offsetY: Double
+    open val offsetY: Double
         get() = noImpl
-        set(value) = noImpl
     fun getModifierState(keyArg: String): Boolean = noImpl
     fun initMouseEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, screenXArg: Int, screenYArg: Int, clientXArg: Int, clientYArg: Int, ctrlKeyArg: Boolean, altKeyArg: Boolean, shiftKeyArg: Boolean, metaKeyArg: Boolean, buttonArg: Short, relatedTargetArg: EventTarget?): Unit = noImpl
 }
 
 native public open class Event(type: String, eventInitDict: EventInit = noImpl) {
-    var type: String
+    open val type: String
         get() = noImpl
-        set(value) = noImpl
-    var target: EventTarget?
+    open val target: EventTarget?
         get() = noImpl
-        set(value) = noImpl
-    var currentTarget: EventTarget?
+    open val currentTarget: EventTarget?
         get() = noImpl
-        set(value) = noImpl
-    var eventPhase: Short
+    open val eventPhase: Short
         get() = noImpl
-        set(value) = noImpl
-    var bubbles: Boolean
+    open val bubbles: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var cancelable: Boolean
+    open val cancelable: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var defaultPrevented: Boolean
+    open val defaultPrevented: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var isTrusted: Boolean
+    open val isTrusted: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var timeStamp: Number
+    open val timeStamp: Number
         get() = noImpl
-        set(value) = noImpl
     fun stopPropagation(): Unit = noImpl
     fun stopImmediatePropagation(): Unit = noImpl
     fun preventDefault(): Unit = noImpl
@@ -145,12 +114,10 @@ native public interface EventListener {
 }
 
 native public open class UIEvent(type: String, eventInitDict: UIEventInit = noImpl) : Event(type, eventInitDict) {
-    var view: Window?
+    open val view: Window?
         get() = noImpl
-        set(value) = noImpl
-    var detail: Int
+    open val detail: Int
         get() = noImpl
-        set(value) = noImpl
     fun initUIEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int): Unit = noImpl
 }
 
@@ -160,9 +127,8 @@ native public open class UIEventInit : EventInit() {
 }
 
 native public open class FocusEvent(typeArg: String, focusEventInitDict: FocusEventInit = noImpl) : UIEvent(noImpl, noImpl) {
-    var relatedTarget: EventTarget?
+    open val relatedTarget: EventTarget?
         get() = noImpl
-        set(value) = noImpl
     fun initFocusEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, relatedTargetArg: EventTarget?): Unit = noImpl
 }
 
@@ -199,18 +165,14 @@ native public open class EventModifierInit : UIEventInit() {
 }
 
 native public open class WheelEvent(typeArg: String, wheelEventInitDict: WheelEventInit = noImpl) : MouseEvent(typeArg, noImpl) {
-    var deltaX: Double
+    open val deltaX: Double
         get() = noImpl
-        set(value) = noImpl
-    var deltaY: Double
+    open val deltaY: Double
         get() = noImpl
-        set(value) = noImpl
-    var deltaZ: Double
+    open val deltaZ: Double
         get() = noImpl
-        set(value) = noImpl
-    var deltaMode: Int
+    open val deltaMode: Int
         get() = noImpl
-        set(value) = noImpl
     fun initWheelEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, screenXArg: Int, screenYArg: Int, clientXArg: Int, clientYArg: Int, buttonArg: Short, relatedTargetArg: EventTarget?, modifiersListArg: String, deltaXArg: Double, deltaYArg: Double, deltaZArg: Double, deltaMode: Int): Unit = noImpl
 
     companion object {
@@ -228,42 +190,30 @@ native public open class WheelEventInit : MouseEventInit() {
 }
 
 native public open class KeyboardEvent(typeArg: String, keyboardEventInitDict: KeyboardEventInit = noImpl) : UIEvent(noImpl, noImpl) {
-    var key: String
+    open val key: String
         get() = noImpl
-        set(value) = noImpl
-    var code: String
+    open val code: String
         get() = noImpl
-        set(value) = noImpl
-    var location: Int
+    open val location: Int
         get() = noImpl
-        set(value) = noImpl
-    var ctrlKey: Boolean
+    open val ctrlKey: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var shiftKey: Boolean
+    open val shiftKey: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var altKey: Boolean
+    open val altKey: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var metaKey: Boolean
+    open val metaKey: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var repeat: Boolean
+    open val repeat: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var isComposing: Boolean
+    open val isComposing: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var charCode: Int
+    open val charCode: Int
         get() = noImpl
-        set(value) = noImpl
-    var keyCode: Int
+    open val keyCode: Int
         get() = noImpl
-        set(value) = noImpl
-    var which: Int
+    open val which: Int
         get() = noImpl
-        set(value) = noImpl
     fun getModifierState(keyArg: String): Boolean = noImpl
     fun initKeyboardEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, keyArg: String, locationArg: Int, modifiersListArg: String, repeat: Boolean, locale: String): Unit = noImpl
 
@@ -284,9 +234,8 @@ native public open class KeyboardEventInit : EventModifierInit() {
 }
 
 native public open class CompositionEvent(typeArg: String, compositionEventInitDict: CompositionEventInit = noImpl) : UIEvent(noImpl, noImpl) {
-    var data: String
+    open val data: String
         get() = noImpl
-        set(value) = noImpl
     fun initCompositionEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, dataArg: String, locale: String): Unit = noImpl
 }
 
@@ -295,21 +244,16 @@ native public open class CompositionEventInit : UIEventInit() {
 }
 
 native public open class MutationEvent : Event(noImpl, noImpl) {
-    var relatedNode: Node?
+    open val relatedNode: Node?
         get() = noImpl
-        set(value) = noImpl
-    var prevValue: String
+    open val prevValue: String
         get() = noImpl
-        set(value) = noImpl
-    var newValue: String
+    open val newValue: String
         get() = noImpl
-        set(value) = noImpl
-    var attrName: String
+    open val attrName: String
         get() = noImpl
-        set(value) = noImpl
-    var attrChange: Short
+    open val attrChange: Short
         get() = noImpl
-        set(value) = noImpl
     fun initMutationEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, relatedNodeArg: Node?, prevValueArg: String, newValueArg: String, attrNameArg: String, attrChangeArg: Short): Unit = noImpl
 
     companion object {

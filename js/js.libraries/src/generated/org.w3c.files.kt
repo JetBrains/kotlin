@@ -22,15 +22,12 @@ import org.w3c.xhr.*
 
 native public open class Blob() : ImageBitmapSource {
     constructor(blobParts: Array<dynamic>, options: BlobPropertyBag = noImpl) : this()
-    var size: Long
+    open val size: Long
         get() = noImpl
-        set(value) = noImpl
-    var type: String
+    open val type: String
         get() = noImpl
-        set(value) = noImpl
-    var isClosed: Boolean
+    open val isClosed: Boolean
         get() = noImpl
-        set(value) = noImpl
     fun slice(start: Long = noImpl, end: Long = noImpl, contentType: String = noImpl): Blob = noImpl
     fun close(): Unit = noImpl
 }
@@ -40,12 +37,10 @@ native public open class BlobPropertyBag {
 }
 
 native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob() {
-    var name: String
+    open val name: String
         get() = noImpl
-        set(value) = noImpl
-    var lastModified: Long
+    open val lastModified: Long
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public open class FilePropertyBag {
@@ -54,23 +49,19 @@ native public open class FilePropertyBag {
 }
 
 native public interface FileList {
-    var length: Int
+    val length: Int
         get() = noImpl
-        set(value) = noImpl
     fun item(index: Int): File? = noImpl
     nativeGetter fun get(index: Int): File? = noImpl
 }
 
 native public open class FileReader : EventTarget {
-    var readyState: Short
+    open val readyState: Short
         get() = noImpl
-        set(value) = noImpl
-    var result: dynamic
+    open val result: dynamic
         get() = noImpl
-        set(value) = noImpl
-    var error: dynamic
+    open val error: dynamic
         get() = noImpl
-        set(value) = noImpl
     var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl

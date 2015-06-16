@@ -56,39 +56,30 @@ native public interface WebGLUniformLocation {
 }
 
 native public interface WebGLActiveInfo {
-    var size: Int
+    val size: Int
         get() = noImpl
-        set(value) = noImpl
-    var type: Int
+    val type: Int
         get() = noImpl
-        set(value) = noImpl
-    var name: String
+    val name: String
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface WebGLShaderPrecisionFormat {
-    var rangeMin: Int
+    val rangeMin: Int
         get() = noImpl
-        set(value) = noImpl
-    var rangeMax: Int
+    val rangeMax: Int
         get() = noImpl
-        set(value) = noImpl
-    var precision: Int
+    val precision: Int
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface WebGLRenderingContext : RenderingContext {
-    var canvas: HTMLCanvasElement
+    val canvas: HTMLCanvasElement
         get() = noImpl
-        set(value) = noImpl
-    var drawingBufferWidth: Int
+    val drawingBufferWidth: Int
         get() = noImpl
-        set(value) = noImpl
-    var drawingBufferHeight: Int
+    val drawingBufferHeight: Int
         get() = noImpl
-        set(value) = noImpl
     fun getContextAttributes(): WebGLContextAttributes? = noImpl
     fun isContextLost(): Boolean = noImpl
     fun getSupportedExtensions(): Array<String>? = noImpl
@@ -546,9 +537,8 @@ native public interface WebGLRenderingContext : RenderingContext {
 }
 
 native public open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = noImpl) : Event(type, noImpl) {
-    var statusMessage: String
+    open val statusMessage: String
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public open class WebGLContextEventInit : EventInit() {
@@ -556,9 +546,8 @@ native public open class WebGLContextEventInit : EventInit() {
 }
 
 native public open class ArrayBuffer(length: Int) : Transferable {
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun slice(begin: Int, end: Int = noImpl): ArrayBuffer = noImpl
 
     companion object {
@@ -571,18 +560,14 @@ native public open class Int8Array : ArrayBufferView {
     constructor(array: Int8Array)
     constructor(array: Array<Byte>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Byte = noImpl
     fun set(index: Int, value: Byte): Unit = noImpl
     fun set(array: Int8Array, offset: Int = noImpl): Unit = noImpl
@@ -599,18 +584,14 @@ native public open class Uint8Array : ArrayBufferView {
     constructor(array: Uint8Array)
     constructor(array: Array<Byte>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Byte = noImpl
     fun set(index: Int, value: Byte): Unit = noImpl
     fun set(array: Uint8Array, offset: Int = noImpl): Unit = noImpl
@@ -627,18 +608,14 @@ native public open class Uint8ClampedArray : ArrayBufferView {
     constructor(array: Uint8ClampedArray)
     constructor(array: Array<Byte>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Byte = noImpl
     fun set(index: Int, value: Byte): Unit = noImpl
     fun set(array: Uint8ClampedArray, offset: Int = noImpl): Unit = noImpl
@@ -655,18 +632,14 @@ native public open class Int16Array : ArrayBufferView {
     constructor(array: Int16Array)
     constructor(array: Array<Short>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Short = noImpl
     fun set(index: Int, value: Short): Unit = noImpl
     fun set(array: Int16Array, offset: Int = noImpl): Unit = noImpl
@@ -683,18 +656,14 @@ native public open class Uint16Array : ArrayBufferView {
     constructor(array: Uint16Array)
     constructor(array: Array<Short>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Short = noImpl
     fun set(index: Int, value: Short): Unit = noImpl
     fun set(array: Uint16Array, offset: Int = noImpl): Unit = noImpl
@@ -711,18 +680,14 @@ native public open class Int32Array : ArrayBufferView {
     constructor(array: Int32Array)
     constructor(array: Array<Int>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Int = noImpl
     fun set(index: Int, value: Int): Unit = noImpl
     fun set(array: Int32Array, offset: Int = noImpl): Unit = noImpl
@@ -739,18 +704,14 @@ native public open class Uint32Array : ArrayBufferView {
     constructor(array: Uint32Array)
     constructor(array: Array<Int>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Int = noImpl
     fun set(index: Int, value: Int): Unit = noImpl
     fun set(array: Uint32Array, offset: Int = noImpl): Unit = noImpl
@@ -767,18 +728,14 @@ native public open class Float32Array : ArrayBufferView {
     constructor(array: Float32Array)
     constructor(array: Array<Float>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Float = noImpl
     fun set(index: Int, value: Float): Unit = noImpl
     fun set(array: Float32Array, offset: Int = noImpl): Unit = noImpl
@@ -795,18 +752,14 @@ native public open class Float64Array : ArrayBufferView {
     constructor(array: Float64Array)
     constructor(array: Array<Double>)
     constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
-    var length: Int
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Double = noImpl
     fun set(index: Int, value: Double): Unit = noImpl
     fun set(array: Float64Array, offset: Int = noImpl): Unit = noImpl
@@ -819,15 +772,12 @@ native public open class Float64Array : ArrayBufferView {
 }
 
 native public open class DataView(buffer: ArrayBuffer, byteOffset: Int = noImpl, byteLength: Int = noImpl) : ArrayBufferView {
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun getInt8(byteOffset: Int): Byte = noImpl
     fun getUint8(byteOffset: Int): Byte = noImpl
     fun getInt16(byteOffset: Int, littleEndian: Boolean = noImpl): Short = noImpl

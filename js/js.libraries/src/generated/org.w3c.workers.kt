@@ -21,24 +21,19 @@ import org.w3c.performance.*
 import org.w3c.xhr.*
 
 native public interface ServiceWorkerRegistration : EventTarget {
-    var installing: ServiceWorker?
+    val installing: ServiceWorker?
         get() = noImpl
-        set(value) = noImpl
-    var waiting: ServiceWorker?
+    val waiting: ServiceWorker?
         get() = noImpl
-        set(value) = noImpl
-    var active: ServiceWorker?
+    val active: ServiceWorker?
         get() = noImpl
-        set(value) = noImpl
-    var scope: String
+    val scope: String
         get() = noImpl
-        set(value) = noImpl
     var onupdatefound: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var APISpace: dynamic
+    val APISpace: dynamic
         get() = noImpl
-        set(value) = noImpl
     fun update(): Unit = noImpl
     fun unregister(): dynamic = noImpl
     fun methodName(of: dynamic): dynamic = noImpl
@@ -47,12 +42,10 @@ native public interface ServiceWorkerRegistration : EventTarget {
 }
 
 native public interface ServiceWorkerGlobalScope : WorkerGlobalScope {
-    var clients: Clients
+    val clients: Clients
         get() = noImpl
-        set(value) = noImpl
-    var registration: ServiceWorkerRegistration
+    val registration: ServiceWorkerRegistration
         get() = noImpl
-        set(value) = noImpl
     var oninstall: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -75,15 +68,12 @@ native public interface ServiceWorkerGlobalScope : WorkerGlobalScope {
 }
 
 native public interface ServiceWorker : EventTarget, UnionMessagePortOrServiceWorker, UnionClientOrMessagePortOrServiceWorker {
-    var scriptURL: String
+    val scriptURL: String
         get() = noImpl
-        set(value) = noImpl
-    var state: String
+    val state: String
         get() = noImpl
-        set(value) = noImpl
-    var id: String
+    val id: String
         get() = noImpl
-        set(value) = noImpl
     var onstatechange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -94,12 +84,10 @@ native public interface ServiceWorker : EventTarget, UnionMessagePortOrServiceWo
 }
 
 native public interface ServiceWorkerContainer : EventTarget {
-    var controller: ServiceWorker?
+    val controller: ServiceWorker?
         get() = noImpl
-        set(value) = noImpl
-    var ready: dynamic
+    val ready: dynamic
         get() = noImpl
-        set(value) = noImpl
     var oncontrollerchange: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
@@ -119,21 +107,16 @@ native public open class RegistrationOptions {
 }
 
 native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = noImpl) : Event(type, eventInitDict) {
-    var data: Any?
+    open val data: Any?
         get() = noImpl
-        set(value) = noImpl
-    var origin: String
+    open val origin: String
         get() = noImpl
-        set(value) = noImpl
-    var lastEventId: String
+    open val lastEventId: String
         get() = noImpl
-        set(value) = noImpl
-    var source: UnionMessagePortOrServiceWorker?
+    open val source: UnionMessagePortOrServiceWorker?
         get() = noImpl
-        set(value) = noImpl
-    var ports: Array<MessagePort>?
+    open val ports: Array<MessagePort>?
         get() = noImpl
-        set(value) = noImpl
     fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
@@ -146,25 +129,20 @@ native public open class ServiceWorkerMessageEventInit : EventInit() {
 }
 
 native public interface Client : UnionClientOrMessagePortOrServiceWorker {
-    var url: String
+    val url: String
         get() = noImpl
-        set(value) = noImpl
-    var frameType: String
+    val frameType: String
         get() = noImpl
-        set(value) = noImpl
-    var id: String
+    val id: String
         get() = noImpl
-        set(value) = noImpl
     fun postMessage(message: Any?, transfer: Array<Transferable> = noImpl): Unit = noImpl
 }
 
 native public interface WindowClient : Client {
-    var visibilityState: dynamic
+    val visibilityState: dynamic
         get() = noImpl
-        set(value) = noImpl
-    var focused: Boolean
+    val focused: Boolean
         get() = noImpl
-        set(value) = noImpl
     fun focus(): dynamic = noImpl
 }
 
@@ -187,15 +165,12 @@ native public open class ExtendableEventInit : EventInit() {
 }
 
 native public open class FetchEvent(type: String, eventInitDict: FetchEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
-    var request: Request
+    open val request: Request
         get() = noImpl
-        set(value) = noImpl
-    var client: Client
+    open val client: Client
         get() = noImpl
-        set(value) = noImpl
-    var isReload: Boolean
+    open val isReload: Boolean
         get() = noImpl
-        set(value) = noImpl
     fun respondWith(r: dynamic): Unit = noImpl
 }
 
@@ -206,21 +181,16 @@ native public open class FetchEventInit : ExtendableEventInit() {
 }
 
 native public open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
-    var data: Any?
+    open val data: Any?
         get() = noImpl
-        set(value) = noImpl
-    var origin: String
+    open val origin: String
         get() = noImpl
-        set(value) = noImpl
-    var lastEventId: String
+    open val lastEventId: String
         get() = noImpl
-        set(value) = noImpl
-    var source: UnionClientOrMessagePortOrServiceWorker?
+    open val source: UnionClientOrMessagePortOrServiceWorker?
         get() = noImpl
-        set(value) = noImpl
-    var ports: Array<MessagePort>?
+    open val ports: Array<MessagePort>?
         get() = noImpl
-        set(value) = noImpl
     fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
