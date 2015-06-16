@@ -20,4 +20,15 @@ public open class KaptExtension {
 
     public open var generateStubs: Boolean = false
 
+    private val additionalCompilerArgs = arrayListOf<String>()
+
+    public open fun arg(name: String, vararg values: String) {
+        val valuesString = if (values.isNotEmpty()) values.joinToString(" ", prefix = "=") else ""
+        additionalCompilerArgs.add("-A$name$valuesString")
+    }
+
+    public open fun getAdditionalCompilerArgs(): List<String> {
+        return additionalCompilerArgs.toList()
+    }
+
 }

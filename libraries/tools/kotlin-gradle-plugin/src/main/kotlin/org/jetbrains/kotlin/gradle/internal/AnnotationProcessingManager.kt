@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
 import java.io.File
 import java.io.IOException
@@ -67,6 +68,8 @@ public class AnnotationProcessingManager(
         javaTask.appendClasspath(stubOutputDir)
 
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
+
+        appendAdditionalComplerArgs()
     }
 
     fun afterJavaCompile() {
@@ -91,6 +94,16 @@ public class AnnotationProcessingManager(
 
         project.getLogger().kotlinDebug("kapt: Java file stub generated: $javaHackClFile")
         javaTask.source(javaAptSourceDir)
+    }
+
+    private fun appendAdditionalComplerArgs() {
+        val kaptExtension = project.getExtensions().getByType(javaClass<KaptExtension>())
+        val args = kaptExtension.getAdditionalCompilerArgs()
+        if (args.isEmpty()) return
+
+        javaTask.modifyCompilerArguments { list ->
+            list.addAll(args)
+        }
     }
 
     private fun generateAnnotationProcessorStubs(javaTask: JavaCompile, processorFqNames: Set<String>, outputDir: File) {
