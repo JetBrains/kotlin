@@ -2155,6 +2155,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/formatting"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("lineBreaksBetweenArguments.java")
+        public void testLineBreaksBetweenArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/lineBreaksBetweenArguments.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("nonStaticMembers.java")
         public void testNonStaticMembers() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/formatting/nonStaticMembers.java");
@@ -3220,6 +3226,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("genericClassInvocation.java")
         public void testGenericClassInvocation() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/genericClassInvocation.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lineBreaks.java")
+        public void testLineBreaks() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/newClassExpression/lineBreaks.java");
             doTest(fileName);
         }
 
