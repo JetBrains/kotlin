@@ -14,6 +14,8 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns a list with elements in reversed order.
  */
 public fun <T> Array<out T>.reverse(): List<T> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -23,6 +25,8 @@ public fun <T> Array<out T>.reverse(): List<T> {
  * Returns a list with elements in reversed order.
  */
 public fun BooleanArray.reverse(): List<Boolean> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -32,6 +36,8 @@ public fun BooleanArray.reverse(): List<Boolean> {
  * Returns a list with elements in reversed order.
  */
 public fun ByteArray.reverse(): List<Byte> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -41,6 +47,8 @@ public fun ByteArray.reverse(): List<Byte> {
  * Returns a list with elements in reversed order.
  */
 public fun CharArray.reverse(): List<Char> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -50,6 +58,8 @@ public fun CharArray.reverse(): List<Char> {
  * Returns a list with elements in reversed order.
  */
 public fun DoubleArray.reverse(): List<Double> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -59,6 +69,8 @@ public fun DoubleArray.reverse(): List<Double> {
  * Returns a list with elements in reversed order.
  */
 public fun FloatArray.reverse(): List<Float> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -68,6 +80,8 @@ public fun FloatArray.reverse(): List<Float> {
  * Returns a list with elements in reversed order.
  */
 public fun IntArray.reverse(): List<Int> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -77,6 +91,8 @@ public fun IntArray.reverse(): List<Int> {
  * Returns a list with elements in reversed order.
  */
 public fun LongArray.reverse(): List<Long> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -86,6 +102,8 @@ public fun LongArray.reverse(): List<Long> {
  * Returns a list with elements in reversed order.
  */
 public fun ShortArray.reverse(): List<Short> {
+    if (isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list
@@ -95,6 +113,8 @@ public fun ShortArray.reverse(): List<Short> {
  * Returns a list with elements in reversed order.
  */
 public fun <T> Iterable<T>.reverse(): List<T> {
+    if (this is Collection<*> && isEmpty())
+        return emptyList()
     val list = toArrayList()
     Collections.reverse(list)
     return list

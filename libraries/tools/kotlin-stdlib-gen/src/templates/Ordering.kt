@@ -10,6 +10,16 @@ fun ordering(): List<GenericFunction> {
         returns { "List<T>" }
         body {
             """
+            if (this is Collection<*> && isEmpty()) return emptyList()
+            val list = toArrayList()
+            Collections.reverse(list)
+            return list
+            """
+        }
+
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            if (isEmpty()) return emptyList()
             val list = toArrayList()
             Collections.reverse(list)
             return list
