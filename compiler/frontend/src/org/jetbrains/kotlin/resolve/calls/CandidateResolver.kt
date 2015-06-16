@@ -126,7 +126,7 @@ public class CandidateResolver(
             for (projection in jetTypeArguments) {
                 if (projection.getProjectionKind() != JetProjectionKind.NONE) {
                     trace.report(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.on(projection))
-                    modifiersChecker.withTrace(trace).checkIncompatibleVarianceModifiers(projection.getModifierList())
+                    ModifierCheckerCore.check(projection, trace, null)
                 }
                 val type = argumentTypeResolver.resolveTypeRefWithDefault(
                         projection.getTypeReference(), scope, trace,

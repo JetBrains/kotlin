@@ -1,3 +1,3 @@
-<!ILLEGAL_MODIFIER!>sealed<!> object Sealed {
+<!WRONG_MODIFIER_TARGET!>sealed<!> object Sealed {
 
 }

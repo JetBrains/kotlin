@@ -115,6 +115,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
         ILLEGAL_MODIFIER.registerFactory(removeModifierFactory)
+        WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
+        WRONG_MODIFIER_CONTAINING_DECLARATION.registerFactory(removeModifierFactory)
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
 
         val removeInnerModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(INNER_KEYWORD)

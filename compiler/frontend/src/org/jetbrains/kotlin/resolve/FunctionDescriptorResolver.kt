@@ -344,11 +344,7 @@ class FunctionDescriptorResolver(
                             valueParameter,
                             if (isConstructor) VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER else VAL_OR_VAR_ON_FUN_PARAMETER
                     )
-                    checkParameterHasNoModifier(valueParameter)
                 }
-            }
-            else {
-                checkConstructorParameterHasNoModifier(trace, valueParameter)
             }
 
             val valueParameterDescriptor = descriptorResolver.resolveValueParameterDescriptor(parameterScope, functionDescriptor,
@@ -357,12 +353,5 @@ class FunctionDescriptorResolver(
             result.add(valueParameterDescriptor)
         }
         return result
-    }
-
-    private fun checkConstructorParameterHasNoModifier(trace: BindingTrace, parameter: JetParameter) {
-        // If is not a property, then it must have no modifier
-        if (!parameter.hasValOrVar()) {
-            modifiersChecker.withTrace(trace).checkParameterHasNoModifier(parameter)
-        }
     }
 }

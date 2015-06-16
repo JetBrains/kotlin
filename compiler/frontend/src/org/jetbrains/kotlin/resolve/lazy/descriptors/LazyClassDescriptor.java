@@ -381,12 +381,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Nullable
-    private JetClassLikeInfo getCompanionObjectInfo(@Nullable JetObjectDeclaration companionObject) {
+    private static JetClassLikeInfo getCompanionObjectInfo(@Nullable JetObjectDeclaration companionObject) {
         if (companionObject != null) {
-            if (!isCompanionObjectAllowed()) {
-                c.getTrace().report(COMPANION_OBJECT_NOT_ALLOWED.on(companionObject));
-            }
-
             return JetClassInfoUtil.createClassLikeInfo(companionObject);
         }
 

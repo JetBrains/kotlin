@@ -1,8 +1,8 @@
-open interface First {
+interface First {
   public open fun foo() : Int
 }
 
-open interface Second : First {
+interface Second : First {
   public open fun bar() : Int
 }
 

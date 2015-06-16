@@ -1,4 +1,5 @@
 // ERROR: Body is not allowed for annotation class
+// ERROR: Modifier 'companion' is not applicable inside 'annotation class'
 annotation class Anon(public val value: String) {
 
     public enum class E {

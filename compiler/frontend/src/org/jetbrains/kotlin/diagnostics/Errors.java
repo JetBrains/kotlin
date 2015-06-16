@@ -108,10 +108,12 @@ public interface Errors {
 
     // Modifiers
 
-    DiagnosticFactory1<PsiElement, Collection<JetModifierKeywordToken>> INCOMPATIBLE_MODIFIERS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> INCOMPATIBLE_MODIFIERS = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory1<PsiElement, JetModifierKeywordToken> ILLEGAL_MODIFIER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, JetModifierKeywordToken> REPEATED_MODIFIER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_TARGET = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<PsiElement, JetModifierKeywordToken, String> WRONG_MODIFIER_CONTAINING_DECLARATION = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_PLATFORM_NAME = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<JetAnnotationEntry, String> WRONG_ANNOTATION_TARGET = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<JetAnnotationEntry> REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);

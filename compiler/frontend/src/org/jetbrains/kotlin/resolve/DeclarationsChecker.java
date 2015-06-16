@@ -114,15 +114,7 @@ public class DeclarationsChecker {
     }
 
     private void checkConstructorDeclaration(ConstructorDescriptor constructorDescriptor, JetDeclaration declaration) {
-        modifiersChecker.reportIllegalModalityModifiers(declaration);
-        reportErrorIfHasIllegalModifier(declaration);
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor);
-    }
-
-    private void reportErrorIfHasIllegalModifier(JetModifierListOwner declaration) {
-        if (declaration.hasModifier(JetTokens.ENUM_KEYWORD)) {
-            trace.report(ILLEGAL_ENUM_ANNOTATION.on(declaration));
-        }
     }
 
     private void checkModifiersAndAnnotationsInPackageDirective(JetFile file) {
@@ -142,8 +134,7 @@ public class DeclarationsChecker {
             }
         }
         AnnotationChecker.INSTANCE$.check(packageDirective, trace, null);
-
-        modifiersChecker.reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY));
+        ModifierCheckerCore.INSTANCE$.check(packageDirective, trace, null);
     }
 
     private void checkTypesInClassHeader(@NotNull JetClassOrObject classOrObject) {
@@ -228,8 +219,8 @@ public class DeclarationsChecker {
             }
         }
     }
+
     private void checkObject(JetObjectDeclaration declaration, ClassDescriptor classDescriptor) {
-        reportErrorIfHasIllegalModifier(declaration);
         if  (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
             trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor));
         }
@@ -245,11 +236,9 @@ public class DeclarationsChecker {
                 trace.report(Errors.DEPRECATED_TRAIT_KEYWORD.on(traitKeyword.getPsi()));
             }
 
-            checkTraitModifiers(aClass);
             checkConstructorInTrait(aClass);
         }
         else if (aClass.isEnum()) {
-            checkEnumModifiers(aClass);
             if (aClass.isLocal()) {
                 trace.report(LOCAL_ENUM_NOT_ALLOWED.on(aClass, classDescriptor));
             }
@@ -262,9 +251,6 @@ public class DeclarationsChecker {
         else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
             checkAnnotationClassWithBody(aClass);
             checkValOnAnnotationParameter(aClass);
-        }
-        else if (aClass.hasModifier(JetTokens.SEALED_KEYWORD)) {
-            checkSealedModifiers(aClass);
         }
         else if (aClass instanceof JetEnumEntry) {
             checkEnumEntry((JetEnumEntry) aClass, classDescriptor);
@@ -314,24 +300,6 @@ public class DeclarationsChecker {
         }
     }
 
-    private void checkTraitModifiers(JetClass aClass) {
-        reportErrorIfHasIllegalModifier(aClass);
-        JetModifierList modifierList = aClass.getModifierList();
-        if (modifierList == null) return;
-        if (modifierList.hasModifier(JetTokens.FINAL_KEYWORD)) {
-            trace.report(Errors.TRAIT_CAN_NOT_BE_FINAL.on(aClass));
-        }
-        if (modifierList.hasModifier(JetTokens.SEALED_KEYWORD)) {
-            trace.report(Errors.TRAIT_CAN_NOT_BE_SEALED.on(aClass));
-        }
-        if (modifierList.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-            trace.report(Errors.ABSTRACT_MODIFIER_IN_TRAIT.on(aClass));
-        }
-        if (modifierList.hasModifier(JetTokens.OPEN_KEYWORD)) {
-            trace.report(Errors.OPEN_MODIFIER_IN_TRAIT.on(aClass));
-        }
-    }
-
     private void checkAnnotationClassWithBody(JetClassOrObject classOrObject) {
         if (classOrObject.getBody() != null) {
             trace.report(ANNOTATION_CLASS_WITH_BODY.on(classOrObject.getBody()));
@@ -359,13 +327,9 @@ public class DeclarationsChecker {
     }
 
     private void checkProperty(JetProperty property, PropertyDescriptor propertyDescriptor) {
-        reportErrorIfHasIllegalModifier(property);
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             checkPropertyAbstractness(property, propertyDescriptor, (ClassDescriptor) containingDeclaration);
-        }
-        else {
-            modifiersChecker.reportIllegalModalityModifiers(property);
         }
         checkPropertyInitializer(property, propertyDescriptor);
         checkAccessors(property, propertyDescriptor);
@@ -490,7 +454,6 @@ public class DeclarationsChecker {
     }
 
     protected void checkFunction(JetNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
-        reportErrorIfHasIllegalModifier(function);
         DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
         boolean hasAbstractModifier = function.hasModifier(JetTokens.ABSTRACT_KEYWORD);
         checkDeclaredTypeInPublicMember(function, functionDescriptor);
@@ -515,7 +478,6 @@ public class DeclarationsChecker {
             }
             return;
         }
-        modifiersChecker.reportIllegalModalityModifiers(function);
         if (!function.hasBody() && !hasAbstractModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
         }
@@ -526,7 +488,6 @@ public class DeclarationsChecker {
             PropertyAccessorDescriptor propertyAccessorDescriptor = accessor.isGetter() ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
             assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
-            modifiersChecker.reportIllegalModalityModifiers(accessor);
         }
         JetPropertyAccessor getter = property.getGetter();
         PropertyGetterDescriptor getterDescriptor = propertyDescriptor.getGetter();
@@ -545,30 +506,6 @@ public class DeclarationsChecker {
                     trace.report(Errors.REDUNDANT_MODIFIER_IN_GETTER.on(node.getPsi()));
                 }
             }
-        }
-    }
-
-    private void checkEnumModifiers(JetClass aClass) {
-        if (aClass.hasModifier(JetTokens.OPEN_KEYWORD)) {
-            trace.report(OPEN_MODIFIER_IN_ENUM.on(aClass));
-        }
-        if (aClass.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-            trace.report(ABSTRACT_MODIFIER_IN_ENUM.on(aClass));
-        }
-        if (aClass.hasModifier(JetTokens.SEALED_KEYWORD)) {
-            trace.report(SEALED_MODIFIER_IN_ENUM.on(aClass));
-        }
-    }
-
-    private void checkSealedModifiers(JetClass aClass) {
-        if (aClass.hasModifier(JetTokens.OPEN_KEYWORD)) {
-            trace.report(OPEN_MODIFIER_IN_SEALED.on(aClass));
-        }
-        if (aClass.hasModifier(JetTokens.FINAL_KEYWORD)) {
-            trace.report(FINAL_MODIFIER_IN_SEALED.on(aClass));
-        }
-        if (aClass.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
-            trace.report(ABSTRACT_MODIFIER_IN_SEALED.on(aClass));
         }
     }
 

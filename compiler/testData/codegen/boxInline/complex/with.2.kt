@@ -11,7 +11,7 @@ public  class Output(val d: Data) : Closeable {
     public fun doOutput(data: Int): Int = data
 }
 
-public open interface Closeable {
+public interface Closeable {
     open public fun close() {}
 }
 

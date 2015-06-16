@@ -119,22 +119,11 @@ public class DefaultErrorMessages {
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
 
         MAP.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(INCOMPATIBLE_MODIFIERS, "Incompatible modifiers: ''{0}''", new Renderer<Collection<JetModifierKeywordToken>>() {
-            @NotNull
-            @Override
-            public String render(@NotNull Collection<JetModifierKeywordToken> tokens) {
-                StringBuilder sb = new StringBuilder();
-                for (JetKeywordToken token : tokens) {
-                    if (sb.length() != 0) {
-                        sb.append(" ");
-                    }
-                    sb.append(token.getValue());
-                }
-                return sb.toString();
-            }
-        });
+        MAP.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING);
         MAP.put(ILLEGAL_MODIFIER, "Illegal modifier ''{0}''", TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
+        MAP.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(INAPPLICABLE_PLATFORM_NAME, "platformName annotation is not applicable to this declaration");
         MAP.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING);
         MAP.put(REPEATED_ANNOTATION, "This annotation is not repeatable");

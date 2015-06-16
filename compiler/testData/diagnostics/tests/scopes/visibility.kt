@@ -1,11 +1,11 @@
 //FILE:a.kt
 package test_visibility
 
-<!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> class ProtectedClass
-<!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> interface ProtectedTrait
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> class ProtectedClass
+<!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> interface ProtectedTrait
 
-<!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> val protected_val : Int = 4
-<!PACKAGE_MEMBER_CANNOT_BE_PROTECTED!>protected<!> fun protected_fun() {}
+<!WRONG_MODIFIER_TARGET!>protected<!> val protected_val : Int = 4
+<!WRONG_MODIFIER_TARGET!>protected<!> fun protected_fun() {}
 
 private val private_val : Int = 4
 private fun private_fun() {}

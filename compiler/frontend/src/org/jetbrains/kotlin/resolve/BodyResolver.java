@@ -507,12 +507,12 @@ public class BodyResolver {
     }
 
     private void processModifiersOnInitializer(@NotNull JetModifierListOwner owner, @NotNull JetScope scope) {
+        AnnotationChecker.INSTANCE$.check(owner, trace, null);
+        ModifierCheckerCore.INSTANCE$.check(owner, trace, null);
         JetModifierList modifierList = owner.getModifierList();
         if (modifierList == null) return;
 
         annotationResolver.resolveAnnotationsWithArguments(scope, modifierList, trace);
-
-        modifiersChecker.withTrace(trace).reportIllegalModifiers(modifierList, Arrays.asList(JetTokens.MODIFIER_KEYWORDS_ARRAY));
     }
 
     private void resolvePrimaryConstructorParameters(@NotNull BodiesResolveContext c) {
