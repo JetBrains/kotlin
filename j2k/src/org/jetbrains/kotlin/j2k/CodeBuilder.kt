@@ -83,8 +83,10 @@ class CodeBuilder(private val topElement: PsiElement?) {
             return this
         }
 
+        assert(text.indexOf('\r') < 0, "No '\\r' allowed")
+
         if (endOfLineCommentAtEnd) {
-            if (text[0] != '\n' && text[0] != '\r') builder.append('\n')
+            if (text[0] != '\n') builder.append('\n')
             endOfLineCommentAtEnd = false
         }
 
@@ -343,14 +345,16 @@ class CodeBuilder(private val topElement: PsiElement?) {
 
         fun PsiElement.isEmptyElement() = getFirstChild() == null && getTextLength() == 0
 
-        fun PsiWhiteSpace.lineBreakCount() = StringUtil.getLineBreakCount(getText()!!)
+        fun PsiWhiteSpace.lineBreakCount() = StringUtil.getLineBreakCount(getText())
 
-        fun PsiWhiteSpace.hasLineBreaks() = StringUtil.containsLineBreak(getText()!!)
+        fun PsiWhiteSpace.hasLineBreaks() = StringUtil.containsLineBreak(getText())
 
         fun CharSequence.trailingLineBreakCount(): Int {
-            val index = ((length()-1 downTo 0).firstOrNull { val c = this[it]; c != '\n' && c != '\r' } ?: -1) + 1
-            if (index == length()) return 0
-            return StringUtil.getLineBreakCount(subSequence(index, length()))
+            var i = length() - 1
+            while (i >= 0 && this[i] == '\n') {
+                i--
+            }
+            return length() - i - 1
         }
     }
 }
