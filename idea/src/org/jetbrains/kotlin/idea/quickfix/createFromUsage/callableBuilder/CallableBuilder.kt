@@ -1013,10 +1013,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         PsiDocumentManager.getInstance(project).commitDocument(containingFileEditor.getDocument())
 
                         dialogWithEditor?.close(DialogWrapper.OK_EXIT_CODE)
-                        if (brokenOff && !ApplicationManager.getApplication().isUnitTestMode()) {
-                            NavigationUtil.activateFileWithPsiElement(config.originalElement)
-                            return
-                        }
+                        if (brokenOff && !ApplicationManager.getApplication().isUnitTestMode()) return
 
                         // file templates
                         val newDeclaration = if (templateImpl.getSegmentsCount() > 0) {
