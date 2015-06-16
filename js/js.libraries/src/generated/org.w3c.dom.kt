@@ -2996,8 +2996,8 @@ native public open class HitRegionOptions {
 }
 
 native public open class ImageData : ImageBitmapSource {
-    constructor(sw: Int, sh: Int) : super()
-    constructor(data: Uint8ClampedArray, sw: Int, sh: Int = noImpl) : super()
+    constructor(sw: Int, sh: Int)
+    constructor(data: Uint8ClampedArray, sw: Int, sh: Int = noImpl)
     var width: Int
         get() = noImpl
         set(value) = noImpl
@@ -5086,8 +5086,8 @@ native public open class DOMRectInit {
 }
 
 native public open class DOMQuad {
-    constructor(p1: DOMPointInit = noImpl, p2: DOMPointInit = noImpl, p3: DOMPointInit = noImpl, p4: DOMPointInit = noImpl) : super()
-    constructor(rect: DOMRectInit = noImpl) : super()
+    constructor(p1: DOMPointInit = noImpl, p2: DOMPointInit = noImpl, p3: DOMPointInit = noImpl, p4: DOMPointInit = noImpl)
+    constructor(rect: DOMRectInit = noImpl)
     var p1: DOMPoint
         get() = noImpl
         set(value) = noImpl

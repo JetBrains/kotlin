@@ -60,7 +60,7 @@ private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>,
                     append(it.initializer.replaceWrongConstants(it.type))
                 }
             }
-        }.joinTo(this, ", ")
+        }.joinTo(this, ", ", "(", ")")
 
 private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.map { it.replaceKeywords() }.join(", ")})"
 
@@ -80,9 +80,9 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
     if (f.name in keywords) {
         append("native(\"${f.name}\") ")
     }
-    append("fun ${f.name.replaceKeywords()}(")
+    append("fun ${f.name.replaceKeywords()}")
     renderArgumentsDeclaration(f.arguments, override)
-    appendln("): ${f.returnType.render()} = noImpl")
+    appendln(": ${f.returnType.render()} = noImpl")
 }
 
 fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
@@ -100,17 +100,13 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
 
     append(iface.name)
     val primary = iface.primaryConstructor
-    if (primary != null) {
-        if (primary.constructor.arguments.isNotEmpty() || iface.secondaryConstructors.isNotEmpty()) {
-            append("(")
-            renderArgumentsDeclaration(primary.constructor.arguments.dynamicIfUnknownType(allTypes.keySet()), false)
-            append(")")
-        }
+    if (primary != null && (primary.constructor.arguments.isNotEmpty() || iface.secondaryConstructors.isNotEmpty())) {
+        renderArgumentsDeclaration(primary.constructor.arguments.dynamicIfUnknownType(allTypes.keySet()), false)
     }
 
     val superCallName = primary?.initTypeCall?.name
     val superTypesWithCalls =
-            listOf(primary?.initTypeCall).filterNotNull().map { renderCall(it) } +
+            (primary?.initTypeCall?.let { listOf(renderCall(it)) } ?: emptyList()) +
                     iface.superTypes.filter { it != superCallName && it in allSuperTypesNames } +
                     (typeNamesToUnions[iface.name] ?: emptyList())
 
@@ -122,9 +118,8 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
 
     iface.secondaryConstructors.forEach { secondary ->
         indent(1)
-        append("constructor(")
+        append("constructor")
         renderArgumentsDeclaration(secondary.constructor.arguments.dynamicIfUnknownType(allTypes.keySet()), false)
-        append(")")
 
         if (secondary.initTypeCall != null) {
             append(" : ")
