@@ -300,8 +300,11 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             importHelper.importDescriptor(file, descriptor)
         }
         for ((pointer, fqName) in bindingRequests) {
-            val reference = pointer.getElement().getReference() as JetSimpleNameReference
-            reference.bindToFqName(fqName, JetSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
+            val psiReference = pointer.getElement()?.getReference()
+            if (psiReference != null) {
+                val reference = psiReference as JetSimpleNameReference
+                reference.bindToFqName(fqName, JetSimpleNameReference.ShorteningMode.DELAYED_SHORTENING)
+            }
         }
         performDelayedShortening(file.getProject())
     }
