@@ -180,8 +180,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
         Pass<OccurrencesChooser.ReplaceChoice> callback = new Pass<OccurrencesChooser.ReplaceChoice>() {
             @Override
             public void pass(OccurrencesChooser.ReplaceChoice replaceChoice) {
-                boolean replaceOccurrence =
-                        container != expression.getParent() || BindingContextUtilPackage.isUsedAsExpression(expression, bindingContext);
+                boolean replaceOccurrence = shouldReplaceOccurrence(expression, bindingContext, container);
                 List<JetExpression> allReplaces;
                 if (OccurrencesChooser.ReplaceChoice.ALL == replaceChoice) {
                     if (allOccurrences.size() > 1) replaceOccurrence = true;
@@ -415,17 +414,21 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         }
                     }
                 }
-                for (JetExpression replace : allReplaces) {
-                    if (replaceOccurrence && !needBraces) {
-                        replaceExpression(replace);
-                    }
-                    else if (!needBraces) {
-                        PsiElement sibling = PsiTreeUtil.skipSiblingsBackward(replace, PsiWhiteSpace.class);
-                        if (sibling == property) {
-                            replace.getParent().deleteChildRange(property.getNextSibling(), replace);
+                if (!needBraces) {
+                    for (int i = 0; i < allReplaces.size(); i++) {
+                        JetExpression replace = allReplaces.get(i);
+
+                        if (i != 0 ? replaceOccurrence : shouldReplaceOccurrence(replace, bindingContext, commonContainer)) {
+                            replaceExpression(replace);
                         }
                         else {
-                            replace.delete();
+                            PsiElement sibling = PsiTreeUtil.skipSiblingsBackward(replace, PsiWhiteSpace.class);
+                            if (sibling == property) {
+                                replace.getParent().deleteChildRange(property.getNextSibling(), replace);
+                            }
+                            else {
+                                replace.delete();
+                            }
                         }
                     }
                 }
@@ -513,6 +516,14 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     }
                 }
         );
+    }
+
+    private static boolean shouldReplaceOccurrence(
+            @NotNull JetExpression expression,
+            @NotNull BindingContext bindingContext,
+            @Nullable PsiElement container
+    ) {
+        return BindingContextUtilPackage.isUsedAsExpression(expression, bindingContext) || container != expression.getParent();
     }
 
     @Nullable

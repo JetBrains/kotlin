@@ -72,9 +72,9 @@ public abstract class AbstractKotlinInplaceIntroducer<D: JetNamedDeclaration>(
             containingFile: PsiFile,
             declaration: D,
             marker: RangeMarker,
-            exprText: String
+            exprText: String?
     ): JetExpression? {
-        if (!declaration.isValid()) return null
+        if (exprText == null || !declaration.isValid()) return null
 
         return containingFile
                 .findElementAt(marker.getStartOffset())

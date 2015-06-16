@@ -271,6 +271,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("UsedAndUnusedExpressions1.kt")
+        public void testUsedAndUnusedExpressions1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/UsedAndUnusedExpressions1.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("UsedAndUnusedExpressions2.kt")
+        public void testUsedAndUnusedExpressions2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/UsedAndUnusedExpressions2.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("WhenAddBlock.kt")
         public void testWhenAddBlock() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/WhenAddBlock.kt");
