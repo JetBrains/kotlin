@@ -2,14 +2,17 @@ package org.jetbrains.idl2k
 
 import java.math.BigInteger
 
-private fun <O : Appendable> O.indent(level: Int) {
+private fun <O : Appendable> O.indent(commented: Boolean, level: Int) {
+    if (commented) {
+        append("//")
+    }
     for (i in 1..level) {
         append("    ")
     }
 }
 
-private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, override: Boolean, open: Boolean, level: Int = 1) {
-    indent(level)
+private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, override: Boolean, open: Boolean, commented: Boolean, level: Int = 1) {
+    indent(commented, level)
 
     when {
         override -> append("override ")
@@ -28,11 +31,11 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, overri
 
     appendln()
     if (arg.getterNoImpl) {
-        indent(level + 1)
+        indent(commented, level + 1)
         appendln("get() = noImpl")
     }
     if (arg.setterNoImpl) {
-        indent(level + 1)
+        indent(commented, level + 1)
         appendln("set(value) = noImpl")
     }
 }
@@ -65,8 +68,8 @@ private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>,
 
 private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.map { it.replaceKeywords() }.join(", ")})"
 
-private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: Boolean, level: Int = 1) {
-    indent(level)
+private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: Boolean, commented: Boolean, level: Int = 1) {
+    indent(commented, level)
 
     when (f.nativeGetterOrSetter) {
         NativeGetterOrSetter.GETTER -> append("nativeGetter ")
@@ -91,6 +94,10 @@ private val GenerateAttribute.isVal: Boolean
     get() = readOnly
 private val GenerateAttribute.isVar: Boolean
     get() = !readOnly
+
+private fun GenerateAttribute.isCommented(parent: String) = "$parent.$name" in commentOutDeclarations || "$parent.$name: ${type.render()}" in commentOutDeclarations
+private fun GenerateFunction.isCommented(parent: String) =
+        "$parent.$name" in commentOutDeclarations || "$parent.$name(${arguments.size()})" in commentOutDeclarations
 
 fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUnions: Map<String, List<String>>, iface: GenerateTraitOrClass, markerAnnotation: Boolean = false) {
     append("native public ")
@@ -124,7 +131,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     appendln (" {")
 
     iface.secondaryConstructors.forEach { secondary ->
-        indent(1)
+        indent(false, 1)
         append("constructor")
         renderArgumentsDeclaration(secondary.constructor.arguments.dynamicIfUnknownType(allTypes.keySet()), false)
 
@@ -145,10 +152,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
             .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
             .map { it.dynamicIfUnknownType(allTypes.keySet()) }
             .groupBy { it.signature }.reduceValues().values().forEach { arg ->
-        renderAttributeDeclaration(arg, override = arg.signature in superSignatures, open = iface.kind == GenerateDefinitionKind.CLASS && arg.readOnly)
+        renderAttributeDeclaration(arg, override = arg.signature in superSignatures, open = iface.kind == GenerateDefinitionKind.CLASS && arg.readOnly, commented = arg.isCommented(iface.name))
     }
     iface.memberFunctions.filter { it !in superFunctions && !it.static }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
-        renderFunctionDeclaration(it, it.signature in superSignatures)
+        renderFunctionDeclaration(it, it.signature in superSignatures, commented = it.isCommented(iface.name))
     }
 
     val staticAttributes = iface.memberAttributes.filter { it.static }
@@ -156,18 +163,18 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
 
     if (iface.constants.isNotEmpty() || staticAttributes.isNotEmpty() || staticFunctions.isNotEmpty()) {
         appendln()
-        indent(1)
+        indent(false, 1)
         appendln("companion object {")
         iface.constants.forEach {
-            renderAttributeDeclaration(it, override = false, open = false, level = 2)
+            renderAttributeDeclaration(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
         }
         staticAttributes.forEach {
-            renderAttributeDeclaration(it, override = false, open = false, level = 2)
+            renderAttributeDeclaration(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
         }
         staticFunctions.forEach {
-            renderFunctionDeclaration(it, override = false, level = 2)
+            renderFunctionDeclaration(it, override = false, level = 2, commented = it.isCommented(iface.name))
         }
-        indent(1)
+        indent(false, 1)
         appendln("}")
     }
 
