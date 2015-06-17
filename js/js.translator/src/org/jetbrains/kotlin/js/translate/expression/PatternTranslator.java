@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -43,6 +44,9 @@ import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAnyOrNullableAny;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isFunctionOrExtensionFunctionType;
+import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getNameIfStandardType;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.equality;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.findChildByType;
@@ -125,7 +129,9 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression doGetIsTypeCheckCallable(@NotNull KotlinType type) {
-        if (KotlinBuiltIns.isAnyOrNullableAny(type)) return namer().isAny();
+        if (isAnyOrNullableAny(type)) return namer().isAny();
+
+        if (isFunctionOrExtensionFunctionType(type)) return namer().isTypeOf(program().getStringLiteral("function"));
 
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
         if (builtinCheck != null) return builtinCheck;
