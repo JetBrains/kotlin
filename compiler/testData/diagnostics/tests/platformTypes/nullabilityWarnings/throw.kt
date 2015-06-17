@@ -17,7 +17,7 @@ fun test() {
 }
 
 fun test1() {
-    throw <!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>
+    throw <!TYPE_MISMATCH!>J.staticN<!>
 }
 
 fun test2() {

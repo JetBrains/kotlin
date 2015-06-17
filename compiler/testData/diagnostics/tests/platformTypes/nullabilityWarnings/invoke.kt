@@ -18,7 +18,7 @@ public class J {
 
 fun test() {
     J.staticNN()
-    J.<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>staticN<!>()
+    J.<!UNSAFE_CALL!>staticN<!>()
     J.staticJ()
 }
 

@@ -15,7 +15,7 @@ public class J {
 
 fun test() {
     foo(J.staticNN)
-    foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>J.staticN<!>)
+    foo(<!TYPE_MISMATCH!>J.staticN<!>)
     foo(J.staticJ)
 
     bar(J.staticNN)

@@ -1,7 +1,7 @@
 package
 
 internal var A: kotlin.String!
-internal var B: kotlin.String!
+internal var B: [ERROR : Type from delegate]
 internal var C: kotlin.String!
 
 public open class J {
@@ -20,6 +20,6 @@ public open class J {
 
     // Static members
     public final var staticJ: J.DP!
-    org.jetbrains.annotations.Nullable() public final var staticN: J.DP!
-    org.jetbrains.annotations.NotNull() public final var staticNN: J.DP!
+    org.jetbrains.annotations.Nullable() public final var staticN: J.DP?
+    org.jetbrains.annotations.NotNull() public final var staticNN: J.DP
 }
