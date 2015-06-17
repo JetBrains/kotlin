@@ -32,7 +32,7 @@ private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, overri
     }
 }
 
-private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribute, override: Boolean, open: Boolean, commented: Boolean, level: Int, omitDefaults: Boolean) {
+private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribute, override: Boolean, open: Boolean, commented: Boolean, level: Int, omitDefaults: Boolean = false) {
     indent(commented, level)
 
     renderAttributeDeclaration(arg, override, open, omitDefaults)
@@ -169,10 +169,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         indent(false, 1)
         appendln("companion object {")
         iface.constants.forEach {
-            renderAttributeDeclarationAsProperty(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name), omitDefaults = false)
+            renderAttributeDeclarationAsProperty(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
         }
         staticAttributes.forEach {
-            renderAttributeDeclarationAsProperty(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name), omitDefaults = false)
+            renderAttributeDeclarationAsProperty(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
         }
         staticFunctions.forEach {
             renderFunctionDeclaration(it.fixRequiredArguments(iface.name), override = false, level = 2, commented = it.isCommented(iface.name))
@@ -192,17 +192,18 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
 fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperTypes: List<GenerateTraitOrClass>, allTypes: Set<String>) {
     val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes }).distinctBy { it.signature }.map { it.copy(kind = AttributeKind.ARGUMENT) }.dynamicIfUnknownType(allTypes)
 
+    appendln("suppress(\"NOTHING_TO_INLINE\")")
     append("inline fun ${dictionary.name}")
     renderArgumentsDeclaration(fields)
     appendln(": ${dictionary.name} {")
 
     indent(level = 1)
-    appendln("val o = js(\"({})\") as ${dictionary.name}")
+    appendln("val o = js(\"({})\")")
     appendln()
 
     for (field in fields) {
         indent(level = 1)
-        appendln("o.`${field.name}` = ${field.name.replaceKeywords()}")
+        appendln("o[\"${field.name}\"] = ${field.name.replaceKeywords()}")
     }
 
     appendln()

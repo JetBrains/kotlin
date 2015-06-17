@@ -29,47 +29,47 @@ native public interface Performance {
 }
 
 native public interface PerformanceTiming {
-    val navigationStart: Long
+    val navigationStart: Int
         get() = noImpl
-    val unloadEventStart: Long
+    val unloadEventStart: Int
         get() = noImpl
-    val unloadEventEnd: Long
+    val unloadEventEnd: Int
         get() = noImpl
-    val redirectStart: Long
+    val redirectStart: Int
         get() = noImpl
-    val redirectEnd: Long
+    val redirectEnd: Int
         get() = noImpl
-    val fetchStart: Long
+    val fetchStart: Int
         get() = noImpl
-    val domainLookupStart: Long
+    val domainLookupStart: Int
         get() = noImpl
-    val domainLookupEnd: Long
+    val domainLookupEnd: Int
         get() = noImpl
-    val connectStart: Long
+    val connectStart: Int
         get() = noImpl
-    val connectEnd: Long
+    val connectEnd: Int
         get() = noImpl
-    val secureConnectionStart: Long
+    val secureConnectionStart: Int
         get() = noImpl
-    val requestStart: Long
+    val requestStart: Int
         get() = noImpl
-    val responseStart: Long
+    val responseStart: Int
         get() = noImpl
-    val responseEnd: Long
+    val responseEnd: Int
         get() = noImpl
-    val domLoading: Long
+    val domLoading: Int
         get() = noImpl
-    val domInteractive: Long
+    val domInteractive: Int
         get() = noImpl
-    val domContentLoadedEventStart: Long
+    val domContentLoadedEventStart: Int
         get() = noImpl
-    val domContentLoadedEventEnd: Long
+    val domContentLoadedEventEnd: Int
         get() = noImpl
-    val domComplete: Long
+    val domComplete: Int
         get() = noImpl
-    val loadEventStart: Long
+    val loadEventStart: Int
         get() = noImpl
-    val loadEventEnd: Long
+    val loadEventEnd: Int
         get() = noImpl
 }
 

@@ -31,17 +31,18 @@ native public interface WebGLContextAttributes {
     var failIfMajorPerformanceCaveat: Boolean
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun WebGLContextAttributes(alpha: Boolean = true, depth: Boolean = true, stencil: Boolean = false, antialias: Boolean = true, premultipliedAlpha: Boolean = true, preserveDrawingBuffer: Boolean = false, preferLowPowerToHighPerformance: Boolean = false, failIfMajorPerformanceCaveat: Boolean = false): WebGLContextAttributes {
-    val o = js("({})") as WebGLContextAttributes
+    val o = js("({})")
 
-    o.`alpha` = alpha
-    o.`depth` = depth
-    o.`stencil` = stencil
-    o.`antialias` = antialias
-    o.`premultipliedAlpha` = premultipliedAlpha
-    o.`preserveDrawingBuffer` = preserveDrawingBuffer
-    o.`preferLowPowerToHighPerformance` = preferLowPowerToHighPerformance
-    o.`failIfMajorPerformanceCaveat` = failIfMajorPerformanceCaveat
+    o["alpha"] = alpha
+    o["depth"] = depth
+    o["stencil"] = stencil
+    o["antialias"] = antialias
+    o["premultipliedAlpha"] = premultipliedAlpha
+    o["preserveDrawingBuffer"] = preserveDrawingBuffer
+    o["preferLowPowerToHighPerformance"] = preferLowPowerToHighPerformance
+    o["failIfMajorPerformanceCaveat"] = failIfMajorPerformanceCaveat
 
     return o
 }
@@ -111,9 +112,9 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int): Unit = noImpl
     fun blendFunc(sfactor: Int, dfactor: Int): Unit = noImpl
     fun blendFuncSeparate(srcRGB: Int, dstRGB: Int, srcAlpha: Int, dstAlpha: Int): Unit = noImpl
-    fun bufferData(target: Int, size: Long, usage: Int): Unit = noImpl
+    fun bufferData(target: Int, size: Int, usage: Int): Unit = noImpl
     fun bufferData(target: Int, data: dynamic, usage: Int): Unit = noImpl
-    fun bufferSubData(target: Int, offset: Long, data: dynamic): Unit = noImpl
+    fun bufferSubData(target: Int, offset: Int, data: dynamic): Unit = noImpl
     fun checkFramebufferStatus(target: Int): Int = noImpl
     fun clear(mask: Int): Unit = noImpl
     fun clearColor(red: Float, green: Float, blue: Float, alpha: Float): Unit = noImpl
@@ -145,7 +146,7 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun disable(cap: Int): Unit = noImpl
     fun disableVertexAttribArray(index: Int): Unit = noImpl
     fun drawArrays(mode: Int, first: Int, count: Int): Unit = noImpl
-    fun drawElements(mode: Int, count: Int, type: Int, offset: Long): Unit = noImpl
+    fun drawElements(mode: Int, count: Int, type: Int, offset: Int): Unit = noImpl
     fun enable(cap: Int): Unit = noImpl
     fun enableVertexAttribArray(index: Int): Unit = noImpl
     fun finish(): Unit = noImpl
@@ -173,7 +174,7 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun getUniform(program: WebGLProgram?, location: WebGLUniformLocation?): Any? = noImpl
     fun getUniformLocation(program: WebGLProgram?, name: String): WebGLUniformLocation? = noImpl
     fun getVertexAttrib(index: Int, pname: Int): Any? = noImpl
-    fun getVertexAttribOffset(index: Int, pname: Int): Long = noImpl
+    fun getVertexAttribOffset(index: Int, pname: Int): Int = noImpl
     fun hint(target: Int, mode: Int): Unit = noImpl
     fun isBuffer(buffer: WebGLBuffer?): Boolean = noImpl
     fun isEnabled(cap: Int): Boolean = noImpl
@@ -247,7 +248,7 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun vertexAttrib4f(indx: Int, x: Float, y: Float, z: Float, w: Float): Unit = noImpl
     fun vertexAttrib4fv(indx: Int, values: Float32Array): Unit = noImpl
     fun vertexAttrib4fv(indx: Int, values: Array<Float>): Unit = noImpl
-    fun vertexAttribPointer(indx: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Long): Unit = noImpl
+    fun vertexAttribPointer(indx: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int): Unit = noImpl
     fun viewport(x: Int, y: Int, width: Int, height: Int): Unit = noImpl
 
     companion object {
@@ -560,12 +561,13 @@ native public interface WebGLContextEventInit : EventInit {
     var statusMessage: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun WebGLContextEventInit(statusMessage: String, bubbles: Boolean = false, cancelable: Boolean = false): WebGLContextEventInit {
-    val o = js("({})") as WebGLContextEventInit
+    val o = js("({})")
 
-    o.`statusMessage` = statusMessage
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["statusMessage"] = statusMessage
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }

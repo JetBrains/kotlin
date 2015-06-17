@@ -106,10 +106,11 @@ native public interface RegistrationOptions {
     var scope: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun RegistrationOptions(scope: String): RegistrationOptions {
-    val o = js("({})") as RegistrationOptions
+    val o = js("({})")
 
-    o.`scope` = scope
+    o["scope"] = scope
 
     return o
 }
@@ -136,16 +137,17 @@ native public interface ServiceWorkerMessageEventInit : EventInit {
     var ports: Array<MessagePort>
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ServiceWorkerMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ServiceWorkerMessageEventInit {
-    val o = js("({})") as ServiceWorkerMessageEventInit
+    val o = js("({})")
 
-    o.`data` = data
-    o.`origin` = origin
-    o.`lastEventId` = lastEventId
-    o.`source` = source
-    o.`ports` = ports
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["data"] = data
+    o["origin"] = origin
+    o["lastEventId"] = lastEventId
+    o["source"] = source
+    o["ports"] = ports
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -179,11 +181,12 @@ native public interface ClientQueryOptions {
     var type: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ClientQueryOptions(includeUncontrolled: Boolean = false, type: String = "window"): ClientQueryOptions {
-    val o = js("({})") as ClientQueryOptions
+    val o = js("({})")
 
-    o.`includeUncontrolled` = includeUncontrolled
-    o.`type` = type
+    o["includeUncontrolled"] = includeUncontrolled
+    o["type"] = type
 
     return o
 }
@@ -195,11 +198,12 @@ native public open class ExtendableEvent(type: String, eventInitDict: Extendable
 native public interface ExtendableEventInit : EventInit {
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ExtendableEventInit(bubbles: Boolean = false, cancelable: Boolean = false): ExtendableEventInit {
-    val o = js("({})") as ExtendableEventInit
+    val o = js("({})")
 
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -220,14 +224,15 @@ native public interface FetchEventInit : ExtendableEventInit {
     var isReload: Boolean
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun FetchEventInit(request: Request, client: Client, isReload: Boolean = false, bubbles: Boolean = false, cancelable: Boolean = false): FetchEventInit {
-    val o = js("({})") as FetchEventInit
+    val o = js("({})")
 
-    o.`request` = request
-    o.`client` = client
-    o.`isReload` = isReload
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["request"] = request
+    o["client"] = client
+    o["isReload"] = isReload
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -254,16 +259,17 @@ native public interface ExtendableMessageEventInit : ExtendableEventInit {
     var ports: Array<MessagePort>
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ExtendableMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionClientOrMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ExtendableMessageEventInit {
-    val o = js("({})") as ExtendableMessageEventInit
+    val o = js("({})")
 
-    o.`data` = data
-    o.`origin` = origin
-    o.`lastEventId` = lastEventId
-    o.`source` = source
-    o.`ports` = ports
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["data"] = data
+    o["origin"] = origin
+    o["lastEventId"] = lastEventId
+    o["source"] = source
+    o["ports"] = ports
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -285,13 +291,14 @@ native public interface CacheQueryOptions {
     var cacheName: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun CacheQueryOptions(ignoreSearch: Boolean = false, ignoreMethod: Boolean = false, ignoreVary: Boolean = false, cacheName: String): CacheQueryOptions {
-    val o = js("({})") as CacheQueryOptions
+    val o = js("({})")
 
-    o.`ignoreSearch` = ignoreSearch
-    o.`ignoreMethod` = ignoreMethod
-    o.`ignoreVary` = ignoreVary
-    o.`cacheName` = cacheName
+    o["ignoreSearch"] = ignoreSearch
+    o["ignoreMethod"] = ignoreMethod
+    o["ignoreVary"] = ignoreVary
+    o["cacheName"] = cacheName
 
     return o
 }
@@ -303,13 +310,14 @@ native public interface CacheBatchOperation {
     var options: CacheQueryOptions
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun CacheBatchOperation(type: String, request: Request, response: Response, options: CacheQueryOptions): CacheBatchOperation {
-    val o = js("({})") as CacheBatchOperation
+    val o = js("({})")
 
-    o.`type` = type
-    o.`request` = request
-    o.`response` = response
-    o.`options` = options
+    o["type"] = type
+    o["request"] = request
+    o["response"] = response
+    o["options"] = options
 
     return o
 }

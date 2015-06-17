@@ -106,26 +106,27 @@ native public open class FormData(form: HTMLFormElement = noImpl) {
 native public open class ProgressEvent(type: String, eventInitDict: ProgressEventInit = noImpl) : Event(type, eventInitDict) {
     open val lengthComputable: Boolean
         get() = noImpl
-    open val loaded: Long
+    open val loaded: Int
         get() = noImpl
-    open val total: Long
+    open val total: Int
         get() = noImpl
 }
 
 native public interface ProgressEventInit : EventInit {
     var lengthComputable: Boolean
-    var loaded: Long
-    var total: Long
+    var loaded: Int
+    var total: Int
 }
 
-inline fun ProgressEventInit(lengthComputable: Boolean = false, loaded: Long = 0, total: Long = 0, bubbles: Boolean = false, cancelable: Boolean = false): ProgressEventInit {
-    val o = js("({})") as ProgressEventInit
+suppress("NOTHING_TO_INLINE")
+inline fun ProgressEventInit(lengthComputable: Boolean = false, loaded: Int = 0, total: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): ProgressEventInit {
+    val o = js("({})")
 
-    o.`lengthComputable` = lengthComputable
-    o.`loaded` = loaded
-    o.`total` = total
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["lengthComputable"] = lengthComputable
+    o["loaded"] = loaded
+    o["total"] = total
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }

@@ -22,13 +22,13 @@ import org.w3c.xhr.*
 
 native public open class Blob() : ImageBitmapSource {
     constructor(blobParts: Array<dynamic>, options: BlobPropertyBag = noImpl) : this()
-    open val size: Long
+    open val size: Int
         get() = noImpl
     open val type: String
         get() = noImpl
     open val isClosed: Boolean
         get() = noImpl
-    fun slice(start: Long = noImpl, end: Long = noImpl, contentType: String = noImpl): Blob = noImpl
+    fun slice(start: Int = noImpl, end: Int = noImpl, contentType: String = noImpl): Blob = noImpl
     fun close(): Unit = noImpl
 }
 
@@ -36,10 +36,11 @@ native public interface BlobPropertyBag {
     var type: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
-    val o = js("({})") as BlobPropertyBag
+    val o = js("({})")
 
-    o.`type` = type
+    o["type"] = type
 
     return o
 }
@@ -47,20 +48,21 @@ inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
 native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob() {
     open val name: String
         get() = noImpl
-    open val lastModified: Long
+    open val lastModified: Int
         get() = noImpl
 }
 
 native public interface FilePropertyBag {
     var type: String
-    var lastModified: Long
+    var lastModified: Int
 }
 
-inline fun FilePropertyBag(type: String = "", lastModified: Long): FilePropertyBag {
-    val o = js("({})") as FilePropertyBag
+suppress("NOTHING_TO_INLINE")
+inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePropertyBag {
+    val o = js("({})")
 
-    o.`type` = type
-    o.`lastModified` = lastModified
+    o["type"] = type
+    o["lastModified"] = lastModified
 
     return o
 }
