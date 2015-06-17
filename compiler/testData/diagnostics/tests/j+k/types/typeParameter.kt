@@ -1,6 +1,6 @@
 // FILE: k.kt
 
-trait K {
+interface K {
     fun <T> foo(t: T)
 }
 

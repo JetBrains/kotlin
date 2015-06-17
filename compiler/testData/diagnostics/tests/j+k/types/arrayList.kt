@@ -1,6 +1,6 @@
 // FILE: k.kt
 
-trait ML<T> {
+interface ML<T> {
     public fun foo(): MutableList<T>
 }
 

@@ -1,9 +1,9 @@
 // FILE: k.kt
 
-trait G<T>
-trait SubG : G<String>
+interface G<T>
+interface SubG : G<String>
 
-trait K {
+interface K {
     fun foo(): G<String>
     fun bar(): G<String>?
 }
