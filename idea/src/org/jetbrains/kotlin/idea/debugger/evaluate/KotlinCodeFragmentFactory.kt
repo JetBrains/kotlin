@@ -16,34 +16,51 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
-import com.intellij.debugger.engine.evaluation.TextWithImports
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.project.Project
-import com.intellij.psi.JavaCodeFragment
-import org.jetbrains.kotlin.idea.JetFileType
-import org.jetbrains.kotlin.psi.JetExpressionCodeFragment
-import com.intellij.psi.PsiCodeBlock
-import com.intellij.debugger.engine.evaluation.CodeFragmentKind
-import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
-import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetBlockCodeFragment
-import org.jetbrains.kotlin.asJava.KotlinLightClass
 import com.intellij.debugger.DebuggerManagerEx
-import org.jetbrains.kotlin.psi.JetCodeFragment
-import org.jetbrains.kotlin.types.JetType
-import com.intellij.util.concurrency.Semaphore
-import java.util.concurrent.atomic.AtomicReference
+import com.intellij.debugger.engine.evaluation.CodeFragmentFactory
+import com.intellij.debugger.engine.evaluation.CodeFragmentKind
+import com.intellij.debugger.engine.evaluation.TextWithImports
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
+import com.intellij.psi.JavaCodeFragment
+import com.intellij.psi.PsiCodeBlock
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.concurrency.Semaphore
+import com.intellij.xdebugger.XDebuggerManager
+import com.intellij.xdebugger.impl.XDebugSessionImpl
+import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
+import com.sun.jdi.ObjectReference
+import com.sun.jdi.Value
+import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.JetType
+import java.util.HashMap
+import java.util.concurrent.atomic.AtomicReference
 
 class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun createCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         val codeFragment = if (item.getKind() == CodeFragmentKind.EXPRESSION) {
-            JetExpressionCodeFragment(project, "fragment.kt", item.getText(), item.getImports(), getContextElement(context))
+            JetExpressionCodeFragment(
+                    project,
+                    "fragment.kt",
+                    item.getText(),
+                    item.getImports(),
+                    getWrappedContextElement(project, context)
+            )
         }
         else {
-            JetBlockCodeFragment(project, "fragment.kt", item.getText(), item.getImports(), getContextElement(context))
+            JetBlockCodeFragment(
+                    project,
+                    "fragment.kt",
+                    item.getText(),
+                    item.getImports(),
+                    getWrappedContextElement(project, context)
+            )
         }
 
         codeFragment.putCopyableUserData(JetCodeFragment.RUNTIME_TYPE_EVALUATOR, {
@@ -79,6 +96,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         return codeFragment
     }
 
+    private fun getWrappedContextElement(project: Project, context: PsiElement?)
+            = wrapContextIfNeeded(project, getContextElement(context))
+
     override fun createPresentationCodeFragment(item: TextWithImports, context: PsiElement?, project: Project): JavaCodeFragment {
         return createCodeFragment(item, context, project)
     }
@@ -96,6 +116,9 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
     override fun getEvaluatorBuilder() = KotlinEvaluationBuilder
 
     companion object {
+        public val LABEL_VARIABLE_VALUE_KEY: Key<Value> = Key.create<Value>("_label_variable_value_key_")
+        public val DEBUG_LABEL_SUFFIX: String = "_DebugLabel"
+
         fun getContextElement(elementAt: PsiElement?): PsiElement? {
             if (elementAt == null) return null
 
@@ -107,16 +130,65 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 return getContextElement(elementAt.getOrigin())
             }
 
-            // If label for some variable is set
-            if (elementAt.getParent() is JetCodeFragment) {
-                return elementAt.getParent().getContext()
-            }
-
             val expressionAtOffset = PsiTreeUtil.findElementOfClassAtOffset(elementAt.getContainingFile()!!, elementAt.getTextOffset(), javaClass<JetExpression>(), false)
             if (expressionAtOffset != null) {
                 return expressionAtOffset
             }
             return KotlinEditorTextProvider.findExpressionInner(elementAt, true)
         }
+
+        //internal for tests
+        fun createCodeFragmentForLabeledObjects(markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, ObjectReference>> {
+            val sb = StringBuilder()
+            val labeledObjects = HashMap<String, ObjectReference>()
+            for ((value, markup) in markupMap.entrySet()) {
+                val labelName = markup.getText()
+                if (!Name.isValidIdentifier(labelName)) continue
+
+                val objectRef = value as ObjectReference
+
+                val typeName = value.type().name()
+                val labelNameWithSuffix = labelName + DEBUG_LABEL_SUFFIX
+                sb.append("val ").append(labelNameWithSuffix).append(": ").append(typeName).append("? = null\n")
+
+                labeledObjects.put(labelNameWithSuffix, objectRef)
+            }
+            sb.append("val _debug_context_val = 1")
+            return sb.toString() to labeledObjects
+        }
+    }
+
+    private fun wrapContextIfNeeded(project: Project, originalContext: PsiElement?): PsiElement? {
+        val session = XDebuggerManager.getInstance(project).getCurrentSession() as? XDebugSessionImpl
+                                            ?: return originalContext
+
+        val markupMap = session.getValueMarkers()?.getAllMarkers()
+        if (markupMap == null || markupMap.isEmpty()) return originalContext
+
+        val (text, labels) = createCodeFragmentForLabeledObjects(markupMap)
+        if (text.isEmpty()) return originalContext
+
+        return createWrappingContext(text, labels, originalContext, project)
+    }
+
+    // internal for test
+    fun createWrappingContext(
+            newFragmentText: String,
+            labels: Map<String, ObjectReference>,
+            originalContext: PsiElement?,
+            project: Project
+    ): PsiElement? {
+        val codeFragment = JetPsiFactory(project).createBlockCodeFragment(newFragmentText, originalContext)
+
+        codeFragment.accept(object : JetTreeVisitorVoid() {
+            override fun visitProperty(property: JetProperty) {
+                val reference = labels.get(property.getName())
+                if (reference != null) {
+                    property.putUserData(LABEL_VARIABLE_VALUE_KEY, reference)
+                }
+            }
+        })
+
+        return getContextElement(codeFragment.findElementAt(codeFragment.getText().length() - 1))
     }
 }

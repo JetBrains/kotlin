@@ -44,6 +44,7 @@ import com.sun.jdi.request.EventRequest
 import org.jetbrains.eval4j.*
 import org.jetbrains.eval4j.jdi.JDIEval
 import org.jetbrains.eval4j.jdi.asJdiValue
+import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.jdi.makeInitialFrame
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -80,7 +81,7 @@ import org.jetbrains.kotlin.types.Flexibility
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ASM5
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.Collections
+import java.util.*
 
 private val RECEIVER_NAME = "\$receiver"
 private val THIS_NAME = "this"
@@ -176,7 +177,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             if (extractionResult == null) {
                 throw IllegalStateException("Code fragment cannot be extracted to function")
             }
-            val parametersDescriptor = extractionResult.getParametersForDebugger()
+            val parametersDescriptor = extractionResult.getParametersForDebugger(codeFragment)
             val extractedFunction = extractionResult.declaration as JetNamedFunction
 
             val classFileFactory = createClassFileFactory(codeFragment, extractedFunction, context, parametersDescriptor)
@@ -287,8 +288,22 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
             return jdiValue.asJdiValue(vm, jdiValue.asmType)
         }
 
-        private fun ExtractionResult.getParametersForDebugger(): ParametersDescriptor {
+        private fun ExtractionResult.getParametersForDebugger(fragment: JetCodeFragment): ParametersDescriptor {
             return runReadAction {
+                val valuesForLabels = HashMap<String, Value>()
+
+                val contextElementFile = fragment.getContext()?.getContainingFile()
+                if (contextElementFile is JetCodeFragment) {
+                    contextElementFile.accept(object: JetTreeVisitorVoid() {
+                        override fun visitProperty(property: JetProperty) {
+                            val value = property.getUserData(KotlinCodeFragmentFactory.LABEL_VARIABLE_VALUE_KEY)
+                            if (value != null) {
+                                valuesForLabels.put(property.getName(), value.asValue())
+                            }
+                        }
+                    })
+                }
+
                 val parameters = ParametersDescriptor()
                 val receiver = config.descriptor.receiverParameter
                 if (receiver != null) {
@@ -301,7 +316,7 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
                         param.argumentText.startsWith("::") -> param.argumentText.substring(2)
                         else -> param.argumentText
                     }
-                    parameters.add(paramName, param.getParameterType(true))
+                    parameters.add(paramName, param.getParameterType(true), valuesForLabels[paramName])
                 }
                 parameters
             }
@@ -310,7 +325,12 @@ class KotlinEvaluator(val codeFragment: JetCodeFragment,
         private fun EvaluationContextImpl.getArgumentsForEval4j(parameters: ParametersDescriptor, parameterTypes: Array<Type>): List<Value> {
             val frameVisitor = FrameVisitor(this)
             return parameters.zip(parameterTypes).map {
-                frameVisitor.findValue(it.first.callText, it.second, checkType = false, failIfNotFound = true)!!
+                if (it.first.value != null) {
+                    it.first.value!!
+                }
+                else {
+                    frameVisitor.findValue(it.first.callText, it.second, checkType = false, failIfNotFound = true)!!
+                }
             }
         }
 

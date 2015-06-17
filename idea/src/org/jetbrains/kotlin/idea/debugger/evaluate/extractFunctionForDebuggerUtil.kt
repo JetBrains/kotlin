@@ -153,6 +153,11 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: JetFile, contextEle
         return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
     }
 
+    val containingFile = contextElement.getContainingFile()
+    if (containingFile is JetCodeFragment) {
+        return getExpressionToAddDebugExpressionBefore(tmpFile, containingFile.getContext(), line)
+    }
+
     fun shouldStop(el: PsiElement?, p: PsiElement?) = p is JetBlockExpression || el is JetDeclaration
 
     var elementAt = tmpFile.getElementInCopy(contextElement)
@@ -239,28 +244,25 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
 
     parent.addBefore(psiFactory.createNewLine(), elementBefore)
 
-    val debugExpression = codeFragment.getContentElement() ?: return emptyList()
-
-    val expressions = ArrayList<JetExpression>()
-
-    fun insertExpression(expr: JetExpression) {
-        val newDebugExpression = parent.addBefore(expr, elementBefore) ?: return
-
-        expressions.add(newDebugExpression as JetExpression)
-
-        parent.addBefore(psiFactory.createNewLine(), elementBefore)
-    }
-
-    when (debugExpression) {
-        is JetBlockExpression -> {
-            for (statement in debugExpression.getStatements()) {
-                insertExpression(statement)
+    fun insertExpression(expr: JetElement?): List<JetExpression> {
+        when (expr) {
+            is JetBlockExpression -> return expr.getStatements().flatMap { insertExpression(it) }
+            is JetExpression -> {
+                val newDebugExpression = parent.addBefore(expr, elementBefore) ?: return emptyList()
+                parent.addBefore(psiFactory.createNewLine(), elementBefore)
+                return listOf(newDebugExpression as JetExpression)
             }
         }
-        is JetExpression -> insertExpression(debugExpression)
+        return emptyList()
     }
 
-    return expressions
+    val containingFile = codeFragment.getContext()?.getContainingFile()
+    if (containingFile is JetCodeFragment) {
+        insertExpression(containingFile.getContentElement() as? JetExpression)
+    }
+
+    val debugExpression = codeFragment.getContentElement() ?: return emptyList()
+    return insertExpression(debugExpression)
 }
 
 private fun replaceByRunFunction(expression: JetExpression): JetCallExpression {

@@ -526,6 +526,33 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             }
         }
 
+        @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Labels extends AbstractKotlinEvaluateExpressionTest {
+            public void testAllFilesPresentInLabels() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("lCallOnLabeledObj.kt")
+            public void testLCallOnLabeledObj() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/lCallOnLabeledObj.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("lSeveralLabels.kt")
+            public void testLSeveralLabels() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/lSeveralLabels.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
+            @TestMetadata("lSimple.kt")
+            public void testLSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/labels/lSimple.kt");
+                doSingleBreakpointTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/lambdas")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

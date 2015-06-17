@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import com.intellij.debugger.DebuggerInvocationUtil
-import com.intellij.debugger.DebuggerManagerEx
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.ContextUtil
 import com.intellij.debugger.engine.SourcePositionProvider
@@ -35,13 +33,11 @@ import com.intellij.debugger.ui.tree.LocalVariableDescriptor
 import com.intellij.debugger.ui.tree.StackFrameDescriptor
 import com.intellij.debugger.ui.tree.StaticDescriptor
 import com.intellij.execution.process.ProcessOutputTypes
-import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiManager
-import com.intellij.psi.search.FilenameIndex
+import com.intellij.psi.PsiElement
 import com.intellij.xdebugger.impl.ui.XDebuggerUIConstants
+import com.intellij.xdebugger.impl.ui.tree.ValueMarkup
 import com.sun.jdi.ObjectReference
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.Level
@@ -58,6 +54,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 import java.io.File
 import java.util.Collections
+import kotlin.test.fail
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
     private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
@@ -278,12 +275,39 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         return mainFile.getParentFile()?.listFiles()?.filter { it.name.startsWith(mainFileName) && it.name != mainFileName } ?: Collections.emptyList()
     }
 
+    private fun createContextElement(context: SuspendContextImpl): PsiElement {
+        val contextElement = ContextUtil.getContextElement(debuggerContext)
+        Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
+                          KotlinCodeFragmentFactory().isContextAccepted(contextElement))
+
+        if (contextElement != null) {
+            val labelsAsText = InTextDirectivesUtils.findLinesWithPrefixesRemoved(contextElement.getContainingFile().getText(), "// DEBUG_LABEL: ")
+            if (labelsAsText.isEmpty()) return contextElement
+
+            val markupMap = hashMapOf<ObjectReference, ValueMarkup>()
+            for (labelAsText in labelsAsText) {
+                val labelParts = labelAsText.splitBy("=")
+                assert(labelParts.size() == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
+                val localVariableName = labelParts[0].trim()
+                val labelName = labelParts[1].trim()
+                val localVariable = context.getFrameProxy().visibleVariableByName(localVariableName)
+                assert(localVariable != null) { "Couldn't find localVariable for label: name = $localVariableName" }
+                val localVariableValue = context.getFrameProxy().getValue(localVariable) as? ObjectReference
+                assert(localVariableValue != null) { "Local variable $localVariableName should be an ObjectReference" }
+                markupMap.put(localVariableValue, ValueMarkup(labelName, null, labelName))
+            }
+
+            val (text, labels) = KotlinCodeFragmentFactory.createCodeFragmentForLabeledObjects(markupMap)
+            return KotlinCodeFragmentFactory().createWrappingContext(text, labels, KotlinCodeFragmentFactory.getContextElement(contextElement), getProject())!!
+        }
+
+        return contextElement!!
+    }
+
     private fun SuspendContextImpl.evaluate(text: String, codeFragmentKind: CodeFragmentKind, expectedResult: String) {
         runReadAction {
             val sourcePosition = ContextUtil.getSourcePosition(this)
-            val contextElement = ContextUtil.getContextElement(sourcePosition)!!
-            Assert.assertTrue("KotlinCodeFragmentFactory should be accepted for context element otherwise default evaluator will be called. ContextElement = ${contextElement.getText()}",
-                              KotlinCodeFragmentFactory().isContextAccepted(contextElement))
+            val contextElement = createContextElement(this)
 
             try {
 
