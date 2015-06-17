@@ -5,6 +5,8 @@ JetFile: semicolonBetweenDeclarations.kt
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')
     PsiElement(SEMICOLON)(';')
+  IMPORT_LIST
+    <empty list>
   PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')

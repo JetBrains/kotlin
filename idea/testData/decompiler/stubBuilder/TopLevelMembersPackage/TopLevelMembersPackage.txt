@@ -3,6 +3,7 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
     DOT_QUALIFIED_EXPRESSION:
       REFERENCE_EXPRESSION:[referencedName=foo]
       REFERENCE_EXPRESSION:[referencedName=TopLevelMembers]
+  IMPORT_LIST:
   PROPERTY:[fqName=foo.TopLevelMembers.certainlyNothing, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=certainlyNothing]
     MODIFIER_LIST:[private]
     TYPE_REFERENCE:

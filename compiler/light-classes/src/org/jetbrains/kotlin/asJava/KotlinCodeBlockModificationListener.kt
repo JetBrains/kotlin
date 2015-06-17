@@ -103,7 +103,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             return false
         }
 
-        private fun isInsideCodeBlock(element: PsiElement?): Boolean {
+        public fun isInsideCodeBlock(element: PsiElement?): Boolean {
             if (element is PsiFileSystemItem) return false
             if (element == null || element.getParent() == null) return true
 

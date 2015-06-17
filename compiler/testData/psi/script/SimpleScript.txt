@@ -1,6 +1,8 @@
 JetFile: SimpleScript.kts
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   SCRIPT
     BLOCK
       CALL_EXPRESSION

@@ -1,6 +1,8 @@
 JetFile: ConstructorModifiers.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   PROPERTY
     PsiElement(val)('val')
     PsiWhiteSpace(' ')

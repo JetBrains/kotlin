@@ -30,36 +30,26 @@ native public open class Headers(init: dynamic = noImpl) {
 }
 
 native public open class Request(input: dynamic, init: RequestInit = noImpl) {
-    var method: String
+    open val method: String
         get() = noImpl
-        set(value) = noImpl
-    var url: String
+    open val url: String
         get() = noImpl
-        set(value) = noImpl
-    var headers: Headers
+    open val headers: Headers
         get() = noImpl
-        set(value) = noImpl
-    var context: String
+    open val context: String
         get() = noImpl
-        set(value) = noImpl
-    var referrer: String
+    open val referrer: String
         get() = noImpl
-        set(value) = noImpl
-    var mode: String
+    open val mode: String
         get() = noImpl
-        set(value) = noImpl
-    var credentials: String
+    open val credentials: String
         get() = noImpl
-        set(value) = noImpl
-    var cache: String
+    open val cache: String
         get() = noImpl
-        set(value) = noImpl
-    var redirect: String
+    open val redirect: String
         get() = noImpl
-        set(value) = noImpl
-    var bodyUsed: Boolean
+    open val bodyUsed: Boolean
         get() = noImpl
-        set(value) = noImpl
     fun clone(): Request = noImpl
     fun arrayBuffer(): dynamic = noImpl
     fun blob(): dynamic = noImpl
@@ -68,7 +58,7 @@ native public open class Request(input: dynamic, init: RequestInit = noImpl) {
     fun text(): dynamic = noImpl
 }
 
-native public open class RequestInit {
+native public interface RequestInit {
     var method: String
     var headers: dynamic
     var body: dynamic
@@ -78,39 +68,63 @@ native public open class RequestInit {
     var redirect: String
 }
 
+suppress("NOTHING_TO_INLINE")
+inline fun RequestInit(method: String, headers: dynamic, body: dynamic, mode: String, credentials: String, cache: String, redirect: String): RequestInit {
+    val o = js("({})")
+
+    o["method"] = method
+    o["headers"] = headers
+    o["body"] = body
+    o["mode"] = mode
+    o["credentials"] = credentials
+    o["cache"] = cache
+    o["redirect"] = redirect
+
+    return o
+}
+
 native public open class Response(body: dynamic = noImpl, init: ResponseInit = noImpl) {
-    var type: String
+    open val type: String
         get() = noImpl
-        set(value) = noImpl
-    var url: String
+    open val url: String
         get() = noImpl
-        set(value) = noImpl
-    var status: Short
+    open val status: Short
         get() = noImpl
-        set(value) = noImpl
-    var ok: Boolean
+    open val ok: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var statusText: String
+    open val statusText: String
         get() = noImpl
-        set(value) = noImpl
-    var headers: Headers
+    open val headers: Headers
         get() = noImpl
-        set(value) = noImpl
-    var bodyUsed: Boolean
+    open val bodyUsed: Boolean
         get() = noImpl
-        set(value) = noImpl
     fun clone(): Response = noImpl
     fun arrayBuffer(): dynamic = noImpl
     fun blob(): dynamic = noImpl
     fun formData(): dynamic = noImpl
     fun json(): dynamic = noImpl
     fun text(): dynamic = noImpl
+
+    companion object {
+        fun error(): Response = noImpl
+        fun redirect(url: String, status: Short = 302): Response = noImpl
+    }
 }
 
-native public open class ResponseInit {
-    var status: Short = 200
-    var statusText: String = "OK"
+native public interface ResponseInit {
+    var status: Short
+    var statusText: String
     var headers: dynamic
+}
+
+suppress("NOTHING_TO_INLINE")
+inline fun ResponseInit(status: Short = 200, statusText: String = "OK", headers: dynamic): ResponseInit {
+    val o = js("({})")
+
+    o["status"] = status
+    o["statusText"] = statusText
+    o["headers"] = headers
+
+    return o
 }
 

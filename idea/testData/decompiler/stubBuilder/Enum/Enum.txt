@@ -9,6 +9,7 @@ PsiJetFileStubImpl[package=a.b.c.test.enum]
           REFERENCE_EXPRESSION:[referencedName=c]
         REFERENCE_EXPRESSION:[referencedName=test]
       REFERENCE_EXPRESSION:[referencedName=enum]
+  IMPORT_LIST:
   CLASS:[fqName=a.b.c.test.enum.Enum, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Enum]]
     MODIFIER_LIST:[enum internal final]
     PRIMARY_CONSTRUCTOR:

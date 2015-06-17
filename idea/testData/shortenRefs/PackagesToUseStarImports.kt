@@ -7,5 +7,3 @@ val v: java.io.File
 val v: java.util.concurrent.atomic.AtomicBoolean
 val v: java.util.ArrayList<String>
 </selection>
-
-

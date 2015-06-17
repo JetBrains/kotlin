@@ -20,15 +20,31 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class WebGLContextAttributes {
-    var alpha: Boolean = true
-    var depth: Boolean = true
-    var stencil: Boolean = false
-    var antialias: Boolean = true
-    var premultipliedAlpha: Boolean = true
-    var preserveDrawingBuffer: Boolean = false
-    var preferLowPowerToHighPerformance: Boolean = false
-    var failIfMajorPerformanceCaveat: Boolean = false
+native public interface WebGLContextAttributes {
+    var alpha: Boolean
+    var depth: Boolean
+    var stencil: Boolean
+    var antialias: Boolean
+    var premultipliedAlpha: Boolean
+    var preserveDrawingBuffer: Boolean
+    var preferLowPowerToHighPerformance: Boolean
+    var failIfMajorPerformanceCaveat: Boolean
+}
+
+suppress("NOTHING_TO_INLINE")
+inline fun WebGLContextAttributes(alpha: Boolean = true, depth: Boolean = true, stencil: Boolean = false, antialias: Boolean = true, premultipliedAlpha: Boolean = true, preserveDrawingBuffer: Boolean = false, preferLowPowerToHighPerformance: Boolean = false, failIfMajorPerformanceCaveat: Boolean = false): WebGLContextAttributes {
+    val o = js("({})")
+
+    o["alpha"] = alpha
+    o["depth"] = depth
+    o["stencil"] = stencil
+    o["antialias"] = antialias
+    o["premultipliedAlpha"] = premultipliedAlpha
+    o["preserveDrawingBuffer"] = preserveDrawingBuffer
+    o["preferLowPowerToHighPerformance"] = preferLowPowerToHighPerformance
+    o["failIfMajorPerformanceCaveat"] = failIfMajorPerformanceCaveat
+
+    return o
 }
 
 native public interface WebGLObject {
@@ -56,42 +72,33 @@ native public interface WebGLUniformLocation {
 }
 
 native public interface WebGLActiveInfo {
-    var size: Int
+    val size: Int
         get() = noImpl
-        set(value) = noImpl
-    var type: Int
+    val type: Int
         get() = noImpl
-        set(value) = noImpl
-    var name: String
+    val name: String
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface WebGLShaderPrecisionFormat {
-    var rangeMin: Int
+    val rangeMin: Int
         get() = noImpl
-        set(value) = noImpl
-    var rangeMax: Int
+    val rangeMax: Int
         get() = noImpl
-        set(value) = noImpl
-    var precision: Int
+    val precision: Int
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface WebGLRenderingContext : RenderingContext {
-    var canvas: HTMLCanvasElement
+    val canvas: HTMLCanvasElement
         get() = noImpl
-        set(value) = noImpl
-    var drawingBufferWidth: Int
+    val drawingBufferWidth: Int
         get() = noImpl
-        set(value) = noImpl
-    var drawingBufferHeight: Int
+    val drawingBufferHeight: Int
         get() = noImpl
-        set(value) = noImpl
     fun getContextAttributes(): WebGLContextAttributes? = noImpl
     fun isContextLost(): Boolean = noImpl
-    fun getSupportedExtensions(): Array<dynamic> = noImpl
+    fun getSupportedExtensions(): Array<String>? = noImpl
     fun getExtension(name: String): dynamic = noImpl
     fun activeTexture(texture: Int): Unit = noImpl
     fun attachShader(program: WebGLProgram?, shader: WebGLShader?): Unit = noImpl
@@ -105,9 +112,9 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun blendEquationSeparate(modeRGB: Int, modeAlpha: Int): Unit = noImpl
     fun blendFunc(sfactor: Int, dfactor: Int): Unit = noImpl
     fun blendFuncSeparate(srcRGB: Int, dstRGB: Int, srcAlpha: Int, dstAlpha: Int): Unit = noImpl
-    fun bufferData(target: Int, size: Long, usage: Int): Unit = noImpl
+    fun bufferData(target: Int, size: Int, usage: Int): Unit = noImpl
     fun bufferData(target: Int, data: dynamic, usage: Int): Unit = noImpl
-    fun bufferSubData(target: Int, offset: Long, data: dynamic): Unit = noImpl
+    fun bufferSubData(target: Int, offset: Int, data: dynamic): Unit = noImpl
     fun checkFramebufferStatus(target: Int): Int = noImpl
     fun clear(mask: Int): Unit = noImpl
     fun clearColor(red: Float, green: Float, blue: Float, alpha: Float): Unit = noImpl
@@ -139,7 +146,7 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun disable(cap: Int): Unit = noImpl
     fun disableVertexAttribArray(index: Int): Unit = noImpl
     fun drawArrays(mode: Int, first: Int, count: Int): Unit = noImpl
-    fun drawElements(mode: Int, count: Int, type: Int, offset: Long): Unit = noImpl
+    fun drawElements(mode: Int, count: Int, type: Int, offset: Int): Unit = noImpl
     fun enable(cap: Int): Unit = noImpl
     fun enableVertexAttribArray(index: Int): Unit = noImpl
     fun finish(): Unit = noImpl
@@ -150,7 +157,7 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun generateMipmap(target: Int): Unit = noImpl
     fun getActiveAttrib(program: WebGLProgram?, index: Int): WebGLActiveInfo? = noImpl
     fun getActiveUniform(program: WebGLProgram?, index: Int): WebGLActiveInfo? = noImpl
-    fun getAttachedShaders(program: WebGLProgram?): Array<dynamic> = noImpl
+    fun getAttachedShaders(program: WebGLProgram?): Array<WebGLShader>? = noImpl
     fun getAttribLocation(program: WebGLProgram?, name: String): Int = noImpl
     fun getBufferParameter(target: Int, pname: Int): Any? = noImpl
     fun getParameter(pname: Int): Any? = noImpl
@@ -167,7 +174,7 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun getUniform(program: WebGLProgram?, location: WebGLUniformLocation?): Any? = noImpl
     fun getUniformLocation(program: WebGLProgram?, name: String): WebGLUniformLocation? = noImpl
     fun getVertexAttrib(index: Int, pname: Int): Any? = noImpl
-    fun getVertexAttribOffset(index: Int, pname: Int): Long = noImpl
+    fun getVertexAttribOffset(index: Int, pname: Int): Int = noImpl
     fun hint(target: Int, mode: Int): Unit = noImpl
     fun isBuffer(buffer: WebGLBuffer?): Boolean = noImpl
     fun isEnabled(cap: Int): Boolean = noImpl
@@ -241,7 +248,7 @@ native public interface WebGLRenderingContext : RenderingContext {
     fun vertexAttrib4f(indx: Int, x: Float, y: Float, z: Float, w: Float): Unit = noImpl
     fun vertexAttrib4fv(indx: Int, values: Float32Array): Unit = noImpl
     fun vertexAttrib4fv(indx: Int, values: Array<Float>): Unit = noImpl
-    fun vertexAttribPointer(indx: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Long): Unit = noImpl
+    fun vertexAttribPointer(indx: Int, size: Int, type: Int, normalized: Boolean, stride: Int, offset: Int): Unit = noImpl
     fun viewport(x: Int, y: Int, width: Int, height: Int): Unit = noImpl
 
     companion object {
@@ -546,35 +553,48 @@ native public interface WebGLRenderingContext : RenderingContext {
 }
 
 native public open class WebGLContextEvent(type: String, eventInit: WebGLContextEventInit = noImpl) : Event(type, noImpl) {
-    var statusMessage: String
+    open val statusMessage: String
         get() = noImpl
-        set(value) = noImpl
 }
 
-native public open class WebGLContextEventInit : EventInit() {
+native public interface WebGLContextEventInit : EventInit {
     var statusMessage: String
+}
+
+suppress("NOTHING_TO_INLINE")
+inline fun WebGLContextEventInit(statusMessage: String, bubbles: Boolean = false, cancelable: Boolean = false): WebGLContextEventInit {
+    val o = js("({})")
+
+    o["statusMessage"] = statusMessage
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+
+    return o
 }
 
 native public open class ArrayBuffer(length: Int) : Transferable {
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun slice(begin: Int, end: Int = noImpl): ArrayBuffer = noImpl
+
+    companion object {
+        fun isView(value: Any?): Boolean = noImpl
+    }
 }
 
-native public open class Int8Array(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Int8Array : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Int8Array)
+    constructor(array: Array<Byte>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Byte = noImpl
     fun set(index: Int, value: Byte): Unit = noImpl
     fun set(array: Int8Array, offset: Int = noImpl): Unit = noImpl
@@ -586,19 +606,19 @@ native public open class Int8Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Uint8Array(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Uint8Array : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Uint8Array)
+    constructor(array: Array<Byte>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Byte = noImpl
     fun set(index: Int, value: Byte): Unit = noImpl
     fun set(array: Uint8Array, offset: Int = noImpl): Unit = noImpl
@@ -610,19 +630,19 @@ native public open class Uint8Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Uint8ClampedArray(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Uint8ClampedArray : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Uint8ClampedArray)
+    constructor(array: Array<Byte>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Byte = noImpl
     fun set(index: Int, value: Byte): Unit = noImpl
     fun set(array: Uint8ClampedArray, offset: Int = noImpl): Unit = noImpl
@@ -634,19 +654,19 @@ native public open class Uint8ClampedArray(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Int16Array(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Int16Array : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Int16Array)
+    constructor(array: Array<Short>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Short = noImpl
     fun set(index: Int, value: Short): Unit = noImpl
     fun set(array: Int16Array, offset: Int = noImpl): Unit = noImpl
@@ -658,19 +678,19 @@ native public open class Int16Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Uint16Array(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Uint16Array : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Uint16Array)
+    constructor(array: Array<Short>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Short = noImpl
     fun set(index: Int, value: Short): Unit = noImpl
     fun set(array: Uint16Array, offset: Int = noImpl): Unit = noImpl
@@ -682,19 +702,19 @@ native public open class Uint16Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Int32Array(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Int32Array : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Int32Array)
+    constructor(array: Array<Int>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Int = noImpl
     fun set(index: Int, value: Int): Unit = noImpl
     fun set(array: Int32Array, offset: Int = noImpl): Unit = noImpl
@@ -706,19 +726,19 @@ native public open class Int32Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Uint32Array(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Uint32Array : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Uint32Array)
+    constructor(array: Array<Int>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Int = noImpl
     fun set(index: Int, value: Int): Unit = noImpl
     fun set(array: Uint32Array, offset: Int = noImpl): Unit = noImpl
@@ -730,19 +750,19 @@ native public open class Uint32Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Float32Array(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Float32Array : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Float32Array)
+    constructor(array: Array<Float>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Float = noImpl
     fun set(index: Int, value: Float): Unit = noImpl
     fun set(array: Float32Array, offset: Int = noImpl): Unit = noImpl
@@ -754,19 +774,19 @@ native public open class Float32Array(length: Int) : ArrayBufferView {
     }
 }
 
-native public open class Float64Array(length: Int) : ArrayBufferView {
-    var length: Int
+native public open class Float64Array : ArrayBufferView {
+    constructor(length: Int)
+    constructor(array: Float64Array)
+    constructor(array: Array<Double>)
+    constructor(buffer: ArrayBuffer, byteOffset: Int = noImpl, length: Int = noImpl)
+    open val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun get(index: Int): Double = noImpl
     fun set(index: Int, value: Double): Unit = noImpl
     fun set(array: Float64Array, offset: Int = noImpl): Unit = noImpl
@@ -779,15 +799,12 @@ native public open class Float64Array(length: Int) : ArrayBufferView {
 }
 
 native public open class DataView(buffer: ArrayBuffer, byteOffset: Int = noImpl, byteLength: Int = noImpl) : ArrayBufferView {
-    var buffer: ArrayBuffer
+    open val buffer: ArrayBuffer
         get() = noImpl
-        set(value) = noImpl
-    var byteOffset: Int
+    open val byteOffset: Int
         get() = noImpl
-        set(value) = noImpl
-    var byteLength: Int
+    open val byteLength: Int
         get() = noImpl
-        set(value) = noImpl
     fun getInt8(byteOffset: Int): Byte = noImpl
     fun getUint8(byteOffset: Int): Byte = noImpl
     fun getInt16(byteOffset: Int, littleEndian: Boolean = noImpl): Short = noImpl

@@ -1,6 +1,8 @@
 JetFile: EnumShortNoCommas.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   CLASS
     PsiComment(EOL_COMMENT)('// NB: this test uses deprecated syntax')
     PsiWhiteSpace('\n')

@@ -3,6 +3,7 @@ PsiJetFileStubImpl[package=test.a]
     DOT_QUALIFIED_EXPRESSION:
       REFERENCE_EXPRESSION:[referencedName=test]
       REFERENCE_EXPRESSION:[referencedName=a]
+  IMPORT_LIST:
   CLASS:[fqName=test.a.AnnotationClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationClass, superNames=[Annotation]]
     MODIFIER_LIST:[annotation public final]
     PRIMARY_CONSTRUCTOR:

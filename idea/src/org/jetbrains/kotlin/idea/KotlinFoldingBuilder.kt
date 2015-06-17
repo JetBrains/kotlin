@@ -23,7 +23,6 @@ import com.intellij.lang.folding.FoldingDescriptor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.JetNodeTypes
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.psi.JetFunctionLiteral
 import org.jetbrains.kotlin.psi.JetImportList
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -126,12 +126,11 @@ public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
     private fun isFirstElementInFile(element: PsiElement): Boolean {
         val parent = element.getParent()
         if (parent is JetFile) {
-            var firstChild = parent.getFirstChild()
-            if (firstChild is PsiWhiteSpace) {
-                firstChild = firstChild.getNextSibling()
+            val firstNonWhiteSpace = parent.allChildren.firstOrNull {
+                it.getTextLength() != 0 && it !is PsiWhiteSpace
             }
 
-            return element == firstChild
+            return element == firstNonWhiteSpace
         }
 
         return false

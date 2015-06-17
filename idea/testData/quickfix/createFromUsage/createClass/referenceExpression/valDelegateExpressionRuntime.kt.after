@@ -1,7 +1,7 @@
+import kotlin.properties.ReadOnlyProperty
+
 // "Create object 'Foo'" "true"
 // DISABLE-ERRORS
-
-import kotlin.properties.ReadOnlyProperty
 
 open class B
 
