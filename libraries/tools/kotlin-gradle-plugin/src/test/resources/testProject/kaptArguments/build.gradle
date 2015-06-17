@@ -36,5 +36,7 @@ task wrapper(type: Wrapper) {
 
 kapt {
     generateStubs = true
-    arg("suffix", "Customized")
+    arguments {
+        arg("suffix", "Customized")
+    }
 }
