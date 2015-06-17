@@ -414,14 +414,14 @@ class DefinitionVisitor(val extendedAttributes: List<ExtendedAttribute>, val nam
     }
 
     override fun visitReadOnly(ctx: WebIDLParser.ReadOnlyContext): Definition {
-        readOnly = true
-        visitChildren(ctx)
-        readOnly = false
-
-        return defaultResult()
+        return visitReadOnlyImpl(ctx)
     }
 
-    override fun visitReadonlyMemberRest(ctx: ReadonlyMemberRestContext?): Definition? {
+    override fun visitReadonlyMemberRest(ctx: ReadonlyMemberRestContext): Definition? {
+        return visitReadOnlyImpl(ctx)
+    }
+
+    private fun visitReadOnlyImpl(ctx: ParserRuleContext): Definition {
         readOnly = true
         visitChildren(ctx)
         readOnly = false

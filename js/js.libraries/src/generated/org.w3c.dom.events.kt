@@ -126,13 +126,14 @@ native public interface UIEventInit : EventInit {
     var detail: Int
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun UIEventInit(view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): UIEventInit {
-    val o = js("({})") as UIEventInit
+    val o = js("({})")
 
-    o.`view` = view
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -147,14 +148,15 @@ native public interface FocusEventInit : UIEventInit {
     var relatedTarget: EventTarget?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): FocusEventInit {
-    val o = js("({})") as FocusEventInit
+    val o = js("({})")
 
-    o.`relatedTarget` = relatedTarget
-    o.`view` = view
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["relatedTarget"] = relatedTarget
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -169,35 +171,36 @@ native public interface MouseEventInit : EventModifierInit {
     var relatedTarget: EventTarget?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun MouseEventInit(screenX: Int = 0, screenY: Int = 0, clientX: Int = 0, clientY: Int = 0, button: Short = 0, buttons: Short = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): MouseEventInit {
-    val o = js("({})") as MouseEventInit
+    val o = js("({})")
 
-    o.`screenX` = screenX
-    o.`screenY` = screenY
-    o.`clientX` = clientX
-    o.`clientY` = clientY
-    o.`button` = button
-    o.`buttons` = buttons
-    o.`relatedTarget` = relatedTarget
-    o.`ctrlKey` = ctrlKey
-    o.`shiftKey` = shiftKey
-    o.`altKey` = altKey
-    o.`metaKey` = metaKey
-    o.`modifierAltGraph` = modifierAltGraph
-    o.`modifierCapsLock` = modifierCapsLock
-    o.`modifierFn` = modifierFn
-    o.`modifierFnLock` = modifierFnLock
-    o.`modifierHyper` = modifierHyper
-    o.`modifierNumLock` = modifierNumLock
-    o.`modifierOS` = modifierOS
-    o.`modifierScrollLock` = modifierScrollLock
-    o.`modifierSuper` = modifierSuper
-    o.`modifierSymbol` = modifierSymbol
-    o.`modifierSymbolLock` = modifierSymbolLock
-    o.`view` = view
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["screenX"] = screenX
+    o["screenY"] = screenY
+    o["clientX"] = clientX
+    o["clientY"] = clientY
+    o["button"] = button
+    o["buttons"] = buttons
+    o["relatedTarget"] = relatedTarget
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierOS"] = modifierOS
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -220,28 +223,29 @@ native public interface EventModifierInit : UIEventInit {
     var modifierSymbolLock: Boolean
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun EventModifierInit(ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): EventModifierInit {
-    val o = js("({})") as EventModifierInit
+    val o = js("({})")
 
-    o.`ctrlKey` = ctrlKey
-    o.`shiftKey` = shiftKey
-    o.`altKey` = altKey
-    o.`metaKey` = metaKey
-    o.`modifierAltGraph` = modifierAltGraph
-    o.`modifierCapsLock` = modifierCapsLock
-    o.`modifierFn` = modifierFn
-    o.`modifierFnLock` = modifierFnLock
-    o.`modifierHyper` = modifierHyper
-    o.`modifierNumLock` = modifierNumLock
-    o.`modifierOS` = modifierOS
-    o.`modifierScrollLock` = modifierScrollLock
-    o.`modifierSuper` = modifierSuper
-    o.`modifierSymbol` = modifierSymbol
-    o.`modifierSymbolLock` = modifierSymbolLock
-    o.`view` = view
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierOS"] = modifierOS
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -271,39 +275,40 @@ native public interface WheelEventInit : MouseEventInit {
     var deltaMode: Int
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun WheelEventInit(deltaX: Double = 0.0, deltaY: Double = 0.0, deltaZ: Double = 0.0, deltaMode: Int = 0, screenX: Int = 0, screenY: Int = 0, clientX: Int = 0, clientY: Int = 0, button: Short = 0, buttons: Short = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): WheelEventInit {
-    val o = js("({})") as WheelEventInit
+    val o = js("({})")
 
-    o.`deltaX` = deltaX
-    o.`deltaY` = deltaY
-    o.`deltaZ` = deltaZ
-    o.`deltaMode` = deltaMode
-    o.`screenX` = screenX
-    o.`screenY` = screenY
-    o.`clientX` = clientX
-    o.`clientY` = clientY
-    o.`button` = button
-    o.`buttons` = buttons
-    o.`relatedTarget` = relatedTarget
-    o.`ctrlKey` = ctrlKey
-    o.`shiftKey` = shiftKey
-    o.`altKey` = altKey
-    o.`metaKey` = metaKey
-    o.`modifierAltGraph` = modifierAltGraph
-    o.`modifierCapsLock` = modifierCapsLock
-    o.`modifierFn` = modifierFn
-    o.`modifierFnLock` = modifierFnLock
-    o.`modifierHyper` = modifierHyper
-    o.`modifierNumLock` = modifierNumLock
-    o.`modifierOS` = modifierOS
-    o.`modifierScrollLock` = modifierScrollLock
-    o.`modifierSuper` = modifierSuper
-    o.`modifierSymbol` = modifierSymbol
-    o.`modifierSymbolLock` = modifierSymbolLock
-    o.`view` = view
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["deltaX"] = deltaX
+    o["deltaY"] = deltaY
+    o["deltaZ"] = deltaZ
+    o["deltaMode"] = deltaMode
+    o["screenX"] = screenX
+    o["screenY"] = screenY
+    o["clientX"] = clientX
+    o["clientY"] = clientY
+    o["button"] = button
+    o["buttons"] = buttons
+    o["relatedTarget"] = relatedTarget
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierOS"] = modifierOS
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -352,33 +357,34 @@ native public interface KeyboardEventInit : EventModifierInit {
     var isComposing: Boolean
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun KeyboardEventInit(key: String = "", code: String = "", location: Int = 0, repeat: Boolean = false, isComposing: Boolean = false, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): KeyboardEventInit {
-    val o = js("({})") as KeyboardEventInit
+    val o = js("({})")
 
-    o.`key` = key
-    o.`code` = code
-    o.`location` = location
-    o.`repeat` = repeat
-    o.`isComposing` = isComposing
-    o.`ctrlKey` = ctrlKey
-    o.`shiftKey` = shiftKey
-    o.`altKey` = altKey
-    o.`metaKey` = metaKey
-    o.`modifierAltGraph` = modifierAltGraph
-    o.`modifierCapsLock` = modifierCapsLock
-    o.`modifierFn` = modifierFn
-    o.`modifierFnLock` = modifierFnLock
-    o.`modifierHyper` = modifierHyper
-    o.`modifierNumLock` = modifierNumLock
-    o.`modifierOS` = modifierOS
-    o.`modifierScrollLock` = modifierScrollLock
-    o.`modifierSuper` = modifierSuper
-    o.`modifierSymbol` = modifierSymbol
-    o.`modifierSymbolLock` = modifierSymbolLock
-    o.`view` = view
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["key"] = key
+    o["code"] = code
+    o["location"] = location
+    o["repeat"] = repeat
+    o["isComposing"] = isComposing
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierOS"] = modifierOS
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -393,14 +399,15 @@ native public interface CompositionEventInit : UIEventInit {
     var data: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun CompositionEventInit(data: String = "", view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): CompositionEventInit {
-    val o = js("({})") as CompositionEventInit
+    val o = js("({})")
 
-    o.`data` = data
-    o.`view` = view
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["data"] = data
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }

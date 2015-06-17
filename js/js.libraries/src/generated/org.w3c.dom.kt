@@ -1621,12 +1621,13 @@ native public interface TrackEventInit : EventInit {
     var track: UnionAudioTrackOrTextTrackOrVideoTrack?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack?, bubbles: Boolean = false, cancelable: Boolean = false): TrackEventInit {
-    val o = js("({})") as TrackEventInit
+    val o = js("({})")
 
-    o.`track` = track
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["track"] = track
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -2467,12 +2468,13 @@ native public interface AutocompleteErrorEventInit : EventInit {
     var reason: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun AutocompleteErrorEventInit(reason: String, bubbles: Boolean = false, cancelable: Boolean = false): AutocompleteErrorEventInit {
-    val o = js("({})") as AutocompleteErrorEventInit
+    val o = js("({})")
 
-    o.`reason` = reason
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["reason"] = reason
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -2555,12 +2557,13 @@ native public interface RelatedEventInit : EventInit {
     var relatedTarget: EventTarget?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun RelatedEventInit(relatedTarget: EventTarget?, bubbles: Boolean = false, cancelable: Boolean = false): RelatedEventInit {
-    val o = js("({})") as RelatedEventInit
+    val o = js("({})")
 
-    o.`relatedTarget` = relatedTarget
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["relatedTarget"] = relatedTarget
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -2635,10 +2638,11 @@ native public interface CanvasRenderingContext2DSettings {
     var alpha: Boolean
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun CanvasRenderingContext2DSettings(alpha: Boolean = true): CanvasRenderingContext2DSettings {
-    val o = js("({})") as CanvasRenderingContext2DSettings
+    val o = js("({})")
 
-    o.`alpha` = alpha
+    o["alpha"] = alpha
 
     return o
 }
@@ -2815,17 +2819,18 @@ native public interface HitRegionOptions {
     var role: String?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun HitRegionOptions(path: Path2D? = null, fillRule: String = "nonzero", id: String = "", parentID: String? = null, cursor: String = "inherit", control: Element? = null, label: String? = null, role: String? = null): HitRegionOptions {
-    val o = js("({})") as HitRegionOptions
+    val o = js("({})")
 
-    o.`path` = path
-    o.`fillRule` = fillRule
-    o.`id` = id
-    o.`parentID` = parentID
-    o.`cursor` = cursor
-    o.`control` = control
-    o.`label` = label
-    o.`role` = role
+    o["path"] = path
+    o["fillRule"] = fillRule
+    o["id"] = id
+    o["parentID"] = parentID
+    o["cursor"] = cursor
+    o["control"] = control
+    o["label"] = label
+    o["role"] = role
 
     return o
 }
@@ -2947,36 +2952,37 @@ native public interface DragEventInit : MouseEventInit {
     var dataTransfer: DataTransfer?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun DragEventInit(dataTransfer: DataTransfer?, screenX: Int = 0, screenY: Int = 0, clientX: Int = 0, clientY: Int = 0, button: Short = 0, buttons: Short = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): DragEventInit {
-    val o = js("({})") as DragEventInit
+    val o = js("({})")
 
-    o.`dataTransfer` = dataTransfer
-    o.`screenX` = screenX
-    o.`screenY` = screenY
-    o.`clientX` = clientX
-    o.`clientY` = clientY
-    o.`button` = button
-    o.`buttons` = buttons
-    o.`relatedTarget` = relatedTarget
-    o.`ctrlKey` = ctrlKey
-    o.`shiftKey` = shiftKey
-    o.`altKey` = altKey
-    o.`metaKey` = metaKey
-    o.`modifierAltGraph` = modifierAltGraph
-    o.`modifierCapsLock` = modifierCapsLock
-    o.`modifierFn` = modifierFn
-    o.`modifierFnLock` = modifierFnLock
-    o.`modifierHyper` = modifierHyper
-    o.`modifierNumLock` = modifierNumLock
-    o.`modifierOS` = modifierOS
-    o.`modifierScrollLock` = modifierScrollLock
-    o.`modifierSuper` = modifierSuper
-    o.`modifierSymbol` = modifierSymbol
-    o.`modifierSymbolLock` = modifierSymbolLock
-    o.`view` = view
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["dataTransfer"] = dataTransfer
+    o["screenX"] = screenX
+    o["screenY"] = screenY
+    o["clientX"] = clientX
+    o["clientY"] = clientY
+    o["button"] = button
+    o["buttons"] = buttons
+    o["relatedTarget"] = relatedTarget
+    o["ctrlKey"] = ctrlKey
+    o["shiftKey"] = shiftKey
+    o["altKey"] = altKey
+    o["metaKey"] = metaKey
+    o["modifierAltGraph"] = modifierAltGraph
+    o["modifierCapsLock"] = modifierCapsLock
+    o["modifierFn"] = modifierFn
+    o["modifierFnLock"] = modifierFnLock
+    o["modifierHyper"] = modifierHyper
+    o["modifierNumLock"] = modifierNumLock
+    o["modifierOS"] = modifierOS
+    o["modifierScrollLock"] = modifierScrollLock
+    o["modifierSuper"] = modifierSuper
+    o["modifierSymbol"] = modifierSymbol
+    o["modifierSymbolLock"] = modifierSymbolLock
+    o["view"] = view
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -3402,12 +3408,13 @@ native public interface PopStateEventInit : EventInit {
     var state: Any?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun PopStateEventInit(state: Any?, bubbles: Boolean = false, cancelable: Boolean = false): PopStateEventInit {
-    val o = js("({})") as PopStateEventInit
+    val o = js("({})")
 
-    o.`state` = state
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["state"] = state
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -3424,13 +3431,14 @@ native public interface HashChangeEventInit : EventInit {
     var newURL: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun HashChangeEventInit(oldURL: String, newURL: String, bubbles: Boolean = false, cancelable: Boolean = false): HashChangeEventInit {
-    val o = js("({})") as HashChangeEventInit
+    val o = js("({})")
 
-    o.`oldURL` = oldURL
-    o.`newURL` = newURL
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["oldURL"] = oldURL
+    o["newURL"] = newURL
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -3444,12 +3452,13 @@ native public interface PageTransitionEventInit : EventInit {
     var persisted: Boolean
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun PageTransitionEventInit(persisted: Boolean, bubbles: Boolean = false, cancelable: Boolean = false): PageTransitionEventInit {
-    val o = js("({})") as PageTransitionEventInit
+    val o = js("({})")
 
-    o.`persisted` = persisted
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["persisted"] = persisted
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -3522,16 +3531,17 @@ native public interface ErrorEventInit : EventInit {
     var error: Any?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ErrorEventInit(message: String, filename: String, lineno: Int, colno: Int, error: Any?, bubbles: Boolean = false, cancelable: Boolean = false): ErrorEventInit {
-    val o = js("({})") as ErrorEventInit
+    val o = js("({})")
 
-    o.`message` = message
-    o.`filename` = filename
-    o.`lineno` = lineno
-    o.`colno` = colno
-    o.`error` = error
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["message"] = message
+    o["filename"] = filename
+    o["lineno"] = lineno
+    o["colno"] = colno
+    o["error"] = error
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -3657,16 +3667,17 @@ native public interface MessageEventInit : EventInit {
     var ports: Array<MessagePort>
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun MessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionMessagePortOrWindow?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): MessageEventInit {
-    val o = js("({})") as MessageEventInit
+    val o = js("({})")
 
-    o.`data` = data
-    o.`origin` = origin
-    o.`lastEventId` = lastEventId
-    o.`source` = source
-    o.`ports` = ports
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["data"] = data
+    o["origin"] = origin
+    o["lastEventId"] = lastEventId
+    o["source"] = source
+    o["ports"] = ports
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -3700,10 +3711,11 @@ native public interface EventSourceInit {
     var withCredentials: Boolean
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun EventSourceInit(withCredentials: Boolean = false): EventSourceInit {
-    val o = js("({})") as EventSourceInit
+    val o = js("({})")
 
-    o.`withCredentials` = withCredentials
+    o["withCredentials"] = withCredentials
 
     return o
 }
@@ -3763,14 +3775,15 @@ native public interface CloseEventInit : EventInit {
     var reason: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun CloseEventInit(wasClean: Boolean, code: Short, reason: String, bubbles: Boolean = false, cancelable: Boolean = false): CloseEventInit {
-    val o = js("({})") as CloseEventInit
+    val o = js("({})")
 
-    o.`wasClean` = wasClean
-    o.`code` = code
-    o.`reason` = reason
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["wasClean"] = wasClean
+    o["code"] = code
+    o["reason"] = reason
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -3961,16 +3974,17 @@ native public interface StorageEventInit : EventInit {
     var storageArea: Storage?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun StorageEventInit(key: String?, oldValue: String?, newValue: String?, url: String, storageArea: Storage?, bubbles: Boolean = false, cancelable: Boolean = false): StorageEventInit {
-    val o = js("({})") as StorageEventInit
+    val o = js("({})")
 
-    o.`key` = key
-    o.`oldValue` = oldValue
-    o.`newValue` = newValue
-    o.`url` = url
-    o.`storageArea` = storageArea
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["key"] = key
+    o["oldValue"] = oldValue
+    o["newValue"] = newValue
+    o["url"] = url
+    o["storageArea"] = storageArea
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -4226,11 +4240,12 @@ native public interface EventInit {
     var cancelable: Boolean
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun EventInit(bubbles: Boolean = false, cancelable: Boolean = false): EventInit {
-    val o = js("({})") as EventInit
+    val o = js("({})")
 
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -4245,12 +4260,13 @@ native public interface CustomEventInit : EventInit {
     var detail: Any?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun CustomEventInit(detail: Any? = null, bubbles: Boolean = false, cancelable: Boolean = false): CustomEventInit {
-    val o = js("({})") as CustomEventInit
+    val o = js("({})")
 
-    o.`detail` = detail
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["detail"] = detail
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -4287,16 +4303,17 @@ native public interface MutationObserverInit {
     var attributeFilter: Array<String>
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun MutationObserverInit(childList: Boolean = false, attributes: Boolean, characterData: Boolean, subtree: Boolean = false, attributeOldValue: Boolean, characterDataOldValue: Boolean, attributeFilter: Array<String>): MutationObserverInit {
-    val o = js("({})") as MutationObserverInit
+    val o = js("({})")
 
-    o.`childList` = childList
-    o.`attributes` = attributes
-    o.`characterData` = characterData
-    o.`subtree` = subtree
-    o.`attributeOldValue` = attributeOldValue
-    o.`characterDataOldValue` = characterDataOldValue
-    o.`attributeFilter` = attributeFilter
+    o["childList"] = childList
+    o["attributes"] = attributes
+    o["characterData"] = characterData
+    o["subtree"] = subtree
+    o["attributeOldValue"] = attributeOldValue
+    o["characterDataOldValue"] = characterDataOldValue
+    o["attributeFilter"] = attributeFilter
 
     return o
 }
@@ -4766,13 +4783,14 @@ native public interface EditingBeforeInputEventInit : EventInit {
     var value: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun EditingBeforeInputEventInit(command: String, value: String, bubbles: Boolean = false, cancelable: Boolean = false): EditingBeforeInputEventInit {
-    val o = js("({})") as EditingBeforeInputEventInit
+    val o = js("({})")
 
-    o.`command` = command
-    o.`value` = value
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["command"] = command
+    o["value"] = value
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -4789,13 +4807,14 @@ native public interface EditingInputEventInit : EventInit {
     var value: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun EditingInputEventInit(command: String, value: String, bubbles: Boolean = false, cancelable: Boolean = false): EditingInputEventInit {
-    val o = js("({})") as EditingInputEventInit
+    val o = js("({})")
 
-    o.`command` = command
-    o.`value` = value
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["command"] = command
+    o["value"] = value
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }
@@ -4836,13 +4855,14 @@ native public interface DOMPointInit {
     var w: Double
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun DOMPointInit(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0, w: Double = 1.0): DOMPointInit {
-    val o = js("({})") as DOMPointInit
+    val o = js("({})")
 
-    o.`x` = x
-    o.`y` = y
-    o.`z` = z
-    o.`w` = w
+    o["x"] = x
+    o["y"] = y
+    o["z"] = z
+    o["w"] = w
 
     return o
 }
@@ -4888,13 +4908,14 @@ native public interface DOMRectInit {
     var height: Double
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun DOMRectInit(x: Double = 0.0, y: Double = 0.0, width: Double = 0.0, height: Double = 0.0): DOMRectInit {
-    val o = js("({})") as DOMRectInit
+    val o = js("({})")
 
-    o.`x` = x
-    o.`y` = y
-    o.`width` = width
-    o.`height` = height
+    o["x"] = x
+    o["y"] = y
+    o["width"] = width
+    o["height"] = height
 
     return o
 }
@@ -5072,10 +5093,11 @@ native public interface ScrollOptions {
     var behavior: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ScrollOptions(behavior: String = "auto"): ScrollOptions {
-    val o = js("({})") as ScrollOptions
+    val o = js("({})")
 
-    o.`behavior` = behavior
+    o["behavior"] = behavior
 
     return o
 }
@@ -5116,11 +5138,12 @@ native public interface ScrollOptionsHorizontal : ScrollOptions {
     var x: Double
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ScrollOptionsHorizontal(x: Double, behavior: String = "auto"): ScrollOptionsHorizontal {
-    val o = js("({})") as ScrollOptionsHorizontal
+    val o = js("({})")
 
-    o.`x` = x
-    o.`behavior` = behavior
+    o["x"] = x
+    o["behavior"] = behavior
 
     return o
 }
@@ -5129,11 +5152,12 @@ native public interface ScrollOptionsVertical : ScrollOptions {
     var y: Double
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ScrollOptionsVertical(y: Double, behavior: String = "auto"): ScrollOptionsVertical {
-    val o = js("({})") as ScrollOptionsVertical
+    val o = js("({})")
 
-    o.`y` = y
-    o.`behavior` = behavior
+    o["y"] = y
+    o["behavior"] = behavior
 
     return o
 }
@@ -5143,11 +5167,12 @@ native public interface BoxQuadOptions {
     var relativeTo: GeometryNode
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun BoxQuadOptions(box: String = "border", relativeTo: GeometryNode): BoxQuadOptions {
-    val o = js("({})") as BoxQuadOptions
+    val o = js("({})")
 
-    o.`box` = box
-    o.`relativeTo` = relativeTo
+    o["box"] = box
+    o["relativeTo"] = relativeTo
 
     return o
 }
@@ -5157,11 +5182,12 @@ native public interface ConvertCoordinateOptions {
     var toBox: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun ConvertCoordinateOptions(fromBox: String = "border", toBox: String = "border"): ConvertCoordinateOptions {
-    val o = js("({})") as ConvertCoordinateOptions
+    val o = js("({})")
 
-    o.`fromBox` = fromBox
-    o.`toBox` = toBox
+    o["fromBox"] = fromBox
+    o["toBox"] = toBox
 
     return o
 }

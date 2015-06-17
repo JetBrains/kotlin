@@ -76,21 +76,22 @@ native public interface NotificationOptions {
     var data: Any?
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun NotificationOptions(dir: String = "auto", lang: String = "", body: String = "", tag: String = "", icon: String, sound: String, vibrate: dynamic, renotify: Boolean = false, silent: Boolean = false, noscreen: Boolean = false, sticky: Boolean = false, data: Any? = null): NotificationOptions {
-    val o = js("({})") as NotificationOptions
+    val o = js("({})")
 
-    o.`dir` = dir
-    o.`lang` = lang
-    o.`body` = body
-    o.`tag` = tag
-    o.`icon` = icon
-    o.`sound` = sound
-    o.`vibrate` = vibrate
-    o.`renotify` = renotify
-    o.`silent` = silent
-    o.`noscreen` = noscreen
-    o.`sticky` = sticky
-    o.`data` = data
+    o["dir"] = dir
+    o["lang"] = lang
+    o["body"] = body
+    o["tag"] = tag
+    o["icon"] = icon
+    o["sound"] = sound
+    o["vibrate"] = vibrate
+    o["renotify"] = renotify
+    o["silent"] = silent
+    o["noscreen"] = noscreen
+    o["sticky"] = sticky
+    o["data"] = data
 
     return o
 }
@@ -99,10 +100,11 @@ native public interface GetNotificationOptions {
     var tag: String
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun GetNotificationOptions(tag: String = ""): GetNotificationOptions {
-    val o = js("({})") as GetNotificationOptions
+    val o = js("({})")
 
-    o.`tag` = tag
+    o["tag"] = tag
 
     return o
 }
@@ -116,12 +118,13 @@ native public interface NotificationEventInit : ExtendableEventInit {
     var notification: Notification
 }
 
+suppress("NOTHING_TO_INLINE")
 inline fun NotificationEventInit(notification: Notification, bubbles: Boolean = false, cancelable: Boolean = false): NotificationEventInit {
-    val o = js("({})") as NotificationEventInit
+    val o = js("({})")
 
-    o.`notification` = notification
-    o.`bubbles` = bubbles
-    o.`cancelable` = cancelable
+    o["notification"] = notification
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
 
     return o
 }

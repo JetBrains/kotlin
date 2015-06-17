@@ -20,8 +20,8 @@ import java.util.*
 
 private val typeMapper = mapOf(
         "unsignedlong" to SimpleType("Int", false),
-        "unsignedlonglong" to SimpleType("Long", false),
-        "longlong" to SimpleType("Long", false),
+        "unsignedlonglong" to SimpleType("Int", false),
+        "longlong" to SimpleType("Int", false),
         "unsignedshort" to SimpleType("Short", false),
         "unsignedbyte" to SimpleType("Byte", false),
         "octet" to SimpleType("Byte", false),
