@@ -132,6 +132,6 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
 
     @Override
     public void reportSignatureErrors(@NotNull CallableMemberDescriptor descriptor, @NotNull List<String> signatureErrors) {
-        trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor, signatureErrors);
+        trace.record(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor.getOriginal(), signatureErrors);
     }
 }

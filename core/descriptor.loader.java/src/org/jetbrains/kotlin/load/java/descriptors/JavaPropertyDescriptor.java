@@ -33,9 +33,10 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
             @NotNull Visibility visibility,
             boolean isVar,
             @NotNull Name name,
-            @NotNull SourceElement source
+            @NotNull SourceElement source,
+            @Nullable PropertyDescriptor original
     ) {
-        super(containingDeclaration, null, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION, source);
+        super(containingDeclaration, original, annotations, Modality.FINAL, visibility, isVar, name, Kind.DECLARATION, source);
     }
 
     @Override
@@ -56,7 +57,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                 getVisibility(),
                 isVar(),
                 getName(),
-                getSource()
+                getSource(),
+                getOriginal()
         );
         assert getGetter() == null : "Field must not have a getter: " + this;
         assert getSetter() == null : "Field must not have a setter: " + this;

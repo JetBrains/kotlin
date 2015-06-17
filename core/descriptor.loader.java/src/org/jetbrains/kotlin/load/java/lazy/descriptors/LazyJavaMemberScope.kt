@@ -276,7 +276,7 @@ public abstract class LazyJavaMemberScope(
         val propertyName = field.getName()
 
         return JavaPropertyDescriptor(containingDeclaration, annotations, visibility, isVar, propertyName,
-                                      c.sourceElementFactory.source(field))
+                                      c.sourceElementFactory.source(field), /* original = */ null)
     }
 
     private fun getPropertyType(field: JavaField, annotations: Annotations): JetType {

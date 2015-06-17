@@ -90,7 +90,7 @@ public class ExpectedLoadErrorsUtil {
                 //noinspection ConstantConditions
                 List<String> errors = Arrays.asList(error.split("\\|"));
 
-                map.put(descriptor, errors);
+                map.put(descriptor.getOriginal(), errors);
 
                 return null;
             }
@@ -113,7 +113,7 @@ public class ExpectedLoadErrorsUtil {
         Collection<DeclarationDescriptor> descriptors = bindingContext.getKeys(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS);
         for (DeclarationDescriptor descriptor : descriptors) {
             List<String> errors = bindingContext.get(JavaBindingContext.LOAD_FROM_JAVA_SIGNATURE_ERRORS, descriptor);
-            result.put(descriptor, errors);
+            result.put(descriptor.getOriginal(), errors);
         }
 
         return result;

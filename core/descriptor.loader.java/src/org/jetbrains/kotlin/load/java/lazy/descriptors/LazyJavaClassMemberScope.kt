@@ -104,7 +104,7 @@ public class LazyJavaClassMemberScope(
 
         val propertyDescriptor = JavaPropertyDescriptor(
                 getContainingDeclaration(), annotations, method.getVisibility(),
-                /* isVar = */ false, method.getName(), c.sourceElementFactory.source(method)
+                /* isVar = */ false, method.getName(), c.sourceElementFactory.source(method), /* original */ null
         )
 
         // default getter is necessary because there is no real field in annotation
