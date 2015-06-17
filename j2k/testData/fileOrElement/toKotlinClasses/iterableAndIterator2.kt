@@ -1,11 +1,11 @@
-// ERROR: Null can not be a value of a non-null type kotlin.Iterator<kotlin.String>
-// ERROR: Null can not be a value of a non-null type kotlin.Iterator<kotlin.String>
+// ERROR: Return type of 'iterator' is not a subtype of the return type of the overridden member 'public abstract fun iterator(): kotlin.Iterator<kotlin.String> defined in kotlin.Iterable'
+// ERROR: Return type of 'iterator' is not a subtype of the return type of the overridden member 'public abstract fun iterator(): kotlin.Iterator<kotlin.String> defined in kotlin.Iterable'
 package demo
 
 import java.util.*
 
 class Test : Iterable<String> {
-    override fun iterator(): Iterator<String> {
+    override fun iterator(): Iterator<String>? {
         return null
     }
 
@@ -16,7 +16,7 @@ class Test : Iterable<String> {
 }
 
 class FullTest : Iterable<String> {
-    override fun iterator(): Iterator<String> {
+    override fun iterator(): Iterator<String>? {
         return null
     }
 
