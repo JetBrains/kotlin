@@ -1,5 +1,6 @@
 package org.jetbrains.idl2k
 
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ
 import java.util.*
 
 private fun Operation.getterOrSetter() = this.attributes.map { it.call }.toSet().let { attributes ->
@@ -22,7 +23,7 @@ fun generateFunction(repository: Repository, function: Operation, functionName: 
                                 initializer = it.defaultValue,
                                 getterSetterNoImpl = false,
                                 override = false,
-                                readOnly = true,
+                                kind = AttributeKind.ARGUMENT,
                                 vararg = it.vararg,
                                 static = it.static
                         )
@@ -66,7 +67,7 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
                 type = mapType(repository, attribute.type),
                 initializer = attribute.defaultValue,
                 getterSetterNoImpl = putNoImpl,
-                readOnly = attribute.readOnly,
+                kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
                 override = false,
                 vararg = attribute.vararg,
                 static = attribute.static
@@ -74,7 +75,7 @@ fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Att
 
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
 private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructors: List<ExtendedAttribute> = iface.findConstructors()): GenerateDefinitionKind =
-        if (iface.dictionary || constructors.isNotEmpty() || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }) {
+        if (constructors.isNotEmpty() || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS }) {
             GenerateDefinitionKind.CLASS
         } else {
             GenerateDefinitionKind.TRAIT
@@ -82,7 +83,7 @@ private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefini
 
 private fun InterfaceDefinition.mapAttributes(repository: Repository) = attributes.map { generateAttribute(!dictionary, repository, it) }
 private fun InterfaceDefinition.mapOperations(repository: Repository) = operations.flatMap { generateFunctions(repository, it) }
-private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), value, false, true, false, false, true)
+private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), value, false, AttributeKind.VAL, false, false, true)
 private val EMPTY_CONSTRUCTOR = ExtendedAttribute(null, "Constructor", emptyList())
 
 fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {
@@ -132,7 +133,8 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
             memberFunctions = (iface.mapOperations(repository) + extensions.flatMap { it.mapOperations(repository) }).distinct().toList(),
             constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
             primaryConstructor = primaryConstructorWithCall,
-            secondaryConstructors = secondaryConstructorsWithCall
+            secondaryConstructors = secondaryConstructorsWithCall,
+            generateBuilderFunction = iface.dictionary
     )
 }
 
@@ -161,7 +163,8 @@ fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
         memberFunctions = emptyList(),
         constants = emptyList(),
         primaryConstructor = null,
-        secondaryConstructors = emptyList()
+        secondaryConstructors = emptyList(),
+        generateBuilderFunction = false
 )
 
 fun generateUnionTypeTraits(allUnionTypes: Sequence<UnionType>): Sequence<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)

@@ -121,9 +121,20 @@ native public open class UIEvent(type: String, eventInitDict: UIEventInit = noIm
     fun initUIEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int): Unit = noImpl
 }
 
-native public open class UIEventInit : EventInit() {
-    var view: Window? = null
-    var detail: Int = 0
+native public interface UIEventInit : EventInit {
+    var view: Window?
+    var detail: Int
+}
+
+inline fun UIEventInit(view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): UIEventInit {
+    val o = js("({})") as UIEventInit
+
+    o.`view` = view
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class FocusEvent(typeArg: String, focusEventInitDict: FocusEventInit = noImpl) : UIEvent(noImpl, noImpl) {
@@ -132,36 +143,107 @@ native public open class FocusEvent(typeArg: String, focusEventInitDict: FocusEv
     fun initFocusEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, relatedTargetArg: EventTarget?): Unit = noImpl
 }
 
-native public open class FocusEventInit : UIEventInit() {
-    var relatedTarget: EventTarget? = null
+native public interface FocusEventInit : UIEventInit {
+    var relatedTarget: EventTarget?
 }
 
-native public open class MouseEventInit : EventModifierInit() {
-    var screenX: Int = 0
-    var screenY: Int = 0
-    var clientX: Int = 0
-    var clientY: Int = 0
-    var button: Short = 0
-    var buttons: Short = 0
-    var relatedTarget: EventTarget? = null
+inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): FocusEventInit {
+    val o = js("({})") as FocusEventInit
+
+    o.`relatedTarget` = relatedTarget
+    o.`view` = view
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
-native public open class EventModifierInit : UIEventInit() {
-    var ctrlKey: Boolean = false
-    var shiftKey: Boolean = false
-    var altKey: Boolean = false
-    var metaKey: Boolean = false
-    var modifierAltGraph: Boolean = false
-    var modifierCapsLock: Boolean = false
-    var modifierFn: Boolean = false
-    var modifierFnLock: Boolean = false
-    var modifierHyper: Boolean = false
-    var modifierNumLock: Boolean = false
-    var modifierOS: Boolean = false
-    var modifierScrollLock: Boolean = false
-    var modifierSuper: Boolean = false
-    var modifierSymbol: Boolean = false
-    var modifierSymbolLock: Boolean = false
+native public interface MouseEventInit : EventModifierInit {
+    var screenX: Int
+    var screenY: Int
+    var clientX: Int
+    var clientY: Int
+    var button: Short
+    var buttons: Short
+    var relatedTarget: EventTarget?
+}
+
+inline fun MouseEventInit(screenX: Int = 0, screenY: Int = 0, clientX: Int = 0, clientY: Int = 0, button: Short = 0, buttons: Short = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): MouseEventInit {
+    val o = js("({})") as MouseEventInit
+
+    o.`screenX` = screenX
+    o.`screenY` = screenY
+    o.`clientX` = clientX
+    o.`clientY` = clientY
+    o.`button` = button
+    o.`buttons` = buttons
+    o.`relatedTarget` = relatedTarget
+    o.`ctrlKey` = ctrlKey
+    o.`shiftKey` = shiftKey
+    o.`altKey` = altKey
+    o.`metaKey` = metaKey
+    o.`modifierAltGraph` = modifierAltGraph
+    o.`modifierCapsLock` = modifierCapsLock
+    o.`modifierFn` = modifierFn
+    o.`modifierFnLock` = modifierFnLock
+    o.`modifierHyper` = modifierHyper
+    o.`modifierNumLock` = modifierNumLock
+    o.`modifierOS` = modifierOS
+    o.`modifierScrollLock` = modifierScrollLock
+    o.`modifierSuper` = modifierSuper
+    o.`modifierSymbol` = modifierSymbol
+    o.`modifierSymbolLock` = modifierSymbolLock
+    o.`view` = view
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
+}
+
+native public interface EventModifierInit : UIEventInit {
+    var ctrlKey: Boolean
+    var shiftKey: Boolean
+    var altKey: Boolean
+    var metaKey: Boolean
+    var modifierAltGraph: Boolean
+    var modifierCapsLock: Boolean
+    var modifierFn: Boolean
+    var modifierFnLock: Boolean
+    var modifierHyper: Boolean
+    var modifierNumLock: Boolean
+    var modifierOS: Boolean
+    var modifierScrollLock: Boolean
+    var modifierSuper: Boolean
+    var modifierSymbol: Boolean
+    var modifierSymbolLock: Boolean
+}
+
+inline fun EventModifierInit(ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): EventModifierInit {
+    val o = js("({})") as EventModifierInit
+
+    o.`ctrlKey` = ctrlKey
+    o.`shiftKey` = shiftKey
+    o.`altKey` = altKey
+    o.`metaKey` = metaKey
+    o.`modifierAltGraph` = modifierAltGraph
+    o.`modifierCapsLock` = modifierCapsLock
+    o.`modifierFn` = modifierFn
+    o.`modifierFnLock` = modifierFnLock
+    o.`modifierHyper` = modifierHyper
+    o.`modifierNumLock` = modifierNumLock
+    o.`modifierOS` = modifierOS
+    o.`modifierScrollLock` = modifierScrollLock
+    o.`modifierSuper` = modifierSuper
+    o.`modifierSymbol` = modifierSymbol
+    o.`modifierSymbolLock` = modifierSymbolLock
+    o.`view` = view
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class WheelEvent(typeArg: String, wheelEventInitDict: WheelEventInit = noImpl) : MouseEvent(typeArg, noImpl) {
@@ -182,11 +264,48 @@ native public open class WheelEvent(typeArg: String, wheelEventInitDict: WheelEv
     }
 }
 
-native public open class WheelEventInit : MouseEventInit() {
-    var deltaX: Double = 0.0
-    var deltaY: Double = 0.0
-    var deltaZ: Double = 0.0
-    var deltaMode: Int = 0
+native public interface WheelEventInit : MouseEventInit {
+    var deltaX: Double
+    var deltaY: Double
+    var deltaZ: Double
+    var deltaMode: Int
+}
+
+inline fun WheelEventInit(deltaX: Double = 0.0, deltaY: Double = 0.0, deltaZ: Double = 0.0, deltaMode: Int = 0, screenX: Int = 0, screenY: Int = 0, clientX: Int = 0, clientY: Int = 0, button: Short = 0, buttons: Short = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): WheelEventInit {
+    val o = js("({})") as WheelEventInit
+
+    o.`deltaX` = deltaX
+    o.`deltaY` = deltaY
+    o.`deltaZ` = deltaZ
+    o.`deltaMode` = deltaMode
+    o.`screenX` = screenX
+    o.`screenY` = screenY
+    o.`clientX` = clientX
+    o.`clientY` = clientY
+    o.`button` = button
+    o.`buttons` = buttons
+    o.`relatedTarget` = relatedTarget
+    o.`ctrlKey` = ctrlKey
+    o.`shiftKey` = shiftKey
+    o.`altKey` = altKey
+    o.`metaKey` = metaKey
+    o.`modifierAltGraph` = modifierAltGraph
+    o.`modifierCapsLock` = modifierCapsLock
+    o.`modifierFn` = modifierFn
+    o.`modifierFnLock` = modifierFnLock
+    o.`modifierHyper` = modifierHyper
+    o.`modifierNumLock` = modifierNumLock
+    o.`modifierOS` = modifierOS
+    o.`modifierScrollLock` = modifierScrollLock
+    o.`modifierSuper` = modifierSuper
+    o.`modifierSymbol` = modifierSymbol
+    o.`modifierSymbolLock` = modifierSymbolLock
+    o.`view` = view
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class KeyboardEvent(typeArg: String, keyboardEventInitDict: KeyboardEventInit = noImpl) : UIEvent(noImpl, noImpl) {
@@ -225,12 +344,43 @@ native public open class KeyboardEvent(typeArg: String, keyboardEventInitDict: K
     }
 }
 
-native public open class KeyboardEventInit : EventModifierInit() {
-    var key: String = ""
-    var code: String = ""
-    var location: Int = 0
-    var repeat: Boolean = false
-    var isComposing: Boolean = false
+native public interface KeyboardEventInit : EventModifierInit {
+    var key: String
+    var code: String
+    var location: Int
+    var repeat: Boolean
+    var isComposing: Boolean
+}
+
+inline fun KeyboardEventInit(key: String = "", code: String = "", location: Int = 0, repeat: Boolean = false, isComposing: Boolean = false, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): KeyboardEventInit {
+    val o = js("({})") as KeyboardEventInit
+
+    o.`key` = key
+    o.`code` = code
+    o.`location` = location
+    o.`repeat` = repeat
+    o.`isComposing` = isComposing
+    o.`ctrlKey` = ctrlKey
+    o.`shiftKey` = shiftKey
+    o.`altKey` = altKey
+    o.`metaKey` = metaKey
+    o.`modifierAltGraph` = modifierAltGraph
+    o.`modifierCapsLock` = modifierCapsLock
+    o.`modifierFn` = modifierFn
+    o.`modifierFnLock` = modifierFnLock
+    o.`modifierHyper` = modifierHyper
+    o.`modifierNumLock` = modifierNumLock
+    o.`modifierOS` = modifierOS
+    o.`modifierScrollLock` = modifierScrollLock
+    o.`modifierSuper` = modifierSuper
+    o.`modifierSymbol` = modifierSymbol
+    o.`modifierSymbolLock` = modifierSymbolLock
+    o.`view` = view
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class CompositionEvent(typeArg: String, compositionEventInitDict: CompositionEventInit = noImpl) : UIEvent(noImpl, noImpl) {
@@ -239,8 +389,20 @@ native public open class CompositionEvent(typeArg: String, compositionEventInitD
     fun initCompositionEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, dataArg: String, locale: String): Unit = noImpl
 }
 
-native public open class CompositionEventInit : UIEventInit() {
-    var data: String = ""
+native public interface CompositionEventInit : UIEventInit {
+    var data: String
+}
+
+inline fun CompositionEventInit(data: String = "", view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): CompositionEventInit {
+    val o = js("({})") as CompositionEventInit
+
+    o.`data` = data
+    o.`view` = view
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class MutationEvent : Event(noImpl, noImpl) {

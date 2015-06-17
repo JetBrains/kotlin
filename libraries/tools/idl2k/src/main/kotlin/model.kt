@@ -25,12 +25,19 @@ data class Repository(
         val enums: Map<String, EnumDefinition>
 )
 
-data class GenerateAttribute(val name: String, val type: Type, val initializer: String?, val getterSetterNoImpl: Boolean, val readOnly: Boolean, val override: Boolean, var vararg: Boolean, val static: Boolean)
+enum class AttributeKind {
+    VAL, VAR, ARGUMENT
+}
+data class GenerateAttribute(val name: String, val type: Type, val initializer: String?, val getterSetterNoImpl: Boolean, val kind: AttributeKind, val override: Boolean, var vararg: Boolean, val static: Boolean)
 
 val GenerateAttribute.getterNoImpl: Boolean
     get() = getterSetterNoImpl
 val GenerateAttribute.setterNoImpl: Boolean
-    get() = getterSetterNoImpl && !readOnly
+    get() = getterSetterNoImpl && kind == AttributeKind.VAR
+val GenerateAttribute.isVal: Boolean
+    get() = kind == AttributeKind.VAL
+val GenerateAttribute.isVar: Boolean
+    get() = kind == AttributeKind.VAR
 
 val Type.typeSignature: String
     get() = when {
@@ -74,7 +81,8 @@ data class GenerateTraitOrClass(
         val memberFunctions: List<GenerateFunction>,
         val constants: List<GenerateAttribute>,
         val primaryConstructor: ConstructorWithSuperTypeCall?,
-        val secondaryConstructors: List<ConstructorWithSuperTypeCall>
+        val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
+        val generateBuilderFunction: Boolean
 )
 
 val GenerateFunction.signature: String

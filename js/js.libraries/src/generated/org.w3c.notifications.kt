@@ -61,23 +61,50 @@ native public open class Notification(title: String, options: NotificationOption
     }
 }
 
-native public open class NotificationOptions {
-    var dir: String = "auto"
-    var lang: String = ""
-    var body: String = ""
-    var tag: String = ""
+native public interface NotificationOptions {
+    var dir: String
+    var lang: String
+    var body: String
+    var tag: String
     var icon: String
     var sound: String
     var vibrate: dynamic
-    var renotify: Boolean = false
-    var silent: Boolean = false
-    var noscreen: Boolean = false
-    var sticky: Boolean = false
-    var data: Any? = null
+    var renotify: Boolean
+    var silent: Boolean
+    var noscreen: Boolean
+    var sticky: Boolean
+    var data: Any?
 }
 
-native public open class GetNotificationOptions {
-    var tag: String = ""
+inline fun NotificationOptions(dir: String = "auto", lang: String = "", body: String = "", tag: String = "", icon: String, sound: String, vibrate: dynamic, renotify: Boolean = false, silent: Boolean = false, noscreen: Boolean = false, sticky: Boolean = false, data: Any? = null): NotificationOptions {
+    val o = js("({})") as NotificationOptions
+
+    o.`dir` = dir
+    o.`lang` = lang
+    o.`body` = body
+    o.`tag` = tag
+    o.`icon` = icon
+    o.`sound` = sound
+    o.`vibrate` = vibrate
+    o.`renotify` = renotify
+    o.`silent` = silent
+    o.`noscreen` = noscreen
+    o.`sticky` = sticky
+    o.`data` = data
+
+    return o
+}
+
+native public interface GetNotificationOptions {
+    var tag: String
+}
+
+inline fun GetNotificationOptions(tag: String = ""): GetNotificationOptions {
+    val o = js("({})") as GetNotificationOptions
+
+    o.`tag` = tag
+
+    return o
 }
 
 native public open class NotificationEvent(type: String, eventInitDict: NotificationEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
@@ -85,7 +112,17 @@ native public open class NotificationEvent(type: String, eventInitDict: Notifica
         get() = noImpl
 }
 
-native public open class NotificationEventInit : ExtendableEventInit() {
+native public interface NotificationEventInit : ExtendableEventInit {
     var notification: Notification
+}
+
+inline fun NotificationEventInit(notification: Notification, bubbles: Boolean = false, cancelable: Boolean = false): NotificationEventInit {
+    val o = js("({})") as NotificationEventInit
+
+    o.`notification` = notification
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 

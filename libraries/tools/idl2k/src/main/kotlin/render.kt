@@ -2,7 +2,7 @@ package org.jetbrains.idl2k
 
 import java.math.BigInteger
 
-private fun <O : Appendable> O.indent(commented: Boolean, level: Int) {
+private fun <O : Appendable> O.indent(commented: Boolean = false, level: Int) {
     if (commented) {
         append("//")
     }
@@ -11,23 +11,31 @@ private fun <O : Appendable> O.indent(commented: Boolean, level: Int) {
     }
 }
 
-private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, override: Boolean, open: Boolean, commented: Boolean, level: Int = 1) {
-    indent(commented, level)
-
+private fun Appendable.renderAttributeDeclaration(arg: GenerateAttribute, override: Boolean, open: Boolean, omitDefaults: Boolean = false) {
     when {
         override -> append("override ")
         open -> append("open ")
+        arg.vararg -> append("vararg ")
     }
 
-    append(if (arg.readOnly) "val" else "var")
-    append(" ")
-    append(arg.name)
+    append(when(arg.kind) {
+        AttributeKind.VAL -> "val "
+        AttributeKind.VAR -> "var "
+        AttributeKind.ARGUMENT -> ""
+    })
+    append(arg.name.replaceKeywords())
     append(": ")
     append(arg.type.render())
-    if (arg.initializer != null) {
+    if (arg.initializer != null && !omitDefaults) {
         append(" = ")
         append(arg.initializer.replaceWrongConstants(arg.type))
     }
+}
+
+private fun Appendable.renderAttributeDeclarationAsProperty(arg: GenerateAttribute, override: Boolean, open: Boolean, commented: Boolean, level: Int, omitDefaults: Boolean) {
+    indent(commented, level)
+
+    renderAttributeDeclaration(arg, override, open, omitDefaults)
 
     appendln()
     if (arg.getterNoImpl) {
@@ -50,19 +58,10 @@ private fun String.replaceWrongConstants(type: Type) = when {
 }
 private fun String.replaceKeywords() = if (this in keywords) this + "_" else this
 
-private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>, omitDefaults: Boolean) =
+private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>, omitDefaults: Boolean = false) =
         args.map {
             StringBuilder {
-                if (it.vararg) {
-                    append("vararg ")
-                }
-                append(it.name.replaceKeywords())
-                append(": ")
-                append(it.type.render())
-                if (!omitDefaults && it.initializer != null && it.initializer != "") {
-                    append(" = ")
-                    append(it.initializer.replaceWrongConstants(it.type))
-                }
+                renderAttributeDeclaration(it, it.override, false, omitDefaults)
             }
         }.joinTo(this, ", ", "(", ")")
 
@@ -90,10 +89,6 @@ private fun Appendable.renderFunctionDeclaration(f: GenerateFunction, override: 
 }
 
 private fun List<GenerateAttribute>.hasNoVars() = none { it.isVar }
-private val GenerateAttribute.isVal: Boolean
-    get() = readOnly
-private val GenerateAttribute.isVar: Boolean
-    get() = !readOnly
 
 private fun GenerateAttribute.isCommented(parent: String) = "$parent.$name" in commentOutDeclarations || "$parent.$name: ${type.render()}" in commentOutDeclarations
 private fun GenerateFunction.isCommented(parent: String) =
@@ -154,7 +149,13 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
             .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
             .map { it.dynamicIfUnknownType(allTypes.keySet()) }
             .groupBy { it.signature }.reduceValues().values().forEach { arg ->
-        renderAttributeDeclaration(arg, override = arg.signature in superSignatures, open = iface.kind == GenerateDefinitionKind.CLASS && arg.readOnly, commented = arg.isCommented(iface.name))
+        renderAttributeDeclarationAsProperty(arg,
+                override = arg.signature in superSignatures,
+                open = iface.kind == GenerateDefinitionKind.CLASS && arg.isVal,
+                commented = arg.isCommented(iface.name),
+                omitDefaults = iface.kind == GenerateDefinitionKind.TRAIT,
+                level = 1
+        )
     }
     iface.memberFunctions.filter { it !in superFunctions && !it.static }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
         renderFunctionDeclaration(it.fixRequiredArguments(iface.name), it.signature in superSignatures, commented = it.isCommented(iface.name))
@@ -168,10 +169,10 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         indent(false, 1)
         appendln("companion object {")
         iface.constants.forEach {
-            renderAttributeDeclaration(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
+            renderAttributeDeclarationAsProperty(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name), omitDefaults = false)
         }
         staticAttributes.forEach {
-            renderAttributeDeclaration(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name))
+            renderAttributeDeclarationAsProperty(it, override = false, open = false, level = 2, commented = it.isCommented(iface.name), omitDefaults = false)
         }
         staticFunctions.forEach {
             renderFunctionDeclaration(it.fixRequiredArguments(iface.name), override = false, level = 2, commented = it.isCommented(iface.name))
@@ -179,6 +180,35 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
         indent(false, 1)
         appendln("}")
     }
+
+    appendln("}")
+    appendln()
+
+    if (iface.generateBuilderFunction) {
+        renderBuilderFunction(iface, allSuperTypes, allTypes.keySet())
+    }
+}
+
+fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperTypes: List<GenerateTraitOrClass>, allTypes: Set<String>) {
+    val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes }).distinctBy { it.signature }.map { it.copy(kind = AttributeKind.ARGUMENT) }.dynamicIfUnknownType(allTypes)
+
+    append("inline fun ${dictionary.name}")
+    renderArgumentsDeclaration(fields)
+    appendln(": ${dictionary.name} {")
+
+    indent(level = 1)
+    appendln("val o = js(\"({})\") as ${dictionary.name}")
+    appendln()
+
+    for (field in fields) {
+        indent(level = 1)
+        appendln("o.`${field.name}` = ${field.name.replaceKeywords()}")
+    }
+
+    appendln()
+
+    indent(level = 1)
+    appendln("return o")
 
     appendln("}")
     appendln()
