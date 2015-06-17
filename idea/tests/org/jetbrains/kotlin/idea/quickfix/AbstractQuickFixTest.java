@@ -104,7 +104,6 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             enableInspections(beforeFileName);
 
             doSingleTest(getTestName(false) + ".kt");
-            checkForUnexpectedActions();
             checkForUnexpectedErrors();
         }
         finally {
@@ -120,7 +119,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     private static QuickFixTestCase myWrapper;
 
-    private static void doTestFor(final String testName, final QuickFixTestCase quickFixTestCase) {
+    private void doTestFor(final String testName, final QuickFixTestCase quickFixTestCase) {
         String relativePath = notNull(quickFixTestCase.getBasePath(), "") + "/" + KotlinPackage.decapitalize(testName);
         final String testFullPath = quickFixTestCase.getTestDataPath().replace(File.separatorChar, '/') + relativePath;
         final File testFile = new File(testFullPath);
@@ -132,20 +131,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                     String contents = StringUtil.convertLineSeparators(FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET));
                     quickFixTestCase.configureFromFileText(testFile.getName(), contents);
                     quickFixTestCase.bringRealEditorBack();
-                    Pair<String, Boolean> pair = quickFixTestCase.parseActionHintImpl(quickFixTestCase.getFile(), contents);
-                    String text = pair.getFirst();
-                    boolean actionShouldBeAvailable = pair.getSecond().booleanValue();
 
-                    quickFixTestCase.beforeActionStarted(testName, contents);
+                    checkForUnexpectedActions();
 
-                    try {
-                        myWrapper = quickFixTestCase;
-                        quickFixTestCase.doAction(text, actionShouldBeAvailable, testFullPath, testName);
-                    }
-                    finally {
-                        myWrapper = null;
-                        quickFixTestCase.afterActionCompleted(testName, contents);
-                    }
+                    applyAction(contents, quickFixTestCase, testName, testFullPath);
                 }
                 catch (FileComparisonFailure e) {
                     throw e;
@@ -156,6 +145,23 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                 }
             }
         }, "", "");
+    }
+
+    private static void applyAction(String contents, QuickFixTestCase quickFixTestCase, String testName, String testFullPath) throws Exception {
+        Pair<String, Boolean> pair = quickFixTestCase.parseActionHintImpl(quickFixTestCase.getFile(), contents);
+        String text = pair.getFirst();
+        boolean actionShouldBeAvailable = pair.getSecond().booleanValue();
+
+        quickFixTestCase.beforeActionStarted(testName, contents);
+
+        try {
+            myWrapper = quickFixTestCase;
+            quickFixTestCase.doAction(text, actionShouldBeAvailable, testFullPath, testName);
+        }
+        finally {
+            myWrapper = null;
+            quickFixTestCase.afterActionCompleted(testName, contents);
+        }
     }
 
     @Override

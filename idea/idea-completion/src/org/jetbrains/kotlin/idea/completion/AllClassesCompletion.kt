@@ -46,7 +46,8 @@ class AllClassesCompletion(val parameters: CompletionParameters,
         val filteredBuiltIns = builtIns.filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
         result.addDescriptorElements(filteredBuiltIns, suppressAutoInsertion = true)
 
-        val helper = KotlinIndicesHelper(scope.getProject(), resolutionFacade, bindingContext, scope, moduleDescriptor, visibilityFilter)
+        val project = parameters.getOriginalFile().getProject()
+        val helper = KotlinIndicesHelper(project, resolutionFacade, bindingContext, scope, moduleDescriptor, visibilityFilter)
         result.addDescriptorElements(helper.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter),
                                      suppressAutoInsertion = true)
 

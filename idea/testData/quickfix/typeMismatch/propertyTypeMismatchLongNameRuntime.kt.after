@@ -1,7 +1,7 @@
-// "Change 'f' type to '(Delegates) -> Unit'" "true"
-
 import kotlin.properties.Delegates
 
+// "Change 'f' type to '(Delegates) -> Unit'" "true"
+
 fun foo() {
-    var f: (Delegates) -> Unit = { (x: kotlin.properties.Delegates) ->  }<caret>
+    var f: (Delegates) -> Unit = { (x: kotlin.properties.Delegates) ->  }
 }

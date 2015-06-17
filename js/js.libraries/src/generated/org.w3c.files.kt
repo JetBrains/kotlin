@@ -20,56 +20,67 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class Blob : ImageBitmapSource {
-    var size: Long
+native public open class Blob() : ImageBitmapSource {
+    constructor(blobParts: Array<dynamic>, options: BlobPropertyBag = noImpl) : this()
+    open val size: Int
         get() = noImpl
-        set(value) = noImpl
-    var type: String
+    open val type: String
         get() = noImpl
-        set(value) = noImpl
-    var isClosed: Boolean
+    open val isClosed: Boolean
         get() = noImpl
-        set(value) = noImpl
-    fun slice(start: Long = noImpl, end: Long = noImpl, contentType: String = noImpl): Blob = noImpl
+    fun slice(start: Int = noImpl, end: Int = noImpl, contentType: String = noImpl): Blob = noImpl
     fun close(): Unit = noImpl
 }
 
-native public open class BlobPropertyBag {
-    var type: String = ""
+native public interface BlobPropertyBag {
+    var type: String
+}
+
+suppress("NOTHING_TO_INLINE")
+inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
+    val o = js("({})")
+
+    o["type"] = type
+
+    return o
 }
 
 native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob() {
-    var name: String
+    open val name: String
         get() = noImpl
-        set(value) = noImpl
-    var lastModified: Long
+    open val lastModified: Int
         get() = noImpl
-        set(value) = noImpl
 }
 
-native public open class FilePropertyBag {
-    var type: String = ""
-    var lastModified: Long
+native public interface FilePropertyBag {
+    var type: String
+    var lastModified: Int
+}
+
+suppress("NOTHING_TO_INLINE")
+inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePropertyBag {
+    val o = js("({})")
+
+    o["type"] = type
+    o["lastModified"] = lastModified
+
+    return o
 }
 
 native public interface FileList {
-    var length: Int
+    val length: Int
         get() = noImpl
-        set(value) = noImpl
     fun item(index: Int): File? = noImpl
     nativeGetter fun get(index: Int): File? = noImpl
 }
 
 native public open class FileReader : EventTarget {
-    var readyState: Short
+    open val readyState: Short
         get() = noImpl
-        set(value) = noImpl
-    var result: dynamic
+    open val result: dynamic
         get() = noImpl
-        set(value) = noImpl
-    var error: dynamic
+    open val error: dynamic
         get() = noImpl
-        set(value) = noImpl
     var onloadstart: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl

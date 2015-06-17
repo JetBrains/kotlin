@@ -1,7 +1,7 @@
+import kotlin.properties.ReadWriteProperty
+
 // "Create object 'Foo'" "true"
 // DISABLE-ERRORS
-
-import kotlin.properties.ReadWriteProperty
 
 open class B
 

@@ -1,6 +1,8 @@
 JetFile: FunctionTypes_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   TYPEDEF
     PsiElement(typealias)('typealias')
     PsiWhiteSpace(' ')

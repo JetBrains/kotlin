@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.DelegatingCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
 public class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<JetTypeArgumentList>(RemoveExplicitTypeArgumentsIntention()) {
     override val problemHighlightType: ProblemHighlightType
@@ -39,45 +41,60 @@ public class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<Je
 }
 
 public class RemoveExplicitTypeArgumentsIntention : JetSelfTargetingOffsetIndependentIntention<JetTypeArgumentList>(javaClass(), "Remove explicit type arguments") {
+    companion object {
+        public fun isApplicableTo(element: JetTypeArgumentList, approximateFlexible: Boolean): Boolean {
+            val callExpression = element.getParent() as? JetCallExpression ?: return false
+            if (callExpression.getTypeArguments().isEmpty()) return false
+
+            val context = callExpression.analyze(BodyResolveMode.PARTIAL)
+            val calleeExpression = callExpression.getCalleeExpression() ?: return false
+            val scope = context[BindingContext.RESOLUTION_SCOPE, calleeExpression/*TODO: discuss it*/] ?: return false
+            val originalCall = callExpression.getResolvedCall(context) ?: return false
+            val untypedCall = CallWithoutTypeArgs(originalCall.getCall())
+
+            // todo Check with expected type for other expressions
+            // If always use expected type from trace there is a problem with nested calls:
+            // the expression type for them can depend on their explicit type arguments (via outer call),
+            // therefore we should resolve outer call with erased type arguments for inner call
+            val parent = callExpression.getParent()
+            val expectedTypeIsExplicitInCode = when (parent) {
+                is JetProperty -> parent.getInitializer() == callExpression && parent.getTypeReference() != null
+                is JetDeclarationWithBody -> parent.getBodyExpression() == callExpression
+                is JetReturnExpression -> true
+                else -> false
+            }
+            val expectedType = if (expectedTypeIsExplicitInCode) {
+                context[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression] ?: TypeUtils.NO_EXPECTED_TYPE
+            }
+            else {
+                TypeUtils.NO_EXPECTED_TYPE
+            }
+            val dataFlow = context.getDataFlowInfo(callExpression)
+            val injector = InjectorForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
+            val resolutionResults = injector.getCallResolver().resolveFunctionCall(
+                    BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)
+            assert (resolutionResults.isSingleResult()) {
+                "Removing type arguments changed resolve for: ${callExpression.getTextWithLocation()} to ${resolutionResults.getResultCode()}"
+            }
+
+            val args = originalCall.getTypeArguments()
+            val newArgs = resolutionResults.getResultingCall().getTypeArguments()
+
+            fun equalTypes(type1: JetType, type2: JetType): Boolean {
+                return if (approximateFlexible) {
+                    JetTypeChecker.DEFAULT.equalTypes(type1, type2)
+                }
+                else {
+                    type1 == type2
+                }
+            }
+
+            return args.size() == newArgs.size() && args.values().zip(newArgs.values()).all { pair -> equalTypes(pair.first, pair.second) }
+        }
+    }
+
     override fun isApplicableTo(element: JetTypeArgumentList): Boolean {
-        val callExpression = element.getParent() as? JetCallExpression ?: return false
-        if (callExpression.getTypeArguments().isEmpty()) return false
-
-        val context = callExpression.analyze(BodyResolveMode.PARTIAL)
-        val calleeExpression = callExpression.getCalleeExpression() ?: return false
-        val scope = context[BindingContext.RESOLUTION_SCOPE, calleeExpression/*TODO: discuss it*/] ?: return false
-        val originalCall = callExpression.getResolvedCall(context) ?: return false
-        val untypedCall = CallWithoutTypeArgs(originalCall.getCall())
-
-        // todo Check with expected type for other expressions
-        // If always use expected type from trace there is a problem with nested calls:
-        // the expression type for them can depend on their explicit type arguments (via outer call),
-        // therefore we should resolve outer call with erased type arguments for inner call
-        val parent = callExpression.getParent()
-        val expectedTypeIsExplicitInCode = when (parent) {
-            is JetProperty -> parent.getInitializer() == callExpression && parent.getTypeReference() != null
-            is JetDeclarationWithBody -> parent.getBodyExpression() == callExpression
-            is JetReturnExpression -> true
-            else -> false
-        }
-        val expectedType = if (expectedTypeIsExplicitInCode) {
-            context[BindingContext.EXPECTED_EXPRESSION_TYPE, callExpression] ?: TypeUtils.NO_EXPECTED_TYPE
-        }
-        else {
-            TypeUtils.NO_EXPECTED_TYPE
-        }
-        val dataFlow = context.getDataFlowInfo(callExpression)
-        val injector = InjectorForMacros(callExpression.getProject(), callExpression.findModuleDescriptor())
-        val resolutionResults = injector.getCallResolver().resolveFunctionCall(
-                BindingTraceContext(), scope, untypedCall, expectedType, dataFlow, false)
-        assert (resolutionResults.isSingleResult()) {
-            "Removing type arguments changed resolve for: ${callExpression.getTextWithLocation()} to ${resolutionResults.getResultCode()}"
-        }
-
-        val args = originalCall.getTypeArguments()
-        val newArgs = resolutionResults.getResultingCall().getTypeArguments()
-
-        return args == newArgs.mapValues { approximateFlexibleTypes(it.getValue(), false) }
+        return isApplicableTo(element, approximateFlexible = false)
     }
 
     private class CallWithoutTypeArgs(call: Call) : DelegatingCall(call) {

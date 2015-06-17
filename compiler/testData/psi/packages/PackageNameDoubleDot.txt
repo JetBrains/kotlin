@@ -9,3 +9,5 @@ JetFile: PackageNameDoubleDot.kt
       PsiElement(DOT)('.')
     PsiErrorElement:Package name must be a '.'-separated identifier list placed on a single line
       <empty list>
+  IMPORT_LIST
+    <empty list>

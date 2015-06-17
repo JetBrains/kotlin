@@ -24,9 +24,8 @@ native public interface MediaList {
     var mediaText: String
         get() = noImpl
         set(value) = noImpl
-    var length: Int
+    val length: Int
         get() = noImpl
-        set(value) = noImpl
     fun item(index: Int): String? = noImpl
     nativeGetter fun get(index: Int): String? = noImpl
     fun appendMedium(medium: String): Unit = noImpl
@@ -34,69 +33,56 @@ native public interface MediaList {
 }
 
 native public interface StyleSheet {
-    var type: String
+    val type: String
         get() = noImpl
-        set(value) = noImpl
-    var href: String?
+    val href: String?
         get() = noImpl
-        set(value) = noImpl
-    var ownerNode: UnionElementOrProcessingInstruction?
+    val ownerNode: UnionElementOrProcessingInstruction?
         get() = noImpl
-        set(value) = noImpl
-    var parentStyleSheet: StyleSheet?
+    val parentStyleSheet: StyleSheet?
         get() = noImpl
-        set(value) = noImpl
-    var title: String?
+    val title: String?
         get() = noImpl
-        set(value) = noImpl
-    var media: MediaList
+    val media: MediaList
         get() = noImpl
-        set(value) = noImpl
     var disabled: Boolean
         get() = noImpl
         set(value) = noImpl
 }
 
 native public interface CSSStyleSheet : StyleSheet {
-    var ownerRule: CSSRule?
+    val ownerRule: CSSRule?
         get() = noImpl
-        set(value) = noImpl
-    var cssRules: CSSRuleList
+    val cssRules: CSSRuleList
         get() = noImpl
-        set(value) = noImpl
     fun insertRule(rule: String, index: Int): Int = noImpl
     fun deleteRule(index: Int): Unit = noImpl
 }
 
 native public interface StyleSheetList {
-    var length: Int
+    val length: Int
         get() = noImpl
-        set(value) = noImpl
     fun item(index: Int): StyleSheet? = noImpl
     nativeGetter fun get(index: Int): StyleSheet? = noImpl
 }
 
 native public interface CSSRuleList {
-    var length: Int
+    val length: Int
         get() = noImpl
-        set(value) = noImpl
     fun item(index: Int): CSSRule? = noImpl
     nativeGetter fun get(index: Int): CSSRule? = noImpl
 }
 
 native public interface CSSRule {
-    var type: Short
+    val type: Short
         get() = noImpl
-        set(value) = noImpl
     var cssText: String
         get() = noImpl
         set(value) = noImpl
-    var parentRule: CSSRule?
+    val parentRule: CSSRule?
         get() = noImpl
-        set(value) = noImpl
-    var parentStyleSheet: CSSStyleSheet?
+    val parentStyleSheet: CSSStyleSheet?
         get() = noImpl
-        set(value) = noImpl
 
     companion object {
         val STYLE_RULE: Short = 1
@@ -114,53 +100,44 @@ native public interface CSSStyleRule : CSSRule {
     var selectorText: String
         get() = noImpl
         set(value) = noImpl
-    var style: CSSStyleDeclaration
+    val style: CSSStyleDeclaration
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface CSSImportRule : CSSRule {
-    var href: String
+    val href: String
         get() = noImpl
-        set(value) = noImpl
-    var media: MediaList
+    val media: MediaList
         get() = noImpl
-        set(value) = noImpl
-    var styleSheet: CSSStyleSheet
+    val styleSheet: CSSStyleSheet
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface CSSGroupingRule : CSSRule {
-    var cssRules: CSSRuleList
+    val cssRules: CSSRuleList
         get() = noImpl
-        set(value) = noImpl
     fun insertRule(rule: String, index: Int): Int = noImpl
     fun deleteRule(index: Int): Unit = noImpl
 }
 
 native public interface CSSMediaRule : CSSGroupingRule {
-    var media: MediaList
+    val media: MediaList
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface CSSPageRule : CSSGroupingRule {
     var selectorText: String
         get() = noImpl
         set(value) = noImpl
-    var style: CSSStyleDeclaration
+    val style: CSSStyleDeclaration
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface CSSMarginRule : CSSRule {
-    var name: String
+    val name: String
         get() = noImpl
-        set(value) = noImpl
-    var style: CSSStyleDeclaration
+    val style: CSSStyleDeclaration
         get() = noImpl
-        set(value) = noImpl
 }
 
 native public interface CSSNamespaceRule : CSSRule {
@@ -848,12 +825,10 @@ native public interface CSSStyleDeclaration {
     var cssText: String
         get() = noImpl
         set(value) = noImpl
-    var length: Int
+    val length: Int
         get() = noImpl
-        set(value) = noImpl
-    var parentRule: CSSRule?
+    val parentRule: CSSRule?
         get() = noImpl
-        set(value) = noImpl
     var _dashed_attribute: String
         get() = noImpl
         set(value) = noImpl
@@ -871,18 +846,14 @@ native public interface CSSStyleDeclaration {
 }
 
 native public interface PseudoElement : GeometryNode {
-    var cascadedStyle: CSSStyleDeclaration
+    val cascadedStyle: CSSStyleDeclaration
         get() = noImpl
-        set(value) = noImpl
-    var defaultStyle: CSSStyleDeclaration
+    val defaultStyle: CSSStyleDeclaration
         get() = noImpl
-        set(value) = noImpl
-    var rawComputedStyle: CSSStyleDeclaration
+    val rawComputedStyle: CSSStyleDeclaration
         get() = noImpl
-        set(value) = noImpl
-    var usedStyle: CSSStyleDeclaration
+    val usedStyle: CSSStyleDeclaration
         get() = noImpl
-        set(value) = noImpl
     fun getBoxQuads(options: BoxQuadOptions = noImpl): Array<DOMQuad> = noImpl
     fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
     fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
@@ -890,5 +861,9 @@ native public interface PseudoElement : GeometryNode {
 }
 
 native public interface CSS {
+
+    companion object {
+        fun escape(ident: String): String = noImpl
+    }
 }
 

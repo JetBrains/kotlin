@@ -1,6 +1,6 @@
-// "Create function 'foo'" "true"
-
 import kotlin.properties.ReadOnlyProperty
+
+// "Create function 'foo'" "true"
 
 class A<T>(val t: T) {
     val x: A<Int> by foo(t, "")

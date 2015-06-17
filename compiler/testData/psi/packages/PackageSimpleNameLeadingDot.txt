@@ -6,3 +6,5 @@ JetFile: PackageSimpleNameLeadingDot.kt
       PsiElement(DOT)('.')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('a')
+  IMPORT_LIST
+    <empty list>

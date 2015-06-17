@@ -16,3 +16,5 @@ JetFile: LongPackageName.kt
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('buzz')
+  IMPORT_LIST
+    <empty list>

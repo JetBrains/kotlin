@@ -1,6 +1,8 @@
 JetFile: ParamTagAtStart.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   KDoc
     PsiElement(KDOC_START)('/**')
     KDOC_SECTION

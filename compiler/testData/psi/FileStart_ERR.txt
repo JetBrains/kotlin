@@ -1,6 +1,8 @@
 JetFile: FileStart_ERR.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   PsiErrorElement:Expecting a top level declaration
     PsiElement(DIV)('/')
   PsiErrorElement:Expecting a top level declaration

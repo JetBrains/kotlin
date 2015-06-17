@@ -1,6 +1,6 @@
-// "Change getter type to HashSet<Int>" "true"
-
 import java.util.HashSet
+
+// "Change getter type to HashSet<Int>" "true"
 
 class A() {
     val i: java.util.HashSet<Int>

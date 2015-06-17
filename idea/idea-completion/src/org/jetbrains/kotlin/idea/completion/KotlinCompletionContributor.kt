@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.performCompletionWithOutOfBlockTracking
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -197,6 +197,12 @@ public class KotlinCompletionContributor : CompletionContributor() {
         val position = parameters.getPosition()
         if (position.getContainingFile() !is JetFile) return
 
+        performCompletionWithOutOfBlockTracking(position) {
+            doComplete(parameters, position, result)
+        }
+    }
+
+    private fun doComplete(parameters: CompletionParameters, position: PsiElement, result: CompletionResultSet) {
         if (position.getNonStrictParentOfType<PsiComment>() != null) {
             // don't stop here, allow other contributors to run
             return

@@ -743,6 +743,7 @@ public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean =
  * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
  * @returns An index of the first occurrence of [string] or -1 if none is found.
  */
+kotlin.jvm.jvmOverloads
 public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
         indexOfAny(listOf(string), startIndex, ignoreCase)

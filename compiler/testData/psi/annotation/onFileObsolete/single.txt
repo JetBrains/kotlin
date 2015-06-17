@@ -18,3 +18,5 @@ JetFile: single.kt
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('bar')
+  IMPORT_LIST
+    <empty list>

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.actions.JetAddImportAction
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
@@ -116,7 +117,7 @@ public class AutoImportFix(element: JetSimpleNameExpression) : JetHintAction<Jet
 
         val resolutionFacade = element.getResolutionFacade()
 
-        val searchScope = file.getResolveScope()
+        val searchScope = ResolutionFacade.getResolveScope(file)
 
         val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
 

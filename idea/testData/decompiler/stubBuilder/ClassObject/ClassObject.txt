@@ -3,6 +3,7 @@ PsiJetFileStubImpl[package=test.class_object]
     DOT_QUALIFIED_EXPRESSION:
       REFERENCE_EXPRESSION:[referencedName=test]
       REFERENCE_EXPRESSION:[referencedName=class_object]
+  IMPORT_LIST:
   CLASS:[fqName=test.class_object.ClassObject, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassObject, superNames=[]]
     MODIFIER_LIST:[internal final]
     PRIMARY_CONSTRUCTOR:

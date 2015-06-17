@@ -389,11 +389,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
                 }
             }
             else {
-                val newImportList = psiFactory.createImportDirectiveWithImportList(importPath)
-                val packageDirective = file.getPackageDirective()
-                                       ?: throw IllegalStateException("Scripts are not supported: " + file.getName())
-                val addedImportList = packageDirective.getParent().addAfter(newImportList, packageDirective) as JetImportList
-                return addedImportList.getImports().single()
+                error("Trying to insert import $fqName into a file ${file.getName()} of type ${file.javaClass} with no import list.")
             }
         }
     }

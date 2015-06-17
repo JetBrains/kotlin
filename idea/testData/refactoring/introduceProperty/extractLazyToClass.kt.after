@@ -1,7 +1,7 @@
+import kotlin.properties.Delegates
+
 // WITH_RUNTIME
 // EXTRACTION_TARGET: lazy property
-
-import kotlin.properties.Delegates
 
 class A(val n: Int = 1) {
     val m: Int = 2
