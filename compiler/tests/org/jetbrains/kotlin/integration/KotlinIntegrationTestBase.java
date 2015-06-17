@@ -108,15 +108,15 @@ public abstract class KotlinIntegrationTestBase extends TestCaseWithTmpdir {
         handler.waitFor();
         int exitCode = handler.getProcess().exitValue();
 
-        appendIfNotEmpty(executionLog, "OUT:\n", outContent);
-        appendIfNotEmpty(executionLog, "\nERR:\n", errContent);
+        appendIfNotEmpty(executionLog, "OUT:\n", outContent.toString());
+        appendIfNotEmpty(executionLog, "\nERR:\n", CliBaseTest.removePerfOutput(errContent.toString()));
 
         executionLog.append("\nReturn code: ").append(exitCode).append("\n");
 
         return exitCode;
     }
 
-    private static void appendIfNotEmpty(StringBuilder executionLog, String prefix, StringBuilder content) {
+    private static void appendIfNotEmpty(StringBuilder executionLog, String prefix, String content) {
         if (content.length() > 0) {
             executionLog.append(prefix);
             executionLog.append(content);
