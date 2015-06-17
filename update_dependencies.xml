@@ -859,15 +859,13 @@
         </sequential>
     </macrodef>
 
-    <target name="fetch-annotations">
-        <mkdir dir="dependencies/annotations"/>
-        <get
-            src="https://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-jdk-annotations.jar"
-            dest="dependencies/annotations/kotlin-jdk-annotations.jar" usetimestamp="true"/>
-        <get
-            src="https://teamcity.jetbrains.com/guestAuth/repository/download/Kotlin_KAnnotator_InferJdkAnnotations/shipWithKotlin.tcbuildtag/kotlin-android-sdk-annotations.jar"
-            dest="dependencies/annotations/kotlin-android-sdk-annotations.jar" usetimestamp="true"/>
-    </target>
+    <!--
+    Currently we use empty annotations.
+    Future options are:
+      - Drop the target when will be sure that custom annotations are unneeded
+      - Fill the target with downloading correct annotations
+    -->
+    <target name="fetch-annotations"/>
 
     <target name="get_android_studio">
         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpath="${basedir}/dependencies/ant-contrib.jar"/>

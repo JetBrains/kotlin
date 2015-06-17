@@ -327,7 +327,7 @@ public class JetTestUtils {
 
     @NotNull
     public static File getJdkAnnotationsJar() {
-        File jdkAnnotations = new File(getHomeDirectory(), "dependencies/annotations/kotlin-jdk-annotations.jar");
+        File jdkAnnotations = new File(getHomeDirectory(), "dist/kotlinc/lib/kotlin-jdk-annotations.jar");
         if (!jdkAnnotations.exists()) {
             throw new RuntimeException("Kotlin JDK annotations jar not found; please run 'ant dist' to build it");
         }
@@ -336,7 +336,7 @@ public class JetTestUtils {
 
     @NotNull
     public static File getAndroidSdkAnnotationsJar() {
-        File androidSdkAnnotations = new File(getHomeDirectory(), "dependencies/annotations/kotlin-android-sdk-annotations.jar");
+        File androidSdkAnnotations = new File(getHomeDirectory(), "dist/kotlinc/lib/kotlin-android-sdk-annotations.jar");
         if (!androidSdkAnnotations.exists()) {
             throw new RuntimeException("Kotlin Android SDK annotations jar not found; please run 'ant dist' to build it");
         }

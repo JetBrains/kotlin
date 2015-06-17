@@ -81,7 +81,7 @@ public class JdkAnnotationsValidityTest extends AbstractSdkAnnotationsValidityTe
 
     @Override
     protected List<FqName> getClassesToValidate() throws IOException {
-        return getAffectedClasses("jar://dependencies/annotations/kotlin-jdk-annotations.jar!/");
+        return getAffectedClasses("jar://dist/kotlinc/lib/kotlin-jdk-annotations.jar!/");
     }
 
     static List<FqName> getAffectedClasses(String rootUrl) {
