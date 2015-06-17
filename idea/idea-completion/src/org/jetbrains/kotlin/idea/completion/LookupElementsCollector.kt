@@ -42,8 +42,8 @@ class LookupElementsCollector(
         private val context: LookupElementsCollector.Context
 ) {
     public enum class Context {
-        NORMAL
-        STRING_TEMPLATE_AFTER_DOLLAR
+        NORMAL,
+        STRING_TEMPLATE_AFTER_DOLLAR,
         INFIX_CALL
     }
 
@@ -59,6 +59,8 @@ class LookupElementsCollector(
 
     public var isResultEmpty: Boolean = true
         private set
+
+    public var suppressItemSelectionByCharsOnTyping: Boolean = false
 
     public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
                                      suppressAutoInsertion: Boolean, // auto-insertion suppression is used for elements that require adding an import
@@ -137,7 +139,7 @@ class LookupElementsCollector(
 
     public fun addElement(element: LookupElement) {
         if (prefixMatcher.prefixMatches(element)) {
-            elements.add(object: LookupElementDecorator<LookupElement>(element) {
+            val decorated = object : LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext) {
                     getDelegate().handleInsert(context)
 
@@ -155,7 +157,11 @@ class LookupElementsCollector(
                     }
 
                 }
-            })
+            }
+            if (suppressItemSelectionByCharsOnTyping) {
+                decorated.putUserData(KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING, Unit)
+            }
+            elements.add(decorated)
         }
     }
 

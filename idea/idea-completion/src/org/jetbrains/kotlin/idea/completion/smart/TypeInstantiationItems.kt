@@ -200,7 +200,7 @@ class TypeInstantiationItems(
                 lookupElement = lookupElement.keepOldArgumentListOnTab()
             }
             if (baseInsertHandler.lambdaInfo != null) {
-                lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
+                lookupElement.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, Unit)
             }
             lookupElement = lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.INSTANTIATION)
         }

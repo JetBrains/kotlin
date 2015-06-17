@@ -265,6 +265,18 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("NoInsertionOnTypingColon.kt")
+        public void testNoInsertionOnTypingColon() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/NoInsertionOnTypingColon.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("NoInsertionOnTypingSpace.kt")
+        public void testNoInsertionOnTypingSpace() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/NoInsertionOnTypingSpace.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/Simple.kt");

@@ -207,7 +207,7 @@ public class LookupElementFactory(
         element = element.withInsertHandler(insertHandler)
 
         if (insertHandler is KotlinFunctionInsertHandler && insertHandler.lambdaInfo != null) {
-            element.putUserData<Boolean>(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, true)
+            element.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, Unit)
         }
 
         return element

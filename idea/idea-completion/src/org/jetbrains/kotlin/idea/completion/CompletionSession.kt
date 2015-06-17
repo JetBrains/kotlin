@@ -351,6 +351,10 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
     override fun doComplete() {
         assert(parameters.getCompletionType() == CompletionType.BASIC)
 
+        if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {
+            collector.suppressItemSelectionByCharsOnTyping = true
+        }
+
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
             collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
 

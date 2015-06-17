@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 
 public class KotlinCompletionCharFilter() : CharFilter() {
     companion object {
-        public val ACCEPT_OPENING_BRACE: Key<Boolean> = Key("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
+        public val ACCEPT_OPENING_BRACE: Key<Unit> = Key("KotlinCompletionCharFilter.ACCEPT_OPENNING_BRACE")
+
+        public val SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING: Key<Unit> = Key("KotlinCompletionCharFilter.SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING")
 
         public val JUST_TYPING_PREFIX: Key<String> = Key("KotlinCompletionCharFilter.JUST_TYPING_PREFIX")
     }
@@ -49,8 +51,11 @@ public class KotlinCompletionCharFilter() : CharFilter() {
             return CharFilter.Result.ADD_TO_PREFIX
         }
 
-        // do not accept items by special chars in the very beginning of function literal where name of the first parameter can be
-        if (isAutopopup && !lookup.isSelectionTouched() && isInFunctionLiteralStart(completionParameters.getPosition())) {
+        val currentItem = lookup.getCurrentItem()
+
+        // do not accept items by special chars in some special positions such as in the very beginning of function literal where name of the first parameter can be
+        if (isAutopopup && !lookup.isSelectionTouched()
+            && (currentItem?.getUserData(SUPPRESS_ITEM_SELECTION_BY_CHARS_ON_TYPING) != null || isInFunctionLiteralStart(completionParameters.getPosition()))) {
             return Result.HIDE_LOOKUP
         }
 
@@ -58,7 +63,6 @@ public class KotlinCompletionCharFilter() : CharFilter() {
             return CharFilter.Result.ADD_TO_PREFIX
         }
 
-        val currentItem = lookup.getCurrentItem()
         if (!lookup.isSelectionTouched()) {
             currentItem?.putUserData(JUST_TYPING_PREFIX, lookup.itemPattern(currentItem))
         }
@@ -75,7 +79,7 @@ public class KotlinCompletionCharFilter() : CharFilter() {
             }
 
             '{' -> {
-                if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) ?: false)
+                if (currentItem != null && currentItem.getUserData(ACCEPT_OPENING_BRACE) != null)
                     Result.SELECT_ITEM_AND_FINISH_LOOKUP
                 else
                     Result.HIDE_LOOKUP
