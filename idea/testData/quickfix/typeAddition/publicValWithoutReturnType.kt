@@ -1,4 +1,6 @@
 // "Specify type explicitly" "true"
 package a
 
-public val <caret>l = java.util.Collections.emptyList<Int>()
+public fun emptyList<T>(): List<T> = null!!
+
+public val <caret>l = emptyList<Int>()

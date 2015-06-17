@@ -1,7 +1,7 @@
 // "Remove initializer from property" "true"
 package a
 
-import java.util.Collections
+public fun emptyList<T>(): List<T> = null!!
 
 class M {
     interface A {

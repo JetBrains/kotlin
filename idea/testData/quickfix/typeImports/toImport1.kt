@@ -1,10 +1,10 @@
 // "Remove initializer from property" "true"
 package a
 
-import java.util.Collections
+public fun emptyList<T>(): List<T> = null!!
 
 class M {
     interface A {
-        abstract val l = <caret>Collections.emptyList<Int>()
+        abstract val l = <caret>emptyList<Int>()
     }
 }
