@@ -129,10 +129,9 @@ class ParameterNameAndTypeCompletion(
             val nameAndType: NameAndType,
             factory: LookupElementFactory
     ) : LookupElementDecorator<LookupElement>(nameAndType.createTypeLookupElement(factory)) {
-        override fun getObject() = nameAndType
 
         override fun equals(other: Any?)
-                = other is MyLookupElement && nameAndType.parameterName == other.getObject().parameterName && getDelegate() == other.getDelegate()
+                = other is MyLookupElement && nameAndType.parameterName == other.nameAndType.parameterName && getDelegate() == other.getDelegate()
         override fun hashCode() = nameAndType.parameterName.hashCode()
 
         override fun getLookupString() = nameAndType.parameterName

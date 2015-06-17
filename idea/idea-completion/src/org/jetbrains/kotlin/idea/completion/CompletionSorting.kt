@@ -89,7 +89,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
         val o = element.getObject()
 
         return when (o) {
-            is DeclarationDescriptorLookupObjectImpl -> {
+            is DeclarationDescriptorLookupObject -> {
                 val descriptor = o.descriptor
                 when (descriptor) {
                     is VariableDescriptor -> CompoundWeight(Weight.variable, element.getUserData(CALLABLE_WEIGHT_KEY))
@@ -136,7 +136,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
 
     override fun weigh(element: LookupElement): Weight {
         val o = element.getObject()
-        if (o is DeclarationDescriptorLookupObjectImpl) {
+        if (o is DeclarationDescriptorLookupObject) {
             val elementFile = o.psiElement?.getContainingFile()
             if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
                 return Weight.thisFile

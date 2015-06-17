@@ -130,4 +130,25 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/ReturnBoolean.kt");
         doTest(fileName);
     }
+
+    @TestMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ParameterNameAndType extends AbstractBasicCompletionWeigherTest {
+        public void testAllFilesPresentInParameterNameAndType() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/weighers/basic/parameterNameAndType"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("Deprecated.kt")
+        public void testDeprecated() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType/Deprecated.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ImportedFirst.kt")
+        public void testImportedFirst() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType/ImportedFirst.kt");
+            doTest(fileName);
+        }
+    }
 }
