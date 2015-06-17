@@ -22,6 +22,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
 import java.io.File
 
 public abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: CompletionType) : CompletionHandlerTestBase() {
@@ -31,7 +32,7 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
     private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
     private val COMPLETION_CHAR_PREFIX = "CHAR:"
     private val COMPLETION_TYPE_PREFIX = "COMPLETION_TYPE:"
-    private val INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = "INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD:"
+    private val CODE_STYLE_SETTING_PREFIX = "CODE_STYLE_SETTING:"
 
     protected open fun doTest(testPath: String) {
         setUpFixture(testPath)
@@ -61,8 +62,17 @@ public abstract class AbstractCompletionHandlerTest(private val defaultCompletio
                 else -> error("Unknown completion type: $completionTypeString")
             }
 
-            InTextDirectivesUtils.getPrefixedBoolean(fileText, INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD)?.let {
-                JetCodeStyleSettings.getInstance(getProject()).INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD = it
+            val codeStyleSettings = JetCodeStyleSettings.getInstance(getProject())
+            for (line in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, CODE_STYLE_SETTING_PREFIX)) {
+                val index = line.indexOfOrNull('=') ?: error("Invalid code style setting '$line': '=' expected")
+                val settingName = line.substring(0, index).trim()
+                val settingValue = line.substring(index + 1).trim()
+                val field = codeStyleSettings.javaClass.getDeclaredField(settingName)
+                when (field.getType().getName()) {
+                    "boolean" -> field.setBoolean(codeStyleSettings, settingValue.toBoolean())
+                    "int" -> field.setInt(codeStyleSettings, settingValue.toInt())
+                    else -> error("Unsupported setting type: ${field.getType()}")
+                }
             }
 
             doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, testPath + ".after")

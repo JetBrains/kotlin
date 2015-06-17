@@ -1053,18 +1053,6 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
-            @TestMetadata("NoParameterAnnotationAutoPopup1.kt")
-            public void testNoParameterAnnotationAutoPopup1() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/NoParameterAnnotationAutoPopup1.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("NoParameterAnnotationAutoPopup2.kt")
-            public void testNoParameterAnnotationAutoPopup2() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/NoParameterAnnotationAutoPopup2.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("ParameterAnnotation1.kt")
             public void testParameterAnnotation1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/ParameterAnnotation1.kt");
@@ -1398,6 +1386,45 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("WithParameterExpression.kt")
             public void testWithParameterExpression() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/namedArguments/WithParameterExpression.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ParameterNameAndType extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInParameterNameAndType() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/parameterNameAndType"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("NoDuplication.kt")
+            public void testNoDuplication() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NoDuplication.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoDuplicationJava.kt")
+            public void testNoDuplicationJava() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NoDuplicationJava.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotImported.kt")
+            public void testNotImported() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotImported.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotImportedJava.kt")
+            public void testNotImportedJava() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotImportedJava.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/Simple.kt");
                 doTest(fileName);
             }
         }

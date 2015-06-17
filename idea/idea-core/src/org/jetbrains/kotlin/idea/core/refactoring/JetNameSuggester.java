@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -197,6 +198,12 @@ public class JetNameSuggester {
     }
 
     private static final String[] ACCESSOR_PREFIXES = { "get", "is", "set" };
+
+    public static List<String> getCamelNames(String name, JetNameValidator validator) {
+        ArrayList<String> result = new ArrayList<String>();
+        addCamelNames(result, name, validator);
+        return result;
+    }
 
     private static void addCamelNames(ArrayList<String> result, String name, JetNameValidator validator) {
         if (name == "") return;

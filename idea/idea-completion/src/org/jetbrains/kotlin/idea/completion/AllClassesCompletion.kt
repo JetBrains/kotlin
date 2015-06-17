@@ -19,8 +19,10 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.AllClassesGetter
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.KotlinLightClass
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -31,34 +33,28 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class AllClassesCompletion(val parameters: CompletionParameters,
-                           val lookupElementFactory: LookupElementFactory,
-                           val resolutionFacade: ResolutionFacade,
-                           val bindingContext: BindingContext,
-                           val moduleDescriptor: ModuleDescriptor,
-                           val scope: GlobalSearchScope,
-                           val prefixMatcher: PrefixMatcher,
-                           val kindFilter: (ClassKind) -> Boolean,
-                           val visibilityFilter: (DeclarationDescriptor) -> Boolean) {
-    fun collect(result: LookupElementsCollector) {
+class AllClassesCompletion(private val parameters: CompletionParameters,
+                           private val kotlinIndicesHelper: KotlinIndicesHelper,
+                           private val prefixMatcher: PrefixMatcher,
+                           private val kindFilter: (ClassKind) -> Boolean) {
+    fun collect(classDescriptorCollector: (ClassDescriptor) -> Unit, javaClassCollector: (PsiClass) -> Unit) {
         //TODO: this is a temporary hack until we have built-ins in indices
         val builtIns = JavaToKotlinClassMap.INSTANCE.allKotlinClasses()
         val filteredBuiltIns = builtIns.filter { kindFilter(it.getKind()) && prefixMatcher.prefixMatches(it.getName().asString()) }
-        result.addDescriptorElements(filteredBuiltIns, suppressAutoInsertion = true)
+        filteredBuiltIns.forEach { classDescriptorCollector(it) }
 
-        val project = parameters.getOriginalFile().getProject()
-        val helper = KotlinIndicesHelper(project, resolutionFacade, bindingContext, scope, moduleDescriptor, visibilityFilter)
-        result.addDescriptorElements(helper.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter),
-                                     suppressAutoInsertion = true)
+        kotlinIndicesHelper.getClassDescriptors({ prefixMatcher.prefixMatches(it) }, kindFilter).forEach { classDescriptorCollector(it) }
 
         if (!ProjectStructureUtil.isJsKotlinModule(parameters.getOriginalFile() as JetFile)) {
-            addAdaptedJavaCompletion(result)
+            addAdaptedJavaCompletion(javaClassCollector)
         }
     }
 
-    private fun addAdaptedJavaCompletion(collector: LookupElementsCollector) {
+    private fun addAdaptedJavaCompletion(collector: (PsiClass) -> Unit) {
         AllClassesGetter.processJavaClasses(parameters, prefixMatcher, true, { psiClass ->
             if (psiClass!! !is KotlinLightClass) { // Kotlin class should have already been added as kotlin element before
+                if (psiClass.isSyntheticKotlinClass()) return@processJavaClasses // filter out synthetic classes produced by Kotlin compiler
+
                 val kind = when {
                     psiClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
                     psiClass.isInterface() -> ClassKind.INTERFACE
@@ -66,9 +62,14 @@ class AllClassesCompletion(val parameters: CompletionParameters,
                     else -> ClassKind.CLASS
                 }
                 if (kindFilter(kind)) {
-                    collector.addElementWithAutoInsertionSuppressed(lookupElementFactory.createLookupElementForJavaClass(psiClass))
+                    collector(psiClass)
                 }
             }
         })
+    }
+
+    private fun PsiClass.isSyntheticKotlinClass(): Boolean {
+        if (!getName().contains('$')) return false // optimization to not analyze annotations of all classes
+        return getModifierList()?.findAnnotation(javaClass<kotlin.jvm.internal.KotlinSyntheticClass>().getName()) != null
     }
 }

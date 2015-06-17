@@ -69,7 +69,7 @@ class LookupElementsCollector(
         }
     }
 
-    private fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, withReceiverCast: Boolean) {
+    public fun addDescriptorElements(descriptor: DeclarationDescriptor, suppressAutoInsertion: Boolean, withReceiverCast: Boolean = false) {
         run {
             var lookupElement = lookupElementFactory.createLookupElement(descriptor, true)
 

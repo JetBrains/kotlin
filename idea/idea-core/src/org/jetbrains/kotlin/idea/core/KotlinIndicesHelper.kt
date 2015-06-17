@@ -46,7 +46,6 @@ import java.util.LinkedHashSet
 public class KotlinIndicesHelper(
         private val project: Project,
         private val resolutionFacade: ResolutionFacade,
-        private val bindingContext: BindingContext,
         private val scope: GlobalSearchScope,
         private val moduleDescriptor: ModuleDescriptor,
         private val visibilityFilter: (DeclarationDescriptor) -> Boolean
@@ -73,36 +72,36 @@ public class KotlinIndicesHelper(
     }
 
     public fun getTopLevelCallables(nameFilter: (String) -> Boolean): Collection<CallableDescriptor> {
-        return (JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).sequence() +
-                    JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).sequence())
+        return (JetTopLevelFunctionFqnNameIndex.getInstance().getAllKeys(project).asSequence() +
+                    JetTopLevelPropertyFqnNameIndex.getInstance().getAllKeys(project).asSequence())
                 .map { FqName(it) }
                 .filter { nameFilter(it.shortName().asString()) }
                 .toSet()
                 .flatMap { findTopLevelCallables(it).filter(visibilityFilter) }
     }
 
-    public fun getCallableTopLevelExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression): Collection<CallableDescriptor> {
-        val receiverValues = receiverValues(expression)
+    public fun getCallableTopLevelExtensions(nameFilter: (String) -> Boolean, expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<CallableDescriptor> {
+        val receiverValues = receiverValues(expression, bindingContext)
         if (receiverValues.isEmpty()) return emptyList()
 
         val dataFlowInfo = bindingContext.getDataFlowInfo(expression)
 
-        val receiverTypeNames = possibleReceiverTypeNames(receiverValues.map { it.first }, dataFlowInfo)
+        val receiverTypeNames = possibleReceiverTypeNames(receiverValues.map { it.first }, dataFlowInfo, bindingContext)
 
         val index = JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE
 
         val declarations = index.getAllKeys(project)
-                .sequence()
+                .asSequence()
                 .filter {
                     JetTopLevelExtensionsByReceiverTypeIndex.receiverTypeNameFromKey(it) in receiverTypeNames
                     && nameFilter(JetTopLevelExtensionsByReceiverTypeIndex.callableNameFromKey(it))
                 }
-                .flatMap { index.get(it, project, scope).sequence() }
+                .flatMap { index.get(it, project, scope).asSequence() }
 
         return findSuitableExtensions(declarations, receiverValues, dataFlowInfo, bindingContext)
     }
 
-    private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo): Set<String> {
+    private fun possibleReceiverTypeNames(receiverValues: Collection<ReceiverValue>, dataFlowInfo: DataFlowInfo, bindingContext: BindingContext): Set<String> {
         val result = HashSet<String>()
         for (receiverValue in receiverValues) {
             for (type in SmartCastUtils.getSmartCastVariants(receiverValue, bindingContext, moduleDescriptor, dataFlowInfo)) {
@@ -118,7 +117,7 @@ public class KotlinIndicesHelper(
         constructor.getSupertypes().forEach { addTypeNames(it) }
     }
 
-    private fun receiverValues(expression: JetSimpleNameExpression): Collection<Pair<ReceiverValue, CallType>> {
+    private fun receiverValues(expression: JetSimpleNameExpression, bindingContext: BindingContext): Collection<Pair<ReceiverValue, CallType>> {
         val receiverPair = ReferenceVariantsHelper.getExplicitReceiverData(expression)
         if (receiverPair != null) {
             val (receiverExpression, callType) = receiverPair
@@ -173,7 +172,7 @@ public class KotlinIndicesHelper(
     }
 
     public fun getClassDescriptors(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
-        return JetFullClassNameIndex.getInstance().getAllKeys(project).sequence()
+        return JetFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
                 .map { FqName(it) }
                 .filter { nameFilter(it.shortName().asString()) }
                 .toList()

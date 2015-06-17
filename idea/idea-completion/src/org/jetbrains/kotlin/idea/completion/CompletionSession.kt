@@ -128,7 +128,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
-    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, project) { isVisibleDescriptor(it) }
+    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, project, { isVisibleDescriptor(it) })
 
     protected val receiversData: ReferenceVariantsHelper.ReceiversData? = reference?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it.expression) }
 
@@ -168,7 +168,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected val indicesHelper: KotlinIndicesHelper
-        get() = KotlinIndicesHelper(project, resolutionFacade, bindingContext, searchScope, moduleDescriptor) { isVisibleDescriptor(it) }
+        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, { isVisibleDescriptor(it) })
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
@@ -241,7 +241,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected fun getTopLevelExtensions(): Collection<CallableDescriptor> {
-        val descriptors = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression)
+        val descriptors = indicesHelper.getCallableTopLevelExtensions({ prefixMatcher.prefixMatches(it) }, reference!!.expression, bindingContext)
         return filterShadowedNonImported(descriptors, reference)
     }
 
@@ -250,10 +250,11 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected fun addAllClasses(kindFilter: (ClassKind) -> Boolean) {
-        AllClassesCompletion(
-                parameters, lookupElementFactory, resolutionFacade, bindingContext, moduleDescriptor,
-                searchScope, prefixMatcher, kindFilter, { isVisibleDescriptor(it) }
-        ).collect(collector)
+        AllClassesCompletion(parameters, indicesHelper, prefixMatcher, kindFilter)
+                .collect(
+                        { descriptor -> collector.addDescriptorElements(descriptor, suppressAutoInsertion = true) },
+                        { javaClass -> collector.addElementWithAutoInsertionSuppressed(lookupElementFactory.createLookupElementForJavaClass(javaClass)) }
+                )
     }
 }
 
@@ -286,6 +287,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         CompletionKind.NAMED_ARGUMENTS_ONLY, CompletionKind.KEYWORDS_ONLY ->
             null
     }
+
+    private val parameterNameAndTypeCompletion = if (completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME)
+        ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher)
+    else
+        null
 
     private fun calcCompletionKind(): CompletionKind {
         if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
@@ -326,6 +332,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
             collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
+
+            parameterNameAndTypeCompletion?.addFromImports(reference!!.expression, bindingContext, { isVisibleDescriptor(it) })
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
@@ -405,6 +413,8 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                 collector.addDescriptorElements(getTopLevelCallables(), suppressAutoInsertion = true)
             }
         }
+
+        parameterNameAndTypeCompletion?.addAll(parameters, indicesHelper)
     }
 }
 

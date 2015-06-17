@@ -95,3 +95,13 @@ public fun <T : Any> constant(calculator: () -> T): T {
 }
 
 private val constantMap = ConcurrentHashMap<Function0<*>, Any>()
+
+public fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? {
+    val index = indexOf(char, startIndex, ignoreCase)
+    return if (index >= 0) index else null
+}
+
+public fun String.lastIndexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int? {
+    val index = lastIndexOf(char, startIndex, ignoreCase)
+    return if (index >= 0) index else null
+}
