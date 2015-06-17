@@ -159,10 +159,17 @@ public interface LocalLookup {
 
         @NotNull
         public StackValue outerValue(@NotNull EnclosedValueDescriptor d, @NotNull ExpressionCodegen codegen) {
-            int idx = codegen.lookupLocalIndex(d.getDescriptor());
-            assert idx != -1;
-
-            return StackValue.local(idx, d.getType());
+            DeclarationDescriptor declarationDescriptor = d.getDescriptor();
+            int idx = codegen.lookupLocalIndex(declarationDescriptor);
+            if (idx >= 0) {
+                return StackValue.local(idx, d.getType());
+            }
+            else {
+                assert declarationDescriptor != null : "No declaration descriptor for " + d;
+                StackValue capturedValue = codegen.findCapturedValue(declarationDescriptor);
+                assert capturedValue != null : "Unresolved captured value for " + d;
+                return capturedValue;
+            }
         }
     }
 }

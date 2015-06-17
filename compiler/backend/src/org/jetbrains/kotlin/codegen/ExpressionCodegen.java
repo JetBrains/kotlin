@@ -2022,6 +2022,11 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return stackValueForLocal(descriptor, index);
         }
 
+        return findCapturedValue(descriptor);
+    }
+
+    @Nullable
+    public StackValue findCapturedValue(@NotNull DeclarationDescriptor descriptor) {
         if (context instanceof ConstructorContext) {
             return lookupCapturedValueInConstructorParameters(descriptor);
         }
