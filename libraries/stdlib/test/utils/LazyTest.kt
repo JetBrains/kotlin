@@ -22,12 +22,12 @@ class LazyTest {
         var callCount = 0
         val lazyInt = lazy { ++callCount }
 
-        assertFalse(lazyInt.valueCreated)
+        assertFalse(lazyInt.isInitialized())
         assertEquals(0, callCount)
 
         lazyInt.value
 
-        assertTrue(lazyInt.valueCreated)
+        assertTrue(lazyInt.isInitialized())
     }
 
 

@@ -5,12 +5,14 @@ import java.io.Serializable
 
 /**
  * Represents a value with lazy initialization.
+ *
+ * To create an instance of [Lazy] use the [lazy] function.
  */
 public interface Lazy<out T> {
     /** Gets the lazily initialized value of the current Lazy instance. */
     public val value: T
     /** Returns `true` if a value for this Lazy instance has been already initialized. */
-    public val valueCreated: Boolean
+    public fun isInitialized(): Boolean
 }
 
 /**
@@ -67,9 +69,9 @@ private class LazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
             }
         }
 
-    override val valueCreated: Boolean get() = _value !== UNINITIALIZED_VALUE
+    override fun isInitialized(): Boolean = _value !== UNINITIALIZED_VALUE
 
-    override fun toString(): String = if (valueCreated) value.toString() else "Lazy value not initialized yet."
+    override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 
     private fun writeReplace(): Any = InitializedLazyImpl(value)
 }
@@ -88,16 +90,16 @@ private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializabl
             return _value as T
         }
 
-    override val valueCreated: Boolean get() = _value !== UNINITIALIZED_VALUE
+    override fun isInitialized(): Boolean = _value !== UNINITIALIZED_VALUE
 
-    override fun toString(): String = if (valueCreated) value.toString() else "Lazy value not initialized yet."
+    override fun toString(): String = if (isInitialized()) value.toString() else "Lazy value not initialized yet."
 
     private fun writeReplace(): Any = InitializedLazyImpl(value)
 }
 
 private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>, Serializable {
 
-    override val valueCreated: Boolean get() = true
+    override fun isInitialized(): Boolean = true
 
     override fun toString(): String = value.toString()
 

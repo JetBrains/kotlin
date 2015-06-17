@@ -11,10 +11,10 @@ class LazyJVMTest {
     test fun lazyInitializationForcedOnSerialization() {
         for(mode in listOf(LazyThreadSafetyMode.SYNCHRONIZED, LazyThreadSafetyMode.NONE)) {
             val lazy = lazy(mode) { "initialized" }
-            assertFalse(lazy.valueCreated)
+            assertFalse(lazy.isInitialized())
             val lazy2 = serializeAndDeserialize(lazy)
-            assertTrue(lazy.valueCreated)
-            assertTrue(lazy2.valueCreated)
+            assertTrue(lazy.isInitialized())
+            assertTrue(lazy2.isInitialized())
             assertEquals(lazy.value, lazy2.value)
         }
     }
