@@ -19,16 +19,24 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.structure.reflect.classId
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.reflect.*
+import org.jetbrains.kotlin.load.kotlin.SignatureDeserializer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
+import kotlin.reflect.KotlinReflectionInternalError
 
 object RuntimeTypeMapper {
     // TODO: this logic must be shared with JetTypeMapper
@@ -60,6 +68,61 @@ object RuntimeTypeMapper {
         JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName)?.let { return it.desc }
 
         return classDescriptor.classId.desc
+    }
+
+    fun mapSignature(function: FunctionDescriptor): String {
+        if (function is DeserializedSimpleFunctionDescriptor) {
+            val proto = function.getProto()
+            if (!proto.hasExtension(JvmProtoBuf.methodSignature)) {
+                throw KotlinReflectionInternalError("No metadata found for $function")
+            }
+            val signature = proto.getExtension(JvmProtoBuf.methodSignature)
+            return SignatureDeserializer(function.getNameResolver()).methodSignatureString(signature)
+        }
+        else if (function is JavaMethodDescriptor) {
+            val method = (function.getSource() as? JavaSourceElement)?.javaElement as? JavaMethod ?:
+                         throw KotlinReflectionInternalError("Incorrect resolution sequence for Java method $function")
+
+            return StringBuilder {
+                append(method.getName().asString())
+
+                append("(")
+                for (parameter in method.getValueParameters()) {
+                    appendJavaType(parameter.getType())
+                }
+                append(")")
+
+                appendJavaType(method.getReturnType())
+            }.toString()
+        }
+        else throw KotlinReflectionInternalError("Unknown origin of $function (${function.javaClass})")
+    }
+
+    // TODO: verify edge cases when it's possible to reference generic functions
+    private tailRecursive fun StringBuilder.appendJavaType(type: JavaType) {
+        when (type) {
+            is JavaPrimitiveType -> {
+                append(type.getType()?.let { JvmPrimitiveType.get(it).getDesc() } ?: "V")
+            }
+            is JavaArrayType -> {
+                append("[")
+                appendJavaType(type.getComponentType())
+            }
+            is JavaWildcardType -> {
+                val bound = type.getBound()
+                if (bound != null && type.isExtends()) appendJavaType(bound)
+                else append("Ljava/lang/Object;")
+            }
+            is JavaClassifierType -> {
+                val classifier = type.getClassifier()
+                when (classifier) {
+                    is ReflectJavaClass ->
+                        append(classifier.element.desc)
+                    is ReflectJavaTypeParameter ->
+                        appendJavaType(ReflectJavaType.create(classifier.typeVariable.getBounds().first()))
+                }
+            }
+        }
     }
 
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {

@@ -19,6 +19,7 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import kotlin.reflect.*
@@ -39,7 +40,9 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
-    override val scope: JetScope get() = descriptor.getDefaultType().getMemberScope()
+    override val scope: JetScope get() = ChainedScope(
+            descriptor, "KClassImpl scope", descriptor.getDefaultType().getMemberScope(), descriptor.getStaticScope()
+    )
 
     override val simpleName: String? get() {
         if (jClass.isAnonymousClass()) return null

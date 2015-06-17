@@ -16,6 +16,41 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import kotlin.jvm.internal.FunctionImpl
+import kotlin.reflect.KFunction
 
-abstract class KFunctionImpl<out R> : FunctionImpl()
+abstract class KFunctionImpl private constructor(
+        container: KCallableContainerImpl,
+        name: String,
+        signature: String,
+        descriptorInitialValue: FunctionDescriptor?
+) : KFunction<Any?>, FunctionImpl() {
+    constructor(container: KCallableContainerImpl, name: String, signature: String): this(container, name, signature, null)
+
+    constructor(container: KCallableContainerImpl, descriptor: FunctionDescriptor): this(
+            container, descriptor.getName().asString(), RuntimeTypeMapper.mapSignature(descriptor), descriptor
+    )
+
+    protected val descriptor: FunctionDescriptor by ReflectProperties.lazySoft<FunctionDescriptor>(descriptorInitialValue) {
+        container.findFunctionDescriptor(name, signature)
+    }
+
+    override val name: String get() = descriptor.getName().asString()
+
+    override fun getArity(): Int {
+        // TODO: test?
+        return descriptor.getValueParameters().size() +
+               (if (descriptor.getDispatchReceiverParameter() != null) 1 else 0) +
+               (if (descriptor.getExtensionReceiverParameter() != null) 1 else 0)
+    }
+
+    override fun equals(other: Any?): Boolean =
+            other is KFunctionImpl && descriptor == other.descriptor
+
+    override fun hashCode(): Int =
+            descriptor.hashCode()
+
+    override fun toString(): String =
+            ReflectionObjectRenderer.renderFunction(descriptor)
+}

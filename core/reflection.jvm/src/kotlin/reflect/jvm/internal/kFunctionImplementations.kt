@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package kotlin.reflect
+package kotlin.reflect.jvm.internal
 
-/**
- * Represents a function with introspection capabilities.
- */
-public interface KFunction<out R> : KCallable<R>, Function<R>
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import kotlin.reflect.KTopLevelFunction
+
+class KTopLevelFreeFunctionImpl : KFunctionImpl, KTopLevelFunction<Any?> {
+    constructor(container: KPackageImpl, name: String, signature: String): super(container, name, signature)
+
+    constructor(container: KPackageImpl, descriptor: FunctionDescriptor): super(container, descriptor)
+}

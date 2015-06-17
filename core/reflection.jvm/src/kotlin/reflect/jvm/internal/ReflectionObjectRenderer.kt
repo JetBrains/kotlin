@@ -16,6 +16,8 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -23,29 +25,47 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 object ReflectionObjectRenderer {
     private val renderer = DescriptorRenderer.FQ_NAMES_IN_TYPES
 
+    private fun StringBuilder.appendReceiverType(receiver: ReceiverParameterDescriptor?) {
+        if (receiver != null) {
+            append(renderer.renderType(receiver.getType()))
+            append(".")
+        }
+    }
+
+    private fun StringBuilder.appendReceiversAndName(callable: CallableDescriptor) {
+        val dispatchReceiver = callable.getDispatchReceiverParameter()
+        val extensionReceiver = callable.getExtensionReceiverParameter()
+
+        appendReceiverType(dispatchReceiver)
+
+        val addParentheses = dispatchReceiver != null && extensionReceiver != null
+        if (addParentheses) append("(")
+        appendReceiverType(extensionReceiver)
+        if (addParentheses) append(")")
+
+        append(renderer.renderName(callable.getName()))
+    }
+
     // TODO: include visibility, return type
     fun renderProperty(descriptor: PropertyDescriptor): String {
-        fun StringBuilder.appendReceiverType(receiver: ReceiverParameterDescriptor?) {
-            if (receiver != null) {
-                append(renderer.renderType(receiver.getType()))
-                append(".")
-            }
-        }
-
         return StringBuilder {
             append(if (descriptor.isVar()) "var " else "val ")
+            appendReceiversAndName(descriptor)
+        }.toString()
+    }
 
-            val dispatchReceiver = descriptor.getDispatchReceiverParameter()
-            val extensionReceiver = descriptor.getExtensionReceiverParameter()
+    fun renderFunction(descriptor: FunctionDescriptor): String {
+        // TODO: add tests
+        return StringBuilder {
+            append("fun ")
+            appendReceiversAndName(descriptor)
 
-            appendReceiverType(dispatchReceiver)
+            descriptor.getValueParameters().joinTo(this, separator = ", ", prefix = "(", postfix = ")") {
+                renderer.renderType(it.getType()) // TODO: vararg
+            }
 
-            val addParentheses = dispatchReceiver != null && extensionReceiver != null
-            if (addParentheses) append("(")
-            appendReceiverType(extensionReceiver)
-            if (addParentheses) append(")")
-
-            append(renderer.renderName(descriptor.getName()))
+            append(": ")
+            append(renderer.renderType(descriptor.getReturnType()!!))
         }.toString()
     }
 }

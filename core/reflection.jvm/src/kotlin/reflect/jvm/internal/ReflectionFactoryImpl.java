@@ -44,7 +44,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
 
     @Override
     public KFunction function(FunctionReference f) {
-        return f;
+        return new KTopLevelFreeFunctionImpl((KPackageImpl) f.getOwner(), f.getName(), f.getSignature());
     }
 
     // Properties

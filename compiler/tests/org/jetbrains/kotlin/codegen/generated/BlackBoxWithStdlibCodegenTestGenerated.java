@@ -2821,6 +2821,21 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/constructors")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Constructors extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInConstructors() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/constructors"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("constructorName.kt")
+            public void testConstructorName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/constructors/constructorName.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -2970,6 +2985,33 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("objectInLambda.kt")
             public void testObjectInLambda() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/enclosing/objectInLambda.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/functions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Functions extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInFunctions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/functions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("localFunctionName.kt")
+            public void testLocalFunctionName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/functions/localFunctionName.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("platformName.kt")
+            public void testPlatformName() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/functions/platformName.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("simpleNames.kt")
+            public void testSimpleNames() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/functions/simpleNames.kt");
                 doTestWithStdlib(fileName);
             }
         }
