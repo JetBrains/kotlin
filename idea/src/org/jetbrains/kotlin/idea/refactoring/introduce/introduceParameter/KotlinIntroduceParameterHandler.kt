@@ -33,6 +33,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
@@ -58,8 +59,10 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
-import java.util.Collections
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import java.util.*
 import kotlin.test.fail
 
 public data class IntroduceParameterDescriptor(
@@ -70,9 +73,9 @@ public data class IntroduceParameterDescriptor(
         val newParameterTypeText: String,
         val newArgumentValue: JetExpression,
         val withDefaultValue: Boolean,
-        val parametersUsages: Map<JetParameter, List<PsiReference>>,
+        val parametersUsages: Map<JetElement, List<JetElement>>,
         val occurrencesToReplace: List<JetPsiRange>,
-        val parametersToRemove: List<JetParameter> = getParametersToRemove(withDefaultValue, parametersUsages, occurrencesToReplace),
+        val parametersToRemove: List<JetElement> = getParametersToRemove(withDefaultValue, parametersUsages, occurrencesToReplace),
         val occurrenceReplacer: IntroduceParameterDescriptor.(JetPsiRange) -> Unit = {}
 ) {
     val originalOccurrence: JetPsiRange
@@ -103,16 +106,16 @@ public data class IntroduceParameterDescriptor(
 
 fun getParametersToRemove(
         withDefaultValue: Boolean,
-        parametersUsages: Map<JetParameter, List<PsiReference>>,
+        parametersUsages: Map<JetElement, List<JetElement>>,
         occurrencesToReplace: List<JetPsiRange>
-): List<JetParameter> {
+): List<JetElement> {
     if (withDefaultValue) return Collections.emptyList()
 
     val occurrenceRanges = occurrencesToReplace.map { it.getTextRange() }
     return parametersUsages.entrySet()
             .filter {
-                it.value.all { paramRef ->
-                    occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramRef.getElement().getTextRange()) }
+                it.value.all { paramUsage ->
+                    occurrenceRanges.any { occurrenceRange -> occurrenceRange.contains(paramUsage.getTextRange()) }
                 }
             }
             .map { it.key }
@@ -127,7 +130,11 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                         val parameters = callable.getValueParameters()
                         val withReceiver = methodDescriptor.receiver != null
                         parametersToRemove
-                                .map { parameters.indexOf(it) + if (withReceiver) 1 else 0 }
+                                .map {
+                                    if (it is JetParameter) {
+                                        parameters.indexOf(it) + if (withReceiver) 1 else 0
+                                    } else 0
+                                }
                                 .sortDescending()
                                 .forEach { methodDescriptor.removeParameter(it) }
                     }
@@ -227,7 +234,7 @@ public open class KotlinIntroduceParameterHandler(
         val nameValidator = JetNameValidatorImpl(body, null, JetNameValidatorImpl.Target.PROPERTIES)
         val suggestedNames = linkedSetOf(*JetNameSuggester.suggestNames(replacementType, nameValidator, "p"))
 
-        val parametersUsages = findInternalParameterUsages(targetParent)
+        val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor)
 
         val forbiddenRanges =
                 if (targetParent is JetClass) {
@@ -331,17 +338,51 @@ public open class KotlinIntroduceParameterHandler(
     }
 }
 
-private fun findInternalParameterUsages(targetParent: JetNamedDeclaration): Map<JetParameter, List<PsiReference>> {
-    return targetParent.getValueParameters()
+private fun findInternalUsagesOfParametersAndReceiver(
+        targetParent: JetNamedDeclaration,
+        targetDescriptor: FunctionDescriptor
+): Map<JetElement, List<JetElement>> {
+    val usages = ArrayList<Pair<JetElement, List<JetElement>>>()
+    targetParent.getValueParameters()
             .filter { !it.hasValOrVar() }
             .map {
                 it to DefaultSearchHelper<JetParameter>()
                         .newRequest(UsagesSearchTarget(element = it))
                         .search()
-                        .toList()
+                        .map { it.getElement() as JetElement }
             }
-            .filter { it.second.isNotEmpty() }
-            .toMap()
+            .filterTo(usages) { it.second.isNotEmpty() }
+    val receiverTypeRef = (targetParent as? JetFunction)?.getReceiverTypeReference()
+    if (receiverTypeRef != null) {
+        val receiverUsages = ArrayList<JetElement>()
+        targetParent.acceptChildren(
+                object : JetTreeVisitorVoid() {
+                    override fun visitThisExpression(expression: JetThisExpression) {
+                        super.visitThisExpression(expression)
+
+                        if (expression.getInstanceReference().getReference()?.resolve() == targetDescriptor) {
+                            receiverUsages.add(expression)
+                        }
+                    }
+
+                    override fun visitJetElement(element: JetElement) {
+                        super.visitJetElement(element)
+
+                        val bindingContext = element.analyze()
+                        val resolvedCall = element.getResolvedCall(bindingContext) ?: return
+
+                        if ((resolvedCall.getExtensionReceiver() as? ThisReceiver)?.getDeclarationDescriptor() == targetDescriptor ||
+                            (resolvedCall.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor() == targetDescriptor) {
+                            receiverUsages.add(resolvedCall.getCall().getCallElement())
+                        }
+                    }
+                }
+        )
+        if (receiverUsages.isNotEmpty()) {
+            usages.add(receiverTypeRef to receiverUsages)
+        }
+    }
+    return usages.toMap()
 }
 
 trait KotlinIntroduceLambdaParameterHelper: KotlinIntroduceParameterHelper {
@@ -376,7 +417,7 @@ public open class KotlinIntroduceLambdaParameterHandler(
                     newParameterTypeText = "", // to be chosen in the dialog
                     newArgumentValue = JetPsiFactory(project).createExpression("{}"), // substituted later
                     withDefaultValue = false,
-                    parametersUsages = findInternalParameterUsages(callable),
+                    parametersUsages = findInternalUsagesOfParametersAndReceiver(callable, callableDescriptor),
                     occurrencesToReplace = listOf(originalRange),
                     parametersToRemove = listOf()
             )

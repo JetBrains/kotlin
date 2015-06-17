@@ -59,7 +59,9 @@ fun DeclarationDescriptorWithVisibility.isVisible(
 public fun compareDescriptors(project: Project, d1: DeclarationDescriptor?, d2: DeclarationDescriptor?): Boolean {
     if (d1 == d2) return true
     if (d1 == null || d2 == null) return false
-    if (DescriptorToSourceUtilsIde.getAllDeclarations(project, d1) == DescriptorToSourceUtilsIde.getAllDeclarations(project, d2)) return true
+    val declarations1 = DescriptorToSourceUtilsIde.getAllDeclarations(project, d1)
+    val declarations2 = DescriptorToSourceUtilsIde.getAllDeclarations(project, d2)
+    if (declarations1 == declarations2 && declarations1.isNotEmpty()) return true
     return DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d1) == DescriptorRenderer.FQ_NAMES_IN_TYPES.render(d2)
 }
 

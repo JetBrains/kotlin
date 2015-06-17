@@ -34,7 +34,10 @@ public class JetMutableMethodDescriptor(val original: JetMethodDescriptor): JetM
     }
 
     public fun removeParameter(index: Int) {
-        parameters.remove(index)
+        val paramInfo = parameters.remove(index)
+        if (paramInfo == receiver) {
+            receiver = null
+        }
     }
 
     public fun renameParameter(index: Int, newName: String) {

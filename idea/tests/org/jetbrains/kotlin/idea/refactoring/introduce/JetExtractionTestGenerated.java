@@ -2569,6 +2569,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceSimpleParameterTest(fileName);
         }
 
+        @TestMetadata("unusedDispatchReceiver.kt")
+        public void testUnusedDispatchReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/unusedDispatchReceiver.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
+        @TestMetadata("unusedExtensionReceiver.kt")
+        public void testUnusedExtensionReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/unusedExtensionReceiver.kt");
+            doIntroduceSimpleParameterTest(fileName);
+        }
+
         @TestMetadata("valueAtCallSite.kt")
         public void testValueAtCallSite() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/valueAtCallSite.kt");

@@ -168,6 +168,13 @@ public class KotlinInplaceParameterIntroducer(
             var addedRange: TextRange? = null
             val builder = StringBuilder()
 
+            (callable as? JetFunction)?.getReceiverTypeReference()?.let { receiverTypeRef ->
+                builder.append(receiverTypeRef.getText()).append('.')
+                if (!descriptor.withDefaultValue && receiverTypeRef in parametersToRemove) {
+                    rangesToRemove.add(TextRange(0, builder.length()))
+                }
+            }
+
             builder.append(callable.getName())
 
             val parameters = callable.getValueParameters()
@@ -192,7 +199,7 @@ public class KotlinInplaceParameterIntroducer(
                 if (parameter == addedParameter) {
                     addedRange = range
                 }
-                else if (parameter in parametersToRemove && !descriptor.withDefaultValue) {
+                else if (!descriptor.withDefaultValue && parameter in parametersToRemove) {
                     rangesToRemove.add(range)
                 }
 

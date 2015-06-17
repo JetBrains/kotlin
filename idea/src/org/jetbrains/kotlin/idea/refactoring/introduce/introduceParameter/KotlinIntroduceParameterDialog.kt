@@ -90,7 +90,7 @@ public class KotlinIntroduceParameterDialog private constructor(
     private val typeField = NameSuggestionsField(typeNameSuggestions, project, JetFileType.INSTANCE)
     private var replaceAllCheckBox: JCheckBox? = null
     private var defaultValueCheckBox: JCheckBox? = null
-    private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, JetParameter>(descriptor.parametersToRemove.size())
+    private val removeParamsCheckBoxes = LinkedHashMap<JCheckBox, JetElement>(descriptor.parametersToRemove.size())
     private var parameterTablePanel: KotlinParameterTablePanel? = null
     private val commandName = if (lambdaExtractionDescriptor != null) INTRODUCE_LAMBDA_PARAMETER else INTRODUCE_PARAMETER
 
@@ -218,7 +218,8 @@ public class KotlinIntroduceParameterDialog private constructor(
         }
 
         for (parameter in descriptor.parametersToRemove) {
-            val cb = NonFocusableCheckBox("Remove parameter '${parameter.getName()}' no longer used")
+            val removeWhat = if (parameter is JetParameter) "parameter '${parameter.getName()}'" else "receiver"
+            val cb = NonFocusableCheckBox("Remove $removeWhat no longer used")
 
             removeParamsCheckBoxes[cb] = parameter
             cb.setSelected(true)
