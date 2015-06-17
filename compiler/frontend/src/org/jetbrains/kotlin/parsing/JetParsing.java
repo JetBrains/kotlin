@@ -215,8 +215,8 @@ public class JetParsing extends AbstractJetParsing {
             parseFileAnnotationList(FILE_ANNOTATIONS_WHEN_PACKAGE_OMITTED);
             packageDirective = mark();
             packageDirective.done(PACKAGE_DIRECTIVE);
-            // this is necessary to allow comments at the start of the file to be bound to the first declaration:
-            packageDirective.setCustomEdgeTokenBinders(PrecedingCommentsBinder.INSTANCE$, null);
+            // this is necessary to allow comments at the start of the file to be bound to the first declaration
+            packageDirective.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE$, null);
         }
 
         parseImportDirectives();
@@ -351,13 +351,15 @@ public class JetParsing extends AbstractJetParsing {
     }
 
     private void parseImportDirectives() {
-        if (at(IMPORT_KEYWORD)) {
-            PsiBuilder.Marker importList = mark();
-            while (at(IMPORT_KEYWORD)) {
-                parseImportDirective();
-            }
-            importList.done(IMPORT_LIST);
+        PsiBuilder.Marker importList = mark();
+        if (!at(IMPORT_KEYWORD)) {
+            // this is necessary to allow comments at the start of the file to be bound to the first declaration
+            importList.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE$, null);
         }
+        while (at(IMPORT_KEYWORD)) {
+            parseImportDirective();
+        }
+        importList.done(IMPORT_LIST);
     }
 
     /*

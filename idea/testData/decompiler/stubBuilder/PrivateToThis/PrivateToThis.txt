@@ -1,6 +1,7 @@
 PsiJetFileStubImpl[package=p]
   PACKAGE_DIRECTIVE:
     REFERENCE_EXPRESSION:[referencedName=p]
+  IMPORT_LIST:
   CLASS:[fqName=p.PrivateToThis, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateToThis, superNames=[]]
     MODIFIER_LIST:[internal final]
     TYPE_PARAMETER_LIST:

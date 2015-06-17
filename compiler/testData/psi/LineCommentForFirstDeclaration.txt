@@ -1,6 +1,8 @@
 JetFile: LineCommentForFirstDeclaration.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   FUN
     PsiComment(EOL_COMMENT)('// This is foo')
     PsiWhiteSpace('\n')

@@ -3,3 +3,4 @@ PsiJetFileStubImpl[package=some.test]
     DOT_QUALIFIED_EXPRESSION:
       REFERENCE_EXPRESSION:[referencedName=some]
       REFERENCE_EXPRESSION:[referencedName=test]
+  IMPORT_LIST:

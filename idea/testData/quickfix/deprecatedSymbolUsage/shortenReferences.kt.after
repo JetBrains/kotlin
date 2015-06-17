@@ -1,6 +1,6 @@
-// "Replace with 'newFun(java.io.File.separatorChar)'" "true"
-
 import java.io.File
+
+// "Replace with 'newFun(java.io.File.separatorChar)'" "true"
 
 @deprecated("", ReplaceWith("newFun(java.io.File.separatorChar)"))
 fun oldFun() { }
@@ -8,5 +8,5 @@ fun oldFun() { }
 fun newFun(separator: Char){}
 
 fun foo() {
-    <caret>newFun(File.separatorChar)
+    newFun(File.separatorChar)
 }

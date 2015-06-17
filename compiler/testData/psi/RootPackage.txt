@@ -9,6 +9,8 @@ JetFile: RootPackage.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('bar')
     PsiElement(SEMICOLON)(';')
+  IMPORT_LIST
+    <empty list>
   PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')

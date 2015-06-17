@@ -1,7 +1,7 @@
+import java.lang
+
 // "Replace javaClass<T>() with T::class" "true"
 // WITH_RUNTIME
-
-import java.lang
 
 Ann(
         String::class,

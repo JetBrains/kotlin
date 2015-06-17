@@ -4,6 +4,8 @@ JetFile: BabySteps.kt
     PsiWhiteSpace(' ')
     REFERENCE_EXPRESSION
       PsiElement(IDENTIFIER)('foo')
+  IMPORT_LIST
+    <empty list>
   PsiWhiteSpace('\n\n')
   CLASS
     PsiElement(class)('class')

@@ -22,6 +22,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.asJava.KotlinLightElement
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.idea.kdoc.KDocRenderer
 import org.jetbrains.kotlin.idea.kdoc.resolveKDocLink
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetPsiUtil
 import org.jetbrains.kotlin.psi.JetReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
@@ -50,7 +50,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
         return getText(element, originalElement, true)
     }
 
-    override fun generateDoc(element: PsiElement, originalElement: PsiElement): String? {
+    override fun generateDoc(element: PsiElement, originalElement: PsiElement?): String? {
         return getText(element, originalElement, false)
     }
 
@@ -91,18 +91,17 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
                 .build()
 
 
-        private fun getText(element: PsiElement, originalElement: PsiElement, quickNavigation: Boolean): String? {
+        private fun getText(element: PsiElement, originalElement: PsiElement?, quickNavigation: Boolean): String? {
             if (element is JetDeclaration) {
                 return renderKotlinDeclaration(element, quickNavigation)
             }
-            else if (element is KotlinLightMethod) {
-                val origin = element.getOrigin()
-                if (origin == null) return null
+            else if (element is KotlinLightElement<*, *>) {
+                val origin = element.getOrigin() ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
             }
 
             if (quickNavigation) {
-                val referenceExpression = originalElement.getNonStrictParentOfType<JetReferenceExpression>()
+                val referenceExpression = originalElement?.getNonStrictParentOfType<JetReferenceExpression>()
                 if (referenceExpression != null) {
                     val context = referenceExpression.analyze(BodyResolveMode.PARTIAL)
                     val declarationDescriptor = context[BindingContext.REFERENCE_TARGET, referenceExpression]
@@ -139,7 +138,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
             return renderedDecl
         }
 
-        private fun mixKotlinToJava(declarationDescriptor: DeclarationDescriptor, element: PsiElement, originalElement: PsiElement): String? {
+        private fun mixKotlinToJava(declarationDescriptor: DeclarationDescriptor, element: PsiElement, originalElement: PsiElement?): String? {
             val originalInfo = JavaDocumentationProvider().getQuickNavigateInfo(element, originalElement)
             if (originalInfo != null) {
                 val renderedDecl = DescriptorRenderer.HTML_NAMES_WITH_SHORT_TYPES.render(declarationDescriptor)

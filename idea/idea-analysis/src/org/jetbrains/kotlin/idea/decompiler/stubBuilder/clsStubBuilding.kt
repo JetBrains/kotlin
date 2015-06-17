@@ -60,6 +60,7 @@ fun createFileStub(packageFqName: FqName): KotlinFileStubImpl {
     val fileStub = KotlinFileStubImpl(null, packageFqName.asString(), packageFqName.isRoot())
     val packageDirectiveStub = KotlinPlaceHolderStubImpl<JetPackageDirective>(fileStub, JetStubElementTypes.PACKAGE_DIRECTIVE)
     createStubForPackageName(packageDirectiveStub, packageFqName)
+    KotlinPlaceHolderStubImpl<JetImportList>(fileStub, JetStubElementTypes.IMPORT_LIST)
     return fileStub
 }
 

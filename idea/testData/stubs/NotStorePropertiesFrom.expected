@@ -1,5 +1,6 @@
 PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE:
+  IMPORT_LIST:
   CLASS:[fqName=Test, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Test, superNames=[]]
     PRIMARY_CONSTRUCTOR:
       VALUE_PARAMETER_LIST:

@@ -86,3 +86,9 @@ object TrailingCommentsBinder : WhitespacesAndCommentsBinder {
         return result
     }
 }
+
+object DoNotBindAnything : WhitespacesAndCommentsBinder {
+    override fun getEdgePosition(tokens: List<IElementType>, atStreamEdge: Boolean, getter: WhitespacesAndCommentsBinder.TokenTextGetter): Int {
+        return 0
+    }
+}

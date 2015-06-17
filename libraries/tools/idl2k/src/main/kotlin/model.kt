@@ -16,8 +16,6 @@
 
 package org.jetbrains.idl2k
 
-import java.util.HashSet
-
 data class NamedValue<V>(val name: String, val value: V)
 
 data class Repository(
@@ -27,20 +25,31 @@ data class Repository(
         val enums: Map<String, EnumDefinition>
 )
 
-data class GenerateAttribute(val name: String, val type: String, val initializer: String?, val getterSetterNoImpl: Boolean, val readOnly: Boolean, val override: Boolean, var vararg: Boolean)
+enum class AttributeKind {
+    VAL, VAR, ARGUMENT
+}
+data class GenerateAttribute(val name: String, val type: Type, val initializer: String?, val getterSetterNoImpl: Boolean, val kind: AttributeKind, val override: Boolean, var vararg: Boolean, val static: Boolean)
 
 val GenerateAttribute.getterNoImpl: Boolean
     get() = getterSetterNoImpl
 val GenerateAttribute.setterNoImpl: Boolean
-    get() = getterSetterNoImpl && !readOnly
+    get() = getterSetterNoImpl && kind == AttributeKind.VAR
+val GenerateAttribute.isVal: Boolean
+    get() = kind == AttributeKind.VAL
+val GenerateAttribute.isVar: Boolean
+    get() = kind == AttributeKind.VAR
 
-val String.typeSignature: String
-    get() = if (contains("->")) "Function${FunctionType(this).arity}" else this
+val Type.typeSignature: String
+    get() = when {
+        this is FunctionType -> "Function$arity"
+        else -> this.toString()
+    }
 
 val GenerateAttribute.signature: String
     get() = "$name:${type.typeSignature}"
 
-fun GenerateAttribute.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<String> = standardTypes()) = copy(type = type.dynamicIfUnknownType(allTypes, standardTypes))
+fun GenerateAttribute.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<Type> = standardTypes()) = copy(type = type.dynamicIfUnknownType(allTypes, standardTypes))
+fun List<GenerateAttribute>.dynamicIfUnknownType(allTypes : Set<String>, standardTypes : Set<Type> = standardTypes()) = map { it.dynamicIfUnknownType(allTypes, standardTypes) }
 
 enum class NativeGetterOrSetter {
     NONE,
@@ -53,25 +62,16 @@ enum class GenerateDefinitionKind {
     CLASS
 }
 
-class UnionType(val namespace: String, types: Collection<String>) {
-    val memberTypes = HashSet(types)
-    val name = "Union${this.memberTypes.sort().joinToString("Or")}"
-
-    fun contains(type: String) = type in memberTypes
-
-    override fun equals(other: Any?): Boolean = other is UnionType && name == other.name
-    override fun hashCode(): Int = name.hashCode()
-    override fun toString(): String = name
-}
-
 data class GenerateFunctionCall(val name: String, val arguments: List<String>)
 data class GenerateFunction(
         val name: String,
-        val returnType: String,
+        val returnType: Type,
         val arguments: List<GenerateAttribute>,
-        val nativeGetterOrSetter: NativeGetterOrSetter
+        val nativeGetterOrSetter: NativeGetterOrSetter,
+        val static: Boolean
 )
 
+data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute, val initTypeCall: GenerateFunctionCall?)
 data class GenerateTraitOrClass(
         val name: String,
         val namespace: String,
@@ -80,14 +80,10 @@ data class GenerateTraitOrClass(
         val memberAttributes: List<GenerateAttribute>,
         val memberFunctions: List<GenerateFunction>,
         val constants: List<GenerateAttribute>,
-        val constructor: GenerateFunction?,
-        val superConstructorCalls: List<GenerateFunctionCall>
-) {
-    init {
-        assert(superConstructorCalls.size() <= 1, "It shoould be zero or one super constructors")
-    }
-}
-
+        val primaryConstructor: ConstructorWithSuperTypeCall?,
+        val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
+        val generateBuilderFunction: Boolean
+)
 
 val GenerateFunction.signature: String
     get() = arguments.map { it.type.typeSignature }.joinToString(", ", "$name(", ")")
@@ -96,9 +92,9 @@ fun GenerateFunction.dynamicIfUnknownType(allTypes : Set<String>) = standardType
     copy(returnType = returnType.dynamicIfUnknownType(allTypes, standardTypes), arguments = arguments.map { it.dynamicIfUnknownType(allTypes, standardTypes) })
 }
 
-fun InterfaceDefinition.findExtendedAttribute(name: String) = extendedAttributes.firstOrNull { it.call == name }
-fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttribute(name) ?: null != null
-fun InterfaceDefinition.findConstructor() = findExtendedAttribute("Constructor")
+fun InterfaceDefinition.findExtendedAttributes(name: String) = extendedAttributes.filter { it.call == name }
+fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttributes(name)?.isNotEmpty() ?: false
+fun InterfaceDefinition.findConstructors() = findExtendedAttributes("Constructor")
 
 data class GenerateUnionTypes(
         val typeNamesToUnionsMap: Map<String, List<String>>,

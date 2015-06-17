@@ -1,6 +1,8 @@
 JetFile: EmptyParentheses.kt
   PACKAGE_DIRECTIVE
     <empty list>
+  IMPORT_LIST
+    <empty list>
   OBJECT_DECLARATION
     PsiElement(object)('object')
     PsiWhiteSpace(' ')

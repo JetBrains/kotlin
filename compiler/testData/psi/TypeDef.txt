@@ -12,6 +12,8 @@ JetFile: TypeDef.kt
       PsiElement(DOT)('.')
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('goo')
+  IMPORT_LIST
+    <empty list>
   PsiWhiteSpace('\n\n')
   TYPEDEF
     PsiElement(typealias)('typealias')

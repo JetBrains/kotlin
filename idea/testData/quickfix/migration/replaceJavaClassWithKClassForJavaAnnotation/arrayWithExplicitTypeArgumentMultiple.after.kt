@@ -1,7 +1,7 @@
+import java.lang.Number
+
 // "Replace javaClass<T>() with T::class in whole project" "true"
 // WITH_RUNTIME
-
-import java.lang.Number
 
 Ann(arg = array(Int::class, String::class)) class MyClass1
 

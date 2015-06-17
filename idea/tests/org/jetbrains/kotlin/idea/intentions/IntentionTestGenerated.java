@@ -5813,6 +5813,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("platforrmType1.kt")
+        public void testPlatforrmType1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/platforrmType1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("platforrmType2.kt")
+        public void testPlatforrmType2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/platforrmType2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("propertyInitializerIsCallWithUnnecessaryTypeArgs.kt")
         public void testPropertyInitializerIsCallWithUnnecessaryTypeArgs() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeExplicitTypeArguments/propertyInitializerIsCallWithUnnecessaryTypeArgs.kt");

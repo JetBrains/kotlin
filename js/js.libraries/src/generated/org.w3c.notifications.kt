@@ -21,80 +21,111 @@ import org.w3c.workers.*
 import org.w3c.xhr.*
 
 native public open class Notification(title: String, options: NotificationOptions = noImpl) : EventTarget {
-    var permission: String
-        get() = noImpl
-        set(value) = noImpl
     var onclick: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
     var onerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    var title: String
+    open val title: String
         get() = noImpl
-        set(value) = noImpl
-    var dir: String
+    open val dir: String
         get() = noImpl
-        set(value) = noImpl
-    var lang: String
+    open val lang: String
         get() = noImpl
-        set(value) = noImpl
-    var body: String
+    open val body: String
         get() = noImpl
-        set(value) = noImpl
-    var tag: String
+    open val tag: String
         get() = noImpl
-        set(value) = noImpl
-    var icon: String
+    open val icon: String
         get() = noImpl
-        set(value) = noImpl
-    var sound: String
+    open val sound: String
         get() = noImpl
-        set(value) = noImpl
-    var renotify: Boolean
+    open val renotify: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var silent: Boolean
+    open val silent: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var noscreen: Boolean
+    open val noscreen: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var sticky: Boolean
+    open val sticky: Boolean
         get() = noImpl
-        set(value) = noImpl
-    var data: Any?
+    open val data: Any?
         get() = noImpl
-        set(value) = noImpl
     fun close(): Unit = noImpl
+
+    companion object {
+        var permission: String
+            get() = noImpl
+            set(value) = noImpl
+        fun requestPermission(callback: (String) -> Unit = noImpl): Unit = noImpl
+    }
 }
 
-native public open class NotificationOptions {
-    var dir: String = "auto"
-    var lang: String = ""
-    var body: String = ""
-    var tag: String = ""
+native public interface NotificationOptions {
+    var dir: String
+    var lang: String
+    var body: String
+    var tag: String
     var icon: String
     var sound: String
     var vibrate: dynamic
-    var renotify: Boolean = false
-    var silent: Boolean = false
-    var noscreen: Boolean = false
-    var sticky: Boolean = false
-    var data: Any? = null
+    var renotify: Boolean
+    var silent: Boolean
+    var noscreen: Boolean
+    var sticky: Boolean
+    var data: Any?
 }
 
-native public open class GetNotificationOptions {
-    var tag: String = ""
+suppress("NOTHING_TO_INLINE")
+inline fun NotificationOptions(dir: String = "auto", lang: String = "", body: String = "", tag: String = "", icon: String, sound: String, vibrate: dynamic, renotify: Boolean = false, silent: Boolean = false, noscreen: Boolean = false, sticky: Boolean = false, data: Any? = null): NotificationOptions {
+    val o = js("({})")
+
+    o["dir"] = dir
+    o["lang"] = lang
+    o["body"] = body
+    o["tag"] = tag
+    o["icon"] = icon
+    o["sound"] = sound
+    o["vibrate"] = vibrate
+    o["renotify"] = renotify
+    o["silent"] = silent
+    o["noscreen"] = noscreen
+    o["sticky"] = sticky
+    o["data"] = data
+
+    return o
+}
+
+native public interface GetNotificationOptions {
+    var tag: String
+}
+
+suppress("NOTHING_TO_INLINE")
+inline fun GetNotificationOptions(tag: String = ""): GetNotificationOptions {
+    val o = js("({})")
+
+    o["tag"] = tag
+
+    return o
 }
 
 native public open class NotificationEvent(type: String, eventInitDict: NotificationEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
-    var notification: Notification
+    open val notification: Notification
         get() = noImpl
-        set(value) = noImpl
 }
 
-native public open class NotificationEventInit : ExtendableEventInit() {
+native public interface NotificationEventInit : ExtendableEventInit {
     var notification: Notification
+}
+
+suppress("NOTHING_TO_INLINE")
+inline fun NotificationEventInit(notification: Notification, bubbles: Boolean = false, cancelable: Boolean = false): NotificationEventInit {
+    val o = js("({})")
+
+    o["notification"] = notification
+    o["bubbles"] = bubbles
+    o["cancelable"] = cancelable
+
+    return o
 }
 
