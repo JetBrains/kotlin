@@ -150,5 +150,17 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType/ImportedFirst.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("ShorterFirst.kt")
+        public void testShorterFirst() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType/ShorterFirst.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("StartMatchFirst.kt")
+        public void testStartMatchFirst() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType/StartMatchFirst.kt");
+            doTest(fileName);
+        }
     }
 }
