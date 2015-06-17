@@ -225,6 +225,11 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (parameters.getCompletionType() == CompletionType.BASIC) {
                 val session = BasicCompletionSession(configuration, parameters, result)
 
+                if (parameters.isAutoPopup() && session.disableAutoPopup()) {
+                    result.stopHere()
+                    return
+                }
+
                 val somethingAdded = session.complete()
                 if (!somethingAdded && parameters.getInvocationCount() < 2) {
                     // Rerun completion if nothing was found

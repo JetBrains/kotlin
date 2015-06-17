@@ -44,10 +44,7 @@ import org.jetbrains.kotlin.idea.util.makeNotNullable
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -289,7 +286,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             null
     }
 
-    private val parameterNameAndTypeCompletion = if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME)
+    private val parameterNameAndTypeCompletion = if (shouldCompleteParameterNameAndType())
         ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
     else
         null
@@ -330,6 +327,25 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         return CompletionKind.ALL
+    }
+
+    private fun shouldCompleteParameterNameAndType(): Boolean {
+        when (completionKind) {
+            CompletionKind.PARAMETER_NAME, CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME -> {
+                val parameter = position.getNonStrictParentOfType<JetParameter>()!!
+                val owner = parameter.getParent().getParent()
+                return parameter != (owner as? JetCatchClause)?.getCatchParameter() && parameter != (owner as? JetPropertyAccessor)?.getParameter()
+            }
+
+            else -> return false
+        }
+    }
+
+    public fun disableAutoPopup(): Boolean {
+        return when (completionKind) {
+            CompletionKind.PARAMETER_NAME, CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME -> !shouldCompleteParameterNameAndType()
+            else -> false
+        }
     }
 
     override fun doComplete() {

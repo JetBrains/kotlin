@@ -1053,6 +1053,18 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("NoCatchParameterAutopopup.kt")
+            public void testNoCatchParameterAutopopup() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/NoCatchParameterAutopopup.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NoSetterParameterAutopopup.kt")
+            public void testNoSetterParameterAutopopup() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/NoSetterParameterAutopopup.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ParameterAnnotation1.kt")
             public void testParameterAnnotation1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/ParameterAnnotation1.kt");
@@ -1407,6 +1419,24 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("NoDuplicationJava.kt")
             public void testNoDuplicationJava() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NoDuplicationJava.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotForCatchParameter.kt")
+            public void testNotForCatchParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForCatchParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotForLambdaParameter.kt")
+            public void testNotForLambdaParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForLambdaParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("NotForSetterParameter.kt")
+            public void testNotForSetterParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForSetterParameter.kt");
                 doTest(fileName);
             }
 
