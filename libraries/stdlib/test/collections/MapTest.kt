@@ -3,6 +3,7 @@ package test.collections
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.test.fails
 import org.junit.Test as test
 
 class MapTest {
@@ -19,6 +20,27 @@ class MapTest {
         val empty = mapOf<String, Int?>()
         val c = empty.getOrElse("") { null }
         assertEquals(null, c)
+    }
+
+    test fun getOrImplicitDefault() {
+        val data: MutableMap<String, Int> = hashMapOf("bar" to 1)
+        assertTrue(fails { data.getOrImplicitDefault("foo") } is KeyMissingException)
+        assertEquals(1, data.getOrImplicitDefault("bar"))
+
+        val mutableWithDefault = data.withDefault { 42 }
+        assertEquals(42, mutableWithDefault.getOrImplicitDefault("foo"))
+
+        // verify that it is wrapper
+        mutableWithDefault["bar"] = 2
+        assertEquals(2, data["bar"])
+        data["bar"] = 3
+        assertEquals(3, mutableWithDefault["bar"])
+
+        val readonlyWithDefault = (data as Map<String, Int>).withDefault { it.length() }
+        assertEquals(4, readonlyWithDefault.getOrImplicitDefault("loop"))
+
+        val withReplacedDefault = readonlyWithDefault.withDefault { 42 }
+        assertEquals(42, withReplacedDefault.getOrImplicitDefault("loop"))
     }
 
     test fun getOrPut() {
