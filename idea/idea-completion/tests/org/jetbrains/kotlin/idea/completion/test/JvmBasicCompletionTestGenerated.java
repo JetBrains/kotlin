@@ -1427,6 +1427,18 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/Simple.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("ValParameter.kt")
+            public void testValParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/ValParameter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("VarParameter.kt")
+            public void testVarParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/VarParameter.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/idea-completion/testData/basic/common/shadowing")

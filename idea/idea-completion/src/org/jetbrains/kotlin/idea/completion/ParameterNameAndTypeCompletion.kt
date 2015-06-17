@@ -23,29 +23,37 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression
+import org.jetbrains.kotlin.psi.JetClassOrObject
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 
 class ParameterNameAndTypeCompletion(
         private val collector: LookupElementsCollector,
         private val lookupElementFactory: LookupElementFactory,
-        private val prefixMatcher: PrefixMatcher
+        private val prefixMatcher: PrefixMatcher,
+        private val resolutionFacade: ResolutionFacade
 ) {
     private val modifiedPrefixMatcher = prefixMatcher.cloneWithPrefix(prefixMatcher.getPrefix().capitalize())
 
-    public fun addFromImports(nameExpression: JetSimpleNameExpression, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+    public fun addFromImports(context: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         if (prefixMatcher.getPrefix().isEmpty()) return
 
-        val resolutionScope = bindingContext[BindingContext.RESOLUTION_SCOPE, nameExpression] ?: return
+        val resolutionScope = context.getResolutionScope(bindingContext)
         val classifiers = resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, modifiedPrefixMatcher.asNameFilter())
 
         for (classifier in classifiers) {
@@ -53,6 +61,27 @@ class ParameterNameAndTypeCompletion(
                 addSuggestionsForClassifier(classifier)
             }
         }
+    }
+
+    private fun PsiElement.getResolutionScope(bindingContext: BindingContext): JetScope {
+        for (parent in parentsWithSelf) {
+            if (parent is JetExpression) {
+                val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, parent]
+                if (scope != null) return scope
+            }
+
+            if (parent is JetClassOrObject) {
+                val classDescriptor = bindingContext[BindingContext.CLASS, parent] as? ClassDescriptorWithResolutionScopes
+                if (classDescriptor != null) {
+                    return classDescriptor.getScopeForMemberDeclarationResolution()
+                }
+            }
+
+            if (parent is JetFile) {
+                return resolutionFacade.getFileTopLevelScope(parent)
+            }
+        }
+        error("Not in JetFile")
     }
 
     public fun addAll(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {

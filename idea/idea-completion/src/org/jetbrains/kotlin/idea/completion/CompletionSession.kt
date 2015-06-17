@@ -263,13 +263,14 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
-    public enum class CompletionKind {
-        KEYWORDS_ONLY,
-        NAMED_ARGUMENTS_ONLY,
-        ALL,
-        TYPES,
-        ANNOTATION_TYPES,
-        ANNOTATION_TYPES_OR_PARAMETER_NAME
+    public enum class CompletionKind(val classKindFilter: ((ClassKind) -> Boolean)?) {
+        KEYWORDS_ONLY(classKindFilter = null),
+        NAMED_ARGUMENTS_ONLY(classKindFilter = null),
+        ALL(classKindFilter = { it != ClassKind.ENUM_ENTRY }),
+        TYPES(classKindFilter = { it != ClassKind.ENUM_ENTRY }),
+        ANNOTATION_TYPES(classKindFilter = { it == ClassKind.ANNOTATION_CLASS }),
+        ANNOTATION_TYPES_OR_PARAMETER_NAME(classKindFilter = { it == ClassKind.ANNOTATION_CLASS }),
+        PARAMETER_NAME(classKindFilter = null)
     }
 
     public val completionKind: CompletionKind = calcCompletionKind()
@@ -284,12 +285,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         CompletionKind.ALL ->
             DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK)
 
-        CompletionKind.NAMED_ARGUMENTS_ONLY, CompletionKind.KEYWORDS_ONLY ->
+        CompletionKind.NAMED_ARGUMENTS_ONLY, CompletionKind.KEYWORDS_ONLY, CompletionKind.PARAMETER_NAME ->
             null
     }
 
-    private val parameterNameAndTypeCompletion = if (completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME)
-        ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher)
+    private val parameterNameAndTypeCompletion = if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME)
+        ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
     else
         null
 
@@ -299,7 +300,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (reference == null) {
-            return CompletionKind.KEYWORDS_ONLY
+            val parameter = position.getParent() as? JetParameter
+            return if (parameter != null && position == parameter.getNameIdentifier())
+                CompletionKind.PARAMETER_NAME
+            else
+                CompletionKind.KEYWORDS_ONLY
         }
 
         val annotationEntry = position.getStrictParentOfType<JetAnnotationEntry>()
@@ -333,7 +338,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
             collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
 
-            parameterNameAndTypeCompletion?.addFromImports(reference!!.expression, bindingContext, { isVisibleDescriptor(it) })
+            parameterNameAndTypeCompletion?.addFromImports(position, bindingContext, { isVisibleDescriptor(it) })
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
@@ -402,12 +407,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         flushToResultSet()
 
         if (shouldRunTopLevelCompletion()) {
-            addAllClasses {
-                if (completionKind != CompletionKind.ANNOTATION_TYPES && completionKind != CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME)
-                    it != ClassKind.ENUM_ENTRY
-                else
-                    it == ClassKind.ANNOTATION_CLASS
-            }
+            completionKind.classKindFilter?.let { addAllClasses(it) }
 
             if (completionKind == CompletionKind.ALL) {
                 collector.addDescriptorElements(getTopLevelCallables(), suppressAutoInsertion = true)
