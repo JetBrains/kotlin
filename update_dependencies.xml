@@ -1,7 +1,7 @@
 <project name="Update Dependencies" default="update">
     <property name="ideaVersion" value="142.2491.1"/>
 
-    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS"/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:M12.1,status:SUCCESS,branch:M12/bootstrap"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
