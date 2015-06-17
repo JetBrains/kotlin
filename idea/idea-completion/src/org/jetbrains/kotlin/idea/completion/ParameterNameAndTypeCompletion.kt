@@ -104,7 +104,7 @@ class ParameterNameAndTypeCompletion(
         for (parameterName in parameterNames) {
             if (prefixMatcher.prefixMatches(parameterName)) {
                 val nameAndType = nameAndTypeFactory(parameterName)
-                collector.addElement(MyLookupElement(nameAndType, lookupElementFactory))
+                collector.addElement(MyLookupElement(nameAndType, lookupElementFactory).suppressAutoInsertion())
             }
         }
     }

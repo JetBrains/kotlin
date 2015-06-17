@@ -1410,6 +1410,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/parameterNameAndType"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("NoAutoInsertion.kt")
+            public void testNoAutoInsertion() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NoAutoInsertion.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoDuplication.kt")
             public void testNoDuplication() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NoDuplication.kt");
