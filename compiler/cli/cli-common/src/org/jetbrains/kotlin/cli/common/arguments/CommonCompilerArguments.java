@@ -44,6 +44,7 @@ public abstract class CommonCompilerArguments {
     public boolean noInline;
 
     @Argument(value = "Xrepeat", description = "Repeat compilation (for performance analysis)")
+    @ValueDescription("<count>")
     public String repeat;
 
     @Argument(value = "Xplugin", description = "Load plugins from the given classpath")
