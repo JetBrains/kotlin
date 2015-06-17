@@ -32,8 +32,16 @@ native public open class Blob() : ImageBitmapSource {
     fun close(): Unit = noImpl
 }
 
-native public open class BlobPropertyBag {
-    var type: String = ""
+native public interface BlobPropertyBag {
+    var type: String
+}
+
+inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
+    val o = js("({})") as BlobPropertyBag
+
+    o.`type` = type
+
+    return o
 }
 
 native public open class File(fileBits: Array<dynamic>, fileName: String, options: FilePropertyBag = noImpl) : Blob() {
@@ -43,9 +51,18 @@ native public open class File(fileBits: Array<dynamic>, fileName: String, option
         get() = noImpl
 }
 
-native public open class FilePropertyBag {
-    var type: String = ""
+native public interface FilePropertyBag {
+    var type: String
     var lastModified: Long
+}
+
+inline fun FilePropertyBag(type: String = "", lastModified: Long): FilePropertyBag {
+    val o = js("({})") as FilePropertyBag
+
+    o.`type` = type
+    o.`lastModified` = lastModified
+
+    return o
 }
 
 native public interface FileList {

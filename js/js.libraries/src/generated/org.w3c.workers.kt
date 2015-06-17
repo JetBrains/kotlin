@@ -102,8 +102,16 @@ native public interface ServiceWorkerContainer : EventTarget {
     fun getRegistrations(): dynamic = noImpl
 }
 
-native public open class RegistrationOptions {
+native public interface RegistrationOptions {
     var scope: String
+}
+
+inline fun RegistrationOptions(scope: String): RegistrationOptions {
+    val o = js("({})") as RegistrationOptions
+
+    o.`scope` = scope
+
+    return o
 }
 
 native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: ServiceWorkerMessageEventInit = noImpl) : Event(type, eventInitDict) {
@@ -120,12 +128,26 @@ native public open class ServiceWorkerMessageEvent(type: String, eventInitDict: 
     fun initServiceWorkerMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrServiceWorker, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
-native public open class ServiceWorkerMessageEventInit : EventInit() {
+native public interface ServiceWorkerMessageEventInit : EventInit {
     var data: Any?
     var origin: String
     var lastEventId: String
     var source: UnionMessagePortOrServiceWorker?
     var ports: Array<MessagePort>
+}
+
+inline fun ServiceWorkerMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ServiceWorkerMessageEventInit {
+    val o = js("({})") as ServiceWorkerMessageEventInit
+
+    o.`data` = data
+    o.`origin` = origin
+    o.`lastEventId` = lastEventId
+    o.`source` = source
+    o.`ports` = ports
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface Client : UnionClientOrMessagePortOrServiceWorker {
@@ -152,16 +174,34 @@ native public interface Clients {
     fun claim(): dynamic = noImpl
 }
 
-native public open class ClientQueryOptions {
-    var includeUncontrolled: Boolean = false
-    var type: String = "window"
+native public interface ClientQueryOptions {
+    var includeUncontrolled: Boolean
+    var type: String
+}
+
+inline fun ClientQueryOptions(includeUncontrolled: Boolean = false, type: String = "window"): ClientQueryOptions {
+    val o = js("({})") as ClientQueryOptions
+
+    o.`includeUncontrolled` = includeUncontrolled
+    o.`type` = type
+
+    return o
 }
 
 native public open class ExtendableEvent(type: String, eventInitDict: ExtendableEventInit = noImpl) : Event(type, eventInitDict) {
     fun waitUntil(f: dynamic): Unit = noImpl
 }
 
-native public open class ExtendableEventInit : EventInit() {
+native public interface ExtendableEventInit : EventInit {
+}
+
+inline fun ExtendableEventInit(bubbles: Boolean = false, cancelable: Boolean = false): ExtendableEventInit {
+    val o = js("({})") as ExtendableEventInit
+
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class FetchEvent(type: String, eventInitDict: FetchEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
@@ -174,10 +214,22 @@ native public open class FetchEvent(type: String, eventInitDict: FetchEventInit 
     fun respondWith(r: dynamic): Unit = noImpl
 }
 
-native public open class FetchEventInit : ExtendableEventInit() {
+native public interface FetchEventInit : ExtendableEventInit {
     var request: Request
     var client: Client
-    var isReload: Boolean = false
+    var isReload: Boolean
+}
+
+inline fun FetchEventInit(request: Request, client: Client, isReload: Boolean = false, bubbles: Boolean = false, cancelable: Boolean = false): FetchEventInit {
+    val o = js("({})") as FetchEventInit
+
+    o.`request` = request
+    o.`client` = client
+    o.`isReload` = isReload
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class ExtendableMessageEvent(type: String, eventInitDict: ExtendableMessageEventInit = noImpl) : ExtendableEvent(type, eventInitDict) {
@@ -194,12 +246,26 @@ native public open class ExtendableMessageEvent(type: String, eventInitDict: Ext
     fun initExtendableMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionClientOrMessagePortOrServiceWorker, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
-native public open class ExtendableMessageEventInit : ExtendableEventInit() {
+native public interface ExtendableMessageEventInit : ExtendableEventInit {
     var data: Any?
     var origin: String
     var lastEventId: String
     var source: UnionClientOrMessagePortOrServiceWorker?
     var ports: Array<MessagePort>
+}
+
+inline fun ExtendableMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionClientOrMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ExtendableMessageEventInit {
+    val o = js("({})") as ExtendableMessageEventInit
+
+    o.`data` = data
+    o.`origin` = origin
+    o.`lastEventId` = lastEventId
+    o.`source` = source
+    o.`ports` = ports
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface Cache {
@@ -212,18 +278,40 @@ native public interface Cache {
     fun keys(request: dynamic = noImpl, options: CacheQueryOptions = noImpl): dynamic = noImpl
 }
 
-native public open class CacheQueryOptions {
-    var ignoreSearch: Boolean = false
-    var ignoreMethod: Boolean = false
-    var ignoreVary: Boolean = false
+native public interface CacheQueryOptions {
+    var ignoreSearch: Boolean
+    var ignoreMethod: Boolean
+    var ignoreVary: Boolean
     var cacheName: String
 }
 
-native public open class CacheBatchOperation {
+inline fun CacheQueryOptions(ignoreSearch: Boolean = false, ignoreMethod: Boolean = false, ignoreVary: Boolean = false, cacheName: String): CacheQueryOptions {
+    val o = js("({})") as CacheQueryOptions
+
+    o.`ignoreSearch` = ignoreSearch
+    o.`ignoreMethod` = ignoreMethod
+    o.`ignoreVary` = ignoreVary
+    o.`cacheName` = cacheName
+
+    return o
+}
+
+native public interface CacheBatchOperation {
     var type: String
     var request: Request
     var response: Response
     var options: CacheQueryOptions
+}
+
+inline fun CacheBatchOperation(type: String, request: Request, response: Response, options: CacheQueryOptions): CacheBatchOperation {
+    val o = js("({})") as CacheBatchOperation
+
+    o.`type` = type
+    o.`request` = request
+    o.`response` = response
+    o.`options` = options
+
+    return o
 }
 
 native public interface CacheStorage {

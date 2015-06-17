@@ -58,7 +58,7 @@ native public open class Request(input: dynamic, init: RequestInit = noImpl) {
     fun text(): dynamic = noImpl
 }
 
-native public open class RequestInit {
+native public interface RequestInit {
     var method: String
     var headers: dynamic
     var body: dynamic
@@ -66,6 +66,20 @@ native public open class RequestInit {
     var credentials: String
     var cache: String
     var redirect: String
+}
+
+inline fun RequestInit(method: String, headers: dynamic, body: dynamic, mode: String, credentials: String, cache: String, redirect: String): RequestInit {
+    val o = js("({})") as RequestInit
+
+    o.`method` = method
+    o.`headers` = headers
+    o.`body` = body
+    o.`mode` = mode
+    o.`credentials` = credentials
+    o.`cache` = cache
+    o.`redirect` = redirect
+
+    return o
 }
 
 native public open class Response(body: dynamic = noImpl, init: ResponseInit = noImpl) {
@@ -96,9 +110,19 @@ native public open class Response(body: dynamic = noImpl, init: ResponseInit = n
     }
 }
 
-native public open class ResponseInit {
-    var status: Short = 200
-    var statusText: String = "OK"
+native public interface ResponseInit {
+    var status: Short
+    var statusText: String
     var headers: dynamic
+}
+
+inline fun ResponseInit(status: Short = 200, statusText: String = "OK", headers: dynamic): ResponseInit {
+    val o = js("({})") as ResponseInit
+
+    o.`status` = status
+    o.`statusText` = statusText
+    o.`headers` = headers
+
+    return o
 }
 

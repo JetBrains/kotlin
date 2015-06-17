@@ -112,9 +112,21 @@ native public open class ProgressEvent(type: String, eventInitDict: ProgressEven
         get() = noImpl
 }
 
-native public open class ProgressEventInit : EventInit() {
-    var lengthComputable: Boolean = false
-    var loaded: Long = 0
-    var total: Long = 0
+native public interface ProgressEventInit : EventInit {
+    var lengthComputable: Boolean
+    var loaded: Long
+    var total: Long
+}
+
+inline fun ProgressEventInit(lengthComputable: Boolean = false, loaded: Long = 0, total: Long = 0, bubbles: Boolean = false, cancelable: Boolean = false): ProgressEventInit {
+    val o = js("({})") as ProgressEventInit
+
+    o.`lengthComputable` = lengthComputable
+    o.`loaded` = loaded
+    o.`total` = total
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 

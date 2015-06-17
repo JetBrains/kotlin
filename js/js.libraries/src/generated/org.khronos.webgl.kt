@@ -20,15 +20,30 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class WebGLContextAttributes {
-    var alpha: Boolean = true
-    var depth: Boolean = true
-    var stencil: Boolean = false
-    var antialias: Boolean = true
-    var premultipliedAlpha: Boolean = true
-    var preserveDrawingBuffer: Boolean = false
-    var preferLowPowerToHighPerformance: Boolean = false
-    var failIfMajorPerformanceCaveat: Boolean = false
+native public interface WebGLContextAttributes {
+    var alpha: Boolean
+    var depth: Boolean
+    var stencil: Boolean
+    var antialias: Boolean
+    var premultipliedAlpha: Boolean
+    var preserveDrawingBuffer: Boolean
+    var preferLowPowerToHighPerformance: Boolean
+    var failIfMajorPerformanceCaveat: Boolean
+}
+
+inline fun WebGLContextAttributes(alpha: Boolean = true, depth: Boolean = true, stencil: Boolean = false, antialias: Boolean = true, premultipliedAlpha: Boolean = true, preserveDrawingBuffer: Boolean = false, preferLowPowerToHighPerformance: Boolean = false, failIfMajorPerformanceCaveat: Boolean = false): WebGLContextAttributes {
+    val o = js("({})") as WebGLContextAttributes
+
+    o.`alpha` = alpha
+    o.`depth` = depth
+    o.`stencil` = stencil
+    o.`antialias` = antialias
+    o.`premultipliedAlpha` = premultipliedAlpha
+    o.`preserveDrawingBuffer` = preserveDrawingBuffer
+    o.`preferLowPowerToHighPerformance` = preferLowPowerToHighPerformance
+    o.`failIfMajorPerformanceCaveat` = failIfMajorPerformanceCaveat
+
+    return o
 }
 
 native public interface WebGLObject {
@@ -541,8 +556,18 @@ native public open class WebGLContextEvent(type: String, eventInit: WebGLContext
         get() = noImpl
 }
 
-native public open class WebGLContextEventInit : EventInit() {
+native public interface WebGLContextEventInit : EventInit {
     var statusMessage: String
+}
+
+inline fun WebGLContextEventInit(statusMessage: String, bubbles: Boolean = false, cancelable: Boolean = false): WebGLContextEventInit {
+    val o = js("({})") as WebGLContextEventInit
+
+    o.`statusMessage` = statusMessage
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class ArrayBuffer(length: Int) : Transferable {

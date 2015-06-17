@@ -1617,8 +1617,18 @@ native public open class TrackEvent(type: String, eventInitDict: TrackEventInit 
         get() = noImpl
 }
 
-native public open class TrackEventInit : EventInit() {
+native public interface TrackEventInit : EventInit {
     var track: UnionAudioTrackOrTextTrackOrVideoTrack?
+}
+
+inline fun TrackEventInit(track: UnionAudioTrackOrTextTrackOrVideoTrack?, bubbles: Boolean = false, cancelable: Boolean = false): TrackEventInit {
+    val o = js("({})") as TrackEventInit
+
+    o.`track` = track
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface HTMLMapElement : HTMLElement {
@@ -2453,8 +2463,18 @@ native public open class AutocompleteErrorEvent(type: String, eventInitDict: Aut
         get() = noImpl
 }
 
-native public open class AutocompleteErrorEventInit : EventInit() {
+native public interface AutocompleteErrorEventInit : EventInit {
     var reason: String
+}
+
+inline fun AutocompleteErrorEventInit(reason: String, bubbles: Boolean = false, cancelable: Boolean = false): AutocompleteErrorEventInit {
+    val o = js("({})") as AutocompleteErrorEventInit
+
+    o.`reason` = reason
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface ValidityState {
@@ -2531,8 +2551,18 @@ native public open class RelatedEvent(type: String, eventInitDict: RelatedEventI
         get() = noImpl
 }
 
-native public open class RelatedEventInit : EventInit() {
+native public interface RelatedEventInit : EventInit {
     var relatedTarget: EventTarget?
+}
+
+inline fun RelatedEventInit(relatedTarget: EventTarget?, bubbles: Boolean = false, cancelable: Boolean = false): RelatedEventInit {
+    val o = js("({})") as RelatedEventInit
+
+    o.`relatedTarget` = relatedTarget
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface HTMLDialogElement : HTMLElement {
@@ -2601,8 +2631,16 @@ native public interface CanvasProxy : Transferable {
     fun setContext(context: RenderingContext): Unit = noImpl
 }
 
-native public open class CanvasRenderingContext2DSettings {
-    var alpha: Boolean = true
+native public interface CanvasRenderingContext2DSettings {
+    var alpha: Boolean
+}
+
+inline fun CanvasRenderingContext2DSettings(alpha: Boolean = true): CanvasRenderingContext2DSettings {
+    val o = js("({})") as CanvasRenderingContext2DSettings
+
+    o.`alpha` = alpha
+
+    return o
 }
 
 native public open class CanvasRenderingContext2D() : RenderingContext, CanvasImageSource, ImageBitmapSource {
@@ -2766,15 +2804,30 @@ native public interface TextMetrics {
         get() = noImpl
 }
 
-native public open class HitRegionOptions {
-    var path: Path2D? = null
-    var fillRule: String = "nonzero"
-    var id: String = ""
-    var parentID: String? = null
-    var cursor: String = "inherit"
-    var control: Element? = null
-    var label: String? = null
-    var role: String? = null
+native public interface HitRegionOptions {
+    var path: Path2D?
+    var fillRule: String
+    var id: String
+    var parentID: String?
+    var cursor: String
+    var control: Element?
+    var label: String?
+    var role: String?
+}
+
+inline fun HitRegionOptions(path: Path2D? = null, fillRule: String = "nonzero", id: String = "", parentID: String? = null, cursor: String = "inherit", control: Element? = null, label: String? = null, role: String? = null): HitRegionOptions {
+    val o = js("({})") as HitRegionOptions
+
+    o.`path` = path
+    o.`fillRule` = fillRule
+    o.`id` = id
+    o.`parentID` = parentID
+    o.`cursor` = cursor
+    o.`control` = control
+    o.`label` = label
+    o.`role` = role
+
+    return o
 }
 
 native public open class ImageData : ImageBitmapSource {
@@ -2890,8 +2943,42 @@ native public open class DragEvent(type: String, eventInitDict: DragEventInit = 
         get() = noImpl
 }
 
-native public open class DragEventInit : MouseEventInit() {
+native public interface DragEventInit : MouseEventInit {
     var dataTransfer: DataTransfer?
+}
+
+inline fun DragEventInit(dataTransfer: DataTransfer?, screenX: Int = 0, screenY: Int = 0, clientX: Int = 0, clientY: Int = 0, button: Short = 0, buttons: Short = 0, relatedTarget: EventTarget? = null, ctrlKey: Boolean = false, shiftKey: Boolean = false, altKey: Boolean = false, metaKey: Boolean = false, modifierAltGraph: Boolean = false, modifierCapsLock: Boolean = false, modifierFn: Boolean = false, modifierFnLock: Boolean = false, modifierHyper: Boolean = false, modifierNumLock: Boolean = false, modifierOS: Boolean = false, modifierScrollLock: Boolean = false, modifierSuper: Boolean = false, modifierSymbol: Boolean = false, modifierSymbolLock: Boolean = false, view: Window? = null, detail: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): DragEventInit {
+    val o = js("({})") as DragEventInit
+
+    o.`dataTransfer` = dataTransfer
+    o.`screenX` = screenX
+    o.`screenY` = screenY
+    o.`clientX` = clientX
+    o.`clientY` = clientY
+    o.`button` = button
+    o.`buttons` = buttons
+    o.`relatedTarget` = relatedTarget
+    o.`ctrlKey` = ctrlKey
+    o.`shiftKey` = shiftKey
+    o.`altKey` = altKey
+    o.`metaKey` = metaKey
+    o.`modifierAltGraph` = modifierAltGraph
+    o.`modifierCapsLock` = modifierCapsLock
+    o.`modifierFn` = modifierFn
+    o.`modifierFnLock` = modifierFnLock
+    o.`modifierHyper` = modifierHyper
+    o.`modifierNumLock` = modifierNumLock
+    o.`modifierOS` = modifierOS
+    o.`modifierScrollLock` = modifierScrollLock
+    o.`modifierSuper` = modifierSuper
+    o.`modifierSymbol` = modifierSymbol
+    o.`modifierSymbolLock` = modifierSymbolLock
+    o.`view` = view
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface Window : EventTarget, UnionMessagePortOrWindow {
@@ -3311,8 +3398,18 @@ native public open class PopStateEvent(type: String, eventInitDict: PopStateEven
         get() = noImpl
 }
 
-native public open class PopStateEventInit : EventInit() {
+native public interface PopStateEventInit : EventInit {
     var state: Any?
+}
+
+inline fun PopStateEventInit(state: Any?, bubbles: Boolean = false, cancelable: Boolean = false): PopStateEventInit {
+    val o = js("({})") as PopStateEventInit
+
+    o.`state` = state
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class HashChangeEvent(type: String, eventInitDict: HashChangeEventInit = noImpl) : Event(type, eventInitDict) {
@@ -3322,9 +3419,20 @@ native public open class HashChangeEvent(type: String, eventInitDict: HashChange
         get() = noImpl
 }
 
-native public open class HashChangeEventInit : EventInit() {
+native public interface HashChangeEventInit : EventInit {
     var oldURL: String
     var newURL: String
+}
+
+inline fun HashChangeEventInit(oldURL: String, newURL: String, bubbles: Boolean = false, cancelable: Boolean = false): HashChangeEventInit {
+    val o = js("({})") as HashChangeEventInit
+
+    o.`oldURL` = oldURL
+    o.`newURL` = newURL
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class PageTransitionEvent(type: String, eventInitDict: PageTransitionEventInit = noImpl) : Event(type, eventInitDict) {
@@ -3332,8 +3440,18 @@ native public open class PageTransitionEvent(type: String, eventInitDict: PageTr
         get() = noImpl
 }
 
-native public open class PageTransitionEventInit : EventInit() {
+native public interface PageTransitionEventInit : EventInit {
     var persisted: Boolean
+}
+
+inline fun PageTransitionEventInit(persisted: Boolean, bubbles: Boolean = false, cancelable: Boolean = false): PageTransitionEventInit {
+    val o = js("({})") as PageTransitionEventInit
+
+    o.`persisted` = persisted
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class BeforeUnloadEvent : Event(noImpl, noImpl) {
@@ -3396,12 +3514,26 @@ native public open class ErrorEvent(type: String, eventInitDict: ErrorEventInit 
         get() = noImpl
 }
 
-native public open class ErrorEventInit : EventInit() {
+native public interface ErrorEventInit : EventInit {
     var message: String
     var filename: String
     var lineno: Int
     var colno: Int
     var error: Any?
+}
+
+inline fun ErrorEventInit(message: String, filename: String, lineno: Int, colno: Int, error: Any?, bubbles: Boolean = false, cancelable: Boolean = false): ErrorEventInit {
+    val o = js("({})") as ErrorEventInit
+
+    o.`message` = message
+    o.`filename` = filename
+    o.`lineno` = lineno
+    o.`colno` = colno
+    o.`error` = error
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface Navigator {
@@ -3517,12 +3649,26 @@ native public open class MessageEvent(type: String, eventInitDict: MessageEventI
     fun initMessageEvent(typeArg: String, canBubbleArg: Boolean, cancelableArg: Boolean, dataArg: Any?, originArg: String, lastEventIdArg: String, sourceArg: UnionMessagePortOrWindow, portsArg: Array<MessagePort>?): Unit = noImpl
 }
 
-native public open class MessageEventInit : EventInit() {
+native public interface MessageEventInit : EventInit {
     var data: Any?
     var origin: String
     var lastEventId: String
     var source: UnionMessagePortOrWindow?
     var ports: Array<MessagePort>
+}
+
+inline fun MessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionMessagePortOrWindow?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): MessageEventInit {
+    val o = js("({})") as MessageEventInit
+
+    o.`data` = data
+    o.`origin` = origin
+    o.`lastEventId` = lastEventId
+    o.`source` = source
+    o.`ports` = ports
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class EventSource(url: String, eventSourceInitDict: EventSourceInit = noImpl) : EventTarget {
@@ -3550,8 +3696,16 @@ native public open class EventSource(url: String, eventSourceInitDict: EventSour
     }
 }
 
-native public open class EventSourceInit {
-    var withCredentials: Boolean = false
+native public interface EventSourceInit {
+    var withCredentials: Boolean
+}
+
+inline fun EventSourceInit(withCredentials: Boolean = false): EventSourceInit {
+    val o = js("({})") as EventSourceInit
+
+    o.`withCredentials` = withCredentials
+
+    return o
 }
 
 native public open class WebSocket(url: String, protocols: dynamic = noImpl) : EventTarget {
@@ -3603,10 +3757,22 @@ native public open class CloseEvent(type: String, eventInitDict: CloseEventInit 
         get() = noImpl
 }
 
-native public open class CloseEventInit : EventInit() {
+native public interface CloseEventInit : EventInit {
     var wasClean: Boolean
     var code: Short
     var reason: String
+}
+
+inline fun CloseEventInit(wasClean: Boolean, code: Short, reason: String, bubbles: Boolean = false, cancelable: Boolean = false): CloseEventInit {
+    val o = js("({})") as CloseEventInit
+
+    o.`wasClean` = wasClean
+    o.`code` = code
+    o.`reason` = reason
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class MessageChannel {
@@ -3787,12 +3953,26 @@ native public open class StorageEvent(type: String, eventInitDict: StorageEventI
         get() = noImpl
 }
 
-native public open class StorageEventInit : EventInit() {
+native public interface StorageEventInit : EventInit {
     var key: String?
     var oldValue: String?
     var newValue: String?
     var url: String
     var storageArea: Storage?
+}
+
+inline fun StorageEventInit(key: String?, oldValue: String?, newValue: String?, url: String, storageArea: Storage?, bubbles: Boolean = false, cancelable: Boolean = false): StorageEventInit {
+    val o = js("({})") as StorageEventInit
+
+    o.`key` = key
+    o.`oldValue` = oldValue
+    o.`newValue` = newValue
+    o.`url` = url
+    o.`storageArea` = storageArea
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface HTMLAppletElement : HTMLElement {
@@ -4041,9 +4221,18 @@ native public interface HTMLImageElement : HTMLElement, CanvasImageSource, Image
 native public interface HTMLPictureElement : HTMLElement {
 }
 
-native public open class EventInit {
-    var bubbles: Boolean = false
-    var cancelable: Boolean = false
+native public interface EventInit {
+    var bubbles: Boolean
+    var cancelable: Boolean
+}
+
+inline fun EventInit(bubbles: Boolean = false, cancelable: Boolean = false): EventInit {
+    val o = js("({})") as EventInit
+
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class CustomEvent(type: String, eventInitDict: CustomEventInit = noImpl) : Event(type, eventInitDict) {
@@ -4052,8 +4241,18 @@ native public open class CustomEvent(type: String, eventInitDict: CustomEventIni
     fun initCustomEvent(type: String, bubbles: Boolean, cancelable: Boolean, detail: Any?): Unit = noImpl
 }
 
-native public open class CustomEventInit : EventInit() {
-    var detail: Any? = null
+native public interface CustomEventInit : EventInit {
+    var detail: Any?
+}
+
+inline fun CustomEventInit(detail: Any? = null, bubbles: Boolean = false, cancelable: Boolean = false): CustomEventInit {
+    val o = js("({})") as CustomEventInit
+
+    o.`detail` = detail
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public interface NodeList {
@@ -4078,14 +4277,28 @@ native public open class MutationObserver(callback: (Array<MutationRecord>, Muta
     fun takeRecords(): Array<MutationRecord> = noImpl
 }
 
-native public open class MutationObserverInit {
-    var childList: Boolean = false
+native public interface MutationObserverInit {
+    var childList: Boolean
     var attributes: Boolean
     var characterData: Boolean
-    var subtree: Boolean = false
+    var subtree: Boolean
     var attributeOldValue: Boolean
     var characterDataOldValue: Boolean
     var attributeFilter: Array<String>
+}
+
+inline fun MutationObserverInit(childList: Boolean = false, attributes: Boolean, characterData: Boolean, subtree: Boolean = false, attributeOldValue: Boolean, characterDataOldValue: Boolean, attributeFilter: Array<String>): MutationObserverInit {
+    val o = js("({})") as MutationObserverInit
+
+    o.`childList` = childList
+    o.`attributes` = attributes
+    o.`characterData` = characterData
+    o.`subtree` = subtree
+    o.`attributeOldValue` = attributeOldValue
+    o.`characterDataOldValue` = characterDataOldValue
+    o.`attributeFilter` = attributeFilter
+
+    return o
 }
 
 native public interface MutationRecord {
@@ -4548,9 +4761,20 @@ native public open class EditingBeforeInputEvent(type: String, eventInitDict: Ed
         get() = noImpl
 }
 
-native public open class EditingBeforeInputEventInit : EventInit() {
+native public interface EditingBeforeInputEventInit : EventInit {
     var command: String
     var value: String
+}
+
+inline fun EditingBeforeInputEventInit(command: String, value: String, bubbles: Boolean = false, cancelable: Boolean = false): EditingBeforeInputEventInit {
+    val o = js("({})") as EditingBeforeInputEventInit
+
+    o.`command` = command
+    o.`value` = value
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class EditingInputEvent(type: String, eventInitDict: EditingInputEventInit = noImpl) : Event(type, eventInitDict) {
@@ -4560,9 +4784,20 @@ native public open class EditingInputEvent(type: String, eventInitDict: EditingI
         get() = noImpl
 }
 
-native public open class EditingInputEventInit : EventInit() {
+native public interface EditingInputEventInit : EventInit {
     var command: String
     var value: String
+}
+
+inline fun EditingInputEventInit(command: String, value: String, bubbles: Boolean = false, cancelable: Boolean = false): EditingInputEventInit {
+    val o = js("({})") as EditingInputEventInit
+
+    o.`command` = command
+    o.`value` = value
+    o.`bubbles` = bubbles
+    o.`cancelable` = cancelable
+
+    return o
 }
 
 native public open class DOMPointReadOnly(x: Double, y: Double, z: Double, w: Double) {
@@ -4594,11 +4829,22 @@ native public open class DOMPoint : DOMPointReadOnly {
         set(value) = noImpl
 }
 
-native public open class DOMPointInit {
-    var x: Double = 0.0
-    var y: Double = 0.0
-    var z: Double = 0.0
-    var w: Double = 1.0
+native public interface DOMPointInit {
+    var x: Double
+    var y: Double
+    var z: Double
+    var w: Double
+}
+
+inline fun DOMPointInit(x: Double = 0.0, y: Double = 0.0, z: Double = 0.0, w: Double = 1.0): DOMPointInit {
+    val o = js("({})") as DOMPointInit
+
+    o.`x` = x
+    o.`y` = y
+    o.`z` = z
+    o.`w` = w
+
+    return o
 }
 
 native public open class DOMRect(x: Double = 0.0, y: Double = 0.0, width: Double = 0.0, height: Double = 0.0) : DOMRectReadOnly(x, y, width, height) {
@@ -4635,11 +4881,22 @@ native public open class DOMRectReadOnly(x: Double, y: Double, width: Double, he
         get() = noImpl
 }
 
-native public open class DOMRectInit {
-    var x: Double = 0.0
-    var y: Double = 0.0
-    var width: Double = 0.0
-    var height: Double = 0.0
+native public interface DOMRectInit {
+    var x: Double
+    var y: Double
+    var width: Double
+    var height: Double
+}
+
+inline fun DOMRectInit(x: Double = 0.0, y: Double = 0.0, width: Double = 0.0, height: Double = 0.0): DOMRectInit {
+    val o = js("({})") as DOMRectInit
+
+    o.`x` = x
+    o.`y` = y
+    o.`width` = width
+    o.`height` = height
+
+    return o
 }
 
 native public open class DOMQuad {
@@ -4811,8 +5068,16 @@ native public open class DOMMatrix() : DOMMatrixReadOnly(noImpl) {
     fun setMatrixValue(transformList: String): DOMMatrix = noImpl
 }
 
-native public open class ScrollOptions {
-    var behavior: String = "auto"
+native public interface ScrollOptions {
+    var behavior: String
+}
+
+inline fun ScrollOptions(behavior: String = "auto"): ScrollOptions {
+    val o = js("({})") as ScrollOptions
+
+    o.`behavior` = behavior
+
+    return o
 }
 
 native public interface MediaQueryList {
@@ -4847,22 +5112,58 @@ native public interface CaretPosition {
     fun getClientRect(): DOMRect? = noImpl
 }
 
-native public open class ScrollOptionsHorizontal : ScrollOptions() {
+native public interface ScrollOptionsHorizontal : ScrollOptions {
     var x: Double
 }
 
-native public open class ScrollOptionsVertical : ScrollOptions() {
+inline fun ScrollOptionsHorizontal(x: Double, behavior: String = "auto"): ScrollOptionsHorizontal {
+    val o = js("({})") as ScrollOptionsHorizontal
+
+    o.`x` = x
+    o.`behavior` = behavior
+
+    return o
+}
+
+native public interface ScrollOptionsVertical : ScrollOptions {
     var y: Double
 }
 
-native public open class BoxQuadOptions {
-    var box: String = "border"
+inline fun ScrollOptionsVertical(y: Double, behavior: String = "auto"): ScrollOptionsVertical {
+    val o = js("({})") as ScrollOptionsVertical
+
+    o.`y` = y
+    o.`behavior` = behavior
+
+    return o
+}
+
+native public interface BoxQuadOptions {
+    var box: String
     var relativeTo: GeometryNode
 }
 
-native public open class ConvertCoordinateOptions {
-    var fromBox: String = "border"
-    var toBox: String = "border"
+inline fun BoxQuadOptions(box: String = "border", relativeTo: GeometryNode): BoxQuadOptions {
+    val o = js("({})") as BoxQuadOptions
+
+    o.`box` = box
+    o.`relativeTo` = relativeTo
+
+    return o
+}
+
+native public interface ConvertCoordinateOptions {
+    var fromBox: String
+    var toBox: String
+}
+
+inline fun ConvertCoordinateOptions(fromBox: String = "border", toBox: String = "border"): ConvertCoordinateOptions {
+    val o = js("({})") as ConvertCoordinateOptions
+
+    o.`fromBox` = fromBox
+    o.`toBox` = toBox
+
+    return o
 }
 
 native public marker interface UnionElementOrHTMLCollection {
