@@ -29,6 +29,10 @@ public final class ProtoBuf {
      * <code>ABSTRACT = 2;</code>
      */
     ABSTRACT(2, 2),
+    /**
+     * <code>SEALED = 3;</code>
+     */
+    SEALED(3, 3),
     ;
 
     /**
@@ -47,6 +51,10 @@ public final class ProtoBuf {
      * <code>ABSTRACT = 2;</code>
      */
     public static final int ABSTRACT_VALUE = 2;
+    /**
+     * <code>SEALED = 3;</code>
+     */
+    public static final int SEALED_VALUE = 3;
 
 
     public final int getNumber() { return value; }
@@ -56,6 +64,7 @@ public final class ProtoBuf {
         case 0: return FINAL;
         case 1: return OPEN;
         case 2: return ABSTRACT;
+        case 3: return SEALED;
         default: return null;
       }
     }

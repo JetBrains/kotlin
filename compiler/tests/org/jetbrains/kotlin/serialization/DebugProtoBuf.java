@@ -29,6 +29,10 @@ public final class DebugProtoBuf {
      * <code>ABSTRACT = 2;</code>
      */
     ABSTRACT(2, 2),
+    /**
+     * <code>SEALED = 3;</code>
+     */
+    SEALED(3, 3),
     ;
 
     /**
@@ -47,6 +51,10 @@ public final class DebugProtoBuf {
      * <code>ABSTRACT = 2;</code>
      */
     public static final int ABSTRACT_VALUE = 2;
+    /**
+     * <code>SEALED = 3;</code>
+     */
+    public static final int SEALED_VALUE = 3;
 
 
     public final int getNumber() { return value; }
@@ -56,6 +64,7 @@ public final class DebugProtoBuf {
         case 0: return FINAL;
         case 1: return OPEN;
         case 2: return ABSTRACT;
+        case 3: return SEALED;
         default: return null;
       }
     }
@@ -17092,11 +17101,11 @@ public final class DebugProtoBuf {
       "ION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002" +
       "\022\017\n\013SYNTHESIZED\020\003\":\n\014CallableKind\022\007\n\003FUN" +
       "\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010" +
-      "d\020\310\001*-\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n",
-      "\010ABSTRACT\020\002*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022" +
-      "\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022" +
-      "\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005B\022B\rDebug" +
-      "ProtoBuf\210\001\000"
+      "d\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n",
+      "\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n" +
+      "\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022" +
+      "\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCA" +
+      "L\020\005B\022B\rDebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

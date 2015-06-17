@@ -170,6 +170,8 @@ public class Flags {
                 return ProtoBuf.Modality.OPEN;
             case ABSTRACT:
                 return ProtoBuf.Modality.ABSTRACT;
+            case SEALED:
+                return ProtoBuf.Modality.SEALED;
         }
         throw new IllegalArgumentException("Unknown modality: " + modality);
     }

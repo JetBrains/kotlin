@@ -288,6 +288,7 @@ enum Modality {
   FINAL = 0x00;
   OPEN = 0x01;
   ABSTRACT = 0x02;
+  SEALED = 0x03;
 }
 
 enum Visibility {

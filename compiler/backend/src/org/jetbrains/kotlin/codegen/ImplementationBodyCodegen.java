@@ -132,7 +132,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (myClass instanceof JetClass) {
             JetClass jetClass = (JetClass) myClass;
-            if (jetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD)) {
+            if (jetClass.hasModifier(JetTokens.ABSTRACT_KEYWORD) || jetClass.isSealed()) {
                 isAbstract = true;
             }
             if (jetClass.isInterface()) {

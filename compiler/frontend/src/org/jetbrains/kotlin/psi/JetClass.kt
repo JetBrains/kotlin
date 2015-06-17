@@ -64,6 +64,7 @@ public open class JetClass : JetClassOrObject {
         ?: (findChildByType<PsiElement>(JetTokens.TRAIT_KEYWORD) != null || findChildByType<PsiElement>(JetTokens.INTERFACE_KEYWORD) != null)
 
     public fun isEnum(): Boolean = hasModifier(JetTokens.ENUM_KEYWORD)
+    public fun isSealed(): Boolean = hasModifier(JetTokens.SEALED_KEYWORD)
     public fun isInner(): Boolean = hasModifier(JetTokens.INNER_KEYWORD)
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {

@@ -35,6 +35,7 @@ fun modality(modality: ProtoBuf.Modality) = when (modality) {
     ProtoBuf.Modality.FINAL -> Modality.FINAL
     ProtoBuf.Modality.OPEN -> Modality.OPEN
     ProtoBuf.Modality.ABSTRACT -> Modality.ABSTRACT
+    ProtoBuf.Modality.SEALED -> Modality.SEALED
 }
 
 fun visibility(visibility: ProtoBuf.Visibility) = when (visibility) {
