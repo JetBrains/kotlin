@@ -870,8 +870,13 @@ internal class DescriptorRendererImpl(
     private fun replacePrefixes(lowerRendered: String, lowerPrefix: String, upperRendered: String, upperPrefix: String, foldedPrefix: String): String? {
         if (lowerRendered.startsWith(lowerPrefix) && upperRendered.startsWith(upperPrefix)) {
             val lowerWithoutPrefix = lowerRendered.substring(lowerPrefix.length())
-            if (differsOnlyInNullability(lowerWithoutPrefix, upperRendered.substring(upperPrefix.length()))) {
-                return foldedPrefix + lowerWithoutPrefix + "!"
+            val upperWithoutPrefix = upperRendered.substring(upperPrefix.length())
+            val flexibleCollectionName = foldedPrefix + lowerWithoutPrefix
+
+            if (lowerWithoutPrefix == upperWithoutPrefix) return flexibleCollectionName
+
+            if (differsOnlyInNullability(lowerWithoutPrefix, upperWithoutPrefix)) {
+                return flexibleCollectionName + "!"
             }
         }
         return null
