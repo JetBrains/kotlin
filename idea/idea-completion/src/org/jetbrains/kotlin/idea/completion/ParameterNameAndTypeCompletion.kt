@@ -34,10 +34,15 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
+import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -141,37 +146,48 @@ class ParameterNameAndTypeCompletion(
 
     private abstract class NameAndType(val parameterName: String) {
         abstract fun createTypeLookupElement(lookupElementFactory: LookupElementFactory): LookupElement?
+        abstract val typeIdString: String // types with equal id-string are considered as equal (used to avoid duplicated items)
     }
 
-    private class NameAndDescriptorType(parameterName: String, private val type: ClassifierDescriptor) : NameAndType(parameterName) {
+    private class NameAndDescriptorType(parameterName: String, private val classifier: ClassifierDescriptor) : NameAndType(parameterName) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
-                = lookupElementFactory.createLookupElement(type, false)
+                = lookupElementFactory.createLookupElement(classifier, false)
+
+        override val typeIdString: String
+            get() = DescriptorUtils.getFqName(classifier).render()
     }
 
-    private class NameAndJavaType(parameterName: String, private val type: PsiClass) : NameAndType(parameterName) {
+    private class NameAndJavaType(parameterName: String, private val psiClass: PsiClass) : NameAndType(parameterName) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
-                = lookupElementFactory.createLookupElementForJavaClass(type)
+                = lookupElementFactory.createLookupElementForJavaClass(psiClass)
+
+        override val typeIdString: String
+            get() = psiClass.getQualifiedName()!!
     }
 
     private class NameAndArbitraryType(parameterName: String, private val type: JetType) : NameAndType(parameterName) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
                 = lookupElementFactory.createLookupElementForType(type)
+
+        override val typeIdString: String
+            get() = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
     }
 
     private class MyLookupElement private constructor(
             private val parameterName: String,
+            private val typeIdString: String,
             typeLookupElement: LookupElement
     ) : LookupElementDecorator<LookupElement>(typeLookupElement) {
 
         companion object {
             fun create(nameAndType: NameAndType, factory: LookupElementFactory): LookupElement? {
                 val lookupElement = nameAndType.createTypeLookupElement(factory) ?: return null
-                return MyLookupElement(nameAndType.parameterName, lookupElement).suppressAutoInsertion()
+                return MyLookupElement(nameAndType.parameterName, nameAndType.typeIdString, lookupElement).suppressAutoInsertion()
             }
         }
 
         override fun equals(other: Any?)
-                = other is MyLookupElement && parameterName == other.parameterName && getDelegate() == other.getDelegate()
+                = other is MyLookupElement && parameterName == other.parameterName && typeIdString == other.typeIdString
         override fun hashCode() = parameterName.hashCode()
 
         override fun getLookupString() = parameterName

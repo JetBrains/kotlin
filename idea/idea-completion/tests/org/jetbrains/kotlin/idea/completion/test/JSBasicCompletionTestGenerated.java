@@ -1428,6 +1428,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 doTest(fileName);
             }
 
+            @TestMetadata("NoFromFileAndFromClassesDuplication.kt")
+            public void testNoFromFileAndFromClassesDuplication() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NoFromFileAndFromClassesDuplication.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NotForCatchParameter.kt")
             public void testNotForCatchParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForCatchParameter.kt");
