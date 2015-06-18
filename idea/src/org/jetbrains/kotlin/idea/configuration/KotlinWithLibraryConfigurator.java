@@ -64,6 +64,9 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
     @NotNull
     public abstract RuntimeLibraryFiles getExistingJarFiles();
 
+    @Nullable
+    protected abstract String getOldSourceRootUrl(@NotNull Library library);
+
     @Override
     public boolean isApplicable(@NotNull Module module) {
         return !JetPluginUtil.isAndroidGradleModule(module) &&
@@ -507,6 +510,46 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             showError("Couldn't find file: " + file.getPath());
         }
         return file;
+    }
+
+    public void copySourcesToPathFromLibrary(@NotNull Library library) {
+        String dirToJarFromLibrary = getPathFromLibrary(library, OrderRootType.SOURCES);
+        assert dirToJarFromLibrary != null : "Directory to file from library should be non null";
+
+        copyFileToDir(getExistingJarFiles().getRuntimeSourcesJar(), dirToJarFromLibrary);
+    }
+
+    public boolean changeOldSourcesPathIfNeeded(@NotNull Library library) {
+        if (!removeOldSourcesRootIfNeeded(library)) {
+            return false;
+        }
+
+        String parentDir = getPathFromLibrary(library, OrderRootType.CLASSES);
+        assert parentDir != null : "Parent dir for classes jar should exists for Kotlin library";
+
+        return addSourcesToLibraryIfNeeded(library, getExistingJarFiles().getRuntimeSourcesDestination(parentDir));
+    }
+
+    protected boolean removeOldSourcesRootIfNeeded(@NotNull Library library) {
+        String oldLibrarySourceRoot = getOldSourceRootUrl(library);
+
+        String[] librarySourceRoots = library.getUrls(OrderRootType.SOURCES);
+        for (String sourceRoot : librarySourceRoots) {
+            if (sourceRoot.equals(oldLibrarySourceRoot)) {
+                final Library.ModifiableModel model = library.getModifiableModel();
+                model.removeRoot(oldLibrarySourceRoot, OrderRootType.SOURCES);
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        model.commit();
+                    }
+                });
+
+                showInfoNotification("Source root '" + oldLibrarySourceRoot + "' was removed for " + library.getName() + " library");
+                return true;
+            }
+        }
+        return false;
     }
 
     KotlinWithLibraryConfigurator() {

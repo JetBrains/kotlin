@@ -44,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetPluginUtil;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
+import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil;
@@ -164,17 +165,21 @@ public class KotlinRuntimeLibraryUtil {
         ApplicationManager.getApplication().invokeLater(new Runnable() {
             @Override
             public void run() {
-                KotlinJavaModuleConfigurator configurator = (KotlinJavaModuleConfigurator)
+                KotlinJavaModuleConfigurator kJvmConfigurator = (KotlinJavaModuleConfigurator)
                         ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
-                assert configurator != null : "Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME;
+                assert kJvmConfigurator != null : "Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME;
+
+                KotlinJsModuleConfigurator kJsConfigurator = (KotlinJsModuleConfigurator)
+                        ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJsModuleConfigurator.NAME);
+                assert kJsConfigurator != null : "Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME;
 
                 for (Library library : libraries) {
                     if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
                         updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR);
                         updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR);
 
-                        if (configurator.changeOldSourcesPathIfNeeded(library)) {
-                            configurator.copySourcesToPathFromLibrary(library);
+                        if (kJvmConfigurator.changeOldSourcesPathIfNeeded(library)) {
+                            kJvmConfigurator.copySourcesToPathFromLibrary(library);
                         }
                         else {
                             updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR);
@@ -182,7 +187,13 @@ public class KotlinRuntimeLibraryUtil {
                     }
                     else if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
                         updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR);
-                        updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR);
+
+                        if (kJsConfigurator.changeOldSourcesPathIfNeeded(library)) {
+                            kJsConfigurator.copySourcesToPathFromLibrary(library);
+                        }
+                        else {
+                            updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR);
+                        }
                     }
                 }
             }
