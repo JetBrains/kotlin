@@ -248,7 +248,11 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: JetCodeFragment
         when (expr) {
             is JetBlockExpression -> return expr.getStatements().flatMap { insertExpression(it) }
             is JetExpression -> {
-                val newDebugExpression = parent.addBefore(expr, elementBefore) ?: return emptyList()
+                val newDebugExpression = parent.addBefore(expr, elementBefore)
+                if (newDebugExpression == null) {
+                    logger.error("Couldn't insert debug expression ${expr.getText()} to context file before ${elementBefore.getText()}")
+                    return emptyList()
+                }
                 parent.addBefore(psiFactory.createNewLine(), elementBefore)
                 return listOf(newDebugExpression as JetExpression)
             }
