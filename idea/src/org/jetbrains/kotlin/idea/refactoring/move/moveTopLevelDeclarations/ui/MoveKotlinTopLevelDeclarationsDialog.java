@@ -216,7 +216,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private void initPackageChooser(String targetPackageName, PsiDirectory targetDirectory) {
-        if (targetPackageName != null && targetPackageName.length() != 0) {
+        if (targetPackageName != null) {
             classPackageChooser.prependItem(targetPackageName);
         }
 
