@@ -396,8 +396,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     ) {
         JsExpression jsExpression;
 
-        if (PatternTranslator.isUnsafeCast(expression)) {
-            jsExpression = PatternTranslator.newInstance(context).translateUnsafeCast(expression);
+        if (PatternTranslator.isCastExpression(expression)) {
+            jsExpression = PatternTranslator.newInstance(context).translateCastExpression(expression);
         }
         else {
             jsExpression = Translation.translateAsExpression(expression.getLeft(), context);

@@ -21,6 +21,8 @@ import com.google.dart.compiler.backend.js.ast.JsExpression;
 import com.google.dart.compiler.backend.js.ast.JsInvocation;
 import com.google.dart.compiler.backend.js.ast.JsNameRef;
 import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
+import com.google.dart.compiler.backend.js.ast.*;
+import com.google.dart.compiler.backend.js.ast.metadata.MetadataPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -55,26 +57,32 @@ public final class PatternTranslator extends AbstractTranslator {
         super(context);
     }
 
-    public static boolean isUnsafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
-        return expression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_KEYWORD;
+    public static boolean isCastExpression(@NotNull KtBinaryExpressionWithTypeRHS expression) {
+        return isSafeCast(expression) || isUnsafeCast(expression);
     }
 
     @NotNull
-    public JsExpression translateUnsafeCast(@NotNull KtBinaryExpressionWithTypeRHS expression) {
-        assert isUnsafeCast(expression): "Expected unsafe cast expression, got " + expression;
-        KtExpression left = expression.getLeft();
+    public JsExpression translateCastExpression(@NotNull JetBinaryExpressionWithTypeRHS expression) {
+        assert isCastExpression(expression): "Expected cast expression, got " + expression;
+        JetExpression left = expression.getLeft();
         JsExpression expressionToCast = Translation.translateAsExpression(left, context());
         TemporaryVariable temporary = context().declareTemporary(expressionToCast);
 
-        KtTypeReference typeReference = expression.getRight();
-        assert typeReference != null: "Unsafe cast must have type reference";
+        JetTypeReference typeReference = expression.getRight();
+        assert typeReference != null: "Cast expression must have type reference";
         JsExpression isCheck = translateIsCheck(temporary.assignmentExpression(), typeReference);
+        JsExpression onFail;
 
-        Namer namer = context().namer();
-        JsExpression throwCCEFunRef = namer.throwClassCastExceptionFunRef();
-        JsExpression throwCCE = new JsInvocation(throwCCEFunRef);
-        JsConditional conditional = new JsConditional(isCheck, temporary.reference(), throwCCE);
-        MetadataProperties.setUnsafeCast(conditional, true);
+        if (isSafeCast(expression)) {
+            onFail = JsLiteral.NULL;
+        }
+        else {
+            JsExpression throwCCEFunRef = context().namer().throwClassCastExceptionFunRef();
+            onFail = new JsInvocation(throwCCEFunRef);
+        }
+
+        JsConditional conditional = new JsConditional(isCheck, temporary.reference(), onFail);
+        MetadataPackage.setIsCastExpression(conditional, true);
         return conditional;
     }
 
@@ -184,5 +192,13 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     public JsExpression translateExpressionForExpressionPattern(@NotNull KtExpression patternExpression) {
         return Translation.translateAsExpression(patternExpression, context());
+    }
+
+    private static boolean isSafeCast(@NotNull JetBinaryExpressionWithTypeRHS expression) {
+        return expression.getOperationReference().getReferencedNameElementType() == JetTokens.AS_SAFE;
+    }
+
+    private static boolean isUnsafeCast(@NotNull JetBinaryExpressionWithTypeRHS expression) {
+        return expression.getOperationReference().getReferencedNameElementType() == JetTokens.AS_KEYWORD;
     }
 }
