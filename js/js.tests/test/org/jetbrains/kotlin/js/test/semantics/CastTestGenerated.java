@@ -65,6 +65,30 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
+    @TestMetadata("safeCastToNotNull.kt")
+    public void testSafeCastToNotNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToNotNull.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("safeCastToNullable.kt")
+    public void testSafeCastToNullable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToNullable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("safeCastToReifiedNotNull.kt")
+    public void testSafeCastToReifiedNotNull() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToReifiedNotNull.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("safeCastToReifiedNullable.kt")
+    public void testSafeCastToReifiedNullable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToReifiedNullable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("smartCastInExtensionFunction.kt")
     public void testSmartCastInExtensionFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/smartCastInExtensionFunction.kt");
