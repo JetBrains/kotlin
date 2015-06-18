@@ -70,6 +70,8 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.EvaluatePackage;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.types.Approximation;
@@ -2410,6 +2412,16 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE));
         }
 
+        // Extra constructor marker argument
+        if (callableMethod instanceof CallableMethod) {
+            List<JvmMethodParameterSignature> callableParameters = ((CallableMethod) callableMethod).getValueParameters();
+            for (JvmMethodParameterSignature parameter: callableParameters) {
+                if (parameter.getKind() == JvmMethodParameterKind.CONSTRUCTOR_MARKER) {
+                    callGenerator.putValueIfNeeded(null, parameter.getAsmType(), StackValue.constant(null, parameter.getAsmType()));
+                }
+            }
+        }
+
         callGenerator.genCall(callableMethod, resolvedCall, !masks.isEmpty(), this);
     }
 
@@ -3386,6 +3398,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
     }
 
     @NotNull
+    public ConstructorDescriptor getConstructorDescriptor(@NotNull ResolvedCall<?> resolvedCall) {
+        FunctionDescriptor accessibleDescriptor = accessibleFunctionDescriptor(resolvedCall);
+        assert accessibleDescriptor instanceof ConstructorDescriptor :
+                "getConstructorDescriptor must be called only for constructors: " + accessibleDescriptor;
+        return (ConstructorDescriptor) accessibleDescriptor;
+    }
+
+    @NotNull
     public StackValue generateConstructorCall(@NotNull final ResolvedCall<?> resolvedCall, @NotNull final Type objectType) {
         return StackValue.functionCall(objectType, new Function1<InstructionAdapter, Unit>() {
             @Override
@@ -3393,7 +3413,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 v.anew(objectType);
                 v.dup();
 
-                ConstructorDescriptor constructor = (ConstructorDescriptor) resolvedCall.getResultingDescriptor();
+                ConstructorDescriptor constructor = getConstructorDescriptor(resolvedCall);
 
                 ReceiverParameterDescriptor dispatchReceiver = constructor.getDispatchReceiverParameter();
                 if (dispatchReceiver != null) {

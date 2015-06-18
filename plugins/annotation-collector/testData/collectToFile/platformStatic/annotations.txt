@@ -3,9 +3,7 @@ p org.test 0
 m 0 0/SomeClass$Companion a
 a kotlin.inline 1
 m 1 0/SomeClass$Companion a
-a org.jetbrains.annotations.NotNull 2
-m 2 0/SomeClass$Companion access$init$0
-a java.lang.Deprecated 3
-f 3 0/SomeClass OBJECT$
+a java.lang.Deprecated 2
+f 2 0/SomeClass OBJECT$
 m 0 0/SomeClass a
 m 1 0/SomeClass a

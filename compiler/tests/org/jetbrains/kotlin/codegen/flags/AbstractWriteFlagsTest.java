@@ -234,7 +234,7 @@ public abstract class AbstractWriteFlagsTest extends UsefulTestCase {
 
         @Override
         public MethodVisitor visitMethod(int access, @NotNull String name, @NotNull String desc, String signature, String[] exceptions) {
-            if (name.equals(funName)) {
+            if (name.equals(funName) && (access & Opcodes.ACC_SYNTHETIC) == 0) {
                 this.access = access;
                 isExists = true;
             }

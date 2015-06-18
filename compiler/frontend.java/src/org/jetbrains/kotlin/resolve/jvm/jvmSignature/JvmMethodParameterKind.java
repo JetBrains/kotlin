@@ -23,7 +23,8 @@ public enum JvmMethodParameterKind {
     RECEIVER,
     CAPTURED_LOCAL_VARIABLE,
     ENUM_NAME_OR_ORDINAL,
-    SUPER_CALL_PARAM;
+    SUPER_CALL_PARAM,
+    CONSTRUCTOR_MARKER;
 
     public boolean isSkippedInGenericSignature() {
         return this == OUTER || this == ENUM_NAME_OR_ORDINAL;

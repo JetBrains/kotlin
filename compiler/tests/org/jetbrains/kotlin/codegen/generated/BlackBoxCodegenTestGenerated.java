@@ -5984,6 +5984,75 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/privateConstructors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PrivateConstructors extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInPrivateConstructors() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/privateConstructors"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("base.kt")
+        public void testBase() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/base.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("companion.kt")
+        public void testCompanion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/companion.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inline.kt")
+        public void testInline() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/inline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inner.kt")
+        public void testInner() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/inner.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondary.kt")
+        public void testSecondary() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/secondary.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withArguments.kt")
+        public void testWithArguments() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/withArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withDefault.kt")
+        public void testWithDefault() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/withDefault.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withLinkedClasses.kt")
+        public void testWithLinkedClasses() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/withLinkedClasses.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withLinkedObjects.kt")
+        public void testWithLinkedObjects() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/withLinkedObjects.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("withVarargs.kt")
+        public void testWithVarargs() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/privateConstructors/withVarargs.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/properties")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

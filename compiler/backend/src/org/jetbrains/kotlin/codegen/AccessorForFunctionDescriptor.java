@@ -18,20 +18,13 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationsPackage;
-import org.jetbrains.kotlin.types.JetType;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor.NO_RECEIVER_PARAMETER;
 
-public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl implements AccessorForCallableDescriptor<FunctionDescriptor> {
+public class AccessorForFunctionDescriptor extends AbstractAccessorForFunctionDescriptor implements AccessorForCallableDescriptor<FunctionDescriptor> {
 
     private final FunctionDescriptor calleeDescriptor;
 
@@ -40,9 +33,8 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
             @NotNull DeclarationDescriptor containingDeclaration,
             int index
     ) {
-        super(containingDeclaration, null, Annotations.EMPTY,
-              Name.identifier("access$" + (descriptor instanceof ConstructorDescriptor ? "init" : descriptor.getName()) + "$" + index),
-              Kind.DECLARATION, SourceElement.NO_SOURCE);
+        super(containingDeclaration,
+              Name.identifier("access$" + (descriptor instanceof ConstructorDescriptor ? "init" : descriptor.getName()) + "$" + index));
         this.calleeDescriptor = descriptor;
 
         initialize(DescriptorUtils.getReceiverParameterType(descriptor.getExtensionReceiverParameter()),
@@ -54,34 +46,6 @@ public class AccessorForFunctionDescriptor extends SimpleFunctionDescriptorImpl 
                    descriptor.getReturnType(),
                    Modality.FINAL,
                    Visibilities.INTERNAL);
-    }
-
-    @NotNull
-    private List<TypeParameterDescriptor> copyTypeParameters(@NotNull FunctionDescriptor descriptor) {
-        List<TypeParameterDescriptor> typeParameters = descriptor.getTypeParameters();
-        List<TypeParameterDescriptor> result = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
-        for (TypeParameterDescriptor typeParameter : typeParameters) {
-            TypeParameterDescriptorImpl copy = TypeParameterDescriptorImpl.createForFurtherModification(
-                    this, typeParameter.getAnnotations(), typeParameter.isReified(),
-                    typeParameter.getVariance(), typeParameter.getName(), typeParameter.getIndex(), SourceElement.NO_SOURCE
-            );
-            for (JetType upperBound : typeParameter.getUpperBounds()) {
-                copy.addUpperBound(upperBound);
-            }
-            copy.setInitialized();
-            result.add(copy);
-        }
-        return result;
-    }
-
-    @NotNull
-    private List<ValueParameterDescriptor> copyValueParameters(@NotNull FunctionDescriptor descriptor) {
-        List<ValueParameterDescriptor> valueParameters = descriptor.getValueParameters();
-        List<ValueParameterDescriptor> result = new ArrayList<ValueParameterDescriptor>(valueParameters.size());
-        for (ValueParameterDescriptor valueParameter : valueParameters) {
-            result.add(valueParameter.copy(this, valueParameter.getName()));
-        }
-        return result;
     }
 
     @NotNull

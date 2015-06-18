@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
@@ -831,7 +832,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateSyntheticAccessor(Map.Entry<DeclarationDescriptor, DeclarationDescriptor> entry) {
         if (entry.getValue() instanceof FunctionDescriptor) {
-            FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
+            final FunctionDescriptor bridge = (FunctionDescriptor) entry.getValue();
             final FunctionDescriptor original = (FunctionDescriptor) entry.getKey();
             functionCodegen.generateMethod(
                     Synthetic(null, original), bridge,
@@ -840,7 +841,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForSyntheticFunction(descriptor, codegen.v);
 
-                            generateMethodCallTo(original, codegen.v);
+                            generateMethodCallTo(original, bridge, codegen.v);
                             codegen.v.areturn(signature.getReturnType());
                         }
                     }
@@ -921,15 +922,21 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
     }
 
-    private void generateMethodCallTo(FunctionDescriptor functionDescriptor, InstructionAdapter iv) {
+    private void generateMethodCallTo(
+            @NotNull FunctionDescriptor functionDescriptor,
+            @Nullable FunctionDescriptor bridgeDescriptor,
+            @NotNull InstructionAdapter iv
+    ) {
         boolean isConstructor = functionDescriptor instanceof ConstructorDescriptor;
-        boolean callFromAccessor = !JetTypeMapper.isAccessor(functionDescriptor);
+        boolean bridgeIsAccessorConstructor = bridgeDescriptor instanceof AccessorForConstructorDescriptor;
+        boolean callFromAccessor = bridgeIsAccessorConstructor
+                                   || (bridgeDescriptor != null && JetTypeMapper.isAccessor(bridgeDescriptor));
         CallableMethod callableMethod = isConstructor ?
                                         typeMapper.mapToCallableMethod((ConstructorDescriptor) functionDescriptor) :
                                         typeMapper.mapToCallableMethod(functionDescriptor, callFromAccessor, context);
 
         int reg = 1;
-        if (isConstructor) {
+        if (isConstructor && !bridgeIsAccessorConstructor) {
             iv.anew(callableMethod.getOwner());
             iv.dup();
             reg = 0;
@@ -941,8 +948,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         for (Type argType : callableMethod.getParameterTypes()) {
-            iv.load(reg, argType);
-            reg += argType.getSize();
+            if (AsmTypes.DEFAULT_CONSTRUCTOR_MARKER.equals(argType)) {
+                iv.aconst(null);
+            }
+            else {
+                iv.load(reg, argType);
+                reg += argType.getSize();
+            }
         }
         callableMethod.genInvokeInstruction(iv);
     }
@@ -1036,7 +1048,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
         FunctionDescriptor constructor = context.accessibleFunctionDescriptor(KotlinPackage.single(companionObject.getConstructors()));
-        generateMethodCallTo(constructor, codegen.v);
+        generateMethodCallTo(constructor, null, codegen.v);
         codegen.v.dup();
         StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
         StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
@@ -1475,7 +1487,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             return;
         }
         iv.load(0, OBJECT_TYPE);
-        ConstructorDescriptor delegateConstructor = SamCodegenUtil.resolveSamAdapter(delegationConstructorCall.getResultingDescriptor());
+        ConstructorDescriptor delegateConstructor = SamCodegenUtil.resolveSamAdapter(codegen.getConstructorDescriptor(delegationConstructorCall));
 
         CallableMethod delegateConstructorCallable = typeMapper.mapToCallableMethod(delegateConstructor);
         CallableMethod callable = typeMapper.mapToCallableMethod(constructorDescriptor);

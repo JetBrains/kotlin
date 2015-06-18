@@ -241,8 +241,11 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         int accessorIndex = accessors.size();
-        if (descriptor instanceof SimpleFunctionDescriptor || descriptor instanceof ConstructorDescriptor) {
+        if (descriptor instanceof SimpleFunctionDescriptor) {
             accessor = new AccessorForFunctionDescriptor((FunctionDescriptor) descriptor, contextDescriptor, accessorIndex);
+        }
+        else if (descriptor instanceof ConstructorDescriptor) {
+            accessor = new AccessorForConstructorDescriptor((ConstructorDescriptor) descriptor, contextDescriptor);
         }
         else if (descriptor instanceof PropertyDescriptor) {
             if (isForBackingFieldInOuterClass) {

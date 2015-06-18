@@ -584,7 +584,7 @@ public class JetTypeMapper {
             }
             else {
                 if (isStaticDeclaration(functionDescriptor) ||
-                    isAccessor(functionDescriptor) ||
+                    isStaticAccessor(functionDescriptor) ||
                     AnnotationsPackage.isPlatformStaticInObjectOrClass(functionDescriptor)) {
                     invokeOpcode = INVOKESTATIC;
                 }
@@ -641,6 +641,11 @@ public class JetTypeMapper {
 
     public static boolean isAccessor(@NotNull CallableMemberDescriptor descriptor) {
         return descriptor instanceof AccessorForCallableDescriptor<?>;
+    }
+
+    public static boolean isStaticAccessor(@NotNull CallableMemberDescriptor descriptor) {
+        if (descriptor instanceof AccessorForConstructorDescriptor) return false;
+        return isAccessor(descriptor);
     }
 
     @NotNull
@@ -746,6 +751,10 @@ public class JetTypeMapper {
 
             for (ValueParameterDescriptor parameter : valueParameters) {
                 writeParameter(sw, parameter.getType());
+            }
+
+            if (f instanceof AccessorForConstructorDescriptor) {
+                writeParameter(sw, JvmMethodParameterKind.CONSTRUCTOR_MARKER, DEFAULT_CONSTRUCTOR_MARKER);
             }
 
             writeVoidReturn(sw);
