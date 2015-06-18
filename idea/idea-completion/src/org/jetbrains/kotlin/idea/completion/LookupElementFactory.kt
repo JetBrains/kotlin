@@ -111,7 +111,7 @@ public class LookupElementFactory(
         val packageName = qualifiedName.substringBeforeLast('.', "<root>")
         element = element.appendTailText(" ($packageName)", true)
 
-        if (psiClass.isDeprecated()) {
+        if (lookupObject.isDeprecated) {
             element = element.setStrikeout(true)
         }
 
@@ -151,7 +151,8 @@ public class LookupElementFactory(
         val name = nameAndIconDescriptor.getName().asString()
         val icon = JetDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, Iconable.ICON_FLAG_VISIBILITY)
 
-        var element = LookupElementBuilder.create(DeclarationLookupObjectImpl(descriptor, declaration, resolutionFacade), name)
+        val lookupObject = DeclarationLookupObjectImpl(descriptor, declaration, resolutionFacade)
+        var element = LookupElementBuilder.create(lookupObject, name)
                 .withIcon(icon)
 
         when (descriptor) {
@@ -201,7 +202,7 @@ public class LookupElementFactory(
             }
         }
 
-        if (KotlinBuiltIns.isDeprecated(descriptor)) {
+        if (lookupObject.isDeprecated) {
             element = element.withStrikeoutness(true)
         }
 

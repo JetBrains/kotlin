@@ -110,11 +110,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
 private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
         val o = element.getObject() as? DeclarationLookupObject ?: return 0
-        val isDeprecated = if (o.descriptor != null)
-            KotlinBuiltIns.isDeprecated(o.descriptor!!)
-        else
-            (o.psiElement as PsiDocCommentOwner).isDeprecated()
-        return if (isDeprecated) 1 else 0
+        return if (o.isDeprecated) 1 else 0
     }
 }
 

@@ -22,4 +22,5 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 public interface DeclarationLookupObject {
     public val psiElement: PsiElement?
     public val descriptor: DeclarationDescriptor?
+    public val isDeprecated: Boolean
 }

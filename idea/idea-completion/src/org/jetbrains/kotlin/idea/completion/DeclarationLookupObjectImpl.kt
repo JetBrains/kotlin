@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -54,6 +56,8 @@ public class DeclarationLookupObjectImpl(
 
         return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor) && psiElement == lookupObject.psiElement
     }
+
+    override val isDeprecated = if (descriptor != null) KotlinBuiltIns.isDeprecated(descriptor) else (psiElement as PsiDocCommentOwner).isDeprecated()
 
     companion object {
         private val LOG = Logger.getInstance("#" + javaClass<DeclarationLookupObject>().getName())
