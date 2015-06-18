@@ -26,6 +26,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
@@ -342,14 +343,17 @@ fun LookupElementFactory.createBackingFieldLookupElement(
 
 fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElement? {
     if (type.isError()) return null
-    val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
 
-    val lookupElement = createLookupElement(classifier, false)
-    var itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-    val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+    if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
+        val text = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        val baseLookupElement = LookupElementBuilder.create(text).setIcon(JetIcons.LAMBDA)
+        return BaseTypeLookupElement(type, baseLookupElement)
+    }
+    else {
+        val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
+        val baseLookupElement = createLookupElement(classifier, false)
 
-    var packageName: FqName? = null
-    if (!KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
+        var packageName: FqName? = null
         var container = classifier.getContainingDeclaration()
         while (container is ClassDescriptor) {
             container = container.getContainingDeclaration()
@@ -357,38 +361,38 @@ fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElemen
         if (container is PackageFragmentDescriptor) {
             packageName = container.fqName
         }
-    }
 
-    val insertHandler: InsertHandler<LookupElement> = object : InsertHandler<LookupElement> {
-        override fun handleInsert(context: InsertionContext, item: LookupElement) {
-            context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
-            context.setTailOffset(context.getStartOffset() + typeText.length())
-            shortenReferences(context, context.getStartOffset(), context.getTailOffset())
-        }
-    }
+        val itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
 
-    class TypeLookupElement : LookupElementDecorator<LookupElement>(lookupElement) {
-        val typeText = typeText
+        return object : BaseTypeLookupElement(type, baseLookupElement) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+                presentation.setItemText(itemText)
 
-        override fun equals(other: Any?) = other is TypeLookupElement && typeText == other.typeText
-        override fun hashCode() = typeText.hashCode()
-
-        override fun renderElement(presentation: LookupElementPresentation) {
-            getDelegate().renderElement(presentation)
-            presentation.setItemText(itemText)
-
-            presentation.clearTail()
-            if (packageName != null) {
-                presentation.appendTailText(" ($packageName)", true)
+                presentation.clearTail()
+                if (packageName != null) {
+                    presentation.appendTailText(" ($packageName)", true)
+                }
             }
         }
+    }
+}
 
-        override fun handleInsert(context: InsertionContext) {
-            insertHandler.handleInsert(context, getDelegate())
-        }
+private open class BaseTypeLookupElement(type: JetType, baseLookupElement: LookupElement) : LookupElementDecorator<LookupElement>(baseLookupElement) {
+    private val fullText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+
+    override fun equals(other: Any?) = other is BaseTypeLookupElement && fullText == other.fullText
+    override fun hashCode() = fullText.hashCode()
+
+    override fun renderElement(presentation: LookupElementPresentation) {
+        getDelegate().renderElement(presentation)
     }
 
-    return TypeLookupElement()
+    override fun handleInsert(context: InsertionContext) {
+        context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), fullText)
+        context.setTailOffset(context.getStartOffset() + fullText.length())
+        shortenReferences(context, context.getStartOffset(), context.getTailOffset())
+    }
 }
 
 fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
