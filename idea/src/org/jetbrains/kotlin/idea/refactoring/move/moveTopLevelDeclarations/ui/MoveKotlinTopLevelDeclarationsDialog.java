@@ -46,6 +46,7 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.RecentsManager;
 import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
+import com.intellij.usageView.UsageInfo;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.text.UniqueNameGenerator;
 import com.intellij.util.ui.UIUtil;
@@ -514,26 +515,10 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     PsiDirectory targetDir = moveDestination.getTargetIfExists(sourceFile);
                     final String targetFileName = tfFileNameInPackage.getText();
                     if (targetDir == null || targetDir.findFile(targetFileName) == null) {
-                        //noinspection ConstantConditions
-                        final String temporaryName = UniqueNameGenerator.generateUniqueName(
-                                "temp",
-                                "",
-                                ".kt",
-                                KotlinPackage.map(
-                                        sourceFile.getContainingDirectory().getFiles(),
-                                        new Function1<PsiFile, String>() {
-                                            @Override
-                                            public String invoke(PsiFile file) {
-                                                return file.getName();
-                                            }
-                                        }
-                                )
-                        );
                         PsiDirectory targetDirectory = ApplicationPackage.runWriteAction(
                                 new Function0<PsiDirectory>() {
                                     @Override
                                     public PsiDirectory invoke() {
-                                        sourceFile.setName(temporaryName);
                                         return moveDestination.getTargetDirectory(sourceFile);
                                     }
                                 }
@@ -560,7 +545,29 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                             }
                                         },
                                         EmptyRunnable.INSTANCE
-                                )
+                                ) {
+                                    @Override
+                                    protected void performRefactoring(UsageInfo[] usages) {
+                                        //noinspection ConstantConditions
+                                        String temporaryName = UniqueNameGenerator.generateUniqueName(
+                                                "temp",
+                                                "",
+                                                ".kt",
+                                                KotlinPackage.map(
+                                                        sourceFile.getContainingDirectory().getFiles(),
+                                                        new Function1<PsiFile, String>() {
+                                                            @Override
+                                                            public String invoke(PsiFile file) {
+                                                                return file.getName();
+                                                            }
+                                                        }
+                                                )
+                                        );
+                                        sourceFile.setName(temporaryName);
+
+                                        super.performRefactoring(usages);
+                                    }
+                                }
                         );
     
                         return;
@@ -568,7 +575,9 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     
                     int ret = Messages.showYesNoCancelDialog(
                             myProject,
-                            "You are going to move all declarations out of '" + sourceFile.getVirtualFile().getPath() + "'. Do you want to delete this file?",
+                            "You are going to move all declarations out of '" +
+                            sourceFile.getVirtualFile().getPath() +
+                            "'. Do you want to delete this file?",
                             RefactoringBundle.message("move.title"),
                             Messages.getQuestionIcon()
                     );
