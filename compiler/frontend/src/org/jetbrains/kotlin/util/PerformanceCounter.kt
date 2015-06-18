@@ -26,6 +26,8 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
 
         private val enteredCounters = ThreadLocal<MutableSet<PerformanceCounter>>()
 
+        private var enabled = false
+
         init {
             threadMxBean.setThreadCpuTimeEnabled(true)
         }
@@ -52,6 +54,10 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
             }
             countersCopy.forEach { it.report(consumer) }
         }
+
+        public fun setTimeCounterEnabled(enable: Boolean) {
+            enabled = enable
+        }
     }
 
     private var count: Int = 0
@@ -69,6 +75,8 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
 
     public fun time<T>(block: () -> T): T {
         count++
+        if (!enabled) return block()
+
         val needTime = !reenterable || enterCounter(this)
         val startTime = currentThreadCpuTime()
         try {
