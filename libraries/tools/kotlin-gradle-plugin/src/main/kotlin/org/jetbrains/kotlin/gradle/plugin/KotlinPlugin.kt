@@ -48,6 +48,8 @@ import java.lang.ref.WeakReference
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
+val KOTLIN_AFTER_JAVA_TASK_SUFFIX = "AfterJava"
+
 abstract class KotlinSourceSetProcessor<T : AbstractCompile>(
         val project: ProjectInternal,
         val javaBasePlugin: JavaBasePlugin,
@@ -170,8 +172,15 @@ class Kotlin2JvmSourceSetProcessor(
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
                             aptConfiguration.resolve(), aptOutputDir, aptWorkingDir, tasksProvider.tasksLoader)
 
-                    project.initKapt(kotlinTask, javaTask, kaptManager, sourceSetName, kotlinDestinationDir, subpluginEnvironment) {
+                    val kotlinAfterJavaTask = project.initKapt(kotlinTask, javaTask, kaptManager,
+                            sourceSetName, kotlinDestinationDir, subpluginEnvironment) {
                         createKotlinCompileTask(it)
+                    }
+
+                    if (kotlinAfterJavaTask != null) {
+                        javaTask.doFirst {
+                            kotlinAfterJavaTask.setClasspath(project.files(kotlinTask.getClasspath(), javaTask.getDestinationDir()))
+                        }
                     }
                 }
             }
@@ -433,6 +442,10 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
                 val fullClasspath = (javaTask.getClasspath() + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))
                 (it as AbstractCompile).setClasspath(fullClasspath)
+
+                for (task in project.getTasksByName(kotlinTaskName + KOTLIN_AFTER_JAVA_TASK_SUFFIX, false)) {
+                    (task as AbstractCompile).setClasspath(project.files(fullClasspath, javaTask.getDestinationDir()))
+                }
             }
 
             javaTask.dependsOn(kotlinTaskName)
@@ -447,7 +460,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 kotlinTask.storeKaptAnnotationsFile(kaptManager)
 
                 project.initKapt(kotlinTask, javaTask, kaptManager, variantDataName, kotlinOutputDir, subpluginEnvironment) {
-                    tasksProvider.createKotlinJVMTask(project, kotlinTaskName + "AfterJava")
+                    tasksProvider.createKotlinJVMTask(project, kotlinTaskName + KOTLIN_AFTER_JAVA_TASK_SUFFIX)
                 }
             }
 
@@ -584,7 +597,7 @@ private fun Project.initKapt(
         kotlinOutputDir: File,
         subpluginEnvironment: SubpluginEnvironment,
         taskFactory: (suffix: String) -> AbstractCompile
-) {
+): AbstractCompile? {
     val kaptExtension = getExtensions().getByType(javaClass<KaptExtension>())
     val kotlinAfterJavaTask: AbstractCompile?
 
@@ -614,7 +627,6 @@ private fun Project.initKapt(
 
     javaTask.doFirst {
         kaptManager.setupKapt()
-        kotlinAfterJavaTask?.setClasspath(files(kotlinTask.getClasspath(), javaTask.getDestinationDir()))
     }
 
     javaTask.doLast {
@@ -622,6 +634,7 @@ private fun Project.initKapt(
     }
 
     kotlinTask.storeKaptAnnotationsFile(kaptManager)
+    return kotlinAfterJavaTask
 }
 
 private fun Project.createKotlinAfterJavaTask(
@@ -629,7 +642,7 @@ private fun Project.createKotlinAfterJavaTask(
         kotlinOutputDir: File,
         taskFactory: (suffix: String) -> AbstractCompile
 ): AbstractCompile {
-    val kotlinAfterJavaTask = with (taskFactory("AfterJava")) {
+    val kotlinAfterJavaTask = with (taskFactory(KOTLIN_AFTER_JAVA_TASK_SUFFIX)) {
         setProperty("kotlinDestinationDir", kotlinOutputDir)
         setDestinationDir(javaTask.getDestinationDir())
         setClasspath(javaTask.getClasspath())
