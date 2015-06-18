@@ -633,14 +633,15 @@ private fun Project.createKotlinAfterJavaTask(
         setProperty("kotlinDestinationDir", kotlinOutputDir)
         setDestinationDir(javaTask.getDestinationDir())
         setClasspath(javaTask.getClasspath())
-        dependsOn(javaTask.getDependsOn(), javaTask)
         this
     }
 
-    val dependsOnJava = getTasks().filter { javaTask in it.getDependsOn() && it != kotlinAfterJavaTask }
-    for (task in dependsOnJava) {
-        task.dependsOn(kotlinAfterJavaTask)
-    }
+    getAllTasks(false)
+            .flatMap { it.getValue() }
+            .filter { javaTask in it.getTaskDependencies().getDependencies(it) }
+            .forEach { it.dependsOn(kotlinAfterJavaTask) }
+
+    kotlinAfterJavaTask.dependsOn(javaTask)
 
     return kotlinAfterJavaTask
 }
