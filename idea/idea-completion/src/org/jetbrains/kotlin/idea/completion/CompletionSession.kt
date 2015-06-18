@@ -125,7 +125,9 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
 
     protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
 
-    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, project, { isVisibleDescriptor(it) })
+    protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it) }
+
+    protected val referenceVariantsHelper: ReferenceVariantsHelper = ReferenceVariantsHelper(bindingContext, moduleDescriptor, project, isVisibleFilter)
 
     protected val receiversData: ReferenceVariantsHelper.ReceiversData? = reference?.let { referenceVariantsHelper.getReferenceVariantsReceivers(it.expression) }
 
@@ -165,7 +167,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected val indicesHelper: KotlinIndicesHelper
-        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, { isVisibleDescriptor(it) })
+        get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter)
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
@@ -356,9 +358,13 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
 
         if (completionKind != CompletionKind.NAMED_ARGUMENTS_ONLY) {
-            collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
+            parameterNameAndTypeCompletion?.addFromParametersInFile(position, resolutionFacade, isVisibleFilter)
+            flushToResultSet()
 
-            parameterNameAndTypeCompletion?.addFromImports(position, bindingContext, { isVisibleDescriptor(it) })
+            parameterNameAndTypeCompletion?.addFromImportedClasses(position, bindingContext, isVisibleFilter)
+            flushToResultSet()
+
+            collector.addDescriptorElements(referenceVariants, suppressAutoInsertion = false)
 
             val keywordsPrefix = prefix.substringBefore('@') // if there is '@' in the prefix - use shorter prefix to not loose 'this' etc
             KeywordCompletion.complete(expression ?: parameters.getPosition(), keywordsPrefix) { lookupElement ->
@@ -434,7 +440,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
         }
 
-        parameterNameAndTypeCompletion?.addAll(parameters, indicesHelper)
+        parameterNameAndTypeCompletion?.addFromAllClasses(parameters, indicesHelper)
     }
 }
 
@@ -456,7 +462,7 @@ class SmartCompletionSession(configuration: CompletionSessionConfiguration, para
             addFunctionLiteralArgumentCompletions()
 
             val completion = SmartCompletion(expression, resolutionFacade, moduleDescriptor,
-                                             bindingContext, { isVisibleDescriptor(it) }, inDescriptor, prefixMatcher, originalSearchScope,
+                                             bindingContext, isVisibleFilter, inDescriptor, prefixMatcher, originalSearchScope,
                                              mapper, lookupElementFactory)
             val result = completion.execute()
             if (result != null) {

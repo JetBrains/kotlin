@@ -22,6 +22,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Key
 import com.intellij.patterns.ElementPattern
 import com.intellij.patterns.StandardPatterns
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
@@ -29,9 +30,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.completion.handlers.CastReceiverInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
 import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
@@ -337,6 +338,62 @@ fun LookupElementFactory.createBackingFieldLookupElement(
             presentation.setIcon(PlatformIcons.FIELD_ICON) //TODO: special icon
         }
     }.assignPriority(ItemPriority.BACKING_FIELD)
+}
+
+fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElement? {
+    if (type.isError()) return null
+    val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
+
+    val lookupElement = createLookupElement(classifier, false)
+    var itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+    val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+
+    var packageName: FqName? = null
+    if (!KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type)) {
+        var container = classifier.getContainingDeclaration()
+        while (container is ClassDescriptor) {
+            container = container.getContainingDeclaration()
+        }
+        if (container is PackageFragmentDescriptor) {
+            packageName = container.fqName
+        }
+    }
+
+    val insertHandler: InsertHandler<LookupElement> = object : InsertHandler<LookupElement> {
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
+            context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
+            context.setTailOffset(context.getStartOffset() + typeText.length())
+            shortenReferences(context, context.getStartOffset(), context.getTailOffset())
+        }
+    }
+
+    class TypeLookupElement : LookupElementDecorator<LookupElement>(lookupElement) {
+        val typeText = typeText
+
+        override fun equals(other: Any?) = other is TypeLookupElement && typeText == other.typeText
+        override fun hashCode() = typeText.hashCode()
+
+        override fun renderElement(presentation: LookupElementPresentation) {
+            getDelegate().renderElement(presentation)
+            presentation.setItemText(itemText)
+
+            presentation.clearTail()
+            if (packageName != null) {
+                presentation.appendTailText(" ($packageName)", true)
+            }
+        }
+
+        override fun handleInsert(context: InsertionContext) {
+            insertHandler.handleInsert(context, getDelegate())
+        }
+    }
+
+    return TypeLookupElement()
+}
+
+fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
+    PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
+    ShortenReferences.DEFAULT.process(context.getFile() as JetFile, startOffset, endOffset)
 }
 
 fun <T> ElementPattern<T>.and(rhs: ElementPattern<T>) = StandardPatterns.and(this, rhs)

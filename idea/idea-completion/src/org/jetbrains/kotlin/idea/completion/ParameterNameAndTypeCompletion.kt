@@ -23,8 +23,10 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -33,14 +35,15 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.types.JetType
 
 class ParameterNameAndTypeCompletion(
         private val collector: LookupElementsCollector,
@@ -50,10 +53,10 @@ class ParameterNameAndTypeCompletion(
 ) {
     private val modifiedPrefixMatcher = prefixMatcher.cloneWithPrefix(prefixMatcher.getPrefix().capitalize())
 
-    public fun addFromImports(context: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+    public fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         if (prefixMatcher.getPrefix().isEmpty()) return
 
-        val resolutionScope = context.getResolutionScope(bindingContext)
+        val resolutionScope = position.getResolutionScope(bindingContext)
         val classifiers = resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, modifiedPrefixMatcher.asNameFilter())
 
         for (classifier in classifiers) {
@@ -84,11 +87,28 @@ class ParameterNameAndTypeCompletion(
         error("Not in JetFile")
     }
 
-    public fun addAll(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
+    public fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
         if (prefixMatcher.getPrefix().isEmpty()) return
 
         AllClassesCompletion(parameters, indicesHelper, modifiedPrefixMatcher, { !it.isSingleton() })
                 .collect({ addSuggestionsForClassifier(it) }, { addSuggestionsForJavaClass(it) })
+    }
+
+    public fun addFromParametersInFile(position: PsiElement, resolutionFacade: ResolutionFacade, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+        position.getContainingFile().forEachDescendantOfType<JetParameter>(
+                canGoInside = { it !is JetExpression || it is JetDeclaration } // we analyze parameters inside bodies to not resolve too much
+        ) { declaration ->
+            val name = declaration.getName()
+            if (name != null && prefixMatcher.prefixMatches(name)) {
+                val parameter = resolutionFacade.analyze(declaration)[BindingContext.VALUE_PARAMETER, declaration]
+                if (parameter != null) {
+                    val parameterType = parameter.getType()
+                    if (parameterType.isVisible(visibilityFilter)) {
+                        addLookupElement(NameAndArbitraryType(name, parameterType))
+                    }
+                }
+            }
+        }
     }
 
     private fun addSuggestionsForClassifier(classifier: DeclarationDescriptor) {
@@ -103,52 +123,76 @@ class ParameterNameAndTypeCompletion(
         val parameterNames = JetNameSuggester.getCamelNames(className, EmptyValidator)
         for (parameterName in parameterNames) {
             if (prefixMatcher.prefixMatches(parameterName)) {
-                val nameAndType = nameAndTypeFactory(parameterName)
-                collector.addElement(MyLookupElement(nameAndType, lookupElementFactory).suppressAutoInsertion())
+                addLookupElement(nameAndTypeFactory(parameterName))
             }
         }
     }
 
-    private interface NameAndType {
-        val parameterName: String
-
-        fun createTypeLookupElement(lookupElementFactory: LookupElementFactory): LookupElement
+    private fun addLookupElement(nameAndType: NameAndType) {
+        val lookupElement = MyLookupElement.create(nameAndType, lookupElementFactory)
+        if (lookupElement != null) {
+            collector.addElement(lookupElement)
+        }
     }
 
-    private data class NameAndDescriptorType(override val parameterName: String, val type: ClassifierDescriptor) : NameAndType {
+    private fun JetType.isVisible(visibilityFilter: (DeclarationDescriptor) -> Boolean): Boolean {
+        if (isError()) return false
+        val classifier = getConstructor().getDeclarationDescriptor() ?: return false
+        return visibilityFilter(classifier) && getArguments().all { it.getType().isVisible(visibilityFilter) }
+    }
+
+    private abstract class NameAndType(val parameterName: String) {
+        abstract fun createTypeLookupElement(lookupElementFactory: LookupElementFactory): LookupElement?
+    }
+
+    private class NameAndDescriptorType(parameterName: String, private val type: ClassifierDescriptor) : NameAndType(parameterName) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
                 = lookupElementFactory.createLookupElement(type, false)
     }
 
-    private data class NameAndJavaType(override val parameterName: String, val type: PsiClass) : NameAndType {
+    private class NameAndJavaType(parameterName: String, private val type: PsiClass) : NameAndType(parameterName) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
                 = lookupElementFactory.createLookupElementForJavaClass(type)
     }
 
-    private class MyLookupElement(
-            val nameAndType: NameAndType,
-            factory: LookupElementFactory
-    ) : LookupElementDecorator<LookupElement>(nameAndType.createTypeLookupElement(factory)) {
+    private class NameAndArbitraryType(parameterName: String, private val type: JetType) : NameAndType(parameterName) {
+        override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
+                = lookupElementFactory.createLookupElementForType(type)
+    }
+
+    private class MyLookupElement private constructor(
+            private val parameterName: String,
+            typeLookupElement: LookupElement
+    ) : LookupElementDecorator<LookupElement>(typeLookupElement) {
+
+        companion object {
+            fun create(nameAndType: NameAndType, factory: LookupElementFactory): LookupElement? {
+                val lookupElement = nameAndType.createTypeLookupElement(factory) ?: return null
+                return MyLookupElement(nameAndType.parameterName, lookupElement).suppressAutoInsertion()
+            }
+        }
 
         override fun equals(other: Any?)
-                = other is MyLookupElement && nameAndType.parameterName == other.nameAndType.parameterName && getDelegate() == other.getDelegate()
-        override fun hashCode() = nameAndType.parameterName.hashCode()
+                = other is MyLookupElement && parameterName == other.parameterName && getDelegate() == other.getDelegate()
+        override fun hashCode() = parameterName.hashCode()
 
-        override fun getLookupString() = nameAndType.parameterName
-        override fun getAllLookupStrings() = setOf(nameAndType.parameterName)
+        override fun getLookupString() = parameterName
+        override fun getAllLookupStrings() = setOf(parameterName)
 
         override fun renderElement(presentation: LookupElementPresentation) {
             super.renderElement(presentation)
-            presentation.setItemText(nameAndType.parameterName + ": " + presentation.getItemText())
+            presentation.setItemText(parameterName + ": " + presentation.getItemText())
         }
 
         override fun handleInsert(context: InsertionContext) {
             super.handleInsert(context)
 
+            PsiDocumentManager.getInstance(context.getProject()).doPostponedOperationsAndUnblockDocument(context.getDocument())
+
             val settings = CodeStyleSettingsManager.getInstance(context.getProject()).getCurrentSettings().getCustomSettings(javaClass<JetCodeStyleSettings>())
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
-            val text = nameAndType.parameterName + spaceBefore + ":" + spaceAfter
+            val text = parameterName + spaceBefore + ":" + spaceAfter
             context.getDocument().insertString(context.getStartOffset(), text)
         }
     }

@@ -371,7 +371,7 @@ class SmartCompletion(
 
         val items = ArrayList<LookupElement>()
         for ((type, infos) in expectedInfosGrouped) {
-            val lookupElement = lookupElementForType(type) ?: continue
+            val lookupElement = lookupElementFactory.createLookupElementForType(type) ?: continue
             items.add(lookupElement.addTailAndNameSimilarity(infos))
         }
         return Result(null, items, null)
@@ -437,34 +437,6 @@ class SmartCompletion(
         }
 
         return Result(::filterDeclaration, listOf(), null)
-    }
-
-    private fun lookupElementForType(type: JetType): LookupElement? {
-        if (type.isError()) return null
-        val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
-
-        val lookupElement = lookupElementFactory.createLookupElement(classifier, bindingContext, false)
-        var itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-        val typeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
-
-        val insertHandler: InsertHandler<LookupElement> = object : InsertHandler<LookupElement> {
-            override fun handleInsert(context: InsertionContext, item: LookupElement) {
-                context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
-                context.setTailOffset(context.getStartOffset() + typeText.length())
-                shortenReferences(context, context.getStartOffset(), context.getTailOffset())
-            }
-        }
-
-        return object: LookupElementDecorator<LookupElement>(lookupElement) {
-            override fun renderElement(presentation: LookupElementPresentation) {
-                getDelegate().renderElement(presentation)
-                presentation.setItemText(itemText)
-            }
-
-            override fun handleInsert(context: InsertionContext) {
-                insertHandler.handleInsert(context, getDelegate())
-            }
-        }
     }
 
     companion object {

@@ -52,11 +52,6 @@ class ArtificialElementInsertHandler(
     }
 }
 
-fun shortenReferences(context: InsertionContext, startOffset: Int, endOffset: Int) {
-    PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments();
-    ShortenReferences.DEFAULT.process(context.getFile() as JetFile, startOffset, endOffset)
-}
-
 fun mergeTails(tails: Collection<Tail?>): Tail? {
     if (tails.size() == 1) return tails.single()
     return if (HashSet(tails).size() == 1) tails.first() else null

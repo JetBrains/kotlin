@@ -7,6 +7,6 @@ fun bar(o: Any) {
     foo(o as <caret>)
 }
 
-// EXIST: { lookupString:"List", itemText:"List<String>" }
-// EXIST: { lookupString:"String", itemText:"String" }
+// EXIST: { lookupString:"List", itemText:"List<String>", tailText: " (kotlin)" }
+// EXIST: { lookupString:"String", itemText:"String", tailText: " (kotlin)" }
 // NOTHING_ELSE
