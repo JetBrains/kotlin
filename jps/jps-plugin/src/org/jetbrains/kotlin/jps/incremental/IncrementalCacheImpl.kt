@@ -16,40 +16,36 @@
 
 package org.jetbrains.kotlin.jps.incremental
 
-import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.*
-import java.io.File
-import com.intellij.util.io.PersistentHashMap
-import java.io.DataOutput
-import com.intellij.util.io.IOUtil
-import java.io.DataInput
-import org.jetbrains.kotlin.name.FqName
-import com.intellij.util.io.DataExternalizer
-import org.jetbrains.kotlin.serialization.jvm.BitEncoding
-import java.util.Arrays
-import org.jetbrains.org.objectweb.asm.*
-import com.intellij.util.io.EnumeratorStringDescriptor
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
-import java.util.HashMap
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import java.security.MessageDigest
-import org.jetbrains.jps.incremental.storage.StorageOwner
-import org.jetbrains.jps.builders.storage.StorageProvider
-import java.io.IOException
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.jps.incremental.storage.BuildDataManager
+import com.intellij.util.io.*
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
-import com.intellij.util.io.BooleanDataDescriptor
-import java.util.ArrayList
-import org.jetbrains.annotations.TestOnly
+import org.jetbrains.jps.builders.storage.StorageProvider
+import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.incremental.storage.PathStringDescriptor
+import org.jetbrains.jps.incremental.storage.StorageOwner
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.jps.build.KotlinBuilder
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_ALL_IN_CHUNK_AND_DEPENDANTS
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_IN_CHUNK_AND_DEPENDANTS
+import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.RECOMPILE_OTHER_KOTLIN_IN_CHUNK
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
+import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.utils.Printer
-import java.io.DataInputStream
+import org.jetbrains.org.objectweb.asm.*
+import java.io.*
+import java.security.MessageDigest
+import java.util.ArrayList
+import java.util.Arrays
+import java.util.HashMap
 
 val INLINE_ANNOTATION_DESC = "Lkotlin/inline;"
 
@@ -77,7 +73,11 @@ class CacheFormatVersion(targetDataRoot: File) {
         val versionNumber = file.readText().toInt()
         val expectedVersionNumber = actualCacheFormatVersion()
 
-        return versionNumber != expectedVersionNumber
+        if (versionNumber != expectedVersionNumber) {
+            KotlinBuilder.LOG.info("Incompatible incremental cache version, expected $expectedVersionNumber, actual $versionNumber")
+            return true
+        }
+        return false
     }
 
     fun saveIfNeeded() {
@@ -147,7 +147,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
         dirtyOutputClassesMap.notDirty(className.getInternalName())
         sourceFiles.forEach { sourceToClassesMap.addSourceToClass(it, className) }
 
-        return when {
+        val decision = when {
             header.isCompatiblePackageFacadeKind() ->
                 getRecompilationDecision(
                         protoChanged = protoMap.put(className, BitEncoding.decodeBytes(header.annotationData)),
@@ -179,6 +179,10 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                 DO_NOTHING
             }
         }
+        if (decision != DO_NOTHING) {
+            KotlinBuilder.LOG.debug("$decision because $className is changed")
+        }
+        return decision
     }
 
     public fun clearCacheForRemovedClasses(): RecompilationDecision {
@@ -191,6 +195,9 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
                     constantsChanged = internalClassName in constantsMap,
                     inlinesChanged = internalClassName in inlineFunctionsMap
             )
+            if (newDecision != DO_NOTHING) {
+                KotlinBuilder.LOG.debug("$newDecision because $internalClassName is removed")
+            }
 
             recompilationDecision = recompilationDecision.merge(newDecision)
 
@@ -204,7 +211,10 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
     }
 
     public override fun getObsoletePackageParts(): Collection<String> {
-        return dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
+        val obsoletePackageParts =
+                dirtyOutputClassesMap.getDirtyOutputClasses().filter { packagePartMap.isPackagePart(JvmClassName.byInternalName(it)) }
+        KotlinBuilder.LOG.debug("Obsolete package parts: ${obsoletePackageParts}")
+        return obsoletePackageParts
     }
 
     public override fun getPackageData(fqName: String): ByteArray? {
