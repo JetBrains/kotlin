@@ -55,6 +55,7 @@ import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.KotlinMemberInfo;
@@ -110,6 +111,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private JPanel memberInfoPanel;
     private JTextField tfFileNameInPackage;
     private JCheckBox cbSpecifyFileNameInPackage;
+    private JCheckBox cbUpdatePackageDirective;
     private KotlinMemberSelectionTable memberTable;
 
     private final JetFile sourceFile;
@@ -238,6 +240,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     }
                 }
         );
+
+        cbUpdatePackageDirective.setSelected(CorePackage.packageMatchesDirectory(sourceFile));
     }
 
     private void initSearchOptions(boolean searchInComments, boolean searchForTextOccurences) {
@@ -316,6 +320,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         classPackageChooser.setEnabled(moveToPackage);
         updateFileNameInPackageField();
         fileChooser.setEnabled(!moveToPackage);
+        cbUpdatePackageDirective.setEnabled(moveToPackage);
         UIUtil.setEnabled(targetPanel, moveToPackage && hasAnySourceRoots(), true);
         updateSuggestedFileName();
         validateButtons();
@@ -375,7 +380,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                   directory.getVirtualFile().getPath() +
                                   "/" +
                                   targetFileName +
-                                  "' already exists. Do you want to move selected declarations to this file?";
+                                  "' already exists." +
+                                  "Do you want to move selected declarations to this file?";
                 int ret = Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"), Messages.getQuestionIcon());
                 if (ret != Messages.YES) return null;
             }
@@ -531,6 +537,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                     }
                                 }
                         );
+                        MovePackage.setUpdatePackageDirective(sourceFile, cbUpdatePackageDirective.isSelected());
                         invokeRefactoring(
                                 new MoveFilesOrDirectoriesProcessor(
                                         myProject,
