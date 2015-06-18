@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.util
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
-public class PerformanceCounter jvmOverloads constructor (val name: String, val reenterable: Boolean = false) {
+public class PerformanceCounter private constructor (val name: String, val reenterable: Boolean = false) {
     companion object {
         private val threadMxBean = ManagementFactory.getThreadMXBean()
         private val allCounters = arrayListOf<PerformanceCounter>()
@@ -57,6 +57,10 @@ public class PerformanceCounter jvmOverloads constructor (val name: String, val 
 
         public fun setTimeCounterEnabled(enable: Boolean) {
             enabled = enable
+        }
+
+        public jvmOverloads fun create(name: String, reentable: Boolean = false): PerformanceCounter {
+            return PerformanceCounter(name, reentable)
         }
     }
 
