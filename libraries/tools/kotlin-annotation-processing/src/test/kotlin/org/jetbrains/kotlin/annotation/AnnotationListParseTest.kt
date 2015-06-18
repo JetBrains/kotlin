@@ -80,9 +80,4 @@ public class AnnotationListParseTest {
         assertEquals(expectedText, actualText)
     }
 
-    public class FileKotlinAnnotationProvider(val annotationsFile: File): KotlinAnnotationProvider() {
-        override val serializedAnnotations: String
-            get() = annotationsFile.readText()
-    }
-
 }
