@@ -277,7 +277,7 @@ public fun <T, K> Stream<T>.distinctBy(keySelector: (T) -> K): Stream<T> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
@@ -286,7 +286,7 @@ public fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
@@ -295,7 +295,7 @@ public fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
@@ -304,7 +304,7 @@ public fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
@@ -313,7 +313,7 @@ public fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
@@ -322,7 +322,7 @@ public fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
@@ -331,7 +331,7 @@ public fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
@@ -340,7 +340,7 @@ public fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
@@ -349,7 +349,7 @@ public fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
@@ -358,7 +358,7 @@ public fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
 public fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
@@ -367,7 +367,7 @@ public fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
@@ -376,7 +376,7 @@ public fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
@@ -385,7 +385,7 @@ public fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
@@ -394,7 +394,7 @@ public fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
@@ -403,7 +403,7 @@ public fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
@@ -412,7 +412,7 @@ public fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
@@ -421,7 +421,7 @@ public fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
@@ -430,7 +430,7 @@ public fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
@@ -439,7 +439,7 @@ public fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
@@ -448,7 +448,7 @@ public fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
 }
 
 /**
- * Returns a set containing all distinct elements from both collections.
+ * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
 public fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
