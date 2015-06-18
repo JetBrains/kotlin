@@ -50,7 +50,7 @@ public class AnnotationProcessingManager(
     }
 
     fun getAnnotationFile(): File {
-        aptWorkingDir.mkdirs()
+        if (!aptWorkingDir.exists()) aptWorkingDir.mkdirs()
         return File(aptWorkingDir, "$WRAPPERS_DIRECTORY/annotations.$taskQualifier.txt")
     }
 
@@ -72,6 +72,7 @@ public class AnnotationProcessingManager(
 
         addGeneratedSourcesOutputToCompilerArgs(javaTask, aptOutputDir)
 
+        appendAnnotationsFileLocationArgument()
         appendAdditionalComplerArgs()
     }
 
@@ -97,6 +98,12 @@ public class AnnotationProcessingManager(
 
         project.getLogger().kotlinDebug("kapt: Java file stub generated: $javaHackClFile")
         javaTask.source(javaAptSourceDir)
+    }
+
+    private fun appendAnnotationsFileLocationArgument() {
+        javaTask.modifyCompilerArguments { list ->
+            list.add("-Akapt.annotations=" + getAnnotationFile())
+        }
     }
 
     private fun appendAdditionalComplerArgs() {

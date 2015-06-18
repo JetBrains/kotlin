@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.annotation
 
+import java.io.File
 import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
@@ -42,6 +43,10 @@ public abstract class AnnotationProcessorWrapper(
         private val processorFqName: String,
         private val taskQualifier: String
 ) : Processor {
+
+    private companion object {
+        val KAPT_ANNOTATION_OPTION = "kapt.annotations"
+    }
 
     private val processor: Processor by Delegates.lazy {
         try {
@@ -76,12 +81,16 @@ public abstract class AnnotationProcessorWrapper(
             return
         }
 
-        try {
-            val annotationsTxt = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, "", "annotations.$taskQualifier.txt")
-            kotlinAnnotationsProvider = FileObjectKotlinAnnotationProvider(annotationsTxt)
-        } catch (e: IOException) {
-            kotlinAnnotationsProvider = EmptyKotlinAnnotationsProvider()
+        val annotationsFile = processingEnv.getOptions().get(KAPT_ANNOTATION_OPTION)
+        if (annotationsFile != null) {
+            try {
+                kotlinAnnotationsProvider = FileKotlinAnnotationProvider(File(annotationsFile))
+            }
+            catch (e: IOException) {
+                kotlinAnnotationsProvider = EmptyKotlinAnnotationsProvider()
+            }
         }
+        else kotlinAnnotationsProvider = EmptyKotlinAnnotationsProvider()
 
         processor.init(processingEnv)
     }
@@ -106,7 +115,9 @@ public abstract class AnnotationProcessorWrapper(
     }
 
     override fun getSupportedOptions(): MutableSet<String> {
-        return processor.getSupportedOptions()
+        val supportedOptions = processor.getSupportedOptions().toHashSet()
+        supportedOptions.add(KAPT_ANNOTATION_OPTION)
+        return supportedOptions
     }
 
     private fun ProcessingEnvironment.err(message: String) {
