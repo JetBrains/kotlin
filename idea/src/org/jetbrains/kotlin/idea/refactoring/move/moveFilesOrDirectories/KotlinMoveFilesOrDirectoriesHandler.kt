@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDirectory
-import com.intellij.psi.PsiDirectoryContainer
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
+import com.intellij.psi.*
 import com.intellij.refactoring.move.MoveCallback
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
 import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
@@ -28,25 +25,29 @@ import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
 
 public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
-    override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
-        val adjustedElements = elements.map {
+    private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
+        return elements.map {
             when {
                 it is PsiFile, it is PsiDirectory -> it
+                it is PsiClass && it.getContainingClass() == null -> it.getContainingFile()
                 it is JetClassOrObject && it.getParent() is JetFile -> it.getParent()
-                else -> return false
+                else -> return null
             }
-        }
-        return super.canMove(adjustedElements.toTypedArray(), targetContainer)
+        }.toTypedArray()
     }
 
-    override fun adjustForMove(project: Project, sourceElements: Array<out PsiElement>, targetElement: PsiElement?): Array<PsiElement> {
-        return sourceElements.map { if (it is JetClassOrObject) it.getContainingFile() else it }.toTypedArray()
+    override fun canMove(elements: Array<PsiElement>, targetContainer: PsiElement?): Boolean {
+        return super.canMove(adjustElements(elements), targetContainer)
+    }
+
+    override fun adjustForMove(project: Project, sourceElements: Array<out PsiElement>, targetElement: PsiElement?): Array<PsiElement>? {
+        return adjustElements(sourceElements)
     }
 
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {
         if (!(targetContainer == null || targetContainer is PsiDirectory || targetContainer is PsiDirectoryContainer)) return
 
-        moveFilesOrDirectories(project, adjustForMove(project, elements, targetContainer), targetContainer) {
+        moveFilesOrDirectories(project, adjustForMove(project, elements, targetContainer) ?: return, targetContainer) {
             callback?.refactoringCompleted()
         }
     }
