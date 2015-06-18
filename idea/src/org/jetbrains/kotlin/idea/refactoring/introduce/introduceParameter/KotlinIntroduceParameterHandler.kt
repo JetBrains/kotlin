@@ -31,6 +31,7 @@ import com.intellij.refactoring.listeners.RefactoringEventListener
 import com.intellij.usageView.BaseUsageViewDescriptor
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewDescriptor
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -73,7 +74,7 @@ public data class IntroduceParameterDescriptor(
         val newParameterTypeText: String,
         val newArgumentValue: JetExpression,
         val withDefaultValue: Boolean,
-        val parametersUsages: Map<JetElement, List<JetElement>>,
+        val parametersUsages: MultiMap<JetElement, JetElement>,
         val occurrencesToReplace: List<JetPsiRange>,
         val parametersToRemove: List<JetElement> = getParametersToRemove(withDefaultValue, parametersUsages, occurrencesToReplace),
         val occurrenceReplacer: IntroduceParameterDescriptor.(JetPsiRange) -> Unit = {}
@@ -106,7 +107,7 @@ public data class IntroduceParameterDescriptor(
 
 fun getParametersToRemove(
         withDefaultValue: Boolean,
-        parametersUsages: Map<JetElement, List<JetElement>>,
+        parametersUsages: MultiMap<JetElement, JetElement>,
         occurrencesToReplace: List<JetPsiRange>
 ): List<JetElement> {
     if (withDefaultValue) return Collections.emptyList()
@@ -341,27 +342,28 @@ public open class KotlinIntroduceParameterHandler(
 private fun findInternalUsagesOfParametersAndReceiver(
         targetParent: JetNamedDeclaration,
         targetDescriptor: FunctionDescriptor
-): Map<JetElement, List<JetElement>> {
-    val usages = ArrayList<Pair<JetElement, List<JetElement>>>()
+): MultiMap<JetElement, JetElement> {
+    val usages = MultiMap<JetElement, JetElement>()
     targetParent.getValueParameters()
             .filter { !it.hasValOrVar() }
-            .map {
-                it to DefaultSearchHelper<JetParameter>()
+            .forEach {
+                val paramUsages = DefaultSearchHelper<JetParameter>()
                         .newRequest(UsagesSearchTarget(element = it))
                         .search()
                         .map { it.getElement() as JetElement }
+                if (paramUsages.isNotEmpty()) {
+                    usages.put(it, paramUsages)
+                }
             }
-            .filterTo(usages) { it.second.isNotEmpty() }
     val receiverTypeRef = (targetParent as? JetFunction)?.getReceiverTypeReference()
     if (receiverTypeRef != null) {
-        val receiverUsages = ArrayList<JetElement>()
         targetParent.acceptChildren(
                 object : JetTreeVisitorVoid() {
                     override fun visitThisExpression(expression: JetThisExpression) {
                         super.visitThisExpression(expression)
 
                         if (expression.getInstanceReference().getReference()?.resolve() == targetDescriptor) {
-                            receiverUsages.add(expression)
+                            usages.putValue(receiverTypeRef, expression)
                         }
                     }
 
@@ -373,16 +375,13 @@ private fun findInternalUsagesOfParametersAndReceiver(
 
                         if ((resolvedCall.getExtensionReceiver() as? ThisReceiver)?.getDeclarationDescriptor() == targetDescriptor ||
                             (resolvedCall.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor() == targetDescriptor) {
-                            receiverUsages.add(resolvedCall.getCall().getCallElement())
+                            usages.putValue(receiverTypeRef, resolvedCall.getCall().getCallElement())
                         }
                     }
                 }
         )
-        if (receiverUsages.isNotEmpty()) {
-            usages.add(receiverTypeRef to receiverUsages)
-        }
     }
-    return usages.toMap()
+    return usages
 }
 
 trait KotlinIntroduceLambdaParameterHelper: KotlinIntroduceParameterHelper {
