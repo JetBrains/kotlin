@@ -1061,6 +1061,8 @@
     <filetype.decompiler filetype="KJSM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
 
     <treeStructureProvider implementation="org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryContentsTreeStructureProvider"/>
+
+    <pathMacroExpandableProtocol protocol="kotlin-js-meta"/>
   </extensions>
 
   <xi:include href="extensions/ide.xml" xpointer="xpointer(/idea-plugin/*)"/>
