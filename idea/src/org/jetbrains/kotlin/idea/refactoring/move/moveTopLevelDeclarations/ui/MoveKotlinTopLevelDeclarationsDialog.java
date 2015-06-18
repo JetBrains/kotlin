@@ -71,6 +71,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
@@ -206,6 +208,11 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         tfFileNameInPackage.setText(MovePackage.guessNewFileName(sourceFile, getSelectedElementsToMove()));
     }
 
+    private void updateFileNameInPackageField() {
+        cbSpecifyFileNameInPackage.setEnabled(isMoveToPackage());
+        tfFileNameInPackage.setEnabled(isMoveToPackage() && cbSpecifyFileNameInPackage.isSelected());
+    }
+
     private void initPackageChooser(String targetPackageName, PsiDirectory targetDirectory) {
         if (targetPackageName != null && targetPackageName.length() != 0) {
             classPackageChooser.prependItem(targetPackageName);
@@ -227,7 +234,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 new ActionListener() {
                     @Override
                     public void actionPerformed(@NotNull ActionEvent e) {
-                        tfFileNameInPackage.setEnabled(cbSpecifyFileNameInPackage.isSelected());
+                        updateFileNameInPackageField();
                     }
                 }
         );
@@ -307,6 +314,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private void updateControls() {
         boolean moveToPackage = isMoveToPackage();
         classPackageChooser.setEnabled(moveToPackage);
+        updateFileNameInPackageField();
         fileChooser.setEnabled(!moveToPackage);
         UIUtil.setEnabled(targetPanel, moveToPackage && hasAnySourceRoots(), true);
         updateSuggestedFileName();
