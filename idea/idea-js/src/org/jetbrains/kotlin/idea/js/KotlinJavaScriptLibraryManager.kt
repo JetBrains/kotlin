@@ -31,7 +31,6 @@ import com.intellij.openapi.roots.impl.OrderEntryUtil
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryTable
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.PathUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.framework.KotlinJavaScriptLibraryDetectionUtil
@@ -47,7 +46,7 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
 
     override fun projectOpened() {
         val project = myProject!!
-        project.getMessageBus().connect(project).subscribe<ModuleRootListener>(ProjectTopics.PROJECT_ROOTS, this)
+        project.getMessageBus().connect(project).subscribe(ProjectTopics.PROJECT_ROOTS, this)
         DumbService.getInstance(project).smartInvokeLater() { updateProjectLibrary() }
     }
 
@@ -92,8 +91,8 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
                 continue
             }
 
-            val clsRootFiles = arrayListOf<VirtualFile>()
-            val srcRootFiles = arrayListOf<VirtualFile>()
+            val clsRootUrls: MutableList<String> = arrayListOf()
+            val srcRootUrls: MutableList<String> = arrayListOf()
 
             ModuleRootManager.getInstance(module).orderEntries().librariesOnly().forEachLibrary() { library ->
                     if (KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)) {
@@ -106,18 +105,18 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
                             if (metadataList.filter { !it.isAbiVersionCompatible }.isNotEmpty()) continue
 
                             val classRoot = KotlinJavaScriptMetaFileSystem.getInstance().refreshAndFindFileByPath(path + "!/")
-                            clsRootFiles.add(classRoot)
-                            addSources = true
+                            classRoot?.let {
+                                clsRootUrls.add(it.getUrl())
+                                addSources = true
+                            }
                         }
                         if (addSources) {
-                            srcRootFiles.addAll(arrayListOf(*library.getFiles(OrderRootType.SOURCES)))
+                            srcRootUrls.addAll(library.getFiles(OrderRootType.SOURCES).map { it.getUrl() })
                         }
                     }
                     true
                 }
 
-            val clsRootUrls = clsRootFiles.map { it.getUrl() }
-            val srcRootUrls = srcRootFiles.map { it.getUrl() }
             val changesToApply = ChangesToApply(clsRootUrls, srcRootUrls)
 
             resetLibraries(module, changesToApply, LIBRARY_NAME, synchronously)
@@ -221,6 +220,6 @@ public class KotlinJavaScriptLibraryManager private constructor(private var myPr
 
         platformStatic
         public fun getInstance(project: Project): KotlinJavaScriptLibraryManager =
-            project.getComponent<KotlinJavaScriptLibraryManager>(javaClass<KotlinJavaScriptLibraryManager>())
+            project.getComponent(javaClass<KotlinJavaScriptLibraryManager>())
     }
 }
