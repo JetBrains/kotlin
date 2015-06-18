@@ -82,6 +82,10 @@ public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
         doTest();
     }
 
+    public void testURL() {
+        doTest();
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();

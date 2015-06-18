@@ -219,14 +219,43 @@ public class JetNameSuggester {
             }
         }
 
+        boolean upperCaseLetterBefore = false;
         for (int i = 0; i < s.length(); ++i) {
+            char c = s.charAt(i);
+            boolean upperCaseLetter = Character.isUpperCase(c);
+
             if (i == 0) {
-                addName(result, StringUtil.decapitalize(s), validator);
+                addName(result, decapitalize(s), validator);
             }
-            else if (s.charAt(i) >= 'A' && s.charAt(i) <= 'Z') {
-                addName(result, StringUtil.decapitalize(s.substring(i)), validator);
+            else {
+                if (upperCaseLetter && !upperCaseLetterBefore) {
+                    addName(result, decapitalize(s.substring(i)), validator);
+                }
             }
+
+            upperCaseLetterBefore = upperCaseLetter;
         }
+    }
+
+    private static String decapitalize(String s) {
+        char c = s.charAt(0);
+        if (!Character.isUpperCase(c)) return s;
+
+        StringBuilder builder = new StringBuilder(s.length());
+        boolean decapitalize = true;
+        for (int i = 0; i < s.length(); i++) {
+            c = s.charAt(i);
+            if (decapitalize) {
+                if (Character.isUpperCase(c)) {
+                    c = Character.toLowerCase(c);
+                }
+                else {
+                    decapitalize = false;
+                }
+            }
+            builder.append(c);
+        }
+        return builder.toString();
     }
     
     private static String deleteNonLetterFromString(String s) {
