@@ -16,27 +16,30 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental
 
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.psi.JetFile
 import com.intellij.util.containers.MultiMap
-import java.util.HashMap
+import org.apache.log4j.Logger
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.serialization.*
-import org.jetbrains.kotlin.serialization.jvm.*
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
-import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.serialization.PackageData
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
+import java.util.HashMap
+import kotlin.reflect.jvm.java
 
 public class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<JetFile>,
@@ -46,6 +49,10 @@ public class IncrementalPackageFragmentProvider(
         val incrementalCache: IncrementalCache,
         val moduleId: String
 ) : PackageFragmentProvider {
+
+    private companion object {
+        private val LOG = Logger.getLogger(IncrementalPackageFragmentProvider::class.java)
+    }
 
     val obsoletePackageParts = incrementalCache.getObsoletePackageParts().toSet()
     val fqNameToSubFqNames = MultiMap<FqName, FqName>()
@@ -110,18 +117,24 @@ public class IncrementalPackageFragmentProvider(
                 { listOf() }
         ) {
             override fun filteredMemberProtos(allMemberProtos: Collection<ProtoBuf.Callable>): Collection<ProtoBuf.Callable> {
-                return allMemberProtos
-                        .filter {
-                            member ->
-                            if (member.hasExtension(JvmProtoBuf.implClassName)) {
-                                val shortName = packageData.getNameResolver().getName(member.getExtension(JvmProtoBuf.implClassName)!!)
-                                val internalName = JvmClassName.byFqNameWithoutInnerClasses(fqName.child(shortName)).getInternalName()
-                                internalName !in obsoletePackageParts
-                            }
-                            else {
-                                true
-                            }
-                        }
+                fun getPackagePart(callable: ProtoBuf.Callable) =
+                        callable.getExtension(JvmProtoBuf.implClassName)?.let { packageData.getNameResolver().getName(it) }
+
+                fun shouldSkipPackagePart(name: Name) =
+                        JvmClassName.byFqNameWithoutInnerClasses(fqName.child(name)).getInternalName() in obsoletePackageParts
+
+                if (LOG.isDebugEnabled()) {
+                    val allPackageParts = allMemberProtos
+                            .map (::getPackagePart)
+                            .filterNotNull()
+                            .toSet()
+                    val skippedPackageParts = allPackageParts.filter { shouldSkipPackagePart(it) }
+
+                    LOG.debug("Loading incremental package fragment for package '$fqName'," +
+                              " all package parts: $allPackageParts, skipped parts: $skippedPackageParts")
+                }
+
+                return allMemberProtos.filter { getPackagePart(it)?.let { !shouldSkipPackagePart(it) } ?: true }
             }
         }
     }

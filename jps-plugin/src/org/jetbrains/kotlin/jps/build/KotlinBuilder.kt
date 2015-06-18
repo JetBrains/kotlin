@@ -59,10 +59,7 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.utils.LibraryUtils
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.keysToMap
-import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.util.ArrayList
@@ -74,7 +71,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     companion object {
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
 
-        private val LOG = Logger.getInstance("#org.jetbrains.jps.cmdline.BuildSession")
+        val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     }
 
     private val statisticsLogger = TeamcityStatisticsLogger()
@@ -122,6 +119,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val dataManager = context.getProjectDescriptor().dataManager
 
         if (chunk.getTargets().any { dataManager.getDataPaths().getKotlinCacheVersion(it).isIncompatible() }) {
+            LOG.info("Clearing caches for " + chunk.getTargets().map { it.getPresentableName() }.join())
             chunk.getTargets().forEach { dataManager.getKotlinCache(it).clean() }
             return CHUNK_REBUILD_REQUIRED
         }
@@ -160,6 +158,13 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
 
         val compilationErrors = Utils.ERRORS_DETECTED_KEY[context, false]
+        if (compilationErrors) {
+            LOG.info("Compiled with errors")
+        }
+        else {
+            LOG.info("Compiled successfully")
+        }
+
         val generatedFiles = getGeneratedFiles(chunk, outputItemCollector)
 
         registerOutputItems(outputConsumer, generatedFiles)
@@ -218,6 +223,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             messageCollector: MessageCollectorAdapter, project: JpsProject
     ): OutputItemsCollectorImpl? {
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
+            LOG.debug("Compiling to JS ${filesToCompile.values().size()} files in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
             return compileToJs(chunk, commonArguments, environment, messageCollector, project)
         }
 
@@ -261,6 +267,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 { className ->
                     className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.cache.")
                     || className == "org.jetbrains.kotlin.config.Services"
+                    || className.startsWith("org.apache.log4j.") // For logging from compiler
                 },
                 compilerServices
         )
@@ -468,17 +475,19 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context)
 
-        var haveRemovedFiles = false
+        var totalRemovedFiles = 0
         for (target in chunk.getTargets()) {
-            if (!KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target).isEmpty()) {
+            val removedFilesInTarget = KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target)
+            if (!removedFilesInTarget.isEmpty()) {
                 if (processedTargetsWithRemoved.add(target)) {
-                    haveRemovedFiles = true
+                    totalRemovedFiles += removedFilesInTarget.size()
                 }
             }
         }
 
-        val moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk, filesToCompile, haveRemovedFiles)
+        val moduleFile = KotlinBuilderModuleScriptGenerator.generateModuleDescription(context, chunk, filesToCompile, totalRemovedFiles != 0)
         if (moduleFile == null) {
+            KotlinBuilder.LOG.debug("Not compiling, because no files affected: " + filesToCompile.keySet().map { it.getPresentableName() }.join())
             // No Kotlin sources found
             return null
         }
@@ -486,6 +495,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val project = context.getProjectDescriptor().getProject()
         val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
+
+        KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size()} files"
+                        + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
+                        + " in " + filesToCompile.keySet().map { it.getPresentableName() }.join())
 
         runK2JvmCompiler(commonArguments, k2JvmArguments, compilerSettings, messageCollector, environment, moduleFile, outputItemCollector)
         moduleFile.delete()
