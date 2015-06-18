@@ -2,7 +2,7 @@ package kotlin
 
 
 /**
- * Initializes a new instance of the [Lazy] that uses the specified initialization function [initializer]
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
  * and the default thread-safety mode [LazyThreadSafetyMode.SYNCHRONIZED].
  *
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.
@@ -13,7 +13,7 @@ package kotlin
 public fun lazy<T>(initializer: () -> T): Lazy<T> = LazyImpl(initializer)
 
 /**
- * Initializes a new instance of the [Lazy] that uses the specified initialization function [initializer]
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
  * and thread-safety [mode].
  *
  * If the initialization of a value throws an exception, it will attempt to reinitialize the value at next access.

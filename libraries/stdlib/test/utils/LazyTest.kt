@@ -11,23 +11,20 @@ class LazyTest {
         val lazyInt = lazy { ++callCount }
 
         assertEquals(0, callCount)
+        assertFalse(lazyInt.isInitialized())
         assertEquals(1, lazyInt.value)
         assertEquals(1, callCount)
+        assertTrue(lazyInt.isInitialized())
 
         lazyInt.value
         assertEquals(1, callCount)
     }
 
-    test fun valueCreated() {
-        var callCount = 0
-        val lazyInt = lazy { ++callCount }
-
-        assertFalse(lazyInt.isInitialized())
-        assertEquals(0, callCount)
-
-        lazyInt.value
+    test fun alreadyInitialized() {
+        val lazyInt = lazyOf(1)
 
         assertTrue(lazyInt.isInitialized())
+        assertEquals(1, lazyInt.value)
     }
 
 

@@ -16,6 +16,11 @@ public interface Lazy<out T> {
 }
 
 /**
+ * Creates a new instance of the [Lazy] that is already initialized with the specified [value].
+ */
+public fun lazyOf<T>(value: T): Lazy<T> = InitializedLazyImpl(value)
+
+/**
  * An extension to delegate a read-only property of type [T] to an instance of [Lazy].
  *
  * This extension allows to use instances of Lazy for property delegation:

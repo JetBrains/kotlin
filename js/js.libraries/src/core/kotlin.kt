@@ -51,6 +51,13 @@ public fun setOf<T>(value: T): Set<T> = hashSetOf(value)
  */
 public fun mapOf<K, V>(keyValuePair: Pair<K, V>): Map<K, V> = hashMapOf(keyValuePair)
 
-
+/**
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
+ */
 public fun lazy<T>(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+
+/**
+ * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
+ *
+ * The [mode] parameter is ignored. */
 public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
