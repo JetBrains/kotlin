@@ -64,9 +64,11 @@ public abstract class AbstractCompileJavaAgainstKotlinTest extends TestCaseWithT
         File ktFile = new File(ktFilePath);
         File javaFile = new File(ktFilePath.replaceFirst("\\.kt$", ".java"));
         File expectedFile = new File(ktFilePath.replaceFirst("\\.kt$", ".txt"));
+        File javaErrorFile = new File(ktFilePath.replaceFirst("\\.kt$", ".javaerr.txt"));
 
         File out = new File(tmpdir, "out");
-        compileKotlinWithJava(Collections.singletonList(javaFile), Collections.singletonList(ktFile), out, getTestRootDisposable());
+        compileKotlinWithJava(Collections.singletonList(javaFile), Collections.singletonList(ktFile),
+                              out, getTestRootDisposable(), javaErrorFile);
 
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(),

@@ -170,7 +170,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                 FileUtil.findFilesByMask(Pattern.compile(".+\\.java$"), librarySrc),
                 FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), librarySrc),
                 libraryOut,
-                getTestRootDisposable()
+                getTestRootDisposable(),
+                null
         );
 
         KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForTests(

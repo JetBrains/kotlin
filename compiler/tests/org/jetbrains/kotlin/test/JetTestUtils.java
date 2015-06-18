@@ -526,7 +526,8 @@ public class JetTestUtils {
             @NotNull List<File> javaFiles,
             @NotNull List<File> ktFiles,
             @NotNull File outDir,
-            @NotNull Disposable disposable
+            @NotNull Disposable disposable,
+            @Nullable File javaErrorFile
     ) throws IOException {
         if (!ktFiles.isEmpty()) {
             compileKotlinToDirAndGetAnalysisResult(ktFiles, outDir, disposable, ALL);
@@ -539,7 +540,7 @@ public class JetTestUtils {
             compileJavaFiles(javaFiles, Arrays.asList(
                     "-classpath", outDir.getPath() + File.pathSeparator + ForTestCompileRuntime.runtimeJarForTests(),
                     "-d", outDir.getPath()
-            ));
+            ), javaErrorFile);
         }
     }
 
@@ -742,6 +743,10 @@ public class JetTestUtils {
     }
 
     public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options) throws IOException {
+        compileJavaFiles(files, options, null);
+    }
+
+    public static void compileJavaFiles(@NotNull Collection<File> files, List<String> options, @Nullable File javaErrorFile) throws IOException {
         JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
         DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
         StandardJavaFileManager fileManager = javaCompiler.getStandardFileManager(diagnosticCollector, Locale.ENGLISH, Charset.forName("utf-8"));
@@ -757,7 +762,13 @@ public class JetTestUtils {
                     javaFileObjectsFromFiles);
 
             Boolean success = task.call(); // do NOT inline this variable, call() should complete before errorsToString()
-            Assert.assertTrue(errorsToString(diagnosticCollector), success);
+            String diagnosticString = errorsToString(diagnosticCollector);
+            if (javaErrorFile == null || !javaErrorFile.exists()) {
+                Assert.assertTrue(diagnosticString, success);
+            }
+            else {
+                assertEqualsToFile(javaErrorFile, diagnosticString);
+            }
         } finally {
             fileManager.close();
         }
@@ -767,7 +778,10 @@ public class JetTestUtils {
         StringBuilder builder = new StringBuilder();
         for (javax.tools.Diagnostic<? extends JavaFileObject> diagnostic : diagnosticCollector.getDiagnostics()) {
             if (diagnostic.getKind() == javax.tools.Diagnostic.Kind.ERROR) {
-                builder.append(diagnostic).append("\n");
+                builder.append(diagnostic.getSource().getName()).append(":")
+                       .append(diagnostic.getLineNumber()).append(":")
+                       .append(diagnostic.getColumnNumber()).append(":")
+                       .append(diagnostic.getCode()).append("\n");
             }
         }
         return builder.toString();

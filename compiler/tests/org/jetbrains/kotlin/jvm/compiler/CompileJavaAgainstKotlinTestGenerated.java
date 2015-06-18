@@ -494,6 +494,27 @@ public class CompileJavaAgainstKotlinTestGenerated extends AbstractCompileJavaAg
         }
     }
 
+    @TestMetadata("compiler/testData/compileJavaAgainstKotlin/sealed")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Sealed extends AbstractCompileJavaAgainstKotlinTest {
+        public void testAllFilesPresentInSealed() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/compileJavaAgainstKotlin/sealed"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("Derived.kt")
+        public void testDerived() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/sealed/Derived.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Instance.kt")
+        public void testInstance() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/compileJavaAgainstKotlin/sealed/Instance.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/compileJavaAgainstKotlin/staticFields")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
