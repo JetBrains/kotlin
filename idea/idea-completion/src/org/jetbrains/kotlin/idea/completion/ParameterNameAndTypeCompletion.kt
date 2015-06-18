@@ -20,9 +20,8 @@ import com.intellij.codeInsight.completion.CompletionInitializationContext
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.completion.PrefixMatcher
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementDecorator
-import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.codeInsight.lookup.*
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
-import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
@@ -42,11 +40,11 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.JetType
+import java.util.*
 
 class ParameterNameAndTypeCompletion(
         private val collector: LookupElementsCollector,
@@ -98,6 +96,7 @@ class ParameterNameAndTypeCompletion(
     }
 
     public fun addFromParametersInFile(position: PsiElement, resolutionFacade: ResolutionFacade, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+        val lookupElementToCount = LinkedHashMap<LookupElement, Int>()
         position.getContainingFile().forEachDescendantOfType<JetParameter>(
                 canGoInside = { it !is JetExpression || it is JetDeclaration } // we analyze parameters inside bodies to not resolve too much
         ) { declaration ->
@@ -107,10 +106,17 @@ class ParameterNameAndTypeCompletion(
                 if (parameter != null) {
                     val parameterType = parameter.getType()
                     if (parameterType.isVisible(visibilityFilter)) {
-                        addLookupElement(NameAndArbitraryType(name, parameterType))
+                        val lookupElement = MyLookupElement.create(NameAndArbitraryType(name, parameterType), lookupElementFactory)
+                        val count = lookupElementToCount[lookupElement] ?: 0
+                        lookupElementToCount[lookupElement] = count + 1
                     }
                 }
             }
+        }
+
+        for ((lookupElement, count) in lookupElementToCount) {
+            lookupElement.putUserData(PRIORITY_KEY, -count)
+            collector.addElement(lookupElement)
         }
     }
 
@@ -126,15 +132,11 @@ class ParameterNameAndTypeCompletion(
         val parameterNames = JetNameSuggester.getCamelNames(className, EmptyValidator)
         for (parameterName in parameterNames) {
             if (prefixMatcher.prefixMatches(parameterName)) {
-                addLookupElement(nameAndTypeFactory(parameterName))
+                val lookupElement = MyLookupElement.create(nameAndTypeFactory(parameterName), lookupElementFactory)
+                if (lookupElement != null) {
+                    collector.addElement(lookupElement)
+                }
             }
-        }
-    }
-
-    private fun addLookupElement(nameAndType: NameAndType) {
-        val lookupElement = MyLookupElement.create(nameAndType, lookupElementFactory)
-        if (lookupElement != null) {
-            collector.addElement(lookupElement)
         }
     }
 
@@ -181,8 +183,9 @@ class ParameterNameAndTypeCompletion(
 
         companion object {
             fun create(nameAndType: NameAndType, factory: LookupElementFactory): LookupElement? {
-                val lookupElement = nameAndType.createTypeLookupElement(factory) ?: return null
-                return MyLookupElement(nameAndType.parameterName, nameAndType.typeIdString, lookupElement).suppressAutoInsertion()
+                val typeLookupElement = nameAndType.createTypeLookupElement(factory) ?: return null
+                val lookupElement = MyLookupElement(nameAndType.parameterName, nameAndType.typeIdString, typeLookupElement)
+                return lookupElement.suppressAutoInsertion()
             }
         }
 
@@ -211,5 +214,13 @@ class ParameterNameAndTypeCompletion(
 
             super.handleInsert(context)
         }
+    }
+
+    private companion object {
+        val PRIORITY_KEY = Key<Int>("ParameterNameAndTypeCompletion.PRIORITY_KEY")
+    }
+
+    object Weigher : LookupElementWeigher("kotlin.parameterNameAndTypePriority") {
+        override fun weigh(element: LookupElement, context: WeighingContext): Int = element.getUserData(PRIORITY_KEY) ?: 0
     }
 }

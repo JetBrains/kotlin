@@ -145,6 +145,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
             doTest(fileName);
         }
 
+        @TestMetadata("FromCurrentFilePriority.kt")
+        public void testFromCurrentFilePriority() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType/FromCurrentFilePriority.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ImportedFirst.kt")
         public void testImportedFirst() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/parameterNameAndType/ImportedFirst.kt");
