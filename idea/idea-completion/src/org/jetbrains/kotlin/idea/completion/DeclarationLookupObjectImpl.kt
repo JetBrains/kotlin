@@ -20,40 +20,42 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
-import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for sorting
  */
-public class DeclarationDescriptorLookupObjectImpl(
-        public override val descriptor: DeclarationDescriptor,
-        private val resolutionFacade: ResolutionFacade,
-        public override val psiElement: PsiElement?
-): DeclarationDescriptorLookupObject {
-    override fun toString(): String {
-        return super.toString() + " " + descriptor
+public class DeclarationLookupObjectImpl(
+        public override val descriptor: DeclarationDescriptor?,
+        public override val psiElement: PsiElement?,
+        private val resolutionFacade: ResolutionFacade
+): DeclarationLookupObject {
+    init {
+        assert(descriptor != null || psiElement != null)
     }
 
+    override fun toString() = super.toString() + " " + (descriptor ?: psiElement)
+
     override fun hashCode(): Int {
-        return descriptor.getOriginal().hashCode()
+        return if (descriptor != null) descriptor.getOriginal().hashCode() else psiElement!!.hashCode()
     }
 
     override fun equals(other: Any?): Boolean {
         if (this identityEquals other) return true
         if (other == null || javaClass != other.javaClass) return false
 
-        val lookupObject = other as DeclarationDescriptorLookupObjectImpl
+        val lookupObject = other as DeclarationLookupObjectImpl
 
         if (resolutionFacade != lookupObject.resolutionFacade) {
             LOG.warn("Descriptors from different resolve sessions")
             return false
         }
 
-        return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor)
+        return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor) && psiElement == lookupObject.psiElement
     }
 
     companion object {
-        private val LOG = Logger.getInstance("#" + javaClass<DeclarationDescriptorLookupObject>().getName())
+        private val LOG = Logger.getInstance("#" + javaClass<DeclarationLookupObject>().getName())
     }
 }

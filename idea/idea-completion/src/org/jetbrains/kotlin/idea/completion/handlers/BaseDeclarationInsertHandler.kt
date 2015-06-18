@@ -20,13 +20,13 @@ import com.intellij.codeInsight.completion.InsertHandler
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.renderer.render
 
 open class BaseDeclarationInsertHandler : InsertHandler<LookupElement> {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
-        val descriptor = (item.getObject() as? DeclarationDescriptorLookupObject)?.descriptor
+        val descriptor = (item.getObject() as? DeclarationLookupObject)?.descriptor
         if (descriptor != null) {
             val name = descriptor.getName()
             val nameInCode = name.render()

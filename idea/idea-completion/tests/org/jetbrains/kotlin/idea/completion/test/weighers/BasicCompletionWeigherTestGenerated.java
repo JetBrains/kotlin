@@ -53,6 +53,12 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
         doTest(fileName);
     }
 
+    @TestMetadata("DeprecatedJavaClass.kt")
+    public void testDeprecatedJavaClass() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/DeprecatedJavaClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ExactMatchForKeyword.kt")
     public void testExactMatchForKeyword() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/weighers/basic/ExactMatchForKeyword.kt");

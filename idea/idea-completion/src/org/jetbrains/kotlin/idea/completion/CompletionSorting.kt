@@ -24,6 +24,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiDocCommentOwner
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.completion.smart.NameSimilarityWeigher
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
-import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
@@ -89,7 +90,7 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
         val o = element.getObject()
 
         return when (o) {
-            is DeclarationDescriptorLookupObject -> {
+            is DeclarationLookupObject -> {
                 val descriptor = o.descriptor
                 when (descriptor) {
                     is VariableDescriptor -> CompoundWeight(Weight.variable, element.getUserData(CALLABLE_WEIGHT_KEY))
@@ -108,8 +109,12 @@ private object KindWeigher : LookupElementWeigher("kotlin.kind") {
 
 private object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
-        val o = element.getObject()
-        return if (o is DeclarationDescriptorLookupObject && KotlinBuiltIns.isDeprecated(o.descriptor)) 1 else 0
+        val o = element.getObject() as? DeclarationLookupObject ?: return 0
+        val isDeprecated = if (o.descriptor != null)
+            KotlinBuiltIns.isDeprecated(o.descriptor!!)
+        else
+            (o.psiElement as PsiDocCommentOwner).isDeprecated()
+        return if (isDeprecated) 1 else 0
     }
 }
 
@@ -135,15 +140,14 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
     }
 
     override fun weigh(element: LookupElement): Weight {
-        val o = element.getObject()
-        if (o is DeclarationDescriptorLookupObject) {
-            val elementFile = o.psiElement?.getContainingFile()
-            if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
-                return Weight.thisFile
-            }
+        val o = element.getObject() as? DeclarationLookupObject ?: return Weight.default
+
+        val elementFile = o.psiElement?.getContainingFile()
+        if (elementFile is JetFile && elementFile.getOriginalFile() == file) {
+            return Weight.thisFile
         }
 
-        val qualifiedName = qualifiedName(o)
+        val qualifiedName = o.qualifiedName()
         // Invalid name can be met for companion object descriptor: Test.MyTest.A.<no name provided>.testOther
         if (qualifiedName != null && isValidJavaFqName(qualifiedName)) {
             val importPath = ImportPath(qualifiedName)
@@ -161,11 +165,12 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
         return Weight.default
     }
 
-    private fun qualifiedName(lookupObject: Any): String? {
-        return when (lookupObject) {
-            is DeclarationDescriptorLookupObject -> DescriptorUtils.getFqName(lookupObject.descriptor).toString()
-            is PsiClass -> lookupObject.getQualifiedName()
-            else -> null
+    private fun DeclarationLookupObject.qualifiedName(): String? {
+        return if (descriptor != null) {
+            DescriptorUtils.getFqName(descriptor!!).toString()
+        }
+        else {
+            (psiElement as? PsiClass)?.getQualifiedName();
         }
     }
 

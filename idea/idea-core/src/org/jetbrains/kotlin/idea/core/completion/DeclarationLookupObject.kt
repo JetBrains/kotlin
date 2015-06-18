@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.core.completion
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
-public trait DeclarationDescriptorLookupObject {
+public interface DeclarationLookupObject {
     public val psiElement: PsiElement?
-    public val descriptor: DeclarationDescriptor
+    public val descriptor: DeclarationDescriptor?
 }

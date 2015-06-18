@@ -21,7 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.core.completion.DeclarationDescriptorLookupObject
+import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
@@ -35,7 +35,7 @@ object CastReceiverInsertHandler : KotlinCallableInsertHandler() {
         if (qualifiedExpression != null) {
             val receiver = qualifiedExpression.getReceiverExpression()
 
-            val descriptor = (item.getObject() as? DeclarationDescriptorLookupObject)?.descriptor as CallableDescriptor
+            val descriptor = (item.getObject() as? DeclarationLookupObject)?.descriptor as CallableDescriptor
             val project = context.getProject()
 
             val thisObj = if (descriptor.getExtensionReceiverParameter() != null) descriptor.getExtensionReceiverParameter() else descriptor.getDispatchReceiverParameter()

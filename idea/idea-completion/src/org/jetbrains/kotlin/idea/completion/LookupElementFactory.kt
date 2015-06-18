@@ -98,7 +98,9 @@ public class LookupElementFactory(
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
-        var element = LookupElementBuilder.create(psiClass, psiClass.getName()).withInsertHandler(KotlinClassInsertHandler)
+        val lookupObject = DeclarationLookupObjectImpl(null, psiClass, resolutionFacade)
+        var element = LookupElementBuilder.create(lookupObject, psiClass.getName())
+                .withInsertHandler(KotlinClassInsertHandler)
 
         val typeParams = psiClass.getTypeParameters()
         if (typeParams.isNotEmpty()) {
@@ -149,7 +151,7 @@ public class LookupElementFactory(
         val name = nameAndIconDescriptor.getName().asString()
         val icon = JetDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, Iconable.ICON_FLAG_VISIBILITY)
 
-        var element = LookupElementBuilder.create(DeclarationDescriptorLookupObjectImpl(descriptor, resolutionFacade, declaration), name)
+        var element = LookupElementBuilder.create(DeclarationLookupObjectImpl(descriptor, declaration, resolutionFacade), name)
                 .withIcon(icon)
 
         when (descriptor) {

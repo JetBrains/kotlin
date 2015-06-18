@@ -22,8 +22,9 @@ import org.jetbrains.kotlin.idea.project.TargetPlatform
 import org.jetbrains.kotlin.test.JetTestUtils
 import org.junit.Assert
 
-val COMPLETION_TEST_DATA_BASE_PATH: String
-    get() = JetTestUtils.getHomeDirectory() + "/idea/idea-completion/testData"
+val RELATIVE_COMPLETION_TEST_DATA_BASE_PATH = "idea/idea-completion/testData"
+
+val COMPLETION_TEST_DATA_BASE_PATH = JetTestUtils.getHomeDirectory() + "/" + RELATIVE_COMPLETION_TEST_DATA_BASE_PATH
 
 fun testCompletion(fileText: String, platform: TargetPlatform?, complete: (Int) -> Array<LookupElement>?, defaultInvocationCount: Int = 0) {
     testWithAutoCompleteSetting(fileText) {
