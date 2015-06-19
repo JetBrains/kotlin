@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.idea.core.completion
 
+import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
-public interface DeclarationLookupObject {
+public interface DeclarationLookupObject : Iconable {
     public val psiElement: PsiElement?
     public val descriptor: DeclarationDescriptor?
     public val isDeprecated: Boolean

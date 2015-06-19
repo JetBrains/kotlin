@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
+import javax.swing.Icon
 
 public class LookupElementFactory(
         private val resolutionFacade: ResolutionFacade,
@@ -98,7 +99,9 @@ public class LookupElementFactory(
     }
 
     public fun createLookupElementForJavaClass(psiClass: PsiClass): LookupElement {
-        val lookupObject = DeclarationLookupObjectImpl(null, psiClass, resolutionFacade)
+        val lookupObject = object : DeclarationLookupObjectImpl(null, psiClass, resolutionFacade) {
+            override fun getIcon(flags: Int) = psiClass.getIcon(flags)
+        }
         var element = LookupElementBuilder.create(lookupObject, psiClass.getName())
                 .withInsertHandler(KotlinClassInsertHandler)
 
@@ -115,13 +118,7 @@ public class LookupElementFactory(
             element = element.setStrikeout(true)
         }
 
-        // add icon in renderElement only to pass presentation.isReal()
-        return object : LookupElementDecorator<LookupElement>(element) {
-            override fun renderElement(presentation: LookupElementPresentation) {
-                super.renderElement(presentation)
-                presentation.setIcon(DefaultLookupItemRenderer.getRawIcon(element, presentation.isReal()))
-            }
-        }
+        return element.withIconFromLookupObject()
     }
 
     private fun createLookupElement(
@@ -149,11 +146,11 @@ public class LookupElementFactory(
             iconDeclaration = declaration
         }
         val name = nameAndIconDescriptor.getName().asString()
-        val icon = JetDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, Iconable.ICON_FLAG_VISIBILITY)
 
-        val lookupObject = DeclarationLookupObjectImpl(descriptor, declaration, resolutionFacade)
+        val lookupObject = object : DeclarationLookupObjectImpl(descriptor, declaration, resolutionFacade) {
+            override fun getIcon(flags: Int) = JetDescriptorIconProvider.getIcon(nameAndIconDescriptor, iconDeclaration, flags)
+        }
         var element = LookupElementBuilder.create(lookupObject, name)
-                .withIcon(icon)
 
         when (descriptor) {
             is FunctionDescriptor -> {
@@ -213,7 +210,17 @@ public class LookupElementFactory(
             element.putUserData(KotlinCompletionCharFilter.ACCEPT_OPENING_BRACE, Unit)
         }
 
-        return element
+        return element.withIconFromLookupObject()
+    }
+
+    private fun LookupElement.withIconFromLookupObject(): LookupElement {
+        // add icon in renderElement only to pass presentation.isReal()
+        return object : LookupElementDecorator<LookupElement>(this) {
+            override fun renderElement(presentation: LookupElementPresentation) {
+                super.renderElement(presentation)
+                presentation.setIcon(DefaultLookupItemRenderer.getRawIcon(this@withIconFromLookupObject, presentation.isReal()))
+            }
+        }
     }
 
     private fun callableWeight(descriptor: DeclarationDescriptor): CallableWeight? {

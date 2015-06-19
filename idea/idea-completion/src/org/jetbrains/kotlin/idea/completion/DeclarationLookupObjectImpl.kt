@@ -17,27 +17,29 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.Iconable
 import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
+import javax.swing.Icon
 
 /**
  * Stores information about resolved descriptor and position of that descriptor.
  * Position will be used for sorting
  */
-public class DeclarationLookupObjectImpl(
-        public override val descriptor: DeclarationDescriptor?,
-        public override val psiElement: PsiElement?,
+public abstract class DeclarationLookupObjectImpl(
+        public final override val descriptor: DeclarationDescriptor?,
+        public final override val psiElement: PsiElement?,
         private val resolutionFacade: ResolutionFacade
 ): DeclarationLookupObject {
     init {
         assert(descriptor != null || psiElement != null)
     }
 
-    override fun toString() = super.toString() + " " + (descriptor ?: psiElement)
+    override fun toString() = super<DeclarationLookupObject>.toString() + " " + (descriptor ?: psiElement)
 
     override fun hashCode(): Int {
         return if (descriptor != null) descriptor.getOriginal().hashCode() else psiElement!!.hashCode()
