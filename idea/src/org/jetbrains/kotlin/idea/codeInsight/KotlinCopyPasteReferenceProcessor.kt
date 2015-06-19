@@ -32,6 +32,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -311,7 +313,10 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             = this == KotlinReferenceData.Kind.EXTENSION_FUNCTION || this == KotlinReferenceData.Kind.EXTENSION_PROPERTY
 
     private fun findImportableDescriptors(fqName: FqName, file: JetFile): Collection<DeclarationDescriptor> {
-        return file.resolveImportReference(fqName, isDefaultImport = true/*TODO: temporary hack until we don't have ability to insert qualified reference into root package*/)
+        return file.resolveImportReference(fqName).filterNot {
+            /*TODO: temporary hack until we don't have ability to insert qualified reference into root package*/
+            DescriptorUtils.getParentOfType(it, javaClass<PackageFragmentDescriptor>())?.fqName?.isRoot() ?: false
+        }
     }
 
     private fun findCallableToImport(fqName: FqName, file: JetFile): CallableDescriptor?
