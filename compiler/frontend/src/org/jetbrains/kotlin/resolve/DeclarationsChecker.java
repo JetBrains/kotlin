@@ -558,7 +558,7 @@ public class DeclarationsChecker {
     // ENTRY(arguments)
     public static boolean enumEntryUsesDeprecatedSuperConstructor(@NotNull JetEnumEntry enumEntry) {
         JetInitializerList initializerList = enumEntry.getInitializerList();
-        if (initializerList == null) return false;
+        if (initializerList == null || initializerList.getInitializers().isEmpty()) return false;
         JetTypeReference typeReference = initializerList.getInitializers().get(0).getTypeReference();
         if (typeReference == null) return false;
         JetUserType userType = (JetUserType) typeReference.getTypeElement();
