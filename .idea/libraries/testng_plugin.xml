@@ -9,7 +9,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/testng/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/" />
     </SOURCES>
   </library>
 </component>

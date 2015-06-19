@@ -8,18 +8,8 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-api/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-serialization/testSrc" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-serialization/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-impl/testSrc" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/model-impl/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/antLayout/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/jps-builders/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/jps-builders/testSrc" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/jps/standalone-builder/src" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/util/src" />
       <root url="jar://$PROJECT_DIR$/dependencies/protobuf-java-2.5.0-sources.jar!/" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/platform/util-rt/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/" />
     </SOURCES>
     <jarDirectory url="file://$PROJECT_DIR$/ideaSDK/jps" recursive="false" />
   </library>

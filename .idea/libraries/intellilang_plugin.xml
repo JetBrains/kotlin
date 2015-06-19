@@ -5,8 +5,7 @@
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/IntelliLang/java-support" />
-      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/plugins/IntelliLang/src" />
+      <root url="jar://$PROJECT_DIR$/ideaSDK/sources/sources.zip!/" />
     </SOURCES>
   </library>
 </component>
