@@ -67,6 +67,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
     // NOTE: this test does a dirty hack of text substitution to make all annotations defined in source code retain at runtime.
     // Specifically each "annotation class" in Kotlin sources is replaced by "Retention(RUNTIME) annotation class", and the same in Java
+    // Also type related annotations are removed from Java because they are invisible at runtime
     protected fun doTest(fileName: String) {
         val file = File(fileName)
         val text = FileUtil.loadFile(file, true)
@@ -112,7 +113,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 val sources = JetTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
                     override fun create(fileName: String, text: String, directives: Map<String, String>): File {
                         val targetFile = File(tmpdir, fileName)
-                        targetFile.writeText(addRuntimeRetentionToJavaSource(text))
+                        targetFile.writeText(adaptJavaSource(text))
                         return targetFile
                     }
                 })
@@ -172,8 +173,9 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         )
     }
 
-    private fun addRuntimeRetentionToJavaSource(text: String): String {
-        return text.replace(
+    private fun adaptJavaSource(text: String): String {
+        val typeAnnotations = arrayOf("NotNull", "Nullable", "ReadOnly", "Mutable")
+        return typeAnnotations.fold(text) { text, annotation -> text.replace("@$annotation", "") }.replace(
                 "@interface",
                 "@java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) @interface"
         )
