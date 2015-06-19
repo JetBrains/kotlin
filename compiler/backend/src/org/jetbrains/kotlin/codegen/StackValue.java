@@ -412,15 +412,23 @@ public abstract class StackValue {
         return None.INSTANCE;
     }
 
-    public static FieldForSharedVar fieldForSharedVar(
+    public static Field receiverWithRefWrapper(
             @NotNull Type localType,
             @NotNull Type classType,
             @NotNull String fieldName,
             @NotNull StackValue receiver,
             @Nullable DeclarationDescriptor descriptor
     ) {
-        Field receiverWithRefWrapper = field(sharedTypeForType(localType), classType, fieldName, false, receiver, descriptor);
-        return new FieldForSharedVar(localType, classType, fieldName, receiverWithRefWrapper);
+        return field(sharedTypeForType(localType), classType, fieldName, false, receiver, descriptor);
+    }
+
+    public static FieldForSharedVar fieldForSharedVar(
+            @NotNull Type localType,
+            @NotNull Type classType,
+            @NotNull String fieldName,
+            @NotNull Field refWrapper
+    ) {
+        return new FieldForSharedVar(localType, classType, fieldName, refWrapper);
     }
 
     @NotNull

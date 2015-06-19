@@ -27,6 +27,7 @@ public final class EnclosedValueDescriptor {
     private final String fieldName;
     private final DeclarationDescriptor descriptor;
     private final StackValue.StackValueWithSimpleReceiver innerValue;
+    private final StackValue instanceValue;
     private final Type type;
 
     public EnclosedValueDescriptor(
@@ -38,6 +39,21 @@ public final class EnclosedValueDescriptor {
         this.fieldName = fieldName;
         this.descriptor = descriptor;
         this.innerValue = innerValue;
+        this.instanceValue = innerValue;
+        this.type = type;
+    }
+
+    public EnclosedValueDescriptor(
+            @NotNull String name,
+            @Nullable DeclarationDescriptor descriptor,
+            @NotNull StackValue.StackValueWithSimpleReceiver innerValue,
+            @NotNull StackValue.Field instanceValue,
+            @NotNull Type type
+    ) {
+        this.fieldName = name;
+        this.descriptor = descriptor;
+        this.innerValue = innerValue;
+        this.instanceValue = instanceValue;
         this.type = type;
     }
 
@@ -57,19 +73,13 @@ public final class EnclosedValueDescriptor {
     }
 
     @NotNull
-    public Type getType() {
-        return type;
+    public StackValue getInstanceValue() {
+        return instanceValue;
     }
 
     @NotNull
-    public StackValue getOuterValue(@NotNull ExpressionCodegen codegen) {
-        for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
-            if (aCase.isCase(descriptor)) {
-                return aCase.outerValue(this, codegen);
-            }
-        }
-
-        throw new IllegalStateException("Can't get outer value in " + codegen + " for " + this);
+    public Type getType() {
+        return type;
     }
 
     @Override

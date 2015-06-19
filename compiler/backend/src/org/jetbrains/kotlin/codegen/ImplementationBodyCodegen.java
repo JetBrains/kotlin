@@ -727,12 +727,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
                     MutableClosure closure = ImplementationBodyCodegen.this.context.closure;
                     if (closure != null) {
-                        ClassDescriptor captureThis = closure.getCaptureThis();
-                        if (captureThis != null) {
-                            iv.load(0, classAsmType);
-                            Type type = typeMapper.mapType(captureThis);
-                            iv.getfield(classAsmType.getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
-                        }
+                        pushCapturedFieldsOnStack(iv, closure);
                     }
 
                     int parameterIndex = 1; // localVariable 0 = this
@@ -746,6 +741,33 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     iv.invokespecial(thisDescriptorType.getInternalName(), "<init>", constructorAsmMethod.getDescriptor(), false);
 
                     iv.areturn(thisDescriptorType);
+                }
+
+                private void pushCapturedFieldsOnStack(InstructionAdapter iv, MutableClosure closure) {
+                    ClassDescriptor captureThis = closure.getCaptureThis();
+                    if (captureThis != null) {
+                        iv.load(0, classAsmType);
+                        Type type = typeMapper.mapType(captureThis);
+                        iv.getfield(classAsmType.getInternalName(), CAPTURED_THIS_FIELD, type.getDescriptor());
+                    }
+
+                    JetType captureReceiver = closure.getCaptureReceiverType();
+                    if (captureReceiver != null) {
+                        iv.load(0, classAsmType);
+                        Type type = typeMapper.mapType(captureReceiver);
+                        iv.getfield(classAsmType.getInternalName(), CAPTURED_RECEIVER_FIELD, type.getDescriptor());
+                    }
+
+                    for (Map.Entry<DeclarationDescriptor, EnclosedValueDescriptor> entry : closure.getCaptureVariables().entrySet()) {
+                        DeclarationDescriptor declarationDescriptor = entry.getKey();
+                        EnclosedValueDescriptor enclosedValueDescriptor = entry.getValue();
+                        StackValue capturedValue = enclosedValueDescriptor.getInstanceValue();
+                        Type sharedVarType = typeMapper.getSharedVarType(declarationDescriptor);
+                        if (sharedVarType == null) {
+                            sharedVarType = typeMapper.mapType((VariableDescriptor) declarationDescriptor);
+                        }
+                        capturedValue.put(sharedVarType, iv);
+                    }
                 }
             });
 

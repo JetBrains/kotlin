@@ -1528,7 +1528,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             if (sharedVarType == null) {
                 sharedVarType = typeMapper.mapType((VariableDescriptor) entry.getKey());
             }
-            StackValue capturedVar = entry.getValue().getOuterValue(this);
+            StackValue capturedVar = lookupOuterValue(entry.getValue());
             callGenerator.putCapturedValueOnStack(capturedVar, sharedVarType, paramIndex++);
         }
 
@@ -1549,6 +1549,17 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             return generateBlock(expression.getStatements(), isStatement, null, context.getMethodEndLabel());
         }
         return generateBlock(expression.getStatements(), isStatement, null, null);
+    }
+
+    @NotNull
+    public StackValue lookupOuterValue(EnclosedValueDescriptor d) {
+        DeclarationDescriptor descriptor = d.getDescriptor();
+        for (LocalLookup.LocalLookupCase aCase : LocalLookup.LocalLookupCase.values()) {
+            if (aCase.isCase(descriptor)) {
+                return aCase.outerValue(d, this);
+            }
+        }
+        throw new IllegalStateException("Can't get outer value in " + this + " for " + d);
     }
 
     private StackValue generateBlock(

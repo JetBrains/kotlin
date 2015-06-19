@@ -61,12 +61,21 @@ public interface LocalLookup {
 
                 String fieldName = "$" + vd.getName();
                 StackValue.Local thiz = StackValue.LOCAL_0;
-                StackValue.StackValueWithSimpleReceiver innerValue = sharedVarType != null
-                                        ? StackValue.fieldForSharedVar(localType, classType, fieldName, thiz, vd)
-                                        : StackValue.field(type, classType, fieldName, false, thiz, vd);
+
+                StackValue.StackValueWithSimpleReceiver innerValue;
+                EnclosedValueDescriptor enclosedValueDescriptor;
+                if (sharedVarType != null) {
+                    StackValue.Field wrapperValue = StackValue.receiverWithRefWrapper(localType, classType, fieldName, thiz, vd);
+                    innerValue = StackValue.fieldForSharedVar(localType, classType, fieldName, wrapperValue);
+                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, wrapperValue, type);
+                }
+                else {
+                    innerValue = StackValue.field(type, classType, fieldName, false, thiz, vd);
+                    enclosedValueDescriptor = new EnclosedValueDescriptor(fieldName, d, innerValue, type);
+                }
 
                 closure.recordField(fieldName, type);
-                closure.captureVariable(new EnclosedValueDescriptor(fieldName, d, innerValue, type));
+                closure.captureVariable(enclosedValueDescriptor);
 
                 return innerValue;
             }
