@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -65,6 +66,7 @@ public class BodyResolver {
     private FunctionAnalyzerExtension functionAnalyzerExtension;
     private AdditionalCheckerProvider additionalCheckerProvider;
     private ValueParameterResolver valueParameterResolver;
+    private BodyResolveCache bodyResolveCache;
 
     //<editor-fold desc="Injector Setters">
     @Inject
@@ -120,6 +122,11 @@ public class BodyResolver {
     @Inject
     public void setValueParameterResolver(ValueParameterResolver valueParameterResolver) {
         this.valueParameterResolver = valueParameterResolver;
+    }
+
+    @Inject
+    public void setBodyResolveCache(BodyResolveCache bodyResolveCache) {
+        this.bodyResolveCache = bodyResolveCache;
     }
     //</editor-fold>
 
@@ -745,16 +752,17 @@ public class BodyResolver {
     private void resolveFunctionBodies(@NotNull BodiesResolveContext c) {
         for (Map.Entry<JetNamedFunction, SimpleFunctionDescriptor> entry : c.getFunctions().entrySet()) {
             JetNamedFunction declaration = entry.getKey();
-            SimpleFunctionDescriptor descriptor = entry.getValue();
 
-            computeDeferredType(descriptor.getReturnType());
+            JetScope scope = c.getDeclaringScope(declaration);
+            assert scope != null : "Scope is null: " + PsiUtilPackage.getElementTextWithContext(declaration);
 
-            JetScope declaringScope = c.getDeclaringScope(declaration);
-            assert declaringScope != null;
-
-            resolveFunctionBody(c.getOuterDataFlowInfo(), trace, declaration, descriptor, declaringScope);
-
-            assert descriptor.getReturnType() != null;
+            if (!c.getTopDownAnalysisMode().getIsLocalDeclarations() && !(bodyResolveCache instanceof BodyResolveCache.ThrowException) &&
+                expressionTypingServices.getStatementFilter() != StatementFilter.NONE) {
+                bodyResolveCache.resolveFunctionBody(declaration).addOwnDataTo(trace, true);
+            }
+            else {
+                resolveFunctionBody(c.getOuterDataFlowInfo(), trace, declaration, entry.getValue(), scope);
+            }
         }
     }
 
@@ -765,7 +773,11 @@ public class BodyResolver {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull JetScope declaringScope
     ) {
+        computeDeferredType(functionDescriptor.getReturnType());
+
         resolveFunctionBody(outerDataFlowInfo, trace, function, functionDescriptor, declaringScope, null, null);
+
+        assert functionDescriptor.getReturnType() != null;
     }
 
     public void resolveFunctionBody(

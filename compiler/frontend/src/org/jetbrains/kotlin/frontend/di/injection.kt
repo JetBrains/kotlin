@@ -53,24 +53,29 @@ public fun StorageComponentContainer.configureModule(
 
 public fun createContainerForBodyResolve(
         moduleContext: ModuleContext, bindingTrace: BindingTrace,
-        additionalCheckerProvider: AdditionalCheckerProvider, statementFilter: StatementFilter
+        additionalCheckerProvider: AdditionalCheckerProvider, statementFilter: StatementFilter,
+        dynamicTypesSettings: DynamicTypesSettings
 ): StorageComponentContainer = createContainer("BodyResolve") {
     configureModule(moduleContext, additionalCheckerProvider, bindingTrace)
 
     useInstance(statementFilter)
+    useInstance(dynamicTypesSettings)
+    useInstance(BodyResolveCache.ThrowException)
     useImpl<BodyResolver>()
 }
 
 public fun createContainerForLazyBodyResolve(
         moduleContext: ModuleContext, kotlinCodeAnalyzer: KotlinCodeAnalyzer,
         bindingTrace: BindingTrace, additionalCheckerProvider: AdditionalCheckerProvider,
-        dynamicTypesSettings: DynamicTypesSettings
+        dynamicTypesSettings: DynamicTypesSettings,
+        bodyResolveCache: BodyResolveCache
 ): StorageComponentContainer = createContainer("LazyBodyResolve") {
     configureModule(moduleContext, additionalCheckerProvider, bindingTrace)
 
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.getScopeProvider())
     useInstance(dynamicTypesSettings)
+    useInstance(bodyResolveCache)
     useImpl<LazyTopDownAnalyzerForTopLevel>()
 }
 
@@ -90,6 +95,7 @@ public fun createContainerForLazyLocalClassifierAnalyzer(
 
     useInstance(NoTopLevelDescriptorProvider)
     useInstance(NoFileScopeProvider)
+    useInstance(BodyResolveCache.ThrowException)
 
     useImpl<DeclarationScopeProviderForLocalClassifierAnalyzer>()
     useImpl<LocalLazyDeclarationResolver>()

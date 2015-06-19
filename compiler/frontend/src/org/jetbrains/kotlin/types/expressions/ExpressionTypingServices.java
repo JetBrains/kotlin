@@ -62,6 +62,10 @@ public class ExpressionTypingServices {
         this.expressionTypingFacade = ExpressionTypingVisitorDispatcher.create(components);
     }
 
+    public StatementFilter getStatementFilter() {
+        return statementFilter;
+    }
+
     @NotNull
     public JetType safeGetType(
             @NotNull JetScope scope,

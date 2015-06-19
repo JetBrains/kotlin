@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.frontend.di.configureModule
 import org.jetbrains.kotlin.js.resolve.KotlinJsCheckerProvider
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.BodyResolveCache
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.ScopeProvider
@@ -39,6 +40,7 @@ public fun createTopDownAnalyzerForJs(
         configureModule(moduleContext, KotlinJsCheckerProvider, bindingTrace)
 
         useInstance(declarationProviderFactory)
+        useInstance(BodyResolveCache.ThrowException)
         useImpl<ScopeProvider>()
         useImpl<ResolveSession>()
         useImpl<LazyTopDownAnalyzerForTopLevel>()

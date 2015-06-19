@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmCheckerProvider
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.BodyResolveCache
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
@@ -76,6 +77,7 @@ public fun createContainerForLazyResolveWithJava(
     useInstance(moduleClassResolver)
 
     useInstance(declarationProviderFactory)
+    useInstance(BodyResolveCache.ThrowException)
     useImpl<ScopeProvider>()
     useImpl<LazyResolveToken>()
 }.let {
@@ -93,6 +95,7 @@ public fun createContainerForTopDownAnalyzerForJvm(
     configureModule(moduleContext, KotlinJvmCheckerProvider, bindingTrace)
     configureJavaTopDownAnalysis(moduleContentScope, moduleContext.project)
     useInstance(declarationProviderFactory)
+    useInstance(BodyResolveCache.ThrowException)
 
     useImpl<SingleModuleClassResolver>()
     useImpl<ScopeProvider>()
