@@ -47,6 +47,8 @@ public interface BodiesResolveContext {
     Map<JetNamedFunction, SimpleFunctionDescriptor> getFunctions();
 
     Function<JetDeclaration, JetScope> getDeclaringScopes();
+
+    @NotNull
     DataFlowInfo getOuterDataFlowInfo();
 
     @NotNull
