@@ -137,7 +137,7 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         loadFile("notNullAssertions/javaMultipleSubstitutions.kt");
         String text = generateToText();
 
-        assertEquals(3, StringUtil.getOccurrenceCount(text, "checkExpressionValueIsNotNull"));
+        assertEquals(0, StringUtil.getOccurrenceCount(text, "checkExpressionValueIsNotNull"));
         assertEquals(3, StringUtil.getOccurrenceCount(text, "checkParameterIsNotNull"));
     }
 

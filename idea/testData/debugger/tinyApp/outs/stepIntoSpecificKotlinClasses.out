@@ -4,9 +4,9 @@ Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socke
 stepIntoSpecificKotlinClasses.kt:8
 MyJavaClass.java:12
 stepIntoSpecificKotlinClasses.kt:8
-Intrinsics.!EXT!
-stepIntoSpecificKotlinClasses.kt:8
 stepIntoSpecificKotlinClasses.kt:9
+stepIntoSpecificKotlinClasses.kt:10
+Thread.!EXT!
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0
