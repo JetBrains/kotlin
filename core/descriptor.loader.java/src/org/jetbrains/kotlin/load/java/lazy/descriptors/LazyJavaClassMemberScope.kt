@@ -35,16 +35,15 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.emptyOrSingletonList
-import org.jetbrains.kotlin.utils.ifEmpty
-import org.jetbrains.kotlin.utils.valuesToMap
+import org.jetbrains.kotlin.utils.*
 import java.util.ArrayList
 import java.util.Collections
 import java.util.LinkedHashSet
@@ -72,7 +71,7 @@ public class LazyJavaClassMemberScope(
             result.addIfNotNull(c.samConversionResolver.resolveSamAdapter(descriptor))
         }
         
-        c.externalSignatureResolver.enhanceSignatures(
+        enhanceSignatures(
                 result ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
         ).toReadOnlyList()
     }

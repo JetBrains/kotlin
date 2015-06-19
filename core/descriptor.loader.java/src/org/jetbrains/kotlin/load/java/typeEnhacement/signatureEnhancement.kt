@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.components
+package org.jetbrains.kotlin.load.java.typeEnhacement
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.load.java.typeEnhacement.computeIndexedQualifiersForOverride
+import org.jetbrains.kotlin.load.java.typeEnhacement.enhance
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaConstructorDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.types.JetType
 
 fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {

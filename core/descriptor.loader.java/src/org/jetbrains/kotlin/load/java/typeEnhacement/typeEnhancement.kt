@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java.components
+package org.jetbrains.kotlin.load.java.typeEnhacement
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.load.java.components.MutabilityQualifier.MUTABLE
-import org.jetbrains.kotlin.load.java.components.MutabilityQualifier.READ_ONLY
-import org.jetbrains.kotlin.load.java.components.NullabilityQualifier.NOT_NULL
-import org.jetbrains.kotlin.load.java.components.NullabilityQualifier.NULLABLE
+import org.jetbrains.kotlin.load.java.typeEnhacement.JavaTypeQualifiers
+import org.jetbrains.kotlin.load.java.typeEnhacement.MutabilityQualifier.MUTABLE
+import org.jetbrains.kotlin.load.java.typeEnhacement.MutabilityQualifier.READ_ONLY
+import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NOT_NULL
+import org.jetbrains.kotlin.load.java.typeEnhacement.NullabilityQualifier.NULLABLE
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
 import org.jetbrains.kotlin.types.*
 

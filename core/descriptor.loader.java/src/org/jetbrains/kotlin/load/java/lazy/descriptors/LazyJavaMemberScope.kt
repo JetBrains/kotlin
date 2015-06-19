@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
+import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
@@ -86,7 +87,7 @@ public abstract class LazyJavaMemberScope(
 
         computeNonDeclaredFunctions(result, name)
 
-        val enhancedResult = c.externalSignatureResolver.enhanceSignatures(result)
+        val enhancedResult = enhanceSignatures(result)
 
         // Make sure that lazy things are computed before we release the lock
         for (f in enhancedResult) {
@@ -239,7 +240,7 @@ public abstract class LazyJavaMemberScope(
         if (DescriptorUtils.isAnnotationClass(containingDeclaration))
             properties.toReadOnlyList()
         else
-            c.externalSignatureResolver.enhanceSignatures(properties).toReadOnlyList()
+            enhanceSignatures(properties).toReadOnlyList()
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
