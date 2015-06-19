@@ -221,6 +221,12 @@ public class MultiFileJvmBasicCompletionTestGenerated extends AbstractMultiFileJ
         doTest(fileName);
     }
 
+    @TestMetadata("ParameterNameAndTypeNestedClasses")
+    public void testParameterNameAndTypeNestedClasses() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/ParameterNameAndTypeNestedClasses/");
+        doTest(fileName);
+    }
+
     @TestMetadata("PreferMemberToExtension")
     public void testPreferMemberToExtension() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/multifile/PreferMemberToExtension/");

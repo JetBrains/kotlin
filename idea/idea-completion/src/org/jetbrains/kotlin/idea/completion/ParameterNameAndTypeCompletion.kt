@@ -169,12 +169,12 @@ class ParameterNameAndTypeCompletion(
 
     private class DescriptorType(private val classifier: ClassifierDescriptor) : Type(DescriptorUtils.getFqName(classifier).render()) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
-                = lookupElementFactory.createLookupElement(classifier, false)
+                = lookupElementFactory.createLookupElement(classifier, false, qualifyNestedClasses = true)
     }
 
     private class JavaClassType(private val psiClass: PsiClass) : Type(psiClass.getQualifiedName()!!) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
-                = lookupElementFactory.createLookupElementForJavaClass(psiClass)
+                = lookupElementFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses = true)
     }
 
     private class ArbitraryType(private val type: JetType) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)) {
