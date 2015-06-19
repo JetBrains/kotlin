@@ -208,11 +208,7 @@ public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
     public override fun get(thisRef: T, property: PropertyMetadata) : V {
         val map = map(thisRef)
         val key = key(property)
-        if (!map.containsKey(key)) {
-            return default(thisRef, property)
-        }
-
-        return map[key] as V
+        return map.getOrElse(key, { default(thisRef, property) }) as V
     }
 }
 
