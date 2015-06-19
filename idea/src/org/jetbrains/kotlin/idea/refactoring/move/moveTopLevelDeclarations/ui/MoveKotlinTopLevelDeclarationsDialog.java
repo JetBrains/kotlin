@@ -562,6 +562,11 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                                         EmptyRunnable.INSTANCE
                                 ) {
                                     @Override
+                                    protected String getCommandName() {
+                                        return "Move " + sourceFile.getName();
+                                    }
+
+                                    @Override
                                     protected void performRefactoring(UsageInfo[] usages) {
                                         //noinspection ConstantConditions
                                         String temporaryName = UniqueNameGenerator.generateUniqueName(
