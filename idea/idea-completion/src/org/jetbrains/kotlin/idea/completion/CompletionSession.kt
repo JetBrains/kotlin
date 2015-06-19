@@ -334,8 +334,11 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         when (completionKind) {
             CompletionKind.PARAMETER_NAME, CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME -> {
                 val parameter = position.getNonStrictParentOfType<JetParameter>()!!
-                val owner = parameter.getParent().getParent()
-                return parameter != (owner as? JetCatchClause)?.getCatchParameter() && parameter != (owner as? JetPropertyAccessor)?.getParameter()
+                val list = parameter.getParent() as? JetParameterList ?: return false
+                val owner = list.getParent()
+                return owner !is JetCatchClause &&
+                       owner !is JetPropertyAccessor &&
+                       !((owner as? JetPrimaryConstructor)?.getContainingClassOrObject()?.isAnnotation() ?: false)
             }
 
             else -> return false

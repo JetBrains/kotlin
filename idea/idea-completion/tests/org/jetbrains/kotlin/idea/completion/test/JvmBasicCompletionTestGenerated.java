@@ -1440,6 +1440,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 doTest(fileName);
             }
 
+            @TestMetadata("NotForAnnnotationTypeConstructor.kt")
+            public void testNotForAnnnotationTypeConstructor() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForAnnnotationTypeConstructor.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NotForCatchParameter.kt")
             public void testNotForCatchParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NotForCatchParameter.kt");
