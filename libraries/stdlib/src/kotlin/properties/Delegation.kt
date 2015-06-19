@@ -58,11 +58,31 @@ public object Delegates {
      * Returns a property delegate for a read/write property that stores its value in a map, using the property name
      * as a key.
      * @param map the map where the property values are stored.
+     */
+    deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map"))
+    public fun mapVar<T>(map: MutableMap<in String, Any?>): ReadWriteProperty<Any?, T> {
+        return FixedMapVar<Any?, String, T>(map, propertyNameSelector, throwKeyNotFound)
+    }
+
+    /**
+     * Returns a property delegate for a read/write property that stores its value in a map, using the property name
+     * as a key.
+     * @param map the map where the property values are stored.
      * @param default the function returning the value of the property for a given object if it's missing from the given map.
      */
     public fun mapVar<T>(map: MutableMap<in String, Any?>,
-                         default: (thisRef: Any?, desc: String) -> T = throwKeyNotFound): ReadWriteProperty<Any?, T> {
+                         default: (thisRef: Any?, desc: String) -> T): ReadWriteProperty<Any?, T> {
         return FixedMapVar<Any?, String, T>(map, propertyNameSelector, default)
+    }
+
+    /**
+     * Returns a property delegate for a read-only property that takes its value from a map, using the property name
+     * as a key.
+     * @param map the map where the property values are stored.
+     */
+    deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map"))
+    public fun mapVal<T>(map: Map<in String, Any?>): ReadOnlyProperty<Any?, T> {
+        return FixedMapVal<Any?, String, T>(map, propertyNameSelector, throwKeyNotFound)
     }
 
     /**
@@ -72,7 +92,7 @@ public object Delegates {
      * @param default the function returning the value of the property for a given object if it's missing from the given map.
      */
     public fun mapVal<T>(map: Map<in String, Any?>,
-                         default: (thisRef: Any?, desc: String) -> T = throwKeyNotFound): ReadOnlyProperty<Any?, T> {
+                         default: (thisRef: Any?, desc: String) -> T): ReadOnlyProperty<Any?, T> {
         return FixedMapVal<Any?, String, T>(map, propertyNameSelector, default)
     }
 }
