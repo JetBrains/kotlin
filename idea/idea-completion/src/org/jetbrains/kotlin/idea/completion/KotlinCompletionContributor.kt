@@ -225,7 +225,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
             if (parameters.getCompletionType() == CompletionType.BASIC) {
                 val session = BasicCompletionSession(configuration, parameters, result)
 
-                if (parameters.isAutoPopup() && session.disableAutoPopup()) {
+                if (parameters.isAutoPopup() && session.shouldDisableAutoPopup()) {
                     result.stopHere()
                     return
                 }

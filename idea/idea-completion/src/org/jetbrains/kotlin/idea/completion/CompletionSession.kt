@@ -342,7 +342,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         }
     }
 
-    public fun disableAutoPopup(): Boolean {
+    public fun shouldDisableAutoPopup(): Boolean {
         return when (completionKind) {
             CompletionKind.PARAMETER_NAME, CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME -> !shouldCompleteParameterNameAndType()
             else -> false
