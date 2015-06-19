@@ -36,7 +36,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
@@ -225,7 +227,7 @@ public open class KotlinIntroduceParameterHandler(
                     is ClassDescriptor -> descriptor.getUnsubstitutedPrimaryConstructor()
                     else -> null
                 } ?: throw AssertionError("Unexpected element type: ${targetParent.getElementTextWithContext()}")
-        val replacementType = expressionType.approximateWithResolvableType(JetScopeUtils.getResolutionScope(targetParent, context), false)
+        val replacementType = expressionType.approximateWithResolvableType(targetParent.getResolutionScope(context, targetParent.getResolutionFacade()), false)
 
         val body = when (targetParent) {
                        is JetFunction -> targetParent.getBodyExpression()

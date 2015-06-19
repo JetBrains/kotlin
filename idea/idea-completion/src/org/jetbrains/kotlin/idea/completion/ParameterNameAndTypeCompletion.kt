@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -77,7 +78,7 @@ class ParameterNameAndTypeCompletion(
 
     public fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         for ((i, prefixMatcher) in allPrefixMatchers.withIndex()) {
-            val resolutionScope = position.getResolutionScope(bindingContext)
+            val resolutionScope = position.getResolutionScope(bindingContext, resolutionFacade)
             val classifiers = resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, prefixMatcher.toClassifierNamePrefixMatcher().asNameFilter())
 
             for (classifier in classifiers) {
@@ -88,27 +89,6 @@ class ParameterNameAndTypeCompletion(
 
             collector.flushToResultSet()
         }
-    }
-
-    private fun PsiElement.getResolutionScope(bindingContext: BindingContext): JetScope {
-        for (parent in parentsWithSelf) {
-            if (parent is JetExpression) {
-                val scope = bindingContext[BindingContext.RESOLUTION_SCOPE, parent]
-                if (scope != null) return scope
-            }
-
-            if (parent is JetClassOrObject) {
-                val classDescriptor = bindingContext[BindingContext.CLASS, parent] as? ClassDescriptorWithResolutionScopes
-                if (classDescriptor != null) {
-                    return classDescriptor.getScopeForMemberDeclarationResolution()
-                }
-            }
-
-            if (parent is JetFile) {
-                return resolutionFacade.getFileTopLevelScope(parent)
-            }
-        }
-        error("Not in JetFile")
     }
 
     public fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {

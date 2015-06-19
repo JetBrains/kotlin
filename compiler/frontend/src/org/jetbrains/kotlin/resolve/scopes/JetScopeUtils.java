@@ -149,29 +149,4 @@ public final class JetScopeUtils {
         }
         return out.toString();
     }
-
-    @Nullable
-    public static JetScope getResolutionScope(@NotNull PsiElement element, @NotNull BindingContext context) {
-        PsiElement parent = element.getParent();
-
-        if (parent instanceof JetClassBody) {
-            JetClassOrObject classOrObject = (JetClassOrObject) parent.getParent();
-            ClassDescriptor classDescriptor = context.get(BindingContext.CLASS, classOrObject);
-            if (classDescriptor instanceof ClassDescriptorWithResolutionScopes) {
-                return ((ClassDescriptorWithResolutionScopes) classDescriptor).getScopeForMemberDeclarationResolution();
-            }
-            return null;
-        }
-
-        if (parent instanceof JetFile) {
-            PackageFragmentDescriptor packageFragment = context.get(BindingContext.FILE_TO_PACKAGE_FRAGMENT, (JetFile) parent);
-            if (packageFragment == null) return null;
-
-            PackageViewDescriptor packageView = packageFragment.getContainingDeclaration().getPackage(((JetFile) parent).getPackageFqName());
-            return packageView.getMemberScope();
-        }
-
-        JetExpression expression = PsiTreeUtil.getParentOfType(element, JetExpression.class, false);
-        return expression != null ? context.get(BindingContext.RESOLUTION_SCOPE, expression) : null;
-    }
 }

@@ -20,6 +20,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetElement;
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.psi.JetVisitorVoid;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
-import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -89,25 +89,23 @@ public class JetNameValidatorImpl extends JetNameValidator {
 
             @Override
             public void visitExpression(@NotNull JetExpression expression) {
-                JetScope resolutionScope = JetScopeUtils.getResolutionScope(expression, context);
+                JetScope resolutionScope = CorePackage.getResolutionScope(expression, context, ResolvePackage.getResolutionFacade(expression));
 
-                if (resolutionScope != null) {
-                    if (!visitedScopes.add(resolutionScope)) return;
+                if (!visitedScopes.add(resolutionScope)) return;
 
-                    boolean noConflict;
-                    if (myTarget == Target.PROPERTIES) {
-                        noConflict = resolutionScope.getProperties(identifier).isEmpty()
-                                     && resolutionScope.getLocalVariable(identifier) == null;
-                    }
-                    else {
-                        noConflict = resolutionScope.getFunctions(identifier).isEmpty()
-                                     && resolutionScope.getClassifier(identifier) == null;
-                    }
+                boolean noConflict;
+                if (myTarget == Target.PROPERTIES) {
+                    noConflict = resolutionScope.getProperties(identifier).isEmpty()
+                                 && resolutionScope.getLocalVariable(identifier) == null;
+                }
+                else {
+                    noConflict = resolutionScope.getFunctions(identifier).isEmpty()
+                                 && resolutionScope.getClassifier(identifier) == null;
+                }
 
-                    if (!noConflict) {
-                        result.set(false);
-                        return;
-                    }
+                if (!noConflict) {
+                    result.set(false);
+                    return;
                 }
 
                 super.visitExpression(expression);
