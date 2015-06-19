@@ -18,27 +18,17 @@ package org.jetbrains.kotlin.idea.refactoring.copy
 
 import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase
-import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.JetFile
 
 public class CopyKotlinFileHandler : CopyHandlerDelegateBase() {
     private val delegate = CopyFilesOrDirectoriesHandler()
 
     private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
-        val adjustedElements = elements
-                .map {
-                    val file = it.getContainingFile()
-                    when {
-                        it is JetFile -> it
-                        it is JetClassOrObject && it.isTopLevel() && (file as JetFile).getDeclarations().size() == 1 -> file
-                        else -> return null
-                    }
-                }
+        return elements
+                .map { it.getContainingFile() as? JetFile ?: return null }
                 .toTypedArray()
-        return adjustedElements
     }
 
     override fun canCopy(elements: Array<out PsiElement>, fromUpdate: Boolean): Boolean {
