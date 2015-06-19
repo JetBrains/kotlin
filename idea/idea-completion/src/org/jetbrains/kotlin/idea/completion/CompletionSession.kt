@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.patterns.ElementPattern
@@ -119,11 +120,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
             kotlinIdentifierPartPattern or singleCharPattern('@'),
             kotlinIdentifierStartPattern)
 
-    protected val resultSet: CompletionResultSet = resultSet
-            .withPrefixMatcher(prefix)
-            .addKotlinSorting(parameters)
-
-    protected val prefixMatcher: PrefixMatcher = this.resultSet.getPrefixMatcher()
+    protected val prefixMatcher: PrefixMatcher = CamelHumpMatcher(prefix)
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it) }
 
@@ -157,7 +154,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     else
         LookupElementsCollector.Context.NORMAL
 
-    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resolutionFacade, lookupElementFactory, inDescriptor, collectorContext)
+    protected val collector: LookupElementsCollector = LookupElementsCollector(prefixMatcher, parameters, resultSet, resolutionFacade, lookupElementFactory, inDescriptor, collectorContext)
 
     protected val originalSearchScope: GlobalSearchScope = ResolutionFacade.getResolveScope(parameters.getOriginalFile() as JetFile)
 
@@ -181,7 +178,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected fun flushToResultSet() {
-        collector.flushToResultSet(resultSet)
+        collector.flushToResultSet()
     }
 
     public fun complete(): Boolean {
@@ -399,11 +396,12 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             }
 
             if (completionKind != CompletionKind.KEYWORDS_ONLY) {
+                flushToResultSet()
+
                 if (!configuration.completeNonImportedDeclarations && isNoQualifierContext()) {
-                    JavaCompletionContributor.advertiseSecondCompletion(project, resultSet)
+                    collector.advertiseSecondCompletion()
                 }
 
-                flushToResultSet()
                 addNonImported(completionKind)
 
                 if (position.getContainingFile() is JetCodeFragment) {

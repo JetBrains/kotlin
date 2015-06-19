@@ -1,7 +1,7 @@
-class FooBar
+class FooBaaaaar
 
-fun f(fooBa<caret>)
+fun f(fooBaaaa<caret>)
 
 // AUTOCOMPLETE_SETTING: true
-// EXIST: fooBar
+// EXIST: fooBaaaaar
 // NUMBER: 1

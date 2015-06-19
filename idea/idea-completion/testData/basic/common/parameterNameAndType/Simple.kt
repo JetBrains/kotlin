@@ -7,5 +7,5 @@ class Boo
 fun f(b<caret>)
 
 // EXIST: { lookupString: "bar", itemText: "bar: FooBar", tailText: " (pack)" }
-// EXIST: { lookupString: "fooBar", itemText: "fooBar: FooBar", tailText: " (pack)" }
+// ABSENT: fooBar
 // EXIST: { lookupString: "boo", itemText: "boo: Boo", tailText: " (pack)" }

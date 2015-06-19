@@ -1,17 +1,16 @@
 package ppp
 
-import java.io.*
+import java.security.*
 
-class MyPrintStream
+class MyAlgorithmException
 
-fun f1(printStream: PrintStream){}
-fun f2(printStream: PrintStream?){}
-fun f3(printStream: MyPrintStream){}
+fun f1(algorithmException: NoSuchAlgorithmException){}
+fun f2(algorithmException: NoSuchAlgorithmException?){}
+fun f3(algorithmException: MyAlgorithmException){}
 
-fun f(printStr<caret>)
+fun f(algorith<caret>)
 
-// EXIST_JAVA_ONLY: { lookupString: "printStream", itemText: "printStream: PrintStream", tailText: " (java.io)" }
-// EXIST_JAVA_ONLY: { lookupString: "printStream", itemText: "printStream: PrintStream?", tailText: " (java.io)" }
-// EXIST: { lookupString: "printStream", itemText: "printStream: MyPrintStream", tailText: " (ppp)" }
-// EXIST: { lookupString: "myPrintStream", itemText: "myPrintStream: MyPrintStream", tailText: " (ppp)" }
+// EXIST_JAVA_ONLY: { lookupString: "algorithmException", itemText: "algorithmException: NoSuchAlgorithmException", tailText: " (java.security)" }
+// EXIST_JAVA_ONLY: { lookupString: "algorithmException", itemText: "algorithmException: NoSuchAlgorithmException?", tailText: " (java.security)" }
+// EXIST: { lookupString: "algorithmException", itemText: "algorithmException: MyAlgorithmException", tailText: " (ppp)" }
 // NOTHING_ELSE

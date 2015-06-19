@@ -80,7 +80,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
                 .filter { it.getName().asString() !in documentedParameters }
 
         descriptors.forEach {
-            resultSet.addElement(lookupElementFactory.createLookupElement(it, false))
+            collector.addElement(lookupElementFactory.createLookupElement(it, false))
         }
     }
 
@@ -88,7 +88,7 @@ class KDocNameCompletionSession(parameters: CompletionParameters,
         val scope = getResolutionScope(resolutionFacade, declarationDescriptor)
         scope.getDescriptors(nameFilter = prefixMatcher.asNameFilter()).forEach {
             val element = lookupElementFactory.createLookupElement(it, false)
-            resultSet.addElement(object: LookupElementDecorator<LookupElement>(element) {
+            collector.addElement(object: LookupElementDecorator<LookupElement>(element) {
                 override fun handleInsert(context: InsertionContext?) {
                     // insert only plain name here, no qualifier/parentheses/etc.
                 }

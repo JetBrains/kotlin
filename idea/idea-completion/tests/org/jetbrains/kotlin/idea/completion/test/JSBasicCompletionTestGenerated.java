@@ -1410,6 +1410,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/parameterNameAndType"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("ByAbbreviation.kt")
+            public void testByAbbreviation() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/ByAbbreviation.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("NoAutoInsertion.kt")
             public void testNoAutoInsertion() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/NoAutoInsertion.kt");
@@ -1479,6 +1485,24 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("Simple.kt")
             public void testSimple() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/Simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("UserPrefix1.kt")
+            public void testUserPrefix1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/UserPrefix1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("UserPrefix2.kt")
+            public void testUserPrefix2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/UserPrefix2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("UserPrefix3.kt")
+            public void testUserPrefix3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/UserPrefix3.kt");
                 doTest(fileName);
             }
 

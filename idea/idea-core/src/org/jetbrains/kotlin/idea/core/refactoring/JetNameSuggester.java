@@ -199,13 +199,17 @@ public class JetNameSuggester {
 
     private static final String[] ACCESSOR_PREFIXES = { "get", "is", "set" };
 
-    public static List<String> getCamelNames(String name, JetNameValidator validator) {
+    public static List<String> getCamelNames(String name, JetNameValidator validator, boolean startLowerCase) {
         ArrayList<String> result = new ArrayList<String>();
-        addCamelNames(result, name, validator);
+        addCamelNames(result, name, validator, startLowerCase);
         return result;
     }
 
     private static void addCamelNames(ArrayList<String> result, String name, JetNameValidator validator) {
+        addCamelNames(result, name, validator, true);
+    }
+
+    private static void addCamelNames(ArrayList<String> result, String name, JetNameValidator validator, boolean startLowerCase) {
         if (name == "") return;
         String s = deleteNonLetterFromString(name);
 
@@ -225,11 +229,12 @@ public class JetNameSuggester {
             boolean upperCaseLetter = Character.isUpperCase(c);
 
             if (i == 0) {
-                addName(result, decapitalize(s), validator);
+                addName(result, startLowerCase ? decapitalize(s) : s, validator);
             }
             else {
                 if (upperCaseLetter && !upperCaseLetterBefore) {
-                    addName(result, decapitalize(s.substring(i)), validator);
+                    String substring = s.substring(i);
+                    addName(result, startLowerCase ? decapitalize(substring) : substring, validator);
                 }
             }
 
@@ -237,7 +242,7 @@ public class JetNameSuggester {
         }
     }
 
-    private static String decapitalize(String s) {
+    public static String decapitalize(String s) {
         char c = s.charAt(0);
         if (!Character.isUpperCase(c)) return s;
 

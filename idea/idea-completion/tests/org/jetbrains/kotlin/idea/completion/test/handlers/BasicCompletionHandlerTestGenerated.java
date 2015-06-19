@@ -294,6 +294,12 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/Simple.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("UserPrefix.kt")
+        public void testUserPrefix() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/handlers/basic/parameterNameAndType/UserPrefix.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/idea-completion/testData/handlers/basic/stringTemplate")
