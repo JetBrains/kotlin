@@ -9,15 +9,13 @@ import kotlin.platform.platformName
 public class KeyMissingException(message: String): RuntimeException(message)
 
 
-//private inline fun <K, V> Map<K, V>.getOrDefault(key: K, defaultValue: () -> V): V {
-//    val value = get(key)
-//    if (value == null && !containsKey(key)) {
-//        return defaultValue()
-//    } else {
-//        return value as V
-//    }
-//}
-
+/**
+ * Returns the value for the given key, or the implicit default value for this map.
+ * By default no implicit value is provided for maps and a [KeyMissingException] is thrown.
+ * To create a map with implicit default value use [Map.withDefault] method.
+ *
+ * @throws KeyMissingException when the map doesn't contain value for the specified key and no implicit default was provided for that map.
+ */
 public fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     if (this is MapWithDefault)
         return this.getOrImplicitDefault(key)
@@ -25,12 +23,26 @@ public fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     return getOrElse(key, { throw KeyMissingException("Key $key is missing in the map.") })
 }
 
+/**
+ * Returns a wrapper of this read-only map, having the implicit default value provided with the specified function [default].
+ * This implicit default value is used when [getOrImplicitDefault] is called on the returned map,
+ * and that map doesn't contain value for the key specified.
+ *
+ * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
+ */
 public fun <K, V> Map<K, V>.withDefault(default: (key: K) -> V): Map<K, V> =
         when (this) {
             is MapWithDefault -> this.map.withDefault(default)
             else -> MapWithDefaultImpl(this, default)
         }
 
+/**
+ * Returns a wrapper of this mutable map, having the implicit default value provided with the specified function [default].
+ * This implicit default value is used when [getOrImplicitDefault] is called on the returned map,
+ * and that map doesn't contain value for the key specified.
+ *
+ * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
+ */
 platformName("withDefaultMutable")
 public fun <K, V> MutableMap<K, V>.withDefault(default: (key: K) -> V): MutableMap<K, V> =
         when (this) {
