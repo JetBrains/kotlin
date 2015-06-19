@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.calls;
 
 import com.google.common.collect.Lists;
+import com.intellij.util.SmartList;
+import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
@@ -116,7 +118,7 @@ public class CallResolverUtil {
                 receiverType = typeParameter.getUpperBoundsAsType();
             }
         }
-        List<TypeProjection> fakeTypeArguments = Lists.newArrayList();
+        List<TypeProjection> fakeTypeArguments = ContainerUtil.newSmartList();
         for (TypeProjection typeProjection : receiverType.getArguments()) {
             fakeTypeArguments.add(new TypeProjectionImpl(typeProjection.getProjectionKind(), DONT_CARE));
         }

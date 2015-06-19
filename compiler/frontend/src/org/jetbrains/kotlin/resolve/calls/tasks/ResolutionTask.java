@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks;
 
-import com.google.common.collect.Lists;
+import com.intellij.util.SmartList;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +82,7 @@ public class ResolutionTask<D extends CallableDescriptor, F extends D> extends C
              context.expectedType, context.dataFlowInfo, context.contextDependency, context.checkArguments,
              context.resolutionResultsCache, context.dataFlowInfoForArguments,
              context.callChecker, context.symbolUsageValidator, context.additionalTypeChecker,
-             context.statementFilter, Lists.<MutableResolvedCall<F>>newArrayList(),
+             context.statementFilter, new SmartList<MutableResolvedCall<F>>(),
              context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
     }
 
