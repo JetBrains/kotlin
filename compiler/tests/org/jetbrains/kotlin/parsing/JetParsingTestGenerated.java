@@ -1244,6 +1244,12 @@ public class JetParsingTestGenerated extends AbstractJetParsingTest {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/greatSyntacticShift/FunctionTypesAsArguments.kt");
                 doParsingTest(fileName);
             }
+
+            @TestMetadata("nullableTypes.kt")
+            public void testNullableTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/psi/greatSyntacticShift/nullableTypes.kt");
+                doParsingTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/psi/kdoc")

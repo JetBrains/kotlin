@@ -1835,10 +1835,6 @@ public class JetParsing extends AbstractJetParsing {
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
     private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet) {
-        // Disabling token merge is required for cases like
-        //    Int?.(Foo) -> Bar
-        // we don't support this case now
-//        myBuilder.disableJoiningComplexTokens();
         PsiBuilder.Marker typeRefMarker = mark();
         parseAnnotations(ONLY_ESCAPED_REGULAR_ANNOTATIONS);
 
@@ -1898,7 +1894,11 @@ public class JetParsing extends AbstractJetParsing {
             typeBeforeDot = false;
         }
 
+        // Disabling token merge is required for cases like
+        //    Int?.(Foo) -> Bar
+        myBuilder.disableJoiningComplexTokens();
         typeRefMarker = parseNullableTypeSuffix(typeRefMarker);
+        myBuilder.restoreJoiningComplexTokensState();
 
         if (typeBeforeDot && at(DOT)) {
             // This is a receiver for a function type
@@ -1922,13 +1922,14 @@ public class JetParsing extends AbstractJetParsing {
 
             functionType.done(FUNCTION_TYPE);
         }
-//        myBuilder.restoreJoiningComplexTokensState();
+
         return typeRefMarker;
     }
 
     @NotNull
     PsiBuilder.Marker parseNullableTypeSuffix(@NotNull PsiBuilder.Marker typeRefMarker) {
-        while (at(QUEST)) {
+        // ?: is joined regardless of joining state
+        while (at(QUEST) && myBuilder.rawLookup(1) != COLON) {
             PsiBuilder.Marker precede = typeRefMarker.precede();
             advance(); // QUEST
             typeRefMarker.done(NULLABLE_TYPE);
