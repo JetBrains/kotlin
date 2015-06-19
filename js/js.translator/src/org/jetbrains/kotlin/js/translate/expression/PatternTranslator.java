@@ -21,8 +21,6 @@ import com.google.dart.compiler.backend.js.ast.metadata.MetadataProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.JetNodeTypes;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -44,9 +42,9 @@ import org.jetbrains.kotlin.psi.KtTypeReference;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 
+import static org.jetbrains.kotlin.builtins.FunctionTypesKt.isFunctionTypeOrSubtype;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAnyOrNullableAny;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isFunctionOrExtensionFunctionType;
-import static org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsPackage.getNameIfStandardType;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isArray;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.equality;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.negated;
 import static org.jetbrains.kotlin.psi.KtPsiUtil.findChildByType;
@@ -131,7 +129,9 @@ public final class PatternTranslator extends AbstractTranslator {
     private JsExpression doGetIsTypeCheckCallable(@NotNull KotlinType type) {
         if (isAnyOrNullableAny(type)) return namer().isAny();
 
-        if (isFunctionOrExtensionFunctionType(type)) return namer().isTypeOf(program().getStringLiteral("function"));
+        if (isFunctionTypeOrSubtype(type)) return namer().isTypeOf(program().getStringLiteral("function"));
+
+        if (isArray(type)) return Namer.IS_ARRAY_FUN_REF;
 
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
         if (builtinCheck != null) return builtinCheck;
