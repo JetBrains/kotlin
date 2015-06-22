@@ -5,4 +5,4 @@ fun foo() {
     <caret>Fake()
 }
 
-//REF: (in java.lang.Fake).Fake()
+//REF_EMPTY

@@ -6,10 +6,10 @@ class java {
 }
 
 // FILE: root1.kt
-import java.lang.* // will import Fake
+import java.lang.* // will not import Fake
 
 fun foo() {
-    `Fake()`Fake()
+    `!`Fake()
 }
 
 // FILE: root2.kt
@@ -21,9 +21,9 @@ fun foo() {
 
 // FILE: nonRoot.kt
 package nonRoot
-import java.lang.* // will import Fake
+import java.lang.* // will not import Fake
 
 fun foo() {
-    `Fake()`Fake()
+    `!`Fake()
     java.lang.`!`Fake() // qualified access to root package's class does not work
 }
