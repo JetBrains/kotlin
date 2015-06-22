@@ -125,7 +125,7 @@ public open class LinkedHashMap<K, V>(
 ) : HashMap<K, V>(initialCapacity, loadFactor)
 
 library
-public class NoSuchElementException(message: String? = null) : Exception() {}
+public open class NoSuchElementException(message: String? = null) : Exception() {}
 
 library
 public trait Enumeration<E> {

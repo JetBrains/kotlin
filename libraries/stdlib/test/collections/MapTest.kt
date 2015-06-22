@@ -1,5 +1,6 @@
 package test.collections
 
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -24,7 +25,7 @@ class MapTest {
 
     test fun getOrImplicitDefault() {
         val data: MutableMap<String, Int> = hashMapOf("bar" to 1)
-        assertTrue(fails { data.getOrImplicitDefault("foo") } is KeyMissingException)
+        assertTrue(fails { data.getOrImplicitDefault("foo") } is NoSuchElementException)
         assertEquals(1, data.getOrImplicitDefault("bar"))
 
         val mutableWithDefault = data.withDefault { 42 }

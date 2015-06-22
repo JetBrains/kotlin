@@ -1,5 +1,6 @@
 package test.properties.delegation
 
+import java.util.*
 import kotlin.properties.*
 import kotlin.test.*
 import org.junit.Test as test
@@ -24,7 +25,7 @@ class ValByMapExtensionsTest {
         assertEquals("default", e)
         assertEquals(1, i)
         assertEquals(1.0, x)
-        fails { d }
+        assertTrue(fails { d } is NoSuchElementException)
     }
 }
 
@@ -59,7 +60,7 @@ class VarByMapExtensionsTest {
         map["a"] = null
         a // fails { a } // does not fail due to KT-8135
 
-        fails { d }
+        assertTrue(fails { d } is NoSuchElementException)
         map["d"] = null
         assertEquals(null, d)
     }

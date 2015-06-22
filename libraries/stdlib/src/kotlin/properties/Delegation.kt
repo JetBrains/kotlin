@@ -1,5 +1,7 @@
 package kotlin.properties
 
+import java.util.NoSuchElementException
+
 
 /**
  * Standard property delegates.
@@ -176,6 +178,16 @@ private class BlockingLazyVal<T>(lock: Any?, private val initializer: () -> T) :
         }
     }
 }
+
+/**
+ * Exception thrown by the default implementation of property delegates which store values in a map
+ * when the map does not contain the corresponding key.
+ */
+deprecated("Do not throw or catch this exception, use NoSuchElementException instead.")
+public class KeyMissingException
+    deprecated("Throw NoSuchElementException instead.", ReplaceWith("NoSuchElementException(message)"))
+    constructor(message: String): NoSuchElementException(message)
+
 
 /**
  * Implements the core logic for a property delegate that stores property values in a map.

@@ -1,26 +1,20 @@
 package kotlin
 
+import java.util.*
 import kotlin.platform.platformName
-
-
-/**
- * Exception thrown when the map does not contain the corresponding key.
- */
-public class KeyMissingException(message: String): RuntimeException(message)
-
 
 /**
  * Returns the value for the given key, or the implicit default value for this map.
- * By default no implicit value is provided for maps and a [KeyMissingException] is thrown.
+ * By default no implicit value is provided for maps and a [NoSuchElementException] is thrown.
  * To create a map with implicit default value use [Map.withDefault] method.
  *
- * @throws KeyMissingException when the map doesn't contain value for the specified key and no implicit default was provided for that map.
+ * @throws NoSuchElementException when the map doesn't contain value for the specified key and no implicit default was provided for that map.
  */
 public fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
     if (this is MapWithDefault)
         return this.getOrImplicitDefault(key)
 
-    return getOrElse(key, { throw KeyMissingException("Key $key is missing in the map.") })
+    return getOrElse(key, { throw NoSuchElementException("Key $key is missing in the map.") })
 }
 
 /**
