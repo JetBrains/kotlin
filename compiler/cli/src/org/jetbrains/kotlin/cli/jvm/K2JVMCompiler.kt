@@ -191,6 +191,7 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             if (arguments.reportPerf) {
                 reportGCTime(environment.configuration)
+                reportCompilationTime(environment.configuration)
                 PerformanceCounter.report { s -> reportPerf(environment.configuration, s) }
             }
             return OK
@@ -225,6 +226,7 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         private var initStartNanos = System.nanoTime()
         // allows to track GC time for each run when repeated compilation is used
         private val elapsedGCTime = hashMapOf<String, Long>()
+        private var elapsedJITTime = 0L
 
         public fun resetInitStartTime() {
             initStartNanos = System.nanoTime()
@@ -247,6 +249,13 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 reportPerf(configuration, "GC time for ${it.getName()} is $time ms")
                 elapsedGCTime[it.getName()] = currentTime
             }
+        }
+
+        fun reportCompilationTime(configuration: CompilerConfiguration) {
+            val bean = ManagementFactory.getCompilationMXBean() ?: return
+            val currentTime = bean.getTotalCompilationTime()
+            reportPerf(configuration, "JIT time is ${currentTime - elapsedJITTime} ms")
+            elapsedJITTime = currentTime
         }
 
         private fun putAdvancedOptions(configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments) {
