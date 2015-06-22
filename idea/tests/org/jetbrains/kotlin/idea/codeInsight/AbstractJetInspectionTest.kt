@@ -31,11 +31,12 @@ import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import org.jetbrains.kotlin.idea.test.JetLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.JetTestUtils
 import java.io.File
 
-public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase() {
+public abstract class AbstractJetInspectionTest: JetLightCodeInsightFixtureTestCase() {
     companion object {
         val ENTRY_POINT_ANNOTATION = "test.anno.EntryPoint"
     }
@@ -74,7 +75,7 @@ public abstract class AbstractJetInspectionTest: LightCodeInsightFixtureTestCase
                                 if (text.startsWith("package") || !file.getName().endsWith(".kt"))
                                     text
                                 else
-                                    "package ${file.getName().trimTrailing(".kt")};$text"
+                                    "package ${file.getName().removeSuffix(".kt")};$text"
                         configureByText(file.getName(), fileText)!!
                     }
 
