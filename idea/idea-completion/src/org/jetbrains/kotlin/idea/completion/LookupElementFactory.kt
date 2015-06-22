@@ -44,13 +44,14 @@ public class LookupElementFactory(
     public fun createLookupElement(
             descriptor: DeclarationDescriptor,
             boldImmediateMembers: Boolean,
-            qualifyNestedClasses: Boolean = false
+            qualifyNestedClasses: Boolean = false,
+            includeClassTypeArguments: Boolean = true
     ): LookupElement {
         val _descriptor = if (descriptor is CallableMemberDescriptor)
             DescriptorUtils.unwrapFakeOverride(descriptor)
         else
             descriptor
-        var element = createLookupElement(_descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor), qualifyNestedClasses)
+        var element = createLookupElement(_descriptor, DescriptorToSourceUtils.descriptorToDeclaration(_descriptor), qualifyNestedClasses, includeClassTypeArguments)
 
         val weight = callableWeight(descriptor)
         if (weight != null) {
@@ -99,7 +100,7 @@ public class LookupElementFactory(
         GRAYED
     }
 
-    public fun createLookupElementForJavaClass(psiClass: PsiClass, qualifyNestedClasses: Boolean = false): LookupElement {
+    public fun createLookupElementForJavaClass(psiClass: PsiClass, qualifyNestedClasses: Boolean = false, includeClassTypeArguments: Boolean = true): LookupElement {
         val lookupObject = object : DeclarationLookupObjectImpl(null, psiClass, resolutionFacade) {
             override fun getIcon(flags: Int) = psiClass.getIcon(flags)
         }
@@ -107,7 +108,7 @@ public class LookupElementFactory(
                 .withInsertHandler(KotlinClassInsertHandler)
 
         val typeParams = psiClass.getTypeParameters()
-        if (typeParams.isNotEmpty()) {
+        if (includeClassTypeArguments && typeParams.isNotEmpty()) {
             element = element.appendTailText(typeParams.map { it.getName() }.joinToString(", ", "<", ">"), true)
         }
 
@@ -138,7 +139,8 @@ public class LookupElementFactory(
     private fun createLookupElement(
             descriptor: DeclarationDescriptor,
             declaration: PsiElement?,
-            qualifyNestedClasses: Boolean = false
+            qualifyNestedClasses: Boolean,
+            includeClassTypeArguments: Boolean
     ): LookupElement {
         if (descriptor is ClassifierDescriptor &&
             declaration is PsiClass &&
@@ -146,7 +148,7 @@ public class LookupElementFactory(
             // for java classes we create special lookup elements
             // because they must be equal to ones created in TypesCompletion
             // otherwise we may have duplicates
-            return createLookupElementForJavaClass(declaration, qualifyNestedClasses)
+            return createLookupElementForJavaClass(declaration, qualifyNestedClasses, includeClassTypeArguments)
         }
 
         // for constructor use name and icon of containing class
@@ -180,7 +182,7 @@ public class LookupElementFactory(
 
             is ClassDescriptor -> {
                 val typeParams = descriptor.getTypeConstructor().getParameters()
-                if (typeParams.isNotEmpty()) {
+                if (includeClassTypeArguments && typeParams.isNotEmpty()) {
                     element = element.appendTailText(typeParams.map { it.getName().asString() }.joinToString(", ", "<", ">"), true)
                 }
 

@@ -351,16 +351,7 @@ fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElemen
     }
     else {
         val classifier = type.getConstructor().getDeclarationDescriptor() ?: return null
-        val baseLookupElement = createLookupElement(classifier, false)
-
-        var packageName: FqName? = null
-        var container = classifier.getContainingDeclaration()
-        while (container is ClassDescriptor) {
-            container = container.getContainingDeclaration()
-        }
-        if (container is PackageFragmentDescriptor) {
-            packageName = container.fqName
-        }
+        val baseLookupElement = createLookupElement(classifier, false, qualifyNestedClasses = true, includeClassTypeArguments = false)
 
         val itemText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
 
@@ -368,11 +359,6 @@ fun LookupElementFactory.createLookupElementForType(type: JetType): LookupElemen
             override fun renderElement(presentation: LookupElementPresentation) {
                 super.renderElement(presentation)
                 presentation.setItemText(itemText)
-
-                presentation.clearTail()
-                if (packageName != null) {
-                    presentation.appendTailText(" ($packageName)", true)
-                }
             }
         }
     }
