@@ -322,7 +322,7 @@ public class KotlinToJVMBytecodeCompiler {
         long analysisNanos = PerformanceCounter.Companion.currentThreadCpuTime() - analysisStart;
         String message = "ANALYZE: " + environment.getSourceFiles().size() + " files (" +
                          environment.getSourceLinesOfCode() + " lines) in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms";
-        K2JVMCompiler.reportPerf(environment.getConfiguration(), message);
+        K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);
 
         AnalysisResult result = analyzerWithCompilerReport.getAnalysisResult();
         assert result != null : "AnalysisResult should be non-null, compiling: " + environment.getSourceFiles();
@@ -383,7 +383,7 @@ public class KotlinToJVMBytecodeCompiler {
         long generationNanos = PerformanceCounter.Companion.currentThreadCpuTime() - generationStart;
         String message = "GENERATE: " + sourceFiles.size() + " files (" +
                          environment.countLinesOfCode(sourceFiles) + " lines) in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
-        K2JVMCompiler.reportPerf(environment.getConfiguration(), message);
+        K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);
 
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(
