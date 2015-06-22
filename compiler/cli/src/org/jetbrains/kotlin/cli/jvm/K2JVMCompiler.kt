@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 import kotlin.platform.platformStatic
 
@@ -189,6 +190,7 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
 
             if (arguments.reportPerf) {
+                reportGCTime(environment.configuration)
                 PerformanceCounter.report { s -> reportPerf(environment.configuration, s) }
             }
             return OK
@@ -221,6 +223,8 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     companion object {
         private var initStartNanos = System.nanoTime()
+        // allows to track GC time for each run when repeated compilation is used
+        private val elapsedGCTime = hashMapOf<String, Long>()
 
         public fun resetInitStartTime() {
             initStartNanos = System.nanoTime()
@@ -233,6 +237,16 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         public fun reportPerf(configuration: CompilerConfiguration, message: String) {
             val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
             collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
+        }
+
+        fun reportGCTime(configuration: CompilerConfiguration) {
+            ManagementFactory.getGarbageCollectorMXBeans().forEach {
+                val currentTime = it.getCollectionTime()
+                val elapsedTime = elapsedGCTime.getOrElse(it.getName()) { 0 }
+                val time = currentTime - elapsedTime
+                reportPerf(configuration, "GC time for ${it.getName()} is $time ms")
+                elapsedGCTime[it.getName()] = currentTime
+            }
         }
 
         private fun putAdvancedOptions(configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments) {
