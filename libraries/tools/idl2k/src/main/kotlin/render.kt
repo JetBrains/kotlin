@@ -193,7 +193,7 @@ fun Appendable.renderBuilderFunction(dictionary: GenerateTraitOrClass, allSuperT
     val fields = (dictionary.memberAttributes + allSuperTypes.flatMap { it.memberAttributes }).distinctBy { it.signature }.map { it.copy(kind = AttributeKind.ARGUMENT) }.dynamicIfUnknownType(allTypes)
 
     appendln("suppress(\"NOTHING_TO_INLINE\")")
-    append("inline fun ${dictionary.name}")
+    append("public inline fun ${dictionary.name}")
     renderArgumentsDeclaration(fields)
     appendln(": ${dictionary.name} {")
 

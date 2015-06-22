@@ -107,7 +107,7 @@ native public interface RegistrationOptions {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun RegistrationOptions(scope: String): RegistrationOptions {
+public inline fun RegistrationOptions(scope: String): RegistrationOptions {
     val o = js("({})")
 
     o["scope"] = scope
@@ -138,7 +138,7 @@ native public interface ServiceWorkerMessageEventInit : EventInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun ServiceWorkerMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ServiceWorkerMessageEventInit {
+public inline fun ServiceWorkerMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ServiceWorkerMessageEventInit {
     val o = js("({})")
 
     o["data"] = data
@@ -182,7 +182,7 @@ native public interface ClientQueryOptions {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun ClientQueryOptions(includeUncontrolled: Boolean = false, type: String = "window"): ClientQueryOptions {
+public inline fun ClientQueryOptions(includeUncontrolled: Boolean = false, type: String = "window"): ClientQueryOptions {
     val o = js("({})")
 
     o["includeUncontrolled"] = includeUncontrolled
@@ -199,7 +199,7 @@ native public interface ExtendableEventInit : EventInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun ExtendableEventInit(bubbles: Boolean = false, cancelable: Boolean = false): ExtendableEventInit {
+public inline fun ExtendableEventInit(bubbles: Boolean = false, cancelable: Boolean = false): ExtendableEventInit {
     val o = js("({})")
 
     o["bubbles"] = bubbles
@@ -225,7 +225,7 @@ native public interface FetchEventInit : ExtendableEventInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun FetchEventInit(request: Request, client: Client, isReload: Boolean = false, bubbles: Boolean = false, cancelable: Boolean = false): FetchEventInit {
+public inline fun FetchEventInit(request: Request, client: Client, isReload: Boolean = false, bubbles: Boolean = false, cancelable: Boolean = false): FetchEventInit {
     val o = js("({})")
 
     o["request"] = request
@@ -260,7 +260,7 @@ native public interface ExtendableMessageEventInit : ExtendableEventInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun ExtendableMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionClientOrMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ExtendableMessageEventInit {
+public inline fun ExtendableMessageEventInit(data: Any?, origin: String, lastEventId: String, source: UnionClientOrMessagePortOrServiceWorker?, ports: Array<MessagePort>, bubbles: Boolean = false, cancelable: Boolean = false): ExtendableMessageEventInit {
     val o = js("({})")
 
     o["data"] = data
@@ -292,7 +292,7 @@ native public interface CacheQueryOptions {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun CacheQueryOptions(ignoreSearch: Boolean = false, ignoreMethod: Boolean = false, ignoreVary: Boolean = false, cacheName: String): CacheQueryOptions {
+public inline fun CacheQueryOptions(ignoreSearch: Boolean = false, ignoreMethod: Boolean = false, ignoreVary: Boolean = false, cacheName: String): CacheQueryOptions {
     val o = js("({})")
 
     o["ignoreSearch"] = ignoreSearch
@@ -311,7 +311,7 @@ native public interface CacheBatchOperation {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun CacheBatchOperation(type: String, request: Request, response: Response, options: CacheQueryOptions): CacheBatchOperation {
+public inline fun CacheBatchOperation(type: String, request: Request, response: Response, options: CacheQueryOptions): CacheBatchOperation {
     val o = js("({})")
 
     o["type"] = type
