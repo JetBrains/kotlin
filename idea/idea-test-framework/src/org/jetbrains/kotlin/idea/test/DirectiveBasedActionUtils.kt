@@ -67,6 +67,7 @@ public object DirectiveBasedActionUtils {
             "Disable ",
             "Edit intention settings",
             "Edit inspection profile setting",
-            "Inject language or reference"
+            "Inject language or reference",
+            "Suppress '"
     )
 }
