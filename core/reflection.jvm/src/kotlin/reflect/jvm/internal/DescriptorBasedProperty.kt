@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-abstract class DescriptorBasedProperty private constructor(
+abstract class DescriptorBasedProperty protected constructor (
+        /* KT-7615 workaround - preventing crash on Android ART by increasing constructor visibility from private */
         container: KCallableContainerImpl,
         name: String,
         receiverParameterDesc: String?,
