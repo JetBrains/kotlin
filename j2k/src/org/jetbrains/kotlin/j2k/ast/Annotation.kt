@@ -63,6 +63,3 @@ class Annotations(val annotations: List<Annotation>) : Element() {
         val Empty = Annotations(listOf())
     }
 }
-
-fun Annotations.withAt(): Annotations
-        = Annotations(annotations.map { Annotation(it.name, it.arguments, withAt = true, newLineAfter = it.newLineAfter).assignPrototypesFrom(it) }).assignPrototypesFrom(this)

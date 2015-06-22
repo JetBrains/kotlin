@@ -1,5 +1,5 @@
 // ERROR: Overload resolution ambiguity:  public constructor C(arg1: kotlin.Int, arg2: kotlin.Int) defined in C kotlin.jvm.jvmOverloads public constructor C(arg1: kotlin.Int, arg2: kotlin.Int = ..., arg3: kotlin.Int = ...) defined in C
-class C @jvmOverloads constructor(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
+class C jvmOverloads constructor(arg1: Int, arg2: Int = 0, arg3: Int = 0) {
     private val field: Int
 
     init {

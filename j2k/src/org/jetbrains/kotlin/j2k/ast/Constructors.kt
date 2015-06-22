@@ -61,7 +61,7 @@ class PrimaryConstructorSignature(val annotations: Annotations, private val modi
         var needConstructorKeyword = false
 
         if (!annotations.isEmpty) {
-            builder append " " append annotations.withAt()
+            builder append " " append annotations
             needConstructorKeyword = true
         }
 

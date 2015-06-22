@@ -102,6 +102,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/jetbrainsNullable.java");
             doTest(fileName);
         }
+
+        @TestMetadata("primaryConstructorAnnotation.java")
+        public void testPrimaryConstructorAnnotation() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/annotations/primaryConstructorAnnotation.java");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("j2k/testData/fileOrElement/anonymousBlock")
