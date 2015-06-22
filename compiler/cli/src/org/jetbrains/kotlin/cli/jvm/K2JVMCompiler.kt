@@ -16,40 +16,38 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
+import com.google.common.base.Predicates.`in`
 import com.intellij.openapi.Disposable
-import kotlin.Unit
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
+import org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR
+import org.jetbrains.kotlin.cli.common.ExitCode.OK
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.cli.common.modules.ModuleScriptData
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.*
+import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
-
 import java.io.File
-import java.util.Collections
 import java.util.concurrent.TimeUnit
-
-import com.google.common.base.Predicates.`in`
-import org.jetbrains.kotlin.cli.common.ExitCode.*
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
+import kotlin.platform.platformStatic
 
 SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
@@ -214,11 +212,17 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     /**
      * Allow derived classes to add additional command line arguments
      */
-    override fun createArguments() = K2JVMCompilerArguments()
+    override fun createArguments(): K2JVMCompilerArguments {
+        val result = K2JVMCompilerArguments()
+        if (System.getenv("KOTLIN_REPORT_PERF") != null) {
+            result.reportPerf = true
+        }
+        return result
+    }
 
     companion object {
 
-        public fun main(args: Array<String>) {
+        platformStatic public fun main(args: Array<String>) {
             CLICompiler.doMain(K2JVMCompiler(), args)
         }
 
