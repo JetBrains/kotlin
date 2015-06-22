@@ -261,31 +261,40 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
-    public enum class CompletionKind(val classKindFilter: ((ClassKind) -> Boolean)?) {
-        KEYWORDS_ONLY(classKindFilter = null),
-        NAMED_ARGUMENTS_ONLY(classKindFilter = null),
-        ALL(classKindFilter = { it != ClassKind.ENUM_ENTRY }),
-        TYPES(classKindFilter = { it != ClassKind.ENUM_ENTRY }),
-        ANNOTATION_TYPES(classKindFilter = { it == ClassKind.ANNOTATION_CLASS }),
-        ANNOTATION_TYPES_OR_PARAMETER_NAME(classKindFilter = { it == ClassKind.ANNOTATION_CLASS }),
-        PARAMETER_NAME(classKindFilter = null)
+    private enum class CompletionKind(
+            val descriptorKindFilter: DescriptorKindFilter?,
+            val classKindFilter: ((ClassKind) -> Boolean)?
+    ) {
+        ALL(
+                descriptorKindFilter = DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK),
+                classKindFilter = { it != ClassKind.ENUM_ENTRY }
+        ),
+
+        TYPES(
+                descriptorKindFilter = DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry,
+                classKindFilter = { it != ClassKind.ENUM_ENTRY }
+        ),
+
+        ANNOTATION_TYPES(
+                descriptorKindFilter = ANNOTATION_TYPES_FILTER,
+                classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
+        ),
+
+        ANNOTATION_TYPES_OR_PARAMETER_NAME(
+                descriptorKindFilter = ANNOTATION_TYPES_FILTER,
+                classKindFilter = { it == ClassKind.ANNOTATION_CLASS }
+        ),
+
+        KEYWORDS_ONLY(descriptorKindFilter = null, classKindFilter = null),
+
+        NAMED_ARGUMENTS_ONLY(descriptorKindFilter = null, classKindFilter = null),
+
+        PARAMETER_NAME(descriptorKindFilter = null, classKindFilter = null)
     }
 
-    public val completionKind: CompletionKind = calcCompletionKind()
+    private val completionKind = calcCompletionKind()
 
-    protected override val descriptorKindFilter = when (completionKind) {
-        CompletionKind.TYPES ->
-            DescriptorKindFilter(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude DescriptorKindExclude.EnumEntry
-
-        CompletionKind.ANNOTATION_TYPES,  CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME ->
-            DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude
-
-        CompletionKind.ALL ->
-            DescriptorKindFilter(DescriptorKindFilter.ALL_KINDS_MASK)
-
-        CompletionKind.NAMED_ARGUMENTS_ONLY, CompletionKind.KEYWORDS_ONLY, CompletionKind.PARAMETER_NAME ->
-            null
-    }
+    override val descriptorKindFilter = completionKind.descriptorKindFilter
 
     private val parameterNameAndTypeCompletion = if (shouldCompleteParameterNameAndType())
         ParameterNameAndTypeCompletion(collector, lookupElementFactory, prefixMatcher, resolutionFacade)
@@ -428,15 +437,6 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
         NamedArgumentCompletion.complete(position, collector, bindingContext)
     }
 
-    private object NonAnnotationClassifierExclude : DescriptorKindExclude {
-        override fun matches(descriptor: DeclarationDescriptor): Boolean {
-            return if (descriptor is ClassDescriptor)
-                descriptor.getKind() != ClassKind.ANNOTATION_CLASS
-            else
-                descriptor !is ClassifierDescriptor
-        }
-    }
-
     private fun addNonImported(completionKind: CompletionKind) {
         if (completionKind == CompletionKind.ALL) {
             collector.addDescriptorElements(getTopLevelExtensions(), suppressAutoInsertion = true)
@@ -454,13 +454,26 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
 
         parameterNameAndTypeCompletion?.addFromAllClasses(parameters, indicesHelper)
     }
+
+    private companion object {
+        object NonAnnotationClassifierExclude : DescriptorKindExclude {
+            override fun matches(descriptor: DeclarationDescriptor): Boolean {
+                return if (descriptor is ClassDescriptor)
+                    descriptor.getKind() != ClassKind.ANNOTATION_CLASS
+                else
+                    descriptor !is ClassifierDescriptor
+            }
+        }
+
+        val ANNOTATION_TYPES_FILTER = DescriptorKindFilter(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK or DescriptorKindFilter.PACKAGES_MASK) exclude NonAnnotationClassifierExclude
+    }
 }
 
 class SmartCompletionSession(configuration: CompletionSessionConfiguration, parameters: CompletionParameters, resultSet: CompletionResultSet)
 : CompletionSessionBase(configuration, parameters, resultSet) {
 
     // we do not include SAM-constructors because they are handled separately and adding them requires iterating of java classes
-    override val descriptorKindFilter: DescriptorKindFilter? = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
+    override val descriptorKindFilter = DescriptorKindFilter.VALUES exclude SamConstructorDescriptorKindExclude
 
     override fun doComplete() {
         if (NamedArgumentCompletion.isOnlyNamedArgumentExpected(position)) {
