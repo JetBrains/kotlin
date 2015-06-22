@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.name.Name;
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 import java.util.List;
 import java.util.Map;
@@ -46,14 +44,13 @@ import static org.jetbrains.kotlin.resolve.calls.ValueArgumentsToParametersMappe
 public class ValueArgumentsToParametersMapper {
 
     public enum Status {
-        STRONG_ERROR(false),
         ERROR(false),
         WEAK_ERROR(false),
         OK(true);
 
         private final boolean success;
 
-        private Status(boolean success) {
+        Status(boolean success) {
             this.success = success;
         }
 
@@ -62,7 +59,6 @@ public class ValueArgumentsToParametersMapper {
         }
 
         public Status compose(Status other) {
-            if (this == STRONG_ERROR || other == STRONG_ERROR) return STRONG_ERROR;
             if (this == ERROR || other == ERROR) return ERROR;
             if (this == WEAK_ERROR || other == WEAK_ERROR) return WEAK_ERROR;
             return this;
@@ -223,7 +219,6 @@ public class ValueArgumentsToParametersMapper {
 
             processFunctionLiteralArguments();
             reportUnmappedParameters();
-            checkReceiverArgument();
         }
 
         private void processFunctionLiteralArguments() {
@@ -265,7 +260,6 @@ public class ValueArgumentsToParametersMapper {
         }
 
         private void reportUnmappedParameters() {
-
             List<ValueParameterDescriptor> valueParameters = candidateCall.getCandidateDescriptor().getValueParameters();
             for (ValueParameterDescriptor valueParameter : valueParameters) {
                 if (!usedParameters.contains(valueParameter)) {
@@ -279,26 +273,6 @@ public class ValueArgumentsToParametersMapper {
                         tracing.noValueForParameter(candidateCall.getTrace(), valueParameter);
                         setStatus(ERROR);
                     }
-                }
-            }
-        }
-
-        private void checkReceiverArgument() {
-            D candidate = candidateCall.getCandidateDescriptor();
-
-            ReceiverParameterDescriptor receiverParameter = candidate.getExtensionReceiverParameter();
-            ReceiverValue receiverArgument = candidateCall.getExtensionReceiver();
-            if (receiverParameter != null &&!receiverArgument.exists()) {
-                tracing.missingReceiver(candidateCall.getTrace(), receiverParameter);
-                setStatus(ERROR);
-            }
-            if (receiverParameter == null && receiverArgument.exists()) {
-                tracing.noReceiverAllowed(candidateCall.getTrace());
-                if (call.getCalleeExpression() instanceof JetSimpleNameExpression) {
-                    setStatus(STRONG_ERROR);
-                }
-                else {
-                    setStatus(ERROR);
                 }
             }
         }

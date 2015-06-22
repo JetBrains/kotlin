@@ -1122,6 +1122,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("kt7430_wrongClassOnLHS.kt")
+            public void testKt7430_wrongClassOnLHS() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/kt7430_wrongClassOnLHS.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("unused.kt")
             public void testUnused() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/unused.kt");
@@ -1502,6 +1508,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("kt7564.kt")
                 public void testKt7564() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/kt7564.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt7945_unrelatedClass.kt")
+                public void testKt7945_unrelatedClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/property/kt7945_unrelatedClass.kt");
                     doTest(fileName);
                 }
 

@@ -41,10 +41,6 @@ import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
@@ -276,6 +272,8 @@ public class JetControlFlowProcessor {
                         Sets.<ValueArgument>newLinkedHashSet()
                 );
                 if (!status.isSuccess()) continue;
+
+                if ((candidate.getExtensionReceiverParameter() == null) == candidateCall.getExtensionReceiver().exists()) continue;
 
                 Map<ValueParameterDescriptor, ResolvedValueArgument> candidateArgumentMap = candidateCall.getValueArguments();
                 List<? extends ValueArgument> callArguments = call.getValueArguments();

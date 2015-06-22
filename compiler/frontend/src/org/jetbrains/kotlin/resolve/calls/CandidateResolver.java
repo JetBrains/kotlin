@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.context.*;
@@ -104,18 +103,16 @@ public class CandidateResolver {
         }
 
         if (task.checkArguments == CheckValueArgumentsMode.ENABLED) {
-            Set<ValueArgument> unmappedArguments = Sets.newLinkedHashSet();
             ValueArgumentsToParametersMapper.Status argumentMappingStatus = ValueArgumentsToParametersMapper.mapValueArgumentsToParameters(
-                    context.call, context.tracing, candidateCall, unmappedArguments);
+                    context.call, context.tracing, candidateCall, Sets.<ValueArgument>newLinkedHashSet()
+            );
             if (!argumentMappingStatus.isSuccess()) {
-                if (argumentMappingStatus == ValueArgumentsToParametersMapper.Status.STRONG_ERROR) {
-                    candidateCall.addStatus(RECEIVER_PRESENCE_ERROR);
-                }
-                else {
-                    candidateCall.addStatus(OTHER_ERROR);
-                }
+                candidateCall.addStatus(OTHER_ERROR);
             }
         }
+
+        checkExtensionReceiver(context);
+
         if (!checkDispatchReceiver(context)) {
             candidateCall.addStatus(OTHER_ERROR);
         }
@@ -172,6 +169,25 @@ public class CandidateResolver {
         checkAbstractAndSuper(context);
 
         checkNonExtensionCalledWithReceiver(context);
+    }
+
+    private static <D extends CallableDescriptor> void checkExtensionReceiver(@NotNull CallCandidateResolutionContext<D> context) {
+        MutableResolvedCall<D> candidateCall = context.candidateCall;
+        ReceiverParameterDescriptor receiverParameter = candidateCall.getCandidateDescriptor().getExtensionReceiverParameter();
+        ReceiverValue receiverArgument = candidateCall.getExtensionReceiver();
+        if (receiverParameter != null &&!receiverArgument.exists()) {
+            context.tracing.missingReceiver(candidateCall.getTrace(), receiverParameter);
+            candidateCall.addStatus(OTHER_ERROR);
+        }
+        if (receiverParameter == null && receiverArgument.exists()) {
+            context.tracing.noReceiverAllowed(candidateCall.getTrace());
+            if (context.call.getCalleeExpression() instanceof JetSimpleNameExpression) {
+                candidateCall.addStatus(RECEIVER_PRESENCE_ERROR);
+            }
+            else {
+                candidateCall.addStatus(OTHER_ERROR);
+            }
+        }
     }
 
     private static boolean checkDispatchReceiver(@NotNull CallCandidateResolutionContext<?> context) {
