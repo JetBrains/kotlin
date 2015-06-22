@@ -145,10 +145,11 @@ public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> {
  * @sample test.collections.MapTest.getOrElse
  */
 public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
-    if (containsKey(key)) {
-        return get(key) as V
-    } else {
+    val value = get(key)
+    if (value == null && !containsKey(key)) {
         return defaultValue()
+    } else {
+        return value as V
     }
 }
 
@@ -159,12 +160,13 @@ public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
  * @sample test.collections.MapTest.getOrPut
  */
 public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
-    if (containsKey(key)) {
-        return get(key) as V
-    } else {
+    val value = get(key)
+    if (value == null && !containsKey(key)) {
         val answer = defaultValue()
         put(key, answer)
         return answer
+    } else {
+        return value as V
     }
 }
 
