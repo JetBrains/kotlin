@@ -8,11 +8,13 @@ import java.io.Serializable
  *
  * To create an instance of [Lazy] use the [lazy] function.
  */
-public interface Lazy<out T> {
+public abstract class Lazy<out T> internal constructor() {
     /** Gets the lazily initialized value of the current Lazy instance. */
-    public val value: T
-    /** Returns `true` if a value for this Lazy instance has been already initialized. */
-    public fun isInitialized(): Boolean
+    public abstract  val value: T
+    /** Returns `true` if a value for this Lazy instance has been already initialized, and `false` otherwise.
+     *  Once this function has returned `true` it stays `true` for the rest of lifetime of this Lazy instance.
+     */
+    public abstract fun isInitialized(): Boolean
 }
 
 /**
@@ -49,7 +51,7 @@ public enum class LazyThreadSafetyMode {
 
 private object UNINITIALIZED_VALUE
 
-private class LazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
+private class LazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
     private volatile var _value: Any? = UNINITIALIZED_VALUE
 
@@ -82,7 +84,7 @@ private class LazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
 }
 
 
-private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializable {
+private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>(), Serializable {
     private var initializer: (() -> T)? = initializer
     private var _value: Any? = UNINITIALIZED_VALUE
 
@@ -102,7 +104,7 @@ private class UnsafeLazyImpl<out T>(initializer: () -> T) : Lazy<T>, Serializabl
     private fun writeReplace(): Any = InitializedLazyImpl(value)
 }
 
-private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>, Serializable {
+private class InitializedLazyImpl<out T>(override val value: T) : Lazy<T>(), Serializable {
 
     override fun isInitialized(): Boolean = true
 
