@@ -36,24 +36,24 @@ public object Delegates {
     /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed.
      * @param initial the initial value of the property.
-     * @param onChange the callback which is called when the property value is changed.
+     * @param onChange the callback which is called after the change of the property is made. The value of the property
+     *  has already been changed when this callback is invoked.
      */
-    public fun observable<T>(initial: T, onChange: (desc: PropertyMetadata, oldValue: T, newValue: T) -> Unit): ReadWriteProperty<Any?, T> {
-        return ObservableProperty<T>(initial) { desc, old, new ->
-            onChange(desc, old, new)
-            true
-        }
+    public fun observable<T>(initial: T, onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Unit): ReadWriteProperty<Any?, T> {
+        return ObservableProperty<T>(initial, afterChange = onChange)
     }
 
     /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed,
      * allowing the callback to veto the modification.
      * @param initial the initial value of the property.
-     * @param onChange the callback which is called when a change to the property value is attempted. The new value
-    *                  is saved if the callback returns `true` and discarded if the callback returns `false`.
+     * @param onChange the callback which is called before a change to the property value is attempted.
+     *  The value of the property hasn't been changed yet, when this callback is invoked.
+     *  If the callback returns `true` the value of the property is being set to the new value,
+     *  and if the callback returns `false` the new value is discarded and the property remains its old value.
      */
-    public fun vetoable<T>(initial: T, onChange: (desc: PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ReadWriteProperty<Any?, T> {
-        return ObservableProperty<T>(initial, onChange)
+    public fun vetoable<T>(initial: T, onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ReadWriteProperty<Any?, T> {
+        return ObservableProperty<T>(initial, beforeChange = onChange)
     }
 
     /**
@@ -115,11 +115,17 @@ private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
 /**
  * Implements a property delegate for a read/write property that calls a specified callback function when changed.
  * @param initialValue the initial value of the property.
- * @param onChange the callback which is called when a change to the property value is attempted. The new value
-*                  is saved if the callback returns `true` and discarded if the callback returns `false`.
+ * @param beforeChange the callback which is called before a change to the property value is attempted.
+ *  The value of the property hasn't been changed yet, when this callback is invoked.
+ *  If the callback returns `true` the value of the property is being set to the new value,
+ *  and if the callback returns `false` the new value is discarded and the property remains its old value.
+ * @param afterChange the callback which is called after the change of the property is made. The value of the property
+ *  has already been changed when this callback is invoked.
  */
 public class ObservableProperty<T>(
-        initialValue: T, private val onChange: (name: PropertyMetadata, oldValue: T, newValue: T) -> Boolean
+        initialValue: T,
+        private val beforeChange: ((property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean)? = null,
+        private val afterChange: ((property: PropertyMetadata, oldValue: T, newValue: T) -> Unit)? = null
 ) : ReadWriteProperty<Any?, T> {
     private var value = initialValue
 
@@ -128,8 +134,16 @@ public class ObservableProperty<T>(
     }
 
     public override fun set(thisRef: Any?, property: PropertyMetadata, value: T) {
-        if (onChange(property, this.value, value)) {
+        if (beforeChange == null && afterChange == null) {
             this.value = value
+        }
+        else {
+            val oldValue = this.value
+            if (beforeChange != null && !(beforeChange)(property, oldValue, value)) {
+                return
+            }
+            this.value = value
+            if (afterChange != null) (afterChange)(property, oldValue, value)
         }
     }
 }

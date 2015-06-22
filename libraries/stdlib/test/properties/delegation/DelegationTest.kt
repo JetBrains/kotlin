@@ -48,7 +48,11 @@ class ObservablePropertyInChangeSupportTest: ChangeSupport() {
 class ObservablePropertyTest {
     var result = false
 
-    var b by Delegates.observable(1, { pd, o, n -> result = true})
+    var b: Int by Delegates.observable(1, { property, old, new ->
+        assertEquals("b", property.name)
+        result = true
+        assertEquals(new, b, "New value has already been set")
+    })
 
     test fun doTest() {
         b = 4
@@ -61,7 +65,12 @@ class A(val p: Boolean)
 
 class VetoablePropertyTest {
     var result = false
-    var b by Delegates.vetoable(A(true), { pd, o, n -> result = n.p == true; result})
+    var b: A by Delegates.vetoable(A(true), { property, old, new ->
+        assertEquals("b", property.name)
+        assertEquals(old, b, "New value hasn't been set yet")
+        result = new.p == true;
+        result
+    })
 
     test fun doTest() {
         val firstValue = A(true)
