@@ -421,17 +421,17 @@ public abstract class ElementResolver protected constructor(
 
                     val descriptors = if (element is JetDotQualifiedExpression) {
                         qualifiedExpressionResolver.lookupDescriptorsForQualifiedExpression(
-                                element, rootPackage.getMemberScope(), filePackage, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false)
+                                element, rootPackage.memberScope, filePackage, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false)
                     }
                     else {
                         qualifiedExpressionResolver.lookupDescriptorsForSimpleNameReference(
-                                element as JetSimpleNameExpression, rootPackage.getMemberScope(), filePackage, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false, false)
+                                element as JetSimpleNameExpression, rootPackage.memberScope, filePackage, trace, QualifiedExpressionResolver.LookupMode.EVERYTHING, false, false)
                     }
 
-                    return descriptors.firstIsInstanceOrNull<PackageViewDescriptor>()?.getMemberScope()
+                    return descriptors.firstIsInstanceOrNull<PackageViewDescriptor>()?.memberScope
                 }
                 else {
-                    return rootPackage.getMemberScope()
+                    return rootPackage.memberScope
                 }
             }
 
@@ -439,7 +439,7 @@ public abstract class ElementResolver protected constructor(
             val packageDirective = expression.getParentOfType<JetPackageDirective>(false)
             if (packageDirective != null) {
                 val packageDescriptor = resolveSession.getModuleDescriptor().getPackage(packageDirective.getFqName(expression as JetSimpleNameExpression).parent())
-                return packageDescriptor?.getMemberScope()
+                return packageDescriptor?.memberScope
             }
         }
 

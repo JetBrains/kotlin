@@ -329,7 +329,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
         private fun getDeclarationScope(): JetScope {
             if (config.isExtension || receiverClassDescriptor == null) {
-                return currentFileModule.getPackage(config.currentFile.getPackageFqName())!!.getMemberScope()
+                return currentFileModule.getPackage(config.currentFile.getPackageFqName())!!.memberScope
             }
 
             if (receiverClassDescriptor is ClassDescriptorWithResolutionScopes) {

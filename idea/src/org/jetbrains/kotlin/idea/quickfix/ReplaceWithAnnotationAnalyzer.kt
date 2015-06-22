@@ -167,7 +167,7 @@ object ReplaceWithAnnotationAnalyzer {
             }
 
             is PackageViewDescriptor ->
-                descriptor.getMemberScope()
+                descriptor.memberScope
 
             is ClassDescriptorWithResolutionScopes ->
                 descriptor.getScopeForMemberDeclarationResolution()

@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.descriptors;
+package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.scopes.JetScope;
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.scopes.JetScope
 
-import java.util.List;
+public interface PackageViewDescriptor : DeclarationDescriptor {
+    override fun getContainingDeclaration(): PackageViewDescriptor?
 
-public interface PackageViewDescriptor extends DeclarationDescriptor {
-    @Override
-    @Nullable
-    PackageViewDescriptor getContainingDeclaration();
+    public val fqName: FqName
 
-    @NotNull
-    FqName getFqName();
+    public val memberScope: JetScope
 
-    @NotNull
-    JetScope getMemberScope();
+    public val module: ModuleDescriptor
 
-    @NotNull
-    ModuleDescriptor getModule();
-
-    @NotNull
-    List<PackageFragmentDescriptor> getFragments();
+    public val fragments: List<PackageFragmentDescriptor>
 }

@@ -197,7 +197,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
                                       ?: reference.resolveToDescriptors(bindingContext)
                         for (target in targets) {
                             if (!target.canBeReferencedViaImport()) continue
-                            if (target is PackageViewDescriptor && target.getFqName().parent() == FqName.ROOT) continue // no need to import top-level packages
+                            if (target is PackageViewDescriptor && target.fqName.parent() == FqName.ROOT) continue // no need to import top-level packages
 
                             if (!target.isExtension) { // for non-extension targets, count only non-qualified simple name usages
                                 if (element !is JetNameReferenceExpression) continue

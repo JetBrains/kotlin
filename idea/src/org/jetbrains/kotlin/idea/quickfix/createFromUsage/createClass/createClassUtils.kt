@@ -63,8 +63,8 @@ private fun getTargetParentByQualifier(
         qualifierDescriptor is ClassDescriptor ->
             DescriptorToSourceUtilsIde.getAnyDeclaration(project, qualifierDescriptor)
         qualifierDescriptor is PackageViewDescriptor ->
-            if (qualifierDescriptor.getFqName() != file.getPackageFqName()) {
-                JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.getFqName().asString())
+            if (qualifierDescriptor.fqName != file.getPackageFqName()) {
+                JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString())
             }
             else file : PsiElement
         else ->

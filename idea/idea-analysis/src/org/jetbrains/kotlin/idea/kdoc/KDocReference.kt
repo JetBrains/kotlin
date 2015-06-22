@@ -129,7 +129,7 @@ private fun resolveParamLink(fromDescriptor: DeclarationDescriptor, qualifiedNam
 private fun getPackageInnerScope(descriptor: PackageFragmentDescriptor): JetScope {
     val module = descriptor.getContainingDeclaration()
     val packageView = module.getPackage(descriptor.fqName)
-    val packageScope = packageView!!.getMemberScope()
+    val packageScope = packageView!!.memberScope
     return packageScope
 }
 
@@ -155,7 +155,7 @@ public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: De
             getPackageInnerScope(descriptor)
 
         is PackageViewDescriptor ->
-            descriptor.getMemberScope()
+            descriptor.memberScope
 
         is ClassDescriptor ->
             getClassInnerScope(getOuterScope(descriptor, resolutionFacade), descriptor)

@@ -158,7 +158,7 @@ public class FunctionClassDescriptor(
                 if (functionKind.hasExtensionReceiver) functionArity++
 
                 val module = containingDeclaration.getContainingDeclaration()
-                val kotlinPackageFragment = module.getPackage(BUILT_INS_PACKAGE_FQ_NAME)!!.getFragments().single()
+                val kotlinPackageFragment = module.getPackage(BUILT_INS_PACKAGE_FQ_NAME)!!.fragments.single()
 
                 // If this is a KMemberFunction{n} or KExtensionFunction{n}, it extends Function{n} with the annotation kotlin.extension,
                 // so that the value of this type is callable as an extension function, with the receiver before the dot

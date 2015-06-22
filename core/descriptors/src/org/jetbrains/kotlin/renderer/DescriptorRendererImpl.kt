@@ -764,10 +764,10 @@ internal class DescriptorRendererImpl(
 
     private fun renderPackageView(packageView: PackageViewDescriptor, builder: StringBuilder) {
         builder.append(renderKeyword("package")).append(" ")
-        builder.append(renderFqName(packageView.getFqName()))
+        builder.append(renderFqName(packageView.fqName))
         if (debugMode) {
             builder.append(" in context of ")
-            renderName(packageView.getModule(), builder)
+            renderName(packageView.module, builder)
         }
     }
 

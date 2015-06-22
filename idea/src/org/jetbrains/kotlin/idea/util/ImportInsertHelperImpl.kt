@@ -264,7 +264,7 @@ public class ImportInsertHelperImpl(private val project: Project) : ImportInsert
         private fun getMemberScope(fqName: FqName, moduleDescriptor: ModuleDescriptor): JetScope? {
             val packageView = moduleDescriptor.getPackage(fqName)
             if (packageView != null) {
-                return packageView.getMemberScope()
+                return packageView.memberScope
             }
 
             val parentScope = getMemberScope(fqName.parent(), moduleDescriptor) ?: return null

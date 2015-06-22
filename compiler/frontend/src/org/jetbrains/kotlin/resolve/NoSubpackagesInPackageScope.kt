@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
 class NoSubpackagesInPackageScope(packageDescriptor: PackageViewDescriptor) : AbstractScopeAdapter() {
-    override val workerScope: JetScope = packageDescriptor.getMemberScope()
+    override val workerScope: JetScope = packageDescriptor.memberScope
 
     override fun getPackage(name: Name): PackageViewDescriptor? = null
 

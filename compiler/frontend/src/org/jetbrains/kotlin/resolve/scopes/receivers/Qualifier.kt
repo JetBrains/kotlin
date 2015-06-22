@@ -87,7 +87,7 @@ class QualifierReceiver (
     fun getNestedClassesAndPackageMembersScope(): JetScope {
         val scopes = ArrayList<JetScope>(4)
 
-        scopes.addIfNotNull(packageView?.getMemberScope())
+        scopes.addIfNotNull(packageView?.memberScope)
 
         if (classifier is ClassDescriptor) {
             scopes.add(classifier.getStaticScope())

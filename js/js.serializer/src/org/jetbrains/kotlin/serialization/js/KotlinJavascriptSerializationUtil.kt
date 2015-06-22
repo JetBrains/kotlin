@@ -107,7 +107,7 @@ public object KotlinJavascriptSerializationUtil {
 
         val serializer = DescriptorSerializer.createTopLevel(KotlinJavascriptSerializerExtension)
 
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))
+        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
         ClassSerializationUtil.serializeClasses(classifierDescriptors, serializer, object : ClassSerializationUtil.Sink {
             override fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class) {
@@ -118,7 +118,7 @@ public object KotlinJavascriptSerializationUtil {
         }, skip)
 
         val packageStream = ByteArrayOutputStream()
-        val fragments = packageView.getFragments()
+        val fragments = packageView.fragments
         val packageProto = serializer.packageProto(fragments, skip).build() ?: error("Package fragments not serialized: $fragments")
         if (packageProto.getMemberCount() > 0) {
             packageProto.writeTo(packageStream)

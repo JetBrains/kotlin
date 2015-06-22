@@ -29,7 +29,7 @@ class KPackageImpl(override val jClass: Class<*>) : KCallableContainerImpl(), KP
         moduleData.module.getPackage(fqName) ?: throw KotlinReflectionInternalError("Package not resolved: $fqName")
     }
 
-    override val scope: JetScope get() = descriptor.getMemberScope()
+    override val scope: JetScope get() = descriptor.memberScope
 
     fun topLevelVariable(name: String): KTopLevelVariable<*> =
             KTopLevelVariableImpl<Any?>(this, name)

@@ -31,7 +31,7 @@ fun renderDataFlowValue(value: DataFlowValue): String? {
             is JetExpression -> id.getText()
             is ThisReceiver -> "this@${id.getDeclarationDescriptor().getName()}"
             is VariableDescriptor -> id.getName().asString()
-            is PackageViewDescriptor -> id.getFqName().asString()
+            is PackageViewDescriptor -> id.fqName.asString()
             is com.intellij.openapi.util.Pair<*, *> -> renderId(id.first) + "." + renderId(id.second)
             else -> null
         }

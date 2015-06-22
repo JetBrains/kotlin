@@ -115,7 +115,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val serializer = DescriptorSerializer.createTopLevel(BuiltInsSerializerExtension)
 
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.getMemberScope().getDescriptors(DescriptorKindFilter.CLASSIFIERS))
+        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
         serializeClasses(classifierDescriptors, serializer) {
             classDescriptor, classProto ->
@@ -125,7 +125,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         }
 
         val packageStream = ByteArrayOutputStream()
-        val fragments = packageView.getFragments()
+        val fragments = packageView.fragments
         val packageProto = serializer.packageProto(fragments).build() ?: error("Package fragments not serialized: $fragments")
         packageProto.writeTo(packageStream)
         write(destDir, BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), packageStream,

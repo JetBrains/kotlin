@@ -145,7 +145,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
             if (header?.kind == KotlinClassHeader.Kind.PACKAGE_FACADE) {
                 val packageView = module.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME).sure { "Couldn't resolve package ${LoadDescriptorUtil.TEST_PACKAGE_FQNAME}" }
-                packageScopes.add(packageView.getMemberScope())
+                packageScopes.add(packageView.memberScope)
             }
             else if (header == null ||
                      (header.kind == KotlinClassHeader.Kind.CLASS && header.classKind == JvmAnnotationNames.KotlinClass.Kind.CLASS)) {
@@ -179,7 +179,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         )
     }
 
-    private class SyntheticPackageViewForTest(private val module: ModuleDescriptor,
+    private class SyntheticPackageViewForTest(override val module: ModuleDescriptor,
                                               packageScopes: List<JetScope>,
                                               classes: List<ClassifierDescriptor>) : PackageViewDescriptor {
         private val scope: JetScope
@@ -191,9 +191,10 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
             scope = ChainedScope(this, "synthetic package view for test", writableScope, *packageScopes.toTypedArray())
         }
 
-        override fun getFqName() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
-        override fun getMemberScope() = scope
-        override fun getModule() = module
+        override val fqName: FqName
+            get() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
+        override val memberScope: JetScope
+            get() = scope
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
                 visitor.visitPackageViewDescriptor(this, data)
 
@@ -203,6 +204,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) = throw UnsupportedOperationException()
         override fun getAnnotations() = throw UnsupportedOperationException()
         override fun getName() = throw UnsupportedOperationException()
-        override fun getFragments() = throw UnsupportedOperationException()
+        override val fragments: Nothing
+            get() = throw UnsupportedOperationException()
     }
 }

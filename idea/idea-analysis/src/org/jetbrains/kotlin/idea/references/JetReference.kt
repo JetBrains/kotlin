@@ -93,7 +93,7 @@ public abstract class AbstractJetReference<T : JetElement>(element: T)
     private fun resolveToPsiElements(targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
         if (targetDescriptor is PackageViewDescriptor) {
             val psiFacade = JavaPsiFacade.getInstance(expression.getProject())
-            val fqName = targetDescriptor.getFqName().asString()
+            val fqName = targetDescriptor.fqName.asString()
             return psiFacade.findPackage(fqName).singletonOrEmptyList()
         }
         else {

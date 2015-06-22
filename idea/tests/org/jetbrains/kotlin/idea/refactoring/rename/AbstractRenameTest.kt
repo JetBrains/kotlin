@@ -249,7 +249,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val scopeToSearch = if (classIdStr != null) {
                 module.findClassAcrossModuleDependencies(classIdStr.toClassId())!!.getDefaultType().getMemberScope()
             } else {
-                module.getPackage(FqName(packageFqnStr!!))!!.getMemberScope()
+                module.getPackage(FqName(packageFqnStr!!))!!.memberScope
             }
 
             val psiElement = DescriptorToSourceUtils.descriptorToDeclaration(findDescriptorToRename(scopeToSearch))!!

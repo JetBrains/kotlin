@@ -32,7 +32,7 @@ val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
 public class ReflectionTypes(private val module: ModuleDescriptor) {
     private val kotlinReflectScope: JetScope? by Delegates.lazy {
-        module.getPackage(KOTLIN_REFLECT_FQ_NAME)?.getMemberScope()
+        module.getPackage(KOTLIN_REFLECT_FQ_NAME)?.memberScope
     }
 
     fun find(className: String): ClassDescriptor {

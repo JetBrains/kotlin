@@ -113,7 +113,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     private fun checkClassInPackage(moduleDescriptor: ModuleDescriptor, packageName: String, className: String) {
         val kotlinPackage = moduleDescriptor.getPackage(FqName(packageName))!!
         val kotlinClassName = Name.identifier(className)
-        val kotlinClass = kotlinPackage.getMemberScope().getClassifier(kotlinClassName) as ClassDescriptor
+        val kotlinClass = kotlinPackage.memberScope.getClassifier(kotlinClassName) as ClassDescriptor
         checkClass(kotlinClass)
     }
 
