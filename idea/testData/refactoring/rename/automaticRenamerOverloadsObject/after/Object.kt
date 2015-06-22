@@ -2,13 +2,13 @@ package testing
 
 object Object {
     fun bar() {
-        "".bar()
+        "".foo()
     }
 
     fun bar(a: Int) {
     }
 
-    fun String.bar() {
+    fun String.foo() {
     }
 
 }

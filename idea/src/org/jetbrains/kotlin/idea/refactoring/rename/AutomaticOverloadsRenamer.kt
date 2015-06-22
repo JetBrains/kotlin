@@ -17,25 +17,26 @@
 package org.jetbrains.kotlin.idea.refactoring.rename
 
 import com.intellij.openapi.module.ModuleUtilCore
-import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionByPackageIndex
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.stubindex.JetTopLevelExtensionsByReceiverTypeIndex
 import org.jetbrains.kotlin.idea.stubindex.JetTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.psi.JetClassBody
-import org.jetbrains.kotlin.psi.JetClassOrObject
-import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedFunction
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
 public class AutomaticOverloadsRenamer(function: JetNamedFunction, newName: String) : AutomaticRenamer() {
     init {
-        myElements.addAll(function.getOverloads().filter { it != function })
+        myElements.addAll(function.getOverloads().filter { it != function && QuickFixUtil.canModifyElement(it) })
         suggestAllNames(function.getName(), newName)
     }
 
@@ -46,24 +47,83 @@ public class AutomaticOverloadsRenamer(function: JetNamedFunction, newName: Stri
 }
 
 private fun JetNamedFunction.getOverloads(): Collection<JetNamedFunction> {
+    val functionName = this.getName() ?: return emptyList()
+
     val parent = getParent()
+    val receiverTypeReference = getReceiverTypeReference()
     when (parent) {
         is JetFile -> {
-            val module = ModuleUtilCore.findModuleForPsiElement(this)
-            if (module != null) {
-                val searchScope = GlobalSearchScope.moduleScope(module)
-                val fqName = getFqName()
-                if (fqName != null) {
-                    return JetTopLevelFunctionFqnNameIndex.getInstance().get(fqName.asString(), getProject(), searchScope)
-                }
+            if (receiverTypeReference == null) {
+                // Non-extension top-level functions in same module
+                val module = ModuleUtilCore.findModuleForPsiElement(this) ?: return emptyList()
+                val searchScope = GlobalSearchScope.moduleWithDependentsScope(module)
+                val fqName = getFqName() ?: return emptyList()
+                return JetTopLevelFunctionFqnNameIndex.getInstance()
+                        .get(fqName.asString(), getProject(), searchScope)
+                        .filter { it.getName() == functionName && it.getReceiverTypeReference() == null }
+
+            } else {
+                // Members and extensions for the class
+
+                val klass = (receiverTypeReference.getTypeElement() as? JetUserType)
+                                    ?.getReferenceExpression()
+                                    ?.getReference()
+                                    ?.resolve()
+                                    as? JetClassOrObject
+                            ?: return emptyList()
+
+                return klass.getMembersAndExtensionsForClass(functionName, this.getReceiverClass() ?: return emptyList())
             }
         }
         is JetClassBody -> {
-            return parent.getDeclarations().filterIsInstance<JetNamedFunction>().filter { it.getName() == this.getName() }
+            val klass = parent.getParent() as? JetClassOrObject ?: return emptyList()
+
+            if (receiverTypeReference == null) {
+                // Members and extensions for the class
+                return klass.getMembersAndExtensionsForClass(functionName, (klass.descriptor as? ClassDescriptor) ?: return emptyList())
+            }
+            else {
+                // Members and extensions for the class
+                val receiverClass = this.getReceiverClass() ?: return emptyList()
+                return klass.getFunctions(functionName).filter {
+                    it.isExtensionDeclaration() && it.getReceiverClass() == receiverClass
+                }
+            }
         }
     }
     return emptyList()
 }
+
+private fun JetClassOrObject.getMembersAndExtensionsForClass(functionName: String, classDescriptor: ClassDescriptor): List<JetNamedFunction> {
+    val functionsInClass = this.getFunctions(functionName)
+            .filter { !it.isExtensionDeclaration() && !it.hasModifier(JetTokens.OVERRIDE_KEYWORD) }
+    return functionsInClass + this.getTopLevelExtensionFunctions(functionName, classDescriptor)
+}
+
+
+private fun JetClassOrObject.getFunctions(functionName: String) =
+        getDeclarations()
+                .filterIsInstance<JetNamedFunction>()
+                .filter { it.getName() == functionName }
+
+private fun JetClassOrObject.getTopLevelExtensionFunctions(functionName: String, classDescriptor: ClassDescriptor): List<JetNamedFunction> {
+    val className = getName() ?: return emptyList()
+    val searchScope = this.getUseScope() as? GlobalSearchScope ?: return emptyList()
+    return JetTopLevelExtensionsByReceiverTypeIndex.INSTANCE.get(
+            JetTopLevelExtensionsByReceiverTypeIndex.buildKey(className, functionName),
+            getProject(),
+            searchScope
+    )
+            .filterIsInstance<JetNamedFunction>()
+            .filter { it.getReceiverClass() == classDescriptor }
+}
+
+private fun JetNamedFunction.getReceiverClass() =
+        (this.descriptor as? SimpleFunctionDescriptor)
+                ?.getExtensionReceiverParameter()
+                ?.getType()
+                ?.getConstructor()
+                ?.getDeclarationDescriptor() as? ClassDescriptor
 
 public class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement): Boolean {

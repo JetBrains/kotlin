@@ -13,6 +13,9 @@ open class Klass {
 
 }
 
+fun Klass.foo(a: Int, b: Int) {
+}
+
 class Sub : Klass() {
     override fun foo(a: Int) {
     }
