@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler;
 
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.util.ArrayUtil;
@@ -120,7 +123,13 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         Map<Module, ClassFileFactory> outputFiles = Maps.newHashMap();
 
-        AnalysisResult result = analyze(environment);
+        String targetDescription = "in modules [" + Joiner.on(", ").join(Collections2.transform(chunk, new Function<Module, String>() {
+            @Override
+            public String apply(@Nullable Module input) {
+                return input != null ? input.getModuleName() : "<null>";
+            }
+        })) + "] ";
+        AnalysisResult result = analyze(environment, targetDescription);
         if (result == null) {
             return false;
         }
@@ -281,7 +290,7 @@ public class KotlinToJVMBytecodeCompiler {
 
     @Nullable
     public static GenerationState analyzeAndGenerate(@NotNull KotlinCoreEnvironment environment) {
-        AnalysisResult result = analyze(environment);
+        AnalysisResult result = analyze(environment, null);
 
         if (result == null) {
             return null;
@@ -295,7 +304,7 @@ public class KotlinToJVMBytecodeCompiler {
     }
 
     @Nullable
-    private static AnalysisResult analyze(@NotNull final KotlinCoreEnvironment environment) {
+    private static AnalysisResult analyze(@NotNull final KotlinCoreEnvironment environment, @Nullable String targetDescription) {
         MessageCollector collector = environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
         assert collector != null;
 
@@ -321,7 +330,9 @@ public class KotlinToJVMBytecodeCompiler {
         );
         long analysisNanos = PerformanceCounter.Companion.currentThreadCpuTime() - analysisStart;
         String message = "ANALYZE: " + environment.getSourceFiles().size() + " files (" +
-                         environment.getSourceLinesOfCode() + " lines) in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms";
+                         environment.getSourceLinesOfCode() + " lines) " +
+                         (targetDescription != null ? targetDescription : "") +
+                         "in " + TimeUnit.NANOSECONDS.toMillis(analysisNanos) + " ms";
         K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);
 
         AnalysisResult result = analyzerWithCompilerReport.getAnalysisResult();
@@ -381,8 +392,9 @@ public class KotlinToJVMBytecodeCompiler {
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
 
         long generationNanos = PerformanceCounter.Companion.currentThreadCpuTime() - generationStart;
+        String desc = moduleId != null ? "module " + moduleId + " " : "";
         String message = "GENERATE: " + sourceFiles.size() + " files (" +
-                         environment.countLinesOfCode(sourceFiles) + " lines) in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
+                         environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
         K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);
 
         AnalyzerWithCompilerReport.reportDiagnostics(
