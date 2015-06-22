@@ -59,7 +59,7 @@ public class TrackingSlicedMap extends SlicedMapImpl {
         super.forEach(new Function3<WritableSlice, Object, Object, Void>() {
             @Override
             public Void invoke(WritableSlice slice, Object key, Object value) {
-                f.invoke(slice, key, ((TrackableValue<?>) value).value);
+                f.invoke(((SliceWithStackTrace) slice).getWritableDelegate(), key, ((TrackableValue<?>) value).value);
                 return null;
             }
         });
