@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.cli.jvm
 
-import com.google.common.base.Splitter
-import com.google.common.collect.Lists
 import com.intellij.openapi.Disposable
 import kotlin.Unit
 import org.jetbrains.kotlin.cli.common.CLICompiler
@@ -71,15 +69,11 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         if (IncrementalCompilation.ENABLED) {
             val incrementalCacheProvider = services.get(javaClass<IncrementalCacheProvider>())
-            if (incrementalCacheProvider != null) {
-                configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER, incrementalCacheProvider)
-            }
+            configuration.put(JVMConfigurationKeys.INCREMENTAL_CACHE_PROVIDER, incrementalCacheProvider)
         }
 
         val locator = services.get(javaClass<CompilerJarLocator>())
-        if (locator != null) {
-            configuration.put(JVMConfigurationKeys.COMPILER_JAR_LOCATOR, locator)
-        }
+        configuration.put(JVMConfigurationKeys.COMPILER_JAR_LOCATOR, locator)
 
         try {
             if (!arguments.noJdk) {
@@ -198,11 +192,7 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
 
             if (arguments.reportPerf) {
-                PerformanceCounter.report(object : Function1<String, Unit> {
-                    override fun invoke(s: String): Unit {
-                        reportPerf(environment.configuration, s)
-                    }
-                })
+                PerformanceCounter.report { s -> reportPerf(environment.configuration, s) }
             }
             return OK
         }
@@ -224,9 +214,7 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     /**
      * Allow derived classes to add additional command line arguments
      */
-    override fun createArguments(): K2JVMCompilerArguments {
-        return K2JVMCompilerArguments()
-    }
+    override fun createArguments() = K2JVMCompilerArguments()
 
     companion object {
 
@@ -235,9 +223,8 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         public fun reportPerf(configuration: CompilerConfiguration, message: String) {
-            val collector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-            assert(collector != null)
-            collector!!.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
+            val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+            collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
         }
 
         private fun putAdvancedOptions(configuration: CompilerConfiguration, arguments: K2JVMCompilerArguments) {
@@ -248,11 +235,9 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         private fun getClasspath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {
-            val classpath = Lists.newArrayList<File>()
+            val classpath = arrayListOf<File>()
             if (arguments.classpath != null) {
-                for (element in Splitter.on(File.pathSeparatorChar).split(arguments.classpath)) {
-                    classpath.add(File(element))
-                }
+                classpath.addAll(arguments.classpath.split(File.pathSeparatorChar).map { File(it) })
             }
             if (!arguments.noStdlib) {
                 classpath.add(paths.getRuntimePath())
@@ -261,11 +246,9 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         private fun getAnnotationsPath(paths: KotlinPaths, arguments: K2JVMCompilerArguments): List<File> {
-            val annotationsPath = Lists.newArrayList<File>()
+            val annotationsPath = arrayListOf<File>()
             if (arguments.annotations != null) {
-                for (element in Splitter.on(File.pathSeparatorChar).split(arguments.annotations)) {
-                    annotationsPath.add(File(element))
-                }
+                annotationsPath.addAll(arguments.annotations.split(File.pathSeparatorChar).map { File(it) })
             }
             if (!arguments.noJdkAnnotations) {
                 annotationsPath.add(paths.getJdkAnnotationsPath())
