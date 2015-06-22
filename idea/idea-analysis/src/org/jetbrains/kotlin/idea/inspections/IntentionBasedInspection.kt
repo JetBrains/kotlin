@@ -39,7 +39,7 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
 ) : AbstractKotlinInspection() {
 
     constructor(intention: JetSelfTargetingRangeIntention<TElement>, additionalChecker: (TElement) -> Boolean = { true })
-        : this(listOf(IntentionData(intention, additionalChecker)), null, intention.elementType)
+    : this(listOf(IntentionData(intention, additionalChecker)), null, intention.elementType)
 
     public data class IntentionData<TElement : JetElement>(
             val intention: JetSelfTargetingRangeIntention<TElement>,
@@ -81,10 +81,14 @@ public abstract class IntentionBasedInspection<TElement : JetElement>(
             val intention: JetSelfTargetingRangeIntention<TElement>,
             val additionalChecker: (TElement) -> Boolean,
             targetElement: TElement
-    ): LocalQuickFixOnPsiElement(targetElement), IntentionAction {
+    ) : LocalQuickFixOnPsiElement(targetElement), IntentionAction {
 
         // store text into variable because intention instance is shared and may change its text later
-        private val _text = intention.getText()
+        private val _text = synchronized(intention) {
+            // Ensure that text will be valid for current element in multithreaded environment
+            intention.applicabilityRange(targetElement)
+            intention.getText()
+        }
 
         override fun getFamilyName() = intention.getFamilyName()
 
