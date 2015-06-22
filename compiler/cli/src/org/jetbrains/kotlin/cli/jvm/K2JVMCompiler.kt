@@ -51,7 +51,6 @@ import kotlin.platform.platformStatic
 
 SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
-    private val initStartNanos = System.nanoTime()
 
     override fun doExecute(arguments: K2JVMCompilerArguments, services: Services, messageCollector: MessageCollector, rootDisposable: Disposable): ExitCode {
         val messageSeverityCollector = MessageSeverityCollector(messageCollector)
@@ -221,6 +220,11 @@ public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     }
 
     companion object {
+        private var initStartNanos = System.nanoTime()
+
+        public fun resetInitStartTime() {
+            initStartNanos = System.nanoTime()
+        }
 
         platformStatic public fun main(args: Array<String>) {
             CLICompiler.doMain(K2JVMCompiler(), args)

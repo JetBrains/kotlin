@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments;
 import org.jetbrains.kotlin.cli.common.messages.*;
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
@@ -156,6 +157,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
             }
 
             for (int i = 0; i < repeatCount; i++) {
+                if (i > 0) {
+                    K2JVMCompiler.Companion.resetInitStartTime();
+                }
                 Disposable rootDisposable = Disposer.newDisposable();
                 try {
                     MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
