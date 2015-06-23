@@ -536,7 +536,7 @@ private class SubpluginEnvironment(
             }
         }
 
-        val extraProperties = compileTask.getExtensions().getExtraProperties()
+        val extraProperties = compileTask.extraProperties
         extraProperties.set("compilerPluginClasspaths", realPluginClasspaths.toTypedArray())
         extraProperties.set("compilerPluginArguments", pluginArguments.toTypedArray())
     }
@@ -563,7 +563,7 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
 }
 
 private fun AbstractCompile.storeKaptAnnotationsFile(kapt: AnnotationProcessingManager) {
-    getExtensions().getExtraProperties().set("kaptAnnotationsFile", kapt.getAnnotationFile())
+    extraProperties.set("kaptAnnotationsFile", kapt.getAnnotationFile())
 }
 
 private fun Project.getAptDirsForSourceSet(kotlinTask: AbstractCompile, sourceSetName: String): Pair<File, File> {
@@ -607,7 +607,7 @@ private fun Project.initKapt(
         kotlinTask.getLogger().kotlinDebug("kapt: Using class file stubs")
 
         val stubsDir = File(getBuildDir(), "tmp/kapt/$variantName/classFileStubs")
-        kotlinTask.getExtensions().getExtraProperties().set("stubsDir", stubsDir)
+        kotlinTask.extraProperties.set("kaptStubsDir", stubsDir)
 
         javaTask.setClasspath(javaTask.getClasspath() + files(stubsDir))
 
@@ -619,6 +619,10 @@ private fun Project.initKapt(
     } else {
         kotlinAfterJavaTask = null
         kotlinTask.getLogger().kotlinDebug("kapt: Class file stubs are not used")
+    }
+
+    if (kaptExtension.inheritedAnnotations) {
+        kotlinTask.extraProperties.set("kaptInheritedAnnotations", true)
     }
 
     kotlinTask.doFirst {
@@ -681,6 +685,9 @@ private fun loadAndroidPluginVersion(): String? {
         return null;
     }
 }
+
+private val AbstractCompile.extraProperties: ExtraPropertiesExtension
+    get() = getExtensions().getExtraProperties()
 
 //Copied from StringUtil.compareVersionNumbers
 private fun compareVersionNumbers(v1: String?, v2: String?): Int {

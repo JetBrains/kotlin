@@ -131,17 +131,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         val basePluginOptions = extraProperties.getOrNull<Array<String>>("compilerPluginArguments") ?: arrayOf()
 
         val pluginOptions = arrayListOf(*basePluginOptions)
-
-        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
-        if (kaptAnnotationsFile != null) {
-            if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
-        }
-
-        val kaptClassFileStubsDir = extraProperties.getOrNull<File>("stubsDir")
-        if (kaptClassFileStubsDir != null) {
-            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
-        }
+        handleKaptProperties(extraProperties, pluginOptions)
 
         args.pluginOptions = pluginOptions.toTypedArray()
         getLogger().kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
@@ -160,6 +150,24 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         args.noOptimize = kotlinOptions.noOptimize
         args.noCallAssertions = kotlinOptions.noCallAssertions
         args.noParamAssertions = kotlinOptions.noParamAssertions
+    }
+
+    private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
+        val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
+        if (kaptAnnotationsFile != null) {
+            if (kaptAnnotationsFile.exists()) kaptAnnotationsFile.delete()
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:output=" + kaptAnnotationsFile)
+        }
+
+        val kaptClassFileStubsDir = extraProperties.getOrNull<File>("kaptStubsDir")
+        if (kaptClassFileStubsDir != null) {
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:stubs=" + kaptClassFileStubsDir)
+        }
+
+        val supportInheritedAnnotations = extraProperties.getOrNull<Boolean>("kaptInheritedAnnotations")
+        if (supportInheritedAnnotations != null && supportInheritedAnnotations) {
+            pluginOptions.add("plugin:$ANNOTATIONS_PLUGIN_NAME:inherited=true")
+        }
     }
 
     private fun getJavaSourceRoots(): Set<File> =
