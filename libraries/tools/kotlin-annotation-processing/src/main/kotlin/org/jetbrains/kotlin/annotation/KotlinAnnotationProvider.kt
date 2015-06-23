@@ -20,7 +20,6 @@ import java.io.File
 import java.io.Reader
 import java.io.StringReader
 import javax.tools.FileObject
-import kotlin.properties.Delegates
 
 public abstract class KotlinAnnotationProvider {
 
@@ -31,11 +30,21 @@ public abstract class KotlinAnnotationProvider {
 
         val SHORTENED_ANNOTATION = "a"
         val SHORTENED_PACKAGE_NAME = "p"
+
+        val CLASS_DECLARATION = "d"
     }
 
-    public val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>> by Delegates.lazy {
+    public val annotatedKotlinElements: Map<String, Set<AnnotatedElementDescriptor>> by lazy {
         readAnnotations()
     }
+
+    private val kotlinClassesInternal = hashSetOf<String>()
+
+    public val kotlinClasses: Set<String>
+        get() = kotlinClassesInternal
+
+    public val supportInheritedAnnotations: Boolean
+        get() = kotlinClassesInternal.isNotEmpty()
 
     protected abstract val serializedAnnotations: Reader
 
@@ -65,6 +74,10 @@ public abstract class KotlinAnnotationProvider {
                 when (type) {
                     SHORTENED_ANNOTATION -> handleShortenedName(shortenedAnnotationCache, lineParts)
                     SHORTENED_PACKAGE_NAME -> handleShortenedName(shortenedPackageNameCache, lineParts)
+                    CLASS_DECLARATION -> {
+                        val classFqName = expandClassName(lineParts[1]).replace('$', '.')
+                        kotlinClassesInternal.add(classFqName)
+                    }
 
                     ANNOTATED_CLASS, ANNOTATED_FIELD, ANNOTATED_METHOD -> {
                         val annotationName = expandAnnotation(lineParts[1])
