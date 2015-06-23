@@ -44,7 +44,8 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     private final LabeledComponent<JComboBox> moduleChooser;
 
     public JetRunConfigurationEditor(Project project) {
-        moduleChooser = LabeledComponent.create(new JComboBox(), "Use classpath and JDK of module:");
+        moduleChooser = LabeledComponent.create(new JComboBox(), "Use classpath of module:");
+        moduleChooser.setLabelLocation(BorderLayout.WEST);
         myModuleChooserHolder.add(moduleChooser, BorderLayout.CENTER);
         myModuleSelector = new ConfigurationModuleSelector(project, moduleChooser.getComponent());
         myCommonProgramParameters.setModuleContext(myModuleSelector.getModule());
