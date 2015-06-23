@@ -17,6 +17,9 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnOpcode
+import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
+import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -50,6 +53,10 @@ open class BranchedValue(
         v.visitJumpInsn(patchOpcode(if (jumpIfFalse) opcode else negatedOperations[opcode], v), jumpLabel);
     }
 
+    open fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        condJump(jumpLabel, v, jumpIfFalse)
+    }
+
     protected open fun patchOpcode(opcode: Int, v: InstructionAdapter): Int {
         return opcode
     }
@@ -58,10 +65,18 @@ open class BranchedValue(
         val negatedOperations = hashMapOf<Int, Int>()
 
         val TRUE: BranchedValue = object : BranchedValue(StackValue.Constant(true, Type.BOOLEAN_TYPE), null, Type.BOOLEAN_TYPE, IFEQ) {
-
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 if (!jumpIfFalse) {
                     v.goTo(jumpLabel)
+                }
+            }
+
+            override fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+                if (!jumpIfFalse) {
+                    v.fakeAlwaysTrueIfeq(jumpLabel)
+                }
+                else {
+                    v.fakeAlwaysFalseIfeq(jumpLabel)
                 }
             }
 
@@ -75,6 +90,15 @@ open class BranchedValue(
             override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
                 if (jumpIfFalse) {
                     v.goTo(jumpLabel)
+                }
+            }
+
+            override fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+                if (jumpIfFalse) {
+                    v.fakeAlwaysTrueIfeq(jumpLabel)
+                }
+                else {
+                    v.fakeAlwaysFalseIfeq(jumpLabel)
                 }
             }
 
@@ -109,6 +133,10 @@ open class BranchedValue(
 
         fun condJump(condition: StackValue, label: Label, jumpIfFalse: Boolean, iv: InstructionAdapter) {
             condJump(condition).condJump(label, iv, jumpIfFalse)
+        }
+
+        fun loopJump(condition: StackValue, label: Label, jumpIfFalse: Boolean, iv: InstructionAdapter) {
+            condJump(condition).loopJump(label, iv, jumpIfFalse)
         }
 
         fun condJump(condition: StackValue): CondJump {
@@ -170,6 +198,10 @@ class CondJump(val condition: BranchedValue, op: Int) : BranchedValue(condition,
 
     override fun condJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
         condition.condJump(jumpLabel, v, jumpIfFalse)
+    }
+
+    override fun loopJump(jumpLabel: Label, v: InstructionAdapter, jumpIfFalse: Boolean) {
+        condition.loopJump(jumpLabel, v, jumpIfFalse)
     }
 }
 

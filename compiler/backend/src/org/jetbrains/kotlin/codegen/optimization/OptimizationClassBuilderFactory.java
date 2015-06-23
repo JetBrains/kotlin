@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 
 public class OptimizationClassBuilderFactory implements ClassBuilderFactory {
     private final ClassBuilderFactory delegate;
+    private final boolean disableOptimization;
 
-    public OptimizationClassBuilderFactory(ClassBuilderFactory delegate) {
+    public OptimizationClassBuilderFactory(ClassBuilderFactory delegate, boolean disableOptimization) {
         this.delegate = delegate;
+        this.disableOptimization = disableOptimization;
     }
 
     @NotNull
@@ -38,7 +40,7 @@ public class OptimizationClassBuilderFactory implements ClassBuilderFactory {
     @NotNull
     @Override
     public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-        return new OptimizationClassBuilder(delegate.newClassBuilder(origin));
+        return new OptimizationClassBuilder(delegate.newClassBuilder(origin), disableOptimization);
     }
 
     @Override

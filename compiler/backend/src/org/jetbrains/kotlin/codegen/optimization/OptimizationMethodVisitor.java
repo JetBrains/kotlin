@@ -35,7 +35,12 @@ import java.util.List;
 
 public class OptimizationMethodVisitor extends MethodVisitor {
     private static final int MEMORY_LIMIT_BY_METHOD_MB = 50;
-    private static final MethodTransformer[] TRANSFORMERS = new MethodTransformer[]{
+
+    private static final MethodTransformer[] MANDATORY_TRANSFORMERS = new MethodTransformer[] {
+            new FixStackBeforeJumpTransformer()
+    };
+
+    private static final MethodTransformer[] OPTIMIZATION_TRANSFORMERS = new MethodTransformer[] {
             new RedundantNullCheckMethodTransformer(),
             new RedundantBoxingMethodTransformer(),
             new DeadCodeEliminationMethodTransformer(),
@@ -45,9 +50,11 @@ public class OptimizationMethodVisitor extends MethodVisitor {
 
     private final MethodNode methodNode;
     private final MethodVisitor delegate;
+    private final boolean disableOptimization;
 
     public OptimizationMethodVisitor(
             @NotNull MethodVisitor delegate,
+            boolean disableOptimization,
             int access,
             @NotNull String name,
             @NotNull String desc,
@@ -59,6 +66,7 @@ public class OptimizationMethodVisitor extends MethodVisitor {
         this.methodNode = new MethodNode(access, name, desc, signature, exceptions);
         this.methodNode.localVariables = new ArrayList<LocalVariableNode>(5);
         this.mv = InlineCodegenUtil.wrapWithMaxLocalCalc(methodNode);
+        this.disableOptimization = disableOptimization;
     }
 
     @Override
@@ -70,9 +78,14 @@ public class OptimizationMethodVisitor extends MethodVisitor {
 
         super.visitEnd();
 
-        if (canBeAnalyzed(methodNode)) {
-            for (MethodTransformer transformer : TRANSFORMERS) {
+        if (shouldBeTransformed(methodNode)) {
+            for (MethodTransformer transformer : MANDATORY_TRANSFORMERS) {
                 transformer.transform("fake", methodNode);
+            }
+            if (canBeOptimized(methodNode) && !disableOptimization) {
+                for (MethodTransformer transformer : OPTIMIZATION_TRANSFORMERS) {
+                    transformer.transform("fake", methodNode);
+                }
             }
             CommonPackage.prepareForEmitting(methodNode);
         }
@@ -121,11 +134,12 @@ public class OptimizationMethodVisitor extends MethodVisitor {
         return traceMethodVisitor;
     }
 
-    private static boolean canBeAnalyzed(@NotNull MethodNode node) {
-        int totalFramesSizeMb = node.instructions.size() *
-                              (node.maxLocals + node.maxStack) / (1024 * 1024);
+    private static boolean shouldBeTransformed(@NotNull MethodNode node) {
+        return node.instructions.size() > 0;
+    }
 
-        return node.instructions.size() > 0 &&
-               totalFramesSizeMb < MEMORY_LIMIT_BY_METHOD_MB;
+    private static boolean canBeOptimized(@NotNull MethodNode node) {
+        int totalFramesSizeMb = node.instructions.size() * (node.maxLocals + node.maxStack) / (1024 * 1024);
+        return totalFramesSizeMb < MEMORY_LIMIT_BY_METHOD_MB;
     }
 }

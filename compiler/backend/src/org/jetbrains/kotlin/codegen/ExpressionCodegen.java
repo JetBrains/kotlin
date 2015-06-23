@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.codegen.inline.*;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethod;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
+import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsPackage;
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
@@ -467,7 +468,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         blockStackElements.push(new LoopBlockStackElement(end, condition, targetLabel(expression)));
 
         StackValue conditionValue = gen(expression.getCondition());
-        BranchedValue.Companion.condJump(conditionValue, end, true, v);
+        BranchedValue.Companion.loopJump(conditionValue, end, true, v);
 
         generateLoopBody(expression.getBody());
 
@@ -490,6 +491,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         Label continueLabel = new Label();
 
         blockStackElements.push(new LoopBlockStackElement(breakLabel, continueLabel, targetLabel(expression)));
+
+        PseudoInsnsPackage.fakeAlwaysFalseIfeq(v, continueLabel);
 
         JetExpression body = expression.getBody();
         JetExpression condition = expression.getCondition();
@@ -514,7 +517,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             conditionValue = gen(condition);
         }
 
-        BranchedValue.Companion.condJump(conditionValue, beginLoopLabel, false, v);
+        BranchedValue.Companion.loopJump(conditionValue, beginLoopLabel, false, v);
         v.mark(breakLabel);
 
         blockStackElements.pop();
@@ -573,6 +576,9 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
         v.mark(loopEntry);
         generator.checkPreCondition(loopExit);
+
+        // Some forms of for-loop can be optimized as post-condition loops.
+        PseudoInsnsPackage.fakeAlwaysFalseIfeq(v, continueLabel);
 
         generator.beforeBody();
         blockStackElements.push(new LoopBlockStackElement(loopExit, continueLabel, targetLabel(generator.forExpression)));
@@ -1231,7 +1237,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
                 if (labelElement == null ||
                     loopBlockStackElement.targetLabel != null &&
                     labelElement.getReferencedName().equals(loopBlockStackElement.targetLabel.getReferencedName())) {
-                    v.goTo(isBreak ? loopBlockStackElement.breakLabel : loopBlockStackElement.continueLabel);
+                    Label label = isBreak ? loopBlockStackElement.breakLabel : loopBlockStackElement.continueLabel;
+                    PseudoInsnsPackage.fixStackAndJump(v, label);
                     v.mark(afterBreakContinueLabel);
                     return StackValue.none();
                 }

@@ -25,9 +25,11 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor;
 
 public class OptimizationClassBuilder extends DelegatingClassBuilder {
     private final ClassBuilder delegate;
+    private final boolean disableOptimization;
 
-    public OptimizationClassBuilder(@NotNull ClassBuilder delegate) {
+    public OptimizationClassBuilder(@NotNull ClassBuilder delegate, boolean disableOptimization) {
         this.delegate = delegate;
+        this.disableOptimization = disableOptimization;
     }
 
     @NotNull
@@ -48,6 +50,7 @@ public class OptimizationClassBuilder extends DelegatingClassBuilder {
     ) {
         return new OptimizationMethodVisitor(
                 super.newMethod(origin, access, name, desc, signature, exceptions),
+                disableOptimization,
                 access, name, desc, signature, exceptions
         );
     }

@@ -149,9 +149,7 @@ public class GenerationState {
 
         this.intrinsics = new IntrinsicMethods();
 
-        if (!disableOptimization) {
-            builderFactory = new OptimizationClassBuilderFactory(builderFactory);
-        }
+        builderFactory = new OptimizationClassBuilderFactory(builderFactory, disableOptimization);
 
         ClassBuilderFactory interceptedBuilderFactory = new BuilderFactoryForDuplicateSignatureDiagnostics(
                 builderFactory, this.bindingContext, diagnostics);
