@@ -23,6 +23,7 @@ import com.intellij.execution.configurations.*;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.util.JavaParametersUtil;
+import com.intellij.execution.util.ProgramParametersUtil;
 import com.intellij.openapi.components.PathMacroManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -200,6 +201,13 @@ public class JetRunConfiguration extends ModuleBasedConfiguration<RunConfigurati
     @Override
     public void setAlternativeJrePath(String path) {
         ALTERNATIVE_JRE_PATH = path;
+    }
+
+    @Override
+    public void checkConfiguration() throws RuntimeConfigurationException {
+        JavaParametersUtil.checkAlternativeJRE(this);
+        ProgramParametersUtil.checkWorkingDirectoryExist(this, getProject(), getConfigurationModule().getModule());
+        JavaRunConfigurationExtensionManager.checkConfigurationIsValid(this);
     }
 
     @Override
