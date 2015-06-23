@@ -70,7 +70,7 @@ fun CompletionSessionConfiguration(parameters: CompletionParameters) = Completio
         completeNonImportedDeclarations = parameters.getInvocationCount() >= 2,
         completeNonAccessibleDeclarations = parameters.getInvocationCount() >= 2)
 
-abstract class CompletionSessionBase(protected val configuration: CompletionSessionConfiguration,
+abstract class CompletionSession(protected val configuration: CompletionSessionConfiguration,
                                      protected val parameters: CompletionParameters,
                                      resultSet: CompletionResultSet) {
     protected val position: PsiElement = parameters.getPosition()

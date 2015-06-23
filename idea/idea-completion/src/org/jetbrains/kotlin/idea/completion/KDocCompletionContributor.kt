@@ -57,7 +57,7 @@ object KDocNameCompletionProvider: CompletionProvider<CompletionParameters>() {
 }
 
 class KDocNameCompletionSession(parameters: CompletionParameters,
-                                resultSet: CompletionResultSet): CompletionSessionBase(CompletionSessionConfiguration(parameters), parameters, resultSet) {
+                                resultSet: CompletionResultSet): CompletionSession(CompletionSessionConfiguration(parameters), parameters, resultSet) {
     override val descriptorKindFilter: DescriptorKindFilter? get() = null
 
     override fun doComplete() {

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 class BasicCompletionSession(configuration: CompletionSessionConfiguration,
                              parameters: CompletionParameters,
                              resultSet: CompletionResultSet)
-: CompletionSessionBase(configuration, parameters, resultSet) {
+: CompletionSession(configuration, parameters, resultSet) {
 
     private enum class CompletionKind(
             val descriptorKindFilter: DescriptorKindFilter?,
