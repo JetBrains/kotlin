@@ -63,14 +63,6 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitObjectDeclarationName(@NotNull JetObjectDeclarationName declaration) {
-        PsiElement nameIdentifier = declaration.getNameIdentifier();
-        if (nameIdentifier != null) {
-            highlightName(nameIdentifier, JetHighlightingColors.CLASS);
-        }
-    }
-
-    @Override
     public void visitTypeParameter(@NotNull JetTypeParameter parameter) {
         PsiElement identifier = parameter.getNameIdentifier();
         if (identifier != null) {
@@ -80,18 +72,13 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
     }
 
     @Override
-    public void visitEnumEntry(@NotNull JetEnumEntry enumEntry) {
-        // Do nothing, the name was already highlighted in visitObjectDeclarationName
-    }
-
-    @Override
-    public void visitClass(@NotNull JetClass klass) {
-        PsiElement identifier = klass.getNameIdentifier();
-        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, klass);
+    public void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
+        PsiElement identifier = classOrObject.getNameIdentifier();
+        ClassDescriptor classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject);
         if (identifier != null && classDescriptor != null) {
             highlightName(identifier, textAttributesKeyForClass(classDescriptor));
         }
-        super.visitClass(klass);
+        super.visitClassOrObject(classOrObject);
     }
 
     @Override
@@ -113,7 +100,7 @@ class TypeKindHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
             case OBJECT:
                 return JetHighlightingColors.OBJECT;
             case ENUM_ENTRY:
-                return JetHighlightingColors.INSTANCE_PROPERTY;
+                return JetHighlightingColors.ENUM_ENTRY;
             default:
                 return descriptor.getModality() == Modality.ABSTRACT
                        ? JetHighlightingColors.ABSTRACT_CLASS

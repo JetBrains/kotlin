@@ -1,6 +1,6 @@
 package testing
 
-object <info textAttributesKey="KOTLIN_CLASS">O</info> {
+object <info textAttributesKey="KOTLIN_OBJECT">O</info> {
     fun <info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">foo</info>() = 42
 }
 

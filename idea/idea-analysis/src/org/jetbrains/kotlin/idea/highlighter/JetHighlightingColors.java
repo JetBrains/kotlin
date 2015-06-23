@@ -55,6 +55,7 @@ public class JetHighlightingColors {
     public static final TextAttributesKey TRAIT = createTextAttributesKey("KOTLIN_TRAIT", CodeInsightColors.INTERFACE_NAME_ATTRIBUTES);
     public static final TextAttributesKey ANNOTATION = createTextAttributesKey("KOTLIN_ANNOTATION");
     public static final TextAttributesKey OBJECT = createTextAttributesKey("KOTLIN_OBJECT", CLASS);
+    public static final TextAttributesKey ENUM_ENTRY = createTextAttributesKey("KOTLIN_ENUM_ENTRY", CodeInsightColors.INSTANCE_FIELD_ATTRIBUTES);
 
     // variable kinds
     public static final TextAttributesKey MUTABLE_VARIABLE = createTextAttributesKey("KOTLIN_MUTABLE_VARIABLE");

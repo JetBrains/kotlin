@@ -154,7 +154,7 @@ public class LazyTopDownAnalyzer {
                     fileScope.forceResolveImport(importDirective)
                 }
 
-                private fun visitClassOrObject(classOrObject: JetClassOrObject) {
+                override fun visitClassOrObject(classOrObject: JetClassOrObject) {
                     val descriptor = lazyDeclarationResolver!!.getClassDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes
 
                     c.getDeclaredClasses().put(classOrObject, descriptor)

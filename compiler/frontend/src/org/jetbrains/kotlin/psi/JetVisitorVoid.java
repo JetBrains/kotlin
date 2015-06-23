@@ -33,6 +33,10 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
         super.visitClass(klass, null);
     }
 
+    public void visitClassOrObject(@NotNull JetClassOrObject classOrObject) {
+        super.visitClassOrObject(classOrObject, null);
+    }
+
     public void visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor) {
         super.visitSecondaryConstructor(constructor, null);
     }
@@ -445,6 +449,12 @@ public class JetVisitorVoid extends JetVisitor<Void, Void> {
     @Override
     public final Void visitClass(@NotNull JetClass klass, Void data) {
         visitClass(klass);
+        return null;
+    }
+
+    @Override
+    public final Void visitClassOrObject(@NotNull JetClassOrObject classOrObject, Void data) {
+        visitClassOrObject(classOrObject);
         return null;
     }
 

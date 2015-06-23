@@ -30,7 +30,15 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
     }
 
     public R visitClass(@NotNull JetClass klass, D data) {
-        return visitNamedDeclaration(klass, data);
+        return visitClassOrObject(klass, data);
+    }
+
+    public R visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, D data) {
+        return visitClassOrObject(declaration, data);
+    }
+
+    public R visitClassOrObject(@NotNull JetClassOrObject classOrObject, D data) {
+        return visitNamedDeclaration(classOrObject, data);
     }
 
     public R visitSecondaryConstructor(@NotNull JetSecondaryConstructor constructor, D data) {
@@ -400,10 +408,6 @@ public class JetVisitor<R, D> extends PsiElementVisitor {
 
     public R visitWhenConditionWithExpression(@NotNull JetWhenConditionWithExpression condition, D data) {
         return visitJetElement(condition, data);
-    }
-
-    public R visitObjectDeclaration(@NotNull JetObjectDeclaration declaration, D data) {
-        return visitNamedDeclaration(declaration, data);
     }
 
     public R visitObjectDeclarationName(@NotNull JetObjectDeclarationName declarationName, D data) {

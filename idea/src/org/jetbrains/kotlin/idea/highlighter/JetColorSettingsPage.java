@@ -82,6 +82,10 @@ public class JetColorSettingsPage implements ColorSettingsPage {
                "\n" +
                "<KEYWORD>public</KEYWORD> <KEYWORD>abstract</KEYWORD> class <ABSTRACT_CLASS>Abstract</ABSTRACT_CLASS> {\n" +
                "}\n" +
+               "\n" +
+               "<KEYWORD>object</KEYWORD> <OBJECT>Obj</OBJECT>\n" +
+               "\n" +
+               "<KEYWORD>enum</KEYWORD> <KEYWORD>class</KEYWORD> <CLASS>E</CLASS> { <ENUM_ENTRY>A</ENUM_ENTRY> }\n" +
                "               Bad character: \\n\n";
     }
 
@@ -137,6 +141,7 @@ public class JetColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Interface", JetHighlightingColors.TRAIT),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.annotation"), JetHighlightingColors.ANNOTATION),
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.object"), JetHighlightingColors.OBJECT),
+            new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.enumEntry"), JetHighlightingColors.ENUM_ENTRY),
 
             new AttributesDescriptor(JetBundle.message("options.kotlin.attribute.descriptor.var"), JetHighlightingColors.MUTABLE_VARIABLE),
 
