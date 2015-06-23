@@ -16,12 +16,15 @@
 
 package org.jetbrains.kotlin.idea.run;
 
+import com.intellij.execution.ui.AlternativeJREPanel;
 import com.intellij.execution.ui.CommonJavaParametersPanel;
 import com.intellij.execution.ui.ConfigurationModuleSelector;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.ui.PanelWithAnchor;
+import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -29,15 +32,20 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguration> {
+public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguration> implements PanelWithAnchor {
     private JPanel myMainPanel;
     private JTextField myMainClassField;
     private JPanel myModuleChooserHolder;
     private CommonJavaParametersPanel myCommonProgramParameters;
+    private AlternativeJREPanel alternativeJREPanel;
+    private LabeledComponent<JTextField> mainClass;
     private ConfigurationModuleSelector myModuleSelector;
+    private JComponent anchor;
+    private final LabeledComponent<JComboBox> moduleChooser;
 
     public JetRunConfigurationEditor(Project project) {
-        LabeledComponent<JComboBox> moduleChooser = LabeledComponent.create(new JComboBox(),  "Use classpath and JDK of module:");
+        moduleChooser = LabeledComponent.create(new JComboBox(), "Use classpath of module:");
+        moduleChooser.setLabelLocation(BorderLayout.WEST);
         myModuleChooserHolder.add(moduleChooser, BorderLayout.CENTER);
         myModuleSelector = new ConfigurationModuleSelector(project, moduleChooser.getComponent());
         myCommonProgramParameters.setModuleContext(myModuleSelector.getModule());
@@ -47,6 +55,8 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
                 myCommonProgramParameters.setModuleContext(myModuleSelector.getModule());
             }
         });
+
+        anchor = UIUtil.mergeComponentsWithAnchor(mainClass, myCommonProgramParameters, alternativeJREPanel, moduleChooser);
     }
 
     @Override
@@ -54,6 +64,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
         myCommonProgramParameters.reset(configuration);
         myMainClassField.setText(configuration.getRunClass() == null ? null : configuration.getRunClass());
         myModuleSelector.reset(configuration);
+        alternativeJREPanel.init(configuration.getAlternativeJrePath(), configuration.isAlternativeJrePathEnabled());
     }
 
     @Override
@@ -61,6 +72,8 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
         myModuleSelector.applyTo(configuration);
         myCommonProgramParameters.applyTo(configuration);
         configuration.setRunClass(myMainClassField.getText());
+        configuration.setAlternativeJrePath(alternativeJREPanel.getPath());
+        configuration.setAlternativeJrePathEnabled(alternativeJREPanel.isPathEnabled());
     }
 
     @NotNull
@@ -71,5 +84,25 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
 
     @Override
     protected void disposeEditor() {
+    }
+
+    @Override
+    public JComponent getAnchor() {
+        return anchor;
+    }
+
+    @Override
+    public void setAnchor(JComponent anchor) {
+        this.anchor = anchor;
+        mainClass.setAnchor(anchor);
+        myCommonProgramParameters.setAnchor(anchor);
+        alternativeJREPanel.setAnchor(anchor);
+        moduleChooser.setAnchor(anchor);
+    }
+
+    private void createUIComponents() {
+        mainClass = new LabeledComponent<JTextField>();
+        myMainClassField = new JTextField();
+        mainClass.setComponent(myMainClassField);
     }
 }
