@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,6 +44,11 @@ public class JetValueArgument extends JetElementImpl implements ValueArgument {
     @Nullable
     public JetValueArgumentName getArgumentName() {
         return (JetValueArgumentName) findChildByType(JetNodeTypes.VALUE_ARGUMENT_NAME);
+    }
+
+    @Nullable
+    public PsiElement getEqualsToken() {
+        return findChildByType(JetTokens.EQ);
     }
 
     @Override
