@@ -98,4 +98,14 @@ class KotlinGradleIT: BaseGradleIT() {
         }
     }
 
+    Test fun testKaptInheritedAnnotations() {
+        Project("kaptInheritedAnnotations", "1.12").build("build") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/kapt/main/TestClassGenerated.java")
+            assertFileExists("build/generated/source/kapt/main/AncestorClassGenerated.java")
+            assertFileExists("build/classes/main/example/TestClassGenerated.class")
+            assertFileExists("build/classes/main/example/AncestorClassGenerated.class")
+        }
+    }
+
 }
