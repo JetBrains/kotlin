@@ -12,7 +12,7 @@ internal val parenthesizedParameters2: (???) -> kotlin.Unit
 internal val receiver: kotlin.Int.() -> kotlin.Unit
 internal val receiverAndReturnType: kotlin.Int.() -> kotlin.Int
 internal val receiverAndReturnTypeWithParameter: kotlin.Int.(kotlin.Int) -> kotlin.Int
-internal val receiverWithFunctionType: (kotlin.Int) -> kotlin.Int.() -> kotlin.Unit
+internal val receiverWithFunctionType: ((kotlin.Int) -> kotlin.Int).() -> kotlin.Unit
 internal val receiverWithParameter: kotlin.Int.(???) -> kotlin.Unit
 internal val returnType: () -> kotlin.Int
 internal val returnTypeWithParameter: (kotlin.Int) -> kotlin.Int

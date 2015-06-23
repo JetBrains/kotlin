@@ -288,7 +288,14 @@ internal class DescriptorRendererImpl(
 
             val receiverType = KotlinBuiltIns.getReceiverType(type)
             if (receiverType != null) {
+                val surroundReceiver = shouldRenderAsPrettyFunctionType(receiverType) && !receiverType.isMarkedNullable()
+                if (surroundReceiver) {
+                    append("(")
+                }
                 append(renderNormalizedType(receiverType))
+                if (surroundReceiver) {
+                    append(")")
+                }
                 append(".")
             }
 

@@ -19,6 +19,9 @@ var v10: GF<Any>
 class GEF<A, B>: @extension Function1<A, B>
 var v11: GEF<Any, Any>
 
+var v12: (() -> Unit).() -> Unit
+var v13: (() -> Unit)?.() -> Unit
+
 //internal var v1: () -> kotlin.Unit defined in root package
 //internal var v2: (kotlin.Int) -> kotlin.Int defined in root package
 //internal var v3: (kotlin.Int, kotlin.String) -> kotlin.String defined in root package
@@ -42,3 +45,5 @@ var v11: GEF<Any, Any>
 //<A> defined in GEF
 //<B> defined in GEF
 //internal var v11: GEF<kotlin.Any, kotlin.Any> defined in root package
+//internal var v12: (() -> kotlin.Unit).() -> kotlin.Unit defined in root package
+//internal var v13: (() -> kotlin.Unit)?.() -> kotlin.Unit defined in root package

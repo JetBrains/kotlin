@@ -17,7 +17,7 @@ internal abstract class XXX {
     internal abstract val a15: kotlin.Int?.(kotlin.Int) -> kotlin.Int
     internal abstract val a152: kotlin.Int?.(kotlin.Int) -> kotlin.Int
     internal abstract val a16: (kotlin.Int) -> (kotlin.Int) -> kotlin.Int
-    internal abstract val a17: (kotlin.Int) -> kotlin.Int.(kotlin.Int) -> kotlin.Int
+    internal abstract val a17: ((kotlin.Int) -> kotlin.Int).(kotlin.Int) -> kotlin.Int
     internal abstract val a18: (kotlin.Int) -> (kotlin.Int) -> kotlin.Int
     internal abstract val a19: ((kotlin.Int) -> kotlin.Int) -> kotlin.Int
     internal abstract val a2: n.B
@@ -42,7 +42,7 @@ internal abstract class YYY {
     internal abstract val a15: kotlin.Int?.(kotlin.Int) -> kotlin.Int
     internal abstract val a152: kotlin.Int?.(kotlin.Int) -> kotlin.Int
     internal abstract val a16: (kotlin.Int) -> (kotlin.Int) -> kotlin.Int
-    internal abstract val a17: (kotlin.Int) -> kotlin.Int.(kotlin.Int) -> kotlin.Int
+    internal abstract val a17: ((kotlin.Int) -> kotlin.Int).(kotlin.Int) -> kotlin.Int
     internal abstract val a18: (kotlin.Int) -> (kotlin.Int) -> kotlin.Int
     internal abstract val a19: ((kotlin.Int) -> kotlin.Int) -> kotlin.Int
     internal abstract val a7: (A) -> n.B
