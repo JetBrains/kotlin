@@ -142,7 +142,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         initPackageChooser(targetPackageName, targetDirectory);
 
-        initFileChooser(targetFile);
+        initFileChooser(targetFile, elementsToMove);
 
         initMoveToButtons(moveToPackage);
 
@@ -278,16 +278,19 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         );
     }
 
-    private void initFileChooser(JetFile targetFile) {
+    private void initFileChooser(@Nullable JetFile targetFile, @NotNull Set<JetNamedDeclaration> elementsToMove) {
         FileChooserDescriptor descriptor = FileChooserDescriptorFactory.createSingleFileNoJarsDescriptor()
                 .withRoots(ProjectRootManager.getInstance(myProject).getContentRoots())
                 .withTreeRootVisible(true);
 
         String title = JetRefactoringBundle.message("refactoring.move.top.level.declaration.file.title");
         fileChooser.addBrowseFolderListener(title, null, myProject, descriptor, TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
-        if (targetFile != null) {
-            fileChooser.setText(targetFile.getVirtualFile().getPath());
-        }
+
+        String initialTargetPath =
+                targetFile != null
+                ? targetFile.getVirtualFile().getPath()
+                : sourceFile.getVirtualFile().getParent().getPath() + "/" + MovePackage.guessNewFileName(sourceFile, elementsToMove);
+        fileChooser.setText(initialTargetPath);
     }
 
     private void createUIComponents() {

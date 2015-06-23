@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.refactoring.move.guessNewFileName
 import java.util.HashSet
 import java.util.LinkedHashSet
 
@@ -64,13 +65,7 @@ public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
         val targetDirectory = MoveClassesOrPackagesImpl.getInitialTargetDirectory(targetContainer, elements)
         val searchInComments = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_IN_COMMENTS
         val searchInText = JavaRefactoringSettings.getInstance()!!.MOVE_SEARCH_FOR_TEXT
-        val targetFile: JetFile? = when (targetContainer) {
-            is JetFile -> targetContainer
-            else -> {
-                val files = elements.mapTo(HashSet<JetFile>()) { e -> e.getContainingFile() as JetFile }
-                if (files.size() == 1) files.first() else null
-            }
-        }
+        val targetFile = targetContainer as? JetFile
         val moveToPackage = targetContainer !is JetFile
 
         MoveKotlinTopLevelDeclarationsDialog(
