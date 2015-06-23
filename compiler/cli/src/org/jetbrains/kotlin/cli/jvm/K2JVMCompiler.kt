@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.platform.platformStatic
 
 SuppressWarnings("UseOfSystemOutOrSystemErr")
-public class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
+public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun doExecute(arguments: K2JVMCompilerArguments, services: Services, messageCollector: MessageCollector, rootDisposable: Disposable): ExitCode {
         val messageSeverityCollector = MessageSeverityCollector(messageCollector)

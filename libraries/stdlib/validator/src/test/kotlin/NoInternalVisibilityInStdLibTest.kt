@@ -180,7 +180,7 @@ class NoInternalVisibilityInStdLibTest {
             }
             is PackageViewDescriptor -> {
                 sink.reportValidatedPackage(DescriptorUtils.getFqName(descriptor).toSafe())
-                descriptor.getMemberScope().getAllDescriptors().forEach {
+                descriptor.memberScope.getAllDescriptors().forEach {
                     validateDescriptor(module, it, sink)
                 }
             }
