@@ -52,6 +52,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.InsnList;
 import org.jetbrains.org.objectweb.asm.tree.LabelNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
 
@@ -62,6 +63,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isFunctionLiteral;
 import static org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage.getResolvedCallWithAssert;
 
@@ -290,6 +292,7 @@ public class InlineCodegen extends CallGenerator {
 
         List<MethodInliner.PointForExternalFinallyBlocks> infos = MethodInliner.processReturns(adapter, labelOwner, true, null);
         generateAndInsertFinallyBlocks(adapter, infos, ((StackValue.Local)remapper.remap(parameters.totalSize() + 1).value).index);
+        removeFinallyMarkers(adapter);
 
         adapter.accept(new InliningInstructionAdapter(codegen.v));
 
@@ -647,8 +650,8 @@ public class InlineCodegen extends CallGenerator {
 
 
     public void generateAndInsertFinallyBlocks(
-            MethodNode intoNode,
-            List<MethodInliner.PointForExternalFinallyBlocks> insertPoints,
+            @NotNull MethodNode intoNode,
+            @NotNull List<MethodInliner.PointForExternalFinallyBlocks> insertPoints,
             int offsetForFinallyLocalVar
     ) {
         if (!codegen.hasFinallyBlocks()) return;
@@ -667,7 +670,7 @@ public class InlineCodegen extends CallGenerator {
             processor.processInstruction(curInstr, true);
             if (InlineCodegenUtil.isFinallyStart(curInstr)) {
                 //TODO deep index calc could be more precise
-                curFinallyDeep = InlineCodegenUtil.getConstant(curInstr.getPrevious());
+                curFinallyDeep = getConstant(curInstr.getPrevious());
             }
 
             MethodInliner.PointForExternalFinallyBlocks extension = extensionPoints.get(curInstr);
@@ -707,6 +710,25 @@ public class InlineCodegen extends CallGenerator {
         processor.substituteTryBlockNodes(intoNode);
 
         //processor.substituteLocalVarTable(intoNode);
+    }
+
+    public void removeFinallyMarkers(@NotNull MethodNode intoNode) {
+        if (InlineCodegenUtil.isFinallyMarkerRequired(codegen.getContext())) return;
+
+        InsnList instructions = intoNode.instructions;
+        AbstractInsnNode curInstr = instructions.getFirst();
+        while (curInstr != null) {
+            if (InlineCodegenUtil.isFinallyMarker(curInstr)) {
+                //just to assert
+                AbstractInsnNode marker = curInstr;
+                getConstant(marker.getPrevious());
+                curInstr = curInstr.getNext();
+                instructions.remove(marker.getPrevious());
+                instructions.remove(marker);
+                continue;
+            }
+            curInstr = curInstr.getNext();
+        }
     }
 
     private SourceMapper createNestedSourceMapper(@NotNull SMAPAndMethodNode nodeAndSmap) {

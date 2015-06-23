@@ -427,12 +427,21 @@ public class InlineCodegenUtil {
         return INLINE_MARKER_CLASS_NAME.equals(method.owner) && name.equals(method.name);
     }
 
+    public static boolean isFinallyMarkerRequired(@NotNull MethodContext context) {
+        return context.isInlineFunction() || context.isInliningLambda();
+    }
+
     public static int getConstant(AbstractInsnNode ins) {
         int opcode = ins.getOpcode();
         Integer value;
         if (opcode >= Opcodes.ICONST_0 && opcode <= Opcodes.ICONST_5) {
             value = opcode - Opcodes.ICONST_0;
-        } else {
+        }
+        else if (opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH) {
+            IntInsnNode index = (IntInsnNode) ins;
+            value = index.operand;
+        }
+        else {
             LdcInsnNode index = (LdcInsnNode) ins;
             value = (Integer) index.cst;
         }

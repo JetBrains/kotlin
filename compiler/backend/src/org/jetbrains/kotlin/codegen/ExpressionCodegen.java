@@ -1804,13 +1804,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             Label finallyStart = new Label();
             v.mark(finallyStart);
             finallyBlockStackElement.addGapLabel(finallyStart);
-            if (context.isInlineFunction() || context.isInliningLambda()) {
+            if (InlineCodegenUtil.isFinallyMarkerRequired(context)) {
                 InlineCodegenUtil.generateFinallyMarker(v, finallyDeep, true);
             }
             //noinspection ConstantConditions
             gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
 
-            if (context.isInlineFunction() || context.isInliningLambda()) {
+            if (InlineCodegenUtil.isFinallyMarkerRequired(context)) {
                 InlineCodegenUtil.generateFinallyMarker(v, finallyDeep, false);
             }
         }
