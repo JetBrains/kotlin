@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.lang.resolve.android
 
-trait KotlinWriter {
+interface KotlinWriter {
     fun toStringBuffer(): StringBuffer
 }
 
