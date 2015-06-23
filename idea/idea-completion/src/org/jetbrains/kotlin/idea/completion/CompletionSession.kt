@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.completion.smart.LambdaItems
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference
 import org.jetbrains.kotlin.idea.util.CallType
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindEx
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
@@ -99,7 +101,7 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
     }
 
     protected val bindingContext: BindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<JetElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
-    protected val inDescriptor: DeclarationDescriptor? = expression?.let { bindingContext.get(BindingContext.RESOLUTION_SCOPE, it)?.getContainingDeclaration() }
+    protected val inDescriptor: DeclarationDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).getContainingDeclaration()
 
     private val kotlinIdentifierStartPattern: ElementPattern<Char>
     private val kotlinIdentifierPartPattern: ElementPattern<Char>
@@ -169,13 +171,26 @@ abstract class CompletionSessionBase(protected val configuration: CompletionSess
         get() = KotlinIndicesHelper(project, resolutionFacade, searchScope, moduleDescriptor, isVisibleFilter)
 
     protected fun isVisibleDescriptor(descriptor: DeclarationDescriptor): Boolean {
-        if (descriptor is DeclarationDescriptorWithVisibility && inDescriptor != null) {
+        if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
+
+        if (descriptor is DeclarationDescriptorWithVisibility) {
             val visible = descriptor.isVisible(inDescriptor, bindingContext, reference?.expression)
             if (visible) return true
             if (!configuration.completeNonAccessibleDeclarations) return false
             return DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) !is PsiCompiledElement
         }
 
+        return true
+    }
+
+    private fun isTypeParameterVisible(typeParameter: TypeParameterDescriptor): Boolean {
+        val owner = typeParameter.getContainingDeclaration()
+        var parent: DeclarationDescriptor? = inDescriptor
+        while (parent != null) {
+            if (parent == owner) return true
+            if (parent is ClassDescriptor && !parent.isInner()) return false
+            parent = parent.getContainingDeclaration()
+        }
         return true
     }
 

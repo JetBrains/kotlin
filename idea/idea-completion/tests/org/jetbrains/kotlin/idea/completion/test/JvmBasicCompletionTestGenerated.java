@@ -1027,6 +1027,12 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             doTest(fileName);
         }
 
+        @TestMetadata("TypeParameterFromOuterClass.kt")
+        public void testTypeParameterFromOuterClass() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/TypeParameterFromOuterClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("VariableClassName.kt")
         public void testVariableClassName() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/VariableClassName.kt");
@@ -1485,6 +1491,30 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             @TestMetadata("ParametersInFileInaccessibleType.kt")
             public void testParametersInFileInaccessibleType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/ParametersInFileInaccessibleType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParametersInFileInaccessibleType2.kt")
+            public void testParametersInFileInaccessibleType2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/ParametersInFileInaccessibleType2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParametersInFileTypeParameter1.kt")
+            public void testParametersInFileTypeParameter1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/ParametersInFileTypeParameter1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParametersInFileTypeParameter2.kt")
+            public void testParametersInFileTypeParameter2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/ParametersInFileTypeParameter2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ParametersInFileTypeParameter3.kt")
+            public void testParametersInFileTypeParameter3() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/parameterNameAndType/ParametersInFileTypeParameter3.kt");
                 doTest(fileName);
             }
 

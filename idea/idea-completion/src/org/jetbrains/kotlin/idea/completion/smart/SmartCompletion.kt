@@ -54,7 +54,7 @@ class SmartCompletion(
         val moduleDescriptor: ModuleDescriptor,
         val bindingContext: BindingContext,
         val visibilityFilter: (DeclarationDescriptor) -> Boolean,
-        val inDescriptor: DeclarationDescriptor?,
+        val inDescriptor: DeclarationDescriptor,
         val prefixMatcher: PrefixMatcher,
         val inheritorSearchScope: GlobalSearchScope,
         val toFromOriginalFileMapper: ToFromOriginalFileMapper,

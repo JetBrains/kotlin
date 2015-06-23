@@ -16,18 +16,15 @@
 
 package org.jetbrains.kotlin.idea.completion
 
-import com.intellij.codeInsight.completion.CompletionInitializationContext
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.InsertionContext
-import com.intellij.codeInsight.completion.PrefixMatcher
+import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.completion.impl.CamelHumpMatcher
 import com.intellij.codeInsight.lookup.*
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.codeStyle.NameUtil
-import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionFacade
@@ -37,17 +34,18 @@ import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.refactoring.EmptyValidator
 import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.JetDeclaration
+import org.jetbrains.kotlin.psi.JetExpression
+import org.jetbrains.kotlin.psi.JetParameter
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlin.types.JetType
-import java.util.*
+import java.util.HashSet
+import java.util.LinkedHashMap
 
 class ParameterNameAndTypeCompletion(
         private val collector: LookupElementsCollector,
@@ -109,12 +107,14 @@ class ParameterNameAndTypeCompletion(
         val lookupElementToCount = LinkedHashMap<LookupElement, Int>()
         position.getContainingFile().forEachDescendantOfType<JetParameter>(
                 canGoInside = { it !is JetExpression || it is JetDeclaration } // we analyze parameters inside bodies to not resolve too much
-        ) { declaration ->
-            val name = declaration.getName()
+        ) { parameter ->
+            ProgressManager.checkCanceled()
+
+            val name = parameter.getName()
             if (name != null && parametersInCurrentFilePrefixMatcher.prefixMatches(name)) {
-                val parameter = resolutionFacade.analyze(declaration)[BindingContext.VALUE_PARAMETER, declaration]
-                if (parameter != null) {
-                    val parameterType = parameter.getType()
+                val descriptor = resolutionFacade.analyze(parameter)[BindingContext.VALUE_PARAMETER, parameter]
+                if (descriptor != null) {
+                    val parameterType = descriptor.getType()
                     if (parameterType.isVisible(visibilityFilter)) {
                         val lookupElement = MyLookupElement.create("", name, ArbitraryType(parameterType), lookupElementFactory)
                         val count = lookupElementToCount[lookupElement] ?: 0
@@ -139,6 +139,7 @@ class ParameterNameAndTypeCompletion(
     }
 
     private fun addSuggestions(className: String, userPrefix: String, prefixMatcher: PrefixMatcher, type: Type) {
+        ProgressManager.checkCanceled()
         if (suggestionsByTypesAdded.contains(type)) return // don't add suggestions for the same with longer user prefix
 
         val nameSuggestions = JetNameSuggester.getCamelNames(className, EmptyValidator, userPrefix.isEmpty())

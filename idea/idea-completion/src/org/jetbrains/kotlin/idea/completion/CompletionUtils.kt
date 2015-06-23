@@ -310,10 +310,9 @@ fun breakOrContinueExpressionItems(position: JetElement, breakOrContinue: String
 
 fun LookupElementFactory.createBackingFieldLookupElement(
         property: PropertyDescriptor,
-        inDescriptor: DeclarationDescriptor?,
+        inDescriptor: DeclarationDescriptor,
         resolutionFacade: ResolutionFacade
 ): LookupElement? {
-    if (inDescriptor == null) return null // no backing field accessible
     val insideAccessor = inDescriptor is PropertyAccessorDescriptor && inDescriptor.getCorrespondingProperty() == property
     if (!insideAccessor) {
         val container = property.getContainingDeclaration()

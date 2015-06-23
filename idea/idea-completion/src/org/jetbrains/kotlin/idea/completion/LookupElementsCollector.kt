@@ -37,7 +37,7 @@ class LookupElementsCollector(
         resultSet: CompletionResultSet,
         private val resolutionFacade: ResolutionFacade,
         private val lookupElementFactory: LookupElementFactory,
-        private val inDescriptor: DeclarationDescriptor?,
+        private val inDescriptor: DeclarationDescriptor,
         private val context: LookupElementsCollector.Context
 ) {
     public enum class Context {
