@@ -269,6 +269,18 @@ public class JetMoveTestGenerated extends AbstractJetMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/delegateInObject/delegateInObject.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_delegateInObject_DelegateInObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/delegateInObject/delegateInObject.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/fakeOverrideInObject/fakeOverrideInObject.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_fakeOverrideInObject_FakeOverrideInObject() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/fakeOverrideInObject/fakeOverrideInObject.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/internalReferences/internalReferences.test")
     public void testKotlin_moveTopLevelDeclarations_misc_internalReferences_InternalReferences() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/internalReferences/internalReferences.test");

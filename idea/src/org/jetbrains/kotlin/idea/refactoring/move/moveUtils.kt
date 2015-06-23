@@ -102,13 +102,9 @@ public fun JetElement.getInternalReferencesToUpdateOnPackageNameChange(packageNa
             if (receiver != null) {
                 val receiverRef = receiver.getQualifiedElementSelector() as? JetSimpleNameExpression ?: return null
                 if (bindingContext[BindingContext.QUALIFIER, receiverRef] == null) return null
-                if (descriptor is CallableMemberDescriptor && descriptor.getKind() == Kind.SYNTHESIZED) {
-                    return processReference(receiverRef, bindingContext)
-                }
+                return processReference(receiverRef, bindingContext)
             }
-            else {
-                if (containingDescriptor !is PackageFragmentDescriptor) return null
-            }
+            if (containingDescriptor !is PackageFragmentDescriptor) return null
         }
 
         val fqName = DescriptorUtils.getFqName(descriptor)
