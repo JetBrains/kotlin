@@ -53,6 +53,9 @@ import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassFqName;
 
 public abstract class CodegenTestCase extends UsefulTestCase {
+
+    public static final String DEFAULT_TEST_FILE_NAME = "a_test";
+
     protected KotlinCoreEnvironment myEnvironment;
     protected CodegenTestFiles myFiles;
     protected ClassFileFactory classFileFactory;
@@ -80,7 +83,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
     }
 
     protected void loadText(@NotNull String text) {
-        myFiles = CodegenTestFiles.create("a.kt", text, myEnvironment.getProject());
+        myFiles = CodegenTestFiles.create(DEFAULT_TEST_FILE_NAME + ".kt", text, myEnvironment.getProject());
     }
 
     @NotNull

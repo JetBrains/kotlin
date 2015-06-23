@@ -65,6 +65,8 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<JetElement> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory1<PsiElement, String> DUPLICATE_CLASS_NAMES = DiagnosticFactory1.create(ERROR);
+
     enum NullabilityInformationSource {
         KOTLIN {
             @NotNull

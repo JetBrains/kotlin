@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import kotlin.KotlinPackage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
@@ -50,7 +51,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     public void testPackagePart() {
         doTestKotlinSyntheticClass(
                 "fun foo() = 42",
-                "$",
+                KotlinPackage.capitalize(DEFAULT_TEST_FILE_NAME),
                 PACKAGE_PART
         );
     }
