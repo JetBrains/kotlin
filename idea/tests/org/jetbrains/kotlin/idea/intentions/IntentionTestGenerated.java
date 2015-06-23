@@ -5605,6 +5605,69 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/removeArgumentName")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveArgumentName extends AbstractIntentionTest {
+        public void testAllFilesPresentInRemoveArgumentName() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeArgumentName"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("namedArgumentBefore.kt")
+        public void testNamedArgumentBefore() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/namedArgumentBefore.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noExpression.kt")
+        public void testNoExpression() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/noExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInPosition.kt")
+        public void testNotInPosition() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/notInPosition.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInRange.kt")
+        public void testNotInRange() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/notInRange.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notNamed.kt")
+        public void testNotNamed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/notNamed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notResolved.kt")
+        public void testNotResolved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/notResolved.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("range.kt")
+        public void testRange() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/range.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("star.kt")
+        public void testStar() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/removeArgumentName/star.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/removeBraces")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
