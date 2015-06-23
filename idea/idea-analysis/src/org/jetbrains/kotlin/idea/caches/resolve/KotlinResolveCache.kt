@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
 import org.jetbrains.kotlin.types.TypeUtils
 import java.util.HashMap
 
@@ -270,44 +271,13 @@ private object KotlinResolveDataProvider {
         val codeFragmentExpression = codeFragment.getContentElement()
         if (codeFragmentExpression !is JetExpression) return BindingContext.EMPTY
 
-        val contextElement = codeFragment.getContext()
+        val (scopeForContextElement, dataFlowInfo) = codeFragment.getScopeAndDataFlowForAnalyzeFragment(resolveSession) {
+            resolveSession.resolveToElement(it, BodyResolveMode.PARTIAL_FOR_COMPLETION) //TODO: discuss it
+        } ?: return BindingContext.EMPTY
 
-        val scopeForContextElement: JetScope?
-        val dataFlowInfo: DataFlowInfo
-        if (contextElement is JetClassOrObject) {
-            val descriptor = resolveSession.resolveToDescriptor(contextElement) as LazyClassDescriptor
-
-            scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
-            dataFlowInfo = DataFlowInfo.EMPTY
-        }
-        else if (contextElement is JetBlockExpression) {
-            val newContextElement = contextElement.getStatements().lastOrNull()
-            if (newContextElement !is JetExpression) return BindingContext.EMPTY
-
-            val contextForElement = newContextElement.getResolutionFacade().analyze(newContextElement, BodyResolveMode.FULL)
-
-            scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, newContextElement]
-            dataFlowInfo = contextForElement.getDataFlowInfo(newContextElement)
-        }
-        else {
-            if (contextElement !is JetExpression) return BindingContext.EMPTY
-
-            val contextForElement = contextElement.getResolutionFacade().analyze(contextElement, BodyResolveMode.PARTIAL_FOR_COMPLETION) //TODO: discuss it
-
-            scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
-            dataFlowInfo = contextForElement.getDataFlowInfo(contextElement)
-        }
-
-        if (scopeForContextElement == null) return BindingContext.EMPTY
-
-        val codeFragmentScope = resolveSession.getFileScopeProvider().getFileScope(codeFragment)
-        val chainedScope = ChainedScope(
-                                scopeForContextElement.getContainingDeclaration(),
-                                "Scope for resolve code fragment",
-                                scopeForContextElement, codeFragmentScope)
 
         return codeFragmentExpression.analyzeInContext(
-                chainedScope,
+                scopeForContextElement,
                 BindingTraceContext(),
                 dataFlowInfo,
                 TypeUtils.NO_EXPECTED_TYPE,

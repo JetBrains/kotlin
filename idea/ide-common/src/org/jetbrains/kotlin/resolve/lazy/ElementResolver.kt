@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
+import org.jetbrains.kotlin.resolve.util.getScopeAndDataFlowForAnalyzeFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -206,52 +207,21 @@ public abstract class ElementResolver protected constructor(
         val trace = createDelegatingTrace(codeFragment)
 
         val codeFragmentExpression = codeFragment.getContentElement() as? JetExpression ?: return trace
-        val contextElement = codeFragment.correctedContext
 
-        val scopeForContextElement: JetScope?
-        val dataFlowInfoForContextElement: DataFlowInfo
-        when (contextElement) {
-            is JetClassOrObject -> {
-                val descriptor = resolveSession.resolveToDescriptor(contextElement) as LazyClassDescriptor
-                scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
-                dataFlowInfoForContextElement = DataFlowInfo.EMPTY
-            }
+        val (scopeForContextElement, dataFlowInfoForContextElement) = codeFragment.getScopeAndDataFlowForAnalyzeFragment(resolveSession) {
+            val contextResolveMode = if (bodyResolveMode == BodyResolveMode.PARTIAL)
+                BodyResolveMode.PARTIAL_FOR_COMPLETION
+            else
+                bodyResolveMode
 
-            is JetExpression -> {
-                // do not use PARTIAL body resolve mode because because it does not know about names used in our fragment
-                val contextResolveMode = if (bodyResolveMode == BodyResolveMode.PARTIAL)
-                    BodyResolveMode.PARTIAL_FOR_COMPLETION
-                else
-                    bodyResolveMode
-                val contextForElement = resolveToElement(contextElement, contextResolveMode)
-                scopeForContextElement = contextForElement[BindingContext.RESOLUTION_SCOPE, contextElement]
-                dataFlowInfoForContextElement = contextForElement.getDataFlowInfo(contextElement)
-            }
+            resolveToElement(it, contextResolveMode)
+        } ?: return trace
 
-            else -> return trace
-        }
-
-        if (scopeForContextElement == null) return trace
-
-        val codeFragmentScope = resolveSession.getFileScopeProvider().getFileScope(codeFragment)
-        val chainedScope = ChainedScope(scopeForContextElement.getContainingDeclaration(),
-                                        "Scope for resolve code fragment", scopeForContextElement, codeFragmentScope)
-
-        codeFragmentExpression.computeTypeInContext(chainedScope, trace, dataFlowInfoForContextElement,
+        codeFragmentExpression.computeTypeInContext(scopeForContextElement, trace, dataFlowInfoForContextElement,
                                                     TypeUtils.NO_EXPECTED_TYPE, resolveSession.getModuleDescriptor())
 
         return trace
     }
-
-    //TODO: this code should be moved into debugger which should set correct context for its code fragment
-    private val JetCodeFragment.correctedContext: PsiElement?
-        get() {
-            val context = getContext()
-            if (context is JetBlockExpression) {
-                return context.getStatements().lastOrNull() ?: context
-            }
-            return context
-        }
 
     private fun annotationAdditionalResolve(resolveSession: ResolveSession, jetAnnotationEntry: JetAnnotationEntry): BindingTrace {
         val modifierList = jetAnnotationEntry.getParentOfType<JetModifierList>(true)
@@ -397,7 +367,7 @@ public abstract class ElementResolver protected constructor(
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, classInitializer, classOrObjectDescriptor)
-    
+
         return trace
     }
 
