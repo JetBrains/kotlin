@@ -105,7 +105,7 @@ public final class PatternTranslator extends AbstractTranslator {
     @NotNull
     public JsExpression translateIsCheck(@NotNull JsExpression subject, @NotNull KtTypeReference typeReference) {
         KotlinType type = BindingUtils.getTypeByReference(bindingContext(), typeReference);
-        JsExpression checkFunReference = getIsTypeCheckCallable(type);
+        JsExpression checkFunReference = doGetIsTypeCheckCallable(type);
 
         if (isReifiedTypeParameter(type) && findChildByType(typeReference, KtNodeTypes.NULLABLE_TYPE) != null) {
             checkFunReference = namer().orNull(checkFunReference);
@@ -118,7 +118,7 @@ public final class PatternTranslator extends AbstractTranslator {
     public JsExpression getIsTypeCheckCallable(@NotNull KotlinType type) {
         JsExpression callable = doGetIsTypeCheckCallable(type);
 
-        if (isNullableType(type) && !isReifiedTypeParameter(type)) {
+        if (isNullableType(type)) {
             return namer().orNull(callable);
         }
 
