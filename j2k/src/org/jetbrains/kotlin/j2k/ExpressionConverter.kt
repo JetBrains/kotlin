@@ -137,6 +137,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             is PsiClassType -> {
                 val psiClass = type.resolve() ?: return false
                 if (!psiClass.hasModifierProperty(PsiModifier.FINAL)) return false
+                if (psiClass.isEnum()) return true
 
                 val equalsSignature = GenerateEqualsHelper.getEqualsSignature(converter.project, GlobalSearchScope.allScope(converter.project))
                 val equalsMethod = MethodSignatureUtil.findMethodBySignature(psiClass, equalsSignature, true)
