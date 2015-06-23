@@ -53,10 +53,14 @@ fun UsefulTestCase.createAndroidTestEnvironment(
 ): KotlinCoreEnvironment {
     configuration.put(AndroidConfigurationKeys.ANDROID_RES_PATH, resPaths)
     configuration.put(AndroidConfigurationKeys.ANDROID_MANIFEST, manifestPath)
+
     val myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     val project = myEnvironment.project
-    ExternalDeclarationsProvider.registerExtension(project, AndroidTestExternalDeclarationsProvider(project, resPaths, manifestPath, supportV4))
+
+    val declarationsProvider = AndroidTestExternalDeclarationsProvider(project, resPaths, manifestPath, supportV4)
+    ExternalDeclarationsProvider.registerExtension(project, declarationsProvider)
     ExpressionCodegenExtension.registerExtension(project, AndroidExpressionCodegenExtension())
+
     return myEnvironment
 }
 

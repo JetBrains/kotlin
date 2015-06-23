@@ -91,8 +91,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
             newName: String,
             allRenames: MutableMap<PsiElement, String>
     ) {
-        val module = jetProperty.getModule()
-        if (module == null) return
+        val module = jetProperty.getModule() ?: return
 
         val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
         val resourceManager = processor.resourceManager
@@ -119,8 +118,7 @@ public class AndroidRenameProcessor : RenamePsiElementProcessor() {
     ) {
         val element = LazyValueResourceElementWrapper.computeLazyElement(attribute)
         val module = attribute.getModule() ?: ModuleUtilCore.findModuleForFile(
-                attribute.getContainingFile().getVirtualFile(), attribute.getProject())
-        if (module == null) return
+                attribute.getContainingFile().getVirtualFile(), attribute.getProject()) ?: return
 
         val processor = ModuleServiceManager.getService(module, javaClass<AndroidUIXmlProcessor>())
         if (element == null) return
