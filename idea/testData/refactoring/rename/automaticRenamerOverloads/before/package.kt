@@ -13,4 +13,6 @@ fun main(args: Array<String>) {
     foo()
     foo(1)
     "".foo()
+
+    foo(2, 3)
 }

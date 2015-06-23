@@ -1,0 +1,7 @@
+{
+  "type": "KOTLIN_FUNCTION",
+  "packageFqn": "other",
+  "oldName": "foo",
+  "newName": "bar",
+  "mainFile": "otherExt.kt"
+}

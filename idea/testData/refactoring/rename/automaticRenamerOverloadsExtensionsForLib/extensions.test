@@ -1,0 +1,6 @@
+{
+  "type": "MARKED_ELEMENT",
+  "oldName": "foo",
+  "newName": "bar",
+  "mainFile": "extensions.kt"
+}

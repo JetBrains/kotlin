@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.codeInsight.TargetElementUtilBase
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.module.Module
@@ -26,7 +27,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
@@ -48,9 +48,7 @@ import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.JetFile
-import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
@@ -63,7 +61,7 @@ private enum class RenameType {
     KOTLIN_CLASS,
     KOTLIN_FUNCTION,
     KOTLIN_PROPERTY,
-    KOTLIN_PACKAGE
+    KOTLIN_PACKAGE,
     MARKED_ELEMENT
 }
 
@@ -280,6 +278,12 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
     protected fun doTestCommittingDocuments(action : (VirtualFile, VirtualFile?) -> Unit) {
         super.doTest(
                 { rootDir, rootAfter ->
+                    ApplicationManager.getApplication().runWriteAction {
+                        rootDir.getChildren()
+                                .filter { it.getName() == "lib.kt" }
+                                .forEach { it.setWritable(false) }
+                    }
+
                     action(rootDir, rootAfter)
 
                     PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()

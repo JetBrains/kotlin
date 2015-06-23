@@ -2,15 +2,18 @@ package testing
 
 open class Klass {
     fun bar() {
-        "".bar()
+        "".foo()
     }
 
     open fun bar(a: Int) {
     }
 
-    fun String.bar() {
+    fun String.foo() {
     }
 
+}
+
+fun Klass.bar(a: Int, b: Int) {
 }
 
 class Sub : Klass() {

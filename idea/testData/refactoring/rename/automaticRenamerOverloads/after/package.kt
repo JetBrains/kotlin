@@ -6,11 +6,13 @@ fun bar() {
 fun bar(a: Int) {
 }
 
-fun String.bar() {
+fun String.foo() {
 }
 
 fun main(args: Array<String>) {
     bar()
     bar(1)
-    "".bar()
+    "".foo()
+
+    bar(2, 3)
 }

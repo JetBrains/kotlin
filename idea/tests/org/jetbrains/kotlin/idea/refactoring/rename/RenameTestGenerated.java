@@ -65,6 +65,36 @@ public class RenameTestGenerated extends AbstractRenameTest {
         doTest(fileName);
     }
 
+    @TestMetadata("automaticRenamerOverloadsClass/extension.test")
+    public void testAutomaticRenamerOverloadsClass_Extension() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsClass/extension.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("automaticRenamerOverloadsClass/extensionInOtherPackge.test")
+    public void testAutomaticRenamerOverloadsClass_ExtensionInOtherPackge() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsClass/extensionInOtherPackge.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("automaticRenamerOverloadsExtensionsForBuiltin/extensions.test")
+    public void testAutomaticRenamerOverloadsExtensionsForBuiltin_Extensions() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsExtensionsForBuiltin/extensions.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("automaticRenamerOverloadsExtensionsForLib/extensions.test")
+    public void testAutomaticRenamerOverloadsExtensionsForLib_Extensions() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsExtensionsForLib/extensions.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("automaticRenamerOverloadsExtensionsInClass/extensions.test")
+    public void testAutomaticRenamerOverloadsExtensionsInClass_Extensions() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsExtensionsInClass/extensions.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("automaticRenamerOverloadsJavaClass/overloads.test")
     public void testAutomaticRenamerOverloadsJavaClass_Overloads() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsJavaClass/overloads.test");
@@ -74,6 +104,12 @@ public class RenameTestGenerated extends AbstractRenameTest {
     @TestMetadata("automaticRenamerOverloadsObject/object.test")
     public void testAutomaticRenamerOverloadsObject_Object() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsObject/object.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("automaticRenamerOverloadsOverrides/overrides.test")
+    public void testAutomaticRenamerOverloadsOverrides_Overrides() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/rename/automaticRenamerOverloadsOverrides/overrides.test");
         doTest(fileName);
     }
 
