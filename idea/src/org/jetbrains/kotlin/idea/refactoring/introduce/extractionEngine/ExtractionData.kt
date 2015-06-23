@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiNameIdentifierOwner
 import kotlin.properties.Delegates
 import java.util.HashMap
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver
@@ -63,7 +64,7 @@ data class ExtractionOptions(
 
 data class ResolveResult(
         val originalRefExpr: JetSimpleNameExpression,
-        val declaration: PsiNamedElement,
+        val declaration: PsiNameIdentifierOwner,
         val descriptor: DeclarationDescriptor,
         val resolvedCall: ResolvedCall<*>?
 )
@@ -148,7 +149,7 @@ data class ExtractionData(
 
                     val resolvedCall = ref.getResolvedCall(context)
                     val descriptor = context[BindingContext.REFERENCE_TARGET, ref] ?: return
-                    val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNamedElement
+                    val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNameIdentifierOwner
                                       ?: if (isExtractableIt(descriptor, context)) itFakeDeclaration
                                       else if (isSynthesizedInvoke(descriptor)) synthesizedInvokeDeclaration else return
 

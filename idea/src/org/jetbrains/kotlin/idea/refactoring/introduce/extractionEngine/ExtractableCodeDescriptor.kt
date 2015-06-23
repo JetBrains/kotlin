@@ -23,6 +23,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
@@ -82,13 +83,16 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
 
     override fun invoke(e: JetElement): JetElement {
         var expressionToReplace = (e.getParent() as? JetThisExpression ?: e).getQualifiedExpressionForSelectorOrThis()
+        val parameterName = JetPsiUtil.unquoteIdentifier(parameter.nameForRef)
+        val replacingName =
+                if (e.getText().startsWith('`') || !JetNameSuggester.isIdentifier(parameterName)) "`$parameterName`" else parameterName
         val psiFactory = JetPsiFactory(e)
         val replacement =
                 if (expressionToReplace is JetOperationReferenceExpression) {
-                    psiFactory.createOperationName(parameter.nameForRef)
+                    psiFactory.createOperationName(replacingName)
                 }
                 else {
-                    psiFactory.createSimpleName(parameter.nameForRef)
+                    psiFactory.createSimpleName(replacingName)
                 }
         return expressionToReplace.replaced(replacement)
     }

@@ -1873,6 +1873,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Misc extends AbstractJetExtractionTest {
+                @TestMetadata("addPrefixToBackticks.kt")
+                public void testAddPrefixToBackticks() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/addPrefixToBackticks.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 public void testAllFilesPresentInMisc() throws Exception {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/parameters/misc"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
@@ -1892,6 +1898,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("extensionLambdaAsParameter.kt")
                 public void testExtensionLambdaAsParameter() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/extensionLambdaAsParameter.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("idWithBackticks.kt")
+                public void testIdWithBackticks() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/idWithBackticks.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("idWithRequiredBackticks.kt")
+                public void testIdWithRequiredBackticks() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/idWithRequiredBackticks.kt");
                     doExtractFunctionTest(fileName);
                 }
 
@@ -1976,6 +1994,18 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 @TestMetadata("reducedParameterList.kt")
                 public void testReducedParameterList() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/reducedParameterList.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("replaceWithBackticks.kt")
+                public void testReplaceWithBackticks() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/replaceWithBackticks.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("replaceWithBackticks2.kt")
+                public void testReplaceWithBackticks2() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/misc/replaceWithBackticks2.kt");
                     doExtractFunctionTest(fileName);
                 }
 
