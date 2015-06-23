@@ -108,8 +108,8 @@ public abstract class AnnotationProcessorWrapper(
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
         roundCounter += 1
 
-        val annotatedKotlinElements = kotlinAnnotationsProvider.annotatedKotlinElements
-        val roundEnvironmentWrapper = RoundEnvironmentWrapper(processingEnv, roundEnv, roundCounter, annotatedKotlinElements)
+        val roundEnvironmentWrapper = RoundEnvironmentWrapper(
+                processingEnv, roundEnv, roundCounter, kotlinAnnotationsProvider)
         processor.process(annotations, roundEnvironmentWrapper)
         return false
     }
