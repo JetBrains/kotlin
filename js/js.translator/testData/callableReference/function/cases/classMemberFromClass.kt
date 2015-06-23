@@ -4,7 +4,7 @@ package foo
 class A {
     fun bar(k: Int) = k
 
-    fun result() = this.(::bar)(111)
+    fun result() = (::bar)(this, 111)
 }
 
 fun box(): String {

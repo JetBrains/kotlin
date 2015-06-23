@@ -3,10 +3,10 @@ package foo
 fun A.f(s: String) = value + s
 
 class A(val value: String) {
-    fun bar(s: String) = (::f)(s)
+    fun bar(s: String) = (::f)(this, s)
 }
 
-fun A.baz(s: String) = (::f)(s)
+fun A.baz(s: String) = (::f)(this, s)
 
 fun box(): String {
     val a = A("aaa")

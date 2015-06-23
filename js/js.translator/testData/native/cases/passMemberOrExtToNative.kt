@@ -21,17 +21,17 @@ fun box(): String {
 
     fun A.LocalExt(i:Int, s:String): String = "A::LocalExt ${this.v} $i $s"
 
-    r = bar(a, A::topLevelExt)
+    r = bar(a, fun A.(i, s) = (A::topLevelExt)(this, i, s))
     if (r != "A::topLevelExt test 4 boo") return r
 
-    r = bar(a, A::LocalExt)
+    r = bar(a, fun A.(i, s) = (A::LocalExt)(this, i, s))
     if (r != "A::LocalExt test 4 boo") return r
 
-    r = bar(a, A::m)
+    r = bar(a, fun A.(i, s) = (A::m)(this, i, s))
     if (r != "A.m test 4 boo") return r
 
     val b = B("test")
-    r = bar(b, A::m)
+    r = bar(b, fun A.(i, s) = (A::m)(this, i, s))
     if (r != "B.m test 4 boo") return r
 
     return "OK"

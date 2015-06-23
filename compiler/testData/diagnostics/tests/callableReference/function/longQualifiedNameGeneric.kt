@@ -9,10 +9,10 @@ class D<E, F> {
 
 // FILE: b.kt
 
-import kotlin.reflect.KMemberFunction2
+import kotlin.reflect.KFunction3
 
 fun main() {
     val x = a.b.c.D<String, Int>::foo
 
-    checkSubtype<KMemberFunction2<a.b.c.D<String, Int>, String, Int, a.b.c.D<String, Int>>>(x)
+    checkSubtype<KFunction3<a.b.c.D<String, Int>, String, Int, a.b.c.D<String, Int>>>(x)
 }

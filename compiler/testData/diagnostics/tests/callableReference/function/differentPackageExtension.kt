@@ -14,7 +14,7 @@ fun A.baz() {}
 
 package other
 
-import kotlin.reflect.KExtensionFunction0
+import kotlin.reflect.KFunction1
 
 import first.A
 import first.foo
@@ -24,5 +24,5 @@ fun main() {
     first.A::<!UNRESOLVED_REFERENCE!>bar<!>
     A::<!UNRESOLVED_REFERENCE!>baz<!>
 
-    checkSubtype<KExtensionFunction0<A, Unit>>(x)
+    checkSubtype<KFunction1<A, Unit>>(x)
 }

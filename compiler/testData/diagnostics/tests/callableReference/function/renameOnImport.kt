@@ -25,6 +25,6 @@ fun main() {
     val z = AA::bazbaz
 
     checkSubtype<KFunction0<Unit>>(x)
-    checkSubtype<KMemberFunction0<AA, Int>>(y)
-    checkSubtype<KExtensionFunction1<AA, String, Unit>>(z)
+    checkSubtype<KFunction1<AA, Int>>(y)
+    checkSubtype<KFunction2<AA, String, Unit>>(z)
 }

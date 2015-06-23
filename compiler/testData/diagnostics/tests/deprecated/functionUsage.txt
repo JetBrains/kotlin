@@ -5,7 +5,7 @@ internal fun block(): kotlin.Unit
 internal fun expression(): UsefulClass
 internal fun invoker(): kotlin.Unit
 internal fun reflection(): kotlin.reflect.KFunction1<kotlin.Int, UsefulClass>
-internal fun reflection2(): kotlin.reflect.KMemberFunction0<UsefulClass, kotlin.Unit>
+internal fun reflection2(): kotlin.reflect.KFunction1<UsefulClass, kotlin.Unit>
 kotlin.deprecated(value = "does nothing good") internal fun kotlin.Any.doNothing(): kotlin.String
 
 internal final class Delegation {

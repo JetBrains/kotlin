@@ -13,11 +13,11 @@ fun main() {
     val y = A::bar
     val z = A::baz
 
-    checkSubtype<KMemberFunction0<A, Unit>>(x)
-    checkSubtype<KMemberFunction1<A, Int, Unit>>(y)
-    checkSubtype<KMemberFunction0<A, String>>(z)
+    checkSubtype<KFunction1<A, Unit>>(x)
+    checkSubtype<KFunction2<A, Int, Unit>>(y)
+    checkSubtype<KFunction1<A, String>>(z)
 
-    checkSubtype<KMemberFunction<A, Unit>>(x)
-    checkSubtype<KMemberFunction<A, Unit>>(y)
-    checkSubtype<KMemberFunction<A, String>>(z)
+    checkSubtype<KFunction<Unit>>(x)
+    checkSubtype<KFunction<Unit>>(y)
+    checkSubtype<KFunction<String>>(z)
 }

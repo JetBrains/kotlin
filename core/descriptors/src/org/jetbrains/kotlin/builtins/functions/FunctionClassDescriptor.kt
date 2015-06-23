@@ -17,12 +17,10 @@
 package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl
 import org.jetbrains.kotlin.descriptors.impl.AbstractClassDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
@@ -32,18 +30,14 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.ArrayList
-import java.util.EnumSet
 
 /**
- * A [ClassDescriptor] representing the fictitious class for a function type, such as kotlin.Function1 or kotlin.reflect.KMemberFunction0.
+ * A [ClassDescriptor] representing the fictitious class for a function type, such as kotlin.Function1 or kotlin.reflect.KFunction2.
  *
- * Classes which are represented by this descriptor include (with supertypes):
+ * If the class represents kotlin.Function1, its only supertype is kotlin.Function.
  *
- * Function1 : Function
- * KFunction1 : Function1, KFunction
- * KMemberFunction1 : Function2, KMemberFunction
- * KExtensionFunction1 : Function2, KExtensionFunction
- * (TODO) KMemberExtensionFunction1 : Function3, KMemberExtensionFunction
+ * If the class represents kotlin.reflect.KFunction1, it has two supertypes: kotlin.Function1 and kotlin.reflect.KFunction.
+ * This allows to use both 'invoke' and reflection API on function references obtained by '::'.
  */
 public class FunctionClassDescriptor(
         private val storageManager: StorageManager,
@@ -54,24 +48,16 @@ public class FunctionClassDescriptor(
 
     public enum class Kind(val packageFqName: FqName, val classNamePrefix: String) {
         Function(BUILT_INS_PACKAGE_FQ_NAME, "Function"),
-        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction"),
-        KMemberFunction(KOTLIN_REFLECT_FQ_NAME, "KMemberFunction"),
-        KExtensionFunction(KOTLIN_REFLECT_FQ_NAME, "KExtensionFunction");
-        // TODO: KMemberExtensionFunction
+        KFunction(KOTLIN_REFLECT_FQ_NAME, "KFunction");
 
         fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
-        val hasDispatchReceiver: Boolean get() = this == KMemberFunction
-        val hasExtensionReceiver: Boolean get() = this == KExtensionFunction
-    }
 
-    public object Kinds {
-        val Functions = EnumSet.of(Kind.Function)
-        val KFunctions = EnumSet.complementOf(Functions)
-
-        fun byPackage(fqName: FqName) = when (fqName) {
-            BUILT_INS_PACKAGE_FQ_NAME -> Functions
-            KOTLIN_REFLECT_FQ_NAME -> KFunctions
-            else -> error(fqName)
+        companion object {
+            fun byPackage(fqName: FqName) = when (fqName) {
+                BUILT_INS_PACKAGE_FQ_NAME -> Function
+                KOTLIN_REFLECT_FQ_NAME -> KFunction
+                else -> null
+            }
         }
     }
 
@@ -110,13 +96,6 @@ public class FunctionClassDescriptor(
                 ))
             }
 
-            if (functionKind.hasDispatchReceiver) {
-                typeParameter(Variance.IN_VARIANCE, "T")
-            }
-            if (functionKind.hasExtensionReceiver) {
-                typeParameter(Variance.IN_VARIANCE, "E")
-            }
-
             (1..arity).map { i ->
                 typeParameter(Variance.IN_VARIANCE, "P$i")
             }
@@ -129,48 +108,29 @@ public class FunctionClassDescriptor(
         private val supertypes = storageManager.createLazyValue {
             val result = ArrayList<JetType>(2)
 
-            fun add(
-                    packageFragment: PackageFragmentDescriptor,
-                    name: Name,
-                    annotations: Annotations,
-                    supertypeArguments: (superParameters: List<TypeParameterDescriptor>) -> List<TypeProjection>
-            ) {
+            fun add(packageFragment: PackageFragmentDescriptor, name: Name) {
                 val descriptor = packageFragment.getMemberScope().getClassifier(name) as? ClassDescriptor
                                  ?: error("Class $name not found in $packageFragment")
 
                 val typeConstructor = descriptor.getTypeConstructor()
-                val arguments = supertypeArguments(typeConstructor.getParameters())
 
-                result.add(JetTypeImpl(annotations, typeConstructor, false, arguments, descriptor.getMemberScope(arguments)))
+                // Substitute all type parameters of the super class with our last type parameters
+                val arguments = getParameters().takeLast(typeConstructor.getParameters().size()).map {
+                    TypeProjectionImpl(it.getDefaultType())
+                }
+
+                result.add(JetTypeImpl(Annotations.EMPTY, typeConstructor, false, arguments, descriptor.getMemberScope(arguments)))
             }
 
-            // Add unnumbered base class, e.g. KMemberFunction for KMemberFunction5, or Function for Function0
-            add(containingDeclaration, Name.identifier(functionKind.classNamePrefix), Annotations.EMPTY) { superParameters ->
-                // Substitute type parameters of the super class with our type parameters with the same names
-                val parametersByName = getParameters().toMap { it.getName() }
-                superParameters.map { TypeProjectionImpl(parametersByName[it.getName()]!!.getDefaultType()) }
-            }
+            // Add unnumbered base class, e.g. Function for Function{n}, KFunction for KFunction{n}
+            add(containingDeclaration, Name.identifier(functionKind.classNamePrefix))
 
-            // For K*Functions, add corresponding numbered Function class, e.g. Function2 for KMemberFunction1
-            if (functionKind in Kinds.KFunctions) {
-                var functionArity = arity
-                if (functionKind.hasDispatchReceiver) functionArity++
-                if (functionKind.hasExtensionReceiver) functionArity++
-
+            // For KFunction{n}, add corresponding numbered Function{n} class, e.g. Function2 for KFunction2
+            if (functionKind == Kind.KFunction) {
                 val module = containingDeclaration.getContainingDeclaration()
                 val kotlinPackageFragment = module.getPackage(BUILT_INS_PACKAGE_FQ_NAME).fragments.single()
 
-                // If this is a KMemberFunction{n} or KExtensionFunction{n}, it extends Function{n} with the annotation kotlin.extension,
-                // so that the value of this type is callable as an extension function, with the receiver before the dot
-                val annotations =
-                        if (functionKind.hasDispatchReceiver || functionKind.hasExtensionReceiver)
-                            AnnotationsImpl(listOf(KotlinBuiltIns.getInstance().createExtensionAnnotation()))
-                        else Annotations.EMPTY
-
-                add(kotlinPackageFragment, Kind.Function.numberedClassName(functionArity), annotations) {
-                    // Substitute all type parameters of the super class with all our type parameters
-                    getParameters().map { TypeProjectionImpl(it.getDefaultType()) }
-                }
+                add(kotlinPackageFragment, Kind.Function.numberedClassName(arity))
             }
 
             result.toReadOnlyList()

@@ -704,7 +704,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         boolean isExtension = extensionReceiver != null;
 
         if (descriptor instanceof FunctionDescriptor) {
-            return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType, isExtension);
+            return createFunctionReferenceType(expression, context, (FunctionDescriptor) descriptor, receiverType);
         }
         else if (descriptor instanceof PropertyDescriptor) {
             return createPropertyReferenceType(expression, context, (PropertyDescriptor) descriptor, receiverType, isExtension);
@@ -722,16 +722,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull JetCallableReferenceExpression expression,
             @NotNull ExpressionTypingContext context,
             @NotNull FunctionDescriptor descriptor,
-            @Nullable JetType receiverType,
-            boolean isExtension
+            @Nullable JetType receiverType
     ) {
         //noinspection ConstantConditions
         JetType type = components.reflectionTypes.getKFunctionType(
                 Annotations.EMPTY,
                 receiverType,
                 getValueParametersTypes(descriptor.getValueParameters()),
-                descriptor.getReturnType(),
-                isExtension
+                descriptor.getReturnType()
         );
 
         AnonymousFunctionDescriptor functionDescriptor = new AnonymousFunctionDescriptor(

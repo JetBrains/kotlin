@@ -17,14 +17,10 @@
 package kotlin.jvm.internal;
 
 import kotlin.jvm.KotlinReflectionNotSupportedError;
-import kotlin.reflect.*;
+import kotlin.reflect.KDeclarationContainer;
+import kotlin.reflect.KFunction;
 
-public class FunctionReference
-        extends FunctionImpl
-        implements KTopLevelFunction,
-                   KMemberFunction,
-                   KTopLevelExtensionFunction,
-                   KLocalFunction {
+public class FunctionReference extends FunctionImpl implements KFunction {
     private final int arity;
 
     public FunctionReference(int arity) {

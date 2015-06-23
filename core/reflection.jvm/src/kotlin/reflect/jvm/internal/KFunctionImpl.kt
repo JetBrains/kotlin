@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import kotlin.jvm.internal.FunctionImpl
 import kotlin.reflect.KFunction
 
-abstract class KFunctionImpl private constructor(
+open class KFunctionImpl protected constructor(
         container: KCallableContainerImpl,
         name: String,
         signature: String,

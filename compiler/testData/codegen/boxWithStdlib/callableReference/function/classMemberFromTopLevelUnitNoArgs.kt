@@ -9,6 +9,6 @@ class A {
 fun box(): String {
     val a = A()
     val x = A::foo
-    a.x()
+    x(a)
     return a.result
 }

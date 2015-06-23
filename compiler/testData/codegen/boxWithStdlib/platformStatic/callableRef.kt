@@ -28,13 +28,13 @@ object A {
 }
 
 fun box(): String {
-    if (A.(A::test1)() != "OK") return "fail 1"
+    if ((A::test1)(A) != "OK") return "fail 1"
 
-    if (A.(A::test2)() != "OK") return "fail 2"
+    if ((A::test2)(A) != "OK") return "fail 2"
 
-    if (A.(A::test3)() != "1OK") return "fail 3"
+    if ((A::test3)(A) != "1OK") return "fail 3"
 
-    if (A.(A::test4)() != "1OK") return "fail 4"
+    if ((A::test4)(A) != "1OK") return "fail 4"
 
     if (((A::c).get(A)) != "OK") return "fail 5"
 

@@ -22,8 +22,8 @@ fun box(): String {
     assertEquals("A.bar A", a.bar())
     assertEquals("B.bar B", b.bar())
 
-    assertEquals("A.bar A", a.(A::bar)())
-    assertEquals("B.bar B", b.(A::bar)())
+    assertEquals("A.bar A", (A::bar)(a))
+    assertEquals("B.bar B", (A::bar)(b))
 
     a.prop = "prop"
     assertEquals("prop", a.prop)
@@ -31,10 +31,10 @@ fun box(): String {
 
     a = b
     assertEquals("B.bar B", a.bar())
-    assertEquals("B.bar B", a.(A::bar)())
+    assertEquals("B.bar B", (A::bar)(a))
 
     assertEquals("B prop", a.prop)
     assertEquals("B prop", (A::prop).get(a))
 
-    return "OK";
+    return "OK"
 }

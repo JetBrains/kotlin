@@ -1,7 +1,7 @@
 package foo
 
-fun run(a: A, arg: String, funRef:A.(String) -> String): String {
-    return a.(funRef)(arg)
+fun run(a: A, arg: String, funRef:(A, String) -> String): String {
+    return funRef(a, arg)
 }
 
 class A {
@@ -25,7 +25,7 @@ fun box():String {
     r = run(a, "!!", A::locExtBar)
     if (r != "sA:locExtBar:!!") return r
 
-    r = run(a, "!!") {A.(other:String):String -> s + ":literal:" + other }
+    r = run(a, "!!") {(a: A, other: String): String -> a.s + ":literal:" + other }
     if (r != "sA:literal:!!") return r
 
     return "OK"

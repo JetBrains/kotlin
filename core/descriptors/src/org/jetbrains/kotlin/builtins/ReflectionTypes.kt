@@ -48,8 +48,6 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     }
 
     public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
-    public fun getKExtensionFunction(n: Int): ClassDescriptor = find("KExtensionFunction$n")
-    public fun getKMemberFunction(n: Int): ClassDescriptor = find("KMemberFunction$n")
 
     public val kClass: ClassDescriptor by ClassLookup
     public val kTopLevelVariable: ClassDescriptor by ClassLookup
@@ -73,20 +71,16 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             annotations: Annotations,
             receiverType: JetType?,
             parameterTypes: List<JetType>,
-            returnType: JetType,
-            extensionFunction: Boolean
+            returnType: JetType
     ): JetType {
-        val arity = parameterTypes.size()
-        val classDescriptor =
-                if (extensionFunction) getKExtensionFunction(arity)
-                else if (receiverType != null) getKMemberFunction(arity)
-                else getKFunction(arity)
+        val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
+
+        val classDescriptor = getKFunction(arguments.size() - 1 /* return type */)
 
         if (ErrorUtils.isError(classDescriptor)) {
             return classDescriptor.getDefaultType()
         }
 
-        val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
         return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
     }
 

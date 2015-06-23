@@ -80,10 +80,9 @@ public class JavaToKotlinClassMap implements PlatformToKotlinClassMap {
         for (int i = 0; i < 23; i++) {
             add(ClassId.topLevel(new FqName("kotlin.jvm.functions.Function" + i)), builtIns.getFunction(i));
 
-            for (FunctionClassDescriptor.Kind kind : FunctionClassDescriptor.Kinds.KFunctions) {
-                String kFun = kind.getPackageFqName() + "." + kind.getClassNamePrefix();
-                addKotlinToJava(new FqNameUnsafe(kFun + i), ClassId.topLevel(new FqName(kFun)));
-            }
+            FunctionClassDescriptor.Kind kFunction = FunctionClassDescriptor.Kind.KFunction;
+            String kFun = kFunction.getPackageFqName() + "." + kFunction.getClassNamePrefix();
+            addKotlinToJava(new FqNameUnsafe(kFun + i), ClassId.topLevel(new FqName(kFun)));
         }
 
         addJavaToKotlin(classId(Deprecated.class), builtIns.getDeprecatedAnnotation());

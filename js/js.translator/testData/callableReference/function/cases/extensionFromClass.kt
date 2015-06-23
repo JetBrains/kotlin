@@ -2,7 +2,7 @@
 package foo
 
 class A {
-    fun result() = this.(::bar)("OK")
+    fun result() = (::bar)(this, "OK")
 }
 
 fun A.bar(x: String) = x

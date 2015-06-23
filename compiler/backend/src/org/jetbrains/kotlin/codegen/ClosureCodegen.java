@@ -225,53 +225,35 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
 
     @NotNull
     public StackValue putInstanceOnStack(@NotNull final ExpressionCodegen codegen) {
-        return StackValue.operation(asmType, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter v) {
-                if (isConst(closure)) {
-                    v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
-                }
-                else {
-                    v.anew(asmType);
-                    v.dup();
+        return StackValue.operation(
+                functionReferenceTarget != null ? K_FUNCTION : asmType,
+                new Function1<InstructionAdapter, Unit>() {
+                    @Override
+                    public Unit invoke(InstructionAdapter v) {
+                        if (isConst(closure)) {
+                            v.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
+                        }
+                        else {
+                            v.anew(asmType);
+                            v.dup();
 
-                    codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
-                    v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
-                }
+                            codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
+                            v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
+                        }
 
-                if (functionReferenceTarget != null) {
-                    equipFunctionReferenceWithReflection(v, functionReferenceTarget);
-                }
+                        if (functionReferenceTarget != null) {
+                            v.invokestatic(REFLECTION, "function", Type.getMethodDescriptor(K_FUNCTION, FUNCTION_REFERENCE), false);
+                        }
 
-                return Unit.INSTANCE$;
-            }
-        });
+                        return Unit.INSTANCE$;
+                    }
+                }
+        );
     }
-
-    private static void equipFunctionReferenceWithReflection(@NotNull InstructionAdapter v, @NotNull FunctionDescriptor target) {
-        DeclarationDescriptor container = target.getContainingDeclaration();
-
-        Type type;
-        if (container instanceof PackageFragmentDescriptor) {
-            type = target.getExtensionReceiverParameter() != null
-                   ? K_TOP_LEVEL_EXTENSION_FUNCTION
-                   : K_TOP_LEVEL_FUNCTION;
-        }
-        else if (container instanceof ClassDescriptor) {
-            type = K_MEMBER_FUNCTION;
-        }
-        else {
-            type = K_LOCAL_FUNCTION;
-        }
-
-        Method method = method("function", K_FUNCTION, FUNCTION_REFERENCE);
-        v.invokestatic(REFLECTION, method.getName(), method.getDescriptor(), false);
-        StackValue.coerce(K_FUNCTION, type, v);
-    }
-
 
     private void generateConstInstance() {
-        MethodVisitor mv = v.newMethod(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null, ArrayUtil.EMPTY_STRING_ARRAY);
+        MethodVisitor mv = v.newMethod(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null,
+                                       ArrayUtil.EMPTY_STRING_ARRAY);
         InstructionAdapter iv = new InstructionAdapter(mv);
 
         v.newField(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(),

@@ -1,7 +1,7 @@
 package
 
-internal val f: kotlin.reflect.KMemberFunction0<A, kotlin.Unit>
-internal val g: kotlin.reflect.KExtensionFunction0<A, kotlin.Unit>
+internal val f: kotlin.reflect.KFunction1<A, kotlin.Unit>
+internal val g: kotlin.reflect.KFunction1<A, kotlin.Unit>
 internal fun A?.foo(): kotlin.Unit
 
 internal final class A {

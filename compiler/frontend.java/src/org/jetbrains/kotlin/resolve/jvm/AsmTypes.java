@@ -43,10 +43,6 @@ public class AsmTypes {
     public static final Type K_DECLARATION_CONTAINER_TYPE = reflect("KDeclarationContainer");
 
     public static final Type K_FUNCTION = reflect("KFunction");
-    public static final Type K_TOP_LEVEL_FUNCTION = reflect("KTopLevelFunction");
-    public static final Type K_MEMBER_FUNCTION = reflect("KMemberFunction");
-    public static final Type K_TOP_LEVEL_EXTENSION_FUNCTION = reflect("KTopLevelExtensionFunction");
-    public static final Type K_LOCAL_FUNCTION = reflect("KLocalFunction");
 
     public static final Type K_MEMBER_PROPERTY_TYPE = reflect("KMemberProperty");
     public static final Type K_MUTABLE_MEMBER_PROPERTY_TYPE = reflect("KMutableMemberProperty");

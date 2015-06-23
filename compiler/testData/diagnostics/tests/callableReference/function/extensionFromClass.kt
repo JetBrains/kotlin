@@ -8,9 +8,9 @@ class A {
         val y = ::bar
         val z = ::baz
 
-        checkSubtype<KExtensionFunction0<A, Unit>>(x)
-        checkSubtype<KExtensionFunction1<A, Int, Unit>>(y)
-        checkSubtype<KExtensionFunction0<A, String>>(z)
+        checkSubtype<KFunction1<A, Unit>>(x)
+        checkSubtype<KFunction2<A, Int, Unit>>(y)
+        checkSubtype<KFunction1<A, String>>(z)
     }
 }
 
