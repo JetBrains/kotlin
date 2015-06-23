@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.google.common.collect.ObjectArrays
 import com.intellij.debugger.MultiRequestPositionManager
 import com.intellij.debugger.NoDataException
 import com.intellij.debugger.SourcePosition
@@ -47,9 +46,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.decompiler.JetClsFile
 import org.jetbrains.kotlin.idea.findUsages.toSearchTarget
-import org.jetbrains.kotlin.idea.search.usagesSearch.DefaultSearchHelper
 import org.jetbrains.kotlin.idea.search.usagesSearch.FunctionUsagesSearchHelper
-import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearch
 import org.jetbrains.kotlin.idea.search.usagesSearch.search
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -60,23 +57,42 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.inline.InlineAnalyzerExtension
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import java.util.*
+import java.util.ArrayList
+import java.util.WeakHashMap
+import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
 class PositionedElement(val className: String?, val element: PsiElement?)
 
 public class JetPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager {
+
     private val myTypeMappers = WeakHashMap<String, CachedValue<JetTypeMapper>>()
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
         if (location == null) {
             throw NoDataException.INSTANCE
         }
+
         val psiFile = getPsiFileByLocation(location)
         if (psiFile == null) {
+            val isKotlinStrataAvailable = location.declaringType().availableStrata().contains("Kotlin")
+            if (isKotlinStrataAvailable) {
+                try {
+                    val javaSourceFileName = location.sourceName("Java")
+                    val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
+                    val project = myDebugProcess.getProject()
+
+                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), javaClassName, javaSourceFileName, 0)
+                    if (defaultPsiFile != null) {
+                        return SourcePosition.createFromLine(defaultPsiFile, 0)
+                    }
+                }
+                catch(e: AbsentInformationException) {
+                    // ignored
+                }
+            }
+
             throw NoDataException.INSTANCE
         }
 
