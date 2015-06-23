@@ -35,26 +35,28 @@ public object Delegates {
 
     /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed.
-     * @param initial the initial value of the property.
+     * @param initialValue the initial value of the property.
      * @param onChange the callback which is called after the change of the property is made. The value of the property
      *  has already been changed when this callback is invoked.
      */
-    public fun observable<T>(initial: T, onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Unit): ReadWriteProperty<Any?, T> {
-        return ObservableProperty<T>(initial, afterChange = onChange)
-    }
+    public inline fun observable<T>(initialValue: T, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Unit):
+        ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
+            override fun afterChange(property: PropertyMetadata, oldValue: T, newValue: T) = onChange(property, oldValue, newValue)
+        }
 
     /**
      * Returns a property delegate for a read/write property that calls a specified callback function when changed,
      * allowing the callback to veto the modification.
-     * @param initial the initial value of the property.
+     * @param initialValue the initial value of the property.
      * @param onChange the callback which is called before a change to the property value is attempted.
      *  The value of the property hasn't been changed yet, when this callback is invoked.
      *  If the callback returns `true` the value of the property is being set to the new value,
      *  and if the callback returns `false` the new value is discarded and the property remains its old value.
      */
-    public fun vetoable<T>(initial: T, onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ReadWriteProperty<Any?, T> {
-        return ObservableProperty<T>(initial, beforeChange = onChange)
-    }
+    public inline fun vetoable<T>(initialValue: T, inlineOptions(InlineOption.ONLY_LOCAL_RETURN) onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean):
+        ReadWriteProperty<Any?, T> = object : ObservableProperty<T>(initialValue) {
+            override fun beforeChange(property: PropertyMetadata, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
+        }
 
     /**
      * Returns a property delegate for a read/write property that stores its value in a map, using the property name
@@ -112,39 +114,45 @@ private class NotNullVar<T: Any>() : ReadWriteProperty<Any?, T> {
     }
 }
 
+
+deprecated("Use Delegates.vetoable() instead or construct implementation of abstract ObservableProperty", ReplaceWith("Delegates.vetoable(initialValue, onChange)"))
+public fun ObservableProperty<T>(initialValue: T, onChange: (property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean): ObservableProperty<T> =
+    object : ObservableProperty<T>(initialValue) {
+        override fun beforeChange(property: PropertyMetadata, oldValue: T, newValue: T): Boolean = onChange(property, oldValue, newValue)
+    }
+
 /**
- * Implements a property delegate for a read/write property that calls a specified callback function when changed.
+ * Implements the core logic of a property delegate for a read/write property that calls callback functions when changed.
  * @param initialValue the initial value of the property.
- * @param beforeChange the callback which is called before a change to the property value is attempted.
- *  The value of the property hasn't been changed yet, when this callback is invoked.
- *  If the callback returns `true` the value of the property is being set to the new value,
- *  and if the callback returns `false` the new value is discarded and the property remains its old value.
- * @param afterChange the callback which is called after the change of the property is made. The value of the property
- *  has already been changed when this callback is invoked.
  */
-public class ObservableProperty<T>(
-        initialValue: T,
-        private val beforeChange: ((property: PropertyMetadata, oldValue: T, newValue: T) -> Boolean)? = null,
-        private val afterChange: ((property: PropertyMetadata, oldValue: T, newValue: T) -> Unit)? = null
-) : ReadWriteProperty<Any?, T> {
+public abstract class ObservableProperty<T>(initialValue: T) : ReadWriteProperty<Any?, T> {
     private var value = initialValue
+
+    /**
+     *  The callback which is called before a change to the property value is attempted.
+     *  The value of the property hasn't been changed yet, when this callback is invoked.
+     *  If the callback returns `true` the value of the property is being set to the new value,
+     *  and if the callback returns `false` the new value is discarded and the property remains its old value.
+     */
+    protected open fun beforeChange(property: PropertyMetadata, oldValue: T, newValue: T): Boolean = true
+
+    /**
+     * The callback which is called after the change of the property is made. The value of the property
+     * has already been changed when this callback is invoked.
+     */
+    protected open fun afterChange (property: PropertyMetadata, oldValue: T, newValue: T): Unit {}
 
     public override fun get(thisRef: Any?, property: PropertyMetadata): T {
         return value
     }
 
     public override fun set(thisRef: Any?, property: PropertyMetadata, value: T) {
-        if (beforeChange == null && afterChange == null) {
-            this.value = value
+        val oldValue = this.value
+        if (!beforeChange(property, oldValue, value)) {
+            return
         }
-        else {
-            val oldValue = this.value
-            if (beforeChange != null && !(beforeChange)(property, oldValue, value)) {
-                return
-            }
-            this.value = value
-            if (afterChange != null) (afterChange)(property, oldValue, value)
-        }
+        this.value = value
+        afterChange(property, oldValue, value)
     }
 }
 
