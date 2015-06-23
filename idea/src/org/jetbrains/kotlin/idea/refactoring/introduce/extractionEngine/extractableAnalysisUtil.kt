@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -601,7 +602,7 @@ private fun ExtractionData.inferParametersInfo(
         val extensionReceiver = resolvedCall?.getExtensionReceiver()
         val receiverToExtract = when {
                            extensionReceiver == ReceiverValue.NO_RECEIVER,
-                           resolvedCall?.getCall() is CallTransformer.CallForImplicitInvoke -> resolvedCall?.getDispatchReceiver()
+                           isSynthesizedInvoke(originalDescriptor) -> resolvedCall?.getDispatchReceiver()
                            else -> extensionReceiver
                        } ?: ReceiverValue.NO_RECEIVER
 
@@ -671,9 +672,13 @@ private fun ExtractionData.inferParametersInfo(
                                                                      originalDescriptor.getValueParameters().map { it.getType() },
                                                                      originalDescriptor.getReturnType() ?: DEFAULT_RETURN_TYPE)
                     }
-                    parameterExpression != null -> bindingContext[BindingContext.SMARTCAST, parameterExpression]
-                                                   ?: bindingContext.getType(parameterExpression)
-                                                   ?: if (receiverToExtract.exists()) receiverToExtract.getType() else null
+                    parameterExpression != null ->
+                        bindingContext[BindingContext.SMARTCAST, parameterExpression]
+                        ?: bindingContext.getType(parameterExpression)
+                        ?: (parameterExpression as? JetReferenceExpression)?.let {
+                            (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.getReturnType()
+                        }
+                        ?: if (receiverToExtract.exists()) receiverToExtract.getType() else null
                     receiverToExtract is ThisReceiver -> {
                         val calleeExpression = resolvedCall!!.getCall().getCalleeExpression()
                         bindingContext[BindingContext.EXPRESSION_TYPE_INFO, calleeExpression]?.dataFlowInfo?.let { dataFlowInfo ->

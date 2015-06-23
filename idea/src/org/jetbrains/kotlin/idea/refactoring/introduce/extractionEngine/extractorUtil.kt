@@ -79,7 +79,10 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
         }
 
         descriptor.receiverParameter?.let {
-            builder.receiver(it.getParameterType(descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
+            val receiverType = it.getParameterType(descriptor.extractionData.options.allowSpecialClassNames)
+            val receiverTypeAsString = receiverType.typeAsString()
+            val isFunctionType = KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(receiverType)
+            builder.receiver(if (isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
         }
 
         builder.name(if (descriptor.name == "" && generatorOptions.allowDummyName) "myFun" else descriptor.name)

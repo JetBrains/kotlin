@@ -1805,9 +1805,33 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("paramAsExplicitInvoke.kt")
+                public void testParamAsExplicitInvoke() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/paramAsExplicitInvoke.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("paramWithExtensionInvoke.kt")
+                public void testParamWithExtensionInvoke() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/paramWithExtensionInvoke.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("qualifiedThisAsArgument.kt")
                 public void testQualifiedThisAsArgument() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/qualifiedThisAsArgument.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("thisAsExplicitInvoke.kt")
+                public void testThisAsExplicitInvoke() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/thisAsExplicitInvoke.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("thisAsImplicitInvoke.kt")
+                public void testThisAsImplicitInvoke() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/thisAsImplicitInvoke.kt");
                     doExtractFunctionTest(fileName);
                 }
             }

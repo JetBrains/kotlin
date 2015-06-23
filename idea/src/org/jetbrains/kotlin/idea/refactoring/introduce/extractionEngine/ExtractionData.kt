@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.types.JetType
 
 data class ExtractionOptions(
@@ -115,6 +117,7 @@ data class ExtractionData(
     val bindingContext: BindingContext? by Delegates.lazy { commonParent.getContextForContainingDeclarationBody() }
 
     private val itFakeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createParameter("it: Any?") }
+    private val synthesizedInvokeDeclaration by Delegates.lazy { JetPsiFactory(originalFile).createFunction("fun invoke() {}") }
 
     val refOffsetToDeclaration by Delegates.lazy {
         fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
@@ -146,7 +149,8 @@ data class ExtractionData(
                     val resolvedCall = ref.getResolvedCall(context)
                     val descriptor = context[BindingContext.REFERENCE_TARGET, ref] ?: return
                     val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNamedElement
-                                      ?: if (isExtractableIt(descriptor, context)) itFakeDeclaration else return
+                                      ?: if (isExtractableIt(descriptor, context)) itFakeDeclaration
+                                      else if (isSynthesizedInvoke(descriptor)) synthesizedInvokeDeclaration else return
 
                     val offset = ref.getTextRange()!!.getStartOffset() - originalStartOffset
                     resultMap[offset] = ResolveResult(ref, declaration, descriptor, resolvedCall)
@@ -196,7 +200,22 @@ data class ExtractionData(
             val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
             val isBadRef = !compareDescriptors(project, originalResolveResult.descriptor, descriptor) || smartCast != null
             if (isBadRef && !originalResolveResult.declaration.isInsideOf(originalElements)) {
-                referencesInfo.add(ResolvedReferenceInfo(ref, offset, originalResolveResult, smartCast))
+                val originalResolvedCall = originalResolveResult.resolvedCall as? VariableAsFunctionResolvedCall
+                val originalFunctionCall = originalResolvedCall?.functionCall
+                val originalVariableCall = originalResolvedCall?.variableCall
+                val invokeDescriptor = originalFunctionCall?.getResultingDescriptor()
+                if (invokeDescriptor != null && isSynthesizedInvoke(invokeDescriptor) && invokeDescriptor.isExtension) {
+                    val variableResolveResult = originalResolveResult.copy(resolvedCall = originalVariableCall!!,
+                                                                           descriptor = originalVariableCall.getResultingDescriptor())
+                    val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall!!,
+                                                                           descriptor = originalFunctionCall.getResultingDescriptor(),
+                                                                           declaration = synthesizedInvokeDeclaration)
+                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, variableResolveResult, smartCast))
+                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, functionResolveResult, smartCast))
+                }
+                else {
+                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, originalResolveResult, smartCast))
+                }
             }
         }
 
