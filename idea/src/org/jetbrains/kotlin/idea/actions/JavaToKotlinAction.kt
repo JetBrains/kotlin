@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.progress.ProgressManager
@@ -44,6 +45,8 @@ import java.util.ArrayList
 
 public class JavaToKotlinAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
+        ApplicationManager.getApplication().saveAll()
+
         val javaFiles = selectedJavaFiles(e).toList()
         val project = CommonDataKeys.PROJECT.getData(e.getDataContext())!!
 
