@@ -4,53 +4,30 @@ import org.junit.Test as test
 import kotlin.test.*
 import kotlin.properties.*
 
-interface WithBox {
-    fun box(): String
-}
-
-abstract class DelegationTestBase {
-    fun doTest(klass: WithBox) {
-        assertEquals("OK", klass.box())
+class NotNullVarTest() {
+    test fun doTest() {
+        NotNullVarTestGeneric("a", "b").doTest()
     }
 }
 
-class DelegationTest(): DelegationTestBase() {
-    test fun testNotNullVar() {
-        doTest(TestNotNullVar("a", "b"))
-    }
-
-    test fun testObservablePropertyInChangeSupport() {
-        doTest(TestObservablePropertyInChangeSupport())
-    }
-
-    test fun testObservableProperty() {
-        doTest(TestObservableProperty())
-    }
-
-    test fun testVetoableProperty() {
-        doTest(TestVetoableProperty())
-    }
-}
-
-public class TestNotNullVar<T>(val a1: String, val b1: T): WithBox {
+private class NotNullVarTestGeneric<T>(val a1: String, val b1: T) {
     var a: String by Delegates.notNull()
     var b by Delegates.notNull<T>()
 
-    override fun box(): String {
+    public fun doTest() {
         a = a1
         b = b1
-        if (a != "a") return "fail: a shouuld be a, but was $a"
-        if (b != "b") return "fail: b should be b, but was $b"
-        return "OK"
+        assertTrue(a == "a", "fail: a should be a, but was $a")
+        assertTrue(b == "b", "fail: b should be b, but was $b")
     }
 }
 
-class TestObservablePropertyInChangeSupport: WithBox, ChangeSupport() {
+class ObservablePropertyInChangeSupportTest: ChangeSupport() {
 
     var b by property(init = 2)
     var c by property(3)
 
-    override fun box(): String {
+    test fun doTest() {
         var result = false
         addChangeListener("b", object: ChangeListener {
             public override fun onPropertyChange(event: ChangeEvent) {
@@ -63,39 +40,36 @@ class TestObservablePropertyInChangeSupport: WithBox, ChangeSupport() {
             }
         })
         b = 4
-        if (b != 4) return "fail: b != 4"
-        if (!result) return "fail: result should be true"
-        return "OK"
+        assertTrue(b == 4, "fail: b != 4")
+        assertTrue(result, "fail: result should be true")
     }
 }
 
-class TestObservableProperty: WithBox {
+class ObservablePropertyTest {
     var result = false
 
     var b by Delegates.observable(1, { pd, o, n -> result = true})
 
-    override fun box(): String {
+    test fun doTest() {
         b = 4
-        if (b != 4) return "fail: b != 4"
-        if (!result) return "fail: result should be true"
-        return "OK"
+        assertTrue(b == 4, "fail: b != 4")
+        assertTrue(result, "fail: result should be true")
     }
 }
 
 class A(val p: Boolean)
 
-class TestVetoableProperty: WithBox {
+class VetoablePropertyTest {
     var result = false
     var b by Delegates.vetoable(A(true), { pd, o, n -> result = n.p == true; result})
 
-    override fun box(): String {
+    test fun doTest() {
         val firstValue = A(true)
         b = firstValue
-        if (b != firstValue) return "fail1: b should be firstValue = A(true)"
-        if (!result) return "fail2: result should be true"
+        assertTrue(b == firstValue, "fail1: b should be firstValue = A(true)")
+        assertTrue(result, "fail2: result should be true")
         b = A(false)
-        if (b != firstValue) return "fail3: b should be firstValue = A(true)"
-        if (result) return "fail4: result should be false"
-        return "OK"
+        assertTrue(b == firstValue, "fail3: b should be firstValue = A(true)")
+        assertFalse(result, "fail4: result should be false")
     }
 }

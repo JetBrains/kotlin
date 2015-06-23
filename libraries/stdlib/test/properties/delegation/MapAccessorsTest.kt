@@ -1,4 +1,4 @@
-package test.properties.delegation
+package test.properties.delegation.map
 
 import java.util.*
 import kotlin.properties.*
