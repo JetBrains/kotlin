@@ -168,7 +168,7 @@ class ParameterNameAndTypeCompletion(
         override fun hashCode() = idString.hashCode()
     }
 
-    private class DescriptorType(private val classifier: ClassifierDescriptor) : Type(DescriptorUtils.getFqName(classifier).render()) {
+    private class DescriptorType(private val classifier: ClassifierDescriptor) : Type(IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(classifier)) {
         override fun createTypeLookupElement(lookupElementFactory: LookupElementFactory)
                 = lookupElementFactory.createLookupElement(classifier, false, qualifyNestedClasses = true)
     }
