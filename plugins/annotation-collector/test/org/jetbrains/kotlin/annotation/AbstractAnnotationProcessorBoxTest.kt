@@ -55,7 +55,7 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
         val environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val project = environment.project
 
-        val collectorExtension = AnnotationCollectorExtensionForTests()
+        val collectorExtension = AnnotationCollectorExtensionForTests(false)
         ClassBuilderInterceptorExtension.registerExtension(project, collectorExtension)
 
         myEnvironment = environment
@@ -63,7 +63,9 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
         return collectorExtension
     }
 
-    private class AnnotationCollectorExtensionForTests : AnnotationCollectorExtensionBase() {
+    private class AnnotationCollectorExtensionForTests(
+            supportInheritedAnnotations: Boolean
+    ) : AnnotationCollectorExtensionBase(supportInheritedAnnotations) {
         val stringWriter = StringWriter()
 
         override fun getWriter(diagnostic: DiagnosticSink) = stringWriter

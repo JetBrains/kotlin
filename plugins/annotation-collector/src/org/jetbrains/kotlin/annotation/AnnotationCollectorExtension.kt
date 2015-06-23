@@ -33,7 +33,7 @@ import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 import kotlin.properties.Delegates
 
-public abstract class AnnotationCollectorExtensionBase() : ClassBuilderInterceptorExtension {
+public abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations: Boolean) : ClassBuilderInterceptorExtension {
 
     private object RecordTypes {
         val ANNOTATED_CLASS = "c"
@@ -42,6 +42,8 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
 
         val SHORTENED_ANNOTATION = "a"
         val SHORTENED_PACKAGE_NAME = "p"
+
+        val CLASS_DECLARATION = "d"
     }
 
     protected abstract val annotationFilterList: List<String>?
@@ -126,8 +128,15 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
                 superName: String,
                 interfaces: Array<out String>
         ) {
-            currentClassSimpleName = name.substringAfterLast('/')
-            currentPackageName = name.substringBeforeLast('/', "").replace('/', '.')
+            val currentClassSimpleName = name.substringAfterLast('/')
+            val currentPackageName = name.substringBeforeLast('/', "").replace('/', '.')
+
+            this.currentClassSimpleName = currentClassSimpleName
+            this.currentPackageName = currentPackageName
+
+            if (supportInheritedAnnotations) {
+                recordClass(currentPackageName, currentClassSimpleName)
+            }
 
             super.defineClass(origin, version, access, name, signature, superName, interfaces)
         }
@@ -170,6 +179,15 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
             else !annotationFqName.startsWith("kotlin.jvm.internal.") //apply to all
         }
 
+        private fun recordClass(packageName: String, className: String) {
+            val packageNameId = if (!packageName.isEmpty())
+                shortenedPackageNameCache.save(packageName, writer)
+            else null
+
+            val outputClassName = getOutputClassName(packageNameId, className)
+            writer.write("${RecordTypes.CLASS_DECLARATION} $outputClassName\n")
+        }
+
         private fun recordAnnotation(name: String?, type: String, annotationDesc: String) {
             val annotationFqName = Type.getType(annotationDesc).getClassName()
             if (!isAnnotationHandled(annotationFqName)) return
@@ -183,7 +201,7 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
                 else null
 
                 val className = this.currentClassSimpleName!!
-                val outputClassName = if (packageNameId == null) className else "$packageNameId/$className"
+                val outputClassName = getOutputClassName(packageNameId, className)
                 val elementName = if (name != null) " $name" else ""
 
                 writer.write("$type $annotationId $outputClassName$elementName\n")
@@ -191,6 +209,10 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
             catch (e: IOException) {
                 throw e
             }
+        }
+
+        private fun getOutputClassName(packageNameId: String?, className: String): String {
+            return if (packageNameId == null) className else "$packageNameId/$className"
         }
 
         private fun String.compilePatternOpt(): Pattern? {
@@ -220,8 +242,9 @@ public abstract class AnnotationCollectorExtensionBase() : ClassBuilderIntercept
 
 public class AnnotationCollectorExtension(
         override val annotationFilterList: List<String>? = null,
-        val outputFilename: String? = null
-) : AnnotationCollectorExtensionBase() {
+        val outputFilename: String? = null,
+        supportInheritedAnnotations: Boolean
+) : AnnotationCollectorExtensionBase(supportInheritedAnnotations) {
 
     private var writerInternal: Writer? = null
 
