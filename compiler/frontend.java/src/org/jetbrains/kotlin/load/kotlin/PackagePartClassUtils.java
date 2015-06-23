@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.load.kotlin;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.JetDeclaration;
-import org.jetbrains.kotlin.psi.JetFile;
-import org.jetbrains.kotlin.psi.JetNamedFunction;
-import org.jetbrains.kotlin.psi.JetProperty;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf;
@@ -50,18 +50,35 @@ public class PackagePartClassUtils {
     }
 
     @NotNull
+    @TestOnly
     public static FqName getPackagePartFqName(@NotNull FqName facadeFqName, @NotNull VirtualFile file) {
+        return getPackagePartFqName(facadeFqName, file, null);
+    }
+
+    @NotNull
+    public static FqName getPackagePartFqName(@NotNull FqName facadeFqName, @NotNull VirtualFile file, @Nullable JetFile jetFile) {
         String fileName = FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.getName()));
 
-        // path hashCode to prevent same name / different path collision
-        String srcName = String.format(
-                "%s$%s$%08x",
-                facadeFqName.shortName().asString(),
-                replaceSpecialSymbols(fileName),
-                getPathHashCode(file)
-        );
+        if (!fileName.isEmpty()) {
+            char c = fileName.charAt(0);
+            //!Character.isUpperCase also handles non-latin characters
+            if ('a' <= c && c <= 'z') {
+                fileName = Character.toUpperCase(fileName.charAt(0)) + fileName.substring(1);
+            }
+        }
 
-        return facadeFqName.parent().child(Name.identifier(srcName));
+        if (jetFile != null) {
+            for (PsiElement child : jetFile.getDeclarations()) {
+                if (child instanceof JetClassOrObject) {
+                    if (fileName.equalsIgnoreCase(((JetClassOrObject) child).getName())) {
+                        fileName += "_";
+                        break;
+                    }
+                }
+            }
+        }
+
+        return facadeFqName.parent().child(Name.identifier(replaceSpecialSymbols(fileName)));
     }
 
     @NotNull
@@ -77,7 +94,7 @@ public class PackagePartClassUtils {
 
     @NotNull
     public static FqName getPackagePartFqName(@NotNull JetFile file) {
-        return getPackagePartFqName(getPackageClassFqName(file.getPackageFqName()), file.getVirtualFile());
+        return getPackagePartFqName(getPackageClassFqName(file.getPackageFqName()), file.getVirtualFile(), file);
     }
 
     @NotNull

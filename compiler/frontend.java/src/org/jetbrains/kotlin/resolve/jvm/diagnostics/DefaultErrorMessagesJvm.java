@@ -81,8 +81,11 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "Please use the more clear ''::class.java'' syntax to avoid confusion",
                 Renderers.RENDER_TYPE, Renderers.RENDER_TYPE
         );
+
         MAP.put(ErrorsJvm.JAVA_TYPE_MISMATCH,
                 "Java type mismatch expected {1} but found {0}. Use explicit cast", Renderers.RENDER_TYPE, Renderers.RENDER_TYPE);
+
+        MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Class names ''{0}'' conflict with package name (facade or part)", Renderers.TO_STRING);
     }
 
     @NotNull

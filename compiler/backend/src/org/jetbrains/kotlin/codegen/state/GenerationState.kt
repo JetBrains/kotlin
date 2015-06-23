@@ -102,6 +102,9 @@ public class GenerationState jvmOverloads constructor(
         val optimizationClassBuilderFactory = OptimizationClassBuilderFactory(builderFactory, disableOptimization)
         var interceptedBuilderFactory: ClassBuilderFactory = BuilderFactoryForDuplicateSignatureDiagnostics(
                 optimizationClassBuilderFactory, this.bindingContext, diagnostics)
+
+        interceptedBuilderFactory = BuilderFactoryForDuplicateClassNameDiagnostics(interceptedBuilderFactory, diagnostics);
+
         val interceptExtensions = ClassBuilderInterceptorExtension.getInstances(project)
 
         for (extension in interceptExtensions) {

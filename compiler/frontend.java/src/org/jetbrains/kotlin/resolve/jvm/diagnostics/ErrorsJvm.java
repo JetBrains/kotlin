@@ -69,6 +69,8 @@ public interface ErrorsJvm {
     DiagnosticFactory2<JetElement, JetType, JetType> JAVA_CLASS_ON_COMPANION = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<JetExpression, JetType, JetType> JAVA_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
+    DiagnosticFactory1<PsiElement, String> DUPLICATE_CLASS_NAMES = DiagnosticFactory1.create(ERROR);
+
     enum NullabilityInformationSource {
         KOTLIN {
             @NotNull
