@@ -1,0 +1,4 @@
+p org.test 0
+d 0/SomeInterface
+d 0/SomeInterface$$TImpl
+d 0/SomeClass
