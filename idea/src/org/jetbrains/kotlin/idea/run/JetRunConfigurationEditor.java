@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.run;
 
+import com.intellij.execution.ui.AlternativeJREPanel;
 import com.intellij.execution.ui.CommonJavaParametersPanel;
 import com.intellij.execution.ui.ConfigurationModuleSelector;
 import com.intellij.openapi.options.ConfigurationException;
@@ -34,6 +35,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     private JTextField myMainClassField;
     private JPanel myModuleChooserHolder;
     private CommonJavaParametersPanel myCommonProgramParameters;
+    private AlternativeJREPanel alternativeJREPanel;
     private ConfigurationModuleSelector myModuleSelector;
 
     public JetRunConfigurationEditor(Project project) {
@@ -54,6 +56,7 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
         myCommonProgramParameters.reset(configuration);
         myMainClassField.setText(configuration.getRunClass() == null ? null : configuration.getRunClass());
         myModuleSelector.reset(configuration);
+        alternativeJREPanel.init(configuration.getAlternativeJrePath(), configuration.isAlternativeJrePathEnabled());
     }
 
     @Override
@@ -61,6 +64,8 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
         myModuleSelector.applyTo(configuration);
         myCommonProgramParameters.applyTo(configuration);
         configuration.setRunClass(myMainClassField.getText());
+        configuration.setAlternativeJrePath(alternativeJREPanel.getPath());
+        configuration.setAlternativeJrePathEnabled(alternativeJREPanel.isPathEnabled());
     }
 
     @NotNull
