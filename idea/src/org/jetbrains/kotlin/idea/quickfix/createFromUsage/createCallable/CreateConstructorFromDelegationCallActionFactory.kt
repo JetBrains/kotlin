@@ -63,6 +63,6 @@ object CreateConstructorFromDelegationCallActionFactory : JetSingleIntentionActi
             )
         }
 
-        return CreateCallableFromUsageFix(delegationCall, SecondaryConstructorInfo(parameters, targetClass), false)
+        return CreateCallableFromUsageFix(delegationCall, SecondaryConstructorInfo(parameters, targetClass))
     }
 }

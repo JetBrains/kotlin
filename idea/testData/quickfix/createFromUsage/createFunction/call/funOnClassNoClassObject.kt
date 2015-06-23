@@ -1,4 +1,4 @@
-// "Create function 'foo'" "false"
+// "Create member function 'foo'" "false"
 // ERROR: Unresolved reference: foo
 
 class A<T>(val n: T)

@@ -1,4 +1,4 @@
-// "Create function 'contains'" "true"
+// "Create member function 'contains'" "true"
 
 class A<T>(val n: T) {
     fun contains(t: T): Boolean {

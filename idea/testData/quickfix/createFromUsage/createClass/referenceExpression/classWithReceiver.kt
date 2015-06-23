@@ -1,6 +1,6 @@
 // "Create class 'A'" "false"
 // ACTION: Create extension property 'A'
-// ACTION: Create property 'A'
+// ACTION: Create member property 'A'
 // ERROR: Unresolved reference: A
 package p
 

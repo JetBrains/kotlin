@@ -1,4 +1,4 @@
-// "Create function 'plus'" "true"
+// "Create member function 'plus'" "true"
 
 class A<T>(val n: T) {
     fun plus(i: Int, s: String): A<T> = throw Exception()

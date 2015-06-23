@@ -1,5 +1,5 @@
 // "Create extension function 'foo'" "false"
-// ACTION: Create function 'foo'
+// ACTION: Create member function 'foo'
 // ERROR: Unresolved reference: foo
 
 fun test() {

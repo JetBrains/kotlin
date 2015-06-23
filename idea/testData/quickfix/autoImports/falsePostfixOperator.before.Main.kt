@@ -1,6 +1,6 @@
 // "Import" "false"
 // ACTION: Create extension function 'inc'
-// ACTION: Create function 'inc'
+// ACTION: Create member function 'inc'
 // ACTION: Create local variable '++'
 // ACTION: Create parameter '++'
 // ACTION: Replace overloaded operator with function call

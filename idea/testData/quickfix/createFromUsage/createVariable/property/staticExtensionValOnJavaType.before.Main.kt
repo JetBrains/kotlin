@@ -1,5 +1,5 @@
 // "Create extension property 'foo'" "false"
-// ACTION: Create property 'foo'
+// ACTION: Create member property 'foo'
 // ERROR: Unresolved reference: foo
 
 fun test() {

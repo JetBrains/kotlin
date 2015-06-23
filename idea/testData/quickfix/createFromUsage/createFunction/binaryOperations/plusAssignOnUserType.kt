@@ -1,4 +1,4 @@
-// "Create function 'plusAssign'" "true"
+// "Create member function 'plusAssign'" "true"
 
 class A<T>(val n: T)
 

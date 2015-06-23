@@ -1,4 +1,4 @@
-// "Create function 'get'" "true"
+// "Create member function 'get'" "true"
 class Foo<T> {
     fun <T, V> x (y: Foo<Iterable<T>>, w: Iterable<V>) {
         val z: Iterable<T> = y<caret>["", w]

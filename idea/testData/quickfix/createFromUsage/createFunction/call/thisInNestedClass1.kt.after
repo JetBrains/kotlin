@@ -1,4 +1,4 @@
-// "Create function 'foo'" "true"
+// "Create member function 'foo'" "true"
 
 class A<T>(val n: T) {
     inner class B<U>(val m: U) {

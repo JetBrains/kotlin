@@ -1,4 +1,4 @@
-// "Create function 'next'" "true"
+// "Create member function 'next'" "true"
 class FooIterator<T> {
     fun hasNext(): Boolean { return false }
 }

@@ -1,4 +1,4 @@
-// "Create function 'invoke'" "true"
+// "Create member function 'invoke'" "true"
 
 class A<T>(val n: T)
 class B<T>(val m: T)

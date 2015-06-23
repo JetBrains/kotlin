@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
+import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
@@ -32,14 +32,21 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.Collections
 import java.util.HashSet
 
-public class CreateCallableFromUsageFix(
+public class CreateCallableFromUsageFix(originalElement: JetElement, callableInfos: List<CallableInfo>)
+: CreateCallableFromUsageFixBase(originalElement, callableInfos, false) {
+    constructor(originalExpression: JetElement, callableInfo: CallableInfo) : this(originalExpression, Collections.singletonList(callableInfo))
+}
+
+public class CreateExtensionCallableFromUsageFix(originalElement: JetElement, callableInfos: List<CallableInfo>)
+: CreateCallableFromUsageFixBase(originalElement, callableInfos, true), LowPriorityAction {
+    constructor(originalExpression: JetElement, callableInfo: CallableInfo) : this(originalExpression, Collections.singletonList(callableInfo))
+}
+
+public abstract class CreateCallableFromUsageFixBase(
         originalElement: JetElement,
         val callableInfos: List<CallableInfo>,
         val isExtension: Boolean
 ) : CreateFromUsageFixBase(originalElement) {
-    constructor(originalExpression: JetElement,
-                callableInfo: CallableInfo,
-                isExtension: Boolean) : this(originalExpression, Collections.singletonList(callableInfo), isExtension) { }
 
     init {
         assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${originalElement.getElementTextWithContext()}" }
@@ -69,15 +76,24 @@ public class CreateCallableFromUsageFix(
             }
             if (it.name.isNotEmpty()) "$kind '${it.name}'" else kind
         }
-        return JetBundle.message(
-                "create.0.from.usage",
-                renderedCallables.joinToString(prefix = if (isExtension) "extension " else "")
-        )
+
+        return StringBuilder {
+            append("Create ")
+
+            val receiverInfo = callableInfos.first().receiverTypeInfo
+            if (isExtension) {
+                append("extension ")
+            }
+            else if (receiverInfo !is TypeInfo.Empty) {
+                append("member ")
+            }
+
+            renderedCallables.joinTo(this)
+        }.toString()
     }
 
     fun isAvailable(): Boolean {
-        val callableInfo = callableInfos.first()
-        val receiverInfo = callableInfo.receiverTypeInfo
+        val receiverInfo = callableInfos.first().receiverTypeInfo
 
         if (receiverInfo is TypeInfo.Empty) return !isExtension
         // TODO: Remove after companion object extensions are supported
@@ -147,16 +163,16 @@ public class CreateCallableFromUsageFix(
 public fun CreateCallableFromUsageFixes(
         originalExpression: JetExpression,
         callableInfos: List<CallableInfo>
-) : List<CreateCallableFromUsageFix> {
+) : List<CreateCallableFromUsageFixBase> {
     return listOf(
-            CreateCallableFromUsageFix(originalExpression, callableInfos, false),
-            CreateCallableFromUsageFix(originalExpression, callableInfos, true)
+            CreateCallableFromUsageFix(originalExpression, callableInfos),
+            CreateExtensionCallableFromUsageFix(originalExpression, callableInfos)
     ).filter { it.isAvailable() }
 }
 
 public fun CreateCallableFromUsageFixes(
         originalExpression: JetExpression,
         callableInfo: CallableInfo
-) : List<CreateCallableFromUsageFix> {
+) : List<CreateCallableFromUsageFixBase> {
     return CreateCallableFromUsageFixes(originalExpression, Collections.singletonList(callableInfo))
 }

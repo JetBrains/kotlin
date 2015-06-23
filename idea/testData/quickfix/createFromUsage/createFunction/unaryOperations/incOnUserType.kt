@@ -1,4 +1,4 @@
-// "Create function 'inc'" "true"
+// "Create member function 'inc'" "true"
 
 class A<T>(val n: T)
 

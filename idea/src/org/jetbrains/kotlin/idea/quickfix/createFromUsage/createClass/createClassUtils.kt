@@ -131,6 +131,6 @@ private fun JetSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent
     return object: DelegatingIntentionAction(javaFix) {
         override fun getFamilyName(): String = JetBundle.message("create.from.usage.family")
 
-        override fun getText(): String = JetBundle.message("create.0.from.usage", "package '${fullName}'")
+        override fun getText(): String = "Create package '${fullName}'"
     }
 }

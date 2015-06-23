@@ -1,4 +1,4 @@
-// "Create function 'hasNext'" "true"
+// "Create member function 'hasNext'" "true"
 class FooIterator<T> {
     fun next(): T {
         throw Exception("not implemented")

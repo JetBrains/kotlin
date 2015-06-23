@@ -66,8 +66,8 @@ public class CreateClassFromUsageFix(
         element: JetElement,
         val classInfo: ClassInfo
 ): CreateFromUsageFixBase(element) {
-    override fun getText(): String =
-            JetBundle.message("create.0.from.usage", "${classInfo.kind.description} '${classInfo.name}'")
+
+    override fun getText() = "Create ${classInfo.kind.description} '${classInfo.name}'"
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         if (!super.isAvailable(project, editor, file)) return false

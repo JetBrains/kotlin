@@ -1,4 +1,4 @@
-// "Create function 'foo'" "true"
+// "Create member function 'foo'" "true"
 
 object A
 
