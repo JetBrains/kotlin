@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.JetIcons;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetCallElement;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -147,7 +148,7 @@ public class AddNameToArgumentFix extends JetIntentionAction<JetValueArgument> {
     private static JetValueArgument getParsedArgumentWithName(@NotNull String name, @NotNull JetValueArgument argument) {
         JetExpression argumentExpression = argument.getArgumentExpression();
         assert argumentExpression != null : "Argument should be already parsed.";
-        return JetPsiFactory(argument).createArgument(argumentExpression, name, false);
+        return JetPsiFactory(argument).createArgument(argumentExpression, Name.identifier(name), argument.getSpreadElement() != null);
     }
 
     @NotNull

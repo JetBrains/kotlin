@@ -20,8 +20,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
@@ -43,10 +43,10 @@ public fun JetFunctionLiteralArgument.moveInsideParentheses(bindingContext: Bind
     return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
 }
 
-public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): String? {
+public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): Name? {
     val callExpression = getParent() as JetCallExpression
     val resolvedCall = callExpression.getResolvedCall(bindingContext)
-    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()?.toString()
+    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()
 }
 
 public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
@@ -56,7 +56,7 @@ public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
 
 public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
         replacement: JetExpression,
-        functionLiteralArgumentName: String?
+        functionLiteralArgumentName: Name?
 ): JetCallExpression {
     val oldCallExpression = getParent() as JetCallExpression
     val newCallExpression = oldCallExpression.copy() as JetCallExpression

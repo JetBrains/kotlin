@@ -23,17 +23,15 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.getFunctionLiteralArgumentName
+import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionFactory
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.core.getFunctionLiteralArgumentName
-import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.utils.sure
-import java.util.ArrayList
 
 public class DeprecatedLambdaSyntaxFix(element: JetFunctionLiteralExpression) : JetIntentionAction<JetFunctionLiteralExpression>(element), CleanupFix {
     override fun getText() = JetBundle.message("migrate.lambda.syntax")
@@ -102,7 +100,7 @@ private class DeparenthesizeParameterList(
 private class LambdaToFunctionExpression(
         val functionLiteralExpression: JetFunctionLiteralExpression
 ): DeprecatedSyntaxFix {
-    val functionLiteralArgumentName: String?
+    val functionLiteralArgumentName: Name?
     val receiverType: String?
     val returnType: String?
 

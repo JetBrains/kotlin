@@ -354,12 +354,12 @@ public class JetPsiFactory(private val project: Project) {
             createExpressionByPattern("if ($0) $1", condition, thenExpr)) as JetIfExpression
     }
 
-    public fun createArgument(expression: JetExpression, name: String? = null, isSpread: Boolean = false): JetValueArgument {
+    public fun createArgument(expression: JetExpression, name: Name? = null, isSpread: Boolean = false): JetValueArgument {
         val argumentList = buildByPattern({ pattern, args -> createByPattern(pattern, *args) { createCallArguments(it) } }) {
             appendFixedText("(")
 
             if (name != null) {
-                appendName(Name.identifier(name))
+                appendName(name)
                 appendFixedText("=")
             }
 

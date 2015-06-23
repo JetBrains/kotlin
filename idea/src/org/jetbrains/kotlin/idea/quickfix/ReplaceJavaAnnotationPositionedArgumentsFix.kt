@@ -43,7 +43,7 @@ public class ReplaceJavaAnnotationPositionedArgumentsFix(element: JetAnnotationE
             val valueArgument = (argument.value as? ExpressionValueArgument)?.getValueArgument() ?: return@argumentProcessor
             val expression = valueArgument.getArgumentExpression() ?: return@argumentProcessor
 
-            valueArgument.asElement().replace(psiFactory.createArgument(expression, argument.getKey().getName().asString()))
+            valueArgument.asElement().replace(psiFactory.createArgument(expression, argument.getKey().getName()))
         }
     }
 

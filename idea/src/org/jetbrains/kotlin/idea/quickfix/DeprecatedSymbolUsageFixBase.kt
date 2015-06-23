@@ -485,7 +485,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     if (argument.isNamed()) continue
                     if (argument is JetFunctionLiteralArgument) continue
                     val argumentMatch = resolvedCall.getArgumentMapping(argument) as ArgumentMatch
-                    val name = argumentMatch.valueParameter.getName().asString()
+                    val name = argumentMatch.valueParameter.getName()
                     //TODO: not always correct for vararg's
                     val newArgument = psiFactory.createArgument(argument.getArgumentExpression()!!, name, argument.getSpreadElement() != null)
 

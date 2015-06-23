@@ -92,6 +92,99 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addNameToArgument")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddNameToArgument extends AbstractIntentionTest {
+        public void testAllFilesPresentInAddNameToArgument() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addNameToArgument"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("alreadyNamed.kt")
+        public void testAlreadyNamed() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/alreadyNamed.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ambiguousCall.kt")
+        public void testAmbiguousCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/ambiguousCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("functionLiteralArgument.kt")
+        public void testFunctionLiteralArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/functionLiteralArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("incompleteCall.kt")
+        public void testIncompleteCall() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/incompleteCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaMethod.kt")
+        public void testJavaMethod() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/javaMethod.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notLast.kt")
+        public void testNotLast() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/notLast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notResolved.kt")
+        public void testNotResolved() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/notResolved.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeForLambda1.kt")
+        public void testRangeForLambda1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/rangeForLambda1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeForLambda2.kt")
+        public void testRangeForLambda2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/rangeForLambda2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rangeForLambda3.kt")
+        public void testRangeForLambda3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/rangeForLambda3.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/simple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("vararg1.kt")
+        public void testVararg1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/vararg1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("vararg2.kt")
+        public void testVararg2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/vararg2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("vararg3.kt")
+        public void testVararg3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/vararg3.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/branched")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
