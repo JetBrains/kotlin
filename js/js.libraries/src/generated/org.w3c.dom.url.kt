@@ -58,11 +58,11 @@ native public open class URL(url: String, base: String = noImpl) {
         set(value) = noImpl
 
     companion object {
-        fun domainToASCII(domain: String): String = noImpl
-        fun domainToUnicode(domain: String): String = noImpl
         fun createObjectURL(blob: Blob): String = noImpl
         fun createFor(blob: Blob): String = noImpl
         fun revokeObjectURL(url: String): Unit = noImpl
+        fun domainToASCII(domain: String): String = noImpl
+        fun domainToUnicode(domain: String): String = noImpl
     }
 }
 

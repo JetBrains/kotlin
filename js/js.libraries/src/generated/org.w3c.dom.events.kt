@@ -20,99 +20,6 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public open class MouseEvent(typeArg: String, mouseEventInitDict: MouseEventInit = noImpl) : UIEvent(noImpl, noImpl), UnionElementOrMouseEvent {
-    open val screenX: Int
-        get() = noImpl
-    open val screenY: Int
-        get() = noImpl
-    open val clientX: Int
-        get() = noImpl
-    open val clientY: Int
-        get() = noImpl
-    open val ctrlKey: Boolean
-        get() = noImpl
-    open val shiftKey: Boolean
-        get() = noImpl
-    open val altKey: Boolean
-        get() = noImpl
-    open val metaKey: Boolean
-        get() = noImpl
-    open val button: Short
-        get() = noImpl
-    open val relatedTarget: EventTarget?
-        get() = noImpl
-    open val buttons: Short
-        get() = noImpl
-    open val region: String?
-        get() = noImpl
-//    open val screenX: Double
-//        get() = noImpl
-//    open val screenY: Double
-//        get() = noImpl
-    open val pageX: Double
-        get() = noImpl
-    open val pageY: Double
-        get() = noImpl
-//    open val clientX: Double
-//        get() = noImpl
-//    open val clientY: Double
-//        get() = noImpl
-//    open val x: Double
-//        get() = noImpl
-//    open val y: Double
-//        get() = noImpl
-    open val offsetX: Double
-        get() = noImpl
-    open val offsetY: Double
-        get() = noImpl
-    fun getModifierState(keyArg: String): Boolean = noImpl
-    fun initMouseEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, screenXArg: Int, screenYArg: Int, clientXArg: Int, clientYArg: Int, ctrlKeyArg: Boolean, altKeyArg: Boolean, shiftKeyArg: Boolean, metaKeyArg: Boolean, buttonArg: Short, relatedTargetArg: EventTarget?): Unit = noImpl
-}
-
-native public open class Event(type: String, eventInitDict: EventInit = noImpl) {
-    open val type: String
-        get() = noImpl
-    open val target: EventTarget?
-        get() = noImpl
-    open val currentTarget: EventTarget?
-        get() = noImpl
-    open val eventPhase: Short
-        get() = noImpl
-    open val bubbles: Boolean
-        get() = noImpl
-    open val cancelable: Boolean
-        get() = noImpl
-    open val defaultPrevented: Boolean
-        get() = noImpl
-    open val isTrusted: Boolean
-        get() = noImpl
-    open val timeStamp: Number
-        get() = noImpl
-    fun stopPropagation(): Unit = noImpl
-    fun stopImmediatePropagation(): Unit = noImpl
-    fun preventDefault(): Unit = noImpl
-    fun initEvent(type: String, bubbles: Boolean, cancelable: Boolean): Unit = noImpl
-
-    companion object {
-        val NONE: Short = 0
-        val CAPTURING_PHASE: Short = 1
-        val AT_TARGET: Short = 2
-        val BUBBLING_PHASE: Short = 3
-    }
-}
-
-native public interface EventTarget {
-    fun addEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
-    fun addEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
-    fun removeEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
-    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
-    fun dispatchEvent(event: Event): Boolean = noImpl
-}
-
-native public interface EventListener {
-    fun handleEvent(event: Event): Unit = noImpl
-}
-
 native public open class UIEvent(type: String, eventInitDict: UIEventInit = noImpl) : Event(type, eventInitDict) {
     open val view: Window?
         get() = noImpl
@@ -159,6 +66,55 @@ public inline fun FocusEventInit(relatedTarget: EventTarget? = null, view: Windo
     o["cancelable"] = cancelable
 
     return o
+}
+
+native public open class MouseEvent(typeArg: String, mouseEventInitDict: MouseEventInit = noImpl) : UIEvent(noImpl, noImpl), UnionElementOrMouseEvent {
+    open val region: String?
+        get() = noImpl
+//    open val screenX: Double
+//        get() = noImpl
+//    open val screenY: Double
+//        get() = noImpl
+    open val pageX: Double
+        get() = noImpl
+    open val pageY: Double
+        get() = noImpl
+//    open val clientX: Double
+//        get() = noImpl
+//    open val clientY: Double
+//        get() = noImpl
+//    open val x: Double
+//        get() = noImpl
+//    open val y: Double
+//        get() = noImpl
+    open val offsetX: Double
+        get() = noImpl
+    open val offsetY: Double
+        get() = noImpl
+    open val screenX: Int
+        get() = noImpl
+    open val screenY: Int
+        get() = noImpl
+    open val clientX: Int
+        get() = noImpl
+    open val clientY: Int
+        get() = noImpl
+    open val ctrlKey: Boolean
+        get() = noImpl
+    open val shiftKey: Boolean
+        get() = noImpl
+    open val altKey: Boolean
+        get() = noImpl
+    open val metaKey: Boolean
+        get() = noImpl
+    open val button: Short
+        get() = noImpl
+    open val relatedTarget: EventTarget?
+        get() = noImpl
+    open val buttons: Short
+        get() = noImpl
+    fun getModifierState(keyArg: String): Boolean = noImpl
+    fun initMouseEvent(typeArg: String, bubblesArg: Boolean, cancelableArg: Boolean, viewArg: Window?, detailArg: Int, screenXArg: Int, screenYArg: Int, clientXArg: Int, clientYArg: Int, ctrlKeyArg: Boolean, altKeyArg: Boolean, shiftKeyArg: Boolean, metaKeyArg: Boolean, buttonArg: Short, relatedTargetArg: EventTarget?): Unit = noImpl
 }
 
 native public interface MouseEventInit : EventModifierInit {
@@ -430,5 +386,49 @@ native public open class MutationEvent : Event(noImpl, noImpl) {
         val ADDITION: Short = 2
         val REMOVAL: Short = 3
     }
+}
+
+native public open class Event(type: String, eventInitDict: EventInit = noImpl) {
+    open val type: String
+        get() = noImpl
+    open val target: EventTarget?
+        get() = noImpl
+    open val currentTarget: EventTarget?
+        get() = noImpl
+    open val eventPhase: Short
+        get() = noImpl
+    open val bubbles: Boolean
+        get() = noImpl
+    open val cancelable: Boolean
+        get() = noImpl
+    open val defaultPrevented: Boolean
+        get() = noImpl
+    open val isTrusted: Boolean
+        get() = noImpl
+    open val timeStamp: Number
+        get() = noImpl
+    fun stopPropagation(): Unit = noImpl
+    fun stopImmediatePropagation(): Unit = noImpl
+    fun preventDefault(): Unit = noImpl
+    fun initEvent(type: String, bubbles: Boolean, cancelable: Boolean): Unit = noImpl
+
+    companion object {
+        val NONE: Short = 0
+        val CAPTURING_PHASE: Short = 1
+        val AT_TARGET: Short = 2
+        val BUBBLING_PHASE: Short = 3
+    }
+}
+
+native public interface EventTarget {
+    fun addEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
+    fun addEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
+    fun removeEventListener(type: String, callback: EventListener?, capture: Boolean = false): Unit = noImpl
+    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, capture: Boolean = false): Unit = noImpl
+    fun dispatchEvent(event: Event): Boolean = noImpl
+}
+
+native public interface EventListener {
+    fun handleEvent(event: Event): Unit = noImpl
 }
 

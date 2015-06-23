@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
         return
     }
 
-    val repositoryPre = srcDir.walkTopDown().filter { it.isDirectory() || it.extension == "idl" }.asSequence().filter { it.isFile() }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
+    val repositoryPre = srcDir.walkTopDown().filter { it.isDirectory() || it.extension == "idl" }.asSequence().filter { it.isFile() }.toList().sortBy { it.getAbsolutePath() }.fold(Repository(emptyMap(), emptyMap(), emptyMap(), emptyMap())) { acc, e ->
         val fileRepository = parseIDL(ANTLRFileStream(e.getAbsolutePath(), "UTF-8"))
 
         Repository(

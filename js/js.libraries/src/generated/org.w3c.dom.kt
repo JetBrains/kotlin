@@ -20,56 +20,6 @@ import org.w3c.performance.*
 import org.w3c.workers.*
 import org.w3c.xhr.*
 
-native public interface HTMLAllCollection : HTMLCollection {
-    fun item(name: String): UnionElementOrHTMLCollection? = noImpl
-//    override fun namedItem(name: String): UnionElementOrHTMLCollection? = noImpl
-//    nativeGetter override fun get(name: String): UnionElementOrHTMLCollection? = noImpl
-}
-
-native public interface HTMLFormControlsCollection : HTMLCollection {
-//    override fun namedItem(name: String): UnionElementOrRadioNodeList? = noImpl
-//    nativeGetter override fun get(name: String): UnionElementOrRadioNodeList? = noImpl
-}
-
-native public interface RadioNodeList : NodeList, UnionElementOrRadioNodeList {
-    var value: String
-        get() = noImpl
-        set(value) = noImpl
-}
-
-native public interface HTMLOptionsCollection : HTMLCollection {
-    override var length: Int
-        get() = noImpl
-        set(value) = noImpl
-    var selectedIndex: Int
-        get() = noImpl
-        set(value) = noImpl
-    nativeSetter fun set(index: Int, option: HTMLOptionElement?): Unit = noImpl
-    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = null): Unit = noImpl
-    fun remove(index: Int): Unit = noImpl
-}
-
-native public interface HTMLPropertiesCollection : HTMLCollection {
-    val names: Array<String>
-        get() = noImpl
-//    override fun namedItem(name: String): PropertyNodeList? = noImpl
-//    nativeGetter override fun get(name: String): PropertyNodeList? = noImpl
-}
-
-native public interface PropertyNodeList : NodeList {
-    fun getValues(): Array<Any?> = noImpl
-}
-
-native public interface DOMStringMap {
-    nativeGetter fun get(name: String): String? = noImpl
-    nativeSetter fun set(name: String, value: String): Unit = noImpl
-}
-
-native public interface DOMElementMap {
-    nativeGetter fun get(name: String): Element? = noImpl
-    nativeSetter fun set(name: String, value: Element): Unit = noImpl
-}
-
 native public open class Document : Node, GeometryNode {
     open val fullscreenEnabled: Boolean
         get() = noImpl
@@ -81,17 +31,6 @@ native public open class Document : Node, GeometryNode {
     var onfullscreenerror: ((Event) -> dynamic)?
         get() = noImpl
         set(value) = noImpl
-    open val styleSheets: StyleSheetList
-        get() = noImpl
-    var selectedStyleSheetSet: String?
-        get() = noImpl
-        set(value) = noImpl
-    open val lastStyleSheetSet: String?
-        get() = noImpl
-    open val preferredStyleSheetSet: String?
-        get() = noImpl
-    open val styleSheetSets: Array<String>
-        get() = noImpl
     open val location: Location?
         get() = noImpl
     var domain: String
@@ -185,6 +124,17 @@ native public open class Document : Node, GeometryNode {
     open val doctype: DocumentType?
         get() = noImpl
     open val documentElement: Element?
+        get() = noImpl
+    open val styleSheets: StyleSheetList
+        get() = noImpl
+    var selectedStyleSheetSet: String?
+        get() = noImpl
+        set(value) = noImpl
+    open val lastStyleSheetSet: String?
+        get() = noImpl
+    open val preferredStyleSheetSet: String?
+        get() = noImpl
+    open val styleSheetSets: Array<String>
         get() = noImpl
     var onabort: ((Event) -> dynamic)?
         get() = noImpl
@@ -384,7 +334,6 @@ native public open class Document : Node, GeometryNode {
     open val childElementCount: Int
         get() = noImpl
     fun exitFullscreen(): Unit = noImpl
-    fun enableStyleSheetsForSet(name: String?): Unit = noImpl
     nativeGetter fun get(name: String): dynamic = noImpl
     fun getElementsByName(elementName: String): NodeList = noImpl
     fun getItems(typeNames: String = ""): NodeList = noImpl
@@ -426,6 +375,7 @@ native public open class Document : Node, GeometryNode {
     fun elementFromPoint(x: Double, y: Double): Element? = noImpl
     fun elementsFromPoint(x: Double, y: Double): Array<Element> = noImpl
     fun caretPositionFromPoint(x: Double, y: Double): CaretPosition? = noImpl
+    fun enableStyleSheetsForSet(name: String?): Unit = noImpl
     fun getElementById(elementId: String): Element? = noImpl
     fun prepend(vararg nodes: dynamic): Unit = noImpl
     fun append(vararg nodes: dynamic): Unit = noImpl
@@ -437,6 +387,518 @@ native public open class Document : Node, GeometryNode {
     fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
     fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
     fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
+}
+
+native public interface Window : EventTarget, UnionMessagePortOrWindow {
+    val caches: CacheStorage
+        get() = noImpl
+    val performance: Performance
+        get() = noImpl
+    val window: Window
+        get() = noImpl
+    val self: Window
+        get() = noImpl
+    val document: Document
+        get() = noImpl
+    var name: String
+        get() = noImpl
+        set(value) = noImpl
+    val location: Location
+        get() = noImpl
+    val history: History
+        get() = noImpl
+    val locationbar: BarProp
+        get() = noImpl
+    val menubar: BarProp
+        get() = noImpl
+    val personalbar: BarProp
+        get() = noImpl
+    val scrollbars: BarProp
+        get() = noImpl
+    val statusbar: BarProp
+        get() = noImpl
+    val toolbar: BarProp
+        get() = noImpl
+    var status: String
+        get() = noImpl
+        set(value) = noImpl
+    val closed: Boolean
+        get() = noImpl
+    val frames: Window
+        get() = noImpl
+    val length: Int
+        get() = noImpl
+    val top: Window
+        get() = noImpl
+    var opener: Any?
+        get() = noImpl
+        set(value) = noImpl
+    val parent: Window
+        get() = noImpl
+    val frameElement: Element?
+        get() = noImpl
+    val navigator: Navigator
+        get() = noImpl
+    val external: External
+        get() = noImpl
+    val applicationCache: ApplicationCache
+        get() = noImpl
+    val screen: Screen
+        get() = noImpl
+    val innerWidth: Double
+        get() = noImpl
+    val innerHeight: Double
+        get() = noImpl
+    val scrollX: Double
+        get() = noImpl
+    val pageXOffset: Double
+        get() = noImpl
+    val scrollY: Double
+        get() = noImpl
+    val pageYOffset: Double
+        get() = noImpl
+    val screenX: Double
+        get() = noImpl
+    val screenY: Double
+        get() = noImpl
+    val outerWidth: Double
+        get() = noImpl
+    val outerHeight: Double
+        get() = noImpl
+    val devicePixelRatio: Double
+        get() = noImpl
+    var onabort: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onautocomplete: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onautocompleteerror: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onblur: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var oncancel: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var oncanplay: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var oncanplaythrough: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onchange: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onclick: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onclose: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var oncontextmenu: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var oncuechange: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondblclick: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondrag: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondragend: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondragenter: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondragexit: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondragleave: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondragover: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondragstart: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondrop: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ondurationchange: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onemptied: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onended: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onerror: ((dynamic, String, Int, Int, Any?) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onfocus: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var oninput: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var oninvalid: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onkeydown: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onkeypress: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onkeyup: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onload: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onloadeddata: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onloadedmetadata: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onloadstart: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmousedown: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmouseenter: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmouseleave: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmousemove: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmouseout: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmouseover: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmouseup: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmousewheel: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onpause: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onplay: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onplaying: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onprogress: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onratechange: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onreset: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onresize: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onscroll: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onseeked: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onseeking: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onselect: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onshow: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onsort: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onstalled: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onsubmit: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onsuspend: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ontimeupdate: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ontoggle: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onvolumechange: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onwaiting: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onafterprint: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onbeforeprint: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onbeforeunload: ((Event) -> String?)?
+        get() = noImpl
+        set(value) = noImpl
+    var onhashchange: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onlanguagechange: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onmessage: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onoffline: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var ononline: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onpagehide: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onpageshow: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onpopstate: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onstorage: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    var onunload: ((Event) -> dynamic)?
+        get() = noImpl
+        set(value) = noImpl
+    val sessionStorage: Storage
+        get() = noImpl
+    val localStorage: Storage
+        get() = noImpl
+    fun close(): Unit = noImpl
+    fun stop(): Unit = noImpl
+    fun focus(): Unit = noImpl
+    fun blur(): Unit = noImpl
+    fun open(url: String = "about:blank", target: String = "_blank", features: String = "", replace: Boolean = false): Window = noImpl
+    nativeGetter fun get(index: Int): Window? = noImpl
+    nativeGetter fun get(name: String): dynamic = noImpl
+    fun alert(): Unit = noImpl
+    fun alert(message: String): Unit = noImpl
+    fun confirm(message: String = ""): Boolean = noImpl
+    fun prompt(message: String = "", default: String = ""): String? = noImpl
+    fun print(): Unit = noImpl
+    fun showModalDialog(url: String, argument: Any? = noImpl): Any? = noImpl
+    fun requestAnimationFrame(callback: (Double) -> Unit): Int = noImpl
+    fun cancelAnimationFrame(handle: Int): Unit = noImpl
+    fun postMessage(message: Any?, targetOrigin: String, transfer: Array<Transferable> = noImpl): Unit = noImpl
+    fun captureEvents(): Unit = noImpl
+    fun releaseEvents(): Unit = noImpl
+    fun getSelection(): Selection = noImpl
+    fun matchMedia(query: String): MediaQueryList = noImpl
+    fun moveTo(x: Double, y: Double): Unit = noImpl
+    fun moveBy(x: Double, y: Double): Unit = noImpl
+    fun resizeTo(x: Double, y: Double): Unit = noImpl
+    fun resizeBy(x: Double, y: Double): Unit = noImpl
+    fun scroll(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
+    fun scrollTo(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
+    fun scrollBy(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
+    fun getComputedStyle(elt: Element, pseudoElt: String? = noImpl): CSSStyleDeclaration = noImpl
+    fun btoa(btoa: String): String = noImpl
+    fun atob(atob: String): String = noImpl
+    fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun clearTimeout(handle: Int = 0): Unit = noImpl
+    fun setInterval(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
+    fun clearInterval(handle: Int = 0): Unit = noImpl
+    fun createImageBitmap(image: ImageBitmapSource): dynamic = noImpl
+    fun createImageBitmap(image: ImageBitmapSource, sx: Int, sy: Int, sw: Int, sh: Int): dynamic = noImpl
+    fun fetch(input: dynamic, init: RequestInit = noImpl): dynamic = noImpl
+}
+
+native public interface Element : Node, UnionElementOrProcessingInstruction, UnionElementOrHTMLCollection, UnionElementOrRadioNodeList, UnionElementOrMouseEvent, GeometryNode {
+    var innerHTML: String
+        get() = noImpl
+        set(value) = noImpl
+    var outerHTML: String
+        get() = noImpl
+        set(value) = noImpl
+    val namespaceURI: String?
+        get() = noImpl
+    val prefix: String?
+        get() = noImpl
+    val localName: String
+        get() = noImpl
+    val tagName: String
+        get() = noImpl
+    var id: String
+        get() = noImpl
+        set(value) = noImpl
+    var className: String
+        get() = noImpl
+        set(value) = noImpl
+    val classList: DOMTokenList
+        get() = noImpl
+    val attributes: NamedNodeMap
+        get() = noImpl
+    var scrollTop: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    var scrollLeft: dynamic
+        get() = noImpl
+        set(value) = noImpl
+    val scrollWidth: Double
+        get() = noImpl
+    val scrollHeight: Double
+        get() = noImpl
+    val clientTop: Double
+        get() = noImpl
+    val clientLeft: Double
+        get() = noImpl
+    val clientWidth: Double
+        get() = noImpl
+    val clientHeight: Double
+        get() = noImpl
+    val cascadedStyle: CSSStyleDeclaration
+        get() = noImpl
+    val defaultStyle: CSSStyleDeclaration
+        get() = noImpl
+    val rawComputedStyle: CSSStyleDeclaration
+        get() = noImpl
+    val usedStyle: CSSStyleDeclaration
+        get() = noImpl
+    val children: HTMLCollection
+        get() = noImpl
+    val firstElementChild: Element?
+        get() = noImpl
+    val lastElementChild: Element?
+        get() = noImpl
+    val childElementCount: Int
+        get() = noImpl
+    val previousElementSibling: Element?
+        get() = noImpl
+    val nextElementSibling: Element?
+        get() = noImpl
+    fun requestFullscreen(): Unit = noImpl
+    fun insertAdjacentHTML(position: String, text: String): Unit = noImpl
+    fun hasAttributes(): Boolean = noImpl
+    fun getAttribute(name: String): String? = noImpl
+    fun getAttributeNS(namespace: String?, localName: String): String? = noImpl
+    fun setAttribute(name: String, value: String): Unit = noImpl
+    fun setAttributeNS(namespace: String?, name: String, value: String): Unit = noImpl
+    fun removeAttribute(name: String): Unit = noImpl
+    fun removeAttributeNS(namespace: String?, localName: String): Unit = noImpl
+    fun hasAttribute(name: String): Boolean = noImpl
+    fun hasAttributeNS(namespace: String?, localName: String): Boolean = noImpl
+    fun getAttributeNode(name: String): Attr? = noImpl
+    fun getAttributeNodeNS(namespace: String?, localName: String): Attr? = noImpl
+    fun setAttributeNode(attr: Attr): Attr? = noImpl
+    fun setAttributeNodeNS(attr: Attr): Attr? = noImpl
+    fun removeAttributeNode(attr: Attr): Attr = noImpl
+    fun closest(selectors: String): Element? = noImpl
+    fun matches(selectors: String): Boolean = noImpl
+    fun getElementsByTagName(localName: String): HTMLCollection = noImpl
+    fun getElementsByTagNameNS(namespace: String?, localName: String): HTMLCollection = noImpl
+    fun getElementsByClassName(classNames: String): HTMLCollection = noImpl
+    fun getClientRects(): dynamic = noImpl
+    fun getBoundingClientRect(): DOMRect = noImpl
+    fun scrollIntoView(): Unit = noImpl
+    fun scrollIntoView(top: Boolean, options: ScrollOptions = noImpl): Unit = noImpl
+    fun pseudo(pseudoElt: String): PseudoElement? = noImpl
+    fun prepend(vararg nodes: dynamic): Unit = noImpl
+    fun append(vararg nodes: dynamic): Unit = noImpl
+    fun query(relativeSelectors: String): Element? = noImpl
+    fun queryAll(relativeSelectors: String): dynamic = noImpl
+    fun querySelector(selectors: String): Element? = noImpl
+    fun querySelectorAll(selectors: String): NodeList = noImpl
+    fun before(vararg nodes: dynamic): Unit = noImpl
+    fun after(vararg nodes: dynamic): Unit = noImpl
+    fun replaceWith(vararg nodes: dynamic): Unit = noImpl
+    fun remove(): Unit = noImpl
+    fun getBoxQuads(options: BoxQuadOptions = noImpl): Array<DOMQuad> = noImpl
+    fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
+    fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
+}
+
+native public open class CustomEvent(type: String, eventInitDict: CustomEventInit = noImpl) : Event(type, eventInitDict) {
+    open val detail: Any?
+        get() = noImpl
+    fun initCustomEvent(type: String, bubbles: Boolean, cancelable: Boolean, detail: Any?): Unit = noImpl
+}
+
+native public interface HTMLAllCollection : HTMLCollection {
+    fun item(name: String): UnionElementOrHTMLCollection? = noImpl
+//    override fun namedItem(name: String): UnionElementOrHTMLCollection? = noImpl
+//    nativeGetter override fun get(name: String): UnionElementOrHTMLCollection? = noImpl
+}
+
+native public interface HTMLFormControlsCollection : HTMLCollection {
+//    override fun namedItem(name: String): UnionElementOrRadioNodeList? = noImpl
+//    nativeGetter override fun get(name: String): UnionElementOrRadioNodeList? = noImpl
+}
+
+native public interface RadioNodeList : NodeList, UnionElementOrRadioNodeList {
+    var value: String
+        get() = noImpl
+        set(value) = noImpl
+}
+
+native public interface HTMLOptionsCollection : HTMLCollection {
+    override var length: Int
+        get() = noImpl
+        set(value) = noImpl
+    var selectedIndex: Int
+        get() = noImpl
+        set(value) = noImpl
+    nativeSetter fun set(index: Int, option: HTMLOptionElement?): Unit = noImpl
+    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: dynamic = null): Unit = noImpl
+    fun remove(index: Int): Unit = noImpl
+}
+
+native public interface HTMLPropertiesCollection : HTMLCollection {
+    val names: Array<String>
+        get() = noImpl
+//    override fun namedItem(name: String): PropertyNodeList? = noImpl
+//    nativeGetter override fun get(name: String): PropertyNodeList? = noImpl
+}
+
+native public interface PropertyNodeList : NodeList {
+    fun getValues(): Array<Any?> = noImpl
+}
+
+native public interface DOMStringMap {
+    nativeGetter fun get(name: String): String? = noImpl
+    nativeSetter fun set(name: String, value: String): Unit = noImpl
+}
+
+native public interface DOMElementMap {
+    nativeGetter fun get(name: String): Element? = noImpl
+    nativeSetter fun set(name: String, value: Element): Unit = noImpl
 }
 
 native public open class XMLDocument : Document() {
@@ -518,6 +980,8 @@ native public interface HTMLElement : Element {
     val offsetWidth: Double
         get() = noImpl
     val offsetHeight: Double
+        get() = noImpl
+    val style: CSSStyleDeclaration
         get() = noImpl
     var onabort: ((Event) -> dynamic)?
         get() = noImpl
@@ -712,8 +1176,6 @@ native public interface HTMLElement : Element {
         get() = noImpl
         set(value) = noImpl
     val isContentEditable: Boolean
-        get() = noImpl
-    val style: CSSStyleDeclaration
         get() = noImpl
     fun click(): Unit = noImpl
     fun focus(): Unit = noImpl
@@ -2987,357 +3449,6 @@ public inline fun DragEventInit(dataTransfer: DataTransfer?, screenX: Int = 0, s
     return o
 }
 
-native public interface Window : EventTarget, UnionMessagePortOrWindow {
-    val caches: CacheStorage
-        get() = noImpl
-    val performance: Performance
-        get() = noImpl
-    val window: Window
-        get() = noImpl
-    val self: Window
-        get() = noImpl
-    val document: Document
-        get() = noImpl
-    var name: String
-        get() = noImpl
-        set(value) = noImpl
-    val location: Location
-        get() = noImpl
-    val history: History
-        get() = noImpl
-    val locationbar: BarProp
-        get() = noImpl
-    val menubar: BarProp
-        get() = noImpl
-    val personalbar: BarProp
-        get() = noImpl
-    val scrollbars: BarProp
-        get() = noImpl
-    val statusbar: BarProp
-        get() = noImpl
-    val toolbar: BarProp
-        get() = noImpl
-    var status: String
-        get() = noImpl
-        set(value) = noImpl
-    val closed: Boolean
-        get() = noImpl
-    val frames: Window
-        get() = noImpl
-    val length: Int
-        get() = noImpl
-    val top: Window
-        get() = noImpl
-    var opener: Any?
-        get() = noImpl
-        set(value) = noImpl
-    val parent: Window
-        get() = noImpl
-    val frameElement: Element?
-        get() = noImpl
-    val navigator: Navigator
-        get() = noImpl
-    val external: External
-        get() = noImpl
-    val applicationCache: ApplicationCache
-        get() = noImpl
-    val screen: Screen
-        get() = noImpl
-    val innerWidth: Double
-        get() = noImpl
-    val innerHeight: Double
-        get() = noImpl
-    val scrollX: Double
-        get() = noImpl
-    val pageXOffset: Double
-        get() = noImpl
-    val scrollY: Double
-        get() = noImpl
-    val pageYOffset: Double
-        get() = noImpl
-    val screenX: Double
-        get() = noImpl
-    val screenY: Double
-        get() = noImpl
-    val outerWidth: Double
-        get() = noImpl
-    val outerHeight: Double
-        get() = noImpl
-    val devicePixelRatio: Double
-        get() = noImpl
-    var onabort: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onautocomplete: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onautocompleteerror: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onblur: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var oncancel: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var oncanplay: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var oncanplaythrough: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onchange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onclick: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onclose: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var oncontextmenu: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var oncuechange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondblclick: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondrag: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondragend: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondragenter: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondragexit: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondragleave: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondragover: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondragstart: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondrop: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ondurationchange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onemptied: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onended: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onerror: ((dynamic, String, Int, Int, Any?) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onfocus: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var oninput: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var oninvalid: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onkeydown: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onkeypress: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onkeyup: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onload: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onloadeddata: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onloadedmetadata: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onloadstart: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmousedown: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmouseenter: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmouseleave: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmousemove: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmouseout: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmouseover: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmouseup: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmousewheel: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onpause: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onplay: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onplaying: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onprogress: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onratechange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onreset: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onresize: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onscroll: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onseeked: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onseeking: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onselect: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onshow: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onsort: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onstalled: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onsubmit: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onsuspend: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ontimeupdate: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ontoggle: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onvolumechange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onwaiting: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onafterprint: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onbeforeprint: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onbeforeunload: ((Event) -> String?)?
-        get() = noImpl
-        set(value) = noImpl
-    var onhashchange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onlanguagechange: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onmessage: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onoffline: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var ononline: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onpagehide: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onpageshow: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onpopstate: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onstorage: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    var onunload: ((Event) -> dynamic)?
-        get() = noImpl
-        set(value) = noImpl
-    val sessionStorage: Storage
-        get() = noImpl
-    val localStorage: Storage
-        get() = noImpl
-    fun getComputedStyle(elt: Element, pseudoElt: String? = noImpl): CSSStyleDeclaration = noImpl
-    fun close(): Unit = noImpl
-    fun stop(): Unit = noImpl
-    fun focus(): Unit = noImpl
-    fun blur(): Unit = noImpl
-    fun open(url: String = "about:blank", target: String = "_blank", features: String = "", replace: Boolean = false): Window = noImpl
-    nativeGetter fun get(index: Int): Window? = noImpl
-    nativeGetter fun get(name: String): dynamic = noImpl
-    fun alert(): Unit = noImpl
-    fun alert(message: String): Unit = noImpl
-    fun confirm(message: String = ""): Boolean = noImpl
-    fun prompt(message: String = "", default: String = ""): String? = noImpl
-    fun print(): Unit = noImpl
-    fun showModalDialog(url: String, argument: Any? = noImpl): Any? = noImpl
-    fun requestAnimationFrame(callback: (Double) -> Unit): Int = noImpl
-    fun cancelAnimationFrame(handle: Int): Unit = noImpl
-    fun postMessage(message: Any?, targetOrigin: String, transfer: Array<Transferable> = noImpl): Unit = noImpl
-    fun captureEvents(): Unit = noImpl
-    fun releaseEvents(): Unit = noImpl
-    fun getSelection(): Selection = noImpl
-    fun matchMedia(query: String): MediaQueryList = noImpl
-    fun moveTo(x: Double, y: Double): Unit = noImpl
-    fun moveBy(x: Double, y: Double): Unit = noImpl
-    fun resizeTo(x: Double, y: Double): Unit = noImpl
-    fun resizeBy(x: Double, y: Double): Unit = noImpl
-    fun scroll(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
-    fun scrollTo(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
-    fun scrollBy(x: Double, y: Double, options: ScrollOptions = noImpl): Unit = noImpl
-    fun btoa(btoa: String): String = noImpl
-    fun atob(atob: String): String = noImpl
-    fun setTimeout(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
-    fun setTimeout(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
-    fun clearTimeout(handle: Int = 0): Unit = noImpl
-    fun setInterval(handler: () -> dynamic, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
-    fun setInterval(handler: String, timeout: Int = 0, vararg arguments: Any?): Int = noImpl
-    fun clearInterval(handle: Int = 0): Unit = noImpl
-    fun createImageBitmap(image: ImageBitmapSource): dynamic = noImpl
-    fun createImageBitmap(image: ImageBitmapSource, sx: Int, sy: Int, sw: Int, sh: Int): dynamic = noImpl
-    fun fetch(input: dynamic, init: RequestInit = noImpl): dynamic = noImpl
-}
-
 native public interface BarProp {
     var visible: Boolean
         get() = noImpl
@@ -4250,12 +4361,6 @@ public inline fun EventInit(bubbles: Boolean = false, cancelable: Boolean = fals
     return o
 }
 
-native public open class CustomEvent(type: String, eventInitDict: CustomEventInit = noImpl) : Event(type, eventInitDict) {
-    open val detail: Any?
-        get() = noImpl
-    fun initCustomEvent(type: String, bubbles: Boolean, cancelable: Boolean, detail: Any?): Unit = noImpl
-}
-
 native public interface CustomEventInit : EventInit {
     var detail: Any?
 }
@@ -4440,111 +4545,6 @@ native public interface DocumentType : Node {
     fun after(vararg nodes: dynamic): Unit = noImpl
     fun replaceWith(vararg nodes: dynamic): Unit = noImpl
     fun remove(): Unit = noImpl
-}
-
-native public interface Element : Node, UnionElementOrHTMLCollection, UnionElementOrRadioNodeList, UnionElementOrMouseEvent, UnionElementOrProcessingInstruction, GeometryNode {
-    var innerHTML: String
-        get() = noImpl
-        set(value) = noImpl
-    var outerHTML: String
-        get() = noImpl
-        set(value) = noImpl
-    val namespaceURI: String?
-        get() = noImpl
-    val prefix: String?
-        get() = noImpl
-    val localName: String
-        get() = noImpl
-    val tagName: String
-        get() = noImpl
-    var id: String
-        get() = noImpl
-        set(value) = noImpl
-    var className: String
-        get() = noImpl
-        set(value) = noImpl
-    val classList: DOMTokenList
-        get() = noImpl
-    val attributes: NamedNodeMap
-        get() = noImpl
-    var scrollTop: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    var scrollLeft: dynamic
-        get() = noImpl
-        set(value) = noImpl
-    val scrollWidth: Double
-        get() = noImpl
-    val scrollHeight: Double
-        get() = noImpl
-    val clientTop: Double
-        get() = noImpl
-    val clientLeft: Double
-        get() = noImpl
-    val clientWidth: Double
-        get() = noImpl
-    val clientHeight: Double
-        get() = noImpl
-    val children: HTMLCollection
-        get() = noImpl
-    val firstElementChild: Element?
-        get() = noImpl
-    val lastElementChild: Element?
-        get() = noImpl
-    val childElementCount: Int
-        get() = noImpl
-    val previousElementSibling: Element?
-        get() = noImpl
-    val nextElementSibling: Element?
-        get() = noImpl
-    val cascadedStyle: CSSStyleDeclaration
-        get() = noImpl
-    val defaultStyle: CSSStyleDeclaration
-        get() = noImpl
-    val rawComputedStyle: CSSStyleDeclaration
-        get() = noImpl
-    val usedStyle: CSSStyleDeclaration
-        get() = noImpl
-    fun requestFullscreen(): Unit = noImpl
-    fun pseudo(pseudoElt: String): PseudoElement? = noImpl
-    fun insertAdjacentHTML(position: String, text: String): Unit = noImpl
-    fun hasAttributes(): Boolean = noImpl
-    fun getAttribute(name: String): String? = noImpl
-    fun getAttributeNS(namespace: String?, localName: String): String? = noImpl
-    fun setAttribute(name: String, value: String): Unit = noImpl
-    fun setAttributeNS(namespace: String?, name: String, value: String): Unit = noImpl
-    fun removeAttribute(name: String): Unit = noImpl
-    fun removeAttributeNS(namespace: String?, localName: String): Unit = noImpl
-    fun hasAttribute(name: String): Boolean = noImpl
-    fun hasAttributeNS(namespace: String?, localName: String): Boolean = noImpl
-    fun getAttributeNode(name: String): Attr? = noImpl
-    fun getAttributeNodeNS(namespace: String?, localName: String): Attr? = noImpl
-    fun setAttributeNode(attr: Attr): Attr? = noImpl
-    fun setAttributeNodeNS(attr: Attr): Attr? = noImpl
-    fun removeAttributeNode(attr: Attr): Attr = noImpl
-    fun closest(selectors: String): Element? = noImpl
-    fun matches(selectors: String): Boolean = noImpl
-    fun getElementsByTagName(localName: String): HTMLCollection = noImpl
-    fun getElementsByTagNameNS(namespace: String?, localName: String): HTMLCollection = noImpl
-    fun getElementsByClassName(classNames: String): HTMLCollection = noImpl
-    fun getClientRects(): dynamic = noImpl
-    fun getBoundingClientRect(): DOMRect = noImpl
-    fun scrollIntoView(): Unit = noImpl
-    fun scrollIntoView(top: Boolean, options: ScrollOptions = noImpl): Unit = noImpl
-    fun prepend(vararg nodes: dynamic): Unit = noImpl
-    fun append(vararg nodes: dynamic): Unit = noImpl
-    fun query(relativeSelectors: String): Element? = noImpl
-    fun queryAll(relativeSelectors: String): dynamic = noImpl
-    fun querySelector(selectors: String): Element? = noImpl
-    fun querySelectorAll(selectors: String): NodeList = noImpl
-    fun before(vararg nodes: dynamic): Unit = noImpl
-    fun after(vararg nodes: dynamic): Unit = noImpl
-    fun replaceWith(vararg nodes: dynamic): Unit = noImpl
-    fun remove(): Unit = noImpl
-    fun getBoxQuads(options: BoxQuadOptions = noImpl): Array<DOMQuad> = noImpl
-    fun convertQuadFromNode(quad: DOMQuad, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
-    fun convertRectFromNode(rect: DOMRectReadOnly, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMQuad = noImpl
-    fun convertPointFromNode(point: DOMPointInit, from: GeometryNode, options: ConvertCoordinateOptions = noImpl): DOMPoint = noImpl
 }
 
 native public interface NamedNodeMap {
@@ -5192,6 +5192,9 @@ public inline fun ConvertCoordinateOptions(fromBox: String = "border", toBox: St
     return o
 }
 
+native public marker interface UnionElementOrProcessingInstruction {
+}
+
 native public marker interface UnionElementOrHTMLCollection {
 }
 
@@ -5208,9 +5211,6 @@ native public marker interface UnionElementOrMouseEvent {
 }
 
 native public marker interface UnionMessagePortOrWindow {
-}
-
-native public marker interface UnionElementOrProcessingInstruction {
 }
 
 native public marker interface UnionMessagePortOrServiceWorker {
