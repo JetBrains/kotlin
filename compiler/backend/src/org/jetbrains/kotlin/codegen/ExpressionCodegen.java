@@ -129,7 +129,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
 
     private int myLastLineNumber = -1;
     private boolean shouldMarkLineNumbers = true;
-    private int finallyDeep = 0;
+    private int finallyDepth = 0;
 
     public ExpressionCodegen(
             @NotNull MethodVisitor mv,
@@ -1794,7 +1794,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @Nullable Label afterJumpLabel
     ) {
         if (finallyBlockStackElement != null) {
-            finallyDeep++;
+            finallyDepth++;
             assert finallyBlockStackElement.gaps.size() % 2 == 0 : "Finally block gaps are inconsistent";
 
             BlockStackElement topOfStack = blockStackElements.pop();
@@ -1805,13 +1805,13 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             v.mark(finallyStart);
             finallyBlockStackElement.addGapLabel(finallyStart);
             if (InlineCodegenUtil.isFinallyMarkerRequired(context)) {
-                InlineCodegenUtil.generateFinallyMarker(v, finallyDeep, true);
+                InlineCodegenUtil.generateFinallyMarker(v, finallyDepth, true);
             }
             //noinspection ConstantConditions
             gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
 
             if (InlineCodegenUtil.isFinallyMarkerRequired(context)) {
-                InlineCodegenUtil.generateFinallyMarker(v, finallyDeep, false);
+                InlineCodegenUtil.generateFinallyMarker(v, finallyDepth, false);
             }
         }
 
@@ -1820,7 +1820,7 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         }
 
         if (finallyBlockStackElement != null) {
-            finallyDeep--;
+            finallyDepth--;
             Label finallyEnd = afterJumpLabel != null ? afterJumpLabel : new Label();
             if (afterJumpLabel == null) {
                 v.mark(finallyEnd);
@@ -4006,9 +4006,9 @@ The "returned" value of try expression with no finally is either the last expres
         return new Stack<BlockStackElement>(blockStackElements);
     }
 
-    public void addBlockStackElementsForNonLocalReturns(@NotNull Stack<BlockStackElement> elements, int finallyDeepIndex) {
+    public void addBlockStackElementsForNonLocalReturns(@NotNull Stack<BlockStackElement> elements, int finallyDepth) {
         blockStackElements.addAll(elements);
-        this.finallyDeep = finallyDeepIndex;
+        this.finallyDepth = finallyDepth;
     }
 
     private static class NonLocalReturnInfo {

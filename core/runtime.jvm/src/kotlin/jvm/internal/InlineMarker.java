@@ -32,11 +32,11 @@ public class InlineMarker {
 
     }
 
-    public static void finallyStart(int finallyDeep) {
+    public static void finallyStart(int finallyDepth) {
 
     }
 
-    public static void finallyEnd(int finallyDeep) {
+    public static void finallyEnd(int finallyDepth) {
 
     }
 }

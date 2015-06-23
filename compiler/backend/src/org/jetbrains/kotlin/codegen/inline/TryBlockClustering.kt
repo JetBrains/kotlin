@@ -26,7 +26,7 @@ enum class TryCatchPosition {
     INNER
 }
 
-public class SplittedPair<T: Interval>(val patchedPart: T, val newPart: T)
+public class SplitPair<T: Interval>(val patchedPart: T, val newPart: T)
 
 class SimpleInterval(override val startLabel: LabelNode, override val endLabel: LabelNode ) : Interval
 
@@ -40,7 +40,7 @@ trait Interval {
 }
 
 trait SplittableInterval<T: Interval> : Interval {
-    fun split(splitBy: Interval, keepStart: Boolean): SplittedPair<T>
+    fun split(splitBy: Interval, keepStart: Boolean): SplitPair<T>
 }
 
 
@@ -59,7 +59,7 @@ class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess:
     override val type: String?
         get() = node.type
 
-    override fun split(splitBy: Interval, keepStart: Boolean): SplittedPair<TryCatchBlockNodeInfo> {
+    override fun split(splitBy: Interval, keepStart: Boolean): SplitPair<TryCatchBlockNodeInfo> {
         val newPartInterval = if (keepStart) {
             val oldEnd = endLabel
             node.end = splitBy.startLabel
@@ -70,7 +70,7 @@ class TryCatchBlockNodeInfo(val node: TryCatchBlockNode, val onlyCopyNotProcess:
             node.start = splitBy.endLabel
             Pair(oldStart, splitBy.startLabel)
         }
-        return SplittedPair(
+        return SplitPair(
                 this,
                 TryCatchBlockNodeInfo(TryCatchBlockNode(newPartInterval.first, newPartInterval.second, handler, type), onlyCopyNotProcess)
         )

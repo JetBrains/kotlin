@@ -664,13 +664,13 @@ public class InlineCodegen extends CallGenerator {
 
         DefaultProcessor processor = new DefaultProcessor(intoNode, offsetForFinallyLocalVar);
 
-        int curFinallyDeep = 0;
+        int curFinallyDepth = 0;
         AbstractInsnNode curInstr = intoNode.instructions.getFirst();
         while (curInstr != null) {
             processor.processInstruction(curInstr, true);
             if (InlineCodegenUtil.isFinallyStart(curInstr)) {
-                //TODO deep index calc could be more precise
-                curFinallyDeep = getConstant(curInstr.getPrevious());
+                //TODO depth index calc could be more precise
+                curFinallyDepth = getConstant(curInstr.getPrevious());
             }
 
             MethodInliner.PointForExternalFinallyBlocks extension = extensionPoints.get(curInstr);
@@ -683,7 +683,7 @@ public class InlineCodegen extends CallGenerator {
                 ExpressionCodegen finallyCodegen =
                         new ExpressionCodegen(finallyNode, codegen.getFrameMap(), codegen.getReturnType(),
                                               codegen.getContext(), codegen.getState(), codegen.getParentCodegen());
-                finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.getBlockStackElements(), curFinallyDeep);
+                finallyCodegen.addBlockStackElementsForNonLocalReturns(codegen.getBlockStackElements(), curFinallyDepth);
 
                 FrameMap frameMap = finallyCodegen.getFrameMap();
                 FrameMap.Mark mark = frameMap.mark();
@@ -691,12 +691,12 @@ public class InlineCodegen extends CallGenerator {
                     frameMap.enterTemp(Type.INT_TYPE);
                 }
 
-                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, extension.labelNode.getLabel());
+                finallyCodegen.generateFinallyBlocksIfNeeded(extension.returnType, extension.finallyIntervalEnd.getLabel());
 
                 //Exception table for external try/catch/finally blocks will be generated in original codegen after exiting this method
                 InlineCodegenUtil.insertNodeBefore(finallyNode, intoNode, curInstr);
 
-                SimpleInterval splitBy = new SimpleInterval((LabelNode) start.info, extension.labelNode);
+                SimpleInterval splitBy = new SimpleInterval((LabelNode) start.info, extension.finallyIntervalEnd);
                 processor.getTryBlocksMetaInfo().splitCurrentIntervals(splitBy, true);
 
                 processor.getLocalVarsMetaInfo().splitCurrentIntervals(splitBy, true);
@@ -719,8 +719,8 @@ public class InlineCodegen extends CallGenerator {
         AbstractInsnNode curInstr = instructions.getFirst();
         while (curInstr != null) {
             if (InlineCodegenUtil.isFinallyMarker(curInstr)) {
-                //just to assert
                 AbstractInsnNode marker = curInstr;
+                //just to assert
                 getConstant(marker.getPrevious());
                 curInstr = curInstr.getNext();
                 instructions.remove(marker.getPrevious());

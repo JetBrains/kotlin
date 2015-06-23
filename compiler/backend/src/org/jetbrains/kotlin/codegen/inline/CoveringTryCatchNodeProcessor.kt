@@ -117,16 +117,14 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         intervalEnds.put(remapped.endLabel, remapped)
     }
 
-    fun splitCurrentIntervals(by : Interval, keepStart: Boolean): List<SplittedPair<T>> {
+    fun splitCurrentIntervals(by : Interval, keepStart: Boolean): List<SplitPair<T>> {
         return currentIntervals.map { split(it, by, keepStart) }
     }
 
     fun processCurrent(curIns: LabelNode, directOrder: Boolean) {
         getInterval(curIns, directOrder).forEach {
             val added = currentIntervals.add(it)
-            if (!added) {
-                assert(added, "Wrong interval structure: $curIns, $it")
-            }
+            assert(added, "Wrong interval structure: $curIns, $it")
         }
 
         getInterval(curIns, !directOrder).forEach {
@@ -135,28 +133,22 @@ class IntervalMetaInfo<T : SplittableInterval<T>> {
         }
     }
 
-    fun split(interval: T, by : Interval, keepStart: Boolean): SplittedPair<T> {
-        val splittedPair = interval.split(by, keepStart)
+    fun split(interval: T, by : Interval, keepStart: Boolean): SplitPair<T> {
+        val split = interval.split(by, keepStart)
         if (!keepStart) {
-            remapStartLabel(splittedPair.newPart.startLabel, splittedPair.patchedPart)
+            remapStartLabel(split.newPart.startLabel, split.patchedPart)
         } else {
-            remapEndLabel(splittedPair.newPart.endLabel, splittedPair.patchedPart)
+            remapEndLabel(split.newPart.endLabel, split.patchedPart)
         }
-        addNewInterval(splittedPair.newPart)
-        return splittedPair
+        addNewInterval(split.newPart)
+        return split
     }
 
-    fun splitAndRemoveInterval(interval: T, by : Interval, keepStart: Boolean): SplittedPair<T> {
-        val splittedPair = interval.split(by, keepStart)
-        if (!keepStart) {
-            remapStartLabel(splittedPair.newPart.startLabel, splittedPair.patchedPart)
-        } else {
-            remapEndLabel(splittedPair.newPart.endLabel, splittedPair.patchedPart)
-        }
-        val removed = currentIntervals.remove(splittedPair.patchedPart)
-        assert(removed, "Wrong interval structure: $splittedPair")
-        addNewInterval(splittedPair.newPart)
-        return splittedPair
+    fun splitAndRemoveInterval(interval: T, by : Interval, keepStart: Boolean): SplitPair<T> {
+        val splitPair = split(interval, by, keepStart)
+        val removed = currentIntervals.remove(splitPair.patchedPart)
+        assert(removed, {"Wrong interval structure: $splitPair"})
+        return splitPair
     }
 
     fun getInterval(curIns: LabelNode, isOpen: Boolean) = if (isOpen) intervalStarts.get(curIns) else intervalEnds.get(curIns)
@@ -201,7 +193,7 @@ public class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, Splitt
     override val endLabel: LabelNode
         get() = node.end
 
-    override fun split(split: Interval, keepStart: Boolean): SplittedPair<LocalVarNodeWrapper> {
+    override fun split(split: Interval, keepStart: Boolean): SplitPair<LocalVarNodeWrapper> {
         val newPartInterval = if (keepStart) {
             val oldEnd = endLabel
             node.end = split.startLabel
@@ -213,7 +205,7 @@ public class LocalVarNodeWrapper(val node: LocalVariableNode) : Interval, Splitt
             Pair(oldStart, split.startLabel)
         }
 
-        return SplittedPair(this, LocalVarNodeWrapper(
+        return SplitPair(this, LocalVarNodeWrapper(
                 LocalVariableNode(node.name, node.desc, node.signature, newPartInterval.first, newPartInterval.second, node.index)
         ))
     }

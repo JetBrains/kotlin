@@ -244,7 +244,7 @@ public class MethodInliner {
                                                               mapper);
 
                     LocalVarRemapper remapper = new LocalVarRemapper(lambdaParameters, valueParamShift);
-                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDeep);//TODO add skipped this and receiver
+                    InlineResult lambdaResult = inliner.doInline(this.mv, remapper, true, info, invokeCall.finallyDepthShift);//TODO add skipped this and receiver
                     result.addAllClassesToRemove(lambdaResult);
 
                     //return value boxing/unboxing
@@ -756,12 +756,16 @@ public class MethodInliner {
 
         final Type returnType;
 
-        final LabelNode labelNode;
+        final LabelNode finallyIntervalEnd;
 
-        public PointForExternalFinallyBlocks(@NotNull AbstractInsnNode beforeIns, @NotNull Type returnType, @NotNull LabelNode labelNode) {
+        public PointForExternalFinallyBlocks(
+                @NotNull AbstractInsnNode beforeIns,
+                @NotNull Type returnType,
+                @NotNull LabelNode finallyIntervalEnd
+        ) {
             this.beforeIns = beforeIns;
             this.returnType = returnType;
-            this.labelNode = labelNode;
+            this.finallyIntervalEnd = finallyIntervalEnd;
         }
 
     }

@@ -144,6 +144,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             AbstractInsnNode markedReturn = curIns;
             AbstractInsnNode instrInsertFinallyBefore = markedReturn.getPrevious();
             AbstractInsnNode nextPrev = instrInsertFinallyBefore.getPrevious().getPrevious();
+            assert markedReturn.getNext() instanceof LabelNode : "Label should be occurred after non-local return";
             LabelNode newFinallyEnd = (LabelNode) markedReturn.getNext();
             Type nonLocalReturnType = InlineCodegenUtil.getReturnType(markedReturn.getOpcode());
 
@@ -158,7 +159,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
             checkClusterInvariant(clustersFromInnermost);
 
-            int originalDeepIndex = 0;
+            int originalDepthIndex = 0;
 
             while (tryCatchBlockIterator.hasNext()) {
                 TryBlockCluster<TryCatchBlockNodeInfo> clusterToFindFinally = tryCatchBlockIterator.next();
@@ -174,10 +175,8 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
 
                 FinallyBlockInfo finallyInfo = findFinallyBlockBody(nodeWithDefaultHandlerIfExists, getTryBlocksMetaInfo().getAllIntervals());
                 if (finallyInfo == null) continue;
-                TryCatchBlockNodeInfo defaultHandlerBlock = clusterToFindFinally.getDefaultHandler();
-                assert defaultHandlerBlock != null;
 
-                originalDeepIndex++;
+                originalDepthIndex++;
 
                 instructions.resetLabels();
 
@@ -204,7 +203,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
                             !(currentIns instanceof JumpInsnNode) ||
                             labelsInsideFinally.contains(((JumpInsnNode) currentIns).label);
 
-                    copyInstruction(finallyBlockCopy, currentIns, isInsOrJumpInsideFinally, originalDeepIndex);
+                    copyInstruction(finallyBlockCopy, currentIns, isInsOrJumpInsideFinally, originalDepthIndex);
 
                     currentIns = currentIns.getNext();
                 }
@@ -249,12 +248,12 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             @NotNull MethodNode finallyBlockCopy,
             @NotNull AbstractInsnNode currentIns,
             boolean isInsOrJumpInsideFinally,
-            int deep
+            int depthShift
     ) {
         if (isInsOrJumpInsideFinally) {
             if (InlineCodegenUtil.isFinallyMarker(currentIns.getNext())) {
                 Integer constant = getConstant(currentIns);
-                finallyBlockCopy.visitLdcInsn(constant + deep);
+                finallyBlockCopy.visitLdcInsn(constant + depthShift);
             } else {
                 currentIns.accept(finallyBlockCopy); //VISIT
             }
@@ -383,7 +382,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         // so we should split original interval by inserted finally one
         for (TryCatchBlockNodeInfo block : updatingClusterBlocks) {
             //update exception mapping
-            SplittedPair<TryCatchBlockNodeInfo> split = tryBlocksMetaInfo.splitAndRemoveInterval(block, splitBy, false);
+            SplitPair<TryCatchBlockNodeInfo> split = tryBlocksMetaInfo.splitAndRemoveInterval(block, splitBy, false);
             checkFinally(split.getNewPart());
             checkFinally(split.getPatchedPart());
             //block patched in split method
@@ -451,14 +450,14 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
         AbstractInsnNode meaningful = getNextMeaningful(startFinallyChain);
         assert meaningful != null : "Can't find meaningful in finally block" + startFinallyChain;
 
-        Integer finallyDeep = getConstant(meaningful);
+        Integer finallyDepth = getConstant(meaningful);
         AbstractInsnNode endFinallyChainExclusive = nextIntervalWithSameDefaultHandler.getNode().start;
         AbstractInsnNode current = meaningful.getNext();
         while (endFinallyChainExclusive != current) {
             current = current.getNext();
             if (InlineCodegenUtil.isFinallyEnd(current)) {
-                Integer currentDeep = getConstant(current.getPrevious());
-                if (currentDeep.equals(finallyDeep)) {
+                Integer currentDepth = getConstant(current.getPrevious());
+                if (currentDepth.equals(finallyDepth)) {
                     endFinallyChainExclusive = current.getNext();
                     break;
                 }

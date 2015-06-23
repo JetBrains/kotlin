@@ -404,8 +404,8 @@ public class InlineCodegenUtil {
         }
     }
 
-    public static void generateFinallyMarker(@NotNull InstructionAdapter v, int deep, boolean start) {
-        v.iconst(deep);
+    public static void generateFinallyMarker(@NotNull InstructionAdapter v, int depth, boolean start) {
+        v.iconst(depth);
         v.invokestatic(INLINE_MARKER_CLASS_NAME, start ? INLINE_MARKER_FINALLY_START : INLINE_MARKER_FINALLY_END, "(I)V", false);
     }
 
