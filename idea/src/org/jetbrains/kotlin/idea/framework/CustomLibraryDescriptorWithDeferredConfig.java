@@ -57,7 +57,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
     private final String modulesSeparatorCaption;
     private final LibraryKind libraryKind;
     private final Set<? extends LibraryKind> suitableLibraryKinds;
-    private final boolean useRelativePaths;
+    private final VirtualFile projectBaseDir;
 
     private DeferredCopyFileRequests deferredCopyFileRequests;
 
@@ -73,7 +73,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
             @NotNull LibraryKind libraryKind,
             @NotNull Set<? extends LibraryKind> suitableLibraryKinds
     ) {
-        useRelativePaths = project == null;
+        this.projectBaseDir = project != null ? project.getBaseDir() : null;
         this.configuratorName = configuratorName;
         this.libraryName = libraryName;
         this.dialogTitle = dialogTitle;
@@ -168,8 +168,8 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
 
         deferredCopyFileRequests = new DeferredCopyFileRequests(configurator);
 
-        String defaultPathToJarFile = useRelativePaths ? DEFAULT_LIB_DIR_NAME
-                                                       : FileUIUtils.createRelativePath(null, contextDirectory, DEFAULT_LIB_DIR_NAME);
+        String defaultPathToJarFile = projectBaseDir == null ? DEFAULT_LIB_DIR_NAME
+                                                       : FileUIUtils.createRelativePath(null, projectBaseDir, DEFAULT_LIB_DIR_NAME);
 
         RuntimeLibraryFiles files = configurator.getExistingJarFiles();
 
@@ -178,7 +178,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
         File runtimeSrcJar;
 
         File stdJarInDefaultPath = files.getRuntimeDestination(defaultPathToJarFile);
-        if (!useRelativePaths && stdJarInDefaultPath.exists()) {
+        if (projectBaseDir != null && stdJarInDefaultPath.exists()) {
             runtimeJar = stdJarInDefaultPath;
 
             reflectJar = files.getReflectDestination(defaultPathToJarFile);
