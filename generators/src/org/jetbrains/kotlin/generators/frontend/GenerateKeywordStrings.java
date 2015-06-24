@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.generators.frontend;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil;
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil;
 import org.jetbrains.kotlin.lexer.JetKeywordToken;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.utils.Printer;

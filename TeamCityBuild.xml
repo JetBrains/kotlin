@@ -201,7 +201,6 @@
                         <include name="kotlin-test-data.zip"/>
                     </fileset>
                     <fileset dir="out/artifacts/internal">
-                        <include name="injector-generator.jar"/>
                         <include name="kotlin-ide-common.jar"/>
                     </fileset>
                 </delete>

@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.generators.tests.reservedWords
 
 import com.google.dart.compiler.backend.js.ast.JsFunctionScope
-import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil.writeFileIfContentChanged
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
 import java.io.File
@@ -313,7 +313,7 @@ class TestDataBuilder() {
                         error("Unexpected new testdata file: '$fileName'. It may cause for example because of bug in stdlib.")
                     }
 
-                    writeFileIfContentChanged(testDataFile, out, false)
+                    GeneratorsFileUtil.writeFileIfContentChanged(testDataFile, out, false)
                 }
             }
         }

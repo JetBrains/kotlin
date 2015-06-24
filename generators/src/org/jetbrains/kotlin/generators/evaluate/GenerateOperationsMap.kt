@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.generators.evaluate
 
-import java.io.File
-import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.generators.di.GeneratorsFileUtil
-import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.utils.Printer
+import java.io.File
 
 val DEST_FILE: File = File("compiler/frontend/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
 private val EXCLUDED_FUNCTIONS = listOf("rangeTo", "hashCode", "inc", "dec", "subSequence")

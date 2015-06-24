@@ -14,7 +14,6 @@
     <orderEntry type="module" module-name="backend" scope="TEST" />
     <orderEntry type="module" module-name="frontend" scope="TEST" />
     <orderEntry type="module" module-name="frontend.java" scope="TEST" />
-    <orderEntry type="module" module-name="injector-generator" scope="TEST" />
     <orderEntry type="module" module-name="cli" scope="TEST" />
     <orderEntry type="module" module-name="descriptor.loader.java" scope="TEST" />
     <orderEntry type="module" module-name="descriptors.runtime" scope="TEST" />

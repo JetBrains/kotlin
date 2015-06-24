@@ -37,7 +37,6 @@
       <module fileurl="file://$PROJECT_DIR$/idea/idea-js/idea-js.iml" filepath="$PROJECT_DIR$/idea/idea-js/idea-js.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" filepath="$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" group="ide" />
-      <module fileurl="file://$PROJECT_DIR$/generators/injector-generator/injector-generator.iml" filepath="$PROJECT_DIR$/generators/injector-generator/injector-generator.iml" group="infrastructure" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" filepath="$PROJECT_DIR$/compiler/preloader/instrumentation/instrumentation.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/j2k/j2k.iml" filepath="$PROJECT_DIR$/j2k/j2k.iml" group="j2k" />
       <module fileurl="file://$PROJECT_DIR$/compiler/java8-tests/java8-tests.iml" filepath="$PROJECT_DIR$/compiler/java8-tests/java8-tests.iml" group="compiler" />
