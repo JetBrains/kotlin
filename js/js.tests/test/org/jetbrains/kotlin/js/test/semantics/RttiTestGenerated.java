@@ -41,6 +41,12 @@ public class RttiTestGenerated extends AbstractRttiTest {
         doTest(fileName);
     }
 
+    @TestMetadata("isComparable.kt")
+    public void testIsComparable() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/isComparable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("isJsPrimitiveType.kt")
     public void testIsJsPrimitiveType() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/rtti/cases/isJsPrimitiveType.kt");
