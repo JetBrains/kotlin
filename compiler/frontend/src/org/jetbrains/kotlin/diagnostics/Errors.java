@@ -113,6 +113,7 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, JetModifierKeywordToken> REPEATED_MODIFIER = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, JetModifierKeywordToken, JetModifierKeywordToken> REDUNDANT_MODIFIER = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory0<PsiElement> INAPPLICABLE_ANNOTATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INAPPLICABLE_PUBLIC_FIELD = DiagnosticFactory0.create(ERROR);
 
     // Annotations
 
