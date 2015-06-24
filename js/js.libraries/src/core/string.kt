@@ -18,22 +18,13 @@ internal fun String.nativeStartsWith(s: String, position: Int): Boolean = noImpl
 native("endsWith")
 internal fun String.nativeEndsWith(s: String): Boolean = noImpl
 
-deprecated("Use split(Regex) instead.")
+deprecated("Use split(Regex) instead.", ReplaceWith("split(regex.toRegex()).toTypedArray()"))
 library("splitString")
 public fun String.splitWithRegex(regex: String): Array<String> = noImpl
 
-deprecated("Use split(Regex) instead.")
+deprecated("Use split(Regex) instead.", ReplaceWith("split(regex.toRegex(), limit = limit).toTypedArray()"))
 library("splitString")
 public fun String.splitWithRegex(regex: String, limit: Int): Array<String> = noImpl
-
-deprecated("Use split(Regex) instead.")
-library("splitString")
-public fun String.split(regex: String): Array<String> = noImpl
-
-deprecated("Use split(Regex) instead.")
-library("splitString")
-public fun String.split(regex: String, limit: Int): Array<String> = noImpl
-
 
 native public fun String.substring(beginIndex : Int) : String = noImpl
 native public fun String.substring(beginIndex : Int, endIndex : Int) : String = noImpl
