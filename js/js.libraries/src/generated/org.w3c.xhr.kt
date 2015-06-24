@@ -119,7 +119,7 @@ native public interface ProgressEventInit : EventInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun ProgressEventInit(lengthComputable: Boolean = false, loaded: Int = 0, total: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): ProgressEventInit {
+public inline fun ProgressEventInit(lengthComputable: Boolean = false, loaded: Int = 0, total: Int = 0, bubbles: Boolean = false, cancelable: Boolean = false): ProgressEventInit {
     val o = js("({})")
 
     o["lengthComputable"] = lengthComputable

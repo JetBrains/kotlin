@@ -69,7 +69,7 @@ native public interface RequestInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun RequestInit(method: String, headers: dynamic, body: dynamic, mode: String, credentials: String, cache: String, redirect: String): RequestInit {
+public inline fun RequestInit(method: String, headers: dynamic, body: dynamic, mode: String, credentials: String, cache: String, redirect: String): RequestInit {
     val o = js("({})")
 
     o["method"] = method
@@ -118,7 +118,7 @@ native public interface ResponseInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun ResponseInit(status: Short = 200, statusText: String = "OK", headers: dynamic): ResponseInit {
+public inline fun ResponseInit(status: Short = 200, statusText: String = "OK", headers: dynamic): ResponseInit {
     val o = js("({})")
 
     o["status"] = status
