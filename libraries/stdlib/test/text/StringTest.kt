@@ -551,10 +551,10 @@ class StringTest {
         // doesn't pass in Rhino JS
         // assertEquals("schrodinger", "schrÖdinger".replaceFirst('ö', 'o', ignoreCase = true))
 
-        assertEquals("Abba${'$'}", input.replaceFirstLiteral("bA", "$"))
-        assertEquals("Ab${'$'}bA", input.replaceFirstLiteral("bA", "$", ignoreCase = true))
+        assertEquals("Abba${'$'}", input.replaceFirst("bA", "$"))
+        assertEquals("Ab${'$'}bA", input.replaceFirst("bA", "$", ignoreCase = true))
 
-        assertEquals("-test", "test".replaceFirstLiteral("", "-"))
+        assertEquals("-test", "test".replaceFirst("", "-"))
     }
 
 

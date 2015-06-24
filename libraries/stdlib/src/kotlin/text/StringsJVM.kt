@@ -76,13 +76,15 @@ public fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean
 /**
  * Returns a new string obtained by replacing the first occurrence of the [oldValue] substring in this string
  * with the specified [newValue] string.
- *
- * Soon shall be renamed back to replaceFirst.
  */
-public fun String.replaceFirstLiteral(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
+public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
     val index = indexOf(oldValue, ignoreCase = ignoreCase)
     return if (index < 0) this else this.replaceRange(index, index + oldValue.length(), newValue)
 }
+
+deprecated("Use String.replaceFirst instead.", ReplaceWith("replaceFirst(oldValue, newValue, ignoreCase = ignoreCase)"))
+public fun String.replaceFirstLiteral(oldValue: String, newValue: String, ignoreCase: Boolean = false): String = replaceFirst(oldValue, newValue, ignoreCase = ignoreCase)
+
 /**
  * Returns a new string obtained by replacing each substring of this string that matches the given regular expression
  * with the given [replacement].
@@ -246,11 +248,11 @@ public fun String(stringBuffer: java.lang.StringBuffer): String = java.lang.Stri
  */
 public fun String(stringBuilder: java.lang.StringBuilder): String = java.lang.String(stringBuilder) as String
 
-/**
- * Replaces the first substring of this string that matches the given regular expression with the given replacement.
- */
-deprecated("Use replaceFirst(Regex, String) or replaceFirstLiteral(String, String) instead.", ReplaceWith("replaceFirst(regex.toRegex(), replacement)"))
-public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
+///**
+// * Replaces the first substring of this string that matches the given regular expression with the given replacement.
+// */
+//deprecated("Use replaceFirst(Regex, String) or replaceFirstLiteral(String, String) instead.", ReplaceWith("replaceFirst(regex.toRegex(), replacement)"))
+//public fun String.replaceFirst(regex: String, replacement: String): String = (this as java.lang.String).replaceFirst(regex, replacement)
 
 /**
  * Returns the character (Unicode code point) at the specified index.
