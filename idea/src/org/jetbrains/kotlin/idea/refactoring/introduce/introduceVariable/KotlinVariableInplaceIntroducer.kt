@@ -52,6 +52,7 @@ public class KotlinVariableInplaceIntroducer(
         project: Project,
         editor: Editor
 ): AbstractKotlinInplaceIntroducer<JetProperty>(
+        addedVariable,
         originalExpression,
         occurrencesToReplace,
         KotlinIntroduceVariableHandler.INTRODUCE_VARIABLE,

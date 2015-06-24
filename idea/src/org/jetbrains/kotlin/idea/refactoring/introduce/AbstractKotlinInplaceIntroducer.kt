@@ -37,12 +37,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.awt.BorderLayout
 
 public abstract class AbstractKotlinInplaceIntroducer<D: JetNamedDeclaration>(
+        localVariable: D?,
         expression: JetExpression?,
         occurrences: Array<JetExpression>,
         title: String,
         project: Project,
         editor: Editor
-): AbstractInplaceIntroducer<D, JetExpression>(project, editor, expression, null, occurrences, title, JetFileType.INSTANCE) {
+): AbstractInplaceIntroducer<D, JetExpression>(project, editor, expression, localVariable, occurrences, title, JetFileType.INSTANCE) {
     protected fun initFormComponents(init: FormBuilder.() -> Unit) {
         myWholePanel.setLayout(BorderLayout())
 

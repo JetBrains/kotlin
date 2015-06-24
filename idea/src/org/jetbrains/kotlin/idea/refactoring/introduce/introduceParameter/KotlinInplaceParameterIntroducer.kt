@@ -53,6 +53,7 @@ public class KotlinInplaceParameterIntroducer(
         project: Project,
         editor: Editor
 ): AbstractKotlinInplaceIntroducer<JetParameter>(
+        null,
         originalDescriptor.originalRange.elements.single() as JetExpression,
         originalDescriptor.occurrencesToReplace
                 .map { it.elements.single() as JetExpression }
