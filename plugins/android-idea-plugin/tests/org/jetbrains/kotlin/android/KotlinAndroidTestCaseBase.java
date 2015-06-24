@@ -16,6 +16,8 @@
 package org.jetbrains.kotlin.android;
 
 import com.android.sdklib.IAndroidTarget;
+import com.android.tools.idea.rendering.ResourceHelper;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
@@ -24,17 +26,21 @@ import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.roots.JavadocOrderRootType;
 import com.intellij.openapi.roots.ModuleRootModificationUtil;
 import com.intellij.openapi.roots.OrderRootType;
+import com.intellij.openapi.util.Segment;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.xml.XmlAttributeValue;
 import com.intellij.testFramework.IdeaTestCase;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
-import org.jetbrains.android.sdk.AndroidSdkAdditionalData;
-import org.jetbrains.android.sdk.AndroidSdkData;
-import org.jetbrains.android.sdk.AndroidSdkType;
-import org.jetbrains.kotlin.idea.test.RunnableWithException;
-import org.jetbrains.kotlin.idea.test.TestPackage;
+import org.jetbrains.android.dom.wrappers.LazyValueResourceElementWrapper;
+import org.jetbrains.android.sdk.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.test.JetTestUtils;
 
 import java.io.File;
@@ -68,16 +74,6 @@ public abstract class KotlinAndroidTestCaseBase extends UsefulTestCase {
 
     public String getDefaultTestSdkPath() {
         return getTestDataPath() + "/sdk1.5";
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        TestPackage.unInvalidateBuiltins(getProject(), new RunnableWithException() {
-            @Override
-            public void run() throws Exception {
-                KotlinAndroidTestCaseBase.super.tearDown();
-            }
-        });
     }
 
     public String getDefaultPlatformDir() {

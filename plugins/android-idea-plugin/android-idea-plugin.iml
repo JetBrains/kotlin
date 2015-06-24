@@ -17,6 +17,5 @@
     <orderEntry type="module" module-name="light-classes" />
     <orderEntry type="module" module-name="idea-completion" scope="TEST" />
     <orderEntry type="library" name="kotlin-runtime" level="project" />
-    <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
   </component>
 </module>
