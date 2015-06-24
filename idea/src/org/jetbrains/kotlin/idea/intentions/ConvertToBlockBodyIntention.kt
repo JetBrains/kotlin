@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.JetType
 
 public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarationWithBody>(
-        javaClass(), "Convert to block body", firstElementOfTypeOnly = true
+        javaClass(), "Convert to block body"
 ) {
     override fun isApplicableTo(element: JetDeclarationWithBody, caretOffset: Int): Boolean {
         if (element is JetFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
@@ -42,6 +43,8 @@ public class ConvertToBlockBodyIntention : JetSelfTargetingIntention<JetDeclarat
             else -> error("Unknown declaration type: $element")
         }
     }
+
+    override fun allowCaretInsideElement(element: PsiElement) = element !is JetDeclaration
 
     override fun applyTo(element: JetDeclarationWithBody, editor: Editor) {
         convert(element)

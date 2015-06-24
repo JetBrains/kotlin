@@ -33,12 +33,14 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
 public class ConvertToExpressionBodyIntention : JetSelfTargetingOffsetIndependentIntention<JetDeclarationWithBody>(
-        javaClass(), "Convert to expression body", firstElementOfTypeOnly = true
+        javaClass(), "Convert to expression body"
 ) {
     override fun isApplicableTo(element: JetDeclarationWithBody): Boolean {
         val value = calcValue(element)
         return value != null && !containsReturn(value)
     }
+
+    override fun allowCaretInsideElement(element: PsiElement) = element !is JetDeclaration
 
     override fun applyTo(element: JetDeclarationWithBody, editor: Editor) {
         applyToInternal(element) {

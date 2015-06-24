@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.JetParenthesizedExpression
 import org.jetbrains.kotlin.psi.JetPsiUtil
+import org.jetbrains.kotlin.psi.psiUtil.containsInside
 
 public class RemoveUnnecessaryParenthesesIntention : JetSelfTargetingIntention<JetParenthesizedExpression>(javaClass(), "Remove unnecessary parentheses") {
     override fun isApplicableTo(element: JetParenthesizedExpression, caretOffset: Int): Boolean {

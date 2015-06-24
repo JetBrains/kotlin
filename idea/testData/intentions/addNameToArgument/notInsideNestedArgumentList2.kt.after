@@ -1,0 +1,5 @@
+fun foo(p: Int){}
+
+fun bar() {
+    foo(p = "".hashCode<caret>())
+}

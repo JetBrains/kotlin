@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.conversion.copy.end
 import org.jetbrains.kotlin.idea.conversion.copy.start
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
@@ -43,6 +45,9 @@ public class AddNameToArgumentIntention
 
         return true
     }
+
+    override fun allowCaretInsideElement(element: PsiElement)
+            = element !is JetValueArgumentList && element !is JetContainerNode
 
     override fun applyTo(element: JetValueArgument, editor: Editor) {
         val name = detectNameToAdd(element)!!

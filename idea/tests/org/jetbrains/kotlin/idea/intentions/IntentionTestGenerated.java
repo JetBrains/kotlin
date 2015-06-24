@@ -130,6 +130,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("notInsideIndices.kt")
+        public void testNotInsideIndices() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/notInsideIndices.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInsideNestedArgumentList.kt")
+        public void testNotInsideNestedArgumentList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/notInsideNestedArgumentList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notInsideNestedArgumentList2.kt")
+        public void testNotInsideNestedArgumentList2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/notInsideNestedArgumentList2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notLast.kt")
         public void testNotLast() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/addNameToArgument/notLast.kt");

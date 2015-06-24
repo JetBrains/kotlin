@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.core.moveInsideParentheses
 import org.jetbrains.kotlin.psi.JetFunctionLiteralArgument
+import org.jetbrains.kotlin.psi.psiUtil.containsInside
 
 public class MoveLambdaInsideParenthesesIntention : JetSelfTargetingIntention<JetFunctionLiteralArgument>(javaClass(), "Move lambda argument into parentheses"), LowPriorityAction {
     override fun isApplicableTo(element: JetFunctionLiteralArgument, caretOffset: Int): Boolean {

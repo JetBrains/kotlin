@@ -25,14 +25,14 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.JetBundle
 import org.jetbrains.kotlin.psi.JetElement
+import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 public abstract class JetSelfTargetingIntention<TElement : JetElement>(
         public val elementType: Class<TElement>,
         private var text: String,
-        private val familyName: String = text,
-        private val firstElementOfTypeOnly: Boolean = false
+        private val familyName: String = text
 ) : IntentionAction {
 
     protected val defaultText: String = text
@@ -65,15 +65,16 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
             elementsToCheck += commonParent.parentsWithSelf
         }
 
-        val elementsOfType = elementsToCheck.filterIsInstance(elementType)
-        if (firstElementOfTypeOnly) {
-            val candidate = elementsOfType.firstOrNull() ?: return null
-            return if (isApplicableTo(candidate, offset)) candidate else null
+        for (element in elementsToCheck) {
+            if (elementType.isInstance(element) && isApplicableTo(element as TElement, offset)) {
+                return element as TElement
+            }
+            if (!allowCaretInsideElement(element) && element.getTextRange().containsInside(offset)) break
         }
-        else {
-            return elementsOfType.firstOrNull { isApplicableTo(it, offset) }
-        }
+        return null
     }
+
+    protected open fun allowCaretInsideElement(element: PsiElement): Boolean = true
 
     final override fun isAvailable(project: Project, editor: Editor, file: PsiFile)
             = getTarget(editor, file) != null
@@ -91,9 +92,8 @@ public abstract class JetSelfTargetingIntention<TElement : JetElement>(
 public abstract class JetSelfTargetingRangeIntention<TElement : JetElement>(
         elementType: Class<TElement>,
         text: String,
-        familyName: String = text,
-        firstElementOfTypeOnly: Boolean = false
-) : JetSelfTargetingIntention<TElement>(elementType, text, familyName, firstElementOfTypeOnly) {
+        familyName: String = text
+) : JetSelfTargetingIntention<TElement>(elementType, text, familyName) {
 
     public abstract fun applicabilityRange(element: TElement): TextRange?
 
@@ -106,9 +106,8 @@ public abstract class JetSelfTargetingRangeIntention<TElement : JetElement>(
 public abstract class JetSelfTargetingOffsetIndependentIntention<TElement : JetElement>(
         elementType: Class<TElement>,
         text: String,
-        familyName: String = text,
-        firstElementOfTypeOnly: Boolean = false
-) : JetSelfTargetingRangeIntention<TElement>(elementType, text, familyName, firstElementOfTypeOnly) {
+        familyName: String = text
+) : JetSelfTargetingRangeIntention<TElement>(elementType, text, familyName) {
 
     public abstract fun isApplicableTo(element: TElement): Boolean
 

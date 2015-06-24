@@ -216,6 +216,8 @@ public fun PsiElement.getStartOffsetIn(ancestor: PsiElement): Int {
     return offset
 }
 
+public fun TextRange.containsInside(offset: Int): Boolean = getStartOffset() < offset && offset < getEndOffset()
+
 public val PsiChildRange.textRange: TextRange?
     get() {
         if (isEmpty) return null

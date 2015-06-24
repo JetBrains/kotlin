@@ -63,8 +63,6 @@ fun JetContainerNode.description(): String? {
     return null
 }
 
-fun TextRange.containsInside(offset: Int) = getStartOffset() < offset && offset < getEndOffset()
-
 fun isAutoCreatedItUsage(expression: JetSimpleNameExpression): Boolean {
     if (expression.getReferencedName() != "it") return false
     val context = expression.analyze()
