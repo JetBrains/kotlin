@@ -56,16 +56,8 @@ public class ExtractKotlinFunctionHandler(
             elements: List<PsiElement>,
             targetSibling: PsiElement
     ) {
-        fun adjustElements(elements: List<PsiElement>): List<PsiElement> {
-            if (elements.size() != 1) return elements
-
-            val e = elements.first()
-            if (e is JetBlockExpression && e.getParent() is JetFunctionLiteral) return e.getStatements()
-
-            return elements
-        }
-
-        val extractionData = ExtractionData(file, adjustElements(elements).toRange(false), targetSibling)
+        val adjustedElements = (elements.singleOrNull() as? JetBlockExpression)?.getStatements() ?: elements
+        val extractionData = ExtractionData(file, adjustedElements.toRange(false), targetSibling)
         ExtractionEngine(helper).run(editor, extractionData) {
             processDuplicates(it.duplicateReplacers, file.getProject(), editor)
         }
