@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
+import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
@@ -45,6 +46,8 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
+import org.jetbrains.kotlin.asJava.AsJavaPackage;
+import org.jetbrains.kotlin.asJava.KotlinLightMethod;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.JetFileType;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
@@ -91,6 +94,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         else {
             findSAMUsages(info, result);
             findConstructorDelegationUsages(info, result);
+            findKotlinOverrides(info, result);
         }
 
         return result.toArray(new UsageInfo[result.size()]);
@@ -334,7 +338,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             JetType samCallType = context.getType(callExpression);
             if (samCallType == null) continue;
 
-            result.add(new DeferredSAMUsage(functionLiteral, functionDescriptor, samCallType));
+            result.add(new DeferredJavaMethodOverrideOrSAMUsage(functionLiteral, functionDescriptor, samCallType));
         }
     }
 
@@ -356,6 +360,21 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                     }
                 }
         );
+    }
+
+    private static void findKotlinOverrides(ChangeInfo changeInfo, Set<UsageInfo> result) {
+        PsiElement method = changeInfo.getMethod();
+        if (!RefactoringPackage.isTrueJavaMethod(method)) return;
+
+        for (PsiMethod overridingMethod : OverridingMethodsSearch.search((PsiMethod) method)) {
+            PsiElement unwrappedElement = AsJavaPackage.getNamedUnwrappedElement(overridingMethod);
+            if (!(unwrappedElement instanceof JetNamedFunction)) continue;
+
+            JetNamedFunction function = (JetNamedFunction) unwrappedElement;
+            FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor(function);
+
+            result.add(new DeferredJavaMethodOverrideOrSAMUsage(function, functionDescriptor, null));
+        }
     }
 
     @Override
@@ -692,7 +711,7 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 }
                 if (usage instanceof OverriderUsageInfo) {
                     PsiMethod overridingMethod = ((OverriderUsageInfo)usage).getOverridingMethod();
-                    if (overridingMethod != null) {
+                    if (overridingMethod != null && !(overridingMethod instanceof KotlinLightMethod)) {
                         nullabilityPropagator.processMethod(overridingMethod);
                     }
                 }

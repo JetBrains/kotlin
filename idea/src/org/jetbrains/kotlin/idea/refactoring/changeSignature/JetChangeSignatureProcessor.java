@@ -60,37 +60,15 @@ public class JetChangeSignatureProcessor extends ChangeSignatureProcessorBase {
     @NotNull
     @Override
     protected UsageInfo[] findUsages() {
-        UsageInfo[] kotlinUsages = super.findUsages();
+        List<UsageInfo> allUsages = new ArrayList<UsageInfo>();
 
         JavaChangeInfo javaChangeInfo = getChangeInfo().getOrCreateJavaChangeInfo();
-        if (javaChangeInfo == null) return kotlinUsages;
+        if (javaChangeInfo != null) {
+            UsageInfo[] javaUsages = new JavaChangeSignatureUsageProcessor().findUsages(javaChangeInfo);
+            allUsages.add(new KotlinWrapperForJavaUsageInfos(javaUsages, getChangeInfo().getMethod()));
+        }
+        KotlinPackage.filterIsInstanceTo(super.findUsages(), allUsages, JetUsageInfo.class);
 
-        List<UsageInfo> javaUsages = new ArrayList<UsageInfo>();
-        KotlinPackage.filterNotTo(
-                new JavaChangeSignatureUsageProcessor().findUsages(javaChangeInfo),
-                javaUsages,
-                new Function1<UsageInfo, Boolean>() {
-                    @Override
-                    public Boolean invoke(UsageInfo info) {
-                        // Filter overriding declarations since they are already found by our usage processor
-                        return info instanceof OverriderUsageInfo;
-                    }
-                }
-        );
-        Pair<List<? extends UsageInfo>, List<? extends UsageInfo>> usagesByKotlinProcessor = KotlinPackage.partition(
-                kotlinUsages,
-                new Function1<UsageInfo, Boolean>() {
-                    @Override
-                    public Boolean invoke(UsageInfo info) {
-                        return info instanceof JetUsageInfo;
-                    }
-                }
-        );
-        javaUsages.addAll(usagesByKotlinProcessor.getSecond());
-
-        List<UsageInfo> allUsages = new ArrayList<UsageInfo>();
-        allUsages.add(new KotlinWrapperForJavaUsageInfos(javaUsages.toArray(new UsageInfo[javaUsages.size()]), getChangeInfo().getMethod()));
-        allUsages.addAll(usagesByKotlinProcessor.getFirst());
         return allUsages.toArray(new UsageInfo[allUsages.size()]);
     }
 

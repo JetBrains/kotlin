@@ -975,6 +975,26 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         doTest(changeInfo);
     }
 
+    public void testJavaMethodOverrides() throws Exception {
+        doJavaTest(
+                new JavaRefactoringProvider() {
+                    @Nullable
+                    @Override
+                    PsiType getNewReturnType(@NotNull PsiMethod method) {
+                        return PsiType.getJavaLangString(getPsiManager(), GlobalSearchScope.allScope(getProject()));
+                    }
+
+                    @NotNull
+                    @Override
+                    ParameterInfoImpl[] getNewParameters(@NotNull PsiMethod method) {
+                        ParameterInfoImpl[] newParameters = super.getNewParameters(method);
+                        newParameters[0] = new ParameterInfoImpl(-1, "x", PsiType.INT, "1");
+                        return newParameters;
+                    }
+                }
+        );
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
