@@ -32,11 +32,13 @@ import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class AddNameToArgumentIntention
-  : JetSelfTargetingIntention<JetValueArgument>(javaClass(), "Use named argument"), LowPriorityAction {
+  : JetSelfTargetingIntention<JetValueArgument>(javaClass(), "Add name to argument"), LowPriorityAction {
 
     override fun isApplicableTo(element: JetValueArgument, caretOffset: Int): Boolean {
         val expression = element.getArgumentExpression() ?: return false
-        if (detectNameToAdd(element) == null) return false
+        val name = detectNameToAdd(element) ?: return false
+
+        setText("Add '$name =' to argument")
 
         if (expression is JetFunctionLiteralExpression) {
             val range = expression.getTextRange()
