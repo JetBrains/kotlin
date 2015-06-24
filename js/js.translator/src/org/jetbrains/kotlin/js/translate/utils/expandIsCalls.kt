@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.translate.utils
 
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.TypeCheck
-import com.google.dart.compiler.backend.js.ast.metadata.isCastExpression
 import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
 import org.jetbrains.kotlin.js.inline.util.IdentitySet
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
@@ -54,12 +53,6 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
     override fun endVisit(x: JsConditional, ctx: JsContext<JsNode>) {
         val test = x.testExpression
 
-        if (x.isCastExpression &&
-            test is JsBinaryOperation &&
-            test.operator == JsBinaryOperator.ASG
-        ) {
-            ctx.replaceMe(test.arg2)
-        }
     }
 
     override fun visit(x: JsInvocation, ctx: JsContext<JsNode>): Boolean {
@@ -102,10 +95,8 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
 
         // `Kotlin.orNull(calleeArgument)(argument)` -> `(tmp = argument) == null || calleeArgument(tmp)`
         if (callee.typeCheck == TypeCheck.OR_NULL) {
-            if (calleeArgument is JsInvocation) {
-                if (calleeArgument.typeCheck == TypeCheck.OR_NULL) return JsInvocation(calleeArgument, argument)
-
-                if (calleeArgument.typeCheck == TypeCheck.IS_ANY) return argument
+            if (calleeArgument is JsInvocation && calleeArgument.typeCheck == TypeCheck.OR_NULL) {
+                return JsInvocation(calleeArgument, argument)
             }
 
             var nullCheckTarget = argument

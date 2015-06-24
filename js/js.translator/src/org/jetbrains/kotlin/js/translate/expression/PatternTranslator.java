@@ -87,9 +87,7 @@ public final class PatternTranslator extends AbstractTranslator {
             onFail = new JsInvocation(throwCCEFunRef);
         }
 
-        JsConditional conditional = new JsConditional(isCheck, temporary.reference(), onFail);
-        MetadataProperties.setCastExpression(conditional, true);
-        return conditional;
+        return new JsConditional(isCheck, temporary.reference(), onFail);
     }
 
     @NotNull
