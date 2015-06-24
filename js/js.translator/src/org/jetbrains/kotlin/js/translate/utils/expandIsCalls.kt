@@ -82,7 +82,7 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
 
     private fun getReplacement(callee: JsInvocation, calleeArgument: JsExpression?, argument: JsExpression): JsExpression? {
         if (calleeArgument == null) {
-            // Kotlin.isAny()(argument) -> argument != null
+            // `Kotlin.isAny()(argument)` -> `argument != null`
             if (callee.typeCheck == TypeCheck.IS_ANY) {
                 return TranslationUtils.isNotNullCheck(argument)
             }
@@ -90,17 +90,17 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
             return null
         }
 
-        // Kotlin.isTypeOf(calleeArgument)(argument) -> typeOf argument === calleeArgument
+        // `Kotlin.isTypeOf(calleeArgument)(argument)` -> `typeOf argument === calleeArgument`
         if (callee.typeCheck == TypeCheck.TYPEOF) {
             return typeOfIs(argument, calleeArgument as JsStringLiteral)
         }
 
-        // Kotlin.isInstanceOf(calleeArgument)(argument) -> argument instanceof calleeArgument
+        // `Kotlin.isInstanceOf(calleeArgument)(argument)` -> `argument instanceof calleeArgument`
         if (callee.typeCheck == TypeCheck.INSTANCEOF) {
             return context.namer().isInstanceOf(argument, calleeArgument)
         }
 
-        // Kotlin.orNull(calleeArgument)(argument) -> (tmp = argument) == null || calleeArgument(tmp)
+        // `Kotlin.orNull(calleeArgument)(argument)` -> `(tmp = argument) == null || calleeArgument(tmp)`
         if (callee.typeCheck == TypeCheck.OR_NULL) {
             if (calleeArgument is JsInvocation) {
                 if (calleeArgument.typeCheck == TypeCheck.OR_NULL) return JsInvocation(calleeArgument, argument)
@@ -112,7 +112,7 @@ private class TypeCheckRewritingVisitor(private val context: TranslationContext)
             var nextCheckTarget = argument
 
             if (argument.isAssignmentToLocalVar) {
-                // Kotlin.orNull(Kotlin.isInstance(SomeType))(localVar=someExpr) -> (localVar=someExpr) != null || Kotlin.isInstance(SomeType)(localVar)
+                // `Kotlin.orNull(Kotlin.isInstance(SomeType))(localVar=someExpr)` -> `(localVar=someExpr) != null || Kotlin.isInstance(SomeType)(localVar)`
                 val localVar = (argument as JsBinaryOperation).getArg1()
                 nextCheckTarget = localVar
             }
