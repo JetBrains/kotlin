@@ -53,6 +53,12 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
+    @TestMetadata("castToGenericTypeWithUpperBound.kt")
+    public void testCastToGenericTypeWithUpperBound() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToGenericTypeWithUpperBound.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("castToNotNull.kt")
     public void testCastToNotNull() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToNotNull.kt");
@@ -74,6 +80,12 @@ public class CastTestGenerated extends AbstractCastTest {
     @TestMetadata("reifiedToNullable.kt")
     public void testReifiedToNullable() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("safeCastToGenericTypeWithUpperBound.kt")
+    public void testSafeCastToGenericTypeWithUpperBound() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/safeCastToGenericTypeWithUpperBound.kt");
         doTest(fileName);
     }
 

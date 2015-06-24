@@ -37,13 +37,13 @@ fun <T : Any> castsNullableToNotNullT(a: Any?) {
 fun box(): String {
     val a = A("OK")
 
-    castsNotNullToNullableT<A>(a)
-    castsNullableToNullableT<A>(a)
-    castsNullableToNullableT<A>(null)
-    castsNotNullToNotNullT<A>(a)
-    castsNullableToNotNullT<A>(a)
-    castsNullableToNotNullT<A>(null)
-    castNullableToNotNullT<A>(a)
+    success("castsNotNullToNullableT<A>(a)") { castsNotNullToNullableT<A>(a) }
+    success("castsNullableToNullableT<A>(a)") { castsNullableToNullableT<A>(a) }
+    success("castsNullableToNullableT<A>(null)") { castsNullableToNullableT<A>(null) }
+    success("castsNotNullToNotNullT<A>(a)") { castsNotNullToNotNullT<A>(a) }
+    success("castsNullableToNotNullT<A>(a)") { castsNullableToNotNullT<A>(a) }
+    success("castsNullableToNotNullT<A>(null)") { castsNullableToNotNullT<A>(null) }
+    success("castNullableToNotNullT<A>(a)") { castNullableToNotNullT<A>(a) }
     failsClassCast("castNullableToNotNullT<A>(null)") { castNullableToNotNullT<A>(null) }
 
     return "OK"
