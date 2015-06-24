@@ -83,9 +83,15 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
-    @TestMetadata("reifiedToNullable.kt")
-    public void testReifiedToNullable() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable.kt");
+    @TestMetadata("reifiedToNullable1.kt")
+    public void testReifiedToNullable1() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable1.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reifiedToNullable2.kt")
+    public void testReifiedToNullable2() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/reifiedToNullable2.kt");
         doTest(fileName);
     }
 
