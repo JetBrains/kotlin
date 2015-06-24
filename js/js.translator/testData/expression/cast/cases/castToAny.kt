@@ -1,12 +1,19 @@
 package foo
 
+class A
+
 fun box(): String {
-    val x = 0
-    val y = 1
-    val z = 2
-    val xs = arrayListOf(z, y, x)
-    xs.remove(x as Any)
-    assertEquals(listOf(z, y), xs)
+    val nil: A? = null
+    val a = A()
+
+    success("10 as Any") { assertEquals<Any>(10, 10 as Any) }
+    success("\"abc\" as Any") { assertEquals<Any>("abc", "abc" as Any) }
+    success("\"abc\" as Any") { assertEquals<Any>(true, true as Any) }
+    success("arrayOf(1, 2) as Any") { assertEquals<Any>(arrayOf(1, 2), arrayOf(1, 2) as Any) }
+    success("{ 0 } as Any") { { 0 } as Any }
+    success("a as Any") { assertEquals<Any>(a, a as Any) }
+    success("object{} as Any") { object{} as Any }
+    failsClassCast("nil as Any") { nil as Any }
 
     return "OK"
 }
