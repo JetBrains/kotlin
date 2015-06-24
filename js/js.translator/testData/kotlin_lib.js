@@ -126,6 +126,15 @@
         return (typeof value) == "string" && value.length == 1;
     };
 
+    Kotlin.isComparable = function (value) {
+        var type = typeof value;
+
+        return type === "string" ||
+               type === "boolean" ||
+               Kotlin.isNumber(value) ||
+               Kotlin.isType(value, Kotlin.Comparable);
+    };
+
     Kotlin.charInc = function (value) {
         return String.fromCharCode(value.charCodeAt(0)+1);
     };
