@@ -32,7 +32,7 @@ native public interface WebGLContextAttributes {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun WebGLContextAttributes(alpha: Boolean = true, depth: Boolean = true, stencil: Boolean = false, antialias: Boolean = true, premultipliedAlpha: Boolean = true, preserveDrawingBuffer: Boolean = false, preferLowPowerToHighPerformance: Boolean = false, failIfMajorPerformanceCaveat: Boolean = false): WebGLContextAttributes {
+public inline fun WebGLContextAttributes(alpha: Boolean = true, depth: Boolean = true, stencil: Boolean = false, antialias: Boolean = true, premultipliedAlpha: Boolean = true, preserveDrawingBuffer: Boolean = false, preferLowPowerToHighPerformance: Boolean = false, failIfMajorPerformanceCaveat: Boolean = false): WebGLContextAttributes {
     val o = js("({})")
 
     o["alpha"] = alpha
@@ -562,7 +562,7 @@ native public interface WebGLContextEventInit : EventInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun WebGLContextEventInit(statusMessage: String, bubbles: Boolean = false, cancelable: Boolean = false): WebGLContextEventInit {
+public inline fun WebGLContextEventInit(statusMessage: String, bubbles: Boolean = false, cancelable: Boolean = false): WebGLContextEventInit {
     val o = js("({})")
 
     o["statusMessage"] = statusMessage
