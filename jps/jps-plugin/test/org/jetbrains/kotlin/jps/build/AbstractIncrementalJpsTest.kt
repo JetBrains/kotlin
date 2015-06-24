@@ -16,40 +16,45 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.jps.builders.JpsBuildTestCase
-import kotlin.properties.Delegates
+import com.intellij.openapi.diagnostic
 import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import org.jetbrains.kotlin.test.JetTestUtils
+import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.testFramework.TestLoggerFactory
+import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
+import org.apache.log4j.ConsoleAppender
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
+import org.apache.log4j.PatternLayout
+import org.jetbrains.jps.api.CanceledStatus
+import org.jetbrains.jps.builders.BuildResult
 import org.jetbrains.jps.builders.CompileScopeTestBuilder
+import org.jetbrains.jps.builders.JpsBuildTestCase
+import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
 import org.jetbrains.jps.builders.impl.logging.ProjectBuilderLoggerBase
+import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
+import org.jetbrains.jps.cmdline.ProjectDescriptor
+import org.jetbrains.jps.incremental.BuilderRegistry
+import org.jetbrains.jps.incremental.IncProjectBuilder
+import org.jetbrains.jps.incremental.messages.BuildMessage
+import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.util.JpsPathUtil
-import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import java.util.ArrayList
-import org.jetbrains.jps.builders.impl.BuildDataPathsImpl
-import kotlin.test.fail
-import java.util.HashMap
-import org.jetbrains.kotlin.utils.keysToMap
-import org.jetbrains.jps.incremental.messages.BuildMessage
-import kotlin.test.assertFalse
-import kotlin.test.assertEquals
-import org.jetbrains.jps.model.JpsModuleRootModificationUtil
-import com.intellij.openapi.util.io.FileUtilRt
-import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.jps.cmdline.ProjectDescriptor
-import junit.framework.TestCase
-import org.jetbrains.kotlin.jps.incremental.getKotlinCache
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
-import org.jetbrains.jps.incremental.IncProjectBuilder
-import org.jetbrains.jps.builders.BuildResult
-import org.jetbrains.jps.incremental.BuilderRegistry
-import org.jetbrains.jps.api.CanceledStatus
-import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.kotlin.jps.build.classFilesComparison.assertEqualDirectories
+import org.jetbrains.kotlin.jps.incremental.getKotlinCache
+import org.jetbrains.kotlin.test.JetTestUtils
+import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.keysToMap
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
+import java.util.ArrayList
+import java.util.HashMap
+import kotlin.properties.Delegates
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.fail
 
 public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
     companion object {
@@ -57,15 +62,33 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
 
         // change to "/tmp" or anything when default is too long (for easier debugging)
         val TEMP_DIRECTORY_TO_USE = File(FileUtilRt.getTempDirectory())
+
+        val DEBUG_LOGGING_ENABLED = System.getProperty("debug.logging.enabled") == "true"
     }
 
     private var testDataDir: File by Delegates.notNull()
 
     var workDir: File by Delegates.notNull()
 
+    private fun enableDebugLogging() {
+        diagnostic.Logger.setFactory(javaClass<TestLoggerFactory>())
+        TestLoggerFactory.dumpLogToStdout("")
+        TestLoggerFactory.enableDebugLogging(myTestRootDisposable, "#org")
+
+        val console = ConsoleAppender()
+        console.setLayout(PatternLayout("%d [%p|%c|%C{1}] %m%n"));
+        console.setThreshold(Level.ALL)
+        console.activateOptions()
+        Logger.getRootLogger().addAppender(console)
+    }
+
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
+
+        if (DEBUG_LOGGING_ENABLED) {
+            enableDebugLogging()
+        }
     }
 
     override fun tearDown() {
