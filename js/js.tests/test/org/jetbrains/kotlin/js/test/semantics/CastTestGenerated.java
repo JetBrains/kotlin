@@ -41,6 +41,12 @@ public class CastTestGenerated extends AbstractCastTest {
         doTest(fileName);
     }
 
+    @TestMetadata("castToArray.kt")
+    public void testCastToArray() throws Exception {
+        String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToArray.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("castToFunction.kt")
     public void testCastToFunction() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("js/js.translator/testData/expression/cast/cases/castToFunction.kt");
