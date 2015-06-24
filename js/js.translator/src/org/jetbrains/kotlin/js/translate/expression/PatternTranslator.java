@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.js.descriptorUtils.DescriptorUtilsKt;
 import org.jetbrains.kotlin.js.patterns.NamePredicate;
+import org.jetbrains.kotlin.js.patterns.typePredicates.TypePredicatesPackage;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
@@ -130,13 +131,10 @@ public final class PatternTranslator extends AbstractTranslator {
 
     @NotNull
     private JsExpression doGetIsTypeCheckCallable(@NotNull KotlinType type) {
-        if (isAnyOrNullableAny(type)) return namer().isAny();
-
-        if (isFunctionTypeOrSubtype(type)) return namer().isTypeOf(program().getStringLiteral("function"));
-
-        if (isArray(type)) return Namer.IS_ARRAY_FUN_REF;
-
         JsExpression builtinCheck = getIsTypeCheckCallableForBuiltin(type);
+        if (builtinCheck != null) return builtinCheck;
+
+        builtinCheck = getIsTypeCheckCallableForPrimitiveBuiltin(type);
         if (builtinCheck != null) return builtinCheck;
 
         TypeParameterDescriptor typeParameterDescriptor = getTypeParameterDescriptorOrNull(type);
@@ -150,6 +148,19 @@ public final class PatternTranslator extends AbstractTranslator {
 
         JsNameRef typeName = getClassNameReference(type);
         return namer().isInstanceOf(typeName);
+    }
+
+    @Nullable
+    private JsExpression getIsTypeCheckCallableForBuiltin(@NotNull KotlinType type) {
+        if (isAnyOrNullableAny(type)) return namer().isAny();
+
+        if (isFunctionOrExtensionFunctionType(type)) return namer().isTypeOf(program().getStringLiteral("function"));
+
+        if (isArray(type)) return Namer.IS_ARRAY_FUN_REF;
+
+        if (TypePredicatesPackage.getCOMPARABLE().apply(type)) return namer().isComparable();
+
+        return null;
     }
 
     @Nullable
