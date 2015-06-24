@@ -408,6 +408,11 @@ public final class Namer {
     }
 
     @NotNull
+    public JsExpression isComparable() {
+        return kotlin("isComparable");
+    }
+
+    @NotNull
     private JsExpression invokeFunctionAndSetTypeCheckMetadata(
             @NotNull String functionName,
             @Nullable JsExpression argument,
