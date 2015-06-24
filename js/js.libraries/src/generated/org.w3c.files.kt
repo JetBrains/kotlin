@@ -37,7 +37,7 @@ native public interface BlobPropertyBag {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
+public inline fun BlobPropertyBag(type: String = ""): BlobPropertyBag {
     val o = js("({})")
 
     o["type"] = type
@@ -58,7 +58,7 @@ native public interface FilePropertyBag {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePropertyBag {
+public inline fun FilePropertyBag(type: String = "", lastModified: Int): FilePropertyBag {
     val o = js("({})")
 
     o["type"] = type

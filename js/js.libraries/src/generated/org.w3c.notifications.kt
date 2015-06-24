@@ -77,7 +77,7 @@ native public interface NotificationOptions {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun NotificationOptions(dir: String = "auto", lang: String = "", body: String = "", tag: String = "", icon: String, sound: String, vibrate: dynamic, renotify: Boolean = false, silent: Boolean = false, noscreen: Boolean = false, sticky: Boolean = false, data: Any? = null): NotificationOptions {
+public inline fun NotificationOptions(dir: String = "auto", lang: String = "", body: String = "", tag: String = "", icon: String, sound: String, vibrate: dynamic, renotify: Boolean = false, silent: Boolean = false, noscreen: Boolean = false, sticky: Boolean = false, data: Any? = null): NotificationOptions {
     val o = js("({})")
 
     o["dir"] = dir
@@ -101,7 +101,7 @@ native public interface GetNotificationOptions {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun GetNotificationOptions(tag: String = ""): GetNotificationOptions {
+public inline fun GetNotificationOptions(tag: String = ""): GetNotificationOptions {
     val o = js("({})")
 
     o["tag"] = tag
@@ -119,7 +119,7 @@ native public interface NotificationEventInit : ExtendableEventInit {
 }
 
 suppress("NOTHING_TO_INLINE")
-inline fun NotificationEventInit(notification: Notification, bubbles: Boolean = false, cancelable: Boolean = false): NotificationEventInit {
+public inline fun NotificationEventInit(notification: Notification, bubbles: Boolean = false, cancelable: Boolean = false): NotificationEventInit {
     val o = js("({})")
 
     o["notification"] = notification
