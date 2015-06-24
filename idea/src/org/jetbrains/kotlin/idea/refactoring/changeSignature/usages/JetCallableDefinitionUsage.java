@@ -26,9 +26,9 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.shorten.ShortenPackage;
@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences;
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options;
 import org.jetbrains.kotlin.lexer.JetModifierKeywordToken;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -52,14 +53,14 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.psi.PsiPackage.JetPsiFactory;
 
-public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageInfo<T> {
+public class JetCallableDefinitionUsage<T extends PsiElement> extends JetUsageInfo<T> {
     @NotNull
-    private final FunctionDescriptor originalFunctionDescriptor;
+    private final CallableDescriptor originalCallableDescriptor;
 
-    private FunctionDescriptor currentFunctionDescriptor;
+    private CallableDescriptor currentCallableDescriptor;
 
     @NotNull
-    private final JetFunctionDefinitionUsage<? extends PsiElement> baseFunction;
+    private final JetCallableDefinitionUsage<? extends PsiElement> baseFunction;
 
     private final boolean hasExpectedType;
 
@@ -69,24 +70,25 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
     @Nullable
     private TypeSubstitutor typeSubstitutor;
 
-    public JetFunctionDefinitionUsage(
+    public JetCallableDefinitionUsage(
             @NotNull T function,
-            @NotNull FunctionDescriptor originalFunctionDescriptor,
-            @Nullable JetFunctionDefinitionUsage<PsiElement> baseFunction,
-            @Nullable JetType samCallType) {
+            @NotNull CallableDescriptor originalCallableDescriptor,
+            @Nullable JetCallableDefinitionUsage<PsiElement> baseFunction,
+            @Nullable JetType samCallType
+    ) {
         super(function);
-        this.originalFunctionDescriptor = originalFunctionDescriptor;
+        this.originalCallableDescriptor = originalCallableDescriptor;
         this.baseFunction = baseFunction != null ? baseFunction : this;
-        this.hasExpectedType = checkIfHasExpectedType(originalFunctionDescriptor, isInherited());
+        this.hasExpectedType = checkIfHasExpectedType(originalCallableDescriptor, isInherited());
         this.samCallType = samCallType;
     }
 
-    private static boolean checkIfHasExpectedType(@NotNull FunctionDescriptor functionDescriptor, boolean isInherited) {
-        if (!(functionDescriptor instanceof AnonymousFunctionDescriptor && isInherited)) return false;
+    private static boolean checkIfHasExpectedType(@NotNull CallableDescriptor callableDescriptor, boolean isInherited) {
+        if (!(callableDescriptor instanceof AnonymousFunctionDescriptor && isInherited)) return false;
 
         JetFunctionLiteral functionLiteral =
-                (JetFunctionLiteral) DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
-        assert functionLiteral != null : "No declaration found for " + functionDescriptor;
+                (JetFunctionLiteral) DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor);
+        assert functionLiteral != null : "No declaration found for " + callableDescriptor;
 
         PsiElement parent = functionLiteral.getParent();
         if (!(parent instanceof JetFunctionLiteralExpression)) return false;
@@ -96,7 +98,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     @NotNull
-    public JetFunctionDefinitionUsage getBaseFunction() {
+    public JetCallableDefinitionUsage getBaseFunction() {
         return baseFunction;
     }
 
@@ -112,10 +114,10 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
         if (typeSubstitutor == null) {
             if (samCallType == null) {
-                typeSubstitutor = ChangeSignaturePackage.getFunctionSubstitutor(baseFunction, this);
+                typeSubstitutor = ChangeSignaturePackage.getCallableSubstitutor(baseFunction, this);
             }
             else {
-                DeclarationDescriptor currentBaseDescriptor = baseFunction.getCurrentFunctionDescriptor();
+                DeclarationDescriptor currentBaseDescriptor = baseFunction.getCurrentCallableDescriptor();
                 DeclarationDescriptor classDescriptor = currentBaseDescriptor != null
                                                         ? currentBaseDescriptor.getContainingDeclaration()
                                                         : null;
@@ -140,71 +142,51 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
     }
 
     @NotNull
-    public final FunctionDescriptor getOriginalFunctionDescriptor() {
-        return originalFunctionDescriptor;
+    public final CallableDescriptor getOriginalCallableDescriptor() {
+        return originalCallableDescriptor;
     }
 
     @Nullable
-    public final FunctionDescriptor getCurrentFunctionDescriptor() {
-        if (currentFunctionDescriptor == null) {
+    public final CallableDescriptor getCurrentCallableDescriptor() {
+        if (currentCallableDescriptor == null) {
             PsiElement element = getDeclaration();
 
-            if (element instanceof JetFunction) {
-                currentFunctionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor((JetFunction) element);
+            if (element instanceof JetFunction || element instanceof JetProperty) {
+                currentCallableDescriptor = (CallableDescriptor) ResolvePackage.resolveToDescriptor((JetDeclaration) element);
             }
             else if (element instanceof JetClass) {
-                currentFunctionDescriptor = ((ClassDescriptor) ResolvePackage.resolveToDescriptor((JetClass) element)).getUnsubstitutedPrimaryConstructor();
+                currentCallableDescriptor = ((ClassDescriptor) ResolvePackage.resolveToDescriptor((JetClass) element)).getUnsubstitutedPrimaryConstructor();
             }
             else if (element instanceof PsiMethod) {
-                currentFunctionDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) element);
+                currentCallableDescriptor = ResolvePackage.getJavaMethodDescriptor((PsiMethod) element);
             }
         }
-        return currentFunctionDescriptor;
+        return currentCallableDescriptor;
     }
 
     @Override
     public boolean processUsage(JetChangeInfo changeInfo, PsiElement element) {
-        JetParameterList parameterList;
+        if (!(element instanceof JetNamedDeclaration)) return true;
 
         JetPsiFactory psiFactory = JetPsiFactory(element.getProject());
-        if (element instanceof JetFunction) {
-            JetFunction function = (JetFunction) element;
-            parameterList = function.getValueParameterList();
 
-            if (changeInfo.isNameChanged()) {
-                PsiElement identifier = function.getNameIdentifier();
+        if (changeInfo.isNameChanged()) {
+            PsiElement identifier = ((JetCallableDeclaration) element).getNameIdentifier();
 
-                if (identifier != null) {
-                    identifier.replace(psiFactory.createIdentifier(changeInfo.getNewName()));
-                }
-            }
-
-            boolean returnTypeIsNeeded = (changeInfo.isRefactoringTarget(originalFunctionDescriptor)
-                                         || !(function instanceof JetFunctionLiteral)
-                                         || function.getTypeReference() != null) &&
-                                         !(function instanceof JetConstructor);
-            if (changeInfo.isReturnTypeChanged() && returnTypeIsNeeded) {
-                function.setTypeReference(null);
-                String returnTypeText = changeInfo.renderReturnType((JetFunctionDefinitionUsage<PsiElement>) this);
-
-                //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
-                if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
-                    ShortenPackage.addToShorteningWaitSet(
-                            function.setTypeReference(JetPsiFactory(function).createType(returnTypeText)),
-                            Options.DEFAULT
-                    );
-                }
+            if (identifier != null) {
+                identifier.replace(psiFactory.createIdentifier(changeInfo.getNewName()));
             }
         }
-        else {
-            parameterList = ((JetClass) element).getPrimaryConstructorParameterList();
-        }
+
+        changeReturnTypeIfNeeded(changeInfo, element);
+
+        JetParameterList parameterList = PsiUtilPackage.getValueParameterList((JetNamedDeclaration) element);
 
         if (changeInfo.isParameterSetOrOrderChanged()) {
             processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory);
         }
         else if (parameterList != null) {
-            int paramIndex = originalFunctionDescriptor.getExtensionReceiverParameter() != null ? 1 : 0;
+            int paramIndex = originalCallableDescriptor.getExtensionReceiverParameter() != null ? 1 : 0;
 
             for (JetParameter parameter : parameterList.getParameters()) {
                 JetParameterInfo parameterInfo = changeInfo.getNewParameters()[paramIndex];
@@ -215,11 +197,11 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
             ShortenPackage.addToShorteningWaitSet(parameterList, Options.DEFAULT);
         }
 
-        if (element instanceof JetFunction && changeInfo.isReceiverTypeChanged()) {
+        if (element instanceof JetCallableDeclaration && changeInfo.isReceiverTypeChanged()) {
             //noinspection unchecked
-            String receiverTypeText = changeInfo.renderReceiverType((JetFunctionDefinitionUsage<PsiElement>) this);
+            String receiverTypeText = changeInfo.renderReceiverType((JetCallableDefinitionUsage<PsiElement>) this);
             JetTypeReference receiverTypeRef = receiverTypeText != null ? psiFactory.createType(receiverTypeText) : null;
-            JetTypeReference newReceiverTypeRef = TypeRefHelpersPackage.setReceiverTypeReference((JetFunction) element, receiverTypeRef);
+            JetTypeReference newReceiverTypeRef = TypeRefHelpersPackage.setReceiverTypeReference((JetCallableDeclaration) element, receiverTypeRef);
             if (newReceiverTypeRef != null) {
                 ShortenPackage.addToShorteningWaitSet(newReceiverTypeRef, ShortenReferences.Options.DEFAULT);
             }
@@ -230,6 +212,36 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
         }
 
         return true;
+    }
+
+    protected void changeReturnTypeIfNeeded(JetChangeInfo changeInfo, PsiElement element) {
+        if (!(element instanceof JetCallableDeclaration)) return;
+        if (element instanceof JetConstructor) return;
+
+        JetCallableDeclaration callable = (JetCallableDeclaration) element;
+
+        boolean returnTypeIsNeeded;
+        if (element instanceof JetFunction) {
+            returnTypeIsNeeded = (changeInfo.isRefactoringTarget(originalCallableDescriptor) ||
+                                  !(callable instanceof JetFunctionLiteral) ||
+                                  callable.getTypeReference() != null);
+        }
+        else {
+            returnTypeIsNeeded = element instanceof JetProperty;
+        }
+
+        if (changeInfo.isReturnTypeChanged() && returnTypeIsNeeded) {
+            callable.setTypeReference(null);
+            String returnTypeText = changeInfo.renderReturnType((JetCallableDefinitionUsage<PsiElement>) this);
+
+            //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
+            if (!KotlinBuiltIns.getInstance().getUnitType().toString().equals(returnTypeText)) {
+                ShortenPackage.addToShorteningWaitSet(
+                        callable.setTypeReference(JetPsiFactory(callable).createType(returnTypeText)),
+                        Options.DEFAULT
+                );
+            }
+        }
     }
 
     private void processParameterListWithStructuralChanges(
@@ -256,14 +268,14 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
             }
             else {
                 newParameterList = psiFactory.createFunctionLiteralParameterList(changeInfo.getNewParametersSignature(
-                        (JetFunctionDefinitionUsage<PsiElement>) this)
+                        (JetCallableDefinitionUsage<PsiElement>) this)
                 );
                 canReplaceEntireList = true;
             }
         }
-        else {
+        else if (!(element instanceof JetProperty)) {
             newParameterList = psiFactory.createParameterList(changeInfo.getNewParametersSignature(
-                    (JetFunctionDefinitionUsage<PsiElement>) this)
+                    (JetCallableDefinitionUsage<PsiElement>) this)
             );
         }
 
@@ -339,14 +351,15 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
     private static void changeVisibility(JetChangeInfo changeInfo, PsiElement element) {
         JetModifierKeywordToken newVisibilityToken = JetRefactoringUtil.getVisibilityToken(changeInfo.getNewVisibility());
 
-        if (element instanceof JetFunction) {
-            ((JetFunction)element).addModifier(newVisibilityToken);
+        if (element instanceof JetCallableDeclaration) {
+            ((JetCallableDeclaration)element).addModifier(newVisibilityToken);
         }
-        else {
+        else if (element instanceof JetClass) {
             JetPrimaryConstructor constructor = ((JetClass) element).getPrimaryConstructor();
             assert constructor != null : "Primary constructor should be created before changing visibility";
             constructor.addModifier(newVisibilityToken);
         }
+        else throw new AssertionError("Invalid element: " + PsiUtilPackage.getElementTextWithContext(element));
     }
 
     private void changeParameter(int parameterIndex, JetParameter parameter, JetParameterInfo parameterInfo) {
@@ -365,6 +378,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
         }
         else if (valOrVar != JetValVar.None) {
             PsiElement firstChild = parameter.getFirstChild();
+            //noinspection ConstantConditions
             parameter.addBefore(valOrVar.createKeyword(psiFactory), firstChild);
             parameter.addBefore(psiFactory.createWhiteSpace(), firstChild);
         }
@@ -378,7 +392,7 @@ public class JetFunctionDefinitionUsage<T extends PsiElement> extends JetUsageIn
 
         if (identifier != null) {
             //noinspection unchecked
-            String newName = parameterInfo.getInheritedName((JetFunctionDefinitionUsage<PsiElement>) this);
+            String newName = parameterInfo.getInheritedName(this);
             identifier.replace(psiFactory.createIdentifier(newName));
         }
     }

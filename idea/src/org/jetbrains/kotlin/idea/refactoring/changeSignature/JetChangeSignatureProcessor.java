@@ -21,7 +21,10 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.changeSignature.*;
+import com.intellij.refactoring.changeSignature.ChangeSignatureProcessorBase;
+import com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor;
+import com.intellij.refactoring.changeSignature.JavaChangeInfo;
+import com.intellij.refactoring.changeSignature.JavaChangeSignatureUsageProcessor;
 import com.intellij.refactoring.rename.RenameUtil;
 import com.intellij.refactoring.ui.ConflictsDialog;
 import com.intellij.usageView.UsageInfo;
@@ -29,8 +32,6 @@ import com.intellij.usageView.UsageViewDescriptor;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.MultiMap;
 import kotlin.KotlinPackage;
-import kotlin.Pair;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetUsageInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos;
@@ -62,10 +63,13 @@ public class JetChangeSignatureProcessor extends ChangeSignatureProcessorBase {
     protected UsageInfo[] findUsages() {
         List<UsageInfo> allUsages = new ArrayList<UsageInfo>();
 
-        JavaChangeInfo javaChangeInfo = getChangeInfo().getOrCreateJavaChangeInfo();
-        if (javaChangeInfo != null) {
-            UsageInfo[] javaUsages = new JavaChangeSignatureUsageProcessor().findUsages(javaChangeInfo);
-            allUsages.add(new KotlinWrapperForJavaUsageInfos(javaUsages, getChangeInfo().getMethod()));
+        List<JavaChangeInfo> javaChangeInfos = getChangeInfo().getOrCreateJavaChangeInfos();
+        if (javaChangeInfos != null) {
+            JavaChangeSignatureUsageProcessor javaProcessor = new JavaChangeSignatureUsageProcessor();
+            for (JavaChangeInfo javaChangeInfo : javaChangeInfos) {
+                UsageInfo[] javaUsages = javaProcessor.findUsages(javaChangeInfo);
+                allUsages.add(new KotlinWrapperForJavaUsageInfos(javaChangeInfo, javaUsages, getChangeInfo().getMethod()));
+            }
         }
         KotlinPackage.filterIsInstanceTo(super.findUsages(), allUsages, JetUsageInfo.class);
 

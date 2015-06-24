@@ -34,10 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.asJava.AsJavaPackage;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
@@ -57,44 +54,44 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     @Nullable
     public static PsiElement findTargetForRefactoring(@NotNull PsiElement element) {
         if (PsiTreeUtil.getParentOfType(element, JetParameterList.class) != null) {
-            return PsiTreeUtil.getParentOfType(element, JetFunction.class, JetClass.class);
+            return PsiTreeUtil.getParentOfType(element, JetFunction.class, JetProperty.class, JetClass.class);
         }
 
         JetTypeParameterList typeParameterList = PsiTreeUtil.getParentOfType(element, JetTypeParameterList.class);
         if (typeParameterList != null) {
-            return PsiTreeUtil.getParentOfType(typeParameterList, JetFunction.class, JetClass.class);
+            return PsiTreeUtil.getParentOfType(typeParameterList, JetFunction.class, JetProperty.class, JetClass.class);
         }
 
         PsiElement elementParent = element.getParent();
-        if (elementParent instanceof JetNamedFunction && ((JetNamedFunction) elementParent).getNameIdentifier() == element) {
-            return elementParent;
-        }
-        if (elementParent instanceof JetClass && ((JetClass) elementParent).getNameIdentifier() == element) {
-            return elementParent;
-        }
-        if (elementParent instanceof JetSecondaryConstructor &&
-            ((JetSecondaryConstructor) elementParent).getConstructorKeyword() == element) {
-            return elementParent;
-        }
+        if ((elementParent instanceof JetNamedFunction || elementParent instanceof JetClass || elementParent instanceof JetProperty)
+            && ((JetNamedDeclaration) elementParent).getNameIdentifier() == element) return elementParent;
 
+        if (elementParent instanceof JetSecondaryConstructor &&
+            ((JetSecondaryConstructor) elementParent).getConstructorKeyword() == element) return elementParent;
+
+        JetExpression calleeExpr;
         JetCallElement call = PsiTreeUtil.getParentOfType(element,
                                                           JetCallExpression.class,
                                                           JetDelegatorToSuperCall.class,
                                                           JetConstructorDelegationCall.class);
-        if (call == null) return null;
-
-        JetExpression receiverExpr = call.getCalleeExpression();
-        if (receiverExpr instanceof JetConstructorCalleeExpression) {
-            receiverExpr = ((JetConstructorCalleeExpression) receiverExpr).getConstructorReferenceExpression();
+        if (call != null) {
+            calleeExpr = call.getCalleeExpression();
         }
-        if (receiverExpr instanceof JetSimpleNameExpression || receiverExpr instanceof JetConstructorDelegationReferenceExpression) {
+        else {
+            calleeExpr = PsiTreeUtil.getParentOfType(element, JetSimpleNameExpression.class);
+        }
+
+        if (calleeExpr instanceof JetConstructorCalleeExpression) {
+            calleeExpr = ((JetConstructorCalleeExpression) calleeExpr).getConstructorReferenceExpression();
+        }
+        if (calleeExpr instanceof JetSimpleNameExpression || calleeExpr instanceof JetConstructorDelegationReferenceExpression) {
             JetElement jetElement = PsiTreeUtil.getParentOfType(element, JetElement.class);
             if (jetElement == null) return null;
 
             BindingContext bindingContext = ResolvePackage.analyze(jetElement, BodyResolveMode.FULL);
-            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) receiverExpr);
+            DeclarationDescriptor descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, (JetReferenceExpression) calleeExpr);
 
-            if (descriptor instanceof ClassDescriptor || descriptor instanceof FunctionDescriptor) return receiverExpr;
+            if (descriptor instanceof ClassDescriptor || descriptor instanceof CallableDescriptor) return calleeExpr;
         }
 
         return null;
@@ -107,20 +104,20 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             @Nullable Editor editor
     ) {
         BindingContext bindingContext = ResolvePackage.analyze(element, BodyResolveMode.FULL);
-        
-        FunctionDescriptor functionDescriptor = findDescriptor(element, project, editor, bindingContext);
-        if (functionDescriptor == null) {
+
+        CallableDescriptor callableDescriptor = findDescriptor(element, project, editor, bindingContext);
+        if (callableDescriptor == null) {
             return;
         }
 
-        if (functionDescriptor instanceof JavaCallableMemberDescriptor) {
-            PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, functionDescriptor);
-            assert declaration instanceof PsiMethod : "PsiMethod expected: " + functionDescriptor;
+        if (callableDescriptor instanceof JavaCallableMemberDescriptor) {
+            PsiElement declaration = DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(project, callableDescriptor);
+            assert declaration instanceof PsiMethod : "PsiMethod expected: " + callableDescriptor;
             ChangeSignatureUtil.invokeChangeSignatureOn((PsiMethod) declaration, project);
             return;
         }
 
-        if (TasksPackage.isDynamic(functionDescriptor)) {
+        if (TasksPackage.isDynamic(callableDescriptor)) {
             if (editor != null) {
                 CodeInsightUtils.showErrorHint(
                         project,
@@ -133,7 +130,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
             return;
         }
 
-        runChangeSignature(project, functionDescriptor, emptyConfiguration(), bindingContext, context, null);
+        runChangeSignature(project, callableDescriptor, emptyConfiguration(), bindingContext, context, null);
     }
 
     @TestOnly
@@ -208,7 +205,7 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
     }
 
     @Nullable
-    public static FunctionDescriptor findDescriptor(
+    public static CallableDescriptor findDescriptor(
             @NotNull PsiElement element,
             @NotNull Project project,
             @Nullable Editor editor,
@@ -243,6 +240,9 @@ public class JetChangeSignatureHandler implements ChangeSignatureHandler {
 
 
             return (FunctionDescriptor) descriptor;
+        }
+        else if (descriptor instanceof PropertyDescriptor) {
+            return (PropertyDescriptor) descriptor;
         }
         else {
             String message = RefactoringBundle.getCannotRefactorMessage(JetRefactoringBundle.message(

@@ -44,9 +44,9 @@ public abstract class JetImplicitReceiverUsage(callElement: JetElement): JetUsag
 public class JetImplicitThisToParameterUsage(
         callElement: JetElement,
         val parameterInfo: JetParameterInfo,
-        val containingFunction: JetFunctionDefinitionUsage<*>
+        val containingCallable: JetCallableDefinitionUsage<*>
 ): JetImplicitReceiverUsage(callElement) {
-    override fun getNewReceiverText(): String = parameterInfo.getInheritedName(containingFunction)
+    override fun getNewReceiverText(): String = parameterInfo.getInheritedName(containingCallable)
 
     override fun processReplacedElement(element: JetElement) {
         element.addToShorteningWaitSet(Options(removeThisLabels = true))

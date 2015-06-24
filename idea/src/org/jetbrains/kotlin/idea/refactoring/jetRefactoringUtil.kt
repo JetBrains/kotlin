@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils
+import com.intellij.openapi.options.ConfigurationException
 import com.intellij.psi.*
 import com.intellij.refactoring.listeners.RefactoringEventData
 import com.intellij.refactoring.listeners.RefactoringEventListener
@@ -88,6 +89,7 @@ import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.IdeaReferenceSearcher
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -604,4 +606,14 @@ public fun (() -> Any).runRefactoringWithPostprocessing(
                              }
                          })
     this()
+}
+
+@throws(ConfigurationException::class)
+public fun JetElement.validateElement(errorMessage: String) {
+    try {
+        AnalyzingUtils.checkForSyntacticErrors(this)
+    }
+    catch(e: Exception) {
+        throw ConfigurationException(errorMessage)
+    }
 }

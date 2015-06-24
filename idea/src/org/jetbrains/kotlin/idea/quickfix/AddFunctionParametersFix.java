@@ -147,7 +147,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                                     }
                                     else {
                                         JetParameterInfo parameterInfo =
-                                                getNewParameterInfo(originalDescriptor.getBaseDescriptor(), bindingContext, argument, validator);
+                                                getNewParameterInfo((FunctionDescriptor) originalDescriptor.getBaseDescriptor(), bindingContext, argument, validator);
                                         typesToShorten.add(parameterInfo.getOriginalType());
 
                                         if (expression != null) {

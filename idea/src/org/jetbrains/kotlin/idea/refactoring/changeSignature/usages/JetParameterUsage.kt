@@ -46,7 +46,7 @@ public abstract class JetExplicitReferenceUsage<T: JetElement>(element: T) : Jet
 public class JetParameterUsage(
         element: JetElement,
         private val parameterInfo: JetParameterInfo,
-        val containingFunction: JetFunctionDefinitionUsage<*>
+        val containingCallable: JetCallableDefinitionUsage<*>
 ) : JetExplicitReferenceUsage<JetElement>(element) {
     override fun processReplacedElement(element: JetElement) {
         val qualifiedExpression = element.getParent() as? JetQualifiedExpression
@@ -56,7 +56,7 @@ public class JetParameterUsage(
 
     override fun getReplacementText(changeInfo: JetChangeInfo): String =
             if (changeInfo.receiverParameterInfo != parameterInfo) {
-                parameterInfo.getInheritedName(containingFunction)
+                parameterInfo.getInheritedName(containingCallable)
             } else "this@${changeInfo.getNewName()}"
 }
 

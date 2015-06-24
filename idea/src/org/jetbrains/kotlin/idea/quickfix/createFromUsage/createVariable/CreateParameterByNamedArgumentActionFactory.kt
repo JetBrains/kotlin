@@ -60,7 +60,7 @@ public object CreateParameterByNamedArgumentActionFactory: JetSingleIntentionAct
         if (paramType.hasTypeParametersToAdd(functionDescriptor, context)) return null
 
         val parameterInfo = JetParameterInfo(
-                functionDescriptor = functionDescriptor,
+                callableDescriptor = functionDescriptor,
                 name = name,
                 type = paramType,
                 defaultValueForCall = argumentExpression

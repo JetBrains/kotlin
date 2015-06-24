@@ -35,10 +35,10 @@ public class DeferredJavaMethodOverrideOrSAMUsage(
 ): JavaMethodDeferredKotlinUsage<JetFunction>(function) {
         override fun resolve(javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetFunction> {
                 return object : JavaMethodKotlinUsageWithDelegate<JetFunction>(function, javaMethodChangeInfo) {
-                        override val delegateUsage = JetFunctionDefinitionUsage(
+                        override val delegateUsage = JetCallableDefinitionUsage(
                                 function,
                                 functionDescriptor,
-                                javaMethodChangeInfo.methodDescriptor.originalPrimaryFunction,
+                                javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable,
                                 samCallType
                         )
                 }

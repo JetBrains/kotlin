@@ -416,7 +416,7 @@ public class JetChangeSignatureDialog extends ChangeSignatureDialogBase<
                 getMethodName(),
                 myDefaultValueContext
         );
-        return changeInfo.getNewSignature(getMethodDescriptor().getOriginalPrimaryFunction());
+        return changeInfo.getNewSignature(getMethodDescriptor().getOriginalPrimaryCallable());
     }
 
     @Override

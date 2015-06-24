@@ -33,7 +33,7 @@ import com.intellij.util.VisibilityUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
@@ -995,6 +995,67 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         );
     }
 
+    public void testChangeProperty() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setNewName("s");
+        changeInfo.setNewReturnTypeText("String");
+        doTest(changeInfo);
+    }
+
+    public void testAddPropertyReceiverConflict() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "receiver", KotlinBuiltIns.getInstance().getStringType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("\"\""), JetValVar.None, null);
+        changeInfo.setReceiverParameterInfo(newParameter);
+        doTestConflict(changeInfo);
+    }
+
+    public void testAddPropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "receiver", KotlinBuiltIns.getInstance().getStringType(), null,
+                                                             new JetPsiFactory(getProject()).createExpression("\"\""), JetValVar.None, null);
+        changeInfo.setReceiverParameterInfo(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testChangePropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        //noinspection ConstantConditions
+        changeInfo.getReceiverParameterInfo().setCurrentTypeText("Int");
+        doTest(changeInfo);
+    }
+
+    public void testRemovePropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
+    public void testAddTopLevelPropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        JetParameterInfo newParameter = new JetParameterInfo(changeInfo.getMethodDescriptor().getBaseDescriptor(),
+                                                             -1, "receiver", null, null,
+                                                             new JetPsiFactory(getProject()).createExpression("A()"), JetValVar.None, null);
+        newParameter.setCurrentTypeText("test.A");
+        changeInfo.setReceiverParameterInfo(newParameter);
+        doTest(changeInfo);
+    }
+
+    public void testChangeTopLevelPropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        //noinspection ConstantConditions
+        changeInfo.getReceiverParameterInfo().setCurrentTypeText("String");
+        doTest(changeInfo);
+    }
+
+    public void testRemoveTopLevelPropertyReceiver() throws Exception {
+        JetChangeInfo changeInfo = getChangeInfo();
+        changeInfo.setReceiverParameterInfo(null);
+        doTest(changeInfo);
+    }
+
     @NotNull
     @Override
     protected String getTestDataPath() {
@@ -1039,11 +1100,11 @@ public class JetChangeSignatureTest extends KotlinCodeInsightTestCase {
         PsiElement context = file.findElementAt(editor.getCaretModel().getOffset());
         assertNotNull(context);
 
-        FunctionDescriptor functionDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext);
-        assertNotNull(functionDescriptor);
+        CallableDescriptor callableDescriptor = JetChangeSignatureHandler.findDescriptor(element, project, editor, bindingContext);
+        assertNotNull(callableDescriptor);
 
         return ChangeSignaturePackage.createChangeInfo(
-                project, functionDescriptor, JetChangeSignatureHandler.getConfiguration(), bindingContext, context);
+                project, callableDescriptor, JetChangeSignatureHandler.getConfiguration(), bindingContext, context);
     }
 
     private class JavaRefactoringProvider {

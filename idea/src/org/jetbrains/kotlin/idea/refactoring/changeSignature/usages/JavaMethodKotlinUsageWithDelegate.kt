@@ -34,7 +34,7 @@ public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
 public class JavaMethodKotlinCallUsage(
         callElement: JetCallElement,
         javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetCallElement>(callElement, javaMethodChangeInfo) {
-    override protected val delegateUsage = JetFunctionCallUsage(psiElement, javaMethodChangeInfo.methodDescriptor.originalPrimaryFunction)
+    override protected val delegateUsage = JetFunctionCallUsage(psiElement, javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable)
 }
 
 public class JavaMethodKotlinDerivedDefinitionUsage(
@@ -42,10 +42,10 @@ public class JavaMethodKotlinDerivedDefinitionUsage(
         functionDescriptor: FunctionDescriptor,
         javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetFunction>(function, javaMethodChangeInfo) {
     @suppress("CAST_NEVER_SUCCEEDS")
-    override protected val delegateUsage = JetFunctionDefinitionUsage(
+    override protected val delegateUsage = JetCallableDefinitionUsage(
             psiElement,
             functionDescriptor,
-            javaMethodChangeInfo.methodDescriptor.originalPrimaryFunction,
+            javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable,
             null
     )
 }

@@ -25,7 +25,7 @@ public class JetConstructorDelegationCallUsage(
         call: JetConstructorDelegationCall,
         changeInfo: JetChangeInfo
 ) : JetUsageInfo<JetConstructorDelegationCall>(call) {
-    val delegate = JetFunctionCallUsage(call, changeInfo.methodDescriptor.originalPrimaryFunction)
+    val delegate = JetFunctionCallUsage(call, changeInfo.methodDescriptor.originalPrimaryCallable)
 
     override fun processUsage(changeInfo: JetChangeInfo, element: JetConstructorDelegationCall): Boolean {
         val isThisCall = element.isCallToThis()
