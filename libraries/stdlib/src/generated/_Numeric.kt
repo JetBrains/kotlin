@@ -40,23 +40,6 @@ public fun Sequence<Int>.average(): Double {
     return if (count == 0) 0.0 else sum / count
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an average value of elements in the collection.
- */
-platformName("averageOfInt")
-public fun Stream<Int>.average(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
 /**
  * Returns an average value of elements in the collection.
  */
@@ -106,23 +89,6 @@ public fun Iterable<Long>.average(): Double {
  */
 platformName("averageOfLong")
 public fun Sequence<Long>.average(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an average value of elements in the collection.
- */
-platformName("averageOfLong")
-public fun Stream<Long>.average(): Double {
     val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
@@ -192,23 +158,6 @@ public fun Sequence<Byte>.average(): Double {
     return if (count == 0) 0.0 else sum / count
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an average value of elements in the collection.
- */
-platformName("averageOfByte")
-public fun Stream<Byte>.average(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
 /**
  * Returns an average value of elements in the collection.
  */
@@ -258,23 +207,6 @@ public fun Iterable<Short>.average(): Double {
  */
 platformName("averageOfShort")
 public fun Sequence<Short>.average(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an average value of elements in the collection.
- */
-platformName("averageOfShort")
-public fun Stream<Short>.average(): Double {
     val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
@@ -344,23 +276,6 @@ public fun Sequence<Double>.average(): Double {
     return if (count == 0) 0.0 else sum / count
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an average value of elements in the collection.
- */
-platformName("averageOfDouble")
-public fun Stream<Double>.average(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
 /**
  * Returns an average value of elements in the collection.
  */
@@ -410,23 +325,6 @@ public fun Iterable<Float>.average(): Double {
  */
 platformName("averageOfFloat")
 public fun Sequence<Float>.average(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    var count: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-        count += 1
-    }
-    return if (count == 0) 0.0 else sum / count
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an average value of elements in the collection.
- */
-platformName("averageOfFloat")
-public fun Stream<Float>.average(): Double {
     val iterator = iterator()
     var sum: Double = 0.0
     var count: Int = 0
@@ -492,21 +390,6 @@ public fun Sequence<Int>.sum(): Int {
     return sum
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the sum of all elements in the collection.
- */
-platformName("sumOfInt")
-public fun Stream<Int>.sum(): Int {
-    val iterator = iterator()
-    var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-    }
-    return sum
-}
-
 /**
  * Returns the sum of all elements in the collection.
  */
@@ -550,21 +433,6 @@ public fun Iterable<Long>.sum(): Long {
  */
 platformName("sumOfLong")
 public fun Sequence<Long>.sum(): Long {
-    val iterator = iterator()
-    var sum: Long = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-    }
-    return sum
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the sum of all elements in the collection.
- */
-platformName("sumOfLong")
-public fun Stream<Long>.sum(): Long {
     val iterator = iterator()
     var sum: Long = 0
     while (iterator.hasNext()) {
@@ -624,21 +492,6 @@ public fun Sequence<Byte>.sum(): Int {
     return sum
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the sum of all elements in the collection.
- */
-platformName("sumOfByte")
-public fun Stream<Byte>.sum(): Int {
-    val iterator = iterator()
-    var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-    }
-    return sum
-}
-
 /**
  * Returns the sum of all elements in the collection.
  */
@@ -682,21 +535,6 @@ public fun Iterable<Short>.sum(): Int {
  */
 platformName("sumOfShort")
 public fun Sequence<Short>.sum(): Int {
-    val iterator = iterator()
-    var sum: Int = 0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-    }
-    return sum
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the sum of all elements in the collection.
- */
-platformName("sumOfShort")
-public fun Stream<Short>.sum(): Int {
     val iterator = iterator()
     var sum: Int = 0
     while (iterator.hasNext()) {
@@ -756,21 +594,6 @@ public fun Sequence<Double>.sum(): Double {
     return sum
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the sum of all elements in the collection.
- */
-platformName("sumOfDouble")
-public fun Stream<Double>.sum(): Double {
-    val iterator = iterator()
-    var sum: Double = 0.0
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-    }
-    return sum
-}
-
 /**
  * Returns the sum of all elements in the collection.
  */
@@ -814,21 +637,6 @@ public fun Iterable<Float>.sum(): Float {
  */
 platformName("sumOfFloat")
 public fun Sequence<Float>.sum(): Float {
-    val iterator = iterator()
-    var sum: Float = 0.0f
-    while (iterator.hasNext()) {
-        sum += iterator.next()
-    }
-    return sum
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the sum of all elements in the collection.
- */
-platformName("sumOfFloat")
-public fun Stream<Float>.sum(): Float {
     val iterator = iterator()
     var sum: Float = 0.0f
     while (iterator.hasNext()) {

@@ -53,12 +53,3 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
     return map { it ?: throw IllegalArgumentException("null element found in $this.") }
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
- */
-public fun <T : Any> Stream<T?>.requireNoNulls(): Stream<T> {
-    return map { it ?: throw IllegalArgumentException("null element found in $this.") }
-}
-

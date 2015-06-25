@@ -22,14 +22,6 @@ public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> {
 }
 
 /**
- * Returns a sequence of all elements from all sequences in this sequence.
- */
-deprecated("Use Sequence<T> instead of Stream<T>")
-public fun <T> Stream<Stream<T>>.flatten(): Stream<T> {
-    return FlatteningStream(this, { it })
-}
-
-/**
  * Returns a single list of all elements from all arrays in the given array.
  */
 public fun <T> Array<Array<out T>>.flatten(): List<T> {

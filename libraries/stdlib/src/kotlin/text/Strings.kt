@@ -269,11 +269,6 @@ public fun Sequence<String>.join(separator: String = ", ", prefix: String = "", 
     return joinToString(separator, prefix, postfix, limit, truncated)
 }
 
-deprecated("Migrate to using Sequence<T> and respective functions")
-public fun Stream<String>.join(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "..."): String {
-    return joinToString(separator, prefix, postfix, limit, truncated)
-}
-
 /**
  * Returns a substring before the first occurrence of [delimiter].
  * If the string does not contain the delimiter, returns [missingDelimiterValue] which defaults to the original string.

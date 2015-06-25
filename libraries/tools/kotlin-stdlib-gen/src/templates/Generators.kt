@@ -86,7 +86,7 @@ fun generators(): List<GenericFunction> {
         returns("Sequence<T>")
         body {
             """
-            return sequenceOf(this, collection.sequence()).flatten()
+            return sequenceOf(this, collection.asSequence()).flatten()
             """
         }
     }

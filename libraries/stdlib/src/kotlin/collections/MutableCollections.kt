@@ -18,14 +18,6 @@ public fun <T> MutableCollection<in T>.addAll(sequence: Sequence<T>) {
 }
 
 /**
- * Adds all elements of the given [sequence] to this [MutableCollection].
- */
-deprecated("Use Sequence<T> instead of Stream<T>")
-public fun <T> MutableCollection<in T>.addAll(stream: Stream<T>) {
-    for (item in stream) add(item)
-}
-
-/**
  * Adds all elements of the given [array] to this [MutableCollection].
  */
 public fun <T> MutableCollection<in T>.addAll(array: Array<out T>) {
@@ -47,14 +39,6 @@ public fun <T> MutableCollection<in T>.removeAll(iterable: Iterable<T>) {
  */
 public fun <T> MutableCollection<in T>.removeAll(sequence: Sequence<T>) {
     for (item in sequence) remove(item)
-}
-
-/**
- * Removes all elements of the given [stream] from this [MutableCollection].
- */
-deprecated("Use Sequence<T> instead of Stream<T>")
-public fun <T> MutableCollection<in T>.removeAll(stream: Stream<T>) {
-    for (item in stream) remove(item)
 }
 
 /**

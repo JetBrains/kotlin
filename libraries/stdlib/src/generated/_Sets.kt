@@ -98,16 +98,6 @@ public fun <T> Sequence<T>.distinct(): Sequence<T> {
     return this.distinctBy { it }
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns a stream containing only distinct elements from the given stream.
- * The elements in the resulting stream are in the same order as they were in the source stream.
- */
-public fun <T> Stream<T>.distinct(): Stream<T> {
-    return this.distinctBy { it }
-}
-
 /**
  * Returns a list containing only distinct elements from the given collection according to the [keySelector].
  * The elements in the resulting list are in the same order as they were in the source collection.
@@ -264,16 +254,6 @@ public inline fun <T, K> Iterable<T>.distinctBy(keySelector: (T) -> K): List<T> 
  */
 public fun <T, K> Sequence<T>.distinctBy(keySelector: (T) -> K): Sequence<T> {
     return DistinctSequence(this, keySelector)
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns a stream containing only distinct elements from the given stream according to the [keySelector].
- * The elements in the resulting stream are in the same order as they were in the source stream.
- */
-public fun <T, K> Stream<T>.distinctBy(keySelector: (T) -> K): Stream<T> {
-    return DistinctStream(this, keySelector)
 }
 
 /**
@@ -551,17 +531,6 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
  * Returns a mutable set containing all distinct elements from the given sequence.
  */
 public fun <T> Sequence<T>.toMutableSet(): MutableSet<T> {
-    val set = LinkedHashSet<T>()
-    for (item in this) set.add(item)
-    return set
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns a mutable set containing all distinct elements from the given stream.
- */
-public fun <T> Stream<T>.toMutableSet(): MutableSet<T> {
     val set = LinkedHashSet<T>()
     for (item in this) set.add(item)
     return set

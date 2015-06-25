@@ -381,15 +381,6 @@ public fun <T, R, V> Sequence<T>.merge(sequence: Sequence<R>, transform: (T, R) 
     return MergingSequence(this, sequence, transform)
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns a stream of values built from elements of both collections with same indexes using provided [transform]. Resulting stream has length of shortest input streams.
- */
-public fun <T, R, V> Stream<T>.merge(stream: Stream<R>, transform: (T, R) -> V): Stream<V> {
-    return MergingStream(this, stream, transform)
-}
-
 /**
  * Splits original collection into pair of collections,
  * where *first* collection contains elements for which [predicate] yielded `true`,
@@ -576,26 +567,6 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
  * while *second* collection contains elements for which [predicate] yielded `false`.
  */
 public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
-    val first = ArrayList<T>()
-    val second = ArrayList<T>()
-    for (element in this) {
-        if (predicate(element)) {
-            first.add(element)
-        } else {
-            second.add(element)
-        }
-    }
-    return Pair(first, second)
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Splits original collection into pair of collections,
- * where *first* collection contains elements for which [predicate] yielded `true`,
- * while *second* collection contains elements for which [predicate] yielded `false`.
- */
-public inline fun <T> Stream<T>.partition(predicate: (T) -> Boolean): Pair<List<T>, List<T>> {
     val first = ArrayList<T>()
     val second = ArrayList<T>()
     for (element in this) {
@@ -830,16 +801,7 @@ public fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
  * Returns a sequence containing all elements of original sequence and then all elements of the given [collection].
  */
 public fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
-    return sequenceOf(this, collection.sequence()).flatten()
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns a stream containing all elements of original stream and then all elements of the given [collection].
- */
-public fun <T> Stream<T>.plus(collection: Iterable<T>): Stream<T> {
-    return streamOf(this, collection.stream()).flatten()
+    return sequenceOf(this, collection.asSequence()).flatten()
 }
 
 /**
@@ -949,29 +911,11 @@ public fun <T> Sequence<T>.plus(element: T): Sequence<T> {
     return sequenceOf(this, sequenceOf(element)).flatten()
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns a stream containing all elements of original stream and then the given [element].
- */
-public fun <T> Stream<T>.plus(element: T): Stream<T> {
-    return streamOf(this, streamOf(element)).flatten()
-}
-
 /**
  * Returns a sequence containing all elements of original sequence and then all elements of the given [sequence].
  */
 public fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
     return sequenceOf(this, sequence).flatten()
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns a stream containing all elements of original stream and then all elements of the given [stream].
- */
-public fun <T> Stream<T>.plus(stream: Stream<T>): Stream<T> {
-    return streamOf(this, stream).flatten()
 }
 
 /**
@@ -1189,15 +1133,5 @@ public fun String.zip(other: String): List<Pair<Char, Char>> {
  */
 public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
     return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns a stream of pairs built from elements of both collections with same indexes.
- * Resulting stream has length of shortest input streams.
- */
-public fun <T, R> Stream<T>.zip(stream: Stream<R>): Stream<Pair<T, R>> {
-    return MergingStream(this, stream) { t1, t2 -> t1 to t2 }
 }
 

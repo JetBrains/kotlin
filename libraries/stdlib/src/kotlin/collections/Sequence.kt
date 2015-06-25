@@ -3,35 +3,17 @@ package kotlin
 import java.util.*
 import kotlin.support.AbstractIterator
 
-deprecated("Use Sequence<T> instead.")
-public interface Stream<out T> {
-    /**
-     * Returns an iterator that returns the values from the sequence.
-     */
-    public fun iterator(): Iterator<T>
-}
-
 /**
  * A sequence that returns values through its iterator. The values are evaluated lazily, and the sequence
  * is potentially infinite.
  *
  * @param T the type of elements in the sequence.
  */
-public interface Sequence<out T> : Stream<T>
-
-/**
- * Converts a stream to a sequence.
- */
-public fun<T> Stream<T>.toSequence(): Sequence<T> = object : Sequence<T> {
-    override fun iterator(): Iterator<T> = this@toSequence.iterator()
-}
-
-deprecated("Use sequenceOf() instead", ReplaceWith("sequenceOf(*elements)"))
-public fun <T> streamOf(vararg elements: T): Stream<T> = elements.stream()
-
-deprecated("Use sequenceOf() instead", ReplaceWith("sequenceOf(progression)"))
-public fun <T> streamOf(progression: Progression<T>): Stream<T> = object : Stream<T> {
-    override fun iterator(): Iterator<T> = progression.iterator()
+public interface Sequence<out T> {
+    /**
+     * Returns an iterator that returns the values from the sequence.
+     */
+    public fun iterator(): Iterator<T>
 }
 
 /**
@@ -70,16 +52,9 @@ public fun <T> sequenceOf(progression: Progression<T>): Sequence<T> = object : S
  */
 public fun <T> emptySequence(): Sequence<T> = EmptySequence
 
-deprecated("Remove in M13 with streams.")
-private fun <T> emptyStream(): Stream<T> = EmptySequence
-
 private object EmptySequence : Sequence<Nothing> {
     override fun iterator(): Iterator<Nothing> = EmptyIterator
 }
-
-deprecated("Use FilteringSequence<T> instead")
-public class FilteringStream<T>(stream: Stream<T>, sendWhen: Boolean = true, predicate: (T) -> Boolean)
-: Stream<T> by FilteringSequence<T>(stream.toSequence(), sendWhen, predicate)
 
 /**
  * A sequence that returns the values from the underlying [sequence] that either match or do not match
@@ -130,10 +105,6 @@ public class FilteringSequence<T>(private val sequence: Sequence<T>,
     }
 }
 
-deprecated("Use TransformingSequence<T> instead")
-public class TransformingStream<T, R>(stream: Stream<T>, transformer: (T) -> R)
-: Stream<R> by TransformingSequence<T, R>(stream.toSequence(), transformer)
-
 /**
  * A sequence which returns the results of applying the given [transformer] function to the values
  * in the underlying [sequence].
@@ -153,10 +124,6 @@ constructor(private val sequence: Sequence<T>, private val transformer: (T) -> R
         }
     }
 }
-
-deprecated("Use TransformingIndexedSequence<T> instead")
-public class TransformingIndexedStream<T, R>(stream: Stream<T>, transformer: (Int, T) -> R)
-: Stream<R> by TransformingIndexedSequence<T, R>(stream.toSequence(), transformer)
 
 /**
  * A sequence which returns the results of applying the given [transformer] function to the values
@@ -180,10 +147,6 @@ constructor(private val sequence: Sequence<T>, private val transformer: (Int, T)
     }
 }
 
-deprecated("Use IndexingSequence<T> instead")
-public class IndexingStream<T>(stream: Stream<T>)
-: Stream<IndexedValue<T>> by IndexingSequence(stream.toSequence())
-
 /**
  * A sequence which combines values from the underlying [sequence] with their indices and returns them as
  * [IndexedValue] objects.
@@ -204,10 +167,6 @@ constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
         }
     }
 }
-
-deprecated("Use MergingSequence<T> instead")
-public class MergingStream<T1, T2, V>(stream1: Stream<T1>, stream2: Stream<T2>, transform: (T1, T2) -> V)
-: Stream<V> by MergingSequence(stream1.toSequence(), stream2.toSequence(), transform)
 
 /**
  * A sequence which takes the values from two parallel underlying sequences, passes them to the given
@@ -233,10 +192,6 @@ deprecated("This class is an implementation detail and shall be made internal so
         }
     }
 }
-
-deprecated("Use FlatteningSequence<T> instead")
-public class FlatteningStream<T, R>(stream: Stream<T>, transformer: (T) -> Stream<R>)
-: Stream<R> by FlatteningSequence(stream.toSequence(), { transformer(it).toSequence() })
 
 deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.flatMap() instead.")
 public class FlatteningSequence<T, R>
@@ -279,10 +234,6 @@ deprecated("This class is an implementation detail and shall be made internal so
     }
 }
 
-deprecated("Use MultiSequence<T> instead")
-public class Multistream<T>(stream: Stream<Stream<T>>)
-: Stream<T> by FlatteningSequence(stream.toSequence(), { it.toSequence() })
-
 deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.flatten() instead.")
 public class MultiSequence<T>
 deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.flatten()"))
@@ -322,10 +273,6 @@ constructor(private val sequence: Sequence<Sequence<T>>) : Sequence<T> {
     }
 }
 
-deprecated("Use TakeSequence<T> instead")
-public class TakeStream<T>(stream: Stream<T>, count: Int)
-: Stream<T> by TakeSequence(stream.toSequence(), count)
-
 /**
  * A sequence that returns at most [count] values from the underlying [sequence], and stops returning values
  * as soon as that count is reached.
@@ -356,9 +303,6 @@ deprecated("This class is an implementation detail and shall be made internal so
         }
     }
 }
-
-deprecated("Use TakeWhileSequence<T> instead")
-public class TakeWhileStream<T>(stream: Stream<T>, predicate: (T) -> Boolean) : Stream<T> by TakeWhileSequence<T>(stream.toSequence(), predicate)
 
 /**
  * A sequence that returns values from the underlying [sequence] while the [predicate] function returns
@@ -408,10 +352,6 @@ deprecated("This class is an implementation detail and shall be made internal so
     }
 }
 
-deprecated("Use DropSequence<T> instead")
-public class DropStream<T>(stream: Stream<T>, count: Int)
-: Stream<T> by DropSequence<T>(stream.toSequence(), count)
-
 /**
  * A sequence that skips the specified number of values from the underlying [sequence] and returns
  * all values after that.
@@ -449,9 +389,6 @@ deprecated("This class is an implementation detail and shall be made internal so
         }
     }
 }
-
-deprecated("Use DropWhileSequence<T> instead")
-public class DropWhileStream<T>(stream: Stream<T>, predicate: (T) -> Boolean) : Stream<T> by DropWhileSequence<T>(stream.toSequence(), predicate)
 
 /**
  * A sequence that skips the values from the underlying [sequence] while the given [predicate] returns `true` and returns
@@ -501,9 +438,6 @@ deprecated("This class is an implementation detail and shall be made internal so
         }
     }
 }
-
-deprecated("Use DistinctSequence instead and remove with streams.")
-private class DistinctStream<T, K>(private val source: Stream<T>, private val keySelector : (T) -> K) : Stream<T> by DistinctSequence<T, K>(source.toSequence(), keySelector)
 
 private class DistinctSequence<T, K>(private val source : Sequence<T>, private val keySelector : (T) -> K) : Sequence<T> {
     override fun iterator(): Iterator<T> = DistinctIterator(source.iterator(), keySelector)
@@ -624,9 +558,6 @@ public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> {
     return GeneratorSequence(nextFunction, { nextFunction() }).constrainOnce()
 }
 
-deprecated("Use sequence() instead", ReplaceWith("sequence(nextFunction)"))
-public fun <T : Any> stream(nextFunction: () -> T?): Sequence<T> = sequence(nextFunction)
-
 /**
  * Returns a sequence which invokes the function to calculate the next value based on the previous one on each iteration
  * until the function returns `null`. The sequence starts with the specified [initialValue].
@@ -643,6 +574,3 @@ public /*inline*/ fun <T : Any> sequence(initialValue: T, nextFunction: (T) -> T
  */
 public fun <T: Any> sequence(initialValueFunction: () -> T?, nextFunction: (T) -> T?): Sequence<T> =
         GeneratorSequence(initialValueFunction, nextFunction)
-
-deprecated("Use sequence() instead", ReplaceWith("sequence(initialValue, nextFunction)"))
-public /*inline*/ fun <T : Any> stream(initialValue: T, nextFunction: (T) -> T?): Sequence<T> = sequence(initialValue, nextFunction)

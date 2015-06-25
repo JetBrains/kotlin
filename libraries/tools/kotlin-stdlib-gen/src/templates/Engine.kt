@@ -148,24 +148,6 @@ class GenericFunction(val signature: String, val keyword: String = "fun") : Comp
     }
 
     fun build(builder: StringBuilder, f: Family, primitive: PrimitiveType?) {
-        if (f == Sequences) {
-            val text = StringBuilder {
-                doBuild(this, f, primitive)
-            }.toString()
-            builder.append(text)
-            builder.appendln()
-            if (deprecate[f] == null) // (deprecates[f] == null && deprecate.isEmpty())
-                builder.appendln("deprecated(\"Migrate to using Sequence<T> and respective functions\")")
-            val streamText = text
-                    .replace("Sequence", "Stream")
-                    .replace("sequence", "stream")
-                    .replace("MultiStream", "Multistream")
-            builder.append(streamText)
-        } else
-            doBuild(builder, f, primitive)
-    }
-
-    fun doBuild(builder: StringBuilder, f: Family, primitive: PrimitiveType?) {
         val returnType = returns[f] ?: throw RuntimeException("No return type specified for $signature")
 
         val isAsteriskOrT = if (receiverAsterisk) "*" else "T"

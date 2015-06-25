@@ -441,17 +441,6 @@ public fun <T> Sequence<T>.contains(element: T): Boolean {
     return indexOf(element) >= 0
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns `true` if [element] is found in the collection.
- */
-public fun <T> Stream<T>.contains(element: T): Boolean {
-    if (this is Collection<*>)
-        return contains(element)
-    return indexOf(element) >= 0
-}
-
 /**
  * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
  */
@@ -536,15 +525,6 @@ public fun <T> List<T>.elementAt(index: Int): T {
  */
 public fun <T> Sequence<T>.elementAt(index: Int): T {
     return elementAtOrElse(index) { throw IndexOutOfBoundsException("Sequence doesn't contain element at index $index.") }
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this collection.
- */
-public fun <T> Stream<T>.elementAt(index: Int): T {
-    return elementAtOrElse(index) { throw IndexOutOfBoundsException("Stream doesn't contain element at index $index.") }
 }
 
 /**
@@ -658,24 +638,6 @@ public inline fun <T> Sequence<T>.elementAtOrElse(index: Int, defaultValue: (Int
     return defaultValue(index)
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
- */
-public inline fun <T> Stream<T>.elementAtOrElse(index: Int, defaultValue: (Int) -> T): T {
-    if (index < 0)
-        return defaultValue(index)
-    val iterator = iterator()
-    var count = 0
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (index == count++)
-            return element
-    }
-    return defaultValue(index)
-}
-
 /**
  * Returns an element at the given [index] or the result of calling the [defaultValue] function if the [index] is out of bounds of this collection.
  */
@@ -775,24 +737,6 @@ public fun <T> List<T>.elementAtOrNull(index: Int): T? {
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
  */
 public fun <T> Sequence<T>.elementAtOrNull(index: Int): T? {
-    if (index < 0)
-        return null
-    val iterator = iterator()
-    var count = 0
-    while (iterator.hasNext()) {
-        val element = iterator.next()
-        if (index == count++)
-            return element
-    }
-    return null
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns an element at the given [index] or `null` if the [index] is out of bounds of this collection.
- */
-public fun <T> Stream<T>.elementAtOrNull(index: Int): T? {
     if (index < 0)
         return null
     val iterator = iterator()
@@ -954,29 +898,6 @@ public fun <T> Sequence<T>.first(): T {
     }
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns first element.
- * @throws [NoSuchElementException] if the collection is empty.
- */
-public fun <T> Stream<T>.first(): T {
-    when (this) {
-        is List<*> -> {
-            if (isEmpty())
-                throw NoSuchElementException("Collection is empty.")
-            else
-                return this[0] as T
-        }
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty.")
-            return iterator.next()
-        }
-    }
-}
-
 /**
  * Returns first character.
  * @throws [NoSuchElementException] if the string is empty.
@@ -1082,17 +1003,6 @@ public inline fun <T> Iterable<T>.first(predicate: (T) -> Boolean): T {
  * @throws [NoSuchElementException] if no such element is found.
  */
 public inline fun <T> Sequence<T>.first(predicate: (T) -> Boolean): T {
-    for (element in this) if (predicate(element)) return element
-    throw NoSuchElementException("No element matching predicate was found.")
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the first element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
- */
-public inline fun <T> Stream<T>.first(predicate: (T) -> Boolean): T {
     for (element in this) if (predicate(element)) return element
     throw NoSuchElementException("No element matching predicate was found.")
 }
@@ -1216,28 +1126,6 @@ public fun <T> Sequence<T>.firstOrNull(): T? {
     }
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the first element, or `null` if the collection is empty.
- */
-public fun <T> Stream<T>.firstOrNull(): T? {
-    when (this) {
-        is List<*> -> {
-            if (isEmpty())
-                return null
-            else
-                return this[0] as T
-        }
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                return null
-            return iterator.next()
-        }
-    }
-}
-
 /**
  * Returns the first character, or `null` if string is empty.
  */
@@ -1329,16 +1217,6 @@ public inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
  * Returns the first element matching the given [predicate], or `null` if element was not found.
  */
 public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
-    for (element in this) if (predicate(element)) return element
-    return null
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the first element matching the given [predicate], or `null` if element was not found.
- */
-public inline fun <T> Stream<T>.firstOrNull(predicate: (T) -> Boolean): T? {
     for (element in this) if (predicate(element)) return element
     return null
 }
@@ -1493,21 +1371,6 @@ public fun <T> Sequence<T>.indexOf(element: T): Int {
     return -1
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns first index of [element], or -1 if the collection does not contain element.
- */
-public fun <T> Stream<T>.indexOf(element: T): Int {
-    var index = 0
-    for (item in this) {
-        if (element == item)
-            return index
-        index++
-    }
-    return -1
-}
-
 /**
  * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
@@ -1645,21 +1508,6 @@ public inline fun <T> List<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
  * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
  */
 public inline fun <T> Sequence<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
-    var index = 0
-    for (item in this) {
-        if (predicate(item))
-            return index
-        index++
-    }
-    return -1
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns index of the first element matching the given [predicate], or -1 if the collection does not contain such element.
- */
-public inline fun <T> Stream<T>.indexOfFirst(predicate: (T) -> Boolean): Int {
     var index = 0
     for (item in this) {
         if (predicate(item))
@@ -1829,22 +1677,6 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
     return lastIndex
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
- */
-public inline fun <T> Stream<T>.indexOfLast(predicate: (T) -> Boolean): Int {
-    var lastIndex = -1
-    var index = 0
-    for (item in this) {
-        if (predicate(item))
-            lastIndex = index
-        index++
-    }
-    return lastIndex
-}
-
 /**
  * Returns index of the last element matching the given [predicate], or -1 if the collection does not contain such element.
  */
@@ -1986,22 +1818,6 @@ public fun <T> List<T>.last(): T {
  * @throws [NoSuchElementException] if the collection is empty.
  */
 public fun <T> Sequence<T>.last(): T {
-    val iterator = iterator()
-    if (!iterator.hasNext())
-        throw NoSuchElementException("Collection is empty.")
-    var last = iterator.next()
-    while (iterator.hasNext())
-        last = iterator.next()
-    return last
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the last element.
- * @throws [NoSuchElementException] if the collection is empty.
- */
-public fun <T> Stream<T>.last(): T {
     val iterator = iterator()
     if (!iterator.hasNext())
         throw NoSuchElementException("Collection is empty.")
@@ -2177,25 +1993,6 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
     return last as T
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
- */
-public inline fun <T> Stream<T>.last(predicate: (T) -> Boolean): T {
-    var last: T? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-            found = true
-        }
-    }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching the predicate.")
-    return last as T
-}
-
 /**
  * "Returns the last character matching the given [predicate].
  * @throws [NoSuchElementException] if no such character is found.
@@ -2357,22 +2154,6 @@ public fun <T> Sequence<T>.lastIndexOf(element: T): Int {
     return lastIndex
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns last index of [element], or -1 if the collection does not contain element.
- */
-public fun <T> Stream<T>.lastIndexOf(element: T): Int {
-    var lastIndex = -1
-    var index = 0
-    for (item in this) {
-        if (element == item)
-            lastIndex = index
-        index++
-    }
-    return lastIndex
-}
-
 /**
  * Returns the last element, or `null` if the collection is empty.
  */
@@ -2465,21 +2246,6 @@ public fun <T> List<T>.lastOrNull(): T? {
  * Returns the last element, or `null` if the collection is empty.
  */
 public fun <T> Sequence<T>.lastOrNull(): T? {
-    val iterator = iterator()
-    if (!iterator.hasNext())
-        return null
-    var last = iterator.next()
-    while (iterator.hasNext())
-        last = iterator.next()
-    return last
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the last element, or `null` if the collection is empty.
- */
-public fun <T> Stream<T>.lastOrNull(): T? {
     val iterator = iterator()
     if (!iterator.hasNext())
         return null
@@ -2625,21 +2391,6 @@ public inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T? {
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  */
 public inline fun <T> Sequence<T>.lastOrNull(predicate: (T) -> Boolean): T? {
-    var last: T? = null
-    for (element in this) {
-        if (predicate(element)) {
-            last = element
-        }
-    }
-    return last
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the last element matching the given [predicate], or `null` if no such element was found.
- */
-public inline fun <T> Stream<T>.lastOrNull(predicate: (T) -> Boolean): T? {
     var last: T? = null
     for (element in this) {
         if (predicate(element)) {
@@ -2798,30 +2549,6 @@ public fun <T> List<T>.single(): T {
  * Returns the single element, or throws an exception if the collection is empty or has more than one element.
  */
 public fun <T> Sequence<T>.single(): T {
-    when (this) {
-        is List<*> -> return when (size()) {
-            0 -> throw NoSuchElementException("Collection is empty.")
-            1 -> this[0] as T
-            else -> throw IllegalArgumentException("Collection has more than one element.")
-        }
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                throw NoSuchElementException("Collection is empty.")
-            var single = iterator.next()
-            if (iterator.hasNext())
-                throw IllegalArgumentException("Collection has more than one element.")
-            return single
-        }
-    }
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the single element, or throws an exception if the collection is empty or has more than one element.
- */
-public fun <T> Stream<T>.single(): T {
     when (this) {
         is List<*> -> return when (size()) {
             0 -> throw NoSuchElementException("Collection is empty.")
@@ -3038,25 +2765,6 @@ public inline fun <T> Sequence<T>.single(predicate: (T) -> Boolean): T {
     return single as T
 }
 
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the single element matching the given [predicate], or throws exception if there is no or more than one matching element.
- */
-public inline fun <T> Stream<T>.single(predicate: (T) -> Boolean): T {
-    var single: T? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            if (found) throw IllegalArgumentException("Collection contains more than one matching element.")
-            single = element
-            found = true
-        }
-    }
-    if (!found) throw NoSuchElementException("Collection doesn't contain any element matching predicate.")
-    return single as T
-}
-
 /**
  * Returns the single character matching the given [predicate], or throws exception if there is no or more than one matching character.
  */
@@ -3166,26 +2874,6 @@ public fun <T> List<T>.singleOrNull(): T? {
  * Returns single element, or `null` if the collection is empty or has more than one element.
  */
 public fun <T> Sequence<T>.singleOrNull(): T? {
-    when (this) {
-        is List<*> -> return if (size() == 1) this[0] as T else null
-        else -> {
-            val iterator = iterator()
-            if (!iterator.hasNext())
-                return null
-            var single = iterator.next()
-            if (iterator.hasNext())
-                return null
-            return single
-        }
-    }
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns single element, or `null` if the collection is empty or has more than one element.
- */
-public fun <T> Stream<T>.singleOrNull(): T? {
     when (this) {
         is List<*> -> return if (size() == 1) this[0] as T else null
         else -> {
@@ -3381,25 +3069,6 @@ public inline fun <T> Iterable<T>.singleOrNull(predicate: (T) -> Boolean): T? {
  * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
  */
 public inline fun <T> Sequence<T>.singleOrNull(predicate: (T) -> Boolean): T? {
-    var single: T? = null
-    var found = false
-    for (element in this) {
-        if (predicate(element)) {
-            if (found) return null
-            single = element
-            found = true
-        }
-    }
-    if (!found) return null
-    return single
-}
-
-
-deprecated("Migrate to using Sequence<T> and respective functions")
-/**
- * Returns the single element matching the given [predicate], or `null` if element was not found or more than one element was found.
- */
-public inline fun <T> Stream<T>.singleOrNull(predicate: (T) -> Boolean): T? {
     var single: T? = null
     var found = false
     for (element in this) {
