@@ -190,7 +190,7 @@ public fun CharSequence.iterator(): CharIterator = object : CharIterator() {
 
     public override fun nextChar(): Char = get(index++)
 
-    public override fun hasNext(): Boolean = index < length
+    public override fun hasNext(): Boolean = index < length()
 }
 
 /** Returns the string if it is not `null`, or the empty string otherwise. */
@@ -298,7 +298,7 @@ public fun String.substringBefore(delimiter: String, missingDelimiterValue: Stri
  */
 public fun String.substringAfter(delimiter: Char, missingDelimiterValue: String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else substring(index + 1, length)
+    return if (index == -1) missingDelimiterValue else substring(index + 1, length())
 }
 
 /**
@@ -307,7 +307,7 @@ public fun String.substringAfter(delimiter: Char, missingDelimiterValue: String 
  */
 public fun String.substringAfter(delimiter: String, missingDelimiterValue: String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else substring(index + delimiter.length, length)
+    return if (index == -1) missingDelimiterValue else substring(index + delimiter.length(), length())
 }
 
 /**
@@ -334,7 +334,7 @@ public fun String.substringBeforeLast(delimiter: String, missingDelimiterValue: 
  */
 public fun String.substringAfterLast(delimiter: Char, missingDelimiterValue: String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else substring(index + 1, length)
+    return if (index == -1) missingDelimiterValue else substring(index + 1, length())
 }
 
 /**
@@ -343,7 +343,7 @@ public fun String.substringAfterLast(delimiter: Char, missingDelimiterValue: Str
  */
 public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else substring(index + delimiter.length, length)
+    return if (index == -1) missingDelimiterValue else substring(index + delimiter.length(), length())
 }
 
 /**
@@ -357,7 +357,7 @@ public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: Str
     val sb = StringBuilder()
     sb.append(this, 0, firstIndex)
     sb.append(replacement)
-    sb.append(this, lastIndex, length)
+    sb.append(this, lastIndex, length())
     return sb.toString()
 }
 
@@ -460,7 +460,7 @@ public fun String.replaceBefore(delimiter: String, replacement: String, missingD
  */
 public fun String.replaceAfter(delimiter: Char, replacement: String, missingDelimiterValue: String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else replaceRange(index + 1, length, replacement)
+    return if (index == -1) missingDelimiterValue else replaceRange(index + 1, length(), replacement)
 }
 
 /**
@@ -469,7 +469,7 @@ public fun String.replaceAfter(delimiter: Char, replacement: String, missingDeli
  */
 public fun String.replaceAfter(delimiter: String, replacement: String, missingDelimiterValue: String = this): String {
     val index = indexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else replaceRange(index + delimiter.length, length, replacement)
+    return if (index == -1) missingDelimiterValue else replaceRange(index + delimiter.length(), length(), replacement)
 }
 
 /**
@@ -478,7 +478,7 @@ public fun String.replaceAfter(delimiter: String, replacement: String, missingDe
  */
 public fun String.replaceAfterLast(delimiter: String, replacement: String, missingDelimiterValue: String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else replaceRange(index + delimiter.length, length, replacement)
+    return if (index == -1) missingDelimiterValue else replaceRange(index + delimiter.length(), length(), replacement)
 }
 
 /**
@@ -487,7 +487,7 @@ public fun String.replaceAfterLast(delimiter: String, replacement: String, missi
  */
 public fun String.replaceAfterLast(delimiter: Char, replacement: String, missingDelimiterValue: String = this): String {
     val index = lastIndexOf(delimiter)
-    return if (index == -1) missingDelimiterValue else replaceRange(index + 1, length, replacement)
+    return if (index == -1) missingDelimiterValue else replaceRange(index + 1, length(), replacement)
 }
 
 /**

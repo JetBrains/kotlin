@@ -35,7 +35,7 @@ class Html2CompilerPlugin(private val compilerArguments: KDocArguments) : Doclet
         val filePath = file.getPath()
         for (sourceDirPath in sourceDirPaths) {
             if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
-                val relativePath = filePath.substring(sourceDirPath.length + 1)
+                val relativePath = filePath.substring(sourceDirPath.length() + 1)
                 return relativePath
             }
         }

@@ -272,7 +272,7 @@ class StringJVMTest {
         fails {
             data.drop(-2)
         }
-        assertEquals("", data.drop(data.length + 5))
+        assertEquals("", data.drop(data.length() + 5))
     }
 
     test fun takeWhile() {
@@ -288,7 +288,7 @@ class StringJVMTest {
         fails {
             data.take(-7)
         }
-        assertEquals(data, data.take(data.length + 42))
+        assertEquals(data, data.take(data.length() + 42))
     }
 
     test fun formatter() {

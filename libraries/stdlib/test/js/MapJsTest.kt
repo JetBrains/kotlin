@@ -262,12 +262,12 @@ abstract class MapJsTest {
 
     test fun setViaIndexOperators() {
         val map = HashMap<String, String>()
-        assertTrue{ map.empty }
-        assertEquals(map.size, 0)
+        assertTrue{ map.isEmpty() }
+        assertEquals(map.size(), 0)
 
         map["name"] = "James"
 
-        assertTrue{ !map.empty }
+        assertTrue{ !map.isEmpty() }
         assertEquals(map.size(), 1)
         assertEquals("James", map["name"])
     }

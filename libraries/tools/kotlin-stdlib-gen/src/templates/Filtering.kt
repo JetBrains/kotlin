@@ -236,7 +236,7 @@ fun filtering(): List<GenericFunction> {
         returns(Strings) { "String" }
         body(Strings) {
             """
-            for (index in 0..length - 1)
+            for (index in 0..length() - 1)
                 if (!predicate(get(index))) {
                     return substring(0, index)
                 }
@@ -357,7 +357,7 @@ fun filtering(): List<GenericFunction> {
         doc(Strings) { "Appends all characters matching the given [predicate] to the given [destination]." }
         body(Strings) {
             """
-            for (index in 0..length - 1) {
+            for (index in 0..length() - 1) {
                 val element = get(index)
                 if (predicate(element)) destination.append(element)
             }

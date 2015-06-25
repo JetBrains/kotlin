@@ -190,10 +190,10 @@ Class ${klass.simpleName}</H2>
 
 <P>""")
         println(klass.detailedDescription(this))
-        if (klass.since.size > 0 || klass.authors.size > 0) {
+        if (klass.since.length() > 0 || klass.authors.size() > 0) {
             println("""<P>
 <DL>""")
-            if (klass.since.size > 0) {
+            if (klass.since.length() > 0) {
                 println("""<DT><B>Since:</B></DT>
   <DD>${klass.since}</DD>""")
             }

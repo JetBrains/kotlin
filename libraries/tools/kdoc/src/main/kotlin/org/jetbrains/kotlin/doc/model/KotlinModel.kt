@@ -196,7 +196,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             val filePath = file.getPath()
             for (sourceDirPath in normalizedSourceDirs) {
                 if (filePath.startsWith(sourceDirPath) && filePath.length() > sourceDirPath.length()) {
-                    return filePath.substring(sourceDirPath.length + 1)
+                    return filePath.substring(sourceDirPath.length() + 1)
                 }
             }
             throw Exception("$file is not a child of any source roots $normalizedSourceDirs")
@@ -483,7 +483,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
             val lines = nodeText.trim().split('\n')
             // lets remove the /** ... * ... */ tokens
             val buffer = StringBuilder()
-            val last = lines.size - 1
+            val last = lines.size() - 1
             for (i in 0.rangeTo(last)) {
                 var text = lines[i]
                 text = text.trim()
@@ -518,7 +518,7 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                 // TODO we could default the test function name to match that of the
                 // source code function if folks adopted a convention of naming the test method after the
                 // method its acting as a demo/test for
-                if (words.size > 1) {
+                if (words.size() > 1) {
                     val includeFile = words[0]
                     val fnName = words[1]
                     val content = findFunctionInclude(psiElement, includeFile, fnName)
@@ -597,7 +597,7 @@ $highlight"""
                 break
             }
             var count = 1
-            for (i in 0.rangeTo(remaining.size - 1)) {
+            for (i in 0.rangeTo(remaining.length() - 1)) {
                 val ch = remaining[i]
                 if (ch == '{') count ++
                 else if (ch == '}') {
@@ -619,7 +619,7 @@ $highlight"""
 
         // lets try resolve the include name relative to this file
         val paths = relativeName.split('/')
-        val size = paths.size
+        val size = paths.size()
         for (i in 0.rangeTo(size - 2)) {
             val path = paths[i]
             if (path == ".") continue
@@ -951,7 +951,7 @@ class KPackage(
     val nameAsRelativePath: String
     get() {
         val answer = namePaths.map{ ".." }.makeString("/")
-        return if (answer.length == 0) "" else answer + "/"
+        return if (answer.length() == 0) "" else answer + "/"
     }
 
     override fun description(template: KDocTemplate): String {

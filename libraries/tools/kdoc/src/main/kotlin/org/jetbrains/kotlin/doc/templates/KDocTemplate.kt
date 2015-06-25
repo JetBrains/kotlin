@@ -137,7 +137,7 @@ abstract class KDocTemplate() : TextTemplate() {
             if (cname.startsWith("kotlin.Function") && arguments.isNotEmpty()) {
                 val rt = arguments.last()
                 // TODO use drop()
-                val rest = arguments.subList(0, arguments.size - 1).orEmpty()
+                val rest = arguments.dropLast(1)
                 "${typeArguments(rest, "(", ")", "()")}&nbsp;<A HREF=\"${href(c)}\" title=\"${c.kind} in ${c.packageName}\">-&gt;</a>&nbsp;${link(rt)}"
             } else {
                 val name = if (fullName) cname else c.simpleName

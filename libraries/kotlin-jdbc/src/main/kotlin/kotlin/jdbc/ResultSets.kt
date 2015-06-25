@@ -58,7 +58,7 @@ fun ResultSet.getColumnNames() : Array<String> {
  * @columnNames you can specify column names to extract otherwise all columns will be extracted
  */
 fun ResultSet.getValues(columnNames : Array<String> = getColumnNames()) : Array<Any?> {
-    return Array<Any?>(columnNames.size, {
+    return Array<Any?>(columnNames.size(), {
         this[columnNames[it]]
     })
 }
@@ -68,7 +68,7 @@ fun ResultSet.getValues(columnNames : Array<String> = getColumnNames()) : Array<
  * @param columnNames you can specify column names to extract otherwise all columns will be extracted
  */
 fun ResultSet.getValuesAsMap(columnNames : Array<String> = getColumnNames()) : Map<String, Any?> {
-    val result = java.util.HashMap<String, Any?>(columnNames.size)
+    val result = java.util.HashMap<String, Any?>(columnNames.size())
 
     columnNames.forEach {
         result[it] = this[it]
