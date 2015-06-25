@@ -18,14 +18,14 @@ class JdbcTemplateTest {
 
         // TODO will use a tuple soon
         dataSource.update(
-        StringTemplate(array("insert into foo (id, name) values (", id, ", ", name, ")"))
+        StringTemplate(arrayOf("insert into foo (id, name) values (", id, ", ", name, ")"))
         )
 
         // Mimicks
         // datasource.query("select * from foo where id = $id") { it.map{ it["name"] } }
 
         val names = dataSource.query(
-        StringTemplate(array("select * from foo where id = ", id))
+        StringTemplate(arrayOf("select * from foo where id = ", id))
         ) {
             it.map{ it["name"] }.toList()
         }

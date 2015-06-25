@@ -49,7 +49,7 @@ class JdbcTest {
     }
 
     test fun stringFormat() {
-        dataSource.query(kotlin.template.StringTemplate(array("select * from foo where id = ", 1))) {
+        dataSource.query(kotlin.template.StringTemplate(arrayOf("select * from foo where id = ", 1))) {
             for (row in it) {
                 println(row.getValuesAsMap())
             }

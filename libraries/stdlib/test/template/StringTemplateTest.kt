@@ -15,7 +15,7 @@ class StringTemplateTest : TestCase() {
 
         // TODO will use a tuple soon
         //val actual = StringTemplate(Tuple3<String,String,String>("hello ", name, "!"))).toString()
-        val actual = StringTemplate(array("hello ", name, "!")).toString()
+        val actual = StringTemplate(arrayOf("hello ", name, "!")).toString()
 
         assertEquals("hello James!", actual)
     }

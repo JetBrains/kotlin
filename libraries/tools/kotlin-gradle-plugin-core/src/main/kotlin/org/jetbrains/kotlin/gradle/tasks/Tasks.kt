@@ -217,7 +217,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
 
     override fun createBlankArgs(): K2JSCompilerArguments {
         val args = K2JSCompilerArguments()
-        args.libraryFiles = array<String>()  // defaults to null
+        args.libraryFiles = arrayOf<String>()  // defaults to null
         return args
     }
 

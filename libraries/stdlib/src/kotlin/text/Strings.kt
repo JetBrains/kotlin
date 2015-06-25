@@ -732,7 +732,7 @@ public fun String.lastIndexOfAny(strings: Collection<String>, startIndex: Int = 
  */
 public fun String.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase) 
-        indexOfAny(charArray(char), startIndex, ignoreCase)
+        indexOfAny(charArrayOf(char), startIndex, ignoreCase)
     else
         nativeIndexOf(char, startIndex)
 }
@@ -760,7 +760,7 @@ public fun String.indexOf(string: String, startIndex: Int = 0, ignoreCase: Boole
  */
 public fun String.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
     return if (ignoreCase)
-        lastIndexOfAny(charArray(char), startIndex, ignoreCase)
+        lastIndexOfAny(charArrayOf(char), startIndex, ignoreCase)
     else
         nativeLastIndexOf(char, startIndex)
 }

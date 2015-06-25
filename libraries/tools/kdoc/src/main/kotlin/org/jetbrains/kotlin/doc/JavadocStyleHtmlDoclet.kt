@@ -20,7 +20,7 @@ class JavadocStyleHtmlDoclet() : Doclet {
         fun generateExtensionFunctions(p: KPackage): Unit {
             val map = inheritedExtensionFunctions(p.functions)
             val pmap = inheritedExtensionProperties(p.properties)
-            val classes = hashSet<KClass>()
+            val classes = hashSetOf<KClass>()
             classes.addAll(map.keySet())
             classes.addAll(pmap.keySet())
             for (c in classes) {

@@ -262,8 +262,7 @@ class StringTest {
     }
 
     test fun trimStartAndEnd() {
-        val examples = array(
-                "a",
+        val examples = arrayOf("a",
                 " a ",
                 "  a  ",
                 "  a b  ",
@@ -279,12 +278,11 @@ class StringTest {
             assertEquals(example.trim(), example.trimStart().trimEnd())
         }
 
-        val examplesForPredicate = array(
-                "123",
+        val examplesForPredicate = arrayOf("123",
                 "-=123=-"
         )
 
-        val trimChars = charArray('-','=')
+        val trimChars = charArrayOf('-', '=')
         val trimPredicate = { it: Char -> it < '0' || it > '9' } // TODO: Use !it.isDigit when available in JS
         for (example in examplesForPredicate) {
             assertEquals(example.trimStart(*trimChars).trimEnd(*trimChars), example.trim(*trimChars))
@@ -354,8 +352,8 @@ class StringTest {
 
     test fun split() {
         assertEquals(listOf(""), "".split(";"))
-        assertEquals(listOf("test"), "test".split(*charArray()), "empty list of delimiters, none matched -> entire string returned")
-        assertEquals(listOf("test"), "test".split(*array<String>()), "empty list of delimiters, none matched -> entire string returned")
+        assertEquals(listOf("test"), "test".split(*charArrayOf()), "empty list of delimiters, none matched -> entire string returned")
+        assertEquals(listOf("test"), "test".split(*arrayOf<String>()), "empty list of delimiters, none matched -> entire string returned")
 
         assertEquals(listOf("abc", "def", "123;456"), "abc;def,123;456".split(';', ',', limit = 3))
         assertEquals(listOf("abc", "def", "123", "456"), "abc<BR>def<br>123<bR>456".split("<BR>", ignoreCase = true))
@@ -379,7 +377,7 @@ class StringTest {
 
     test fun indexOfAnyChar() {
         val string = "abracadabra"
-        val chars = charArray('d','b')
+        val chars = charArrayOf('d', 'b')
         assertEquals(1, string.indexOfAny(chars))
         assertEquals(6, string.indexOfAny(chars, startIndex = 2))
         assertEquals(-1, string.indexOfAny(chars, startIndex = 9))
@@ -388,12 +386,12 @@ class StringTest {
         assertEquals(6, string.lastIndexOfAny(chars, startIndex = 7))
         assertEquals(-1, string.lastIndexOfAny(chars, startIndex = 0))
 
-        assertEquals(-1, string.indexOfAny(charArray()))
+        assertEquals(-1, string.indexOfAny(charArrayOf()))
     }
 
     test fun indexOfAnyCharIgnoreCase() {
         val string = "abraCadabra"
-        val chars = charArray('B','c')
+        val chars = charArrayOf('B', 'c')
         assertEquals(1, string.indexOfAny(chars, ignoreCase = true))
         assertEquals(4, string.indexOfAny(chars, startIndex = 2, ignoreCase = true))
         assertEquals(-1, string.indexOfAny(chars, startIndex = 9, ignoreCase = true))
@@ -473,8 +471,8 @@ class StringTest {
         assertEquals(2, string.lastIndexOf('e', 3))
 
         for (startIndex in -1..string.length()+1) {
-            assertEquals(string.indexOfAny(charArray('e'), startIndex), string.indexOf('e', startIndex))
-            assertEquals(string.lastIndexOfAny(charArray('e'), startIndex), string.lastIndexOf('e', startIndex))
+            assertEquals(string.indexOfAny(charArrayOf('e'), startIndex), string.indexOf('e', startIndex))
+            assertEquals(string.lastIndexOfAny(charArrayOf('e'), startIndex), string.lastIndexOf('e', startIndex))
         }
 
     }
@@ -490,8 +488,8 @@ class StringTest {
 
 
         for (startIndex in -1..string.length()+1){
-            assertEquals(string.indexOfAny(charArray('e'), startIndex, ignoreCase = true), string.indexOf('E', startIndex, ignoreCase = true))
-            assertEquals(string.lastIndexOfAny(charArray('E'), startIndex, ignoreCase = true), string.lastIndexOf('e', startIndex, ignoreCase = true))
+            assertEquals(string.indexOfAny(charArrayOf('e'), startIndex, ignoreCase = true), string.indexOf('E', startIndex, ignoreCase = true))
+            assertEquals(string.lastIndexOfAny(charArrayOf('E'), startIndex, ignoreCase = true), string.lastIndexOf('e', startIndex, ignoreCase = true))
         }
     }
 

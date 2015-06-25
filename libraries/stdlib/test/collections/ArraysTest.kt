@@ -161,11 +161,11 @@ class ArraysTest {
     }
 
     test fun average() {
-        expect(0.0) { array<Int>().average() }
-        expect(3.8) { array(1, 2, 5, 8, 3).average() }
-        expect(2.1) { array(1.6, 2.6, 3.6, 0.6).average() }
-        expect(100.0) { array<Byte>(100, 100, 100, 100, 100, 100).average() }
-        expect(0) { array<Short>(1, -1, 2, -2, 3, -3).average().toShort() }
+        expect(0.0) { arrayOf<Int>().average() }
+        expect(3.8) { arrayOf(1, 2, 5, 8, 3).average() }
+        expect(2.1) { arrayOf(1.6, 2.6, 3.6, 0.6).average() }
+        expect(100.0) { arrayOf<Byte>(100, 100, 100, 100, 100, 100).average() }
+        expect(0) { arrayOf<Short>(1, -1, 2, -2, 3, -3).average().toShort() }
         // TODO: Property based tests
         // for each arr with size 1 arr.average() == arr[0]
         // for each arr with size > 0  arr.average() = arr.sum().toDouble() / arr.size()
@@ -296,7 +296,7 @@ class ArraysTest {
     }
 
     test fun toPrimitiveArray() {
-        val genericArray: Array<Int> = array(1, 2, 3)
+        val genericArray: Array<Int> = arrayOf(1, 2, 3)
         val primitiveArray: IntArray = genericArray.toIntArray()
         expect(3) { primitiveArray.size() }
         assertEquals(genericArray.asList(), primitiveArray.asList())

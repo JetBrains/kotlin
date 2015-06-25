@@ -73,9 +73,9 @@ class LinkedHashMapTest : MapJsTest() {
 
 abstract class MapJsTest {
     val KEYS = listOf("zero", "one", "two", "three")
-    val VALUES = array(0, 1, 2, 3).toList()
+    val VALUES = arrayOf(0, 1, 2, 3).toList()
 
-    val SPECIAL_NAMES = array("__proto__", "constructor", "toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable")
+    val SPECIAL_NAMES = arrayOf("__proto__", "constructor", "toString", "toLocaleString", "valueOf", "hasOwnProperty", "isPrototypeOf", "propertyIsEnumerable")
 
     test fun getOrElse() {
         val data = emptyMap()

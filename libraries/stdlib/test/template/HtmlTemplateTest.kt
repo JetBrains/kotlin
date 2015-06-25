@@ -16,7 +16,7 @@ class HtmlTemplateTest : TestCase() {
 
         // TODO will use a tuple soon
         //val actual = StringTemplate(Tuple3<String,String,String>("<h1>", foo, "</h1> <p>hey ", bar, "</p>")).toHtml()
-        val actual = StringTemplate(array("<h1>", foo, "</h1> <p>hey ", bar, "</p>")).toHtml()
+        val actual = StringTemplate(arrayOf("<h1>", foo, "</h1> <p>hey ", bar, "</p>")).toHtml()
 
         assertEquals("<h1>James</h1> <p>hey x &gt; 1</p>", actual)
     }

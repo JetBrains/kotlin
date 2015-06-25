@@ -348,10 +348,10 @@ class FilesTest {
                         fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
                 assert(stack.isEmpty())
                 val sep = File.separator
-                for (fileName in array("", "1", "1${sep}2", "1${sep}3", "6", "8")) {
+                for (fileName in arrayOf("", "1", "1${sep}2", "1${sep}3", "6", "8")) {
                     assert(dirs.contains(fileName), fileName)
                 }
-                for (fileName in array("1${sep}3${sep}4.txt", "1${sep}3${sep}4.txt", "7.txt", "8${sep}9.txt")) {
+                for (fileName in arrayOf("1${sep}3${sep}4.txt", "1${sep}3${sep}4.txt", "7.txt", "8${sep}9.txt")) {
                     assert(files.contains(fileName), fileName)
                 }
 
@@ -362,7 +362,7 @@ class FilesTest {
                         forEach { it -> if (it != basedir) visitFile(it) }
                 assert(stack.isEmpty())
                 assert(dirs.size() == 1 && dirs.contains(""), dirs.size())
-                for (file in array("1", "6", "7.txt", "8")) {
+                for (file in arrayOf("1", "6", "7.txt", "8")) {
                     assert(files.contains(file), file)
                 }
 
@@ -376,11 +376,11 @@ class FilesTest {
                         assert(stack.isEmpty())
                         assert(failed.size() == 1 && failed.contains("1"), failed.size())
                         assert(dirs.size() == 4, dirs.size())
-                        for (dir in array("", "1", "6", "8")) {
+                        for (dir in arrayOf("", "1", "6", "8")) {
                             assert(dirs.contains(dir), dir)
                         }
                         assert(files.size() == 2, files.size())
-                        for (file in array("7.txt", "8${sep}9.txt")) {
+                        for (file in arrayOf("7.txt", "8${sep}9.txt")) {
                             assert(files.contains(file), file)
                         }
                     } finally {
