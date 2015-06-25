@@ -3034,6 +3034,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("replaceCallWithArgument.kt")
+        public void testReplaceCallWithArgument() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/replaceCallWithArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceCallWithReceiver.kt")
+        public void testReplaceCallWithReceiver() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/replaceCallWithReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("shortenReferences.kt")
         public void testShortenReferences() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/quickfix/deprecatedSymbolUsage/shortenReferences.kt");

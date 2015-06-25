@@ -153,21 +153,21 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             receiver?.mark(RECEIVER_VALUE_KEY)
 
+            val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToBeReplaced, bindingContext)
+
             //TODO: this@
             for (thisExpression in replacement.expression.collectDescendantsOfType<JetThisExpression>()) {
                 if (receiver != null) {
-                    thisExpression.replace(receiver)
+                    wrapper.replaceExpression(thisExpression, receiver)
                 }
                 else {
                     thisExpression.mark(RECEIVER_VALUE_KEY)
                 }
             }
 
-            val introduceValuesForParameters = processValueParameterUsages(resolvedCall, replacement, bindingContext, project)
+            val introduceValuesForParameters = wrapper.processValueParameterUsages(resolvedCall, project)
 
-            processTypeParameterUsages(resolvedCall, replacement)
-
-            val wrapper = ConstructedExpressionWrapper(replacement.expression, expressionToBeReplaced, bindingContext)
+            wrapper.processTypeParameterUsages(resolvedCall)
 
             if (qualifiedExpression is JetSafeQualifiedExpression) {
                 wrapper.wrapExpressionForSafeCall(receiver!!, receiverType)
@@ -209,10 +209,8 @@ public abstract class DeprecatedSymbolUsageFixBase(
             return resultRange.last as JetExpression
         }
 
-        private fun processValueParameterUsages(
+        private fun ConstructedExpressionWrapper.processValueParameterUsages(
                 resolvedCall: ResolvedCall<out CallableDescriptor>,
-                replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression,
-                bindingContext: BindingContext,
                 project: Project
         ): Collection<IntroduceValueForParameter> {
             val introduceValuesForParameters = ArrayList<IntroduceValueForParameter>()
@@ -225,7 +223,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 argument.expression.put(PARAMETER_VALUE_KEY, parameter)
 
                 val parameterName = parameter.getName()
-                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
+                val usages = expression.collectDescendantsOfType<JetExpression> {
                     it[ReplaceWithAnnotationAnalyzer.PARAMETER_USAGE_KEY] == parameterName
                 }
                 usages.forEach {
@@ -236,7 +234,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     if (argument.isDefaultValue) {
                         usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
                     }
-                    it.replace(argument.expression)
+                    replaceExpression(it, argument.expression)
                 }
 
                 //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
@@ -254,7 +252,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 val value: JetExpression,
                 val valueType: JetType?)
 
-        private fun processTypeParameterUsages(resolvedCall: ResolvedCall<out CallableDescriptor>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {
+        private fun ConstructedExpressionWrapper.processTypeParameterUsages(resolvedCall: ResolvedCall<out CallableDescriptor>) {
             val typeParameters = resolvedCall.getResultingDescriptor().getOriginal().getTypeParameters()
 
             val callElement = resolvedCall.getCall().getCallElement()
@@ -264,7 +262,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             for ((index, typeParameter) in typeParameters.withIndex()) {
                 val parameterName = typeParameter.getName()
-                val usages = replacement.expression.collectDescendantsOfType<JetExpression> {
+                val usages = expression.collectDescendantsOfType<JetExpression> {
                     it[ReplaceWithAnnotationAnalyzer.TYPE_PARAMETER_USAGE_KEY] == parameterName
                 }
 
@@ -285,7 +283,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                     }
                     else {
                         //TODO: tests for this?
-                        usage.replace(JetPsiFactory(usage).createExpression(typeElement.getText()))
+                        replaceExpression(usage, JetPsiFactory(usage).createExpression(typeElement.getText()))
                     }
                 }
             }
@@ -638,6 +636,15 @@ public abstract class DeprecatedSymbolUsageFixBase(
         val addedStatements = ArrayList<JetExpression>()
 
         val psiFactory = JetPsiFactory(expressionToBeReplaced)
+
+        public fun replaceExpression(oldExpression: JetExpression, newExpression: JetExpression): JetExpression {
+            assert(expression.isAncestor(oldExpression))
+            val result = oldExpression.replace(newExpression) as JetExpression
+            if (oldExpression == expression) {
+                expression = result
+            }
+            return result
+        }
 
         public fun introduceValue(
                 value: JetExpression,
