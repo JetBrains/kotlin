@@ -21,6 +21,7 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementDecorator
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.openapi.util.TextRange
+import com.intellij.patterns.ElementPattern
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -198,5 +199,9 @@ class LookupElementsCollector(
 
     public fun advertiseSecondCompletion() {
         JavaCompletionContributor.advertiseSecondCompletion(completionParameters.getOriginalFile().getProject(), defaultResultSet)
+    }
+
+    public fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>) {
+        defaultResultSet.restartCompletionOnPrefixChange(prefixCondition)
     }
 }

@@ -59,7 +59,7 @@ public abstract class DeclarationLookupObjectImpl(
         return descriptorsEqualWithSubstitution(descriptor, lookupObject.descriptor) && psiElement == lookupObject.psiElement
     }
 
-    override val isDeprecated = if (descriptor != null) KotlinBuiltIns.isDeprecated(descriptor) else (psiElement as PsiDocCommentOwner).isDeprecated()
+    override val isDeprecated = if (descriptor != null) KotlinBuiltIns.isDeprecated(descriptor) else (psiElement as? PsiDocCommentOwner)?.isDeprecated() ?: false
 
     companion object {
         private val LOG = Logger.getInstance("#" + javaClass<DeclarationLookupObject>().getName())

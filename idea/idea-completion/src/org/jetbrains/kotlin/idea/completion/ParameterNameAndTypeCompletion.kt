@@ -56,26 +56,26 @@ class ParameterNameAndTypeCompletion(
     private val parametersInCurrentFilePrefixMatcher = MyPrefixMatcher(defaultPrefixMatcher.getPrefix())
 
     private val prefixWords: Array<String>
-    private val allPrefixes: List<String> // prefixes to use to generate parameter names from class names
+    private val nameSuggestionPrefixes: List<String> // prefixes to use to generate parameter names from class names
 
     init {
         val prefix = defaultPrefixMatcher.getPrefix()
         prefixWords = NameUtil.splitNameIntoWords(prefix)
 
-        allPrefixes = if (prefix.isEmpty() || prefix[0].isUpperCase())
+        nameSuggestionPrefixes = if (prefix.isEmpty() || prefix[0].isUpperCase())
             emptyList()
         else
-            prefixWords.indices.map { if (it == 0) prefix else prefixWords.drop(it).join("") }
+            prefixWords.indices.map { index -> if (index == 0) prefix else prefixWords.drop(index).join("") }
     }
 
-    private val allPrefixMatchers = allPrefixes.map { MyPrefixMatcher(it) }
+    private val nameSuggestionPrefixMatchers = nameSuggestionPrefixes.map { MyPrefixMatcher(it) }
 
-    private val userPrefixes = allPrefixes.indices.map { prefixWords.take(it).join("") }
+    private val userPrefixes = nameSuggestionPrefixes.indices.map { prefixWords.take(it).join("") }
 
     private val suggestionsByTypesAdded = HashSet<Type>()
 
     public fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
-        for ((i, prefixMatcher) in allPrefixMatchers.withIndex()) {
+        for ((i, prefixMatcher) in nameSuggestionPrefixMatchers.withIndex()) {
             val resolutionScope = position.getResolutionScope(bindingContext, resolutionFacade)
             val classifiers = resolutionScope.getDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, prefixMatcher.toClassifierNamePrefixMatcher().asNameFilter())
 
@@ -90,7 +90,7 @@ class ParameterNameAndTypeCompletion(
     }
 
     public fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
-        for ((i, prefixMatcher) in allPrefixMatchers.withIndex()) {
+        for ((i, prefixMatcher) in nameSuggestionPrefixMatchers.withIndex()) {
             AllClassesCompletion(parameters, indicesHelper, prefixMatcher.toClassifierNamePrefixMatcher(), { !it.isSingleton() })
                     .collect(
                             { addSuggestionsForClassifier(it, userPrefixes[i], prefixMatcher) },

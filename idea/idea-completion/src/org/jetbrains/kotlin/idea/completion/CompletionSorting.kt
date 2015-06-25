@@ -166,7 +166,7 @@ private class JetDeclarationRemotenessWeigher(private val file: JetFile) : Looku
             DescriptorUtils.getFqName(descriptor!!).toString()
         }
         else {
-            (psiElement as? PsiClass)?.getQualifiedName();
+            (psiElement as? PsiClass)?.getQualifiedName()
         }
     }
 

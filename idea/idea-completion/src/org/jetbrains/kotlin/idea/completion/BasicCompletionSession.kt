@@ -145,8 +145,7 @@ class BasicCompletionSession(configuration: CompletionSessionConfiguration,
             val prefixPattern = StandardPatterns.string().with(object : PatternCondition<String>("Prefix ends with uppercase letter") {
                 override fun accepts(prefix: String, context: ProcessingContext?) = prefix.isNotEmpty() && prefix.last().isUpperCase()
             })
-            (CompletionService.getCompletionService().getCurrentCompletion() as CompletionProgressIndicator)
-                    .addWatchedPrefix(parameters.getOffset(), prefixPattern)
+            collector.restartCompletionOnPrefixChange(prefixPattern)
         }
 
         if (completionKind == CompletionKind.PARAMETER_NAME || completionKind == CompletionKind.ANNOTATION_TYPES_OR_PARAMETER_NAME) {

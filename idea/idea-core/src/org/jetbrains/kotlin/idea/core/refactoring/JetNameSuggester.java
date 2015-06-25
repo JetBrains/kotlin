@@ -242,7 +242,7 @@ public class JetNameSuggester {
         }
     }
 
-    public static String decapitalize(String s) {
+    private static String decapitalize(String s) {
         char c = s.charAt(0);
         if (!Character.isUpperCase(c)) return s;
 
