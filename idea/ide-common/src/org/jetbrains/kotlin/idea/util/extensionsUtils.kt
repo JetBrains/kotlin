@@ -53,7 +53,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
         callType: CallType,
         containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<CallableDescriptor> {
-    val sequence = receivers.sequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).sequence() }
+    val sequence = receivers.asSequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).asSequence() }
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
     }
@@ -81,7 +81,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
     if (!receiver.exists()) return listOf()
     if (!callType.canCall(this)) return listOf()
 
-    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo).sequence()
+    var types = SmartCastUtils.getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo).asSequence()
 
     if (callType == CallType.SAFE) {
         types = types.map { it.makeNotNullable() }

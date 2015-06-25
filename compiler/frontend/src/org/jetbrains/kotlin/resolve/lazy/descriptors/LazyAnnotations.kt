@@ -77,7 +77,7 @@ public class LazyAnnotations(
 
     override fun findExternalAnnotation(fqName: FqName) = null
 
-    override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.sequence().map(annotation).iterator()
+    override fun iterator(): Iterator<AnnotationDescriptor> = annotationEntries.asSequence().map(annotation).iterator()
 
     override fun forceResolveAllContents() {
         // To resolve all entries

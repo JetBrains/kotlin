@@ -167,7 +167,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
     private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<JetFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
-                .sequence()
+                .asSequence()
                 .map { manager.findFile(it) as? JetFile }
                 .filterNotNull()
     }

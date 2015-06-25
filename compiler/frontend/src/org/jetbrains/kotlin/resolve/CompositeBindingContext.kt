@@ -30,7 +30,7 @@ public class CompositeBindingContext private constructor(
         private val delegates: List<BindingContext>
 ) : BindingContext {
     override fun getType(expression: JetExpression): JetType? {
-        return delegates.sequence().map { it.getType(expression) }.firstOrNull { it != null }
+        return delegates.asSequence().map { it.getType(expression) }.firstOrNull { it != null }
     }
 
     companion object {
@@ -42,7 +42,7 @@ public class CompositeBindingContext private constructor(
     }
 
     override fun <K, V> get(slice: ReadOnlySlice<K, V>?, key: K?): V? {
-        return delegates.sequence().map { it[slice, key] }.firstOrNull { it != null }
+        return delegates.asSequence().map { it[slice, key] }.firstOrNull { it != null }
     }
 
     override fun <K, V> getKeys(slice: WritableSlice<K, V>?): Collection<K> {
@@ -65,8 +65,7 @@ public class CompositeBindingContext private constructor(
     ) : Diagnostics {
 
         override fun iterator(): Iterator<Diagnostic> {
-            val emptyStream = listOf<Diagnostic>().sequence()
-            return delegates.fold(emptyStream, { r, t -> r + t.sequence() }).iterator()
+            return delegates.fold(emptySequence<Diagnostic>(), { r, t -> r + t.asSequence() }).iterator()
         }
 
         override val modificationTracker = object : ModificationTracker {

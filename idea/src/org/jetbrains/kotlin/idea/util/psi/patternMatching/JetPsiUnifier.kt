@@ -225,12 +225,12 @@ public class JetPsiUnifier(
                 if (args1.size() != args2.size()) return UNMATCHED
                 if (rc1.getCall().getValueArguments().size() != args1.size() || rc2.getCall().getValueArguments().size() != args2.size()) return null
 
-                return (args1.sequence() zip args2.sequence()).fold(MATCHED) { s, p ->
+                return (args1.asSequence() zip args2.asSequence()).fold(MATCHED) { s, p ->
                     val (arg1, arg2) = p
                     s and when {
                         arg1 == arg2 -> MATCHED
                         arg1 == null || arg2 == null -> UNMATCHED
-                        else -> (arg1.getArguments().sequence() zip arg2.getArguments().sequence()).fold(MATCHED) { s, p ->
+                        else -> (arg1.getArguments().asSequence() zip arg2.getArguments().asSequence()).fold(MATCHED) { s, p ->
                             s and matchArguments(p.first, p.second)
                         }
                     }
@@ -737,7 +737,7 @@ public class JetPsiUnifier(
             val patternElements = pattern.elements
             if (targetElements.size() != patternElements.size()) return UNMATCHED
 
-            return (targetElements.sequence() zip patternElements.sequence()).fold(MATCHED) { s, p ->
+            return (targetElements.asSequence() zip patternElements.asSequence()).fold(MATCHED) { s, p ->
                 if (s != UNMATCHED) s and doUnify(p.first, p.second) else s
             }
         }

@@ -53,7 +53,7 @@ public object InlineTestUtil {
 
 
         val skipParameterChecking =
-                sourceFiles.sequence().filter {
+                sourceFiles.asSequence().filter {
                     InTextDirectivesUtils.isDirectiveDefined(it.getText(), "NO_CHECK_LAMBDA_INLINING")
                 }.any()
 

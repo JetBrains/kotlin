@@ -80,7 +80,7 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
             }
 
     private fun <P : KProperty<*>> getProperties(extension: Boolean, declared: Boolean, create: (PropertyDescriptor) -> P): Collection<P> =
-            scope.getAllDescriptors().sequence()
+            scope.getAllDescriptors().asSequence()
                     .filterIsInstance<PropertyDescriptor>()
                     .filter { descriptor ->
                         (descriptor.getExtensionReceiverParameter() != null) == extension &&

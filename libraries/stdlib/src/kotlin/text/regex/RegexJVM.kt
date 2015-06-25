@@ -234,7 +234,7 @@ private fun Matcher.findNext(from: Int): MatchResult? {
             override fun contains(o: Any?): Boolean = o is MatchGroup? && this.any({ it == o })
             override fun containsAll(c: Collection<Any?>): Boolean = c.all({contains(it)})
 
-            override fun iterator(): Iterator<MatchGroup?> = indices.sequence().map { this[it] }.iterator()
+            override fun iterator(): Iterator<MatchGroup?> = indices.asSequence().map { this[it] }.iterator()
             override fun get(index: Int): MatchGroup? {
                 val range = matchResult.range(index)
                 return if (range.start >= 0)

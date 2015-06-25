@@ -106,11 +106,11 @@ private fun findPackagePartFileNamesForElement(elementAt: JetElement): List<Stri
                     JdkScope(project, libraryEntry as JdkOrderEntry)
                 }
 
-    val packagePartFiles = FilenameIndex.getAllFilenames(project).sequence().filter {
+    val packagePartFiles = FilenameIndex.getAllFilenames(project).asSequence().filter {
                 it.startsWith(packagePartNameWoHash) && it.endsWith(".class") &&
                     !it.substringAfter(packagePartNameWoHash).contains("\$")
             }.flatMap {
-                FilenameIndex.getVirtualFilesByName(project, it, scope).sequence()
+        FilenameIndex.getVirtualFilesByName(project, it, scope).asSequence()
             }.map {
                 val packageFqName = file.getPackageFqName()
                 if (packageFqName.isRoot()) {
