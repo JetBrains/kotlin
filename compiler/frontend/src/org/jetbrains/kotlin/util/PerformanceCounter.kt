@@ -20,18 +20,17 @@ import java.lang.management.ManagementFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+/**
+ * This counter is thread-safe for initialization and usage.
+ * But it may calculate time and number of runs not precisely.
+ */
 public abstract class PerformanceCounter protected constructor(val name: String) {
     companion object {
-        private val threadMxBean = ManagementFactory.getThreadMXBean()
         private val allCounters = arrayListOf<PerformanceCounter>()
 
         private var enabled = false
 
-        init {
-            threadMxBean.setThreadCpuTimeEnabled(true)
-        }
-
-        public fun currentThreadCpuTime(): Long = threadMxBean.getCurrentThreadUserTime()
+        public fun currentTime(): Long = System.nanoTime()
 
         public fun report(consumer: (String) -> Unit) {
             val countersCopy = synchronized(allCounters) {
@@ -106,12 +105,12 @@ public abstract class PerformanceCounter protected constructor(val name: String)
 
 private class SimpleCounter(name: String): PerformanceCounter(name) {
     override fun <T> countTime(block: () -> T): T {
-        val startTime = PerformanceCounter.currentThreadCpuTime()
+        val startTime = PerformanceCounter.currentTime()
         try {
             return block()
         }
         finally {
-            totalTimeNanos += PerformanceCounter.currentThreadCpuTime() - startTime
+            totalTimeNanos += PerformanceCounter.currentTime() - startTime
         }
     }
 }
@@ -128,14 +127,14 @@ private class ReenterableCounter(name: String): PerformanceCounter(name) {
     }
 
     override fun <T> countTime(block: () -> T): T {
-        val startTime = PerformanceCounter.currentThreadCpuTime()
+        val startTime = PerformanceCounter.currentTime()
         val needTime = enterCounter(this)
         try {
             return block()
         }
         finally {
             if (needTime) {
-                totalTimeNanos += PerformanceCounter.currentThreadCpuTime() - startTime
+                totalTimeNanos += PerformanceCounter.currentTime() - startTime
                 leaveCounter(this)
             }
         }
@@ -188,10 +187,10 @@ private class CounterWithExclude(name: String, vararg excludedCounters: Performa
         fun Stack<Boolean>.peekOrFalse() = if (isEmpty()) false else peek()
 
         private fun intervalUsefulTime(callStackUpdate: Stack<Boolean>.() -> Unit): Long {
-            val delta = if (callStack.peekOrFalse()) PerformanceCounter.currentThreadCpuTime() - intervalStartTime else 0
+            val delta = if (callStack.peekOrFalse()) PerformanceCounter.currentTime() - intervalStartTime else 0
             callStack.callStackUpdate()
 
-            intervalStartTime = PerformanceCounter.currentThreadCpuTime()
+            intervalStartTime = PerformanceCounter.currentTime()
             return delta
         }
 
