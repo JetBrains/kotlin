@@ -100,7 +100,7 @@ Also there are some exotic type usages, such as ones on outer types: `@A (@B Out
 
 Kotlin has more possible targets than Java, so there's an issue of mapping back and forth. The table above gives a correspondence.
 
-When we compile a Kotlin class to Java, we write a `@java.lang.annotation.Target` annotation that reflects the targets. For targets having no correspondent ones in Java (e.g. `EXPRESSION`) nothing is written to `j.l.a.Target`. If the set of Java targets is empy, `j.l.a.Target` is not written to the class file. 
+When we compile a Kotlin class to Java, we write a `@java.lang.annotation.Target` annotation that reflects the targets. For targets having no correspondent ones in Java (e.g. `EXPRESSION`) nothing is written to `j.l.a.Target`. If the set of Java targets is empty,  then `j.l.a.Target({})` is written to the class file, leaving Java clients no way of misusing the annotation.
 
 In addition to `java.lang.annotation.Target`, a Kotlin-specific annotation `kotlin.target` is written containing all the Kotlin targets listed:
 
