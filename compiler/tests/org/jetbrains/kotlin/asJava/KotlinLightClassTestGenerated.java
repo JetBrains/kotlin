@@ -148,6 +148,12 @@ public class KotlinLightClassTestGenerated extends AbstractKotlinLightClassTest 
             doTest(fileName);
         }
 
+        @TestMetadata("PublicField.kt")
+        public void testPublicField() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/PublicField.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Synthetic.kt")
         public void testSynthetic() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/Synthetic.kt");
