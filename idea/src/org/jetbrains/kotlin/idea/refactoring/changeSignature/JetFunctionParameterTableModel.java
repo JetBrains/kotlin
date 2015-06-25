@@ -40,6 +40,14 @@ public class JetFunctionParameterTableModel extends JetCallableParameterTableMod
     }
 
     @Override
+    public void removeRow(int idx) {
+        if (getRowValue(idx).parameter == getReceiver()) {
+            setReceiver(null);
+        }
+        super.removeRow(idx);
+    }
+
+    @Override
     @Nullable
     public JetParameterInfo getReceiver() {
         return ((ReceiverColumn)getColumnInfos()[getColumnCount() - 1]).receiver;
