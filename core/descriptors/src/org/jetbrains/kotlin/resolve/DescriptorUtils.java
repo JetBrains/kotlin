@@ -375,7 +375,7 @@ public class DescriptorUtils {
     @NotNull
     public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
-        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton()) {
+        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || classDescriptor.getModality() == Modality.SEALED) {
             return Visibilities.PRIVATE;
         }
         if (isAnonymousObject(classDescriptor)) {
