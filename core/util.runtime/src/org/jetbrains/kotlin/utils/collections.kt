@@ -23,7 +23,7 @@ import java.util.HashSet
 import java.util.Collections
 import java.util.LinkedHashSet
 
-public fun <K, V> Stream<V>.valuesToMap(key: (V) -> K): Map<K, V> {
+public fun <K, V> Sequence<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (v in this) {
         map[key(v)] = v
@@ -31,7 +31,7 @@ public fun <K, V> Stream<V>.valuesToMap(key: (V) -> K): Map<K, V> {
     return map
 }
 
-public fun <K, V> Stream<K>.keysToMap(value: (K) -> V): Map<K, V> {
+public fun <K, V> Sequence<K>.keysToMap(value: (K) -> V): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
         map[k] = value(k)
@@ -39,7 +39,7 @@ public fun <K, V> Stream<K>.keysToMap(value: (K) -> V): Map<K, V> {
     return map
 }
 
-public fun <K, V: Any> Stream<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
+public fun <K, V: Any> Sequence<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
         val v = value(k)

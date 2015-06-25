@@ -41,7 +41,7 @@ public object CodegenUtilKt {
     ): Map<CallableMemberDescriptor, CallableDescriptor> {
         if (delegateExpressionType?.isDynamic() ?: false) return mapOf();
 
-        return descriptor.getDefaultType().getMemberScope().getDescriptors().stream()
+        return descriptor.getDefaultType().getMemberScope().getDescriptors().asSequence()
             .filterIsInstance<CallableMemberDescriptor>()
             .filter { it.getKind() == CallableMemberDescriptor.Kind.DELEGATION }
             .toList()

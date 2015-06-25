@@ -107,7 +107,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             return searchInfo
         }
 
-        fun findUsagesByJavaProcessor(elements: Stream<PsiElement>, insideDeleted: Condition<PsiElement>): Condition<PsiElement> =
+        fun findUsagesByJavaProcessor(elements: Sequence<PsiElement>, insideDeleted: Condition<PsiElement>): Condition<PsiElement> =
                 elements
                         .map { element -> findUsagesByJavaProcessor(element, true)?.getInsideDeletedCondition() }
                         .filterNotNull()
@@ -116,7 +116,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         fun findUsagesByJavaProcessor(jetDeclaration: JetDeclaration): NonCodeUsageSearchInfo {
             return NonCodeUsageSearchInfo(
                     findUsagesByJavaProcessor(
-                            jetDeclaration.toLightElements().stream(),
+                            jetDeclaration.toLightElements().asSequence(),
                             getIgnoranceCondition()
                     ),
                     jetDeclaration
@@ -125,7 +125,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
 
         fun findKotlinDeclarationUsages(declaration: JetDeclaration): NonCodeUsageSearchInfo {
             ReferencesSearch.search(declaration, declaration.getUseScope())
-                    .stream()
+                    .asSequence()
                     .filterNot { reference -> getIgnoranceCondition().value(reference.getElement()) }
                     .mapTo(usages) { reference ->
                         reference.getElement().getNonStrictParentOfType<JetImportDirective>()?.let { importDirective ->
@@ -231,7 +231,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             if (declarationDescriptor !is CallableMemberDescriptor) return null
 
             return declarationDescriptor.getOverriddenDescriptors()
-                    .stream()
+                    .asSequence()
                     .filter { overridenDescriptor -> overridenDescriptor.getModality() == Modality.ABSTRACT }
                     .mapTo(ArrayList<String>()) { overridenDescriptor ->
                         JetBundle.message(

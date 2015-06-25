@@ -34,7 +34,7 @@ public class ReflectJavaClass(
     override val modifiers: Int get() = klass.getModifiers()
 
     override fun getInnerClasses() = klass.getDeclaredClasses()
-            .stream()
+            .asSequence()
             .filterNot {
                 // getDeclaredClasses() returns anonymous classes sometimes, for example enums with specialized entries (which are in fact
                 // anonymous classes) or in case of a special anonymous class created for the synthetic accessor to a private nested class
@@ -58,7 +58,7 @@ public class ReflectJavaClass(
     }
 
     override fun getMethods() = klass.getDeclaredMethods()
-            .stream()
+            .asSequence()
             .filter { method ->
                 when {
                     method.isSynthetic() -> false
@@ -78,13 +78,13 @@ public class ReflectJavaClass(
     }
 
     override fun getFields() = klass.getDeclaredFields()
-            .stream()
+            .asSequence()
             .filter { field -> !field.isSynthetic() }
             .map(::ReflectJavaField)
             .toList()
 
     override fun getConstructors() = klass.getDeclaredConstructors()
-            .stream()
+            .asSequence()
             .filter { constructor -> !constructor.isSynthetic() }
             .map(::ReflectJavaConstructor)
             .toList()

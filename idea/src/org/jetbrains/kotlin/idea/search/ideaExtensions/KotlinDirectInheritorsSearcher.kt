@@ -46,7 +46,7 @@ public open class KotlinDirectInheritorsSearcher() : QueryExecutorBase<PsiClass,
 
         runReadAction {
             val noLibrarySourceScope = JetSourceFilterScope.kotlinSourceAndClassFiles(scope, baseClass.getProject())
-            JetSuperClassIndex.getInstance().get(name, baseClass.getProject(), noLibrarySourceScope).stream()
+            JetSuperClassIndex.getInstance().get(name, baseClass.getProject(), noLibrarySourceScope).asSequence()
                     .map { candidate -> JetSourceNavigationHelper.getOriginalPsiClassOrCreateLightClass(candidate)}
                     .filterNotNull()
                     .filter { candidate -> candidate.isInheritor(baseClass, false) }

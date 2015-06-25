@@ -203,7 +203,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
     return extractionData
             .originalRange
             .match(scopeElement, unifier)
-            .stream()
+            .asSequence()
             .filter { !(it.range.getTextRange() intersects originalTextRange) }
             .map { match ->
                 val controlFlow = getControlFlowIfMatched(match)
@@ -248,7 +248,7 @@ private fun makeCall(
         else -> calleeName
     }
 
-    val anchorInBlock = stream(anchor) { it.getParent() }.firstOrNull { it.getParent() is JetBlockExpression }
+    val anchorInBlock = sequence(anchor) { it.getParent() }.firstOrNull { it.getParent() is JetBlockExpression }
     val block = (anchorInBlock?.getParent() as? JetBlockExpression) ?: anchorParent
 
     val psiFactory = JetPsiFactory(anchor.getProject())

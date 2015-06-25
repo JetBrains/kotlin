@@ -26,7 +26,7 @@ public class PackageFragmentProviderImpl(
             packageFragments.filter { it.fqName == fqName }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> =
-            packageFragments.stream()
+            packageFragments.asSequence()
                     .map { it.fqName }
                     .filter { !it.isRoot() && it.parent() == fqName }
                     .toList()

@@ -44,7 +44,7 @@ class AllUnderImportsScope : JetScope {
     }
 
     override fun getClassifier(name: Name): ClassifierDescriptor? {
-        return scopes.stream().map { it.getClassifier(name) }.filterNotNull().singleOrNull()
+        return scopes.asSequence().map { it.getClassifier(name) }.filterNotNull().singleOrNull()
     }
 
     override fun getProperties(name: Name): Collection<VariableDescriptor> {

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.codegen.SourceInfo
 class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
 
     val lineNumbers =
-        InsnSequence(node.instructions.getFirst(), null).stream().filterIsInstance<LineNumberNode>().map {
+        InsnSequence(node.instructions.getFirst(), null).filterIsInstance<LineNumberNode>().map {
             val index = Collections.binarySearch(classSMAP.intervals, RangeMapping(it.line, it.line, 1)) {
                 value, key ->
                 if (value.contains(key.dest)) 0 else RangeMapping.Comparator.compare(value, key)
@@ -39,7 +39,7 @@ class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
             LabelAndMapping(it, classSMAP.intervals[index])
         }.toList()
 
-    val ranges = lineNumbers.stream().map { it.mapper }.toList().distinct().toList();
+    val ranges = lineNumbers.asSequence().map { it.mapper }.distinct().toList();
 }
 
 class LabelAndMapping(val lineNumberNode: LineNumberNode, val mapper: RangeMapping)

@@ -84,7 +84,7 @@ public class LazyPackageFragmentScopeForJavaPackage(
         // neither objects nor enum members can be in java package
         if (!kindFilter.acceptsKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) return listOf()
 
-        return jPackage.getClasses(nameFilter).stream()
+        return jPackage.getClasses(nameFilter).asSequence()
                 .filter { c -> c.getOriginKind() != JavaClass.OriginKind.KOTLIN_LIGHT_CLASS }
                 .map { c -> c.getName() }.toList()
     }

@@ -56,7 +56,7 @@ fun PsiElement.removeOverrideModifier() {
 fun PsiMethod.cleanUpOverrides() {
     val superMethods = findSuperMethods(true)
     for (overridingMethod in OverridingMethodsSearch.search(this, true).findAll()) {
-        val currentSuperMethods = overridingMethod.findSuperMethods(true).stream() + superMethods.stream()
+        val currentSuperMethods = overridingMethod.findSuperMethods(true).asSequence() + superMethods.asSequence()
         if (currentSuperMethods.all { superMethod -> superMethod.unwrapped == unwrapped }) {
             overridingMethod.unwrapped?.removeOverrideModifier()
         }

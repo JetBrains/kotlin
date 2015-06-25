@@ -32,7 +32,7 @@ public fun <T> Collection<T>.toIdentitySet(): MutableSet<T> {
     return result
 }
 
-public fun <T> Stream<T>.toIdentitySet(): MutableSet<T> {
+public fun <T> Sequence<T>.toIdentitySet(): MutableSet<T> {
     val result = IdentitySet<T>()
     for (element in this) {
         result.add(element)

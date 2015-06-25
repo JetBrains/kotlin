@@ -27,7 +27,7 @@ public fun <T> T.singletonList(): List<T> = Collections.singletonList(this)
 
 public fun <T: Any> T?.singletonOrEmptySet(): Set<T> = if (this != null) Collections.singleton(this) else Collections.emptySet()
 
-public inline fun <reified T : Any> Stream<*>.firstIsInstanceOrNull(): T? {
+public inline fun <reified T : Any> Sequence<*>.firstIsInstanceOrNull(): T? {
     for (element in this) if (element is T) return element
     return null
 }
@@ -42,7 +42,7 @@ public inline fun <reified T : Any> Array<*>.firstIsInstanceOrNull(): T? {
     return null
 }
 
-public inline fun <reified T> Stream<*>.firstIsInstance(): T {
+public inline fun <reified T> Sequence<*>.firstIsInstance(): T {
     for (element in this) if (element is T) return element
     throw NoSuchElementException("No element of given type found")
 }
@@ -73,7 +73,7 @@ public inline fun <reified T : Any> Iterable<*>.lastIsInstanceOrNull(): T? {
     }
 }
 
-public fun <T> streamOfLazyValues(vararg elements: () -> T): Stream<T> = elements.stream().map { it() }
+public fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.asSequence().map { it() }
 
 public fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)
 

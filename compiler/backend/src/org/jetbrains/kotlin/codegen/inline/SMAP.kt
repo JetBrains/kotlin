@@ -153,7 +153,7 @@ trait SourceMapper {
 
         fun createFromSmap(smap: SMAP): DefaultSourceMapper {
             val sourceMapper = DefaultSourceMapper(smap.sourceInfo, null)
-            smap.fileMappings.stream()
+            smap.fileMappings.asSequence()
                     //default one mapped through sourceInfo
                     .filterNot { it == smap.default }
                     .forEach { fileMapping ->
