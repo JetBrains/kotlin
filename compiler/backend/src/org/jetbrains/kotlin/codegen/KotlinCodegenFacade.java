@@ -20,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.intellij.util.containers.MultiMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetScript;
@@ -54,7 +55,11 @@ public class KotlinCodegenFacade {
             @NotNull GenerationState state,
             @NotNull CompilationErrorHandler errorHandler
     ) {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
         prepareForCompilation(state);
+
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         MultiMap<FqName, JetFile> packageFqNameToFiles = new MultiMap<FqName, JetFile>();
         for (JetFile file : state.getFiles()) {
@@ -64,9 +69,11 @@ public class KotlinCodegenFacade {
 
         Set<FqName> packagesWithObsoleteParts = new HashSet<FqName>(state.getPackagesWithObsoleteParts());
         for (FqName fqName : Sets.union(packagesWithObsoleteParts, packageFqNameToFiles.keySet())) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             generatePackage(state, fqName, packageFqNameToFiles.get(fqName), errorHandler);
         }
 
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         state.getFactory().done();
     }
 

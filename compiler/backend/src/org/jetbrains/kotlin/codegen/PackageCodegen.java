@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.context.PackageContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
@@ -211,6 +212,7 @@ public class PackageCodegen {
         Map<CallableMemberDescriptor, Runnable> generateCallableMemberTasks = new HashMap<CallableMemberDescriptor, Runnable>();
 
         for (JetFile file : files) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             try {
                 ClassBuilder builder = generate(file, generateCallableMemberTasks);
                 if (builder != null) {

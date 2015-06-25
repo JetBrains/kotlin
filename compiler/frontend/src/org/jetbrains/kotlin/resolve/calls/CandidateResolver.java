@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve.calls;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
@@ -76,7 +76,7 @@ public class CandidateResolver {
             @NotNull CallCandidateResolutionContext<D> context,
             @NotNull ResolutionTask<D, F> task) {
 
-        ProgressIndicatorProvider.checkCanceled();
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         MutableResolvedCall<D> candidateCall = context.candidateCall;
         D candidate = candidateCall.getCandidateDescriptor();

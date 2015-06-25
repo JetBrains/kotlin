@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.context
 
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -27,17 +29,18 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import kotlin.platform.platformStatic
 
-public trait GlobalContext {
+public interface GlobalContext {
     public val storageManager: StorageManager
     public val exceptionTracker: ExceptionTracker
 }
 
-public trait ProjectContext : GlobalContext {
+public interface ProjectContext : GlobalContext {
     public val project: Project
 }
 
-public trait ModuleContext : ProjectContext {
+public interface ModuleContext : ProjectContext {
     public val module: ModuleDescriptor
 
     public val platformToKotlinClassMap: PlatformToKotlinClassMap
@@ -47,7 +50,7 @@ public trait ModuleContext : ProjectContext {
         get() = module.builtIns
 }
 
-public trait MutableModuleContext: ModuleContext {
+public interface MutableModuleContext: ModuleContext {
     override val module: ModuleDescriptorImpl
 
     public fun setDependencies(vararg dependencies: ModuleDescriptorImpl) {
@@ -110,6 +113,29 @@ public fun ContextForNewModule(
     val projectContext = ProjectContext(project)
     val module = ModuleDescriptorImpl(moduleName, projectContext.storageManager, parameters)
     return MutableModuleContextImpl(module, projectContext)
+}
+
+public class CompilationCanceledException : ProcessCanceledException()
+
+public interface CompilationCanceledStatus {
+    fun checkCanceled(): Unit
+}
+
+public class ProgressIndicatorAndCompilationCanceledStatus {
+    companion object {
+        private var canceledStatus: CompilationCanceledStatus? = null
+
+        platformStatic
+        synchronized public fun setCompilationCanceledStatus(newCanceledStatus: CompilationCanceledStatus?): Unit {
+            canceledStatus = newCanceledStatus
+        }
+
+        platformStatic
+        public fun checkCanceled(): Unit {
+            ProgressIndicatorProvider.checkCanceled()
+            canceledStatus?.checkCanceled()
+        }
+    }
 }
 
 deprecated("Used temporarily while we are in transition from to lazy resolve")

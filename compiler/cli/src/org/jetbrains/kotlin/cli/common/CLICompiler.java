@@ -30,6 +30,9 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
+import org.jetbrains.kotlin.context.CompilationCanceledException;
+import org.jetbrains.kotlin.context.CompilationCanceledStatus;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -156,6 +159,9 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                 }
             }
 
+            CompilationCanceledStatus canceledStatus = services.get(CompilationCanceledStatus.class);
+            ProgressIndicatorAndCompilationCanceledStatus.setCompilationCanceledStatus(canceledStatus);
+
             for (int i = 0; i < repeatCount; i++) {
                 if (i > 0) {
                     K2JVMCompiler.Companion.resetInitStartTime();
@@ -165,6 +171,21 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
                     MessageSeverityCollector severityCollector = new MessageSeverityCollector(groupingCollector);
                     ExitCode code = doExecute(arguments, services, severityCollector, rootDisposable);
                     exitCode = severityCollector.anyReported(CompilerMessageSeverity.ERROR) ? COMPILATION_ERROR : code;
+                }
+                catch(CompilationCanceledException e) {
+                    messageCollector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", CompilerMessageLocation.NO_LOCATION);
+                    return ExitCode.OK;
+                }
+                catch(RuntimeException e) {
+                    Throwable cause = e.getCause();
+                    if (cause instanceof CompilationCanceledException) {
+                        messageCollector
+                                .report(CompilerMessageSeverity.INFO, "Compilation was canceled", CompilerMessageLocation.NO_LOCATION);
+                        return ExitCode.OK;
+                    }
+                    else {
+                        throw e;
+                    }
                 }
                 finally {
                     Disposer.dispose(rootDisposable);

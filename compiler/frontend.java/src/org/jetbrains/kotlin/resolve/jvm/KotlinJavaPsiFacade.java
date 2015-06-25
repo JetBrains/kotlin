@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -40,6 +39,7 @@ import com.intellij.util.messages.MessageBus;
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.name.ClassId;
 
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class KotlinJavaPsiFacade {
     }
 
     public PsiClass findClass(@NotNull ClassId classId, @NotNull GlobalSearchScope scope) {
-        ProgressIndicatorProvider.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled(); // We hope this method is being called often enough to cancel daemon processes smoothly
 
         String qualifiedName = classId.asSingleFqName().asString();
 

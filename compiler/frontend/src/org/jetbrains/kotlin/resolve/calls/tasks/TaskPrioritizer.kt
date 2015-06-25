@@ -18,28 +18,32 @@ package org.jetbrains.kotlin.resolve.calls.tasks
 
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
-import com.intellij.openapi.progress.ProgressIndicatorProvider
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.BOTH_RECEIVERS
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.EXTENSION_RECEIVER
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollector
+import org.jetbrains.kotlin.resolve.calls.tasks.collectors.CallableDescriptorCollectors
+import org.jetbrains.kotlin.resolve.calls.tasks.collectors.filtered
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
+import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
-
-import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.isOrOverridesSynthesized
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
-import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.util.*
-import org.jetbrains.kotlin.resolve.calls.tasks.collectors.*
+import org.jetbrains.kotlin.types.isDynamic
 
 public class TaskPrioritizer(private val storageManager: StorageManager) {
 
@@ -106,7 +110,7 @@ public class TaskPrioritizer(private val storageManager: StorageManager) {
     }
 
     private fun <D : CallableDescriptor, F : D> doComputeTasks(receiver: ReceiverValue, c: TaskPrioritizerContext<D, F>) {
-        ProgressIndicatorProvider.checkCanceled()
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val resolveInvoke = c.context.call.getDispatchReceiver().exists()
         if (resolveInvoke) {

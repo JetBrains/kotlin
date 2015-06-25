@@ -17,11 +17,11 @@
 package org.jetbrains.kotlin.resolve.calls;
 
 import com.google.common.collect.Lists;
-import com.intellij.openapi.progress.ProgressIndicatorProvider;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;
@@ -74,8 +74,8 @@ public class CallResolver {
     private TaskPrioritizer taskPrioritizer;
     private AdditionalCheckerProvider additionalCheckerProvider;
     
-    private static PerformanceCounter callResolvePerfCounter = new PerformanceCounter("Call resolve", true);
-    private static PerformanceCounter candidatePerfCounter = new PerformanceCounter("Call resolve candidate analysis", true);
+    private static final PerformanceCounter callResolvePerfCounter = new PerformanceCounter("Call resolve", true);
+    private static final PerformanceCounter candidatePerfCounter = new PerformanceCounter("Call resolve candidate analysis", true);
 
     @Inject
     public void setExpressionTypingServices(@NotNull ExpressionTypingServices expressionTypingServices) {
@@ -255,7 +255,7 @@ public class CallResolver {
 
     @NotNull
     public OverloadResolutionResults<FunctionDescriptor> resolveFunctionCall(@NotNull BasicCallResolutionContext context) {
-        ProgressIndicatorProvider.checkCanceled();
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         JetExpression calleeExpression = context.call.getCalleeExpression();
         if (calleeExpression instanceof JetSimpleNameExpression) {

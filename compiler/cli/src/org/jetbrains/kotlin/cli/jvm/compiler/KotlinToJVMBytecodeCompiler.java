@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ModuleContext;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;
@@ -123,6 +124,8 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         Map<Module, ClassFileFactory> outputFiles = Maps.newHashMap();
 
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
         String targetDescription = "in modules [" + Joiner.on(", ").join(Collections2.transform(chunk, new Function<Module, String>() {
             @Override
             public String apply(@Nullable Module input) {
@@ -134,9 +137,12 @@ public class KotlinToJVMBytecodeCompiler {
             return false;
         }
 
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
         result.throwIfError();
 
         for (Module module : chunk) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             List<JetFile> jetFiles = CompileEnvironmentUtil.getJetFiles(
                     environment.getProject(), getAbsolutePaths(directory, module), new Function1<String, Unit>() {
                         @Override
@@ -151,6 +157,7 @@ public class KotlinToJVMBytecodeCompiler {
         }
 
         for (Module module : chunk) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             writeOutput(configuration, outputFiles.get(module), new File(module.getOutputDirectory()), jarPath, jarRuntime, null);
         }
         return true;
@@ -386,6 +393,8 @@ public class KotlinToJVMBytecodeCompiler {
                 diagnosticHolder,
                 outputDirectory
         );
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
         long generationStart = PerformanceCounter.Companion.currentThreadCpuTime();
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION);
@@ -395,6 +404,7 @@ public class KotlinToJVMBytecodeCompiler {
         String message = "GENERATE: " + sourceFiles.size() + " files (" +
                          environment.countLinesOfCode(sourceFiles) + " lines) " + desc + "in " + TimeUnit.NANOSECONDS.toMillis(generationNanos) + " ms";
         K2JVMCompiler.Companion.reportPerf(environment.getConfiguration(), message);
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(
@@ -403,6 +413,7 @@ public class KotlinToJVMBytecodeCompiler {
                 ),
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         );
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         return generationState;
     }
 }

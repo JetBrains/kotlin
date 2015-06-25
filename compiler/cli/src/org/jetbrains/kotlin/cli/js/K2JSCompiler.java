@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;
@@ -142,6 +143,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             return COMPILATION_ERROR;
         }
 
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
         AnalysisResult analysisResult = analyzerWithCompilerReport.getAnalysisResult();
         assert analysisResult instanceof JsAnalysisResult : "analysisResult should be instance of JsAnalysisResult, but " + analysisResult;
         JsAnalysisResult jsAnalysisResult = (JsAnalysisResult) analysisResult;
@@ -179,6 +182,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             throw new RuntimeException(e);
         }
 
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
         AnalyzerWithCompilerReport.reportDiagnostics(translationResult.getDiagnostics(), messageSeverityCollector);
 
         if (!(translationResult instanceof TranslationResult.Success)) return ExitCode.COMPILATION_ERROR;
@@ -197,6 +202,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         if (outputDir == null) {
             outputDir = outputFile.getAbsoluteFile().getParentFile();
         }
+
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
         OutputUtilsPackage.writeAll(outputFiles, outputDir, messageSeverityCollector);
 
         return OK;

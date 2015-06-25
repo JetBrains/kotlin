@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.js.facade;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
@@ -67,6 +68,7 @@ public final class K2JSTranslator {
     ) throws TranslationException {
         if (analysisResult == null) {
             analysisResult = TopDownAnalyzerFacadeForJS.analyzeFiles(files, config);
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         }
 
         BindingTrace bindingTrace = analysisResult.getBindingTrace();
@@ -75,12 +77,15 @@ public final class K2JSTranslator {
         Diagnostics diagnostics = bindingTrace.getBindingContext().getDiagnostics();
 
         TranslationContext context = Translation.generateAst(bindingTrace, files, mainCallParameters, moduleDescriptor, config);
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
         JsProgram program = JsInliner.process(context);
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         if (hasError(diagnostics)) return new TranslationResult.Fail(diagnostics);
 
         expandIsCalls(program, context);
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
         return new TranslationResult.Success(config, files, program, diagnostics, moduleDescriptor);
     }
 }
