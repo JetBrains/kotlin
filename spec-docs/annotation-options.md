@@ -118,6 +118,8 @@ annotation(RUNTIME) class target(vararg targets: AnnotationTarget)
 
 When loading an annotation, we only read `kotlin.target`. When `kotlin.target` is missing, on the JVM, we read `j.l.a.Target` and map its values to Kotlin ones according to the table above. This implies that we can load pure Java annotations that know nothing about Kotlin, and that an annotation written in Java can be targeted, e.g. for Kotlin expressions, because one can simply manually specify `kotlin.target` for it.
 
+If `j.l.a.Target` is specified manually in the Kotlin code, it is written to the class file as is and `kotlin.target` contents are validated against it: so that `kotlin.target` does not permit broken class files to be generated.
+
 ### Syntax
 
 It makes sense to use `kotlin.target` explicitly in Kotlin code:
