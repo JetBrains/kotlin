@@ -151,6 +151,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Callee.kt")
+        public void testCallee() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Callee.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Colon.kt")
         public void testColon() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/addParenthesis/Colon.kt");

@@ -535,6 +535,16 @@ public class JetPsiUtil {
             }
         }
 
+        if (parentExpression instanceof JetCallExpression && currentInner == ((JetCallExpression) parentExpression).getCalleeExpression()) {
+            if (innerExpression instanceof JetSimpleNameExpression) return false;
+            if (PsiUtilPackage.getQualifiedExpressionForSelector(parentExpression) != null) return true;
+            return !(innerExpression instanceof JetThisExpression
+                     || innerExpression instanceof JetArrayAccessExpression
+                     || innerExpression instanceof JetConstantExpression
+                     || innerExpression instanceof JetStringTemplateExpression
+                     || innerExpression instanceof JetCallExpression);
+        }
+
         IElementType innerOperation = getOperation(innerExpression);
         IElementType parentOperation = getOperation(parentExpression);
 

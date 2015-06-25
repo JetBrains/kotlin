@@ -22,6 +22,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
+import org.jetbrains.kotlin.psi.JetCallExpression
 import org.jetbrains.kotlin.psi.JetDotQualifiedExpression
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
@@ -33,7 +34,7 @@ public class ReplaceInvokeIntention : JetSelfTargetingRangeIntention<JetDotQuali
 
     override fun applyTo(element: JetDotQualifiedExpression, editor: Editor) {
         val receiver = element.getReceiverExpression()
-        val callExpression = element.callExpression!!
+        val callExpression = element.callExpression!!.copy() as JetCallExpression
         callExpression.getCalleeExpression()!!.replace(receiver)
         element.replace(callExpression)
     }
