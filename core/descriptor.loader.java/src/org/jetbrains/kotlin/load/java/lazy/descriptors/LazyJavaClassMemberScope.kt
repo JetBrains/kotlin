@@ -31,14 +31,20 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.child
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
-import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.JavaArrayType
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.JavaConstructor
+import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.emptyOrSingletonList
+import org.jetbrains.kotlin.utils.ifEmpty
+import org.jetbrains.kotlin.utils.valuesToMap
 import java.util.ArrayList
 import java.util.Collections
 import java.util.LinkedHashSet
@@ -204,7 +210,7 @@ public class LazyJavaClassMemberScope(
         assert(methodsNamedValue.size() <= 1) { "There can't be more than one method named 'value' in annotation class: $jClass" }
         val methodNamedValue = methodsNamedValue.firstOrNull()
         if (methodNamedValue != null) {
-            val parameterNamedValueJavaType = methodNamedValue.getAnnotationMethodReturnJavaType()
+            val parameterNamedValueJavaType = methodNamedValue.getReturnType()
             val (parameterType, varargType) =
                     if (parameterNamedValueJavaType is JavaArrayType)
                         Pair(c.typeResolver.transformArrayType(parameterNamedValueJavaType, attr, isVararg = true),
@@ -217,16 +223,11 @@ public class LazyJavaClassMemberScope(
 
         val startIndex = if (methodNamedValue != null) 1 else 0
         for ((index, method) in otherMethods.withIndex()) {
-            val parameterType = c.typeResolver.transformJavaType(method.getAnnotationMethodReturnJavaType(), attr)
+            val parameterType = c.typeResolver.transformJavaType(method.getReturnType(), attr)
             result.addAnnotationValueParameter(constructor, index + startIndex, method, parameterType, null)
         }
 
         return result
-    }
-
-    private fun JavaMethod.getAnnotationMethodReturnJavaType(): JavaType {
-        assert(getValueParameters().isEmpty()) { "Annotation method can't have parameters: $this" }
-        return getReturnType() ?: throw AssertionError("Annotation method has no return type: $this")
     }
 
     private fun MutableList<ValueParameterDescriptor>.addAnnotationValueParameter(

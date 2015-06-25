@@ -153,9 +153,8 @@ public abstract class LazyJavaMemberScope(
                 allowFlexible = !annotationMethod,
                 isForAnnotationParameter = annotationMethod
         )
-        val returnJavaType = method.getReturnType() ?: throw IllegalStateException("Constructor passed as method: $method")
-        // Annotation arguments are never null in Java
-        return c.typeResolver.transformJavaType(returnJavaType, returnTypeAttrs).let {
+        return c.typeResolver.transformJavaType(method.getReturnType(), returnTypeAttrs).let {
+            // Annotation arguments are never null in Java
             if (annotationMethod) TypeUtils.makeNotNullable(it) else it
         }
     }
