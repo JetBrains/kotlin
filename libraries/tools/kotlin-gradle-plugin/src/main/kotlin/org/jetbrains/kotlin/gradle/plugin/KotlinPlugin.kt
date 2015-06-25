@@ -695,6 +695,7 @@ private fun compareVersionNumbers(v1: String?, v2: String?): Int {
     }
 
     val pattern = "[\\.\\_\\-]".toRegex()
+    val digitsPattern = "\\d+".toRegex()
     val part1 = v1.split(pattern)
     val part2 = v2.split(pattern)
 
@@ -704,7 +705,7 @@ private fun compareVersionNumbers(v1: String?, v2: String?): Int {
         val p2 = part2[idx]
 
         val cmp: Int
-        if (p1.matches("\\d+") && p2.matches("\\d+")) {
+        if (p1.matches(digitsPattern) && p2.matches(digitsPattern)) {
             cmp = p1.toInt().compareTo(p2.toInt())
         } else {
             cmp = part1[idx].compareTo(part2[idx])
@@ -722,7 +723,7 @@ private fun compareVersionNumbers(v1: String?, v2: String?): Int {
         while (idx < parts.size()) {
             val p = parts[idx]
             val cmp: Int
-            if (p.matches("\\d+")) {
+            if (p.matches(digitsPattern)) {
                 cmp = Integer(p).compareTo(0)
             } else {
                 cmp = 1

@@ -53,7 +53,7 @@ public var Element.classes: String
     }
 
 /** Returns true if the element has the given CSS class style in its 'class' attribute */
-public fun Element.hasClass(cssClass: String): Boolean = classes.matches("""(^|.*\s+)$cssClass($|\s+.*)""")
+public fun Element.hasClass(cssClass: String): Boolean = classes.matches("""(^|.*\s+)$cssClass($|\s+.*)""".toRegex())
 
 
 /** Returns the children of the element as a list */

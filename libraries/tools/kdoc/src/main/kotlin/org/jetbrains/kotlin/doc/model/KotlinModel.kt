@@ -144,7 +144,7 @@ abstract class KClassOrPackage(model: KModel, descriptor: DeclarationDescriptor)
     fun findFunction(expression: String): KFunction? {
         val idx = expression.indexOf('(')
         val name = if (idx > 0) expression.substring(0, idx) else expression
-        val postfix = if (idx > 0) expression.substring(idx).trimTrailing("()") else ""
+        val postfix = if (idx > 0) expression.substring(idx).removeSuffix("()") else ""
         return functions.find{ it.name == name && it.parameterTypeText == postfix }
     }
 }
@@ -342,8 +342,8 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                     canonicalFile.substring(rootDir.length())
                 else
                     canonicalFile
-            val cleanRoot = root.trimTrailing("/")
-            val cleanPath = relativeFile.trimLeading("/")
+            val cleanRoot = root.removeSuffix("/")
+            val cleanPath = relativeFile.removePrefix("/")
             return "$cleanRoot/$cleanPath$lineLinkText$sourceLine"
         }
         return null
@@ -488,14 +488,14 @@ class KModel(val context: BindingContext, val config: KDocConfig, val sourceDirs
                 var text = lines[i]
                 text = text.trim()
                 if (i == 0) {
-                    text = text.trimLeading("/**").trimLeading("/*")
+                    text = text.removePrefix("/**").removePrefix("/*")
                 } else {
                     buffer.append("\n")
                 }
                 if (i >= last) {
-                    text = text.trimTrailing("*/")
+                    text = text.removeSuffix("*/")
                 } else if (i > 0) {
-                    text = text.trimLeading("* ")
+                    text = text.removePrefix("* ")
                     if (text == "*") text = ""
                 }
                 text = processMacros(text, psiElement)
@@ -830,7 +830,7 @@ abstract class KAnnotated(val model: KModel, val declarationDescriptor: Declarat
         val detailedText = detailedDescription(template)
         val idx = detailedText.indexOf("</p>")
         return if (idx > 0) {
-            detailedText.substring(0, idx).trimLeading("<p>")
+            detailedText.substring(0, idx).removePrefix("<p>")
         } else {
             detailedText
         }
@@ -950,7 +950,7 @@ class KPackage(
     /** Returns a relative path like ../.. for each path in the name */
     val nameAsRelativePath: String
     get() {
-        val answer = namePaths.map{ ".." }.makeString("/")
+        val answer = namePaths.map{ ".." }.joinToString("/")
         return if (answer.length() == 0) "" else answer + "/"
     }
 
@@ -958,7 +958,7 @@ class KPackage(
         // lets see if we can find a custom summary
         val text = model.config.packageSummaryText[name]
         return if (text != null)
-            wikiConvert(text, template).trimLeading("<p>").trimTrailing("</p>")
+            wikiConvert(text, template).removePrefix("<p>").removeSuffix("</p>")
         else
             super<KClassOrPackage>.description(template)
     }
@@ -1104,7 +1104,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
         var exceptions: List<KClass> = listOf<KClass>(),
         var annotations: List<KAnnotation> = listOf<KAnnotation>()): KAnnotated(owner.model, descriptor), Comparable<KFunction> {
 
-    val parameterTypeText: String = parameters.map{ it.aType.name }.makeString(", ")
+    val parameterTypeText: String = parameters.map{ it.aType.name }.joinToString(", ")
 
     override fun compareTo(other: KFunction): Int {
         var answer = name.compareTo(other.name)
@@ -1128,7 +1128,7 @@ class KFunction(val descriptor: CallableDescriptor, val owner: KClassOrPackage, 
 
     /** Returns a list of generic type parameter names kinds like "A, I" */
     val typeParametersText: String
-    get() = typeParameters.map{ it.name }.makeString(", ")
+    get() = typeParameters.map{ it.name }.joinToString(", ")
 }
 
 class KProperty(val owner: KClassOrPackage, val descriptor: PropertyDescriptor, val name: String,

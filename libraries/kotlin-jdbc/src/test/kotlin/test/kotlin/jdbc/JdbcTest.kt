@@ -85,10 +85,10 @@ class JdbcTest {
 
     test fun formatCursor() {
         dataSource.query("select * from foo") {
-            println(it.getColumnNames().toList().makeString("\t"))
+            println(it.getColumnNames().toList().joinToString("\t"))
 
             for (row in it) {
-                println(it.getValues().makeString("\t"))
+                println(it.getValues().joinToString("\t"))
             }
         }
     }

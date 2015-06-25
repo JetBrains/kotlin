@@ -119,7 +119,7 @@ abstract class PackageTemplateSupport(open val pkg: KPackage) : KDocTemplate() {
         println("""<PRE>""")
         println("""<FONT SIZE="-1">""")
         printAnnotations(function.annotations)
-        print("""</FONT>${function.modifiers.makeString(" ")} $funKeyword""")
+        print("""</FONT>${function.modifiers.joinToString(" ")} $funKeyword""")
 
         printTypeParameters(function, " ")
         printReceiverType(function, " ", ".", " ")

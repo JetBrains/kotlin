@@ -169,7 +169,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             .filterNotNull()
             .toSet()
 
-    private fun File.isJavaFile() = extension.equalsIgnoreCase(JavaFileType.INSTANCE.getDefaultExtension())
+    private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.getDefaultExtension(), ignoreCase = true)
 
     override fun afterCompileHook(args: K2JVMCompilerArguments) {
         getLogger().debug("Copying resulting files to classes")

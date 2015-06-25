@@ -149,7 +149,7 @@ abstract class KDocTemplate() : TextTemplate() {
     }
 
     open fun typeArguments(arguments: List<KType>, prefix: String = "&lt;", postfix: String = "&gt;", empty: String = ""): String {
-        val text = arguments.map<KType, String>() { link(it) }.makeString(", ")
+        val text = arguments.map<KType, String>() { link(it) }.joinToString(", ")
         return if (text.length() == 0) empty else "$prefix$text$postfix"
     }
 
