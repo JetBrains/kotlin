@@ -394,6 +394,19 @@ public class BodyResolver {
             trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(jetClass.getDelegationSpecifierList()));
         }
 
+        if (primaryConstructorDelegationCall[0] != null && primaryConstructor != null) {
+            recordConstructorDelegationCall(trace, primaryConstructor, primaryConstructorDelegationCall[0]);
+        }
+
+        checkSupertypeList(descriptor, supertypes, jetClass);
+    }
+
+    // Returns a set of enum or sealed types of which supertypeOwner is an entry or a member
+    @NotNull
+    private static Set<TypeConstructor> getAllowedFinalSupertypes(
+            @NotNull ClassDescriptor descriptor,
+            @NotNull JetClassOrObject jetClass
+    ) {
         Set<TypeConstructor> parentEnumOrSealed;
         if (jetClass instanceof JetEnumEntry) {
             parentEnumOrSealed = Collections.singleton(((ClassDescriptor) descriptor.getContainingDeclaration()).getTypeConstructor());
@@ -411,11 +424,7 @@ public class BodyResolver {
                 }
             }
         }
-
-        if (primaryConstructorDelegationCall[0] != null && primaryConstructor != null) {
-            recordConstructorDelegationCall(trace, primaryConstructor, primaryConstructorDelegationCall[0]);
-        }
-        checkSupertypeList(descriptor, supertypes, parentEnumOrSealed);
+        return parentEnumOrSealed;
     }
 
     private static void recordConstructorDelegationCall(
@@ -427,12 +436,12 @@ public class BodyResolver {
         trace.record(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructor, (ResolvedCall<ConstructorDescriptor>) call);
     }
 
-    // allowedFinalSupertypes typically contains a enum type of which supertypeOwner is an entry
     private void checkSupertypeList(
             @NotNull ClassDescriptor supertypeOwner,
             @NotNull Map<JetTypeReference, JetType> supertypes,
-            @NotNull Set<TypeConstructor> allowedFinalSupertypes
+            @NotNull JetClassOrObject jetClass
     ) {
+        Set<TypeConstructor> allowedFinalSupertypes = getAllowedFinalSupertypes(supertypeOwner, jetClass);
         Set<TypeConstructor> typeConstructors = Sets.newHashSet();
         boolean classAppeared = false;
         for (Map.Entry<JetTypeReference, JetType> entry : supertypes.entrySet()) {
