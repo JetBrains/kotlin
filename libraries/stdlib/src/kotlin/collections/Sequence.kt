@@ -63,8 +63,7 @@ private object EmptySequence : Sequence<Nothing> {
  * @param sendWhen If `true`, values for which the predicate returns `true` are returned. Otherwise,
 * values for which the predicate returns `false` are returned
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.filter() or sequence.filterNot() instead.")
-public class FilteringSequence<T>(private val sequence: Sequence<T>,
+private class FilteringSequence<T>(private val sequence: Sequence<T>,
                                   private val sendWhen: Boolean = true,
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
@@ -109,9 +108,8 @@ public class FilteringSequence<T>(private val sequence: Sequence<T>,
  * A sequence which returns the results of applying the given [transformer] function to the values
  * in the underlying [sequence].
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.map() instead.")
-public class TransformingSequence<T, R>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.map(transformer)"))
+
+private class TransformingSequence<T, R>
 constructor(private val sequence: Sequence<T>, private val transformer: (T) -> R) : Sequence<R> {
     override fun iterator(): Iterator<R> = object : Iterator<R> {
         val iterator = sequence.iterator()
@@ -130,9 +128,7 @@ constructor(private val sequence: Sequence<T>, private val transformer: (T) -> R
  * in the underlying [sequence], where the transformer function takes the index of the value in the underlying
  * sequence along with the value itself.
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.mapIndexed() instead.")
-public class TransformingIndexedSequence<T, R>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.mapIndexed(transformer)"))
+private class TransformingIndexedSequence<T, R>
 constructor(private val sequence: Sequence<T>, private val transformer: (Int, T) -> R) : Sequence<R> {
     override fun iterator(): Iterator<R> = object : Iterator<R> {
         val iterator = sequence.iterator()
@@ -151,9 +147,7 @@ constructor(private val sequence: Sequence<T>, private val transformer: (Int, T)
  * A sequence which combines values from the underlying [sequence] with their indices and returns them as
  * [IndexedValue] objects.
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.withIndex() instead.")
-public class IndexingSequence<T>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.withIndex()"))
+private class IndexingSequence<T>
 constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
     override fun iterator(): Iterator<IndexedValue<T>> = object : Iterator<IndexedValue<T>> {
         val iterator = sequence.iterator()
@@ -173,9 +167,7 @@ constructor(private val sequence: Sequence<T>) : Sequence<IndexedValue<T>> {
  * [transform] function and returns the values returned by that function. The sequence stops returning
  * values as soon as one of the underlying sequences stops returning values.
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.merge() instead.")
-public class MergingSequence<T1, T2, V>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence1.merge(sequence2, transform)"))
+private class MergingSequence<T1, T2, V>
                                        constructor(private val sequence1: Sequence<T1>,
                                         private val sequence2: Sequence<T2>,
                                         private val transform: (T1, T2) -> V
@@ -193,9 +185,7 @@ deprecated("This class is an implementation detail and shall be made internal so
     }
 }
 
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.flatMap() instead.")
-public class FlatteningSequence<T, R>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.flatMap(transformer)"))
+private class FlatteningSequence<T, R>
                                      constructor(private val sequence: Sequence<T>,
                                       private val transformer: (T) -> Sequence<R>
                                      ) : Sequence<R> {
@@ -234,9 +224,7 @@ deprecated("This class is an implementation detail and shall be made internal so
     }
 }
 
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.flatten() instead.")
-public class MultiSequence<T>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.flatten()"))
+private class MultiSequence<T>
 constructor(private val sequence: Sequence<Sequence<T>>) : Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
         val iterator = sequence.iterator()
@@ -277,9 +265,7 @@ constructor(private val sequence: Sequence<Sequence<T>>) : Sequence<T> {
  * A sequence that returns at most [count] values from the underlying [sequence], and stops returning values
  * as soon as that count is reached.
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.take() instead.")
-public class TakeSequence<T>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.take(count)"))
+private class TakeSequence<T>
                             constructor(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
@@ -308,9 +294,7 @@ deprecated("This class is an implementation detail and shall be made internal so
  * A sequence that returns values from the underlying [sequence] while the [predicate] function returns
  * `true`, and stops returning values once the function returns `false` for the next element.
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.takeWhile() instead.")
-public class TakeWhileSequence<T>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.takeWhile(predicate)"))
+private class TakeWhileSequence<T>
                                  constructor(private val sequence: Sequence<T>,
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
@@ -356,9 +340,7 @@ deprecated("This class is an implementation detail and shall be made internal so
  * A sequence that skips the specified number of values from the underlying [sequence] and returns
  * all values after that.
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.drop() instead.")
-public class DropSequence<T>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.drop(count)"))
+private class DropSequence<T>
                             constructor(private val sequence: Sequence<T>,
                              private val count: Int
                             ) : Sequence<T> {
@@ -394,9 +376,7 @@ deprecated("This class is an implementation detail and shall be made internal so
  * A sequence that skips the values from the underlying [sequence] while the given [predicate] returns `true` and returns
  * all values after that.
  */
-deprecated("This class is an implementation detail and shall be made internal soon. Use sequence.dropWhile() instead.")
-public class DropWhileSequence<T>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence.dropWhile(predicate)"))
+private class DropWhileSequence<T>
                                  constructor(private val sequence: Sequence<T>,
                                   private val predicate: (T) -> Boolean
                                  ) : Sequence<T> {
@@ -461,49 +441,6 @@ private class DistinctIterator<T, K>(private val source : Iterator<T>, private v
     }
 }
 
-
-/**
- * A sequence which repeatedly calls the specified [producer] function and returns its return values, until
- * `null` is returned from [producer].
- */
-deprecated("This class is an implementation detail and shall be made internal soon. Use function sequence(nextFunction: () -> T?) instead.")
-public class FunctionSequence<T : Any>
-deprecated("This class is an implementation detail and shall be made internal soon.", ReplaceWith("sequence(producer)"))
-constructor(private val producer: () -> T?) : Sequence<T> {
-    override fun iterator(): Iterator<T> = object : Iterator<T> {
-        var nextState: Int = -1 // -1 for unknown, 0 for done, 1 for continue
-        var nextItem: T? = null
-
-        private fun calcNext() {
-            val item = producer()
-            if (item == null) {
-                nextState = 0
-            } else {
-                nextState = 1
-                nextItem = item
-            }
-        }
-
-        override fun next(): T {
-            if (nextState == -1)
-                calcNext()
-            if (nextState == 0)
-                throw NoSuchElementException()
-            val result = nextItem as T
-            // Clean next to avoid keeping reference on yielded instance
-            nextItem = null
-            nextState = -1
-            return result
-        }
-
-        override fun hasNext(): Boolean {
-            if (nextState == -1)
-                calcNext()
-            return nextState == 1
-        }
-
-    }
-}
 
 private class GeneratorSequence<T: Any>(private val getInitialValue: () -> T?, private val getNextValue: (T) -> T?): Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
