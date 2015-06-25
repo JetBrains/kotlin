@@ -352,7 +352,7 @@ fun Class<Any>.findConstructor(methodDesc: MethodDescription): Constructor<Any?>
 fun MethodDescription.matches(ctor: Constructor<*>): Boolean {
     val methodParams = ctor.getParameterTypes()!!
     if (parameterTypes.size() != methodParams.size()) return false
-    for ((i, p) in parameterTypes.withIndices()) {
+    for ((i, p) in parameterTypes.withIndex()) {
         if (!p.matches(methodParams[i])) return false
     }
 
@@ -364,7 +364,7 @@ fun MethodDescription.matches(method: Method): Boolean {
 
     val methodParams = method.getParameterTypes()!!
     if (parameterTypes.size() != methodParams.size()) return false
-    for ((i, p) in parameterTypes.withIndices()) {
+    for ((i, p) in parameterTypes.withIndex()) {
         if (!p.matches(methodParams[i])) return false
     }
 

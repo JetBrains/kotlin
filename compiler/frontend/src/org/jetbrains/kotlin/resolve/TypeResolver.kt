@@ -265,8 +265,7 @@ public class TypeResolver(
     }
 
     private fun resolveTypeProjections(c: TypeResolutionContext, constructor: TypeConstructor, argumentElements: List<JetTypeProjection>): List<TypeProjection> {
-        return argumentElements.withIndices().map {
-            val (i, argumentElement) = it
+        return argumentElements.mapIndexed { i, argumentElement ->
 
             val projectionKind = argumentElement.getProjectionKind()
             ModifiersChecker.checkIncompatibleVarianceModifiers(argumentElement.getModifierList(), c.trace)

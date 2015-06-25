@@ -30,7 +30,7 @@ public object JetPsiPrecedences {
     private val precedence: Map<IElementType, Int>
     init {
         val builder = HashMap<IElementType, Int>()
-        for ((i, record) in JetExpressionParsing.Precedence.values().withIndices()) {
+        for ((i, record) in JetExpressionParsing.Precedence.values().withIndex()) {
             for (elementType in record.getOperations().getTypes()) {
                 builder[elementType] = i
             }
