@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*
 import java.io.File
 
 public fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
-        this.split('\n').map { it.trimTrailing() }.joinToString(separator = "\n").let {
+        this.split('\n').map { it.trimEnd() }.joinToString(separator = "\n").let {
             result -> if (result.endsWith("\n")) result else result + "\n"
         }
 

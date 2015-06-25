@@ -72,7 +72,7 @@ object KDocRenderer {
         }
         to.append("<dl><dt><b>${title}:</b></dt>")
         tags.forEach {
-            to.append("<dd><code>${it.getSubjectName()}</code> - ${markdownToHtml(it.getContent().trimLeading())}</dd>")
+            to.append("<dd><code>${it.getSubjectName()}</code> - ${markdownToHtml(it.getContent().trimStart())}</dd>")
         }
         to.append("</dl>\n")
     }

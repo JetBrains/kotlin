@@ -163,7 +163,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
             val parent = element.getParent()
             val array = element.getArrayExpression()!!.getText()
             val indices = element.getIndicesNode()
-            val indicesText = indices.getText()?.trim("[","]") ?: throw AssertionError("Indices node of ArrayExpression shouldn't be null: JetArrayAccessExpression = ${element.getText()}")
+            val indicesText = indices.getText()?.removeSurrounding("[","]") ?: throw AssertionError("Indices node of ArrayExpression shouldn't be null: JetArrayAccessExpression = ${element.getText()}")
 
             val transformation : String
             val replaced : JetElement
@@ -185,7 +185,7 @@ public class OperatorToFunctionIntention : JetSelfTargetingIntention<JetExpressi
         private fun convertCall(element: JetCallExpression): JetExpression {
             val callee = element.getCalleeExpression()!!
             val arguments = element.getValueArgumentList()
-            val argumentString = arguments?.getText()?.trim("(", ")")
+            val argumentString = arguments?.getText()?.removeSurrounding("(", ")")
             val funcLitArgs = element.getFunctionLiteralArguments()
             val calleeText = callee.getText()
             val transformation = "$calleeText.${OperatorConventions.INVOKE.asString()}" +

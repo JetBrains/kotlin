@@ -134,7 +134,7 @@ public class KotlinCoreEnvironment private constructor(
         }))
         sourceFiles.sortBy(object : Comparator<JetFile> {
             override fun compare(o1: JetFile, o2: JetFile): Int {
-                return o1.getVirtualFile().getPath().compareToIgnoreCase(o2.getVirtualFile().getPath())
+                return o1.getVirtualFile().getPath().compareTo(o2.getVirtualFile().getPath(), ignoreCase = true)
             }
         })
 

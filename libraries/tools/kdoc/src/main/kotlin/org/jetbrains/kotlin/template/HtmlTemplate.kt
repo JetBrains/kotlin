@@ -22,7 +22,7 @@ abstract class HtmlTemplate() : TextTemplate() {
                 }
                 else {
                     // TODO: escape values
-                    "<$tagName ${allAttributes.map { t -> "${t.first}='${t.second.escapeHtml()}'" }.makeString(" ")}>"
+                    "<$tagName ${allAttributes.map { t -> "${t.first}='${t.second.escapeHtml()}'" }.joinToString(" ")}>"
                 }
         )
         content()

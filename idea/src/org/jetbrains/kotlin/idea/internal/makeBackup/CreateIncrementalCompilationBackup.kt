@@ -88,7 +88,7 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
             for (rev in revisions) {
                 val label = rev.getLabel()
                 if (label != null && label.startsWith(HISTORY_LABEL_PREFIX)) {
-                    val patchFile = File(patchesDir, label.trimLeading(HISTORY_LABEL_PREFIX) + ".patch")
+                    val patchFile = File(patchesDir, label.removePrefix(HISTORY_LABEL_PREFIX) + ".patch")
 
                     indicator.setText("Creating patch $patchFile")
                     indicator.setFraction(PATCHES_FRACTION * patchesCreated / PATCHES_TO_CREATE)
