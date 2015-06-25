@@ -419,7 +419,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             val size = `in`.readInt()
             val map = HashMap<String, Any>(size)
 
-            for (i in size.indices) {
+            repeat(size) {
                 val name = IOUtil.readString(`in`)!!
 
                 val kind = Kind.values()[`in`.readByte().toInt()]
@@ -531,7 +531,7 @@ public class IncrementalCacheImpl(targetDataRoot: File) : StorageOwner, Incremen
             val size = `in`.readInt()
             val map = HashMap<String, Long>(size)
 
-            for (i in size.indices) {
+            repeat(size) {
                 val name = IOUtil.readString(`in`)!!
                 val value = `in`.readLong()
 

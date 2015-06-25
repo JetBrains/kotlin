@@ -111,7 +111,7 @@ private fun createCodeFragment(filePath: String, contextElement: PsiElement): Je
     val fileForFragment = File(filePath + ".fragment")
     val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
     val psiFactory = JetPsiFactory(contextElement.getProject())
-    if (fileForFragment.readLines().size == 1) {
+    if (fileForFragment.readLines().size() == 1) {
         return psiFactory.createExpressionCodeFragment(
                 codeFragmentText,
                 KotlinCodeFragmentFactory.getContextElement(contextElement)

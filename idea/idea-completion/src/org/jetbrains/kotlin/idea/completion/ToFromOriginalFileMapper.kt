@@ -38,8 +38,8 @@ class ToFromOriginalFileMapper(
         val syntheticText = syntheticFile.getText()
         assert(originalText.subSequence(0, completionOffset) == syntheticText.subSequence(0, completionOffset)) //TODO: drop it
 
-        syntheticLength = syntheticText.length
-        originalLength = originalText.length
+        syntheticLength = syntheticText.length()
+        originalLength = originalText.length()
         val minLength = Math.min(originalLength, syntheticLength)
         tailLength = (0..minLength-1).firstOrNull {
             syntheticText[syntheticLength - it - 1] != originalText[originalLength - it - 1]

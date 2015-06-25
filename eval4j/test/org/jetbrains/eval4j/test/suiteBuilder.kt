@@ -64,7 +64,7 @@ fun buildTestCase(ownerClass: Class<TestData>,
     for (method in ownerClass.getDeclaredMethods()) {
         if (method.getName() == methodNode.name) {
             val isStatic = (method.getModifiers() and Modifier.STATIC) != 0
-            if (method.getParameterTypes()!!.size > 0) {
+            if (method.getParameterTypes()!!.size() > 0) {
                 println("Skipping method with parameters: $method")
             }
             else if (!isStatic && !method.getName()!!.startsWith("test")) {

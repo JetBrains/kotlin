@@ -300,7 +300,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     private fun LibraryInfo.assertAdditionalLibraryDependencies(vararg expected: IdeaModuleInfo) {
         Assert.assertEquals(this, dependencies().first())
-        val dependenciesWithoutSelf = this.dependencies().tail
+        val dependenciesWithoutSelf = this.dependencies().drop(1)
         UsefulTestCase.assertSameElements(dependenciesWithoutSelf, expected.toList())
     }
 

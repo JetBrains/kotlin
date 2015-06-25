@@ -135,7 +135,7 @@ class LambdaExpression(val arguments: String?, val block: Block) : Expression() 
         if (arguments != null) {
             builder.append(arguments)
                     .append("->")
-                    .append(if (block.statements.size > 1) "\n" else " ")
+                    .append(if (block.statements.size() > 1) "\n" else " ")
                     .append(block.statements, "\n")
         }
         else {

@@ -66,10 +66,10 @@ public fun String.trimIndent(): String {
         else {
             if (!line.startsWith(trimmedPrefix)) {
                 throw IllegalArgumentException(
-                        """Invalid line "$line", ${trimmedPrefix.size} whitespace character are expected""")
+                        """Invalid line "$line", ${trimmedPrefix.length()} whitespace character are expected""")
             }
 
-            line.substring(trimmedPrefix.length)
+            line.substring(trimmedPrefix.length())
         }
     }.joinToString(separator = "\n")
 }

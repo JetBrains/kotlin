@@ -63,7 +63,7 @@ public trait JetPsiRange {
 
     fun match(scope: PsiElement, unifier: JetPsiUnifier): List<Match> {
         val elements = elements.filter(SIGNIFICANT_FILTER)
-        if (elements.empty) return Collections.emptyList()
+        if (elements.isEmpty()) return Collections.emptyList()
 
         val matches = ArrayList<Match>()
         scope.accept(
@@ -72,7 +72,7 @@ public trait JetPsiRange {
                         val range = element
                                 .siblings()
                                 .filter(SIGNIFICANT_FILTER)
-                                .take(elements.size)
+                                .take(elements.size())
                                 .toList()
                                 .toRange()
 
@@ -82,9 +82,9 @@ public trait JetPsiRange {
                             matches.add(Match(range, result))
                         }
                         else {
-                            val matchCountSoFar = matches.size
+                            val matchCountSoFar = matches.size()
                             super.visitJetElement(element)
-                            if (result is UnificationResult.WeaklyMatched && matches.size == matchCountSoFar) {
+                            if (result is UnificationResult.WeaklyMatched && matches.size() == matchCountSoFar) {
                                 matches.add(Match(range, result))
                             }
                         }
@@ -96,7 +96,7 @@ public trait JetPsiRange {
 }
 
 public fun List<PsiElement>.toRange(significantOnly: Boolean = true): JetPsiRange {
-    return if (empty) JetPsiRange.Empty else JetPsiRange.ListRange(if (significantOnly) filter(SIGNIFICANT_FILTER) else this)
+    return if (isEmpty()) JetPsiRange.Empty else JetPsiRange.ListRange(if (significantOnly) filter(SIGNIFICANT_FILTER) else this)
 }
 
 public fun PsiElement?.toRange(): JetPsiRange = this?.let { JetPsiRange.ListRange(Collections.singletonList(it)) } ?: JetPsiRange.Empty

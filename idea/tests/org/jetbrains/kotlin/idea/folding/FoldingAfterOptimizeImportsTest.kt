@@ -64,7 +64,7 @@ class FoldingAfterOptimizeImportsTest : AbstractKotlinFoldingTest() {
         fixture.doHighlighting()
         val model = getEditor().getFoldingModel()
         val foldingRegions = model.getAllFoldRegions()
-        assert(foldingRegions.size >= number) { "There is no enough folding regions in file: in file - ${foldingRegions.size} , expected = ${number}" }
+        assert(foldingRegions.size() >= number) { "There is no enough folding regions in file: in file - ${foldingRegions.size()} , expected = ${number}" }
         return foldingRegions[number]
     }
 

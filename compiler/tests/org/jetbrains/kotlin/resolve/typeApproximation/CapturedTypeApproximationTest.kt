@@ -131,7 +131,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
     private fun getTestTypesForOneTypeVariable(): List<String> {
         val typePatterns = getTypePatternsForOneTypeVariable()
 
-        val range = typePatterns.size().indices
+        val range = typePatterns.indices
         val variants = ArrayList<List<Int>>()
         for (i in range) variants.add(listOf(i))
         for (i in range) for (j in range) variants.add(listOf(i, j))
@@ -152,7 +152,7 @@ public class CapturedTypeApproximationTest() : JetLiteFixture() {
     private fun getTestTypesForTwoTypeVariables(): List<String> {
         val typePatterns = getTypePatternsForOneTypeVariable()
 
-        val range = typePatterns.size().indices
+        val range = typePatterns.indices
         val result = ArrayList<String>()
         for (pattern in getTypePatternsForTwoTypeVariables()) {
             for (i in range) {

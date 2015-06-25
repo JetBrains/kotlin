@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 public class JetEnumEntryWithoutSuperCallUsage(enumEntry: JetEnumEntry) : JetUsageInfo<JetEnumEntry>(enumEntry) {
     override fun processUsage(changeInfo: JetChangeInfo, element: JetEnumEntry): Boolean {
-        if (changeInfo.getNewParameters().size > 0) {
+        if (changeInfo.getNewParameters().size() > 0) {
             val psiFactory = JetPsiFactory(element)
 
             val enumClass = element.getStrictParentOfType<JetClass>()!!

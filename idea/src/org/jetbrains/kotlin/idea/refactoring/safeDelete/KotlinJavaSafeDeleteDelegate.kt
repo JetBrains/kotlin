@@ -60,7 +60,7 @@ public class KotlinJavaSafeDeleteDelegate : JavaSafeDeleteDelegate {
 
         val namedArguments = args.filter { arg -> arg is JetValueArgument && arg.getArgumentName()?.getText() == parameter.getName() }
         if (!namedArguments.isEmpty()) {
-            usages.add(SafeDeleteValueArgumentListUsageInfo(namedArguments.first as JetValueArgument, parameter))
+            usages.add(SafeDeleteValueArgumentListUsageInfo(namedArguments.first(), parameter))
             return
         }
 

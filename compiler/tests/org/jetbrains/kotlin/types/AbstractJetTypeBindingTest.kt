@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.psi.JetCallableDeclaration
+import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.test.JetTestUtils.*
@@ -37,7 +38,7 @@ abstract class AbstractJetTypeBindingTest : JetLiteFixture() {
 
         val analyzeResult = JvmResolveUtil.analyzeFilesWithJavaIntegration(getProject(), listOf(testKtFile))
 
-        val testDeclaration = testKtFile.getDeclarations().last!! as JetCallableDeclaration
+        val testDeclaration = testKtFile.getDeclarations().last()!! as JetCallableDeclaration
 
         val typeBinding = testDeclaration.createTypeBindingForReturnType(analyzeResult.bindingContext)
 

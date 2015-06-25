@@ -50,10 +50,10 @@ private fun calcNameSimilarity(name: String, expectedName: String): Int {
     val nonNumberWords2 = words2.filter(::isNonNumber)
 
     // count number of words matched at the end (but ignore number words - they are less important)
-    val minWords = Math.min(nonNumberWords1.size, nonNumberWords2.size)
+    val minWords = Math.min(nonNumberWords1.size(), nonNumberWords2.size())
     val matchedTailLength = (0..minWords-1).firstOrNull {
-        i -> nonNumberWords1[nonNumberWords1.size - i - 1] != nonNumberWords2[nonNumberWords2.size - i - 1]
+        i -> nonNumberWords1[nonNumberWords1.size() - i - 1] != nonNumberWords2[nonNumberWords2.size() - i - 1]
     } ?: minWords
 
-    return matchedWords.size * 1000 + matchedTailLength
+    return matchedWords.size() * 1000 + matchedTailLength
 }

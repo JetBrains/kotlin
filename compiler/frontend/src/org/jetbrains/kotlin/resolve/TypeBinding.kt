@@ -76,8 +76,8 @@ private class ExplicitTypeBinding(
     override fun getArgumentBindings(): List<TypeArgumentBinding<JetTypeElement>?> {
         val psiTypeArguments = psiElement.getTypeArgumentsAsTypes()
         val isErrorBinding = run {
-            val sizeIsEqual = psiTypeArguments.size == jetType.getArguments().size
-                              && psiTypeArguments.size == jetType.getConstructor().getParameters().size
+            val sizeIsEqual = psiTypeArguments.size() == jetType.getArguments().size()
+                              && psiTypeArguments.size() == jetType.getConstructor().getParameters().size()
             jetType.isError() || !sizeIsEqual
         }
 
@@ -115,7 +115,7 @@ private class NoTypeElementBinding<out P : PsiElement>(
 ): TypeBinding<P> {
 
     override fun getArgumentBindings(): List<TypeArgumentBinding<P>?> {
-        val isErrorBinding = jetType.isError() || jetType.getConstructor().getParameters().size != jetType.getArguments().size
+        val isErrorBinding = jetType.isError() || jetType.getConstructor().getParameters().size() != jetType.getArguments().size()
         return jetType.getArguments().indices.map {
             val typeProjection = jetType.getArguments()[it]
             TypeArgumentBindingImpl(

@@ -74,7 +74,7 @@ trait HierarchyTraverser<T> {
         val processed = HashSet<T>()
 
         stack.push(initialElement)
-        while (!stack.empty) {
+        while (!stack.isEmpty()) {
             ProgressIndicatorProvider.checkCanceled()
 
             val current = stack.pop()!!

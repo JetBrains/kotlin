@@ -54,14 +54,14 @@ class WithTailInsertHandler(val tailText: String,
 
         if (overwriteText) {
             fun isCharAt(offset: Int, c: Char) = offset < document.getTextLength() && document.getCharsSequence().charAt(offset) == c
-            fun isTextAt(offset: Int, text: String) = offset + text.length <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length)) == text
+            fun isTextAt(offset: Int, text: String) = offset + text.length() <= document.getTextLength() && document.getText(TextRange(offset, offset + text.length())) == text
 
             if (spaceBefore && isCharAt(tailOffset, ' ')) {
                 document.deleteString(tailOffset, tailOffset + 1)
             }
 
             if (isTextAt(tailOffset, tailText)) {
-                document.deleteString(tailOffset, tailOffset + tailText.length)
+                document.deleteString(tailOffset, tailOffset + tailText.length())
 
                 if (spaceAfter && isCharAt(tailOffset, ' ')) {
                     document.deleteString(tailOffset, tailOffset + 1)
@@ -77,7 +77,7 @@ class WithTailInsertHandler(val tailText: String,
         document.insertString(tailOffset, textToInsert)
 
         if (moveCaret) {
-            context.getEditor().getCaretModel().moveToOffset(tailOffset + textToInsert.length)
+            context.getEditor().getCaretModel().moveToOffset(tailOffset + textToInsert.length())
 
             if (tailText == ",") {
                 AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(context.getEditor(), null)

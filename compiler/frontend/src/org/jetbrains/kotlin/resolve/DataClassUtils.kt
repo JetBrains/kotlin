@@ -34,7 +34,7 @@ public fun isComponentLike(name: Name): Boolean {
 }
 
 public fun getComponentIndex(componentName: Name): Int =
-    componentName.asString().substring(COMPONENT_FUNCTION_NAME_PREFIX.length).toInt()
+    componentName.asString().substring(COMPONENT_FUNCTION_NAME_PREFIX.length()).toInt()
 
 public fun createComponentName(index: Int): Name =
     Name.identifier(COMPONENT_FUNCTION_NAME_PREFIX + index)

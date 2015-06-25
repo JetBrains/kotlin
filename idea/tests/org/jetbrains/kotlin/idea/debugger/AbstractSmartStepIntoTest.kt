@@ -59,13 +59,13 @@ public abstract class AbstractSmartStepIntoTest : JetLightCodeInsightFixtureTest
     private fun renderTableWithResults(expected: List<String>, actual: List<String>): String {
         val sb = StringBuilder()
 
-        val maxExtStrSize = (expected.maxBy { it.size }?.size ?: 0) + 5
-        val longerList = if (expected.size < actual.size) actual else expected
-        val shorterList = if (expected.size < actual.size) expected else actual
-        for ((i, element) in longerList.withIndices()) {
+        val maxExtStrSize = (expected.maxBy { it.length() }?.length() ?: 0) + 5
+        val longerList = if (expected.size() < actual.size()) actual else expected
+        val shorterList = if (expected.size() < actual.size()) expected else actual
+        for ((i, element) in longerList.withIndex()) {
             sb.append(element)
-            sb.append(" ".repeat(maxExtStrSize - element.size))
-            if (i < shorterList.size) sb.append(shorterList[i])
+            sb.append(" ".repeat(maxExtStrSize - element.length()))
+            if (i < shorterList.size()) sb.append(shorterList[i])
             sb.append("\n")
         }
 

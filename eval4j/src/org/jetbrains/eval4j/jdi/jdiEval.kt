@@ -122,7 +122,7 @@ public class JDIEval(
         if (!nestedSizes.isEmpty()) {
             val nestedElementType = elementType.arrayElementType
             val nestedSize = nestedSizes[0]
-            val tail = nestedSizes.tail
+            val tail = nestedSizes.drop(1)
             for (i in 0..size - 1) {
                 setArrayElement(arr, int(i), fillArray(nestedElementType, nestedSize, tail))
             }
@@ -131,7 +131,7 @@ public class JDIEval(
     }
 
     override fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value {
-        return fillArray(arrayType.arrayElementType, dimensionSizes[0], dimensionSizes.tail)
+        return fillArray(arrayType.arrayElementType, dimensionSizes[0], dimensionSizes.drop(1))
     }
 
     private fun Value.array() = jdiObj.checkNull() as jdi.ArrayReference

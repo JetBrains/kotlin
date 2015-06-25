@@ -83,7 +83,7 @@ fun initFrame(
     }
 
     val args = Type.getArgumentTypes(m.desc)
-    for (i in 0..args.size - 1) {
+    for (i in 0..args.size() - 1) {
         current.setLocal(local++, makeNotInitializedValue(args[i]))
         if (args[i].getSize() == 2) {
             current.setLocal(local++, NOT_A_VALUE)
@@ -351,7 +351,7 @@ fun Class<Any>.findConstructor(methodDesc: MethodDescription): Constructor<Any?>
 
 fun MethodDescription.matches(ctor: Constructor<*>): Boolean {
     val methodParams = ctor.getParameterTypes()!!
-    if (parameterTypes.size() != methodParams.size) return false
+    if (parameterTypes.size() != methodParams.size()) return false
     for ((i, p) in parameterTypes.withIndices()) {
         if (!p.matches(methodParams[i])) return false
     }
@@ -363,7 +363,7 @@ fun MethodDescription.matches(method: Method): Boolean {
     if (name != method.getName()) return false
 
     val methodParams = method.getParameterTypes()!!
-    if (parameterTypes.size() != methodParams.size) return false
+    if (parameterTypes.size() != methodParams.size()) return false
     for ((i, p) in parameterTypes.withIndices()) {
         if (!p.matches(methodParams[i])) return false
     }
