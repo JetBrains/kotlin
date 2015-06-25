@@ -348,7 +348,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         val jdk = addJdk("my jdk")
         val moduleDependencies = readModuleDependencies()
         if (moduleDependencies == null) {
-            addModule("module", array(getAbsolutePath("src")), null, null, jdk)
+            addModule("module", arrayOf(getAbsolutePath("src")), null, null, jdk)
 
             FileUtil.copyDir(testDataDir, File(workDir, "src"), { it.getName().endsWith(".kt") || it.getName().endsWith(".java") })
 
@@ -356,7 +356,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         }
         else {
             val nameToModule = moduleDependencies.keySet()
-                    .keysToMap { addModule(it, array(getAbsolutePath(it + "/src")), null, null, jdk)!! }
+                    .keysToMap { addModule(it, arrayOf(getAbsolutePath(it + "/src")), null, null, jdk)!! }
 
             for ((moduleName, dependencies) in moduleDependencies) {
                 val module = nameToModule[moduleName]!!
