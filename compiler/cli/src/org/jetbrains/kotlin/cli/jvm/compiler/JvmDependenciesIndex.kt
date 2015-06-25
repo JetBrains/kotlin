@@ -174,7 +174,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         // traverse caches starting from last, which contains most specific information
         for (cacheIndex in caches.indices.reversed()) {
             val cache = caches[cacheIndex]
-            for (i in cache.rootIndices.size().indices) {
+            for (i in cache.rootIndices.indices) {
                 val rootIndex = cache.rootIndices[i]
                 if (rootIndex <= processedRootsUpTo) continue // roots with those indices have been processed by now
 
@@ -249,3 +249,4 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
 }
 
 private fun IntArrayList.lastOrNull() = if (isEmpty()) null else get(size() - 1)
+private val IntArrayList.indices: IntRange get() = 0..size()-1
