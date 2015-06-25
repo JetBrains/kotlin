@@ -48,6 +48,8 @@ import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.context.CompilationCanceledStatus
+import org.jetbrains.kotlin.context.CompilationCanceledException
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
@@ -59,7 +61,10 @@ import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCacheProvider
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.util.ArrayList
@@ -94,7 +99,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val messageCollector = MessageCollectorAdapter(context)
         try {
             return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
-        } catch (e: Throwable) {
+        }
+        catch (e: StopBuildException) {
+            throw e
+        }
+        catch (e: Throwable) {
             messageCollector.report(
                     CompilerMessageSeverity.EXCEPTION,
                     OutputMessageUtil.renderException(e),
@@ -133,7 +142,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val incrementalCaches = chunk.getTargets().keysToMap { dataManager.getKotlinCache(it) }
 
-        val environment = createCompileEnvironment(incrementalCaches)
+        val environment = createCompileEnvironment(incrementalCaches, context)
         if (!environment.success()) {
             environment.reportErrorsTo(messageCollector)
             return ABORT
@@ -168,6 +177,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val generatedFiles = getGeneratedFiles(chunk, outputItemCollector)
 
         registerOutputItems(outputConsumer, generatedFiles)
+
+        context.checkCanceled()
 
         val recompilationDecision: IncrementalCacheImpl.RecompilationDecision
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
@@ -237,7 +248,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val representativeTarget = chunk.representativeTarget()
 
-        fun concatenate(strings: Array<String>?, cp: List<String>) = array(*(strings ?: array<String>()), *cp.copyToArray())
+        fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*(strings ?: arrayOf<String>()), *cp.toTypedArray())
 
         for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
             // appending to pluginOptions
@@ -257,9 +268,12 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         return compileToJvm(allCompiledFiles, chunk, commonArguments, context, dirtyFilesHolder, environment, filesToCompile, messageCollector)
     }
 
-    private fun createCompileEnvironment(incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>): CompilerEnvironment {
+    private fun createCompileEnvironment(incrementalCaches: Map<ModuleBuildTarget, IncrementalCache>, context: CompileContext): CompilerEnvironment {
         val compilerServices = Services.Builder()
                 .register(javaClass<IncrementalCacheProvider>(), IncrementalCacheProviderImpl(incrementalCaches))
+                .register(javaClass<CompilationCanceledStatus>(), object: CompilationCanceledStatus {
+                    override fun checkCanceled(): Unit = if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
+                    })
                 .build()
 
         return CompilerEnvironment.getEnvironmentFor(
@@ -268,6 +282,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.cache.")
                     || className == "org.jetbrains.kotlin.config.Services"
                     || className.startsWith("org.apache.log4j.") // For logging from compiler
+                    || className == "org.jetbrains.kotlin.context.CompilationCanceledStatus"
+                    || className == "org.jetbrains.kotlin.context.CompilationCanceledException"
                 },
                 compilerServices
         )
@@ -556,7 +572,7 @@ private fun getAllCompiledFilesContainer(context: CompileContext): MutableSet<Fi
         allCompiledFiles = THashSet(FileUtil.FILE_HASHING_STRATEGY)
         ALL_COMPILED_FILES_KEY.set(context, allCompiledFiles)
     }
-    return allCompiledFiles!!
+    return allCompiledFiles
 }
 
 private val PROCESSED_TARGETS_WITH_REMOVED_FILES = Key.create<MutableSet<ModuleBuildTarget>>("_processed_targets_with_removed_files_")
@@ -566,7 +582,7 @@ private fun getProcessedTargetsWithRemovedFilesContainer(context: CompileContext
         set = HashSet<ModuleBuildTarget>()
         PROCESSED_TARGETS_WITH_REMOVED_FILES.set(context, set)
     }
-    return set!!
+    return set
 }
 
 private fun hasKotlinDirtyOrRemovedFiles(
