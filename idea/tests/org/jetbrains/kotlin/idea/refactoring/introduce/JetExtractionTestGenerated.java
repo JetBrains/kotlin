@@ -348,6 +348,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
                 doExtractFunctionTest(fileName);
             }
 
+            @TestMetadata("calleeExpression.kt")
+            public void testCalleeExpression() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/calleeExpression.kt");
+                doExtractFunctionTest(fileName);
+            }
+
             @TestMetadata("delegatingFunction.kt")
             public void testDelegatingFunction() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/basic/delegatingFunction.kt");

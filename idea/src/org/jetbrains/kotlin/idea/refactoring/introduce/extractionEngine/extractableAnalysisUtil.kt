@@ -161,6 +161,9 @@ private fun List<Instruction>.getResultTypeAndExpressions(
         if (options.inferUnitTypeForUnusedValues && expression.isUsedAsStatement(bindingContext)) return null
 
         return bindingContext.getType(expression)
+               ?: (expression as? JetReferenceExpression)?.let {
+                   (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.getReturnType()
+               }
     }
 
     val resultTypes = map(::instructionToType).filterNotNull()
