@@ -170,17 +170,17 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
                 val fileName = file.getName()
 
                 if (fileName.endsWith(newSuffix)) {
-                    modifications.add(ModifyContent(getDirPrefix(fileName) + "/" + fileName.trimTrailing(newSuffix), file))
+                    modifications.add(ModifyContent(getDirPrefix(fileName) + "/" + fileName.removeSuffix(newSuffix), file))
                 }
                 if (fileName.endsWith(deleteSuffix)) {
-                    modifications.add(DeleteFile(getDirPrefix(fileName) + "/" + fileName.trimTrailing(deleteSuffix)))
+                    modifications.add(DeleteFile(getDirPrefix(fileName) + "/" + fileName.removeSuffix(deleteSuffix)))
                 }
             }
             return modifications
         }
 
-        val haveFilesWithoutNumbers = testDataDir.listFiles { it.getName().matches(".+\\.(new|delete)$") }?.isNotEmpty() ?: false
-        val haveFilesWithNumbers = testDataDir.listFiles { it.getName().matches(".+\\.(new|delete)\\.\\d+$") }?.isNotEmpty() ?: false
+        val haveFilesWithoutNumbers = testDataDir.listFiles { it.getName().matches(".+\\.(new|delete)$".toRegex()) }?.isNotEmpty() ?: false
+        val haveFilesWithNumbers = testDataDir.listFiles { it.getName().matches(".+\\.(new|delete)\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
 
         if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
             fail("Bad test data format: files ending with both unnumbered and numbered \".new\"/\".delete\" were found")
@@ -388,7 +388,7 @@ public abstract class AbstractIncrementalJpsTest : JpsBuildTestCase() {
         override fun isEnabled(): Boolean = true
 
         override fun logLine(message: String?) {
-            logBuf.append(JetTestUtils.replaceHashWithStar(message!!.trimLeading(rootPath + "/"))).append('\n')
+            logBuf.append(JetTestUtils.replaceHashWithStar(message!!.removePrefix(rootPath + "/"))).append('\n')
         }
     }
 
