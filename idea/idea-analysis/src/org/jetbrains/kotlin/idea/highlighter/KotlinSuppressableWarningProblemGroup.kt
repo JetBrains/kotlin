@@ -41,7 +41,7 @@ class KotlinSuppressableWarningProblemGroup(
         if (element == null)
             return SuppressIntentionAction.EMPTY_ARRAY
 
-        return createSuppressWarningActions(element, diagnosticFactory).copyToArray()
+        return createSuppressWarningActions(element, diagnosticFactory).toTypedArray()
     }
 
 }

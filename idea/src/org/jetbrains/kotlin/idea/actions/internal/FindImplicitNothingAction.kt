@@ -96,10 +96,10 @@ public class FindImplicitNothingAction : AnAction() {
 
         SwingUtilities.invokeLater {
             if (found.isNotEmpty()) {
-                val usages = found.map { UsageInfo2UsageAdapter(UsageInfo(it)) }.copyToArray()
+                val usages = found.map { UsageInfo2UsageAdapter(UsageInfo(it)) }.toTypedArray()
                 val presentation = UsageViewPresentation()
                 presentation.setTabName("Implicit Nothing's")
-                UsageViewManager.getInstance(project).showUsages(array<UsageTarget>(), usages, presentation)
+                UsageViewManager.getInstance(project).showUsages(arrayOf<UsageTarget>(), usages, presentation)
             }
             else {
                 Messages.showInfoMessage(project, "Not found in ${files.size()} file(s)", "Not Found")

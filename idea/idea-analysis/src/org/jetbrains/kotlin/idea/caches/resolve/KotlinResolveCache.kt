@@ -179,7 +179,7 @@ private class PerFileAnalysisCache(val file: JetFile, val resolveSession: Resolv
 }
 
 private object KotlinResolveDataProvider {
-    private val topmostElementTypes = array<Class<out PsiElement?>?>(
+    private val topmostElementTypes = arrayOf<Class<out PsiElement?>?>(
             javaClass<JetNamedFunction>(),
             javaClass<JetClassInitializer>(),
             javaClass<JetProperty>(),

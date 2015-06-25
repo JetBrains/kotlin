@@ -277,7 +277,7 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
             }
         }
 
-        return result.copyToArray()
+        return result.toTypedArray()
     }
 
     override fun prepareForDeletion(element: PsiElement) {

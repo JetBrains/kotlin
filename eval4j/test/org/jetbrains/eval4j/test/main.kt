@@ -138,7 +138,7 @@ object REFLECTION_EVAL : Eval {
     }
 
     override fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value {
-        return ObjectValue(ArrayHelper.newMultiArray(findClass(arrayType.getElementType()), *dimensionSizes.copyToArray()), arrayType)
+        return ObjectValue(ArrayHelper.newMultiArray(findClass(arrayType.getElementType()), *dimensionSizes.toTypedArray()), arrayType)
     }
 
     override fun getArrayLength(array: Value): Value {
@@ -236,7 +236,7 @@ object REFLECTION_EVAL : Eval {
         assertTrue(methodDesc.isStatic)
         val method = findClass(methodDesc).findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
-        val args = mapArguments(arguments, methodDesc.parameterTypes).copyToArray()
+        val args = mapArguments(arguments, methodDesc.parameterTypes).toTypedArray()
         val result = mayThrow {method!!.invoke(null, *args)}
         return objectToValue(result, methodDesc.returnType)
     }
@@ -279,7 +279,7 @@ object REFLECTION_EVAL : Eval {
                 val _class = findClass((instance as NewObjectValue).asmType)
                 val ctor = _class.findConstructor(methodDesc)
                 assertNotNull("Constructor not found: $methodDesc", ctor)
-                val args = mapArguments(arguments, methodDesc.parameterTypes).copyToArray()
+                val args = mapArguments(arguments, methodDesc.parameterTypes).toTypedArray()
                 val result = mayThrow {ctor!!.newInstance(*args)}
                 instance.value = result
                 return objectToValue(result, instance.asmType)
@@ -292,7 +292,7 @@ object REFLECTION_EVAL : Eval {
         val obj = instance.obj().checkNull()
         val method = obj.javaClass.findMethod(methodDesc)
         assertNotNull("Method not found: $methodDesc", method)
-        val args = mapArguments(arguments, methodDesc.parameterTypes).copyToArray()
+        val args = mapArguments(arguments, methodDesc.parameterTypes).toTypedArray()
         val result = mayThrow {method!!.invoke(obj, *args)}
         return objectToValue(result, methodDesc.returnType)
     }

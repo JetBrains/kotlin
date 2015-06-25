@@ -73,7 +73,7 @@ public object IdeaReferenceSearcher: ReferenceSearcher {
         if (searchKotlin) {
             fileTypes.add(JetLanguage.INSTANCE.getAssociatedFileType())
         }
-        val searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()), *fileTypes.copyToArray())
+        val searchScope = GlobalSearchScope.getScopeRestrictedByFileTypes(GlobalSearchScope.projectScope(element.getProject()), *fileTypes.toTypedArray())
         return ReferencesSearch.search(element, searchScope).findAll()
     }
 }

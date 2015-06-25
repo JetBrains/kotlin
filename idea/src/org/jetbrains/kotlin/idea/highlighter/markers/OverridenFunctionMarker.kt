@@ -106,7 +106,7 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
     var overridingJavaMethods = processor.getCollection().filter { it !is KotlinLightMethodForTraitFakeOverride }
     if (overridingJavaMethods.isEmpty()) return
 
-    val showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridingJavaMethods.copyToArray())
+    val showMethodNames = !PsiUtil.allMethodsHaveSameSignature(overridingJavaMethods.toTypedArray())
 
     val renderer = MethodCellRenderer(showMethodNames)
     overridingJavaMethods = overridingJavaMethods.sortBy(renderer.getComparator())
@@ -114,7 +114,7 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
     val methodsUpdater = OverridingMethodsUpdater(method, renderer)
     PsiElementListNavigator.openTargets(
             e,
-            overridingJavaMethods.copyToArray(),
+            overridingJavaMethods.toTypedArray(),
             methodsUpdater.getCaption(overridingJavaMethods.size()),
             "Overriding declarations of " + method.getName(),
             renderer,

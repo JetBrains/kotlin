@@ -42,7 +42,7 @@ public class JetForLoopInReference(element: JetForExpression) : JetMultiReferenc
     }
 
     companion object {
-        private val LOOP_RANGE_KEYS = array(
+        private val LOOP_RANGE_KEYS = arrayOf(
                 BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL,
                 BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL,
                 BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 
-private val EXTERNAL_SOURCES_KINDS = array(
+private val EXTERNAL_SOURCES_KINDS = arrayOf(
         JvmDeclarationOriginKind.DELEGATION_TO_TRAIT_IMPL,
         JvmDeclarationOriginKind.DELEGATION,
         JvmDeclarationOriginKind.BRIDGE)

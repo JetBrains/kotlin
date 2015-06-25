@@ -77,14 +77,14 @@ public class KotlinIntroduceParameterDialog private constructor(
             editor,
             introduceParameterDescriptor,
             lambdaExtractionDescriptor,
-            lambdaExtractionDescriptor.suggestedNames.copyToArray(),
+            lambdaExtractionDescriptor.suggestedNames.toTypedArray(),
             listOf(lambdaExtractionDescriptor.returnType),
             helper
     )
 
     private val typeNameSuggestions = typeSuggestions
             .map { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }
-            .copyToArray()
+            .toTypedArray()
 
     private val nameField = NameSuggestionsField(nameSuggestions, project, JetFileType.INSTANCE)
     private val typeField = NameSuggestionsField(typeNameSuggestions, project, JetFileType.INSTANCE)

@@ -44,7 +44,7 @@ class DelegatingFindMemberUsagesHandler(
                     KotlinFindMemberUsagesHandler.getInstance(element, elementsToSearch, factory)
 
                 is PsiMethod ->
-                    JavaFindUsagesHandler(element, elementsToSearch.copyToArray(), factory.javaHandlerFactory)
+                    JavaFindUsagesHandler(element, elementsToSearch.toTypedArray(), factory.javaHandlerFactory)
 
                 else -> null
             }

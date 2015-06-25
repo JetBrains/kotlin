@@ -66,7 +66,7 @@ import java.util.ArrayList
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
     private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
 
-    private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>> = array(
+    private val IGNORE_REFERENCES_INSIDE: Array<Class<out JetElement>> = arrayOf(
             javaClass<JetImportList>(),
             javaClass<JetPackageDirective>()
     )
@@ -112,7 +112,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
         if (collectedData.isEmpty()) return listOf()
 
-        return listOf(KotlinReferenceTransferableData(collectedData.copyToArray()))
+        return listOf(KotlinReferenceTransferableData(collectedData.toTypedArray()))
     }
 
     public fun collectReferenceData(
@@ -334,7 +334,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
             return referencesToRestore
         }
 
-        val dialog = RestoreReferencesDialog(project, fqNames.copyToArray())
+        val dialog = RestoreReferencesDialog(project, fqNames.toTypedArray())
         dialog.show()
 
         val selectedFqNames = dialog.getSelectedElements()!!.toSet()

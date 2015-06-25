@@ -60,7 +60,7 @@ class AndroidFindMemberUsagesHandler(
 
         val psiElements = parser?.resourceManager?.propertyToXmlAttributes(property)
         val valueElements = psiElements?.map { (it as? XmlAttribute)?.getValueElement() as? PsiElement }?.filterNotNull()
-        if (valueElements != null && valueElements.isNotEmpty()) return valueElements.copyToArray()
+        if (valueElements != null && valueElements.isNotEmpty()) return valueElements.toTypedArray()
 
         return super.getPrimaryElements()
     }
@@ -89,7 +89,7 @@ class AndroidFindMemberUsagesHandler(
             }
         }
 
-        if (res.isNotEmpty()) return res.copyToArray()
+        if (res.isNotEmpty()) return res.toTypedArray()
 
         return super.getSecondaryElements()
     }

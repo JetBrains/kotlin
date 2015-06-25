@@ -109,7 +109,7 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: JetProper
             .filterIsInstance<NavigatablePsiElement>()
 
     PsiElementListNavigator.openTargets(e,
-                                        navigatingOverrides.copyToArray(),
+                                        navigatingOverrides.toTypedArray(),
                                         JetBundle.message("navigation.title.overriding.property", property.getName()),
                                         JetBundle.message("navigation.findUsages.title.overriding.property", property.getName()), renderer)
 }

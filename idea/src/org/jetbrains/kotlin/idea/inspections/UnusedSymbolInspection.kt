@@ -114,7 +114,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                     override fun applyFix(project: Project, descriptor: ProblemDescriptor?) {
                         if (!FileModificationService.getInstance().prepareFileForWrite(declaration.getContainingFile())) return
-                        SafeDeleteHandler.invoke(project, array(declaration), false)
+                        SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
                     }
                 }
             }

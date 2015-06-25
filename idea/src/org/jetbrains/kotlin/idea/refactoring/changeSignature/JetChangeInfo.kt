@@ -98,7 +98,7 @@ public class JetChangeInfo(
 
     public fun getNewParametersCount(): Int = newParameters.size()
 
-    override fun getNewParameters(): Array<JetParameterInfo> = newParameters.copyToArray()
+    override fun getNewParameters(): Array<JetParameterInfo> = newParameters.toTypedArray()
 
     fun getNonReceiverParametersCount(): Int = newParameters.size() - (if (receiverParameterInfo != null) 1 else 0)
 
@@ -255,7 +255,7 @@ public class JetChangeInfo(
                 }
 
                 ParameterInfoImpl(javaOldIndex, info.getName(), type, info.defaultValueForCall?.getText() ?: "")
-            }.copyToArray()
+            }.toTypedArray()
 
             val returnType = if (isPrimaryMethodUpdated) currentPsiMethod.getReturnType() else PsiType.VOID
 

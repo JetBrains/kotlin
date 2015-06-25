@@ -43,7 +43,7 @@ public abstract class AndroidResourceManager(val project: Project) {
 
         fun VirtualFile.getAllChildren(): List<VirtualFile> {
             val allChildren = arrayListOf<VirtualFile>()
-            val currentChildren = getChildren() ?: array()
+            val currentChildren = getChildren() ?: emptyArray()
             for (child in currentChildren) {
                 if (child.isDirectory()) {
                     allChildren.addAll(child.getAllChildren())

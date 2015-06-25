@@ -85,7 +85,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
                                         "refactor")
         val title = IdeBundle.message("title.warning")!!
         val icon = Messages.getQuestionIcon()!!
-        return Messages.showDialog(message, title, options.copyToArray(), 0, icon)
+        return Messages.showDialog(message, title, options.toTypedArray(), 0, icon)
     }
 
     protected fun checkModifiable(element: PsiElement): Boolean {

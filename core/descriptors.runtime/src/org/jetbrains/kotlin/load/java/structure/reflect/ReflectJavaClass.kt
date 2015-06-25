@@ -72,7 +72,7 @@ public class ReflectJavaClass(
     private fun isEnumValuesOrValueOf(method: Method): Boolean {
         return when (method.getName()) {
             "values" -> method.getParameterTypes().isEmpty()
-            "valueOf" -> Arrays.equals(method.getParameterTypes(), array(javaClass<String>()))
+            "valueOf" -> Arrays.equals(method.getParameterTypes(), arrayOf(javaClass<String>()))
             else -> false
         }
     }

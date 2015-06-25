@@ -47,7 +47,7 @@ public abstract class AbstractKotlinFileStructureTest : JetLightCodeInsightFixtu
 
         popup.setup()
 
-        val printInfo = PrintInfo(array("text"), array("location"))
+        val printInfo = PrintInfo(arrayOf("text"), arrayOf("location"))
         val popupText = StructureViewUtil.print(popup.getTree(), false, printInfo, null)
         JetTestUtils.assertEqualsToFile(File("${FileUtil.getNameWithoutExtension(path)}.after"), popupText)
     }

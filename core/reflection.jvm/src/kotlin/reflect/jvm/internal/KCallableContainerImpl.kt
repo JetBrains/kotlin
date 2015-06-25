@@ -70,7 +70,7 @@ abstract class KCallableContainerImpl {
         val classLoader = jClass.classLoader
         val parameterTypes = signature.getParameterTypeList().map { jvmType ->
             loadJvmType(jvmType, nameResolver, classLoader)
-        }.copyToArray()
+        }.toTypedArray()
 
         return try {
             if (declared) jClass.getDeclaredMethod(name, *parameterTypes)

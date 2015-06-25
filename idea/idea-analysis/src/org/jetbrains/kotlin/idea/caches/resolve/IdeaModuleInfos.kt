@@ -194,11 +194,11 @@ private object NotUnderContentRootModuleInfo : IdeaModuleInfo() {
 }
 
 private data class LibraryWithoutSourceScope(project: Project, private val library: Library) :
-        LibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), array<VirtualFile>()) {
+        LibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
 }
 
 //TODO: (module refactoring) android sdk has modified scope
 private data class SdkScope(project: Project, private val sdk: Sdk) :
-        LibraryScopeBase(project, sdk.getRootProvider().getFiles(OrderRootType.CLASSES), array<VirtualFile>())
+        LibraryScopeBase(project, sdk.getRootProvider().getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>())
 
 private fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo

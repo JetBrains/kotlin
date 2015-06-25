@@ -129,7 +129,7 @@ enum class MoveAction {
             val targetClassName = config.getString("targetClass")
             val visibility = config.getNullableString("visibility")
 
-            val options = MockMoveMembersOptions(targetClassName, array(member))
+            val options = MockMoveMembersOptions(targetClassName, arrayOf(member))
             if (visibility != null) {
                 options.setMemberVisibility(visibility)
             }
@@ -145,7 +145,7 @@ enum class MoveAction {
 
             MoveClassesOrPackagesProcessor(
                     mainFile.getProject(),
-                    array(classToMove),
+                    arrayOf(classToMove),
                     MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
@@ -162,7 +162,7 @@ enum class MoveAction {
 
             MoveClassesOrPackagesProcessor(
                     project,
-                    array(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
+                    arrayOf(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
                     MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
@@ -180,7 +180,7 @@ enum class MoveAction {
 
             MoveClassToInnerProcessor(
                     project,
-                    array(classToMove),
+                    arrayOf(classToMove),
                     JavaPsiFacade.getInstance(project).findClass(targetClass, project.allScope())!!,
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
@@ -218,7 +218,7 @@ enum class MoveAction {
                 ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(rootDir, targetPackage.replace('.', '/')) }
                 MoveFilesOrDirectoriesProcessor(
                         project,
-                        array(mainFile),
+                        arrayOf(mainFile),
                         JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
                         /* searchInComments = */ false,
                         /* searchInNonJavaFiles = */ true,
@@ -231,7 +231,7 @@ enum class MoveAction {
 
                 MoveHandler.doMove(
                         project,
-                        array(mainFile),
+                        arrayOf(mainFile),
                         PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(targetFile)!!)!!,
                         /* dataContext = */ null,
                         /* callback = */ null

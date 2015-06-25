@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
 import org.jetbrains.kotlin.resolve.diagnostics.FUNCTION_NO_BODY_ERRORS
 import org.jetbrains.kotlin.resolve.diagnostics.PROPERTY_NOT_INITIALIZED_ERRORS
 
-private val NATIVE_ANNOTATIONS = array(NATIVE.fqName, NATIVE_INVOKE.fqName, NATIVE_GETTER.fqName, NATIVE_SETTER.fqName)
+private val NATIVE_ANNOTATIONS = arrayOf(NATIVE.fqName, NATIVE_INVOKE.fqName, NATIVE_GETTER.fqName, NATIVE_SETTER.fqName)
 
 public class SuppressUnusedParameterForJsNative : SuppressDiagnosticsByAnnotations(listOf(Errors.UNUSED_PARAMETER), *NATIVE_ANNOTATIONS)
 

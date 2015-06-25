@@ -311,7 +311,7 @@ public open class KotlinIntroduceParameterHandler(
                     KotlinIntroduceParameterDialog(project,
                                                    editor,
                                                    introduceParameterDescriptor,
-                                                   suggestedNames.copyToArray(),
+                                                   suggestedNames.toTypedArray(),
                                                    listOf(replacementType) + replacementType.supertypes(),
                                                    helper).show()
                 }

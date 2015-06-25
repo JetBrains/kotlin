@@ -23,9 +23,9 @@ import com.intellij.diagnostic.AttachmentFactory
 public fun attachmentByPsiFileAsArray(file: PsiFile?): Array<Attachment> {
     val attachment = attachmentByPsiFile(file)
     if (attachment == null) {
-        return array()
+        return arrayOf()
     }
-    return array(attachment)
+    return arrayOf(attachment)
 }
 
 public fun attachmentByPsiFile(file: PsiFile?): Attachment? {

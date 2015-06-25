@@ -40,8 +40,8 @@ public object PluginCliParser {
         val classLoader = PluginURLClassLoader(
                 arguments.pluginClasspaths
                         ?.map { File(it).toURI().toURL() }
-                        ?.copyToArray()
-                        ?: array<URL>(),
+                        ?.toTypedArray()
+                        ?: arrayOf<URL>(),
                 javaClass.getClassLoader()
         )
 

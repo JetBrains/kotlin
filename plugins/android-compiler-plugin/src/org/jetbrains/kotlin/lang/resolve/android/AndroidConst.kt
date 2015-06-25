@@ -37,7 +37,7 @@ public object AndroidConst {
 
     val ID_DECLARATION_PREFIX = "@+id/"
     val ID_USAGE_PREFIX = "@id/"
-    val XML_ID_PREFIXES = array(ID_DECLARATION_PREFIX, ID_USAGE_PREFIX)
+    val XML_ID_PREFIXES = arrayOf(ID_DECLARATION_PREFIX, ID_USAGE_PREFIX)
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 

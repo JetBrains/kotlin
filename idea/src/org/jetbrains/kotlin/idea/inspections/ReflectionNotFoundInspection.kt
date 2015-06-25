@@ -86,7 +86,7 @@ public class ReflectionNotFoundInspection : AbstractKotlinInspection() {
                         expression.getDoubleColonTokenReference(),
                         JetBundle.message("reflection.not.found"),
                         ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
-                        *(createQuickFix().singletonOrEmptyList().copyToArray())
+                        *(createQuickFix().singletonOrEmptyList().toTypedArray())
                 )
             }
         }

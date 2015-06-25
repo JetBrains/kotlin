@@ -238,13 +238,13 @@ public open class JetPsiChecker : Annotator, HighlightRangeExtension {
             }
         }
 
-        private fun getBeforeAnalysisVisitors(holder: AnnotationHolder) = array(
+        private fun getBeforeAnalysisVisitors(holder: AnnotationHolder) = arrayOf(
                 SoftKeywordsHighlightingVisitor(holder),
                 LabelsHighlightingVisitor(holder),
                 KDocHighlightingVisitor(holder)
         )
 
-        private fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = array(
+        private fun getAfterAnalysisVisitor(holder: AnnotationHolder, bindingContext: BindingContext) = arrayOf(
                 PropertiesHighlightingVisitor(holder, bindingContext),
                 FunctionsHighlightingVisitor(holder, bindingContext),
                 VariablesHighlightingVisitor(holder, bindingContext),

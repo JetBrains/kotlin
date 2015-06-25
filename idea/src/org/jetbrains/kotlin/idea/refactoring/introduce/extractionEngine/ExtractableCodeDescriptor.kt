@@ -202,7 +202,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
         }
 
         companion object {
-            private val selectors = array("first", "second", "third")
+            private val selectors = arrayOf("first", "second", "third")
         }
 
         override val returnType: JetType by Delegates.lazy {

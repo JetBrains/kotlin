@@ -68,7 +68,7 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
         // Quick check for classes from getAllClassNames()
         val classOrObjects = org.jetbrains.kotlin.idea.stubindex.JetClassShortNameIndex.getInstance().get(name, project, scope)
         if (classOrObjects.isEmpty()) {
-            return result.copyToArray()
+            return result.toTypedArray()
         }
 
         for (classOrObject in classOrObjects) {
@@ -82,7 +82,7 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
             }
         }
 
-        return result.copyToArray()
+        return result.toTypedArray()
     }
 
     override fun getAllClassNames(dest: HashSet<String>) {
@@ -90,29 +90,29 @@ public class JetShortNamesCache(private val project: com.intellij.openapi.projec
     }
 
     override fun getMethodsByName(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope): Array<PsiMethod>
-            = array()
+            = emptyArray()
 
     override fun getMethodsByNameIfNotMoreThan(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope, maxCount: Int): Array<PsiMethod>
-            = array()
+            = emptyArray()
 
     override fun getFieldsByNameIfNotMoreThan(org.jetbrains.annotations.NonNls s: String, scope: com.intellij.psi.search.GlobalSearchScope, i: Int): Array<PsiField>
-            = array()
+            = emptyArray()
 
     override fun processMethodsWithName(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope, processor: com.intellij.util.Processor<PsiMethod>): Boolean
             = com.intellij.util.containers.ContainerUtil.process(getMethodsByName(name, scope), processor)
 
     override fun getAllMethodNames(): Array<String>
-            = JetFunctionShortNameIndex.getInstance().getAllKeys(project).copyToArray()
+            = JetFunctionShortNameIndex.getInstance().getAllKeys(project).toTypedArray()
 
     override fun getAllMethodNames(set: HashSet<String>) {
         set.addAll(JetFunctionShortNameIndex.getInstance().getAllKeys(project))
     }
 
     override fun getFieldsByName(org.jetbrains.annotations.NonNls name: String, scope: com.intellij.psi.search.GlobalSearchScope): Array<PsiField>
-            = array()
+            = emptyArray()
 
     override fun getAllFieldNames(): Array<String>
-            = array()
+            = emptyArray()
 
     override fun getAllFieldNames(set: HashSet<String>) {
     }

@@ -24,7 +24,7 @@ import com.intellij.openapi.components.Storage
 
 State(
         name = "KotlinCompilerWorkspaceSettings",
-        storages = array(
+        storages = arrayOf(
                 Storage(file = StoragePathMacros.WORKSPACE_FILE)
         )
 )

@@ -120,15 +120,15 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
         }
 
         super.renameElement(element, PropertyCodegen.setterName(Name.identifier(newName!!)),
-                            refKindUsages[UsageKind.SETTER_USAGE]?.copyToArray() ?: array<UsageInfo>(),
+                            refKindUsages[UsageKind.SETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 
         super.renameElement(element, PropertyCodegen.getterName(Name.identifier(newName)),
-                            refKindUsages[UsageKind.GETTER_USAGE]?.copyToArray() ?: array<UsageInfo>(),
+                            refKindUsages[UsageKind.GETTER_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 
         super.renameElement(element, newName,
-                            refKindUsages[UsageKind.SIMPLE_PROPERTY_USAGE]?.copyToArray() ?: array<UsageInfo>(),
+                            refKindUsages[UsageKind.SIMPLE_PROPERTY_USAGE]?.toTypedArray() ?: arrayOf<UsageInfo>(),
                             null)
 
         listener?.elementRenamed(element)

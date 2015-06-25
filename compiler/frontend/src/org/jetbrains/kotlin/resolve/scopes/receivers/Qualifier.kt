@@ -76,7 +76,7 @@ class QualifierReceiver (
         val classObjectTypeScope = (classifier as? ClassDescriptor)?.classObjectType?.getMemberScope()?.let {
             FilteringScope(it) { it !is ClassDescriptor }
         }
-        val scopes = listOf(classObjectTypeScope, getNestedClassesAndPackageMembersScope()).filterNotNull().copyToArray()
+        val scopes = listOf(classObjectTypeScope, getNestedClassesAndPackageMembersScope()).filterNotNull().toTypedArray()
         return ChainedScope(descriptor, "Member scope for " + name + " as package or class or object", *scopes)
     }
 
@@ -97,7 +97,7 @@ class QualifierReceiver (
             }
         }
 
-        return ChainedScope(descriptor, "Static scope for " + name + " as package or class or object", *scopes.copyToArray())
+        return ChainedScope(descriptor, "Static scope for " + name + " as package or class or object", *scopes.toTypedArray())
     }
 
     override fun getType(): JetType = throw IllegalStateException("No type corresponds to QualifierReceiver '$this'")

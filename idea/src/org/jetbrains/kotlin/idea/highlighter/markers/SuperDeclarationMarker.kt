@@ -95,7 +95,7 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
 
             PsiElementListNavigator.openTargets(
                     e,
-                    superDeclarations.copyToArray(),
+                    superDeclarations.toTypedArray(),
                     JetBundle.message("navigation.title.super.declaration", elementName),
                     JetBundle.message("navigation.findUsages.title.super.declaration", elementName),
                     JetFunctionPsiElementCellRenderer())
