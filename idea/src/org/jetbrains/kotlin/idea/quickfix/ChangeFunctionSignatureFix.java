@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -35,9 +36,8 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
-import org.jetbrains.kotlin.idea.core.NameValidator;
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetParameterInfo;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -97,25 +97,25 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
         return true;
     }
 
-    protected static String getNewArgumentName(ValueArgument argument, NameValidator validator) {
+    protected static String getNewArgumentName(ValueArgument argument, Function1<String, Boolean> validator) {
         ValueArgumentName argumentName = argument.getArgumentName();
         JetExpression expression = argument.getArgumentExpression();
 
         if (argumentName != null) {
-            return validator.validateName(argumentName.getAsName().asString());
+            return KotlinNameSuggester.INSTANCE$.validateName(argumentName.getAsName().asString(), validator);
         }
         else if (expression != null) {
             return KotlinNameSuggester.INSTANCE$.suggestNames(expression, validator, "param")[0];
         }
 
-        return validator.validateName("param");
+        return KotlinNameSuggester.INSTANCE$.validateName("param", validator);
     }
 
     protected static JetParameterInfo getNewParameterInfo(
             FunctionDescriptor functionDescriptor,
             BindingContext bindingContext,
             ValueArgument argument,
-            NameValidator validator
+            Function1<String, Boolean> validator
     ) {
         String name = getNewArgumentName(argument, validator);
         JetExpression expression = argument.getArgumentExpression();

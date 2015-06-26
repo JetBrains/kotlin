@@ -27,7 +27,8 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.idea.core.CollectingValidator
+import org.jetbrains.kotlin.idea.core.CollectingNameValidator
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
@@ -93,8 +94,8 @@ private class ParameterNameExpression(
         }
 
         // ensure there are no conflicts
-        val validator = CollectingValidator(parameterNames)
-        return names.map { LookupElementBuilder.create(validator.validateName(it)) }.toTypedArray()
+        val validator = CollectingNameValidator(parameterNames)
+        return names.map { LookupElementBuilder.create(KotlinNameSuggester.validateName(it, validator)) }.toTypedArray()
     }
 }
 

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.NameValidator
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -662,9 +661,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
-            fun suggestName(validator: NameValidator): Name {
+            fun suggestName(validator: (String) -> Boolean): Name {
                 val name = if (nameSuggestion != null)
-                    validator.validateName(nameSuggestion)
+                    KotlinNameSuggester.validateName(nameSuggestion, validator)
                 else
                     KotlinNameSuggester.suggestNamesForExpression(value, validator, "t").first()
                 return Name.identifier(name)
@@ -690,11 +689,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
                             }
                         }
 
-                        val name = suggestName(object : NameValidator() {
-                            override fun validateInner(name: String): Boolean {
-                                return resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
-                            }
-                        })
+                        val name = suggestName { name ->
+                            resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
+                        }
 
                         var declaration = psiFactory.createDeclarationByPattern<JetVariableDeclaration>("val $0 = $1", name, value)
                         declaration = block.addBefore(declaration, expressionToBeReplaced) as JetVariableDeclaration
@@ -723,9 +720,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, expression)
             }
             else {
-                val name = suggestName(object : NameValidator() {
-                    override fun validateInner(name: String) = !isNameUsed(name)
-                })
+                val name = suggestName { !isNameUsed(it) }
                 replaceUsages(name)
                 psiFactory.createExpressionByPattern("$0${dot}let { $1 -> $2 }", value, name, expression)
             }

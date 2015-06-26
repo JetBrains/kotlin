@@ -28,7 +28,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.ExpectedInfos
-import org.jetbrains.kotlin.idea.core.EmptyValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -103,7 +102,7 @@ private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, 
             template.addTextSegment(", ")
         }
         //TODO: check for names in scope
-        template.addVariable(ParameterNameExpression(KotlinNameSuggester.suggestNames(parameterType, EmptyValidator, "p")), true)
+        template.addVariable(ParameterNameExpression(KotlinNameSuggester.suggestNames(parameterType, { true }, "p")), true)
         if (explicitParameterTypes) {
             template.addTextSegment(": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameterType))
         }

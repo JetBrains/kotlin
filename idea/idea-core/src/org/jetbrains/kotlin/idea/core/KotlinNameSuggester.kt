@@ -21,7 +21,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.NameValidator
 import org.jetbrains.kotlin.lexer.JetLexer
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -30,16 +29,16 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import java.util.ArrayList
+import java.util.*
 import java.util.regex.Pattern
 
 public object KotlinNameSuggester {
 
-    private fun addName(result: ArrayList<String>, name: String?, validator: NameValidator) {
+    private fun addName(result: ArrayList<String>, name: String?, validator: (String) -> Boolean) {
         var name = name ?: return
         if ("class" == name) name = "clazz"
         if (!isIdentifier(name)) return
-        result.add(validator.validateName(name))
+        result.add(validateName(name, validator))
     }
 
     /**
@@ -58,7 +57,7 @@ public object KotlinNameSuggester {
      * *
      * @return possible names
      */
-    public fun suggestNames(expression: JetExpression, validator: NameValidator, defaultName: String?): Array<String> {
+    public fun suggestNames(expression: JetExpression, validator: (String) -> Boolean, defaultName: String?): Array<String> {
         val result = ArrayList<String>()
 
         val bindingContext = expression.analyze(BodyResolveMode.FULL)
@@ -72,20 +71,20 @@ public object KotlinNameSuggester {
         return ArrayUtil.toStringArray(result)
     }
 
-    public fun suggestNames(type: JetType, validator: NameValidator, defaultName: String?): Array<String> {
+    public fun suggestNames(type: JetType, validator: (String) -> Boolean, defaultName: String?): Array<String> {
         val result = ArrayList<String>()
         addNamesForType(result, type, validator)
         if (result.isEmpty()) addName(result, defaultName, validator)
         return ArrayUtil.toStringArray(result)
     }
 
-    public fun suggestNamesForType(jetType: JetType, validator: NameValidator): Array<String> {
+    public fun suggestNamesForType(jetType: JetType, validator: (String) -> Boolean): Array<String> {
         val result = ArrayList<String>()
         addNamesForType(result, jetType, validator)
         return ArrayUtil.toStringArray(result)
     }
 
-    jvmOverloads public fun suggestNamesForExpression(expression: JetExpression, validator: NameValidator, defaultName: String? = null): Array<String> {
+    jvmOverloads public fun suggestNamesForExpression(expression: JetExpression, validator: (String) -> Boolean, defaultName: String? = null): Array<String> {
         val result = ArrayList<String>()
         addNamesForExpression(result, expression, validator)
         if (result.isEmpty()) addName(result, defaultName, validator)
@@ -94,15 +93,15 @@ public object KotlinNameSuggester {
 
     private val COMMON_TYPE_PARAMETER_NAMES = arrayOf("T", "U", "V", "W", "X", "Y", "Z")
 
-    public fun suggestNamesForTypeParameters(count: Int, validator: NameValidator): Array<String> {
+    public fun suggestNamesForTypeParameters(count: Int, validator: (String) -> Boolean): Array<String> {
         val result = ArrayList<String>()
         for (i in 0..count - 1) {
-            result.add(validator.validateNameWithVariants(*COMMON_TYPE_PARAMETER_NAMES))
+            result.add(validateNameWithVariants(validator, *COMMON_TYPE_PARAMETER_NAMES))
         }
         return ArrayUtil.toStringArray(result)
     }
 
-    private fun addNamesForType(result: ArrayList<String>, jetType: JetType, validator: NameValidator) {
+    private fun addNamesForType(result: ArrayList<String>, jetType: JetType, validator: (String) -> Boolean) {
         var jetType = jetType
         val builtIns = KotlinBuiltIns.getInstance()
         val typeChecker = JetTypeChecker.DEFAULT
@@ -177,7 +176,7 @@ public object KotlinNameSuggester {
         }
     }
 
-    private fun addForClassType(result: ArrayList<String>, jetType: JetType, validator: NameValidator) {
+    private fun addForClassType(result: ArrayList<String>, jetType: JetType, validator: (String) -> Boolean) {
         val descriptor = jetType.getConstructor().getDeclarationDescriptor()
         if (descriptor != null) {
             val className = descriptor.getName()
@@ -189,13 +188,13 @@ public object KotlinNameSuggester {
 
     private val ACCESSOR_PREFIXES = arrayOf("get", "is", "set")
 
-    public fun getCamelNames(name: String, validator: NameValidator, startLowerCase: Boolean): List<String> {
+    public fun getCamelNames(name: String, validator: (String) -> Boolean, startLowerCase: Boolean): List<String> {
         val result = ArrayList<String>()
         addCamelNames(result, name, validator, startLowerCase)
         return result
     }
 
-    private fun addCamelNames(result: ArrayList<String>, name: String, validator: NameValidator, startLowerCase: Boolean = true) {
+    private fun addCamelNames(result: ArrayList<String>, name: String, validator: (String) -> Boolean, startLowerCase: Boolean = true) {
         if (name === "") return
         var s = deleteNonLetterFromString(name)
 
@@ -255,7 +254,7 @@ public object KotlinNameSuggester {
         return matcher.replaceAll("")
     }
 
-    private fun addNamesForExpression(result: ArrayList<String>, expression: JetExpression?, validator: NameValidator) {
+    private fun addNamesForExpression(result: ArrayList<String>, expression: JetExpression?, validator: (String) -> Boolean) {
         if (expression == null) return
 
         expression.accept(object : JetVisitorVoid() {
@@ -293,5 +292,56 @@ public object KotlinNameSuggester {
         if (lexer.getTokenType() !== JetTokens.IDENTIFIER) return false
         lexer.advance()
         return lexer.getTokenType() == null
+    }
+
+    /**
+     * Validates name, and slightly improves it by adding number to name in case of conflicts
+     * @param name to check it in scope
+     * @return name or nameI, where I is number
+     */
+    public fun validateName(name: String, validator: (String) -> Boolean): String {
+        if (validator.invoke(name)) return name
+        var i = 1
+        while (!validator.invoke(name + i)) {
+            ++i
+        }
+
+        return name + i
+    }
+
+    /**
+     * Validates name using set of variants which are tried in succession (and extended with suffixes if necessary)
+     * For example, when given sequence of a, b, c possible names are tried out in the following order: a, b, c, a1, b1, c1, a2, b2, c2, ...
+     * @param names to check it in scope
+     * @return name or nameI, where name is one of variants and I is a number
+     */
+    public fun validateNameWithVariants(validator: (String) -> Boolean, vararg names: String): String {
+        var i = 0
+        while (true) {
+            for (name in names) {
+                val candidate = if (i > 0) name + i else name
+                if (validator.invoke(candidate)) return candidate
+            }
+            i++
+        }
+    }
+}
+
+public class CollectingNameValidator @jvmOverloads constructor(
+        existingNames: Collection<String> = Collections.emptySet(),
+        val filter: (String) -> Boolean = { true }
+): (String) -> Boolean {
+    private val existingNames = HashSet(existingNames)
+
+    override fun invoke(name: String): Boolean {
+        if (name !in existingNames && filter(name)) {
+            existingNames.add(name)
+            return true
+        }
+        return false
+    }
+
+    public fun addName(name: String) {
+        existingNames.add(name)
     }
 }

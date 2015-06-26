@@ -25,9 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
+import org.jetbrains.kotlin.idea.core.CollectingNameValidator;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
-import org.jetbrains.kotlin.idea.core.NameValidator;
-import org.jetbrains.kotlin.idea.core.SimpleCollectingValidator;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
 import org.jetbrains.kotlin.psi.JetFile;
 import org.jetbrains.kotlin.psi.JetFunctionLiteral;
@@ -68,7 +67,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
                         new Function1<JetMutableMethodDescriptor, Unit>() {
                             @Override
                             public Unit invoke(JetMutableMethodDescriptor descriptor) {
-                                NameValidator validator = new SimpleCollectingValidator();
+                                CollectingNameValidator validator = new CollectingNameValidator();
                                 descriptor.clearNonReceiverParameters();
                                 for (JetType type : parameterTypes) {
                                     String name = KotlinNameSuggester.INSTANCE$.suggestNames(type, validator, "param")[0];

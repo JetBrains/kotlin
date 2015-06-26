@@ -744,7 +744,7 @@ private fun ExtractionData.inferParametersInfo(
     }
 
     val varNameValidator = NameValidatorImpl(
-            commonParent.getNonStrictParentOfType<JetExpression>(),
+            commonParent.getNonStrictParentOfType<JetExpression>()!!,
             originalElements.firstOrNull(),
             NameValidatorImpl.Target.PROPERTIES
     )
@@ -758,7 +758,7 @@ private fun ExtractionData.inferParametersInfo(
             if (currentName == null) {
                 currentName = KotlinNameSuggester.suggestNames(getParameterType(options.allowSpecialClassNames), varNameValidator, "p").first()
             }
-            mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) varNameValidator.validateName(name) else null
+            mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) KotlinNameSuggester.validateName(name, varNameValidator) else null
             info.parameters.add(this)
         }
     }
@@ -921,7 +921,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<Strin
     getExpressions().singleOrNull()?.let { expr ->
         val property = expr.getStrictParentOfType<JetProperty>()
         if (property?.getInitializer() == expr) {
-            property?.getName()?.let { functionNames.add(validator.validateName("get" + it.capitalize())) }
+            property?.getName()?.let { functionNames.add(KotlinNameSuggester.validateName("get" + it.capitalize(), validator)) }
         }
     }
 

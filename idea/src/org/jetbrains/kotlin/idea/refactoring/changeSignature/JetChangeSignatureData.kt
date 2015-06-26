@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.CollectingValidator
+import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import org.jetbrains.kotlin.name.Name
@@ -76,11 +76,11 @@ public class JetChangeSignatureData(
         val bodyScope = function.getBodyExpression()?.let { it.analyze()[BindingContext.RESOLUTION_SCOPE, it] }
         val paramNames = baseDescriptor.getValueParameters().map { it.getName().asString() }
         val validator = bodyScope?.let { bodyScope ->
-            CollectingValidator(paramNames) {
+            CollectingNameValidator(paramNames) {
                 val name = Name.identifier(it)
                 bodyScope.getLocalVariable(name) == null && bodyScope.getProperties(name).isEmpty()
             }
-        } ?: CollectingValidator(paramNames)
+        } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
         val receiverName = KotlinNameSuggester.suggestNames(receiverType, validator, "receiver").first()
         return JetParameterInfo(functionDescriptor = baseDescriptor, name = receiverName, type = receiverType)

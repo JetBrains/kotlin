@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.core.EmptyValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassInfo
 import org.jetbrains.kotlin.idea.util.makeNotNullable
@@ -44,7 +43,7 @@ abstract class TypeInfo(val variance: Variance) {
 
     class ByExpression(val expression: JetExpression, variance: Variance): TypeInfo(variance) {
         override val possibleNamesFromExpression: Array<String> by Delegates.lazy {
-            KotlinNameSuggester.suggestNamesForExpression(expression, EmptyValidator)
+            KotlinNameSuggester.suggestNamesForExpression(expression, { true })
         }
 
         override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =

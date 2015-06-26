@@ -45,8 +45,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.CollectingValidator
-import org.jetbrains.kotlin.idea.core.EmptyValidator
+import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
@@ -396,7 +395,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     SourceElement.NO_SOURCE
             )
 
-            val validator = CollectingValidator { scope.getClassifier(Name.identifier(it)) == null }
+            val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it)) == null }
             val parameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(typeParameterCount, validator)
             val typeParameters = (0..typeParameterCount - 1).map {
                 TypeParameterDescriptorImpl.createWithDefaultBound(
@@ -622,8 +621,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
             }
 
-            val validator = CollectingValidator { scope.getClassifier(Name.identifier(it)) == null }
-            val typeParameterNames = allTypeParametersNotInScope.map { validator.validateName(it.getName().asString()) }
+            val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it)) == null }
+            val typeParameterNames = allTypeParametersNotInScope.map { KotlinNameSuggester.validateName(it.getName().asString(), validator) }
 
             return allTypeParametersNotInScope.zip(typeParameterNames).toMap()
         }
@@ -821,7 +820,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 // figure out suggested names for each type option
                 val parameterTypeToNamesMap = HashMap<String, Array<String>>()
                 typeCandidates[parameter.typeInfo]!!.forEach { typeCandidate ->
-                    val suggestedNames = KotlinNameSuggester.suggestNamesForType(typeCandidate.theType, EmptyValidator)
+                    val suggestedNames = KotlinNameSuggester.suggestNamesForType(typeCandidate.theType, { true })
                     parameterTypeToNamesMap[typeCandidate.renderedType!!] = suggestedNames
                 }
 
