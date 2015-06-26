@@ -23,7 +23,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface KotlinClass {
     int abiVersion();
 
-    Kind kind();
+    Kind kind() default Kind.CLASS;
 
     String[] data();
 
@@ -31,7 +31,7 @@ public @interface KotlinClass {
         CLASS,
 
         /**
-         * A class has this kind if and only if its first non-class container is not a package.
+         * A class has kind LOCAL_CLASS if and only if it's not an anonymous object and its first non-class container is not a package.
          */
         LOCAL_CLASS,
 
