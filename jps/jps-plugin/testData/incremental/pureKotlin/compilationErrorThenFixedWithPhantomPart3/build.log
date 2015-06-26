@@ -1,5 +1,5 @@
 Cleaning output files:
-out/production/module/Other.class
+out/production/module/B.class
 out/production/module/Usage.class
 out/production/module/_DefaultPackage.class
 End of files
@@ -11,23 +11,19 @@ COMPILATION FAILED
 Expecting an expression
 
 
-Cleaning output files:
-out/production/module/Fun.class
-End of files
 Compiling files:
-src/fun.kt
 src/other.kt
 src/usage.kt
 End of files
 Cleaning output files:
-out/production/module/Fun.class
+out/production/module/A.class
 out/production/module/Usage.class
 out/production/module/_DefaultPackage.class
+out/production/module/new/LikePart.class
 out/production/module/new/NewPackage.class
-out/production/module/new/Other.class
 End of files
 Compiling files:
 src/fun.kt
-src/other.kt
+src/likePart.kt
 src/usage.kt
 End of files

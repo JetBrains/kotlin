@@ -1,14 +1,14 @@
 Cleaning output files:
-out/production/module/inline/InlinePackage$inline$*.class
+out/production/module/inline/Inline.class
 out/production/module/inline/InlinePackage.class
 End of files
 Compiling files:
 src/inline.kt
 End of files
 Cleaning output files:
-out/production/module/inline/InlinePackage$inline$*.class
+out/production/module/inline/Inline.class
 out/production/module/inline/InlinePackage.class
-out/production/module/usage/UsagePackage$usage$*.class
+out/production/module/usage/Usage.class
 out/production/module/usage/UsagePackage.class
 End of files
 Compiling files:

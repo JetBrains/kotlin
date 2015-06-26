@@ -1,6 +1,6 @@
 Cleaning output files:
-out/production/module/outer/nested/NestedPackage$nested$*$main$1.class
-out/production/module/outer/nested/NestedPackage$nested$*.class
+out/production/module/outer/nested/Nested$main$1.class
+out/production/module/outer/nested/Nested.class
 out/production/module/outer/nested/NestedPackage.class
 End of files
 Compiling files:

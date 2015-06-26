@@ -1,14 +1,14 @@
 Cleaning output files:
-out/production/module/b/BPackage$b2$*.class
+out/production/module/b/B2.class
 out/production/module/b/BPackage.class
 End of files
 Compiling files:
 src/a2.kt
 End of files
 Cleaning output files:
-out/production/module/a/APackage$a1$*.class
+out/production/module/a/A1.class
 out/production/module/a/APackage.class
-out/production/module/b/BPackage$b1$*.class
+out/production/module/b/B1.class
 out/production/module/b/BPackage.class
 End of files
 Compiling files:

@@ -1,6 +1,13 @@
 Cleaning output files:
-out/production/module/test/TestPackage$a$*.class
+out/production/module/test/A.class
 out/production/module/test/TestPackage.class
+End of files
+Compiling files:
+src/a.kt
+End of files
+Cleaning output files:
+out/production/module/test2/A.class
+out/production/module/test2/Test2Package.class
 End of files
 Compiling files:
 src/a.kt
@@ -11,7 +18,7 @@ Compiling files:
 src/b.kt
 End of files
 Cleaning output files:
-out/production/module/test2/Test2Package$a$*.class
+out/production/module/test2/A.class
 out/production/module/test2/Test2Package.class
 End of files
 Compiling files:

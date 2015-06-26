@@ -1,6 +1,6 @@
 Cleaning output files:
-out/production/module/a/APackage$a$*$foo$1.class
-out/production/module/a/APackage$a$*.class
+out/production/module/a/A$foo$1.class
+out/production/module/a/A.class
 out/production/module/a/APackage.class
 End of files
 Compiling files:

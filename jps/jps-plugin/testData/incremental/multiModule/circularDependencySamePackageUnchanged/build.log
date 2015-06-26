@@ -1,5 +1,5 @@
 Cleaning output files:
-out/production/module1/test/TestPackage$module1_a$*.class
+out/production/module1/test/Module1_a.class
 out/production/module1/test/TestPackage.class
 End of files
 Compiling files:
