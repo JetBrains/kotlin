@@ -471,6 +471,32 @@ public class InlineCodegenUtil {
                           "()V", false);
     }
 
+    public static boolean isInlineMarker(AbstractInsnNode insn) {
+        return isInlineMarker(insn, null);
+    }
+
+    public static boolean isInlineMarker(AbstractInsnNode insn, String name) {
+        if (insn instanceof MethodInsnNode) {
+            MethodInsnNode methodInsnNode = (MethodInsnNode) insn;
+            return insn.getOpcode() == Opcodes.INVOKESTATIC &&
+                   methodInsnNode.owner.equals(INLINE_MARKER_CLASS_NAME) &&
+                   (name != null ? methodInsnNode.name.equals(name)
+                                 : methodInsnNode.name.equals(INLINE_MARKER_BEFORE_METHOD_NAME) ||
+                                   methodInsnNode.name.equals(INLINE_MARKER_AFTER_METHOD_NAME));
+        }
+        else {
+            return false;
+        }
+    }
+
+    public static boolean isBeforeInlineMarker(AbstractInsnNode insn) {
+        return isInlineMarker(insn, INLINE_MARKER_BEFORE_METHOD_NAME);
+    }
+
+    public static boolean isAfterInlineMarker(AbstractInsnNode insn) {
+        return isInlineMarker(insn, INLINE_MARKER_AFTER_METHOD_NAME);
+    }
+
     public static int getLoadStoreArgSize(int opcode) {
         return opcode == Opcodes.DSTORE || opcode == Opcodes.LSTORE || opcode == Opcodes.DLOAD || opcode == Opcodes.LLOAD ? 2 : 1;
     }

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnOpcode
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysTrueIfeq
 import org.jetbrains.kotlin.lexer.JetTokens

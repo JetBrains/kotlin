@@ -2045,7 +2045,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
             StackValue script = StackValue.thisOrOuter(this, scriptClass, false, false);
             Type fieldType = typeMapper.mapType(valueParameterDescriptor);
-            return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false, script, valueParameterDescriptor);
+            return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false, script,
+                                    valueParameterDescriptor);
         }
 
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
@@ -3596,14 +3597,14 @@ The "returned" value of try expression with no finally is either the last expres
         return StackValue.operation(expectedAsmType, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-
-           JetFinallySection finallyBlock = expression.getFinallyBlock();
+                JetFinallySection finallyBlock = expression.getFinallyBlock();
                 FinallyBlockStackElement finallyBlockStackElement = null;
                 if (finallyBlock != null) {
                     finallyBlockStackElement = new FinallyBlockStackElement(expression);
                     blockStackElements.push(finallyBlockStackElement);
                 }
 
+                //PseudoInsnsPackage.saveStackBeforeTryExpr(v);
 
                 Label tryStart = new Label();
                 v.mark(tryStart);
@@ -3667,6 +3668,7 @@ The "returned" value of try expression with no finally is either the last expres
                     v.mark(defaultCatchStart);
                     int savedException = myFrameMap.enterTemp(JAVA_THROWABLE_TYPE);
                     v.store(savedException, JAVA_THROWABLE_TYPE);
+
                     Label defaultCatchEnd = new Label();
                     v.mark(defaultCatchEnd);
 

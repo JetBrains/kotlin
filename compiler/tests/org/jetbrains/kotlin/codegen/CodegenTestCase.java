@@ -246,7 +246,7 @@ public abstract class CodegenTestCase extends UsefulTestCase {
                 analyzer.analyze(classNode.name, method);
             }
             catch (Throwable e) {
-                System.out.println(file.asText());
+                System.err.println(file.asText());
                 System.err.println(classNode.name + "::" + method.name + method.desc);
 
                 //noinspection InstanceofCatchParameter

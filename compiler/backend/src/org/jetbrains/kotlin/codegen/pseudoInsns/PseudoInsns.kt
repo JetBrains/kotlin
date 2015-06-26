@@ -24,78 +24,46 @@ import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import kotlin.platform.platformStatic
 
-public val PSEUDO_INSN_CALL_OWNER: String = "kotlin.jvm.\$PseudoInsn"
-public val PSEUDO_INSN_PARTS_SEPARATOR: String = ":"
+public val PSEUDO_INSN_CALL_OWNER: String = "kotlin/jvm/internal/\$PseudoInsn"
 
-public enum class PseudoInsnOpcode(val signature: String = "()V") {
+public enum class PseudoInsn(val signature: String = "()V") {
     FIX_STACK_BEFORE_JUMP(),
     FAKE_ALWAYS_TRUE_IFEQ("()I"),
-    FAKE_ALWAYS_FALSE_IFEQ("()I")
+    FAKE_ALWAYS_FALSE_IFEQ("()I"),
+    SAVE_STACK_BEFORE_TRY(),
+    RESTORE_STACK_IN_TRY_CATCH()
     ;
 
-    public fun insnOf(): PseudoInsn = PseudoInsn(this, emptyList())
-    public fun insnOf(args: List<String>): PseudoInsn = PseudoInsn(this, args)
-
-    public fun parseOrNull(insn: AbstractInsnNode): PseudoInsn? {
-        val pseudo = parseOrNull(insn)
-        return if (pseudo?.opcode == this) pseudo else null
-    }
-
-    public fun isa(insn: AbstractInsnNode): Boolean =
-            if (isPseudoInsn(insn)) {
-                val methodName = (insn as MethodInsnNode).name
-                methodName == this.toString() || methodName.startsWith(this.toString() + PSEUDO_INSN_PARTS_SEPARATOR)
-            }
-            else false
-
     public fun emit(iv: InstructionAdapter) {
-        insnOf().emit(iv)
+        iv.invokestatic(PSEUDO_INSN_CALL_OWNER, toString(), signature, false)
     }
+
+    public fun createInsnNode(): MethodInsnNode =
+            MethodInsnNode(Opcodes.INVOKESTATIC, PSEUDO_INSN_CALL_OWNER, toString(), signature, false)
+
+    public fun isa(node: AbstractInsnNode): Boolean =
+            this == parsePseudoInsnOrNull(node)
 }
 
-public class PseudoInsn(public val opcode: PseudoInsnOpcode, public val args: List<String>) {
-    public val encodedMethodName: String =
-            if (args.isEmpty())
-                opcode.toString()
-            else
-                opcode.toString() + PSEUDO_INSN_PARTS_SEPARATOR + args.join(PSEUDO_INSN_PARTS_SEPARATOR)
+public fun isPseudoInsn(insn: AbstractInsnNode): Boolean =
+        insn is MethodInsnNode && insn.getOpcode() == Opcodes.INVOKESTATIC && insn.owner == PSEUDO_INSN_CALL_OWNER
 
-    public fun emit(iv: InstructionAdapter) {
-        iv.invokestatic(PSEUDO_INSN_CALL_OWNER, encodedMethodName, opcode.signature, false)
-    }
-}
+public fun parsePseudoInsnOrNull(insn: AbstractInsnNode): PseudoInsn? =
+        if (isPseudoInsn(insn))
+            PseudoInsn.valueOf((insn as MethodInsnNode).name)
+        else null
 
 public fun InstructionAdapter.fixStackAndJump(label: Label) {
-    PseudoInsnOpcode.FIX_STACK_BEFORE_JUMP.emit(this)
+    PseudoInsn.FIX_STACK_BEFORE_JUMP.emit(this)
     this.goTo(label)
 }
 
 public fun InstructionAdapter.fakeAlwaysTrueIfeq(label: Label) {
-    PseudoInsnOpcode.FAKE_ALWAYS_TRUE_IFEQ.emit(this)
+    PseudoInsn.FAKE_ALWAYS_TRUE_IFEQ.emit(this)
     this.ifeq(label)
 }
 
 public fun InstructionAdapter.fakeAlwaysFalseIfeq(label: Label) {
-    PseudoInsnOpcode.FAKE_ALWAYS_FALSE_IFEQ.emit(this)
+    PseudoInsn.FAKE_ALWAYS_FALSE_IFEQ.emit(this)
     this.ifeq(label)
-}
-
-public fun parseOrNull(insn: AbstractInsnNode): PseudoInsn? =
-        if (isPseudoInsn(insn))
-            parseParts(getPseudoInsnParts(insn as MethodInsnNode))
-        else null
-
-private fun isPseudoInsn(insn: AbstractInsnNode) =
-        insn is MethodInsnNode && insn.getOpcode() == Opcodes.INVOKESTATIC && insn.owner == PSEUDO_INSN_CALL_OWNER
-
-private fun getPseudoInsnParts(insn: MethodInsnNode): List<String> =
-        insn.name.splitBy(PSEUDO_INSN_PARTS_SEPARATOR)
-
-private fun parseParts(parts: List<String>): PseudoInsn? {
-    try {
-        return PseudoInsnOpcode.valueOf(parts[0]).insnOf(parts.subList(1, parts.size()))
-    }
-    catch (e: IllegalArgumentException) {
-        return null
-    }
 }

@@ -2289,6 +2289,129 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TryCatchInExpressions extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInTryCatchInExpressions() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("catch.kt")
+            public void testCatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/catch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("complexChain.kt")
+            public void testComplexChain() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/complexChain.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("differentTypes.kt")
+            public void testDifferentTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/differentTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("expectException.kt")
+            public void testExpectException() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/expectException.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("finally.kt")
+            public void testFinally() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/finally.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineTryCatch.kt")
+            public void testInlineTryCatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/inlineTryCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineTryExpr.kt")
+            public void testInlineTryExpr() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/inlineTryExpr.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineTryFinally.kt")
+            public void testInlineTryFinally() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/inlineTryFinally.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("multipleCatchBlocks.kt")
+            public void testMultipleCatchBlocks() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/multipleCatchBlocks.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitTry.kt")
+            public void testSplitTry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitTryCorner1.kt")
+            public void testSplitTryCorner1() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTryCorner1.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("splitTryCorner2.kt")
+            public void testSplitTryCorner2() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/splitTryCorner2.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("try.kt")
+            public void testTry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/try.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryAfterTry.kt")
+            public void testTryAfterTry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryAfterTry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryAndBreak.kt")
+            public void testTryAndBreak() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryAndBreak.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryAndContinue.kt")
+            public void testTryAndContinue() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryAndContinue.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryInsideCatch.kt")
+            public void testTryInsideCatch() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryInsideCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryInsideTry.kt")
+            public void testTryInsideTry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/tryInsideTry.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unmatchedInlineMarkers.kt")
+            public void testUnmatchedInlineMarkers() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions/unmatchedInlineMarkers.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")

@@ -50,7 +50,7 @@ public abstract class AbstractBytecodeTextTest extends CodegenTestCase {
         }
 
         try {
-            assertEquals(expected.toString(), actual.toString());
+            assertEquals(text, expected.toString(), actual.toString());
         }
         catch (Throwable e) {
             System.out.println(text);
