@@ -31,22 +31,6 @@ import java.util.regex.Pattern
 
 public object KotlinNameSuggester {
 
-    /**
-     * Name suggestion types:
-     * 1. According to type:
-     * 1a. Primitive types to some short name
-     * 1b. Class types according to class name camel humps: (AbCd => {abCd, cd})
-     * 1c. Arrays => arrayOfInnerType
-     * 2. Reference expressions according to reference name camel humps
-     * 3. Method call expression according to method callee expression
-     * @param expression to suggest name for variable
-     * *
-     * @param validator to check scope for such names
-     * *
-     * @param defaultName
-     * *
-     * @return possible names
-     */
     public fun suggestNamesByExpressionAndType(expression: JetExpression, bindingContext: BindingContext, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
         val result = LinkedHashSet<String>()
 
