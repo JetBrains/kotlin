@@ -24,6 +24,11 @@ import org.fusesource.jansi.internal.CLibrary;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
+import java.util.Set;
+
+import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*;
+
 public abstract class PlainTextMessageRenderer implements MessageRenderer {
     // AnsiConsole doesn't check isatty() for stderr (see https://github.com/fusesource/jansi/pull/35).
     // TODO: investigate why ANSI escape codes on Windows only work in REPL for some reason
@@ -32,6 +37,8 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
             CLibrary.isatty(CLibrary.STDERR_FILENO) != 0;
 
     private static final String LINE_SEPARATOR = LineSeparator.getSystemLineSeparator().getSeparatorString();
+
+    private static final Set<CompilerMessageSeverity> IMPORTANT_MESSAGE_SEVERITIES = EnumSet.of(EXCEPTION, ERROR, WARNING);
 
     @Override
     public String renderPreamble() {
@@ -67,8 +74,11 @@ public abstract class PlainTextMessageRenderer implements MessageRenderer {
                     .fg(severityColor(severity))
                     .a(severity.name().toLowerCase())
                     .a(": ")
-                    .reset()
-                    .bold();
+                    .reset();
+
+            if (IMPORTANT_MESSAGE_SEVERITIES.contains(severity)) {
+                ansi.bold();
+            }
 
             // Only make the first line of the message bold. Otherwise long overload ambiguity errors or exceptions are hard to read
             String decapitalized = decapitalizeIfNeeded(message);
