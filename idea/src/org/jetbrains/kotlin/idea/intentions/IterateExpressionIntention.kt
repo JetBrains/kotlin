@@ -25,9 +25,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.JetType
@@ -57,8 +59,8 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         //TODO: multi-declaration (when?)
 
         val elementType = data(element)!!.elementType
-        //TODO: name validation
-        val names = KotlinNameSuggester.suggestIterationVariableNames(element, elementType, { true }, "e")
+        val nameValidator = NewDeclarationNameValidator(element, element.siblings(), NewDeclarationNameValidator.Target.VARIABLES)
+        val names = KotlinNameSuggester.suggestIterationVariableNames(element, elementType, nameValidator, "e")
 
         var forExpression = JetPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names.first(), element) as JetForExpression
         forExpression = element.replaced(forExpression)

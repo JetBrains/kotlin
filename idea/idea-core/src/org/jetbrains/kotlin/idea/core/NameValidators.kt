@@ -51,10 +51,17 @@ public class CollectingNameValidator @jvmOverloads constructor(
 }
 
 public class NewDeclarationNameValidator(
-        private val container: PsiElement,
-        private val anchor: PsiElement?,
+        private val visibleDeclarationsContext: JetElement?,
+        private val checkDeclarationsIn: Sequence<PsiElement>,
         private val target: NewDeclarationNameValidator.Target
 ) : (String) -> Boolean {
+
+    public constructor(container: PsiElement, anchor: PsiElement?, target: NewDeclarationNameValidator.Target)
+        : this(
+            (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<JetElement>(),
+            anchor?.siblings() ?: container.allChildren,
+            target)
+
     public enum class Target {
         VARIABLES,
         FUNCTIONS_AND_CLASSES
@@ -63,13 +70,13 @@ public class NewDeclarationNameValidator(
     override fun invoke(name: String): Boolean {
         val identifier = Name.identifier(name)
 
-        val scopeContext = (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<JetElement>() ?: return true
-        val bindingContext = scopeContext.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
-        val resolutionScope = scopeContext.getResolutionScope(bindingContext, scopeContext.getResolutionFacade())
-        if (resolutionScope.hasConflict(identifier)) return false
+        if (visibleDeclarationsContext != null) {
+            val bindingContext = visibleDeclarationsContext.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
+            val resolutionScope = visibleDeclarationsContext.getResolutionScope(bindingContext, visibleDeclarationsContext.getResolutionFacade())
+            if (resolutionScope.hasConflict(identifier)) return false
+        }
 
-        val elementsToCheck = anchor?.siblings() ?: container.allChildren
-        return elementsToCheck.none {
+        return checkDeclarationsIn.none {
             it.findDescendantOfType<JetNamedDeclaration> { it.isConflicting(identifier) } != null
         }
     }

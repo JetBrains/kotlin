@@ -5241,6 +5241,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noNameConflict.kt")
+        public void testNoNameConflict() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/noNameConflict.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/simple.kt");
