@@ -48,7 +48,7 @@ abstract class JetNamedDeclarationNotStubbed extends JetDeclarationImpl implemen
     @Override
     public Name getNameAsName() {
         String name = getName();
-        return name != null ? Name.identifier(name) : null;
+        return name != null ? Name.guess(name) : null;
     }
 
     @Override

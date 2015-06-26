@@ -163,9 +163,15 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
-        @TestMetadata("NameSuggestionBug.kt")
-        public void testNameSuggestionBug() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/NameSuggestionBug.kt");
+        @TestMetadata("NameSuggestionBug1.kt")
+        public void testNameSuggestionBug1() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/NameSuggestionBug1.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
+        @TestMetadata("NameSuggestionBug2.kt")
+        public void testNameSuggestionBug2() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/NameSuggestionBug2.kt");
             doIntroduceVariableTest(fileName);
         }
 

@@ -8,12 +8,12 @@ class A(val a: Int) {
 }
 
 fun test() {
-    val a = A(1)
-    val a1 = A(2)
-    a.foo(a.a + a1.a)
+    val a2 = A(1)
+    val a3 = A(2)
+    a2.foo(a2.a + a3.a)
     with(A(1)) {
         val a1 = A(2)
-        foo(this.a + a1.a)
+        foo(a + a1.a)
         val a = A(2)
         this.foo(this.a + a.a)
     }

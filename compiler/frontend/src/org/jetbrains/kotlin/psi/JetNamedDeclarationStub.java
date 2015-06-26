@@ -62,7 +62,7 @@ abstract class JetNamedDeclarationStub<T extends KotlinStubWithFqName> extends J
     @Override
     public Name getNameAsName() {
         String name = getName();
-        return name != null ? Name.identifier(name) : null;
+        return name != null ? Name.guess(name) : null;
     }
 
     @Override

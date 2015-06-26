@@ -16,21 +16,20 @@
 
 package org.jetbrains.kotlin.idea.refactoring
 
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.caches.resolve.*
-import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.JetElement
-import org.jetbrains.kotlin.psi.JetExpression
-import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-
-import java.util.HashSet
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class NameValidatorImpl(
         private val container: PsiElement,
@@ -43,54 +42,32 @@ public class NameValidatorImpl(
     }
 
     override fun invoke(name: String): Boolean {
-        val visitedScopes = HashSet<JetScope>()
-
         val identifier = Name.identifier(name)
 
-        val sibling = if (anchor != null) {
-            anchor
-        }
-        else {
-            if (container is JetExpression) {
-                return !hasConflict(identifier, container, visitedScopes)
-            }
-            container.getFirstChild() ?: return true
-        }
+        val scopeContext = (anchor ?: container).parentsWithSelf.firstIsInstanceOrNull<JetElement>() ?: return true
+        val bindingContext = scopeContext.analyze(BodyResolveMode.PARTIAL_FOR_COMPLETION)
+        val resolutionScope = scopeContext.getResolutionScope(bindingContext, scopeContext.getResolutionFacade())
+        if (resolutionScope.hasConflict(identifier)) return false
 
-        return sibling.siblings().none { hasConflict(identifier, it, visitedScopes) }
+        val elementsToCheck = anchor?.siblings() ?: container.allChildren
+        return elementsToCheck.none {
+            it.findDescendantOfType<JetNamedDeclaration> { it.isConflicting(identifier) } != null
+        }
     }
 
-    private fun hasConflict(name: Name, sibling: PsiElement, visitedScopes: MutableSet<JetScope>): Boolean {
-        if (sibling !is JetElement) return false
+    private fun JetScope.hasConflict(name: Name): Boolean {
+        return when(target) {
+            Target.PROPERTIES -> getProperties(name).any { !it.isExtension } || getLocalVariable(name) != null
+            Target.FUNCTIONS_AND_CLASSES -> getFunctions(name).any { !it.isExtension } || getClassifier(name) != null
+        }
+    }
 
-        val context = sibling.analyze(BodyResolveMode.FULL)
-
-        var conflictFound = false
-        sibling.accept(object : JetVisitorVoid() {
-            override fun visitElement(element: PsiElement) {
-                if (!conflictFound) {
-                    element.acceptChildren(this)
-                }
-            }
-
-            override fun visitExpression(expression: JetExpression) {
-                val resolutionScope = expression.getResolutionScope(context, expression.getResolutionFacade())
-
-                if (!visitedScopes.add(resolutionScope)) return
-
-                val conflict =  if (target === Target.PROPERTIES)
-                    resolutionScope.getProperties(name).any { !it.isExtension } || resolutionScope.getLocalVariable(name) != null
-                else
-                    resolutionScope.getFunctions(name).any { !it.isExtension } || resolutionScope.getClassifier(name) != null
-
-                if (conflict) {
-                    conflictFound = true
-                    return
-                }
-
-                super.visitExpression(expression)
-            }
-        })
-        return conflictFound
+    private fun JetNamedDeclaration.isConflicting(name: Name): Boolean {
+        if (getNameAsName() != name) return false
+        if (this is JetCallableDeclaration && getReceiverTypeReference() != null) return false
+        return when(target) {
+            Target.PROPERTIES -> this is JetVariableDeclaration
+            Target.FUNCTIONS_AND_CLASSES -> this is JetNamedFunction || this is JetClassOrObject
+        }
     }
 }
