@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
@@ -78,9 +79,9 @@ public class NameValidatorImpl(
                 if (!visitedScopes.add(resolutionScope)) return
 
                 val conflict =  if (target === Target.PROPERTIES)
-                    resolutionScope.getProperties(name).isNotEmpty() || resolutionScope.getLocalVariable(name) != null
+                    resolutionScope.getProperties(name).any { !it.isExtension } || resolutionScope.getLocalVariable(name) != null
                 else
-                    resolutionScope.getFunctions(name).isNotEmpty() || resolutionScope.getClassifier(name) != null
+                    resolutionScope.getFunctions(name).any { !it.isExtension } || resolutionScope.getClassifier(name) != null
 
                 if (conflict) {
                     conflictFound = true
