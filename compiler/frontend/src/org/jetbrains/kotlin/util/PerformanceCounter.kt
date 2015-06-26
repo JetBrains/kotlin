@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.util
 import java.lang.management.ManagementFactory
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicLong
 
 /**
  * This counter is thread-safe for initialization and usage.
@@ -43,6 +45,14 @@ public abstract class PerformanceCounter protected constructor(val name: String)
             enabled = enable
         }
 
+        public fun resetAllCounters() {
+            synchronized(allCounters) {
+                allCounters.forEach {
+                    it.reset()
+                }
+            }
+        }
+
         public jvmOverloads fun create(name: String, reenterable: Boolean = false): PerformanceCounter {
             return if (reenterable)
                 ReenterableCounter(name)
@@ -65,7 +75,7 @@ public abstract class PerformanceCounter protected constructor(val name: String)
     protected val excludedFrom: MutableList<CounterWithExclude> = ArrayList()
 
     private var count: Int = 0
-    protected var totalTimeNanos: Long = 0
+    private var totalTimeNanos: Long = 0
 
     init {
         synchronized(allCounters) {
@@ -90,6 +100,15 @@ public abstract class PerformanceCounter protected constructor(val name: String)
         }
     }
 
+    public fun reset() {
+        count = 0
+        totalTimeNanos = 0
+    }
+
+    protected final fun incrementTime(delta: Long) {
+        totalTimeNanos += delta
+    }
+
     protected abstract fun countTime<T>(block: () -> T): T
 
     public fun report(consumer: (String) -> Unit) {
@@ -110,7 +129,7 @@ private class SimpleCounter(name: String): PerformanceCounter(name) {
             return block()
         }
         finally {
-            totalTimeNanos += PerformanceCounter.currentTime() - startTime
+            incrementTime(PerformanceCounter.currentTime() - startTime)
         }
     }
 }
@@ -134,7 +153,7 @@ private class ReenterableCounter(name: String): PerformanceCounter(name) {
         }
         finally {
             if (needTime) {
-                totalTimeNanos += PerformanceCounter.currentTime() - startTime
+                incrementTime(PerformanceCounter.currentTime() - startTime)
                 leaveCounter(this)
             }
         }
@@ -163,21 +182,21 @@ private class CounterWithExclude(name: String, vararg excludedCounters: Performa
         get() = getCallStack(this)
 
     override fun <T> countTime(block: () -> T): T {
-        totalTimeNanos += callStack.push(true)
+        incrementTime(callStack.push(true))
         try {
             return block()
         }
         finally {
-            totalTimeNanos += callStack.pop(true)
+            incrementTime(callStack.pop(true))
         }
     }
 
     fun enterExcludedMethod() {
-        totalTimeNanos += callStack.push(false)
+        incrementTime(callStack.push(false))
     }
 
     fun exitExcludedMethod() {
-        totalTimeNanos += callStack.pop(false)
+        incrementTime(callStack.pop(false))
     }
 
     private class CallStackWithTime {
