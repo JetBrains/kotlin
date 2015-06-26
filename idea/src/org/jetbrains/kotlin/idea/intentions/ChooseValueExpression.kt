@@ -32,7 +32,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 
 //TODO: move it somewhere else and reuse
 public abstract class ChooseValueExpression<T : Any>(
-        lookupItems: List<T>,
+        lookupItems: Collection<T>,
         protected val defaultItem: T,
         private val advertisementText: String? = null
 ) : Expression() {
@@ -65,8 +65,8 @@ public abstract class ChooseValueExpression<T : Any>(
 }
 
 public class ChooseStringExpression(
-        suggestions: List<String>,
-        default: String = suggestions[0],
+        suggestions: Collection<String>,
+        default: String = suggestions.first(),
         advertisementText: String? = null
 ) : ChooseValueExpression<String>(suggestions, default, advertisementText) {
     override fun getLookupString(element: String) = element

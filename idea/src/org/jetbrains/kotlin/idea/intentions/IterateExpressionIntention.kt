@@ -57,11 +57,10 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         //TODO: multi-declaration (when?)
 
         val elementType = data(element)!!.elementType
-        //TODO: base on expression too
         //TODO: name validation
-        val names = KotlinNameSuggester.suggestNamesByType(elementType, { true }, "e")
+        val names = KotlinNameSuggester.suggestIterationVariableNames(element, elementType, { true }, "e")
 
-        var forExpression = JetPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names[0], element) as JetForExpression
+        var forExpression = JetPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names.first(), element) as JetForExpression
         forExpression = element.replaced(forExpression)
 
         PsiDocumentManager.getInstance(forExpression.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())

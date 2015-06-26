@@ -5235,6 +5235,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nameSuggestion.kt")
+        public void testNameSuggestion() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/nameSuggestion.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/simple.kt");

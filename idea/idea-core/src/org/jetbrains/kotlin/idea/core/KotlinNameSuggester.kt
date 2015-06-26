@@ -72,6 +72,23 @@ public object KotlinNameSuggester {
         return result
     }
 
+    public fun suggestIterationVariableNames(collection: JetExpression, elementType: JetType, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
+        val result = LinkedHashSet<String>()
+
+        suggestNamesByExpressionOnly(collection, { true })
+                .map { StringUtil.unpluralize(it) }
+                .filterNotNull()
+                .mapTo(result) { suggestNameByName(it, validator) }
+
+        result.addNamesByType(elementType, validator)
+
+        if (result.isEmpty()) {
+            result.addName(defaultName, validator)
+        }
+
+        return result
+    }
+
     private val COMMON_TYPE_PARAMETER_NAMES = listOf("T", "U", "V", "W", "X", "Y", "Z")
 
     public fun suggestNamesForTypeParameters(count: Int, validator: (String) -> Boolean): List<String> {
