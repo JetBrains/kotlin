@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
-import org.jetbrains.kotlin.idea.refactoring.NameValidatorImpl
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
@@ -278,7 +278,7 @@ private fun makeCall(
                 controlFlow.outputValueBoxer.getUnboxingExpressions(callText)
             }
             else {
-                val varNameValidator = NameValidatorImpl(block, anchorInBlock, NameValidatorImpl.Target.PROPERTIES)
+                val varNameValidator = NewDeclarationNameValidator(block, anchorInBlock, NewDeclarationNameValidator.Target.VARIABLES)
                 val resultVal = KotlinNameSuggester.suggestNamesByType(extractableDescriptor.returnType, varNameValidator, null).first()
                 block.addBefore(psiFactory.createDeclaration("val $resultVal = $callText"), anchorInBlock)
                 block.addBefore(newLine, anchorInBlock)
@@ -512,7 +512,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         val (defaultExpression, expressionToUnifyWith) =
                 if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
-                    val varNameValidator = NameValidatorImpl(body, lastExpression, NameValidatorImpl.Target.PROPERTIES)
+                    val varNameValidator = NewDeclarationNameValidator(body, lastExpression, NewDeclarationNameValidator.Target.VARIABLES)
                     val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue.valueType, varNameValidator, null).first()
                     val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.getText()}"), lastExpression) as JetProperty
                     body.addBefore(psiFactory.createNewLine(), lastExpression)

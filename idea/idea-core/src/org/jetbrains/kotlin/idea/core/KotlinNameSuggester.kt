@@ -324,22 +324,3 @@ public object KotlinNameSuggester {
         return lexer.getTokenType() == null
     }
 }
-
-public class CollectingNameValidator @jvmOverloads constructor(
-        existingNames: Collection<String> = Collections.emptySet(),
-        private val filter: (String) -> Boolean = { true }
-): (String) -> Boolean {
-    private val existingNames = HashSet(existingNames)
-
-    override fun invoke(name: String): Boolean {
-        if (name !in existingNames && filter(name)) {
-            existingNames.add(name)
-            return true
-        }
-        return false
-    }
-
-    public fun addName(name: String) {
-        existingNames.add(name)
-    }
-}

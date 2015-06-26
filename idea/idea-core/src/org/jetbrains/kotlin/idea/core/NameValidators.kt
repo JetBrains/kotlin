@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring
+package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -30,15 +29,35 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import java.util.*
 
-public class NameValidatorImpl(
+public class CollectingNameValidator @jvmOverloads constructor(
+        existingNames: Collection<String> = Collections.emptySet(),
+        private val filter: (String) -> Boolean = { true }
+): (String) -> Boolean {
+    private val existingNames = HashSet(existingNames)
+
+    override fun invoke(name: String): Boolean {
+        if (name !in existingNames && filter(name)) {
+            existingNames.add(name)
+            return true
+        }
+        return false
+    }
+
+    public fun addName(name: String) {
+        existingNames.add(name)
+    }
+}
+
+public class NewDeclarationNameValidator(
         private val container: PsiElement,
         private val anchor: PsiElement?,
-        private val target: NameValidatorImpl.Target
+        private val target: NewDeclarationNameValidator.Target
 ) : (String) -> Boolean {
     public enum class Target {
-        FUNCTIONS_AND_CLASSES,
-        PROPERTIES
+        VARIABLES,
+        FUNCTIONS_AND_CLASSES
     }
 
     override fun invoke(name: String): Boolean {
@@ -57,7 +76,7 @@ public class NameValidatorImpl(
 
     private fun JetScope.hasConflict(name: Name): Boolean {
         return when(target) {
-            Target.PROPERTIES -> getProperties(name).any { !it.isExtension } || getLocalVariable(name) != null
+            Target.VARIABLES -> getProperties(name).any { !it.isExtension } || getLocalVariable(name) != null
             Target.FUNCTIONS_AND_CLASSES -> getFunctions(name).any { !it.isExtension } || getClassifier(name) != null
         }
     }
@@ -66,7 +85,7 @@ public class NameValidatorImpl(
         if (getNameAsName() != name) return false
         if (this is JetCallableDeclaration && getReceiverTypeReference() != null) return false
         return when(target) {
-            Target.PROPERTIES -> this is JetVariableDeclaration
+            Target.VARIABLES -> this is JetVariableDeclaration
             Target.FUNCTIONS_AND_CLASSES -> this is JetNamedFunction || this is JetClassOrObject
         }
     }

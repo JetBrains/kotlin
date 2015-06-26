@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.idea.kdoc.getResolutionScope
-import org.jetbrains.kotlin.idea.refactoring.NameValidatorImpl
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
@@ -743,10 +743,10 @@ private fun ExtractionData.inferParametersInfo(
         }
     }
 
-    val varNameValidator = NameValidatorImpl(
+    val varNameValidator = NewDeclarationNameValidator(
             commonParent.getNonStrictParentOfType<JetExpression>()!!,
             originalElements.firstOrNull(),
-            NameValidatorImpl.Target.PROPERTIES
+            NewDeclarationNameValidator.Target.VARIABLES
     )
 
     for ((descriptorToExtract, parameter) in extractedDescriptorToParameter) {
@@ -909,10 +909,10 @@ private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<Strin
     val functionNames = LinkedHashSet<String>()
 
     val validator =
-            NameValidatorImpl(
+            NewDeclarationNameValidator(
                     targetSibling.getParent(),
                     if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
-                    if (options.extractAsProperty) NameValidatorImpl.Target.PROPERTIES else NameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
+                    if (options.extractAsProperty) NewDeclarationNameValidator.Target.VARIABLES else NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES
             )
     if (!returnType.isDefault()) {
         functionNames.addAll(KotlinNameSuggester.suggestNamesByType(returnType, validator))

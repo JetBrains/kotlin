@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.core.CorePackage;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
-import org.jetbrains.kotlin.idea.refactoring.NameValidatorImpl;
+import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.introduce.IntroducePackage;
@@ -193,10 +193,10 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
                 PsiElement commonParent = PsiTreeUtil.findCommonParent(allReplaces);
                 PsiElement commonContainer = getContainer(commonParent);
-                NameValidatorImpl validator = new NameValidatorImpl(
+                NewDeclarationNameValidator validator = new NewDeclarationNameValidator(
                         commonContainer,
                         calculateAnchor(commonParent, commonContainer, allReplaces),
-                        NameValidatorImpl.Target.PROPERTIES
+                        NewDeclarationNameValidator.Target.VARIABLES
                 );
                 final Collection<String> suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(
                         expression, ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL), validator, "value");
