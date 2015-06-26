@@ -189,11 +189,11 @@ message Class {
 
   // we store only names, because the actual information must reside in the corresponding .class files,
   // to be obtainable through reflection at runtime
-  repeated int32 nested_class_name = 7;
+  repeated int32 nested_class_name = 7 [packed = true];
 
   repeated Callable member = 11;
 
-  repeated int32 enum_entry = 12;
+  repeated int32 enum_entry = 12 [packed = true];
 
   message PrimaryConstructor {
     // If this field is present, it contains serialized data for the primary constructor.

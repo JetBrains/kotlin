@@ -9435,9 +9435,9 @@ public final class DebugProtoBuf {
     org.jetbrains.kotlin.serialization.DebugProtoBuf.TypeOrBuilder getSupertypeOrBuilder(
         int index);
 
-    // repeated int32 nested_class_name = 7;
+    // repeated int32 nested_class_name = 7 [packed = true];
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9446,7 +9446,7 @@ public final class DebugProtoBuf {
      */
     java.util.List<java.lang.Integer> getNestedClassNameList();
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9455,7 +9455,7 @@ public final class DebugProtoBuf {
      */
     int getNestedClassNameCount();
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -9489,17 +9489,17 @@ public final class DebugProtoBuf {
     org.jetbrains.kotlin.serialization.DebugProtoBuf.CallableOrBuilder getMemberOrBuilder(
         int index);
 
-    // repeated int32 enum_entry = 12;
+    // repeated int32 enum_entry = 12 [packed = true];
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     java.util.List<java.lang.Integer> getEnumEntryList();
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     int getEnumEntryCount();
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     int getEnumEntry(int index);
 
@@ -10655,11 +10655,11 @@ public final class DebugProtoBuf {
       return supertype_.get(index);
     }
 
-    // repeated int32 nested_class_name = 7;
+    // repeated int32 nested_class_name = 7 [packed = true];
     public static final int NESTED_CLASS_NAME_FIELD_NUMBER = 7;
     private java.util.List<java.lang.Integer> nestedClassName_;
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -10671,7 +10671,7 @@ public final class DebugProtoBuf {
       return nestedClassName_;
     }
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -10682,7 +10682,7 @@ public final class DebugProtoBuf {
       return nestedClassName_.size();
     }
     /**
-     * <code>repeated int32 nested_class_name = 7;</code>
+     * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
      *
      * <pre>
      * we store only names, because the actual information must reside in the corresponding .class files,
@@ -10692,6 +10692,7 @@ public final class DebugProtoBuf {
     public int getNestedClassName(int index) {
       return nestedClassName_.get(index);
     }
+    private int nestedClassNameMemoizedSerializedSize = -1;
 
     // repeated .org.jetbrains.kotlin.serialization.Callable member = 11;
     public static final int MEMBER_FIELD_NUMBER = 11;
@@ -10729,28 +10730,29 @@ public final class DebugProtoBuf {
       return member_.get(index);
     }
 
-    // repeated int32 enum_entry = 12;
+    // repeated int32 enum_entry = 12 [packed = true];
     public static final int ENUM_ENTRY_FIELD_NUMBER = 12;
     private java.util.List<java.lang.Integer> enumEntry_;
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
         getEnumEntryList() {
       return enumEntry_;
     }
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     public int getEnumEntryCount() {
       return enumEntry_.size();
     }
     /**
-     * <code>repeated int32 enum_entry = 12;</code>
+     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
      */
     public int getEnumEntry(int index) {
       return enumEntry_.get(index);
     }
+    private int enumEntryMemoizedSerializedSize = -1;
 
     // optional .org.jetbrains.kotlin.serialization.Class.PrimaryConstructor primary_constructor = 13;
     public static final int PRIMARY_CONSTRUCTOR_FIELD_NUMBER = 13;
@@ -10902,14 +10904,22 @@ public final class DebugProtoBuf {
       for (int i = 0; i < supertype_.size(); i++) {
         output.writeMessage(6, supertype_.get(i));
       }
+      if (getNestedClassNameList().size() > 0) {
+        output.writeRawVarint32(58);
+        output.writeRawVarint32(nestedClassNameMemoizedSerializedSize);
+      }
       for (int i = 0; i < nestedClassName_.size(); i++) {
-        output.writeInt32(7, nestedClassName_.get(i));
+        output.writeInt32NoTag(nestedClassName_.get(i));
       }
       for (int i = 0; i < member_.size(); i++) {
         output.writeMessage(11, member_.get(i));
       }
+      if (getEnumEntryList().size() > 0) {
+        output.writeRawVarint32(98);
+        output.writeRawVarint32(enumEntryMemoizedSerializedSize);
+      }
       for (int i = 0; i < enumEntry_.size(); i++) {
-        output.writeInt32(12, enumEntry_.get(i));
+        output.writeInt32NoTag(enumEntry_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(13, primaryConstructor_);
@@ -10954,7 +10964,12 @@ public final class DebugProtoBuf {
             .computeInt32SizeNoTag(nestedClassName_.get(i));
         }
         size += dataSize;
-        size += 1 * getNestedClassNameList().size();
+        if (!getNestedClassNameList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        nestedClassNameMemoizedSerializedSize = dataSize;
       }
       for (int i = 0; i < member_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -10967,7 +10982,12 @@ public final class DebugProtoBuf {
             .computeInt32SizeNoTag(enumEntry_.get(i));
         }
         size += dataSize;
-        size += 1 * getEnumEntryList().size();
+        if (!getEnumEntryList().isEmpty()) {
+          size += 1;
+          size += com.google.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        enumEntryMemoizedSerializedSize = dataSize;
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
@@ -12082,7 +12102,7 @@ public final class DebugProtoBuf {
         return supertypeBuilder_;
       }
 
-      // repeated int32 nested_class_name = 7;
+      // repeated int32 nested_class_name = 7 [packed = true];
       private java.util.List<java.lang.Integer> nestedClassName_ = java.util.Collections.emptyList();
       private void ensureNestedClassNameIsMutable() {
         if (!((bitField0_ & 0x00000020) == 0x00000020)) {
@@ -12091,7 +12111,7 @@ public final class DebugProtoBuf {
          }
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -12103,7 +12123,7 @@ public final class DebugProtoBuf {
         return java.util.Collections.unmodifiableList(nestedClassName_);
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -12114,7 +12134,7 @@ public final class DebugProtoBuf {
         return nestedClassName_.size();
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -12125,7 +12145,7 @@ public final class DebugProtoBuf {
         return nestedClassName_.get(index);
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -12140,7 +12160,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -12154,7 +12174,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -12169,7 +12189,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 nested_class_name = 7;</code>
+       * <code>repeated int32 nested_class_name = 7 [packed = true];</code>
        *
        * <pre>
        * we store only names, because the actual information must reside in the corresponding .class files,
@@ -12423,7 +12443,7 @@ public final class DebugProtoBuf {
         return memberBuilder_;
       }
 
-      // repeated int32 enum_entry = 12;
+      // repeated int32 enum_entry = 12 [packed = true];
       private java.util.List<java.lang.Integer> enumEntry_ = java.util.Collections.emptyList();
       private void ensureEnumEntryIsMutable() {
         if (!((bitField0_ & 0x00000080) == 0x00000080)) {
@@ -12432,26 +12452,26 @@ public final class DebugProtoBuf {
          }
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public java.util.List<java.lang.Integer>
           getEnumEntryList() {
         return java.util.Collections.unmodifiableList(enumEntry_);
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public int getEnumEntryCount() {
         return enumEntry_.size();
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public int getEnumEntry(int index) {
         return enumEntry_.get(index);
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public Builder setEnumEntry(
           int index, int value) {
@@ -12461,7 +12481,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public Builder addEnumEntry(int value) {
         ensureEnumEntryIsMutable();
@@ -12470,7 +12490,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public Builder addAllEnumEntry(
           java.lang.Iterable<? extends java.lang.Integer> values) {
@@ -12480,7 +12500,7 @@ public final class DebugProtoBuf {
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12;</code>
+       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
        */
       public Builder clearEnumEntry() {
         enumEntry_ = java.util.Collections.emptyList();
@@ -17064,48 +17084,48 @@ public final class DebugProtoBuf {
       "eParameter.Variance:\003INV\022=\n\013upper_bound\030",
       "\005 \003(\0132(.org.jetbrains.kotlin.serializati" +
       "on.Type\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003" +
-      "INV\020\002\"\261\005\n\005Class\022\020\n\005flags\030\001 \001(\005:\0010\022\017\n\007fq_" +
+      "INV\020\002\"\271\005\n\005Class\022\020\n\005flags\030\001 \001(\005:\0010\022\017\n\007fq_" +
       "name\030\003 \002(\005\022\035\n\025companion_object_name\030\004 \001(" +
       "\005\022I\n\016type_parameter\030\005 \003(\01321.org.jetbrain" +
       "s.kotlin.serialization.TypeParameter\022;\n\t" +
       "supertype\030\006 \003(\0132(.org.jetbrains.kotlin.s" +
-      "erialization.Type\022\031\n\021nested_class_name\030\007" +
-      " \003(\005\022<\n\006member\030\013 \003(\0132,.org.jetbrains.kot" +
-      "lin.serialization.Callable\022\022\n\nenum_entry",
-      "\030\014 \003(\005\022Y\n\023primary_constructor\030\r \001(\0132<.or" +
-      "g.jetbrains.kotlin.serialization.Class.P" +
-      "rimaryConstructor\022K\n\025secondary_construct" +
-      "or\030\016 \003(\0132,.org.jetbrains.kotlin.serializ" +
-      "ation.Callable\032P\n\022PrimaryConstructor\022:\n\004" +
-      "data\030\001 \001(\0132,.org.jetbrains.kotlin.serial" +
-      "ization.Callable\"p\n\004Kind\022\t\n\005CLASS\020\000\022\t\n\005T" +
-      "RAIT\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024" +
-      "\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\020\n\014CLAS" +
-      "S_OBJECT\020\006*\005\010d\020\310\001\"N\n\007Package\022<\n\006member\030\001",
-      " \003(\0132,.org.jetbrains.kotlin.serializatio" +
-      "n.Callable*\005\010d\020\310\001\"\300\005\n\010Callable\022\r\n\005flags\030" +
-      "\001 \001(\005\022\024\n\014getter_flags\030\t \001(\005\022\024\n\014setter_fl" +
-      "ags\030\n \001(\005\022I\n\016type_parameter\030\004 \003(\01321.org." +
-      "jetbrains.kotlin.serialization.TypeParam" +
-      "eter\022?\n\rreceiver_type\030\005 \001(\0132(.org.jetbra" +
-      "ins.kotlin.serialization.Type\022\014\n\004name\030\006 " +
-      "\002(\005\022T\n\017value_parameter\030\007 \003(\0132;.org.jetbr" +
-      "ains.kotlin.serialization.Callable.Value" +
-      "Parameter\022=\n\013return_type\030\010 \002(\0132(.org.jet",
-      "brains.kotlin.serialization.Type\032\263\001\n\016Val" +
-      "ueParameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004name\030\002 \002(\005" +
-      "\0226\n\004type\030\003 \002(\0132(.org.jetbrains.kotlin.se" +
-      "rialization.Type\022E\n\023vararg_element_type\030" +
-      "\004 \001(\0132(.org.jetbrains.kotlin.serializati" +
-      "on.Type*\005\010d\020\310\001\"Q\n\nMemberKind\022\017\n\013DECLARAT" +
-      "ION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002" +
-      "\022\017\n\013SYNTHESIZED\020\003\":\n\014CallableKind\022\007\n\003FUN" +
-      "\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUCTOR\020\003*\005\010" +
-      "d\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n",
-      "\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n" +
-      "\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022" +
-      "\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCA" +
-      "L\020\005B\022B\rDebugProtoBuf\210\001\000"
+      "erialization.Type\022\035\n\021nested_class_name\030\007" +
+      " \003(\005B\002\020\001\022<\n\006member\030\013 \003(\0132,.org.jetbrains" +
+      ".kotlin.serialization.Callable\022\026\n\nenum_e",
+      "ntry\030\014 \003(\005B\002\020\001\022Y\n\023primary_constructor\030\r " +
+      "\001(\0132<.org.jetbrains.kotlin.serialization" +
+      ".Class.PrimaryConstructor\022K\n\025secondary_c" +
+      "onstructor\030\016 \003(\0132,.org.jetbrains.kotlin." +
+      "serialization.Callable\032P\n\022PrimaryConstru" +
+      "ctor\022:\n\004data\030\001 \001(\0132,.org.jetbrains.kotli" +
+      "n.serialization.Callable\"p\n\004Kind\022\t\n\005CLAS" +
+      "S\020\000\022\t\n\005TRAIT\020\001\022\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_E" +
+      "NTRY\020\003\022\024\n\020ANNOTATION_CLASS\020\004\022\n\n\006OBJECT\020\005" +
+      "\022\020\n\014CLASS_OBJECT\020\006*\005\010d\020\310\001\"N\n\007Package\022<\n\006",
+      "member\030\001 \003(\0132,.org.jetbrains.kotlin.seri" +
+      "alization.Callable*\005\010d\020\310\001\"\300\005\n\010Callable\022\r" +
+      "\n\005flags\030\001 \001(\005\022\024\n\014getter_flags\030\t \001(\005\022\024\n\014s" +
+      "etter_flags\030\n \001(\005\022I\n\016type_parameter\030\004 \003(" +
+      "\01321.org.jetbrains.kotlin.serialization.T" +
+      "ypeParameter\022?\n\rreceiver_type\030\005 \001(\0132(.or" +
+      "g.jetbrains.kotlin.serialization.Type\022\014\n" +
+      "\004name\030\006 \002(\005\022T\n\017value_parameter\030\007 \003(\0132;.o" +
+      "rg.jetbrains.kotlin.serialization.Callab" +
+      "le.ValueParameter\022=\n\013return_type\030\010 \002(\0132(",
+      ".org.jetbrains.kotlin.serialization.Type" +
+      "\032\263\001\n\016ValueParameter\022\r\n\005flags\030\001 \001(\005\022\014\n\004na" +
+      "me\030\002 \002(\005\0226\n\004type\030\003 \002(\0132(.org.jetbrains.k" +
+      "otlin.serialization.Type\022E\n\023vararg_eleme" +
+      "nt_type\030\004 \001(\0132(.org.jetbrains.kotlin.ser" +
+      "ialization.Type*\005\010d\020\310\001\"Q\n\nMemberKind\022\017\n\013" +
+      "DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELE" +
+      "GATION\020\002\022\017\n\013SYNTHESIZED\020\003\":\n\014CallableKin" +
+      "d\022\007\n\003FUN\020\000\022\007\n\003VAL\020\001\022\007\n\003VAR\020\002\022\017\n\013CONSTRUC" +
+      "TOR\020\003*\005\010d\020\310\001*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004O",
+      "PEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisib" +
+      "ility\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROT" +
+      "ECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004" +
+      "\022\t\n\005LOCAL\020\005B\022B\rDebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
