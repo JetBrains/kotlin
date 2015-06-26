@@ -235,7 +235,7 @@ public open class KotlinIntroduceParameterHandler(
                        else -> null
                    } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
         val nameValidator = NameValidatorImpl(body, null, NameValidatorImpl.Target.PROPERTIES)
-        val suggestedNames = linkedSetOf(*KotlinNameSuggester.suggestNamesByType(replacementType, nameValidator, "p"))
+        val suggestedNames = KotlinNameSuggester.suggestNamesByType(replacementType, nameValidator, "p")
 
         val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor)
 

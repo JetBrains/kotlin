@@ -50,7 +50,7 @@ public object KotlinNameSuggester {
      * *
      * @return possible names
      */
-    public fun suggestNamesByExpressionAndType(expression: JetExpression, validator: (String) -> Boolean, defaultName: String?): Array<String> {
+    public fun suggestNamesByExpressionAndType(expression: JetExpression, validator: (String) -> Boolean, defaultName: String?): List<String> {
         val result = ArrayList<String>()
 
         val bindingContext = expression.analyze(BodyResolveMode.FULL)
@@ -64,10 +64,10 @@ public object KotlinNameSuggester {
             result.addName(defaultName, validator)
         }
 
-        return ArrayUtil.toStringArray(result)
+        return result
     }
 
-    public fun suggestNamesByType(type: JetType, validator: (String) -> Boolean, defaultName: String? = null): Array<String> {
+    public fun suggestNamesByType(type: JetType, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
         val result = ArrayList<String>()
 
         result.addNamesByType(type, validator)
@@ -76,10 +76,10 @@ public object KotlinNameSuggester {
             result.addName(defaultName, validator)
         }
 
-        return ArrayUtil.toStringArray(result)
+        return result
     }
 
-    public fun suggestNamesByExpressionOnly(expression: JetExpression, validator: (String) -> Boolean, defaultName: String? = null): Array<String> {
+    public fun suggestNamesByExpressionOnly(expression: JetExpression, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
         val result = ArrayList<String>()
 
         result.addNamesByExpression(expression, validator)
@@ -88,17 +88,17 @@ public object KotlinNameSuggester {
             result.addName(defaultName, validator)
         }
 
-        return ArrayUtil.toStringArray(result)
+        return result
     }
 
     private val COMMON_TYPE_PARAMETER_NAMES = listOf("T", "U", "V", "W", "X", "Y", "Z")
 
-    public fun suggestNamesForTypeParameters(count: Int, validator: (String) -> Boolean): Array<String> {
+    public fun suggestNamesForTypeParameters(count: Int, validator: (String) -> Boolean): List<String> {
         val result = ArrayList<String>()
         for (i in 0..count - 1) {
             result.add(suggestNameByMultipleNames(COMMON_TYPE_PARAMETER_NAMES, validator))
         }
-        return ArrayUtil.toStringArray(result)
+        return result
     }
 
     /**

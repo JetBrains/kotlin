@@ -69,7 +69,7 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         val bodyPlaceholder = (forExpression.getBody() as JetBlockExpression).getStatements().single()
 
         val templateBuilder = TemplateBuilderImpl(forExpression)
-        templateBuilder.replaceElement(forExpression.getLoopParameter()!!, ChooseStringExpression(names.asList()))
+        templateBuilder.replaceElement(forExpression.getLoopParameter()!!, ChooseStringExpression(names))
         templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
         templateBuilder.setEndVariableAfter(bodyPlaceholder)
 

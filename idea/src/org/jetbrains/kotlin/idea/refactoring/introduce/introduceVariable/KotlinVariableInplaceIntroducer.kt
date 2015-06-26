@@ -44,7 +44,7 @@ public class KotlinVariableInplaceIntroducer(
         val addedVariable: JetProperty,
         val originalExpression: JetExpression?,
         val occurrencesToReplace: Array<JetExpression>,
-        val suggestedNames: Array<out String>,
+        suggestedNames: List<String>,
         val isVar: Boolean,
         val doNotChangeVar: Boolean,
         val expressionType: JetType?,
@@ -59,8 +59,7 @@ public class KotlinVariableInplaceIntroducer(
         project,
         editor
 ) {
-    companion object {
-    }
+    private val suggestedNames = suggestedNames.toTypedArray()
 
     init {
         initFormComponents {

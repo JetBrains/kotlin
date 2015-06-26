@@ -105,7 +105,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return KotlinNameSuggester.INSTANCE$.suggestNameByName(argumentName.getAsName().asString(), validator);
         }
         else if (expression != null) {
-            return KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, validator, "param")[0];
+            return KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, validator, "param").get(0);
         }
 
         return KotlinNameSuggester.INSTANCE$.suggestNameByName("param", validator);

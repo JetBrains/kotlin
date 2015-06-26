@@ -69,8 +69,7 @@ public class JetNameSuggesterTest : LightCodeInsightFixtureTestCase() {
         try {
             JetRefactoringUtil.selectExpression(myFixture.getEditor(), file, object : JetRefactoringUtil.SelectExpressionCallback {
                 override fun run(expression: JetExpression) {
-                    val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression, { true }, "value")
-                    Arrays.sort(names)
+                    val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression, { true }, "value").sort()
                     val result = StringUtil.join(names, "\n").trim()
                     assertEquals(expectedResultText, result)
                 }

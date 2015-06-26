@@ -197,12 +197,12 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         calculateAnchor(commonParent, commonContainer, allReplaces),
                         NameValidatorImpl.Target.PROPERTIES
                 );
-                final String[] suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, validator, "value");
+                final List<String> suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, validator, "value");
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
                 final Runnable introduceRunnable = introduceVariable(
-                        expression, suggestedNames, allReplaces, commonContainer,
+                        expression, suggestedNames.get(0), allReplaces, commonContainer,
                         commonParent, replaceOccurrence, propertyRef, references,
                         reference, finalNoTypeInference, expressionType, bindingContext);
                 CommandProcessor.getInstance().executeCommand(project, new Runnable() {
@@ -251,7 +251,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
     private static Runnable introduceVariable(
             final JetExpression expression,
-            final String[] suggestedNames,
+            final String nameSuggestion,
             final List<JetExpression> allReplaces,
             final PsiElement commonContainer,
             final PsiElement commonParent,
@@ -303,7 +303,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                     PsiElement commonParent,
                     List<JetExpression> allReplaces
             ) {
-                String variableText = "val " + suggestedNames[0];
+                String variableText = "val " + nameSuggestion;
                 if (noTypeInference) {
                     variableText += ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(expressionType);
                 }
@@ -449,7 +449,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
             private JetExpression replaceExpression(JetExpression replace) {
                 boolean isActualExpression = expression == replace;
 
-                JetExpression replacement = psiFactory.createExpression(suggestedNames[0]);
+                JetExpression replacement = psiFactory.createExpression(nameSuggestion);
                 JetExpression result;
                 if (PsiUtilPackage.isFunctionLiteralOutsideParentheses(replace)) {
                     JetFunctionLiteralArgument functionLiteralArgument =

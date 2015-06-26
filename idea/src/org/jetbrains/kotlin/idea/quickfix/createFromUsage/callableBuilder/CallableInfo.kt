@@ -43,7 +43,7 @@ abstract class TypeInfo(val variance: Variance) {
 
     class ByExpression(val expression: JetExpression, variance: Variance): TypeInfo(variance) {
         override val possibleNamesFromExpression: Array<String> by Delegates.lazy {
-            KotlinNameSuggester.suggestNamesByExpressionOnly(expression, { true })
+            KotlinNameSuggester.suggestNamesByExpressionOnly(expression, { true }).toTypedArray()
         }
 
         override fun getPossibleTypes(builder: CallableBuilder): List<JetType> =

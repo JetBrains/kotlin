@@ -821,7 +821,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val parameterTypeToNamesMap = HashMap<String, Array<String>>()
                 typeCandidates[parameter.typeInfo]!!.forEach { typeCandidate ->
                     val suggestedNames = KotlinNameSuggester.suggestNamesByType(typeCandidate.theType, { true })
-                    parameterTypeToNamesMap[typeCandidate.renderedType!!] = suggestedNames
+                    parameterTypeToNamesMap[typeCandidate.renderedType!!] = suggestedNames.toTypedArray()
                 }
 
                 // add expression to builder
