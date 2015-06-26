@@ -1,6 +1,6 @@
 package org.test
 
-public annotation class SomeAnnotation
+public annotation(retention = AnnotationRetention.BINARY) class SomeAnnotation
 
 SomeAnnotation public class SomeClass {
 

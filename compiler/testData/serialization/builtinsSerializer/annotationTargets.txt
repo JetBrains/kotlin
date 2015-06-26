@@ -21,7 +21,7 @@ test.anno(x = "top level class") internal final class C1 {
     }
 }
 
-internal final annotation class anno : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class anno : kotlin.Annotation {
     public constructor anno(/*0*/ x: kotlin.String)
     internal final val x: kotlin.String
 }

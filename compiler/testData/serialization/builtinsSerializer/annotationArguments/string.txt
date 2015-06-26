@@ -8,12 +8,12 @@ test.StringArray(stringArray = {"java", ""}) internal final class C2 {
     public constructor C2()
 }
 
-internal final annotation class JustString : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class JustString : kotlin.Annotation {
     public constructor JustString(/*0*/ string: kotlin.String)
     internal final val string: kotlin.String
 }
 
-internal final annotation class StringArray : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class StringArray : kotlin.Annotation {
     public constructor StringArray(/*0*/ stringArray: kotlin.Array<kotlin.String>)
     internal final val stringArray: kotlin.Array<kotlin.String>
 }

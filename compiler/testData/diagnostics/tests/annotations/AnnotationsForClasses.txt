@@ -1,13 +1,13 @@
 package
 
-java.lang.Deprecated() internal final annotation class my : kotlin.Annotation {
+kotlin.annotation.annotation() java.lang.Deprecated() internal final annotation class my : kotlin.Annotation {
     public constructor my()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-java.lang.Deprecated() internal final annotation class my1 : kotlin.Annotation {
+kotlin.annotation.annotation() java.lang.Deprecated() internal final annotation class my1 : kotlin.Annotation {
     public constructor my1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

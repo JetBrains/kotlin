@@ -8,7 +8,7 @@ test.Primitives(boolean = true, byte = 7.toByte(), char = \u0025 ('%'), double =
     public constructor D()
 }
 
-internal final annotation class Primitives : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class Primitives : kotlin.Annotation {
     public constructor Primitives(/*0*/ byte: kotlin.Byte, /*1*/ char: kotlin.Char, /*2*/ short: kotlin.Short, /*3*/ int: kotlin.Int, /*4*/ long: kotlin.Long, /*5*/ float: kotlin.Float, /*6*/ double: kotlin.Double, /*7*/ boolean: kotlin.Boolean)
     internal final val boolean: kotlin.Boolean
     internal final val byte: kotlin.Byte

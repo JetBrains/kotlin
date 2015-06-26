@@ -26,12 +26,11 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
-
-import static org.jetbrains.kotlin.lexer.JetTokens.ANNOTATION_KEYWORD;
 
 public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotationEntry> {
     private final JetAnnotationEntry annotationEntry;
@@ -83,8 +82,20 @@ public class MakeClassAnAnnotationClassFix extends JetIntentionAction<JetAnnotat
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, JetFile file) throws IncorrectOperationException {
-        annotationClass.addModifier(ANNOTATION_KEYWORD);
+    public void invoke(@NotNull Project project, Editor editor, @NotNull JetFile file) throws IncorrectOperationException {
+        JetPsiFactory factory = new JetPsiFactory(annotationClass.getProject());
+        JetModifierList list = annotationClass.getModifierList();
+        String annotation = KotlinBuiltIns.FQ_NAMES.annotation.shortName().asString();
+        PsiElement added;
+        if (list == null) {
+            JetModifierList newModifierList = factory.createModifierList(annotation);
+            added = annotationClass.addBefore(newModifierList, annotationClass.getClassOrInterfaceKeyword());
+        }
+        else {
+            JetAnnotationEntry entry = factory.createAnnotationEntry(annotation);
+            added = list.addBefore(entry, list.getFirstChild());
+        }
+        annotationClass.addAfter(factory.createWhiteSpace(), added);
     }
 
     @NotNull

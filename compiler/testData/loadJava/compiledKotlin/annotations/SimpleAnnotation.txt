@@ -1,5 +1,5 @@
 package test
 
-public final annotation class SimpleAnnotation : kotlin.Annotation {
+kotlin.annotation.annotation() public final annotation class SimpleAnnotation : kotlin.Annotation {
     /*primary*/ public constructor SimpleAnnotation()
 }

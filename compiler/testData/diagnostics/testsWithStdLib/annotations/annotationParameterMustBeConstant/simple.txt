@@ -6,7 +6,7 @@ internal val ia: kotlin.IntArray
 internal val sa: kotlin.Array<kotlin.String>
 internal fun foo(): kotlin.Int
 
-internal final annotation class Ann : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class Ann : kotlin.Annotation {
     public constructor Ann(/*0*/ i: kotlin.Int)
     internal final val i: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -14,14 +14,14 @@ internal final annotation class Ann : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Ann2 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class Ann2 : kotlin.Annotation {
     public constructor Ann2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class AnnIA : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class AnnIA : kotlin.Annotation {
     public constructor AnnIA(/*0*/ ia: kotlin.IntArray)
     internal final val ia: kotlin.IntArray
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -29,7 +29,7 @@ internal final annotation class AnnIA : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class AnnSA : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class AnnSA : kotlin.Annotation {
     public constructor AnnSA(/*0*/ sa: kotlin.Array<kotlin.String>)
     internal final val sa: kotlin.Array<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

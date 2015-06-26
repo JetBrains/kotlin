@@ -885,6 +885,24 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/annotations"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("Annotated.kt")
+            public void testAnnotated() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/Annotated.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AnnotationArguments.kt")
+            public void testAnnotationArguments() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/AnnotationArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AnnotationTarget.kt")
+            public void testAnnotationTarget() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/AnnotationTarget.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("FunctionAnnotation1.kt")
             public void testFunctionAnnotation1() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/annotations/FunctionAnnotation1.kt");

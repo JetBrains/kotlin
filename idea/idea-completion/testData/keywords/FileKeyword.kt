@@ -1,7 +1,6 @@
 @<caret>[]
 
 // EXIST: {"lookupString":"abstract","itemText":"abstract","attributes":"bold"}
-// EXIST: {"lookupString":"annotation","itemText":"annotation","attributes":"bold"}
 // EXIST: {"lookupString":"class","itemText":"class","attributes":"bold"}
 // EXIST: {"lookupString":"companion object","itemText":"companion object","attributes":"bold"}
 // EXIST: {"lookupString":"enum","itemText":"enum","attributes":"bold"}

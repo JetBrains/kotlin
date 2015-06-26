@@ -645,6 +645,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("AnnotationAsDefaultParameter.kt")
+            public void testAnnotationAsDefaultParameter() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotationAsDefaultParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("AnnotationForClassTypeParameter.kt")
             public void testAnnotationForClassTypeParameter() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/AnnotationForClassTypeParameter.kt");
@@ -974,6 +980,57 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 @TestMetadata("strings.kt")
                 public void testStrings() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/annotationParameterMustBeConstant/strings.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/annotations/options")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Options extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInOptions() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/annotations/options"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("annotation.kt")
+                public void testAnnotation() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/annotation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("annotationAsArg.kt")
+                public void testAnnotationAsArg() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/annotationAsArg.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("annotationAsArgComplex.kt")
+                public void testAnnotationAsArgComplex() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/annotationAsArgComplex.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("brackets.kt")
+                public void testBrackets() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/brackets.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("repeatable.kt")
+                public void testRepeatable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/repeatable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("retention.kt")
+                public void testRetention() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/retention.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("target.kt")
+                public void testTarget() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/target.kt");
                     doTest(fileName);
                 }
             }

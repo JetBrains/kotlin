@@ -269,7 +269,7 @@ public class CallExpressionResolver {
         else if (parent instanceof JetParameter) {
             JetClass jetClass = PsiTreeUtil.getParentOfType(parent, JetClass.class);
             if (jetClass != null) {
-                return jetClass.hasModifier(JetTokens.ANNOTATION_KEYWORD);
+                return jetClass.isAnnotation();
             }
         }
         return false;

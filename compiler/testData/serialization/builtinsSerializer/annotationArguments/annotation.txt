@@ -1,6 +1,6 @@
 package test
 
-internal final annotation class AnnotationArray : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class AnnotationArray : kotlin.Annotation {
     public constructor AnnotationArray(/*0*/ annotationArray: kotlin.Array<test.JustAnnotation>)
     internal final val annotationArray: kotlin.Array<test.JustAnnotation>
 }
@@ -13,11 +13,11 @@ test.AnnotationArray(annotationArray = {test.JustAnnotation(annotation = test.Em
     public constructor C2()
 }
 
-internal final annotation class Empty : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class Empty : kotlin.Annotation {
     public constructor Empty()
 }
 
-internal final annotation class JustAnnotation : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class JustAnnotation : kotlin.Annotation {
     public constructor JustAnnotation(/*0*/ annotation: test.Empty)
     internal final val annotation: test.Empty
 }

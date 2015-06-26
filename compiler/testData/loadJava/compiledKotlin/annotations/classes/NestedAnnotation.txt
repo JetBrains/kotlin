@@ -3,7 +3,7 @@ package test
 internal final class A {
     /*primary*/ public constructor A()
 
-    internal final annotation class Anno : kotlin.Annotation {
+    kotlin.annotation.annotation() internal final annotation class Anno : kotlin.Annotation {
         /*primary*/ public constructor Anno()
     }
 }

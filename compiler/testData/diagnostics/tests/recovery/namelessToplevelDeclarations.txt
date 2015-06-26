@@ -30,7 +30,7 @@ internal final enum class <no name provided> : kotlin.Enum<<no name provided>> {
     public final /*synthesized*/ fun values(): kotlin.Array<<no name provided>>
 }
 
-internal final annotation class <no name provided> : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class <no name provided> : kotlin.Annotation {
     public constructor <no name provided>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

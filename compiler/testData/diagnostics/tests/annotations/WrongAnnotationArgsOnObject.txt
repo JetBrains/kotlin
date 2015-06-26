@@ -3,7 +3,7 @@ package
 package test {
     internal val some: test.SomeObject
 
-    internal final annotation class BadAnnotation : kotlin.Annotation {
+    kotlin.annotation.annotation() internal final annotation class BadAnnotation : kotlin.Annotation {
         public constructor BadAnnotation(/*0*/ s: kotlin.String)
         internal final val s: kotlin.String
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

@@ -128,9 +128,6 @@ public class DeclarationsChecker {
         if (declaration.hasModifier(JetTokens.ENUM_KEYWORD)) {
             trace.report(ILLEGAL_ENUM_ANNOTATION.on(declaration));
         }
-        if (declaration.hasModifier(JetTokens.ANNOTATION_KEYWORD)) {
-            trace.report(ILLEGAL_ANNOTATION_KEYWORD.on(declaration));
-        }
     }
 
     private void checkModifiersAndAnnotationsInPackageDirective(JetFile file) {

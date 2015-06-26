@@ -7,7 +7,7 @@ internal open class A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Ann1 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class Ann1 : kotlin.Annotation {
     public constructor Ann1(/*0*/ arg: kotlin.reflect.KClass<in A>)
     internal final val arg: kotlin.reflect.KClass<in A>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -15,7 +15,7 @@ internal final annotation class Ann1 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-internal final annotation class Ann2 : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class Ann2 : kotlin.Annotation {
     public constructor Ann2(/*0*/ arg: kotlin.reflect.KClass<in B1>)
     internal final val arg: kotlin.reflect.KClass<in B1>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

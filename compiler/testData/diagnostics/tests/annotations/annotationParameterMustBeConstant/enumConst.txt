@@ -2,7 +2,7 @@ package
 
 internal val e: MyEnum
 
-internal final annotation class AnnE : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class AnnE : kotlin.Annotation {
     public constructor AnnE(/*0*/ i: MyEnum)
     internal final val i: MyEnum
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

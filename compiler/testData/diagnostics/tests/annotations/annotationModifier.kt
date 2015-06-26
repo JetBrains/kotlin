@@ -1,15 +1,15 @@
 annotation class B
 
 class A {
-   <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> companion object {}
+   annotation companion object {}
 }
 
-<!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> object O {}
+annotation object O {}
 
-<!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> interface T {}
+annotation interface T {}
 
-<!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> fun f() = 0
+annotation fun f() = 0
 
-<!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> val x = 0
+annotation val x = 0
 
-<!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!> var y = 0
+annotation var y = 0

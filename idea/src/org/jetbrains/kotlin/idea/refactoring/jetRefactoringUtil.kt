@@ -54,6 +54,7 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.KotlinLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -78,6 +79,7 @@ import java.io.File
 import java.util.ArrayList
 import java.util.Collections
 import javax.swing.Icon
+import java.lang.annotation.Retention
 
 fun <T: Any> PsiElement.getAndRemoveCopyableUserData(key: Key<T>): T? {
     val data = getCopyableUserData(key)
@@ -406,7 +408,11 @@ private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, wi
         }
     }
     for (annotation in from.getAnnotations()) {
-        to.addAnnotation(annotation.getQualifiedName()!!)
+        val annotationName = annotation.getQualifiedName()!!
+        if (KotlinBuiltIns.FQ_NAMES.annotation.asString() != annotationName
+            && javaClass<Retention>().getName() != annotationName) {
+            to.addAnnotation(annotationName)
+        }
     }
 }
 

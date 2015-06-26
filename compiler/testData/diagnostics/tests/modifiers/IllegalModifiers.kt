@@ -97,7 +97,7 @@ abstract class IllegalModifiers6() {
 class IllegalModifiers7() {
     <!ILLEGAL_ENUM_ANNOTATION!>enum<!>
     <!ILLEGAL_MODIFIER!>inner<!>
-    <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+    annotation
     <!ILLEGAL_MODIFIER!>out<!>
     <!ILLEGAL_MODIFIER!>in<!>
     <!ILLEGAL_MODIFIER!>vararg<!>
@@ -105,7 +105,7 @@ class IllegalModifiers7() {
     val x = 1
     <!ILLEGAL_ENUM_ANNOTATION!>enum<!>
     <!ILLEGAL_MODIFIER!>inner<!>
-    <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+    annotation
     <!ILLEGAL_MODIFIER!>out<!>
     <!ILLEGAL_MODIFIER!>in<!>
     <!ILLEGAL_MODIFIER!>vararg<!>
@@ -119,7 +119,7 @@ class IllegalModifiers8 {
     <!ILLEGAL_ENUM_ANNOTATION!>enum<!>
     <!ILLEGAL_MODIFIER, REDUNDANT_MODIFIER, REDUNDANT_MODIFIER, INCOMPATIBLE_MODIFIERS!>open<!>
     <!ILLEGAL_MODIFIER!>inner<!>
-    <!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+    annotation
     <!ILLEGAL_MODIFIER!>override<!>
     <!ILLEGAL_MODIFIER!>out<!>
     <!ILLEGAL_MODIFIER!>in<!>
@@ -143,7 +143,7 @@ class IllegalModifiers10
 <!ILLEGAL_ENUM_ANNOTATION!>enum<!>
 <!ILLEGAL_MODIFIER, REDUNDANT_MODIFIER, REDUNDANT_MODIFIER, INCOMPATIBLE_MODIFIERS!>open<!>
 <!ILLEGAL_MODIFIER!>inner<!>
-<!ILLEGAL_ANNOTATION_KEYWORD!>annotation<!>
+annotation
 <!ILLEGAL_MODIFIER!>override<!>
 <!ILLEGAL_MODIFIER!>out<!>
 <!ILLEGAL_MODIFIER!>in<!>

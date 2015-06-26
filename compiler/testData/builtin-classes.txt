@@ -8,6 +8,154 @@ public fun kotlin.Any?.toString(): kotlin.String
 public interface Annotation {
 }
 
+public final enum class AnnotationRetention : kotlin.Enum<kotlin.annotation.AnnotationRetention> {
+    public enum entry SOURCE : kotlin.annotation.AnnotationRetention {
+        /*primary*/ private constructor SOURCE()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationRetention): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry BINARY : kotlin.annotation.AnnotationRetention {
+        /*primary*/ private constructor BINARY()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationRetention): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry RUNTIME : kotlin.annotation.AnnotationRetention {
+        /*primary*/ private constructor RUNTIME()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationRetention): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    /*primary*/ private constructor AnnotationRetention()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationRetention): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.AnnotationRetention
+    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.AnnotationRetention>
+}
+
+public final enum class AnnotationTarget : kotlin.Enum<kotlin.annotation.AnnotationTarget> {
+    public enum entry PACKAGE : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor PACKAGE()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry CLASSIFIER : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor CLASSIFIER()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry ANNOTATION_CLASS : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor ANNOTATION_CLASS()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry TYPE_PARAMETER : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor TYPE_PARAMETER()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry PROPERTY : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor PROPERTY()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry FIELD : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor FIELD()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry LOCAL_VARIABLE : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor LOCAL_VARIABLE()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry VALUE_PARAMETER : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor VALUE_PARAMETER()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry CONSTRUCTOR : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor CONSTRUCTOR()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry FUNCTION : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor FUNCTION()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry PROPERTY_GETTER : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor PROPERTY_GETTER()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry PROPERTY_SETTER : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor PROPERTY_SETTER()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry TYPE : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor TYPE()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry EXPRESSION : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor EXPRESSION()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    public enum entry FILE : kotlin.annotation.AnnotationTarget {
+        /*primary*/ private constructor FILE()
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+    }
+
+    /*primary*/ private constructor AnnotationTarget()
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.AnnotationTarget): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun name(): kotlin.String
+    public final override /*1*/ /*fake_override*/ fun ordinal(): kotlin.Int
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.AnnotationTarget
+    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.AnnotationTarget>
+}
+
 public open class Any {
     /*primary*/ public constructor Any()
 }
@@ -1261,7 +1409,15 @@ public object Unit {
     /*primary*/ private constructor Unit()
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) public final annotation class data : kotlin.Annotation {
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) public final annotation class annotation : kotlin.Annotation {
+    /*primary*/ public constructor __annotation(/*0*/ retention: kotlin.AnnotationRetention = ..., /*1*/ repeatable: kotlin.Boolean = ...)
+    internal final val repeatable: kotlin.Boolean
+        internal final fun <get-repeatable>(): kotlin.Boolean
+    internal final val retention: kotlin.AnnotationRetention
+        internal final fun <get-retention>(): kotlin.AnnotationRetention
+}
+
+kotlin.annotation.target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS}) public final annotation class data : kotlin.Annotation {
     /*primary*/ public constructor data()
 }
 
@@ -1299,6 +1455,12 @@ kotlin.annotation.target(allowedTargets = {AnnotationTarget.CLASSIFIER, Annotati
         internal final fun <get-names>(): kotlin.Array<out kotlin.String>
 }
 
-kotlin.annotation.target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class tailRecursive : kotlin.Annotation {
+kotlin.target(allowedTargets = {AnnotationTarget.FUNCTION}) public final annotation class tailRecursive : kotlin.Annotation {
     /*primary*/ public constructor tailRecursive()
+}
+
+kotlin.target(allowedTargets = {AnnotationTarget.CLASSIFIER}) public final annotation class target : kotlin.Annotation {
+    /*primary*/ public constructor target(/*0*/ vararg allowedTargets: kotlin.AnnotationTarget /*kotlin.Array<out kotlin.AnnotationTarget>*/)
+    internal final val allowedTargets: kotlin.Array<out kotlin.AnnotationTarget>
+        internal final fun <get-allowedTargets>(): kotlin.Array<out kotlin.AnnotationTarget>
 }

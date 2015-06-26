@@ -25,7 +25,12 @@ JetFile: Annotations_ERR.kt
       PsiWhiteSpace('\n')
       PsiElement(open)('open')
       PsiWhiteSpace('\n')
-      PsiElement(annotation)('annotation')
+      ANNOTATION_ENTRY
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('annotation')
       PsiWhiteSpace('\n')
       PsiElement(override)('override')
       PsiWhiteSpace('\n')
@@ -221,7 +226,12 @@ JetFile: Annotations_ERR.kt
           PsiWhiteSpace('\n')
           PsiElement(open)('open')
           PsiWhiteSpace('\n')
-          PsiElement(annotation)('annotation')
+          ANNOTATION_ENTRY
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('annotation')
           PsiWhiteSpace('\n')
           PsiElement(override)('override')
           PsiWhiteSpace('\n')

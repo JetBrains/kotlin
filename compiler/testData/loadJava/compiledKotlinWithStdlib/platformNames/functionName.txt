@@ -5,7 +5,7 @@ test.A(s = "2") internal var v: kotlin.Int
     kotlin.platform.platformName(name = "vset") test.A(s = "4") internal fun <set-v>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
 kotlin.platform.platformName(name = "bar") test.A(s = "1") internal fun foo(): kotlin.String
 
-internal final annotation class A : kotlin.Annotation {
+kotlin.annotation.annotation() internal final annotation class A : kotlin.Annotation {
     /*primary*/ public constructor A(/*0*/ s: kotlin.String)
     internal final val s: kotlin.String
         internal final fun <get-s>(): kotlin.String

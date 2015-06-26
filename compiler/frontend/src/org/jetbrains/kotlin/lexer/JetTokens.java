@@ -145,7 +145,6 @@ public interface JetTokens {
     JetModifierKeywordToken ENUM_KEYWORD      = JetModifierKeywordToken.softKeywordModifier("enum");
     JetModifierKeywordToken OPEN_KEYWORD      = JetModifierKeywordToken.softKeywordModifier("open");
     JetModifierKeywordToken INNER_KEYWORD     = JetModifierKeywordToken.softKeywordModifier("inner");
-    JetModifierKeywordToken ANNOTATION_KEYWORD = JetModifierKeywordToken.softKeywordModifier("annotation");
     JetModifierKeywordToken OVERRIDE_KEYWORD  = JetModifierKeywordToken.softKeywordModifier("override");
     JetModifierKeywordToken PRIVATE_KEYWORD   = JetModifierKeywordToken.softKeywordModifier("private");
     JetModifierKeywordToken PUBLIC_KEYWORD    = JetModifierKeywordToken.softKeywordModifier("public");
@@ -172,7 +171,7 @@ public interface JetTokens {
     );
 
     TokenSet SOFT_KEYWORDS = TokenSet.create(FILE_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,
-                                             SET_KEYWORD, ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD,
+                                             SET_KEYWORD, ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD,
                                              OVERRIDE_KEYWORD, PRIVATE_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD,
                                              CATCH_KEYWORD, FINALLY_KEYWORD, OUT_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD, REIFIED_KEYWORD,
                                              DYNAMIC_KEYWORD, COMPANION_KEYWORD, CONSTRUCTOR_KEYWORD, INIT_KEYWORD, SEALED_KEYWORD
@@ -185,7 +184,7 @@ public interface JetTokens {
      */
     JetModifierKeywordToken[] MODIFIER_KEYWORDS_ARRAY =
             new JetModifierKeywordToken[] {
-                    ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, ANNOTATION_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
+                    ABSTRACT_KEYWORD, ENUM_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
                     PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD,
                     REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD
             };
