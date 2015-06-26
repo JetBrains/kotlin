@@ -36,16 +36,3 @@ public class JavaMethodKotlinCallUsage(
         javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetCallElement>(callElement, javaMethodChangeInfo) {
     override protected val delegateUsage = JetFunctionCallUsage(psiElement, javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable)
 }
-
-public class JavaMethodKotlinDerivedDefinitionUsage(
-        function: JetFunction,
-        functionDescriptor: FunctionDescriptor,
-        javaMethodChangeInfo: JetChangeInfo): JavaMethodKotlinUsageWithDelegate<JetFunction>(function, javaMethodChangeInfo) {
-    @suppress("CAST_NEVER_SUCCEEDS")
-    override protected val delegateUsage = JetCallableDefinitionUsage(
-            psiElement,
-            functionDescriptor,
-            javaMethodChangeInfo.methodDescriptor.originalPrimaryCallable,
-            null
-    )
-}
