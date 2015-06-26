@@ -1,6 +1,6 @@
 Cleaning output files:
-out/production/module/test/TestPackage$usage$*.class
 out/production/module/test/TestPackage.class
+out/production/module/test/Usage.class
 End of files
 Compiling files:
 src/usage.kt

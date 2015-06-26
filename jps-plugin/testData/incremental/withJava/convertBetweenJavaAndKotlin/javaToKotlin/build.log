@@ -6,11 +6,11 @@ src/TheClass.kt
 End of files
 Cleaning output files:
 out/production/module/Usage.class
-out/production/module/_DefaultPackage$usage$*.class
+out/production/module/UsageInKotlin.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:
-src/usage.kt
+src/usageInKotlin.kt
 End of files
 Compiling files:
 src/Usage.java

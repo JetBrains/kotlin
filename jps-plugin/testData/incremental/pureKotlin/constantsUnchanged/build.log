@@ -1,7 +1,7 @@
 Cleaning output files:
+out/production/module/test/Const.class
 out/production/module/test/Klass$Companion.class
 out/production/module/test/Klass.class
-out/production/module/test/TestPackage$const$*.class
 out/production/module/test/TestPackage.class
 End of files
 Compiling files:

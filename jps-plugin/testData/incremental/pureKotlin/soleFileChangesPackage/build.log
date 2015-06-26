@@ -1,6 +1,13 @@
 Cleaning output files:
-out/production/module/foo/FooPackage$a$*.class
+out/production/module/foo/A.class
 out/production/module/foo/FooPackage.class
+End of files
+Compiling files:
+src/a.kt
+End of files
+Cleaning output files:
+out/production/module/bar/A.class
+out/production/module/bar/BarPackage.class
 End of files
 Compiling files:
 src/a.kt
