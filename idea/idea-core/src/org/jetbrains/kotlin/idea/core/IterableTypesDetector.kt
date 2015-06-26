@@ -34,12 +34,11 @@ import java.util.HashMap
 public class IterableTypesDetector(
         private val project: Project,
         private val moduleDescriptor: ModuleDescriptor,
-        private val scope: JetScope,
-        private val loopVarType: JetType? = null
+        private val scope: JetScope
 ) {
 
     private val container = createContainerForMacros(project, moduleDescriptor)
-    private val cache = HashMap<FuzzyType, Boolean>()
+    private val cache = HashMap<FuzzyType, FuzzyType?>()
     private val iteratorName = Name.identifier("iterator")
 
     private val typesWithExtensionIterator: Collection<JetType> = scope.getFunctions(iteratorName)
@@ -47,13 +46,24 @@ public class IterableTypesDetector(
             .filterNotNull()
             .map { it.getType() }
 
-    public fun isIterable(type: FuzzyType): Boolean {
-        return cache.getOrPut(type, { isIterableNoCache(type) })
+    public fun isIterable(type: FuzzyType, loopVarType: JetType? = null): Boolean {
+        val elementType = elementType(type) ?: return false
+        return loopVarType == null || elementType.checkIsSubtypeOf(loopVarType) != null
     }
 
-    private fun isIterableNoCache(type: FuzzyType): Boolean {
+    public fun isIterable(type: JetType, loopVarType: JetType? = null): Boolean
+            = isIterable(FuzzyType(type, emptyList()), loopVarType)
+
+    public fun elementType(type: FuzzyType): FuzzyType? {
+        return cache.getOrPut(type, { elementTypeNoCache(type) })
+    }
+
+    public fun elementType(type: JetType): FuzzyType?
+            = elementType(FuzzyType(type, emptyList()))
+
+    private fun elementTypeNoCache(type: FuzzyType): FuzzyType? {
         // optimization
-        if (!canBeIterable(type)) return false
+        if (!canBeIterable(type)) return null
 
         val expression = JetPsiFactory(project).createExpression("fake")
         val expressionReceiver = ExpressionReceiver(expression, type.type)
@@ -61,8 +71,7 @@ public class IterableTypesDetector(
         val context = ExpressionTypingContext.newContext(expressionTypingComponents.getAdditionalCheckerProvider(),
                                                          BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
         val elementType = expressionTypingComponents.getForLoopConventionsChecker().checkIterableConvention(expressionReceiver, context)
-        if (elementType == null) return false
-        return loopVarType == null || FuzzyType(elementType, type.freeParameters).checkIsSubtypeOf(loopVarType) != null
+        return elementType?.let { FuzzyType(it, type.freeParameters) }
     }
 
     private fun canBeIterable(type: FuzzyType): Boolean {

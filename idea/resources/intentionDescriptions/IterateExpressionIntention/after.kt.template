@@ -1,0 +1,3 @@
+for (i in <spot>listOf(1, 2, 3)</spot>) {
+}
+

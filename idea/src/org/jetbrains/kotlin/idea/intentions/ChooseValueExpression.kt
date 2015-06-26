@@ -30,6 +30,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 
+//TODO: move it somewhere else and reuse
 public abstract class ChooseValueExpression<T : Any>(
         lookupItems: List<T>,
         protected val defaultItem: T,
@@ -61,4 +62,13 @@ public abstract class ChooseValueExpression<T : Any>(
     override fun calculateResult(context: ExpressionContext) = TextResult(getLookupString(defaultItem))
 
     override fun getAdvertisingText() = advertisementText
+}
+
+public class ChooseStringExpression(
+        suggestions: List<String>,
+        default: String = suggestions[0],
+        advertisementText: String? = null
+) : ChooseValueExpression<String>(suggestions, default, advertisementText) {
+    override fun getLookupString(element: String) = element
+    override fun getResult(element: String) = element
 }

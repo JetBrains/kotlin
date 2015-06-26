@@ -26,8 +26,8 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.intentions.ChooseStringExpression
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.intentions.ChooseValueExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
@@ -68,13 +68,7 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPos
         val nullPtrExceptionText = "NullPointerException(\"$message\")"
         val kotlinNullPtrExceptionText = "KotlinNullPointerException()"
 
-        val exceptionLookupExpression =
-                object: ChooseValueExpression<String>(listOf(nullPtrExceptionText, kotlinNullPtrExceptionText),
-                                                        nullPtrExceptionText) {
-                    override fun getLookupString(element: String) = element
-                    override fun getResult(element: String) = element
-                }
-
+        val exceptionLookupExpression = ChooseStringExpression(listOf(nullPtrExceptionText, kotlinNullPtrExceptionText))
         val project = element.getProject()
         val builder = TemplateBuilderImpl(thrownExpression)
         builder.replaceElement(thrownExpression, exceptionLookupExpression);
