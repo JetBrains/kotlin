@@ -34,12 +34,12 @@ public object KotlinNameSuggester {
     public fun suggestNamesByExpressionAndType(expression: JetExpression, bindingContext: BindingContext, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
         val result = LinkedHashSet<String>()
 
+        result.addNamesByExpression(expression, validator)
+
         val type = bindingContext.getType(expression)
         if (type != null) {
             result.addNamesByType(type, validator)
         }
-
-        result.addNamesByExpression(expression, validator)
 
         if (result.isEmpty()) {
             result.addName(defaultName, validator)
@@ -284,15 +284,7 @@ public object KotlinNameSuggester {
         if (expression == null) return
 
         when (expression) {
-            is JetSimpleNameExpression -> {
-                val referenceName = expression.getReferencedName()
-                if (referenceName == referenceName.toUpperCase()) {
-                    addName(referenceName, validator)
-                }
-                else {
-                    addCamelNames(referenceName, validator)
-                }
-            }
+            is JetSimpleNameExpression -> addCamelNames(expression.getReferencedName(), validator)
 
             is JetQualifiedExpression -> addNamesByExpression(expression.getSelectorExpression(), validator)
 

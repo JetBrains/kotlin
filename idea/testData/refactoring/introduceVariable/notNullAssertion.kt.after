@@ -1,9 +1,9 @@
 fun foo(): Int {
     val s: String? = ""
-    val i = s!!.length
+    val length = s!!.length
     return if (true) {
-        i
+        length
     } else {
-        i
+        length
     }
 }

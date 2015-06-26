@@ -4,7 +4,7 @@ class A {
 
 fun main(args: Array<String>) {
     val a = A()
-    val i = a.test()
+    val test = a.test()
 
-    val b = i
+    val b = test
 }

@@ -2,6 +2,6 @@ val a: String?
     get() = ""
 
 fun main(args: Array<String>) {
-    val s = a
-    val x = if (s != null) s else throw NullPointerException("Expression 'a' must not be null")
+    val a1 = a
+    val x = if (a1 != null) a1 else throw NullPointerException("Expression 'a' must not be null")
 }

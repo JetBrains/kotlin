@@ -5,8 +5,8 @@ interface T {
 interface U: T
 
 fun test(t: T): Int {
-    val i = t.foo()
+    val foo = t.foo()
     return if (t is U)
-        i + 1
-    else i
+        foo + 1
+    else foo
 }

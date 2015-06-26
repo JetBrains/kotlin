@@ -7,7 +7,7 @@ class Foo() {
 
 fun main(args: Array<String>) {
     val f = Foo()
-    val i = Bar().f()
-    println(i)
-    println(i)
+    val f1 = Bar().f()
+    println(f1)
+    println(f1)
 }

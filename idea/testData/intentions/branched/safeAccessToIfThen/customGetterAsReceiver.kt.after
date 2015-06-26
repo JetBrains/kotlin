@@ -9,6 +9,6 @@ class Foo {
 
 fun main(args: Array<String>) {
     val a = Foo()
-    val s = a.b
-    doSomething(if (s != null) s.length() else null)
+    val b = a.b
+    doSomething(if (b != null) b.length() else null)
 }

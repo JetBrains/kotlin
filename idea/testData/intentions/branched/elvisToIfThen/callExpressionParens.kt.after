@@ -6,6 +6,6 @@ fun bar() {
 }
 
 fun main(args: Array<String>) {
-    val s = foo()
-    if (s != null) s else bar()
+    val foo = foo()
+    if (foo != null) foo else bar()
 }

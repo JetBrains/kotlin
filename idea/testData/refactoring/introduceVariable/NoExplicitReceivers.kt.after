@@ -1,9 +1,9 @@
 // WITH_RUNTIME
 fun main(args: Array<String>) {
     with(A()) {
-        val i = prop
-        println(i)
-        println(i)
+        val prop = prop
+        println(prop)
+        println(prop)
     }
 }
 

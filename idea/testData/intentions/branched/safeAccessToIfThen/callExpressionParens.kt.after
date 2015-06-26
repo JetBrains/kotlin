@@ -1,5 +1,5 @@
 fun foo(): String? = "foo"
 fun main(args: Array<String>) {
-    val s = foo()
-    if (s != null) s.length()
+    val foo = foo()
+    if (foo != null) foo.length()
 }

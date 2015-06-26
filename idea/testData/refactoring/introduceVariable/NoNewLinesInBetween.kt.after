@@ -1,5 +1,5 @@
 fun bar(): Int = 1
 
 fun foo() {
-    val i = bar();
+    val bar = bar();
 }

@@ -1,7 +1,7 @@
 fun main(args: Array<String>) {
     var a: String? = "A"
-    val s = a
-    doSomething(if (s != null) s else throw NullPointerException("Expression 'a' must not be null"))
+    val a1 = a
+    doSomething(if (a1 != null) a1 else throw NullPointerException("Expression 'a' must not be null"))
 }
 
 fun doSomething(a: Any){}

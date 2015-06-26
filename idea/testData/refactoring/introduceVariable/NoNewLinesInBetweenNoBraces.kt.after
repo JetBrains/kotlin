@@ -3,6 +3,6 @@ fun baz()
 
 fun foo() {
     if (true) {
-        val i = bar();
+        val bar = bar();
     } else baz()
 }

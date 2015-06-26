@@ -1,8 +1,8 @@
 fun main(args: Array<String>) {
-    val any = doSomething("one" + 1,
+    val doSomething = doSomething("one" + 1,
             "two",
             3 * 4)
-    val t = if (any != null) any else throw NullPointerException("Expression 'doSomething(\"one\" + 1, ...' must not be null")
+    val t = if (doSomething != null) doSomething else throw NullPointerException("Expression 'doSomething(\"one\" + 1, ...' must not be null")
 }
 
 fun doSomething(vararg a: Any): Any? = null

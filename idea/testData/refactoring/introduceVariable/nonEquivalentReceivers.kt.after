@@ -6,9 +6,9 @@ fun foo(body: A.() -> Unit) {}
 
 fun bar() {
     foo {
-        val i = value
-        print(i)
-        print(i)
+        val value = value
+        print(value)
+        print(value)
     }
 
     foo {

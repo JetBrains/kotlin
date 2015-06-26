@@ -2,6 +2,6 @@ val a: String?
     get() = ""
 
 fun main(args: Array<String>) {
-    val s = a
-    if (s != null) s else "bar"
+    val a1 = a
+    if (a1 != null) a1 else "bar"
 }

@@ -8,6 +8,6 @@ fun foo(t: T): Int {
 fun bar(x: Int = foo(T(T(2).t + 1)))
 
 fun test() {
-    val i = T(2).t
-    foo(T(i + 1))
+    val t = T(2).t
+    foo(T(t + 1))
 }

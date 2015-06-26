@@ -7,6 +7,6 @@ fun foo(i: Int): Int {
 fun test() {
     var x = 1
     val i = ++x
-    val i1 = x++
-    foo(i * i1)
+    val x1 = x++
+    foo(i * x1)
 }
