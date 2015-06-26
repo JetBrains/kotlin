@@ -128,8 +128,8 @@ public class JetExceptionFilterTest : MultiFileTestCase() {
     public fun testMultiSameName() {
         val packageClassFqName = getPackageClassFqName(FqName("multiSameName"))
         // The order and the exact names do matter here
-        doTest("1/foo.kt", 4, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
-        doTest("2/foo.kt", 4, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
+        doTest("1/foo1.kt", 4, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
+        doTest("2/foo2.kt", 4, { file -> "" + getPackagePartFqName(packageClassFqName, file) + "\$foo\$f\$1" })
     }
 
     public fun testLibrarySources() {
