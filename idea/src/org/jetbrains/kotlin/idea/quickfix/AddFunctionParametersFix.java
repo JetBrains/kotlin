@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.idea.JetBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.idea.core.JetNameValidator;
+import org.jetbrains.kotlin.idea.core.NameValidator;
 import org.jetbrains.kotlin.idea.core.SimpleCollectingValidator;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
@@ -130,7 +130,7 @@ public class AddFunctionParametersFix extends ChangeFunctionSignatureFix {
                             public Unit invoke(JetMutableMethodDescriptor descriptor) {
                                 List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
                                 List<? extends ValueArgument> arguments = callElement.getValueArguments();
-                                JetNameValidator validator = new SimpleCollectingValidator();
+                                NameValidator validator = new SimpleCollectingValidator();
 
                                 for (int i = 0; i < arguments.size(); i ++) {
                                     ValueArgument argument = arguments.get(i);

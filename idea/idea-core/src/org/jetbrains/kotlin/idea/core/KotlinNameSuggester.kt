@@ -21,7 +21,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.core.JetNameValidator
+import org.jetbrains.kotlin.idea.core.NameValidator
 import org.jetbrains.kotlin.lexer.JetLexer
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
@@ -33,9 +33,9 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import java.util.ArrayList
 import java.util.regex.Pattern
 
-public object JetNameSuggester {
+public object KotlinNameSuggester {
 
-    private fun addName(result: ArrayList<String>, name: String?, validator: JetNameValidator) {
+    private fun addName(result: ArrayList<String>, name: String?, validator: NameValidator) {
         var name = name ?: return
         if ("class" == name) name = "clazz"
         if (!isIdentifier(name)) return
@@ -58,7 +58,7 @@ public object JetNameSuggester {
      * *
      * @return possible names
      */
-    public fun suggestNames(expression: JetExpression, validator: JetNameValidator, defaultName: String?): Array<String> {
+    public fun suggestNames(expression: JetExpression, validator: NameValidator, defaultName: String?): Array<String> {
         val result = ArrayList<String>()
 
         val bindingContext = expression.analyze(BodyResolveMode.FULL)
@@ -72,20 +72,20 @@ public object JetNameSuggester {
         return ArrayUtil.toStringArray(result)
     }
 
-    public fun suggestNames(type: JetType, validator: JetNameValidator, defaultName: String?): Array<String> {
+    public fun suggestNames(type: JetType, validator: NameValidator, defaultName: String?): Array<String> {
         val result = ArrayList<String>()
         addNamesForType(result, type, validator)
         if (result.isEmpty()) addName(result, defaultName, validator)
         return ArrayUtil.toStringArray(result)
     }
 
-    public fun suggestNamesForType(jetType: JetType, validator: JetNameValidator): Array<String> {
+    public fun suggestNamesForType(jetType: JetType, validator: NameValidator): Array<String> {
         val result = ArrayList<String>()
         addNamesForType(result, jetType, validator)
         return ArrayUtil.toStringArray(result)
     }
 
-    jvmOverloads public fun suggestNamesForExpression(expression: JetExpression, validator: JetNameValidator, defaultName: String? = null): Array<String> {
+    jvmOverloads public fun suggestNamesForExpression(expression: JetExpression, validator: NameValidator, defaultName: String? = null): Array<String> {
         val result = ArrayList<String>()
         addNamesForExpression(result, expression, validator)
         if (result.isEmpty()) addName(result, defaultName, validator)
@@ -94,7 +94,7 @@ public object JetNameSuggester {
 
     private val COMMON_TYPE_PARAMETER_NAMES = arrayOf("T", "U", "V", "W", "X", "Y", "Z")
 
-    public fun suggestNamesForTypeParameters(count: Int, validator: JetNameValidator): Array<String> {
+    public fun suggestNamesForTypeParameters(count: Int, validator: NameValidator): Array<String> {
         val result = ArrayList<String>()
         for (i in 0..count - 1) {
             result.add(validator.validateNameWithVariants(*COMMON_TYPE_PARAMETER_NAMES))
@@ -102,7 +102,7 @@ public object JetNameSuggester {
         return ArrayUtil.toStringArray(result)
     }
 
-    private fun addNamesForType(result: ArrayList<String>, jetType: JetType, validator: JetNameValidator) {
+    private fun addNamesForType(result: ArrayList<String>, jetType: JetType, validator: NameValidator) {
         var jetType = jetType
         val builtIns = KotlinBuiltIns.getInstance()
         val typeChecker = JetTypeChecker.DEFAULT
@@ -177,7 +177,7 @@ public object JetNameSuggester {
         }
     }
 
-    private fun addForClassType(result: ArrayList<String>, jetType: JetType, validator: JetNameValidator) {
+    private fun addForClassType(result: ArrayList<String>, jetType: JetType, validator: NameValidator) {
         val descriptor = jetType.getConstructor().getDeclarationDescriptor()
         if (descriptor != null) {
             val className = descriptor.getName()
@@ -189,13 +189,13 @@ public object JetNameSuggester {
 
     private val ACCESSOR_PREFIXES = arrayOf("get", "is", "set")
 
-    public fun getCamelNames(name: String, validator: JetNameValidator, startLowerCase: Boolean): List<String> {
+    public fun getCamelNames(name: String, validator: NameValidator, startLowerCase: Boolean): List<String> {
         val result = ArrayList<String>()
         addCamelNames(result, name, validator, startLowerCase)
         return result
     }
 
-    private fun addCamelNames(result: ArrayList<String>, name: String, validator: JetNameValidator, startLowerCase: Boolean = true) {
+    private fun addCamelNames(result: ArrayList<String>, name: String, validator: NameValidator, startLowerCase: Boolean = true) {
         if (name === "") return
         var s = deleteNonLetterFromString(name)
 
@@ -255,7 +255,7 @@ public object JetNameSuggester {
         return matcher.replaceAll("")
     }
 
-    private fun addNamesForExpression(result: ArrayList<String>, expression: JetExpression?, validator: JetNameValidator) {
+    private fun addNamesForExpression(result: ArrayList<String>, expression: JetExpression?, validator: NameValidator) {
         if (expression == null) return
 
         expression.accept(object : JetVisitorVoid() {

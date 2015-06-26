@@ -39,9 +39,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.core.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
-import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
+import org.jetbrains.kotlin.idea.refactoring.NameValidatorImpl
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase
@@ -234,8 +234,8 @@ public open class KotlinIntroduceParameterHandler(
                        is JetClass -> targetParent.getBody()
                        else -> null
                    } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
-        val nameValidator = JetNameValidatorImpl(body, null, JetNameValidatorImpl.Target.PROPERTIES)
-        val suggestedNames = linkedSetOf(*JetNameSuggester.suggestNames(replacementType, nameValidator, "p"))
+        val nameValidator = NameValidatorImpl(body, null, NameValidatorImpl.Target.PROPERTIES)
+        val suggestedNames = linkedSetOf(*KotlinNameSuggester.suggestNames(replacementType, nameValidator, "p"))
 
         val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor)
 

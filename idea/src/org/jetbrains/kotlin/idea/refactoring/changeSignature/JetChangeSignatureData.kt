@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingValidator
-import org.jetbrains.kotlin.idea.core.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.JetFunctionDefinitionUsage
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetClass
@@ -82,7 +82,7 @@ public class JetChangeSignatureData(
             }
         } ?: CollectingValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
-        val receiverName = JetNameSuggester.suggestNames(receiverType, validator, "receiver").first()
+        val receiverName = KotlinNameSuggester.suggestNames(receiverType, validator, "receiver").first()
         return JetParameterInfo(functionDescriptor = baseDescriptor, name = receiverName, type = receiverType)
     }
 

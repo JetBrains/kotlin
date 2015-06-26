@@ -41,10 +41,10 @@ import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.core.CorePackage;
-import org.jetbrains.kotlin.idea.core.JetNameSuggester;
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
-import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl;
+import org.jetbrains.kotlin.idea.refactoring.NameValidatorImpl;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.idea.refactoring.introduce.IntroducePackage;
@@ -192,12 +192,12 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
 
                 PsiElement commonParent = PsiTreeUtil.findCommonParent(allReplaces);
                 PsiElement commonContainer = getContainer(commonParent);
-                JetNameValidatorImpl validator = new JetNameValidatorImpl(
+                NameValidatorImpl validator = new NameValidatorImpl(
                         commonContainer,
                         calculateAnchor(commonParent, commonContainer, allReplaces),
-                        JetNameValidatorImpl.Target.PROPERTIES
+                        NameValidatorImpl.Target.PROPERTIES
                 );
-                final String[] suggestedNames = JetNameSuggester.INSTANCE$.suggestNames(expression, validator, "value");
+                final String[] suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNames(expression, validator, "value");
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();

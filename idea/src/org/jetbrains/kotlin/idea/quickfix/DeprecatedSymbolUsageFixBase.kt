@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.core.JetNameSuggester
-import org.jetbrains.kotlin.idea.core.JetNameValidator
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.NameValidator
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -662,11 +662,11 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 }
             }
 
-            fun suggestName(validator: JetNameValidator): Name {
+            fun suggestName(validator: NameValidator): Name {
                 val name = if (nameSuggestion != null)
                     validator.validateName(nameSuggestion)
                 else
-                    JetNameSuggester.suggestNamesForExpression(value, validator, "t").first()
+                    KotlinNameSuggester.suggestNamesForExpression(value, validator, "t").first()
                 return Name.identifier(name)
             }
 
@@ -690,7 +690,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                             }
                         }
 
-                        val name = suggestName(object : JetNameValidator() {
+                        val name = suggestName(object : NameValidator() {
                             override fun validateInner(name: String): Boolean {
                                 return resolutionScope.getLocalVariable(Name.identifier(name)) == null && !isNameUsed(name)
                             }
@@ -723,7 +723,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
                 psiFactory.createExpressionByPattern("$0${dot}let { $1 }", value, expression)
             }
             else {
-                val name = suggestName(object : JetNameValidator() {
+                val name = suggestName(object : NameValidator() {
                     override fun validateInner(name: String) = !isNameUsed(name)
                 })
                 replaceUsages(name)

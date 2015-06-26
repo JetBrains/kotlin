@@ -30,7 +30,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.JetFileType;
-import org.jetbrains.kotlin.idea.core.JetNameSuggester;
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*;
@@ -102,9 +102,9 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private boolean checkNames() {
-        if (!JetNameSuggester.INSTANCE$.isIdentifier(getFunctionName())) return false;
+        if (!KotlinNameSuggester.INSTANCE$.isIdentifier(getFunctionName())) return false;
         for (KotlinParameterTablePanel.ParameterInfo parameterInfo : parameterTablePanel.getParameterInfos()) {
-            if (!JetNameSuggester.INSTANCE$.isIdentifier(parameterInfo.getName())) return false;
+            if (!KotlinNameSuggester.INSTANCE$.isIdentifier(parameterInfo.getName())) return false;
         }
         return true;
     }

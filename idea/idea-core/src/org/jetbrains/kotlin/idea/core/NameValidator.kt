@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.core
 import java.util.HashSet
 import java.util.Collections
 
-public abstract class JetNameValidator {
+public abstract class NameValidator {
     /**
      * Validates name, and slightly improves it by adding number to name in case of conflicts
      * @param name to check it in scope
@@ -55,14 +55,14 @@ public abstract class JetNameValidator {
     protected abstract fun validateInner(name: String): Boolean
 }
 
-public object EmptyValidator : JetNameValidator() {
+public object EmptyValidator : NameValidator() {
     override fun validateInner(name: String): Boolean = true
 }
 
 public open class CollectingValidator(
         existingNames: Collection<String> = Collections.emptySet(),
         val filter: (String) -> Boolean = { true }
-): JetNameValidator() {
+): NameValidator() {
     private val suggestedSet = HashSet(existingNames)
 
     override fun validateInner(name: String): Boolean {

@@ -21,7 +21,7 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.idea.core.EmptyValidator;
-import org.jetbrains.kotlin.idea.core.JetNameSuggester;
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil;
 import org.jetbrains.kotlin.psi.JetExpression;
 import org.jetbrains.kotlin.psi.JetFile;
@@ -100,7 +100,7 @@ public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
             JetRefactoringUtil.selectExpression(myFixture.getEditor(), file, new JetRefactoringUtil.SelectExpressionCallback() {
                 @Override
                 public void run(@Nullable JetExpression expression) {
-                    String[] names = JetNameSuggester.INSTANCE$.suggestNames(expression, EmptyValidator.INSTANCE$, "value");
+                    String[] names = KotlinNameSuggester.INSTANCE$.suggestNames(expression, EmptyValidator.INSTANCE$, "value");
                     Arrays.sort(names);
                     String result = StringUtil.join(names, "\n").trim();
                     assertEquals(expectedResultText, result);

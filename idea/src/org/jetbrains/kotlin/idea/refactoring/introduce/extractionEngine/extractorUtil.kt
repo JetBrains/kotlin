@@ -20,11 +20,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.core.appendElement
-import org.jetbrains.kotlin.idea.core.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
-import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
+import org.jetbrains.kotlin.idea.refactoring.NameValidatorImpl
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.ExpressionValue
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Initializer
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.Jump
@@ -278,8 +278,8 @@ private fun makeCall(
                 controlFlow.outputValueBoxer.getUnboxingExpressions(callText)
             }
             else {
-                val varNameValidator = JetNameValidatorImpl(block, anchorInBlock, JetNameValidatorImpl.Target.PROPERTIES)
-                val resultVal = JetNameSuggester.suggestNames(extractableDescriptor.returnType, varNameValidator, null).first()
+                val varNameValidator = NameValidatorImpl(block, anchorInBlock, NameValidatorImpl.Target.PROPERTIES)
+                val resultVal = KotlinNameSuggester.suggestNames(extractableDescriptor.returnType, varNameValidator, null).first()
                 block.addBefore(psiFactory.createDeclaration("val $resultVal = $callText"), anchorInBlock)
                 block.addBefore(newLine, anchorInBlock)
                 controlFlow.outputValueBoxer.getUnboxingExpressions(resultVal)
@@ -512,8 +512,8 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
         val (defaultExpression, expressionToUnifyWith) =
                 if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
-                    val varNameValidator = JetNameValidatorImpl(body, lastExpression, JetNameValidatorImpl.Target.PROPERTIES)
-                    val resultVal = JetNameSuggester.suggestNames(defaultValue.valueType, varNameValidator, null).first()
+                    val varNameValidator = NameValidatorImpl(body, lastExpression, NameValidatorImpl.Target.PROPERTIES)
+                    val resultVal = KotlinNameSuggester.suggestNames(defaultValue.valueType, varNameValidator, null).first()
                     val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.getText()}"), lastExpression) as JetProperty
                     body.addBefore(psiFactory.createNewLine(), lastExpression)
                     psiFactory.createExpression(resultVal) to newDecl.getInitializer()!!

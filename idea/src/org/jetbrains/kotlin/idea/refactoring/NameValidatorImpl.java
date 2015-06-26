@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.core.CorePackage;
-import org.jetbrains.kotlin.idea.core.JetNameValidator;
+import org.jetbrains.kotlin.idea.core.NameValidator;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;
@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JetNameValidatorImpl extends JetNameValidator {
+public class NameValidatorImpl extends NameValidator {
     public static enum Target {
         FUNCTIONS_AND_CLASSES,
         PROPERTIES
@@ -43,7 +43,7 @@ public class JetNameValidatorImpl extends JetNameValidator {
     private final PsiElement myAnchor;
     private final Target myTarget;
 
-    public JetNameValidatorImpl(PsiElement container, PsiElement anchor, Target target) {
+    public NameValidatorImpl(PsiElement container, PsiElement anchor, Target target) {
         myContainer = container;
         myAnchor = anchor;
         myTarget = target;

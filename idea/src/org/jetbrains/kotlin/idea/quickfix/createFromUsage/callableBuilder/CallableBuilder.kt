@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.CollectingValidator
 import org.jetbrains.kotlin.idea.core.EmptyValidator
-import org.jetbrains.kotlin.idea.core.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.ClassKind
 import org.jetbrains.kotlin.idea.util.*
@@ -397,7 +397,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             )
 
             val validator = CollectingValidator { scope.getClassifier(Name.identifier(it)) == null }
-            val parameterNames = JetNameSuggester.suggestNamesForTypeParameters(typeParameterCount, validator)
+            val parameterNames = KotlinNameSuggester.suggestNamesForTypeParameters(typeParameterCount, validator)
             val typeParameters = (0..typeParameterCount - 1).map {
                 TypeParameterDescriptorImpl.createWithDefaultBound(
                         fakeFunction,
@@ -821,7 +821,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 // figure out suggested names for each type option
                 val parameterTypeToNamesMap = HashMap<String, Array<String>>()
                 typeCandidates[parameter.typeInfo]!!.forEach { typeCandidate ->
-                    val suggestedNames = JetNameSuggester.suggestNamesForType(typeCandidate.theType, EmptyValidator)
+                    val suggestedNames = KotlinNameSuggester.suggestNamesForType(typeCandidate.theType, EmptyValidator)
                     parameterTypeToNamesMap[typeCandidate.renderedType!!] = suggestedNames
                 }
 

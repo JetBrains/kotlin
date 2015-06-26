@@ -45,12 +45,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.comparePossiblyOverridingDescriptors
 import org.jetbrains.kotlin.idea.core.getResolutionScope
-import org.jetbrains.kotlin.idea.core.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
 import org.jetbrains.kotlin.idea.imports.importableFqNameSafe
 import org.jetbrains.kotlin.idea.kdoc.getResolutionScope
-import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl
+import org.jetbrains.kotlin.idea.refactoring.NameValidatorImpl
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.ErrorMessage
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.AnalysisResult.Status
@@ -743,10 +743,10 @@ private fun ExtractionData.inferParametersInfo(
         }
     }
 
-    val varNameValidator = JetNameValidatorImpl(
+    val varNameValidator = NameValidatorImpl(
             commonParent.getNonStrictParentOfType<JetExpression>(),
             originalElements.firstOrNull(),
-            JetNameValidatorImpl.Target.PROPERTIES
+            NameValidatorImpl.Target.PROPERTIES
     )
 
     for ((descriptorToExtract, parameter) in extractedDescriptorToParameter) {
@@ -756,7 +756,7 @@ private fun ExtractionData.inferParametersInfo(
 
         with (parameter) {
             if (currentName == null) {
-                currentName = JetNameSuggester.suggestNames(getParameterType(options.allowSpecialClassNames), varNameValidator, "p").first()
+                currentName = KotlinNameSuggester.suggestNames(getParameterType(options.allowSpecialClassNames), varNameValidator, "p").first()
             }
             mirrorVarName = if (descriptorToExtract in modifiedVarDescriptors) varNameValidator.validateName(name) else null
             info.parameters.add(this)
@@ -909,13 +909,13 @@ private fun ExtractionData.suggestFunctionNames(returnType: JetType): List<Strin
     val functionNames = LinkedHashSet<String>()
 
     val validator =
-            JetNameValidatorImpl(
+            NameValidatorImpl(
                     targetSibling.getParent(),
                     if (targetSibling is JetClassInitializer) targetSibling.getParent() else targetSibling,
-                    if (options.extractAsProperty) JetNameValidatorImpl.Target.PROPERTIES else JetNameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
+                    if (options.extractAsProperty) NameValidatorImpl.Target.PROPERTIES else NameValidatorImpl.Target.FUNCTIONS_AND_CLASSES
             )
     if (!returnType.isDefault()) {
-        functionNames.addAll(JetNameSuggester.suggestNamesForType(returnType, validator))
+        functionNames.addAll(KotlinNameSuggester.suggestNamesForType(returnType, validator))
     }
 
     getExpressions().singleOrNull()?.let { expr ->

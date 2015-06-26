@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.EmptyValidator
-import org.jetbrains.kotlin.idea.core.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
@@ -60,7 +60,7 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         val elementType = data(element)!!.elementType
         //TODO: base on expression too
         //TODO: name validation
-        val names = JetNameSuggester.suggestNames(elementType, EmptyValidator, "e")
+        val names = KotlinNameSuggester.suggestNames(elementType, EmptyValidator, "e")
 
         var forExpression = JetPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names[0], element) as JetForExpression
         forExpression = element.replaced(forExpression)

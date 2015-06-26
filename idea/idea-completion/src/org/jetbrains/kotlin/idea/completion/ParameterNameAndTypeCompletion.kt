@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.formatter.JetCodeStyleSettings
 import org.jetbrains.kotlin.idea.core.getResolutionScope
 import org.jetbrains.kotlin.idea.core.EmptyValidator
-import org.jetbrains.kotlin.idea.core.JetNameSuggester
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetExpression
@@ -142,7 +142,7 @@ class ParameterNameAndTypeCompletion(
         ProgressManager.checkCanceled()
         if (suggestionsByTypesAdded.contains(type)) return // don't add suggestions for the same with longer user prefix
 
-        val nameSuggestions = JetNameSuggester.getCamelNames(className, EmptyValidator, userPrefix.isEmpty())
+        val nameSuggestions = KotlinNameSuggester.getCamelNames(className, EmptyValidator, userPrefix.isEmpty())
         for (name in nameSuggestions) {
             if (prefixMatcher.prefixMatches(name)) {
                 val lookupElement = MyLookupElement.create(userPrefix, name, type, lookupElementFactory)
