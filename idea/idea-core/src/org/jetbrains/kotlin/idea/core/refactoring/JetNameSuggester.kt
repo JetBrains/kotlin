@@ -41,7 +41,7 @@ import java.util.regex.Pattern
 public object JetNameSuggester {
 
     private fun addName(result: ArrayList<String>, name: String?, validator: JetNameValidator) {
-        var name: kotlin.String? = name ?: return
+        var name = name ?: return
         if ("class" == name) name = "clazz"
         if (!isIdentifier(name)) return
         result.add(validator.validateName(name))
@@ -200,7 +200,7 @@ public object JetNameSuggester {
         return result
     }
 
-    jvmOverloads private fun addCamelNames(result: ArrayList<String>, name: String, validator: JetNameValidator, startLowerCase: Boolean = true) {
+    private fun addCamelNames(result: ArrayList<String>, name: String, validator: JetNameValidator, startLowerCase: Boolean = true) {
         if (name === "") return
         var s = deleteNonLetterFromString(name)
 
