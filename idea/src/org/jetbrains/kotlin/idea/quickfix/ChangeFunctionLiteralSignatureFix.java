@@ -71,7 +71,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
                                 JetNameValidator validator = new SimpleCollectingValidator();
                                 descriptor.clearNonReceiverParameters();
                                 for (JetType type : parameterTypes) {
-                                    String name = JetNameSuggester.suggestNames(type, validator, "param")[0];
+                                    String name = JetNameSuggester.INSTANCE$.suggestNames(type, validator, "param")[0];
                                     descriptor.addParameter(
                                             new JetParameterInfo(functionDescriptor, -1, name, type, null, null, JetValVar.None, null)
                                     );

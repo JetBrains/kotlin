@@ -100,7 +100,7 @@ public class JetNameSuggesterTest extends LightCodeInsightFixtureTestCase {
             JetRefactoringUtil.selectExpression(myFixture.getEditor(), file, new JetRefactoringUtil.SelectExpressionCallback() {
                 @Override
                 public void run(@Nullable JetExpression expression) {
-                    String[] names = JetNameSuggester.suggestNames(expression, EmptyValidator.INSTANCE$, "value");
+                    String[] names = JetNameSuggester.INSTANCE$.suggestNames(expression, EmptyValidator.INSTANCE$, "value");
                     Arrays.sort(names);
                     String result = StringUtil.join(names, "\n").trim();
                     assertEquals(expectedResultText, result);

@@ -14,42 +14,37 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.refactoring;
+package org.jetbrains.kotlin.idea.core.refactoring
 
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ArrayUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
-import org.jetbrains.kotlin.lexer.JetLexer;
-import org.jetbrains.kotlin.lexer.JetTokens;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeUtils;
-import org.jetbrains.kotlin.types.checker.JetTypeChecker;
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.ArrayUtil
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.*
+import org.jetbrains.kotlin.lexer.JetLexer
+import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.ArrayList
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
-public class JetNameSuggester {
-    private JetNameSuggester() {
-    }
+public object JetNameSuggester {
 
-    private static void addName(ArrayList<String> result, @Nullable String name, JetNameValidator validator) {
-        if (name == null) return;
-        if ("class".equals(name)) name = "clazz";
-        if (!isIdentifier(name)) return;
-        result.add(validator.validateName(name));
+    private fun addName(result: ArrayList<String>, name: String?, validator: JetNameValidator) {
+        var name: kotlin.String? = name ?: return
+        if ("class" == name) name = "clazz"
+        if (!isIdentifier(name)) return
+        result.add(validator.validateName(name))
     }
 
     /**
@@ -61,258 +56,247 @@ public class JetNameSuggester {
      * 2. Reference expressions according to reference name camel humps
      * 3. Method call expression according to method callee expression
      * @param expression to suggest name for variable
+     * *
      * @param validator to check scope for such names
+     * *
      * @param defaultName
+     * *
      * @return possible names
      */
-    public static @NotNull String[] suggestNames(@NotNull JetExpression expression, @NotNull JetNameValidator validator, @Nullable String defaultName) {
-        ArrayList<String> result = new ArrayList<String>();
+    public fun suggestNames(expression: JetExpression, validator: JetNameValidator, defaultName: String?): Array<String> {
+        val result = ArrayList<String>()
 
-        BindingContext bindingContext = ResolvePackage.analyze(expression, BodyResolveMode.FULL);
-        JetType jetType = bindingContext.getType(expression);
+        val bindingContext = expression.analyze(BodyResolveMode.FULL)
+        val jetType = bindingContext.getType(expression)
         if (jetType != null) {
-            addNamesForType(result, jetType, validator);
+            addNamesForType(result, jetType, validator)
         }
-        addNamesForExpression(result, expression, validator);
+        addNamesForExpression(result, expression, validator)
 
-        if (result.isEmpty()) addName(result, defaultName, validator);
-        return ArrayUtil.toStringArray(result);
+        if (result.isEmpty()) addName(result, defaultName, validator)
+        return ArrayUtil.toStringArray(result)
     }
 
-    public static @NotNull String[] suggestNames(@NotNull JetType type, @NotNull JetNameValidator validator, @Nullable String defaultName) {
-        ArrayList<String> result = new ArrayList<String>();
-        addNamesForType(result, type, validator);
-        if (result.isEmpty()) addName(result, defaultName, validator);
-        return ArrayUtil.toStringArray(result);
+    public fun suggestNames(type: JetType, validator: JetNameValidator, defaultName: String?): Array<String> {
+        val result = ArrayList<String>()
+        addNamesForType(result, type, validator)
+        if (result.isEmpty()) addName(result, defaultName, validator)
+        return ArrayUtil.toStringArray(result)
     }
 
-    public static @NotNull String[] suggestNamesForType(@NotNull JetType jetType, @NotNull JetNameValidator validator) {
-        ArrayList<String> result = new ArrayList<String>();
-        addNamesForType(result, jetType, validator);
-        return ArrayUtil.toStringArray(result);
+    public fun suggestNamesForType(jetType: JetType, validator: JetNameValidator): Array<String> {
+        val result = ArrayList<String>()
+        addNamesForType(result, jetType, validator)
+        return ArrayUtil.toStringArray(result)
     }
 
-    public static @NotNull String[] suggestNamesForExpression(@NotNull JetExpression expression, @NotNull JetNameValidator validator) {
-        return suggestNamesForExpression(expression, validator, null);
+    jvmOverloads public fun suggestNamesForExpression(expression: JetExpression, validator: JetNameValidator, defaultName: String? = null): Array<String> {
+        val result = ArrayList<String>()
+        addNamesForExpression(result, expression, validator)
+        if (result.isEmpty()) addName(result, defaultName, validator)
+        return ArrayUtil.toStringArray(result)
     }
 
-    public static @NotNull String[] suggestNamesForExpression(@NotNull JetExpression expression, @NotNull JetNameValidator validator, @Nullable String defaultName) {
-        ArrayList<String> result = new ArrayList<String>();
-        addNamesForExpression(result, expression, validator);
-        if (result.isEmpty()) addName(result, defaultName, validator);
-        return ArrayUtil.toStringArray(result);
-    }
+    private val COMMON_TYPE_PARAMETER_NAMES = arrayOf("T", "U", "V", "W", "X", "Y", "Z")
 
-    private static final String[] COMMON_TYPE_PARAMETER_NAMES = {"T", "U", "V", "W", "X", "Y", "Z"};
-
-    public static @NotNull String[] suggestNamesForTypeParameters(int count, @NotNull JetNameValidator validator) {
-        ArrayList<String> result = new ArrayList<String>();
-        for (int i = 0; i < count; i++) {
-            result.add(validator.validateNameWithVariants(COMMON_TYPE_PARAMETER_NAMES));
+    public fun suggestNamesForTypeParameters(count: Int, validator: JetNameValidator): Array<String> {
+        val result = ArrayList<String>()
+        for (i in 0..count - 1) {
+            result.add(validator.validateNameWithVariants(*COMMON_TYPE_PARAMETER_NAMES))
         }
-        return ArrayUtil.toStringArray(result);
+        return ArrayUtil.toStringArray(result)
     }
 
-    private static void addNamesForType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-        JetTypeChecker typeChecker = JetTypeChecker.DEFAULT;
-        jetType = TypeUtils.makeNotNullable(jetType); // wipe out '?'
-        if (ErrorUtils.containsErrorType(jetType)) return;
+    private fun addNamesForType(result: ArrayList<String>, jetType: JetType, validator: JetNameValidator) {
+        var jetType = jetType
+        val builtIns = KotlinBuiltIns.getInstance()
+        val typeChecker = JetTypeChecker.DEFAULT
+        jetType = TypeUtils.makeNotNullable(jetType) // wipe out '?'
+        if (ErrorUtils.containsErrorType(jetType)) return
         if (typeChecker.equalTypes(builtIns.getBooleanType(), jetType)) {
-            addName(result, "b", validator);
+            addName(result, "b", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getIntType(), jetType)) {
-            addName(result, "i", validator);
+            addName(result, "i", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getByteType(), jetType)) {
-            addName(result, "byte", validator);
+            addName(result, "byte", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getLongType(), jetType)) {
-            addName(result, "l", validator);
+            addName(result, "l", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getFloatType(), jetType)) {
-            addName(result, "fl", validator);
+            addName(result, "fl", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getDoubleType(), jetType)) {
-            addName(result, "d", validator);
+            addName(result, "d", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getShortType(), jetType)) {
-            addName(result, "sh", validator);
+            addName(result, "sh", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getCharType(), jetType)) {
-            addName(result, "c", validator);
+            addName(result, "c", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getStringType(), jetType)) {
-            addName(result, "s", validator);
+            addName(result, "s", validator)
         }
         else if (KotlinBuiltIns.isArray(jetType) || KotlinBuiltIns.isPrimitiveArray(jetType)) {
-            JetType elementType = KotlinBuiltIns.getInstance().getArrayElementType(jetType);
+            val elementType = KotlinBuiltIns.getInstance().getArrayElementType(jetType)
             if (typeChecker.equalTypes(builtIns.getBooleanType(), elementType)) {
-                addName(result, "booleans", validator);
+                addName(result, "booleans", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getIntType(), elementType)) {
-                addName(result, "ints", validator);
+                addName(result, "ints", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getByteType(), elementType)) {
-                addName(result, "bytes", validator);
+                addName(result, "bytes", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getLongType(), elementType)) {
-                addName(result, "longs", validator);
+                addName(result, "longs", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getFloatType(), elementType)) {
-                addName(result, "floats", validator);
+                addName(result, "floats", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getDoubleType(), elementType)) {
-                addName(result, "doubles", validator);
+                addName(result, "doubles", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getShortType(), elementType)) {
-                addName(result, "shorts", validator);
+                addName(result, "shorts", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getCharType(), elementType)) {
-                addName(result, "chars", validator);
+                addName(result, "chars", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getStringType(), elementType)) {
-                addName(result, "strings", validator);
+                addName(result, "strings", validator)
             }
             else {
-                ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(elementType);
+                val classDescriptor = TypeUtils.getClassDescriptor(elementType)
                 if (classDescriptor != null) {
-                    Name className = classDescriptor.getName();
-                    addName(result, "arrayOf" + StringUtil.capitalize(className.asString()) + "s", validator);
+                    val className = classDescriptor.getName()
+                    addName(result, "arrayOf" + StringUtil.capitalize(className.asString()) + "s", validator)
                 }
             }
         }
         else {
-            addForClassType(result, jetType, validator);
+            addForClassType(result, jetType, validator)
         }
     }
 
-    private static void addForClassType(ArrayList<String> result, JetType jetType, JetNameValidator validator) {
-        ClassifierDescriptor descriptor = jetType.getConstructor().getDeclarationDescriptor();
+    private fun addForClassType(result: ArrayList<String>, jetType: JetType, validator: JetNameValidator) {
+        val descriptor = jetType.getConstructor().getDeclarationDescriptor()
         if (descriptor != null) {
-            Name className = descriptor.getName();
+            val className = descriptor.getName()
             if (!className.isSpecial()) {
-                addCamelNames(result, className.asString(), validator);
+                addCamelNames(result, className.asString(), validator)
             }
         }
     }
 
-    private static final String[] ACCESSOR_PREFIXES = { "get", "is", "set" };
+    private val ACCESSOR_PREFIXES = arrayOf("get", "is", "set")
 
-    public static List<String> getCamelNames(String name, JetNameValidator validator, boolean startLowerCase) {
-        ArrayList<String> result = new ArrayList<String>();
-        addCamelNames(result, name, validator, startLowerCase);
-        return result;
+    public fun getCamelNames(name: String, validator: JetNameValidator, startLowerCase: Boolean): List<String> {
+        val result = ArrayList<String>()
+        addCamelNames(result, name, validator, startLowerCase)
+        return result
     }
 
-    private static void addCamelNames(ArrayList<String> result, String name, JetNameValidator validator) {
-        addCamelNames(result, name, validator, true);
-    }
+    jvmOverloads private fun addCamelNames(result: ArrayList<String>, name: String, validator: JetNameValidator, startLowerCase: Boolean = true) {
+        if (name === "") return
+        var s = deleteNonLetterFromString(name)
 
-    private static void addCamelNames(ArrayList<String> result, String name, JetNameValidator validator, boolean startLowerCase) {
-        if (name == "") return;
-        String s = deleteNonLetterFromString(name);
+        for (prefix in ACCESSOR_PREFIXES) {
+            if (!s.startsWith(prefix)) continue
 
-        for (String prefix : ACCESSOR_PREFIXES) {
-            if (!s.startsWith(prefix)) continue;
-
-            int len = prefix.length();
+            val len = prefix.length()
             if (len < s.length() && Character.isUpperCase(s.charAt(len))) {
-                s = s.substring(len);
-                break;
+                s = s.substring(len)
+                break
             }
         }
 
-        boolean upperCaseLetterBefore = false;
-        for (int i = 0; i < s.length(); ++i) {
-            char c = s.charAt(i);
-            boolean upperCaseLetter = Character.isUpperCase(c);
+        var upperCaseLetterBefore = false
+        for (i in 0..s.length() - 1) {
+            val c = s.charAt(i)
+            val upperCaseLetter = Character.isUpperCase(c)
 
             if (i == 0) {
-                addName(result, startLowerCase ? decapitalize(s) : s, validator);
+                addName(result, if (startLowerCase) decapitalize(s) else s, validator)
             }
             else {
                 if (upperCaseLetter && !upperCaseLetterBefore) {
-                    String substring = s.substring(i);
-                    addName(result, startLowerCase ? decapitalize(substring) : substring, validator);
+                    val substring = s.substring(i)
+                    addName(result, if (startLowerCase) decapitalize(substring) else substring, validator)
                 }
             }
 
-            upperCaseLetterBefore = upperCaseLetter;
+            upperCaseLetterBefore = upperCaseLetter
         }
     }
 
-    private static String decapitalize(String s) {
-        char c = s.charAt(0);
-        if (!Character.isUpperCase(c)) return s;
+    private fun decapitalize(s: String): String {
+        var c = s.charAt(0)
+        if (!Character.isUpperCase(c)) return s
 
-        StringBuilder builder = new StringBuilder(s.length());
-        boolean decapitalize = true;
-        for (int i = 0; i < s.length(); i++) {
-            c = s.charAt(i);
+        val builder = StringBuilder(s.length())
+        var decapitalize = true
+        for (i in 0..s.length() - 1) {
+            c = s.charAt(i)
             if (decapitalize) {
                 if (Character.isUpperCase(c)) {
-                    c = Character.toLowerCase(c);
+                    c = Character.toLowerCase(c)
                 }
                 else {
-                    decapitalize = false;
+                    decapitalize = false
                 }
             }
-            builder.append(c);
+            builder.append(c)
         }
-        return builder.toString();
+        return builder.toString()
     }
-    
-    private static String deleteNonLetterFromString(String s) {
-        Pattern pattern = Pattern.compile("[^a-zA-Z]");
-        Matcher matcher = pattern.matcher(s);
-        return matcher.replaceAll("");
-    }
-    
-    private static void addNamesForExpression(
-            final ArrayList<String> result,
-            @Nullable JetExpression expression,
-            final JetNameValidator validator) {
-        if (expression == null) return;
 
-        expression.accept(new JetVisitorVoid() {
-            @Override
-            public void visitQualifiedExpression(@NotNull JetQualifiedExpression expression) {
-                JetExpression selectorExpression = expression.getSelectorExpression();
-                addNamesForExpression(result, selectorExpression, validator);
+    private fun deleteNonLetterFromString(s: String): String {
+        val pattern = Pattern.compile("[^a-zA-Z]")
+        val matcher = pattern.matcher(s)
+        return matcher.replaceAll("")
+    }
+
+    private fun addNamesForExpression(result: ArrayList<String>, expression: JetExpression?, validator: JetNameValidator) {
+        if (expression == null) return
+
+        expression.accept(object : JetVisitorVoid() {
+            override fun visitQualifiedExpression(expression: JetQualifiedExpression) {
+                val selectorExpression = expression.getSelectorExpression()
+                addNamesForExpression(result, selectorExpression, validator)
             }
 
-            @Override
-            public void visitSimpleNameExpression(@NotNull JetSimpleNameExpression expression) {
-                String referenceName = expression.getReferencedName();
-                if (referenceName.equals(referenceName.toUpperCase())) {
-                    addName(result, referenceName, validator);
+            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+                val referenceName = expression.getReferencedName()
+                if (referenceName == referenceName.toUpperCase()) {
+                    addName(result, referenceName, validator)
                 }
                 else {
-                    addCamelNames(result, referenceName, validator);
+                    addCamelNames(result, referenceName, validator)
                 }
             }
 
-            @Override
-            public void visitCallExpression(@NotNull JetCallExpression expression) {
-                addNamesForExpression(result, expression.getCalleeExpression(), validator);
+            override fun visitCallExpression(expression: JetCallExpression) {
+                addNamesForExpression(result, expression.getCalleeExpression(), validator)
             }
 
-            @Override
-            public void visitPostfixExpression(@NotNull JetPostfixExpression expression) {
-                addNamesForExpression(result, expression.getBaseExpression(), validator);
+            override fun visitPostfixExpression(expression: JetPostfixExpression) {
+                addNamesForExpression(result, expression.getBaseExpression(), validator)
             }
-        });
+        })
     }
-    
-    public static boolean isIdentifier(@Nullable String name) {
-        ApplicationManager.getApplication().assertReadAccessAllowed();
-        if (name == null || name.isEmpty()) return false;
 
-        JetLexer lexer = new JetLexer();
-        lexer.start(name, 0, name.length());
-        if (lexer.getTokenType() != JetTokens.IDENTIFIER) return false;
-        lexer.advance();
-        return lexer.getTokenType() == null;
+    public fun isIdentifier(name: String?): Boolean {
+        ApplicationManager.getApplication().assertReadAccessAllowed()
+        if (name == null || name.isEmpty()) return false
+
+        val lexer = JetLexer()
+        lexer.start(name, 0, name.length())
+        if (lexer.getTokenType() !== JetTokens.IDENTIFIER) return false
+        lexer.advance()
+        return lexer.getTokenType() == null
     }
 }

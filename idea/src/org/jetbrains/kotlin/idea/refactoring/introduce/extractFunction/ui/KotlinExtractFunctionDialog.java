@@ -102,9 +102,9 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
     }
 
     private boolean checkNames() {
-        if (!JetNameSuggester.isIdentifier(getFunctionName())) return false;
+        if (!JetNameSuggester.INSTANCE$.isIdentifier(getFunctionName())) return false;
         for (KotlinParameterTablePanel.ParameterInfo parameterInfo : parameterTablePanel.getParameterInfos()) {
-            if (!JetNameSuggester.isIdentifier(parameterInfo.getName())) return false;
+            if (!JetNameSuggester.INSTANCE$.isIdentifier(parameterInfo.getName())) return false;
         }
         return true;
     }

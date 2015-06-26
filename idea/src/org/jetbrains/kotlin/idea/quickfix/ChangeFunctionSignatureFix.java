@@ -105,7 +105,7 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return validator.validateName(argumentName.getAsName().asString());
         }
         else if (expression != null) {
-            return JetNameSuggester.suggestNames(expression, validator, "param")[0];
+            return JetNameSuggester.INSTANCE$.suggestNames(expression, validator, "param")[0];
         }
 
         return validator.validateName("param");

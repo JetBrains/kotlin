@@ -345,7 +345,7 @@ public class KotlinParameterTablePanel extends JPanel {
                 }
                 case PARAMETER_NAME_COLUMN: {
                     String name = (String) aValue;
-                    if (JetNameSuggester.isIdentifier(name)) {
+                    if (JetNameSuggester.INSTANCE$.isIdentifier(name)) {
                         info.setName(name);
                     }
                     updateSignature();
