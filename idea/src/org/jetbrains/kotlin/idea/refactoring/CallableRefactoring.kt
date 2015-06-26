@@ -50,7 +50,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
         val project: Project,
         val callableDescriptor: T,
         val bindingContext: BindingContext,
-        val commandName: String?) {
+        val commandName: String) {
     private val LOG = Logger.getInstance(javaClass<CallableRefactoring<*>>())
 
     private val kind = (callableDescriptor as? CallableMemberDescriptor)?.getKind() ?: CallableMemberDescriptor.Kind.DECLARATION

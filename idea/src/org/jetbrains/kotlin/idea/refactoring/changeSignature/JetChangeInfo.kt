@@ -353,12 +353,16 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: JetMeth
         val currentType = parameterDescriptors[i].getType()
 
         val defaultValueText = info.getDefaultValue()
-        val defaultValueExpr = if (getLanguage().`is`(JavaLanguage.INSTANCE) && !defaultValueText.isNullOrEmpty()) {
-            PsiElementFactory.SERVICE.getInstance(method.getProject())
-                    .createExpressionFromText(defaultValueText!!, null)
-                    .j2k()
-        }
-        else null
+        val defaultValueExpr =
+                when {
+                    info is KotlinAwareJavaParameterInfoImpl -> info.kotlinDefaultValue
+                    getLanguage().`is`(JavaLanguage.INSTANCE) && !defaultValueText.isNullOrEmpty() -> {
+                        PsiElementFactory.SERVICE.getInstance(method.getProject())
+                                .createExpressionFromText(defaultValueText!!, null)
+                                .j2k()
+                    }
+                    else -> null
+                }
 
         with(JetParameterInfo(callableDescriptor = functionDescriptor,
                               originalIndex = oldIndex,
