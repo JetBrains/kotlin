@@ -209,6 +209,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("compilationErrorThenFixedWithPhantomPart3")
+        public void testCompilationErrorThenFixedWithPhantomPart3() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/compilationErrorThenFixedWithPhantomPart3/");
+            doTest(fileName);
+        }
+
         @TestMetadata("conflictingPlatformDeclarations")
         public void testConflictingPlatformDeclarations() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/conflictingPlatformDeclarations/");

@@ -1,11 +1,11 @@
 Cleaning output files:
-out/production/module/test/TestPackage$b$*.class
+out/production/module/test/B.class
 out/production/module/test/TestPackage.class
 End of files
 Cleaning output files:
-out/production/module/other/OtherPackage$other$*.class
+out/production/module/other/Other.class
 out/production/module/other/OtherPackage.class
-out/production/module/test/TestPackage$a$*.class
+out/production/module/test/A.class
 End of files
 Compiling files:
 src/a.kt

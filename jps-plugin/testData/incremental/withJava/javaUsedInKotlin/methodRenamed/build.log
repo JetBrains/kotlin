@@ -5,9 +5,9 @@ Compiling files:
 src/JavaClass.java
 End of files
 Cleaning output files:
-out/production/module/_DefaultPackage$willBeResolvedToOther$*$willBeResolvedToOther$1.class
-out/production/module/_DefaultPackage$willBeResolvedToOther$*.class
-out/production/module/_DefaultPackage$willBeUnresolved$*.class
+out/production/module/WillBeResolvedToOther$willBeResolvedToOther$1.class
+out/production/module/WillBeResolvedToOther.class
+out/production/module/WillBeUnresolved.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:

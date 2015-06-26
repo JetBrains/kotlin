@@ -5,11 +5,11 @@ Compiling files:
 src/SamInterface.java
 End of files
 Cleaning output files:
+out/production/module/UsageWithFunctionExpression$usageWithFunctionExpression$a$1.class
+out/production/module/UsageWithFunctionExpression.class
+out/production/module/UsageWithFunctionLiteral$usageWithFunctionLiteral$1.class
+out/production/module/UsageWithFunctionLiteral.class
 out/production/module/_DefaultPackage$sam$SamInterface$*.class
-out/production/module/_DefaultPackage$usageWithFunctionExpression$*$usageWithFunctionExpression$a$1.class
-out/production/module/_DefaultPackage$usageWithFunctionExpression$*.class
-out/production/module/_DefaultPackage$usageWithFunctionLiteral$*$usageWithFunctionLiteral$1.class
-out/production/module/_DefaultPackage$usageWithFunctionLiteral$*.class
 out/production/module/_DefaultPackage.class
 End of files
 Compiling files:
