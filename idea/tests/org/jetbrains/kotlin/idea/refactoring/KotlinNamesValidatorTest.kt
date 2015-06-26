@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.lang.refactoring.NamesValidator
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.core.refactoring.KotlinNamesValidator
+import org.jetbrains.kotlin.idea.refactoring.KotlinNamesValidator
 import org.junit.Assert
 
 public class KotlinNamesValidatorTest : LightCodeInsightFixtureTestCase() {

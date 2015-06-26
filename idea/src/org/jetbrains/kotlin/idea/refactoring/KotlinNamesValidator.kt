@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.refactoring
+package org.jetbrains.kotlin.idea.refactoring
 
 import com.intellij.lang.refactoring.NamesValidator
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.core.JetNameSuggester
 import org.jetbrains.kotlin.lexer.JetKeywordToken
 import org.jetbrains.kotlin.lexer.JetTokens
 
 public class KotlinNamesValidator : NamesValidator {
-    val KEYWORD_SET = JetTokens.KEYWORDS.getTypes().filterIsInstance<JetKeywordToken>().map { it.getValue() }.toHashSet()
+    private val KEYWORD_SET = JetTokens.KEYWORDS.getTypes().filterIsInstance<JetKeywordToken>().map { it.getValue() }.toSet()
 
     override fun isKeyword(name: String, project: Project?): Boolean = name in KEYWORD_SET
     override fun isIdentifier(name: String, project: Project?): Boolean = JetNameSuggester.isIdentifier(name)

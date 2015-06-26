@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.core.CorePackage;
-import org.jetbrains.kotlin.idea.core.refactoring.JetNameValidator;
+import org.jetbrains.kotlin.idea.core.JetNameValidator;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.JetElement;
 import org.jetbrains.kotlin.psi.JetExpression;

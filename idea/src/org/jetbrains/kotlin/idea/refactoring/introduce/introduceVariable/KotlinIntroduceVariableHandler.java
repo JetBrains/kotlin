@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.analyzer.AnalyzerPackage;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolvePackage;
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.core.CorePackage;
-import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
+import org.jetbrains.kotlin.idea.core.JetNameSuggester;
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention;
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention;
 import org.jetbrains.kotlin.idea.refactoring.JetNameValidatorImpl;

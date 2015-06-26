@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.core.refactoring
+package org.jetbrains.kotlin.idea.core
 
 import java.util.HashSet
 import java.util.Collections

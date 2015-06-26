@@ -30,7 +30,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.core.refactoring.JetNameSuggester;
+import org.jetbrains.kotlin.idea.core.JetNameSuggester;
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Parameter;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.types.JetType;
