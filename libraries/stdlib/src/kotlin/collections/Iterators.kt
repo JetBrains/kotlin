@@ -17,6 +17,13 @@ public fun <T> Enumeration<T>.iterator(): Iterator<T> = object : Iterator<T> {
 public fun <T> Iterator<T>.iterator(): Iterator<T> = this
 
 /**
+ * Performs the given [operation] on each element of this [Iterator].
+ */
+public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit) : Unit {
+    for (element in this) operation(element)
+}
+
+/**
  * Data class representing a value from a collection or sequence, along with its index in that collection or sequence.
  *
  * @property value the underlying value.
