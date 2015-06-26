@@ -30,7 +30,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 
-public abstract class JetTypeLookupExpression<T : Any>(
+public abstract class ChooseValueExpression<T : Any>(
         lookupItems: List<T>,
         protected val defaultItem: T,
         private val advertisementText: String? = null

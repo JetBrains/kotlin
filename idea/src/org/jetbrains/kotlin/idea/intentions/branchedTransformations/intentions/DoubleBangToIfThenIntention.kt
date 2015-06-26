@@ -27,7 +27,7 @@ import com.intellij.psi.PsiDocumentManager
 import org.apache.commons.lang.StringEscapeUtils.escapeJava
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.JetSelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.intentions.JetTypeLookupExpression
+import org.jetbrains.kotlin.idea.intentions.ChooseValueExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNotNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfNullExpression
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
@@ -69,7 +69,7 @@ public class DoubleBangToIfThenIntention : JetSelfTargetingRangeIntention<JetPos
         val kotlinNullPtrExceptionText = "KotlinNullPointerException()"
 
         val exceptionLookupExpression =
-                object: JetTypeLookupExpression<String>(listOf(nullPtrExceptionText, kotlinNullPtrExceptionText),
+                object: ChooseValueExpression<String>(listOf(nullPtrExceptionText, kotlinNullPtrExceptionText),
                                                         nullPtrExceptionText) {
                     override fun getLookupString(element: String) = element
                     override fun getResult(element: String) = element

@@ -79,7 +79,7 @@ public class SpecifyTypeExplicitlyIntention : JetSelfTargetingIntention<JetCalla
             val types = if (isAnonymous) ArrayList<JetType>() else arrayListOf(exprType)
             types.addAll(allSupertypes)
 
-            return object : JetTypeLookupExpression<JetType>(types, types.first()) {
+            return object : ChooseValueExpression<JetType>(types, types.first()) {
                 override fun getLookupString(element: JetType) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(element)
                 override fun getResult(element: JetType) = IdeDescriptorRenderers.SOURCE_CODE.renderType(element)
             }
