@@ -3,7 +3,5 @@ p org.test 0
 m 0 0/SomeClass$Companion a
 a kotlin.inline 1
 m 1 0/SomeClass$Companion a
-a java.lang.Deprecated 2
-f 2 0/SomeClass OBJECT$
 m 0 0/SomeClass a
 m 1 0/SomeClass a

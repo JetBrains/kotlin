@@ -5,4 +5,3 @@ c 0 0/SomeClass$SomeInnerObject
 c 0 0/SomeClass$InnerClass
 c 0 0/SomeClass$InnerClass$InnerClassInInnerClass
 c 0 0/SomeClass$NestedClass
-f 0 0/SomeClass OBJECT$

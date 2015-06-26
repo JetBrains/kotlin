@@ -1,10 +1,5 @@
 public interface TraitClassObjectField {
     TraitClassObjectField.Companion Companion;
-    /**
-     * @deprecated
-     */
-    @java.lang.Deprecated
-    TraitClassObjectField.Companion OBJECT$;
     @org.jetbrains.annotations.Nullable
     java.lang.String x = "";
 

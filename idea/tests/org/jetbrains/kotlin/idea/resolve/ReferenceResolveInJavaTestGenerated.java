@@ -77,12 +77,6 @@ public class ReferenceResolveInJavaTestGenerated extends AbstractReferenceResolv
         doTest(fileName);
     }
 
-    @TestMetadata("DeprecatedClassObjectField.java")
-    public void testDeprecatedClassObjectField() throws Exception {
-        String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/DeprecatedClassObjectField.java");
-        doTest(fileName);
-    }
-
     @TestMetadata("EnumEntry.java")
     public void testEnumEntry() throws Exception {
         String fileName = JetTestUtils.navigationMetadata("idea/testData/resolve/referenceInJava/EnumEntry.java");

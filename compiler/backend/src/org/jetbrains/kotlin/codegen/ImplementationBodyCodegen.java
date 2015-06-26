@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KotlinClass;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -1008,12 +1007,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
         v.newField(OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
 
-        StackValue.Field deprecatedField = StackValue.deprecatedCompanionObjectAccessor(companionObjectDescriptor, typeMapper);
-        FieldVisitor fv = v.newField(OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED,
-                                     deprecatedField.name, deprecatedField.type.getDescriptor(), null, null);
-
-        fv.visitAnnotation(asmDescByFqNameWithoutInnerClasses(new FqName("java.lang.Deprecated")), true).visitEnd();
-
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
         if (!isCompanionObjectWithBackingFieldsInOuter(companionObjectDescriptor)) {
@@ -1074,7 +1067,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         codegen.v.dup();
         StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
         StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
-        StackValue.deprecatedCompanionObjectAccessor(companionObject, typeMapper).store(instance, codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {

@@ -1,4 +1,3 @@
-java.lang.Deprecated org.test.SomeClass OBJECT$
 kotlin.inline org.test.SomeClass.Companion a
 kotlin.platform.platformStatic org.test.SomeClass.Companion a
 org.jetbrains.annotations.NotNull org.test.SomeClass.Companion access$init$0

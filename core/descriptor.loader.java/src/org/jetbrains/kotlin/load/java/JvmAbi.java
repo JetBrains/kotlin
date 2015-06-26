@@ -45,10 +45,6 @@ public final class JvmAbi {
     public static final String KOTLIN_PACKAGE_FIELD_NAME = "$kotlinPackage";
     public static final ClassId REFLECTION_FACTORY_IMPL = ClassId.topLevel(new FqName("kotlin.reflect.jvm.internal.ReflectionFactoryImpl"));
 
-    //TODO: To be removed after kotlin M11
-    @Deprecated
-    public static final String DEPRECATED_COMPANION_OBJECT_FIELD = "OBJECT$";
-
     @NotNull
     public static String getSyntheticMethodNameForAnnotatedProperty(@NotNull Name propertyName) {
         return propertyName.asString() + ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX;

@@ -552,10 +552,6 @@ public abstract class StackValue {
         return field(FieldInfo.createForSingleton(classDescriptor, typeMapper));
     }
 
-    public static Field deprecatedCompanionObjectAccessor(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        return field(FieldInfo.deprecatedFieldForCompanionObject(classDescriptor, typeMapper));
-    }
-
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {
         return new OperationStackValue(type, lambda);
     }
