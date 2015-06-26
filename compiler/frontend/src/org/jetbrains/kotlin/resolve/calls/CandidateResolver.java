@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -28,12 +27,12 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.context.*;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl;
+import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext;
+import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
+import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode;
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastUtils;
@@ -49,27 +48,33 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT;
 import static org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER;
-import static org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getLastElementDeparenthesized;
-import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.CallResolverUtil.getEffectiveExpectedType;
 import static org.jetbrains.kotlin.resolve.calls.CallTransformer.CallForImplicitInvoke;
-import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
-import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION;
-import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION;
 import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
-import static org.jetbrains.kotlin.types.TypeUtils.*;
+import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
 public class CandidateResolver {
     @NotNull
     private ArgumentTypeResolver argumentTypeResolver;
+    @NotNull
+    private GenericCandidateResolver genericCandidateResolver;
 
     @Inject
     public void setArgumentTypeResolver(@NotNull ArgumentTypeResolver argumentTypeResolver) {
         this.argumentTypeResolver = argumentTypeResolver;
+    }
+
+    @Inject
+    public void setGenericCandidateResolver(@NotNull GenericCandidateResolver genericCandidateResolver) {
+        this.genericCandidateResolver = genericCandidateResolver;
     }
 
     public <D extends CallableDescriptor, F extends D> void performResolutionForCandidateCall(
@@ -160,7 +165,7 @@ public class CandidateResolver {
         if (jetTypeArguments.isEmpty() &&
             !candidate.getTypeParameters().isEmpty() &&
             candidateCall.getKnownTypeParametersSubstitutor() == null) {
-            candidateCall.addStatus(inferTypeArguments(context));
+            candidateCall.addStatus(genericCandidateResolver.inferTypeArguments(context));
         }
         else {
             candidateCall.addStatus(checkAllValueArguments(context, SHAPE_FUNCTION_ARGUMENTS).status);
@@ -285,203 +290,6 @@ public class CandidateResolver {
         if (expectedThis == null) return null;
         DeclarationDescriptor descriptor = expectedThis.getContainingDeclaration();
         return descriptor instanceof ClassDescriptor ? (ClassDescriptor) descriptor : null;
-    }
-
-    public <D extends CallableDescriptor> void completeTypeInferenceDependentOnFunctionLiteralsForCall(
-            CallCandidateResolutionContext<D> context
-    ) {
-        MutableResolvedCall<D> resolvedCall = context.candidateCall;
-        ConstraintSystem constraintSystem = resolvedCall.getConstraintSystem();
-        if (constraintSystem == null) return;
-
-        // constraints for function literals
-        // Value parameters
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : resolvedCall.getValueArguments().entrySet()) {
-            ResolvedValueArgument resolvedValueArgument = entry.getValue();
-            ValueParameterDescriptor valueParameterDescriptor = entry.getKey();
-
-            for (ValueArgument valueArgument : resolvedValueArgument.getArguments()) {
-                addConstraintForFunctionLiteral(valueArgument, valueParameterDescriptor, constraintSystem, context);
-            }
-        }
-        resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor());
-    }
-
-    private <D extends CallableDescriptor> void addConstraintForFunctionLiteral(
-            @NotNull ValueArgument valueArgument,
-            @NotNull ValueParameterDescriptor valueParameterDescriptor,
-            @NotNull ConstraintSystem constraintSystem,
-            @NotNull CallCandidateResolutionContext<D> context
-    ) {
-        JetExpression argumentExpression = valueArgument.getArgumentExpression();
-        if (argumentExpression == null) return;
-        if (!ArgumentTypeResolver.isFunctionLiteralArgument(argumentExpression, context)) return;
-
-        JetFunction functionLiteral = ArgumentTypeResolver.getFunctionLiteralArgument(argumentExpression, context);
-
-        JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
-        JetType expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT);
-        if (expectedType == null || TypeUtils.isDontCarePlaceholder(expectedType)) {
-            expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, false);
-        }
-        if (expectedType == null || !KotlinBuiltIns.isFunctionOrExtensionFunctionType(expectedType)
-                || CallResolverUtil.hasUnknownFunctionParameter(expectedType)) {
-            return;
-        }
-        MutableDataFlowInfoForArguments dataFlowInfoForArguments = context.candidateCall.getDataFlowInfoForArguments();
-        DataFlowInfo dataFlowInfoForArgument = dataFlowInfoForArguments.getInfo(valueArgument);
-
-        //todo analyze function literal body once in 'dependent' mode, then complete it with respect to expected type
-        boolean hasExpectedReturnType = !CallResolverUtil.hasUnknownReturnType(expectedType);
-        if (hasExpectedReturnType) {
-            TemporaryTraceAndCache temporaryToResolveFunctionLiteral = TemporaryTraceAndCache.create(
-                    context, "trace to resolve function literal with expected return type", argumentExpression);
-
-            JetExpression statementExpression = JetPsiUtil.getExpressionOrLastStatementInBlock(functionLiteral.getBodyExpression());
-            if (statementExpression == null) return;
-            boolean[] mismatch = new boolean[1];
-            ObservableBindingTrace errorInterceptingTrace = ExpressionTypingUtils.makeTraceInterceptingTypeMismatch(
-                    temporaryToResolveFunctionLiteral.trace, statementExpression, mismatch);
-            CallCandidateResolutionContext<D> newContext = context
-                    .replaceBindingTrace(errorInterceptingTrace).replaceExpectedType(expectedType)
-                    .replaceDataFlowInfo(dataFlowInfoForArgument).replaceResolutionResultsCache(temporaryToResolveFunctionLiteral.cache)
-                    .replaceContextDependency(INDEPENDENT);
-            JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo(
-                    argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).getType();
-            if (!mismatch[0]) {
-                constraintSystem.addSubtypeConstraint(
-                        type, effectiveExpectedType, VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
-                temporaryToResolveFunctionLiteral.commit();
-                return;
-            }
-        }
-        JetType expectedTypeWithoutReturnType = hasExpectedReturnType ? CallResolverUtil.replaceReturnTypeByUnknown(expectedType) : expectedType;
-        CallCandidateResolutionContext<D> newContext = context
-                .replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
-                .replaceContextDependency(INDEPENDENT);
-        JetType type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext,
-                                                                       RESOLVE_FUNCTION_ARGUMENTS).getType();
-        constraintSystem.addSubtypeConstraint(
-                type, effectiveExpectedType, VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
-    }
-
-    private <D extends CallableDescriptor> ResolutionStatus inferTypeArguments(CallCandidateResolutionContext<D> context) {
-        MutableResolvedCall<D> candidateCall = context.candidateCall;
-        final D candidate = candidateCall.getCandidateDescriptor();
-
-        ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
-
-        // If the call is recursive, e.g.
-        //   fun foo<T>(t : T) : T = foo(t)
-        // we can't use same descriptor objects for T's as actual type values and same T's as unknowns,
-        // because constraints become trivial (T :< T), and inference fails
-        //
-        // Thus, we replace the parameters of our descriptor with fresh objects (perform alpha-conversion)
-        CallableDescriptor candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidate);
-
-        Map<TypeParameterDescriptor, Variance> typeVariables = Maps.newLinkedHashMap();
-        for (TypeParameterDescriptor typeParameterDescriptor : candidateWithFreshVariables.getTypeParameters()) {
-            typeVariables.put(typeParameterDescriptor, Variance.INVARIANT); // TODO: variance of the occurrences
-        }
-        constraintSystem.registerTypeVariables(typeVariables);
-
-        TypeSubstitutor substituteDontCare =
-                makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE);
-
-        // Value parameters
-        for (Map.Entry<ValueParameterDescriptor, ResolvedValueArgument> entry : candidateCall.getValueArguments().entrySet()) {
-            ResolvedValueArgument resolvedValueArgument = entry.getValue();
-            ValueParameterDescriptor valueParameterDescriptor = candidateWithFreshVariables.getValueParameters().get(entry.getKey().getIndex());
-
-
-            for (ValueArgument valueArgument : resolvedValueArgument.getArguments()) {
-                // TODO : more attempts, with different expected types
-
-                // Here we type check expecting an error type (DONT_CARE, substitution with substituteDontCare)
-                // and throw the results away
-                // We'll type check the arguments later, with the inferred types expected
-                addConstraintForValueArgument(valueArgument, valueParameterDescriptor, substituteDontCare, constraintSystem,
-                                              context, SHAPE_FUNCTION_ARGUMENTS);
-            }
-        }
-
-        // Receiver
-        // Error is already reported if something is missing
-        ReceiverValue receiverArgument = candidateCall.getExtensionReceiver();
-        ReceiverParameterDescriptor receiverParameter = candidateWithFreshVariables.getExtensionReceiverParameter();
-        if (receiverArgument.exists() && receiverParameter != null) {
-            JetType receiverType =
-                    context.candidateCall.isSafeCall()
-                    ? TypeUtils.makeNotNullable(receiverArgument.getType())
-                    : receiverArgument.getType();
-            if (receiverArgument instanceof ExpressionReceiver) {
-                receiverType = updateResultTypeForSmartCasts(
-                        receiverType, ((ExpressionReceiver) receiverArgument).getExpression(), context);
-            }
-            constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), RECEIVER_POSITION.position());
-        }
-
-        // Restore type variables before alpha-conversion
-        ConstraintSystem constraintSystemWithRightTypeParameters = constraintSystem.substituteTypeVariables(
-                new Function1<TypeParameterDescriptor, TypeParameterDescriptor>() {
-                    @Override
-                    public TypeParameterDescriptor invoke(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
-                        return candidate.getTypeParameters().get(typeParameterDescriptor.getIndex());
-                    }
-                }
-        );
-        candidateCall.setConstraintSystem(constraintSystemWithRightTypeParameters);
-
-
-        // Solution
-        boolean hasContradiction = constraintSystem.getStatus().hasContradiction();
-        if (!hasContradiction) {
-            return INCOMPLETE_TYPE_INFERENCE;
-        }
-        return OTHER_ERROR;
-    }
-
-    private void addConstraintForValueArgument(
-            @NotNull ValueArgument valueArgument,
-            @NotNull ValueParameterDescriptor valueParameterDescriptor,
-            @NotNull TypeSubstitutor substitutor,
-            @NotNull ConstraintSystem constraintSystem,
-            @NotNull CallCandidateResolutionContext<?> context,
-            @NotNull CallResolverUtil.ResolveArgumentsMode resolveFunctionArgumentBodies) {
-
-        JetType effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument);
-        JetExpression argumentExpression = valueArgument.getArgumentExpression();
-
-        JetType expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT);
-        DataFlowInfo dataFlowInfoForArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(valueArgument);
-        CallResolutionContext<?> newContext = context.replaceExpectedType(expectedType).replaceDataFlowInfo(dataFlowInfoForArgument);
-
-        JetTypeInfo typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(
-                argumentExpression, newContext, resolveFunctionArgumentBodies);
-        context.candidateCall.getDataFlowInfoForArguments().updateInfo(valueArgument, typeInfoForCall.getDataFlowInfo());
-
-        JetType type = updateResultTypeForSmartCasts(
-                typeInfoForCall.getType(), argumentExpression, context.replaceDataFlowInfo(dataFlowInfoForArgument));
-        constraintSystem.addSubtypeConstraint(
-                type, effectiveExpectedType, VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()));
-    }
-
-    @Nullable
-    private static JetType updateResultTypeForSmartCasts(
-            @Nullable JetType type,
-            @Nullable JetExpression argumentExpression,
-            @NotNull ResolutionContext context
-    ) {
-        JetExpression deparenthesizedArgument = getLastElementDeparenthesized(argumentExpression, context);
-        if (deparenthesizedArgument == null || type == null) return type;
-
-        DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context);
-        if (!dataFlowValue.isPredictable()) return type;
-
-        Set<JetType> possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue);
-        if (possibleTypes.isEmpty()) return type;
-
-        return TypeUtils.intersect(JetTypeChecker.DEFAULT, possibleTypes);
     }
 
     @NotNull
@@ -693,27 +501,6 @@ public class CandidateResolver {
         private ValueArgumentsCheckingResult(@NotNull ResolutionStatus status, @NotNull List<JetType> argumentTypes) {
             this.status = status;
             this.argumentTypes = argumentTypes;
-        }
-    }
-
-    @NotNull
-    public static JetType getEffectiveExpectedType(ValueParameterDescriptor parameterDescriptor, ValueArgument argument) {
-        if (argument.getSpreadElement() != null) {
-            if (parameterDescriptor.getVarargElementType() == null) {
-                // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
-                return DONT_CARE;
-            }
-            else {
-                return parameterDescriptor.getType();
-            }
-        }
-        else {
-            JetType varargElementType = parameterDescriptor.getVarargElementType();
-            if (varargElementType != null) {
-                return varargElementType;
-            }
-
-            return parameterDescriptor.getType();
         }
     }
 

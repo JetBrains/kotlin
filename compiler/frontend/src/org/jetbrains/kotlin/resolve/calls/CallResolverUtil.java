@@ -21,14 +21,8 @@ import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.psi.Call;
-import org.jetbrains.kotlin.psi.JetExpression;
-import org.jetbrains.kotlin.psi.JetSimpleNameExpression;
-import org.jetbrains.kotlin.psi.JetSuperExpression;
+import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
@@ -164,5 +158,26 @@ public class CallResolverUtil {
             }
         }
         return null;
+    }
+
+    @NotNull
+    public static JetType getEffectiveExpectedType(@NotNull ValueParameterDescriptor parameterDescriptor, @NotNull ValueArgument argument) {
+        if (argument.getSpreadElement() != null) {
+            if (parameterDescriptor.getVarargElementType() == null) {
+                // Spread argument passed to a non-vararg parameter, an error is already reported by ValueArgumentsToParametersMapper
+                return DONT_CARE;
+            }
+            else {
+                return parameterDescriptor.getType();
+            }
+        }
+        else {
+            JetType varargElementType = parameterDescriptor.getVarargElementType();
+            if (varargElementType != null) {
+                return varargElementType;
+            }
+
+            return parameterDescriptor.getType();
+        }
     }
 }
