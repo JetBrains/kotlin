@@ -25,9 +25,9 @@ fun foo(f: () -> Unit) {
 }
 
 // PRINT_FRAME
- frame    = invoke():11, FrameAnonymousObjectPackage$@packagePartHASH$main$o$1$run$1 {frameAnonymousObject}
-   this     = this = {frameAnonymousObject.FrameAnonymousObjectPackage$@packagePartHASH$main$o$1$run$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
-     field    = this$0: frameAnonymousObject.FrameAnonymousObjectPackage$@packagePartHASH$main$o$1 = {frameAnonymousObject.FrameAnonymousObjectPackage$@packagePartHASH$main$o$1@uniqueID} (sp = null)
+ frame    = invoke():11, FrameAnonymousObject$main$o$1$run$1 {frameAnonymousObject}
+   this     = this = {frameAnonymousObject.FrameAnonymousObject$main$o$1$run$1@uniqueID}kotlin.jvm.functions.Function0<kotlin.Unit>
+     field    = this$0: frameAnonymousObject.FrameAnonymousObject$main$o$1 = {frameAnonymousObject.FrameAnonymousObject$main$o$1@uniqueID} (sp = null)
        field    = obProp: int = 1 (sp = frameAnonymousObject.kt, 6)
        field    = $val1: int = 1 (sp = null)
      field    = arity: int = 0 (sp = Lambda.!EXT!)

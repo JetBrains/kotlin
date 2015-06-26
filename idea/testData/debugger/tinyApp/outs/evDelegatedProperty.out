@@ -18,8 +18,8 @@ fun main(args: Array<String>) {
 }
 
 // PRINT_FRAME
- frame    = main():13, EvDelegatedPropertyPackage$@packagePartHASH {evDelegatedProperty}
-   static   = static = evDelegatedProperty.EvDelegatedPropertyPackage$@packagePartHASH
+ frame    = main():13, EvDelegatedProperty {evDelegatedProperty}
+   static   = static = evDelegatedProperty.EvDelegatedProperty
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evDelegatedProperty.kt, 9)
    local    = a: evDelegatedProperty.A = {evDelegatedProperty.A@uniqueID} (sp = evDelegatedProperty.kt, 10)
      field    = prop$delegate: kotlin.properties.ReadWriteProperty = {kotlin.properties.NotNullVar@uniqueID} (sp = evDelegatedProperty.kt, 6)
