@@ -70,7 +70,7 @@ public class ChangeFunctionLiteralSignatureFix extends ChangeFunctionSignatureFi
                                 CollectingNameValidator validator = new CollectingNameValidator();
                                 descriptor.clearNonReceiverParameters();
                                 for (JetType type : parameterTypes) {
-                                    String name = KotlinNameSuggester.INSTANCE$.suggestNames(type, validator, "param")[0];
+                                    String name = KotlinNameSuggester.INSTANCE$.suggestNamesByType(type, validator, "param")[0];
                                     descriptor.addParameter(
                                             new JetParameterInfo(functionDescriptor, -1, name, type, null, null, JetValVar.None, null)
                                     );

@@ -38,7 +38,7 @@ public object KotlinNameSuggester {
         var name = name ?: return
         if ("class" == name) name = "clazz"
         if (!isIdentifier(name)) return
-        result.add(validateName(name, validator))
+        result.add(suggestNameByName(name, validator))
     }
 
     /**
@@ -57,85 +57,92 @@ public object KotlinNameSuggester {
      * *
      * @return possible names
      */
-    public fun suggestNames(expression: JetExpression, validator: (String) -> Boolean, defaultName: String?): Array<String> {
+    public fun suggestNamesByExpressionAndType(expression: JetExpression, validator: (String) -> Boolean, defaultName: String?): Array<String> {
         val result = ArrayList<String>()
 
         val bindingContext = expression.analyze(BodyResolveMode.FULL)
         val jetType = bindingContext.getType(expression)
         if (jetType != null) {
-            addNamesForType(result, jetType, validator)
+            addNamesByType(result, jetType, validator)
         }
-        addNamesForExpression(result, expression, validator)
+        addNamesByExpression(result, expression, validator)
 
-        if (result.isEmpty()) addName(result, defaultName, validator)
+        if (result.isEmpty()) {
+            addName(result, defaultName, validator)
+        }
+
         return ArrayUtil.toStringArray(result)
     }
 
-    public fun suggestNames(type: JetType, validator: (String) -> Boolean, defaultName: String?): Array<String> {
+    public fun suggestNamesByType(type: JetType, validator: (String) -> Boolean, defaultName: String? = null): Array<String> {
         val result = ArrayList<String>()
-        addNamesForType(result, type, validator)
-        if (result.isEmpty()) addName(result, defaultName, validator)
+
+        addNamesByType(result, type, validator)
+
+        if (result.isEmpty()) {
+            addName(result, defaultName, validator)
+        }
+
         return ArrayUtil.toStringArray(result)
     }
 
-    public fun suggestNamesForType(jetType: JetType, validator: (String) -> Boolean): Array<String> {
+    public fun suggestNamesByExpressionOnly(expression: JetExpression, validator: (String) -> Boolean, defaultName: String? = null): Array<String> {
         val result = ArrayList<String>()
-        addNamesForType(result, jetType, validator)
+
+        addNamesByExpression(result, expression, validator)
+
+        if (result.isEmpty()) {
+            addName(result, defaultName, validator)
+        }
+
         return ArrayUtil.toStringArray(result)
     }
 
-    jvmOverloads public fun suggestNamesForExpression(expression: JetExpression, validator: (String) -> Boolean, defaultName: String? = null): Array<String> {
-        val result = ArrayList<String>()
-        addNamesForExpression(result, expression, validator)
-        if (result.isEmpty()) addName(result, defaultName, validator)
-        return ArrayUtil.toStringArray(result)
-    }
-
-    private val COMMON_TYPE_PARAMETER_NAMES = arrayOf("T", "U", "V", "W", "X", "Y", "Z")
+    private val COMMON_TYPE_PARAMETER_NAMES = listOf("T", "U", "V", "W", "X", "Y", "Z")
 
     public fun suggestNamesForTypeParameters(count: Int, validator: (String) -> Boolean): Array<String> {
         val result = ArrayList<String>()
         for (i in 0..count - 1) {
-            result.add(validateNameWithVariants(validator, *COMMON_TYPE_PARAMETER_NAMES))
+            result.add(suggestNameByMultipleNames(COMMON_TYPE_PARAMETER_NAMES, validator))
         }
         return ArrayUtil.toStringArray(result)
     }
 
-    private fun addNamesForType(result: ArrayList<String>, jetType: JetType, validator: (String) -> Boolean) {
-        var jetType = jetType
+    private fun addNamesByType(result: ArrayList<String>, type: JetType, validator: (String) -> Boolean) {
+        var type = TypeUtils.makeNotNullable(type) // wipe out '?'
         val builtIns = KotlinBuiltIns.getInstance()
         val typeChecker = JetTypeChecker.DEFAULT
-        jetType = TypeUtils.makeNotNullable(jetType) // wipe out '?'
-        if (ErrorUtils.containsErrorType(jetType)) return
-        if (typeChecker.equalTypes(builtIns.getBooleanType(), jetType)) {
+        if (ErrorUtils.containsErrorType(type)) return
+
+        if (typeChecker.equalTypes(builtIns.getBooleanType(), type)) {
             addName(result, "b", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getIntType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getIntType(), type)) {
             addName(result, "i", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getByteType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getByteType(), type)) {
             addName(result, "byte", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getLongType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getLongType(), type)) {
             addName(result, "l", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getFloatType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getFloatType(), type)) {
             addName(result, "fl", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getDoubleType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getDoubleType(), type)) {
             addName(result, "d", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getShortType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getShortType(), type)) {
             addName(result, "sh", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getCharType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getCharType(), type)) {
             addName(result, "c", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getStringType(), jetType)) {
+        else if (typeChecker.equalTypes(builtIns.getStringType(), type)) {
             addName(result, "s", validator)
         }
-        else if (KotlinBuiltIns.isArray(jetType) || KotlinBuiltIns.isPrimitiveArray(jetType)) {
-            val elementType = KotlinBuiltIns.getInstance().getArrayElementType(jetType)
+        else if (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) {
+            val elementType = KotlinBuiltIns.getInstance().getArrayElementType(type)
             if (typeChecker.equalTypes(builtIns.getBooleanType(), elementType)) {
                 addName(result, "booleans", validator)
             }
@@ -172,16 +179,12 @@ public object KotlinNameSuggester {
             }
         }
         else {
-            addForClassType(result, jetType, validator)
-        }
-    }
-
-    private fun addForClassType(result: ArrayList<String>, jetType: JetType, validator: (String) -> Boolean) {
-        val descriptor = jetType.getConstructor().getDeclarationDescriptor()
-        if (descriptor != null) {
-            val className = descriptor.getName()
-            if (!className.isSpecial()) {
-                addCamelNames(result, className.asString(), validator)
+            val descriptor = type.getConstructor().getDeclarationDescriptor()
+            if (descriptor != null) {
+                val className = descriptor.getName()
+                if (!className.isSpecial()) {
+                    addCamelNames(result, className.asString(), validator)
+                }
             }
         }
     }
@@ -254,13 +257,13 @@ public object KotlinNameSuggester {
         return matcher.replaceAll("")
     }
 
-    private fun addNamesForExpression(result: ArrayList<String>, expression: JetExpression?, validator: (String) -> Boolean) {
+    private fun addNamesByExpression(result: ArrayList<String>, expression: JetExpression?, validator: (String) -> Boolean) {
         if (expression == null) return
 
         expression.accept(object : JetVisitorVoid() {
             override fun visitQualifiedExpression(expression: JetQualifiedExpression) {
                 val selectorExpression = expression.getSelectorExpression()
-                addNamesForExpression(result, selectorExpression, validator)
+                addNamesByExpression(result, selectorExpression, validator)
             }
 
             override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
@@ -274,11 +277,11 @@ public object KotlinNameSuggester {
             }
 
             override fun visitCallExpression(expression: JetCallExpression) {
-                addNamesForExpression(result, expression.getCalleeExpression(), validator)
+                addNamesByExpression(result, expression.getCalleeExpression(), validator)
             }
 
             override fun visitPostfixExpression(expression: JetPostfixExpression) {
-                addNamesForExpression(result, expression.getBaseExpression(), validator)
+                addNamesByExpression(result, expression.getBaseExpression(), validator)
             }
         })
     }
@@ -299,10 +302,10 @@ public object KotlinNameSuggester {
      * @param name to check it in scope
      * @return name or nameI, where I is number
      */
-    public fun validateName(name: String, validator: (String) -> Boolean): String {
-        if (validator.invoke(name)) return name
+    public fun suggestNameByName(name: String, validator: (String) -> Boolean): String {
+        if (validator(name)) return name
         var i = 1
-        while (!validator.invoke(name + i)) {
+        while (!validator(name + i)) {
             ++i
         }
 
@@ -315,12 +318,12 @@ public object KotlinNameSuggester {
      * @param names to check it in scope
      * @return name or nameI, where name is one of variants and I is a number
      */
-    public fun validateNameWithVariants(validator: (String) -> Boolean, vararg names: String): String {
+    public fun suggestNameByMultipleNames(names: Collection<String>, validator: (String) -> Boolean): String {
         var i = 0
         while (true) {
             for (name in names) {
                 val candidate = if (i > 0) name + i else name
-                if (validator.invoke(candidate)) return candidate
+                if (validator(candidate)) return candidate
             }
             i++
         }

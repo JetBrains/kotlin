@@ -197,7 +197,7 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         calculateAnchor(commonParent, commonContainer, allReplaces),
                         NameValidatorImpl.Target.PROPERTIES
                 );
-                final String[] suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNames(expression, validator, "value");
+                final String[] suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, validator, "value");
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();

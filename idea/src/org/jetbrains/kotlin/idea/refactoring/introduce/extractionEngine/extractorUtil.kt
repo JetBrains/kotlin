@@ -279,7 +279,7 @@ private fun makeCall(
             }
             else {
                 val varNameValidator = NameValidatorImpl(block, anchorInBlock, NameValidatorImpl.Target.PROPERTIES)
-                val resultVal = KotlinNameSuggester.suggestNames(extractableDescriptor.returnType, varNameValidator, null).first()
+                val resultVal = KotlinNameSuggester.suggestNamesByType(extractableDescriptor.returnType, varNameValidator, null).first()
                 block.addBefore(psiFactory.createDeclaration("val $resultVal = $callText"), anchorInBlock)
                 block.addBefore(newLine, anchorInBlock)
                 controlFlow.outputValueBoxer.getUnboxingExpressions(resultVal)
@@ -513,7 +513,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         val (defaultExpression, expressionToUnifyWith) =
                 if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
                     val varNameValidator = NameValidatorImpl(body, lastExpression, NameValidatorImpl.Target.PROPERTIES)
-                    val resultVal = KotlinNameSuggester.suggestNames(defaultValue.valueType, varNameValidator, null).first()
+                    val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue.valueType, varNameValidator, null).first()
                     val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression!!.getText()}"), lastExpression) as JetProperty
                     body.addBefore(psiFactory.createNewLine(), lastExpression)
                     psiFactory.createExpression(resultVal) to newDecl.getInitializer()!!

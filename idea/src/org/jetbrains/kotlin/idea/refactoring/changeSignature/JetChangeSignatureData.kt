@@ -82,7 +82,7 @@ public class JetChangeSignatureData(
             }
         } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
-        val receiverName = KotlinNameSuggester.suggestNames(receiverType, validator, "receiver").first()
+        val receiverName = KotlinNameSuggester.suggestNamesByType(receiverType, validator, "receiver").first()
         return JetParameterInfo(functionDescriptor = baseDescriptor, name = receiverName, type = receiverType)
     }
 

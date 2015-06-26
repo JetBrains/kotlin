@@ -102,7 +102,7 @@ private fun buildTemplate(lambdaType: JetType, explicitParameterTypes: Boolean, 
             template.addTextSegment(", ")
         }
         //TODO: check for names in scope
-        template.addVariable(ParameterNameExpression(KotlinNameSuggester.suggestNames(parameterType, { true }, "p")), true)
+        template.addVariable(ParameterNameExpression(KotlinNameSuggester.suggestNamesByType(parameterType, { true }, "p")), true)
         if (explicitParameterTypes) {
             template.addTextSegment(": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(parameterType))
         }

@@ -95,7 +95,7 @@ private class ParameterNameExpression(
 
         // ensure there are no conflicts
         val validator = CollectingNameValidator(parameterNames)
-        return names.map { LookupElementBuilder.create(KotlinNameSuggester.validateName(it, validator)) }.toTypedArray()
+        return names.map { LookupElementBuilder.create(KotlinNameSuggester.suggestNameByName(it, validator)) }.toTypedArray()
     }
 }
 

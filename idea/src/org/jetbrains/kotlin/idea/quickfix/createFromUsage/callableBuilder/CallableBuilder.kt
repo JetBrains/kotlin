@@ -622,7 +622,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             val validator = CollectingNameValidator { scope.getClassifier(Name.identifier(it)) == null }
-            val typeParameterNames = allTypeParametersNotInScope.map { KotlinNameSuggester.validateName(it.getName().asString(), validator) }
+            val typeParameterNames = allTypeParametersNotInScope.map { KotlinNameSuggester.suggestNameByName(it.getName().asString(), validator) }
 
             return allTypeParametersNotInScope.zip(typeParameterNames).toMap()
         }
@@ -820,7 +820,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 // figure out suggested names for each type option
                 val parameterTypeToNamesMap = HashMap<String, Array<String>>()
                 typeCandidates[parameter.typeInfo]!!.forEach { typeCandidate ->
-                    val suggestedNames = KotlinNameSuggester.suggestNamesForType(typeCandidate.theType, { true })
+                    val suggestedNames = KotlinNameSuggester.suggestNamesByType(typeCandidate.theType, { true })
                     parameterTypeToNamesMap[typeCandidate.renderedType!!] = suggestedNames
                 }
 

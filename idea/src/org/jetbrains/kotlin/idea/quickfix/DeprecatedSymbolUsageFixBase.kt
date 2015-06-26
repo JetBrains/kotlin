@@ -663,9 +663,9 @@ public abstract class DeprecatedSymbolUsageFixBase(
 
             fun suggestName(validator: (String) -> Boolean): Name {
                 val name = if (nameSuggestion != null)
-                    KotlinNameSuggester.validateName(nameSuggestion, validator)
+                    KotlinNameSuggester.suggestNameByName(nameSuggestion, validator)
                 else
-                    KotlinNameSuggester.suggestNamesForExpression(value, validator, "t").first()
+                    KotlinNameSuggester.suggestNamesByExpressionOnly(value, validator, "t").first()
                 return Name.identifier(name)
             }
 

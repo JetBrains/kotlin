@@ -59,7 +59,7 @@ public class IterateExpressionIntention : JetSelfTargetingIntention<JetExpressio
         val elementType = data(element)!!.elementType
         //TODO: base on expression too
         //TODO: name validation
-        val names = KotlinNameSuggester.suggestNames(elementType, { true }, "e")
+        val names = KotlinNameSuggester.suggestNamesByType(elementType, { true }, "e")
 
         var forExpression = JetPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names[0], element) as JetForExpression
         forExpression = element.replaced(forExpression)
