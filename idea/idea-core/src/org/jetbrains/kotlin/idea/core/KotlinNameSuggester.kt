@@ -301,6 +301,8 @@ public object KotlinNameSuggester {
             is JetCallExpression -> addNamesByExpression(expression.getCalleeExpression(), validator)
 
             is JetPostfixExpression -> addNamesByExpression(expression.getBaseExpression(), validator)
+
+            is JetParenthesizedExpression -> addNamesByExpression(expression.getExpression(), validator)
         }
     }
 
