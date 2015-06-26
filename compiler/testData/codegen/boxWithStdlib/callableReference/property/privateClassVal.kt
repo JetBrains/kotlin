@@ -1,11 +1,11 @@
 import kotlin.reflect.IllegalPropertyAccessException
-import kotlin.reflect.KMemberProperty
+import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.accessible
 
 class Result {
     private val value = "OK"
 
-    fun ref(): KMemberProperty<Result, String> = ::value
+    fun ref(): KProperty1<Result, String> = ::value
 }
 
 fun box(): String {

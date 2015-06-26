@@ -50,12 +50,10 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
 
     public val kClass: ClassDescriptor by ClassLookup
-    public val kTopLevelVariable: ClassDescriptor by ClassLookup
-    public val kMutableTopLevelVariable: ClassDescriptor by ClassLookup
-    public val kMemberProperty: ClassDescriptor by ClassLookup
-    public val kMutableMemberProperty: ClassDescriptor by ClassLookup
-    public val kTopLevelExtensionProperty: ClassDescriptor by ClassLookup
-    public val kMutableTopLevelExtensionProperty: ClassDescriptor by ClassLookup
+    public val kProperty0: ClassDescriptor by ClassLookup
+    public val kProperty1: ClassDescriptor by ClassLookup
+    public val kMutableProperty0: ClassDescriptor by ClassLookup
+    public val kMutableProperty1: ClassDescriptor by ClassLookup
 
     public fun getKClassType(annotations: Annotations, type: JetType): JetType {
         val descriptor = kClass
@@ -84,23 +82,18 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         return JetTypeImpl(annotations, classDescriptor.getTypeConstructor(), false, arguments, classDescriptor.getMemberScope(arguments))
     }
 
-    public fun getKPropertyType(
-            annotations: Annotations,
-            receiverType: JetType?,
-            returnType: JetType,
-            extensionProperty: Boolean,
-            mutable: Boolean
-    ): JetType {
-        val classDescriptor = if (mutable) when {
-            extensionProperty -> kMutableTopLevelExtensionProperty
-            receiverType != null -> kMutableMemberProperty
-            else -> kMutableTopLevelVariable
-        }
-        else when {
-            extensionProperty -> kTopLevelExtensionProperty
-            receiverType != null -> kMemberProperty
-            else -> kTopLevelVariable
-        }
+    public fun getKPropertyType(annotations: Annotations, receiverType: JetType?, returnType: JetType, mutable: Boolean): JetType {
+        val classDescriptor =
+                when {
+                    receiverType != null -> when {
+                        mutable -> kMutableProperty1
+                        else -> kProperty1
+                    }
+                    else -> when {
+                        mutable -> kMutableProperty0
+                        else -> kProperty0
+                    }
+                }
 
         if (ErrorUtils.isError(classDescriptor)) {
             return classDescriptor.getDefaultType()

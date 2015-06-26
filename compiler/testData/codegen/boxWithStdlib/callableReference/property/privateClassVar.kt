@@ -1,11 +1,11 @@
 import kotlin.reflect.IllegalPropertyAccessException
-import kotlin.reflect.KMutableMemberProperty
+import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.jvm.accessible
 
 class A {
     private var value = 0
 
-    fun ref(): KMutableMemberProperty<A, Int> = ::value
+    fun ref(): KMutableProperty1<A, Int> = ::value
 }
 
 fun box(): String {

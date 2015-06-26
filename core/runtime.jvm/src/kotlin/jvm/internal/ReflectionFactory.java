@@ -40,27 +40,27 @@ public class ReflectionFactory {
 
     // Properties
 
-    public KMemberProperty memberProperty(String name, KClass owner) {
+    public KProperty1 memberProperty(String name, KClass owner) {
         throw error();
     }
 
-    public KMutableMemberProperty mutableMemberProperty(String name, KClass owner) {
+    public KMutableProperty1 mutableMemberProperty(String name, KClass owner) {
         throw error();
     }
 
-    public KTopLevelVariable topLevelVariable(String name, KPackage owner) {
+    public KProperty0 topLevelVariable(String name, KPackage owner) {
         throw error();
     }
 
-    public KMutableTopLevelVariable mutableTopLevelVariable(String name, KPackage owner) {
+    public KMutableProperty0 mutableTopLevelVariable(String name, KPackage owner) {
         throw error();
     }
 
-    public KTopLevelExtensionProperty topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
+    public KProperty1 topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
         throw error();
     }
 
-    public KMutableTopLevelExtensionProperty mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
+    public KMutableProperty1 mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
         throw error();
     }
 

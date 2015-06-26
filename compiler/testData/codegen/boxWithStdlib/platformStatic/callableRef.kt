@@ -4,7 +4,7 @@ object A {
 
     val b: String = "OK"
 
-    platformStatic val c: String = "OK"
+    platformStatic var c: String = "Fail"
 
     platformStatic fun test1() : String {
         return b
@@ -35,6 +35,8 @@ fun box(): String {
     if ((A::test3)(A) != "1OK") return "fail 3"
 
     if ((A::test4)(A) != "1OK") return "fail 4"
+
+    (A::c).set(A, "OK")
 
     if (((A::c).get(A)) != "OK") return "fail 5"
 

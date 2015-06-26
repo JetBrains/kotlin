@@ -1,6 +1,6 @@
 // !CHECK_TYPE
 
-import kotlin.reflect.KMemberProperty
+import kotlin.reflect.KProperty1
 
 class C {
     val baz: Int = 12
@@ -9,5 +9,5 @@ class C {
 fun Int.baz() {}
 
 fun test() {
-    C::baz checkType { _<KMemberProperty<C, Int>>() }
+    C::baz checkType { _<KProperty1<C, Int>>() }
 }

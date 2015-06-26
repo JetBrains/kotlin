@@ -41,10 +41,10 @@ public interface KClass<T> : KDeclarationContainer {
     /**
      * Returns non-extension properties declared in this class and all of its superclasses.
      */
-    public val properties: Collection<KMemberProperty<T, *>>
+    public val properties: Collection<KProperty1<T, *>>
 
     /**
      * Returns extension properties declared in this class and all of its superclasses.
      */
-    public val extensionProperties: Collection<KMemberExtensionProperty<T, *, *>>
+    public val extensionProperties: Collection<KProperty2<T, *, *>>
 }

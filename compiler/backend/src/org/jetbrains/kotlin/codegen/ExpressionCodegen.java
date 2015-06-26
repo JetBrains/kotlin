@@ -2796,14 +2796,14 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
         if (receiverParameter != null) {
             Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_TYPE, getType(Class.class)};
             factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_TYPE, parameterTypes)
-                            : method("topLevelExtensionProperty", K_TOP_LEVEL_EXTENSION_PROPERTY_TYPE, parameterTypes);
+                            ? method("mutableTopLevelExtensionProperty", K_MUTABLE_PROPERTY1_TYPE, parameterTypes)
+                            : method("topLevelExtensionProperty", K_PROPERTY1_TYPE, parameterTypes);
         }
         else {
             Type[] parameterTypes = new Type[] {JAVA_STRING_TYPE, K_PACKAGE_TYPE};
             factoryMethod = descriptor.isVar()
-                            ? method("mutableTopLevelVariable", K_MUTABLE_TOP_LEVEL_VARIABLE_TYPE, parameterTypes)
-                            : method("topLevelVariable", K_TOP_LEVEL_VARIABLE_TYPE, parameterTypes);
+                            ? method("mutableTopLevelVariable", K_MUTABLE_PROPERTY0_TYPE, parameterTypes)
+                            : method("topLevelVariable", K_PROPERTY0_TYPE, parameterTypes);
         }
 
         return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
@@ -2828,8 +2828,8 @@ public class ExpressionCodegen extends JetVisitor<StackValue, StackValue> implem
             @NotNull final ClassDescriptor containingClass
     ) {
         final Method factoryMethod = descriptor.isVar()
-                                     ? method("mutableMemberProperty", K_MUTABLE_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE)
-                                     : method("memberProperty", K_MEMBER_PROPERTY_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE);
+                                     ? method("mutableMemberProperty", K_MUTABLE_PROPERTY1_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE)
+                                     : method("memberProperty", K_PROPERTY1_TYPE, JAVA_STRING_TYPE, K_CLASS_TYPE);
 
         return StackValue.operation(factoryMethod.getReturnType(), new Function1<InstructionAdapter, Unit>() {
             @Override

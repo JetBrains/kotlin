@@ -67,27 +67,27 @@ public class Reflection {
 
     // Properties
 
-    public static KMemberProperty memberProperty(String name, KClass owner) {
+    public static KProperty1 memberProperty(String name, KClass owner) {
         return factory.memberProperty(name, owner);
     }
 
-    public static KMutableMemberProperty mutableMemberProperty(String name, KClass owner) {
+    public static KMutableProperty1 mutableMemberProperty(String name, KClass owner) {
         return factory.mutableMemberProperty(name, owner);
     }
 
-    public static KTopLevelVariable topLevelVariable(String name, KPackage owner) {
+    public static KProperty0 topLevelVariable(String name, KPackage owner) {
         return factory.topLevelVariable(name, owner);
     }
 
-    public static KMutableTopLevelVariable mutableTopLevelVariable(String name, KPackage owner) {
+    public static KMutableProperty0 mutableTopLevelVariable(String name, KPackage owner) {
         return factory.mutableTopLevelVariable(name, owner);
     }
 
-    public static KTopLevelExtensionProperty topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
+    public static KProperty1 topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
         return factory.topLevelExtensionProperty(name, owner, receiver);
     }
 
-    public static KMutableTopLevelExtensionProperty mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
+    public static KMutableProperty1 mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
         return factory.mutableTopLevelExtensionProperty(name, owner, receiver);
     }
 }

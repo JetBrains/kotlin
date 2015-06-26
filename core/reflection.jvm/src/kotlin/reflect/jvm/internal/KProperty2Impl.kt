@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 import kotlin.reflect.IllegalPropertyAccessException
-import kotlin.reflect.KMemberExtensionProperty
-import kotlin.reflect.KMutableMemberExtensionProperty
+import kotlin.reflect.KMutableProperty2
+import kotlin.reflect.KProperty2
 
-open class KMemberExtensionPropertyImpl<D : Any, E, out R> : DescriptorBasedProperty, KMemberExtensionProperty<D, E, R>, KPropertyImpl<R> {
+open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty, KProperty2<D, E, R>, KPropertyImpl<R> {
     constructor(container: KClassImpl<D>, name: String, receiverParameterClass: Class<E>) : super(container, name, receiverParameterClass)
 
     constructor(container: KClassImpl<D>, descriptor: PropertyDescriptor) : super(container, descriptor)
@@ -34,10 +34,10 @@ open class KMemberExtensionPropertyImpl<D : Any, E, out R> : DescriptorBasedProp
 
     override val field: Field? get() = null
 
-    override fun get(instance: D, extensionReceiver: E): R {
+    override fun get(receiver1: D, receiver2: E): R {
         try {
             @suppress("UNCHECKED_CAST")
-            return getter.invoke(instance, extensionReceiver) as R
+            return getter.invoke(receiver1, receiver2) as R
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
@@ -46,19 +46,16 @@ open class KMemberExtensionPropertyImpl<D : Any, E, out R> : DescriptorBasedProp
 }
 
 
-class KMutableMemberExtensionPropertyImpl<D : Any, E, R> :
-        KMemberExtensionPropertyImpl<D, E, R>,
-        KMutableMemberExtensionProperty<D, E, R>,
-        KMutablePropertyImpl<R> {
+class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutableProperty2<D, E, R>, KMutablePropertyImpl<R> {
     constructor(container: KClassImpl<D>, name: String, receiverParameterClass: Class<E>) : super(container, name, receiverParameterClass)
 
     constructor(container: KClassImpl<D>, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    override val setter: Method get() = super<KMemberExtensionPropertyImpl>.setter!!
+    override val setter: Method get() = super<KProperty2Impl>.setter!!
 
-    override fun set(instance: D, extensionReceiver: E, value: R) {
+    override fun set(receiver1: D, receiver2: E, value: R) {
         try {
-            setter.invoke(instance, extensionReceiver, value)
+            setter.invoke(receiver1, receiver2, value)
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)

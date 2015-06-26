@@ -30,3 +30,97 @@ public interface KProperty<out R> : KCallable<R>
  * Represents a property declared as a `var`.
  */
 public interface KMutableProperty<R> : KProperty<R>
+
+
+/**
+ * Represents a property without any kind of receiver.
+ * Such property is either originally declared in a receiverless context such as a package,
+ * or has the receiver bound to it.
+ */
+public interface KProperty0<out R> : KProperty<R> {
+    /**
+     * Returns the current value of the property.
+     */
+    public fun get(): R
+}
+
+/**
+ * Represents a `var`-property without any kind of receiver.
+ */
+public interface KMutableProperty0<R> : KProperty0<R>, KMutableProperty<R> {
+    /**
+     * Modifies the value of the property.
+     *
+     * @param value the new value to be assigned to this property.
+     */
+    public fun set(value: R)
+}
+
+
+/**
+ * Represents a property, operations on which take one receiver as a parameter.
+ *
+ * @param T the type of the receiver which should be used to obtain the value of the property.
+ * @param R the type of the property.
+ */
+public interface KProperty1<T, out R> : KProperty<R> {
+    /**
+     * Returns the current value of the property.
+     *
+     * @param receiver the receiver which is used to obtain the value of the property.
+     *                 For example, it should be a class instance if this is a member property of that class,
+     *                 or an extension receiver if this is a top level extension property.
+     */
+    public fun get(receiver: T): R
+}
+
+/**
+ * Represents a `var`-property, operations on which take one receiver as a parameter.
+ */
+public interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProperty<R> {
+    /**
+     * Modifies the value of the property.
+     *
+     * @param receiver the receiver which is used to modify the value of the property.
+     *                 For example, it should be a class instance if this is a member property of that class,
+     *                 or an extension receiver if this is a top level extension property.
+     * @param value the new value to be assigned to this property.
+     */
+    public fun set(receiver: T, value: R)
+}
+
+
+/**
+ * Represents a property, operations on which take two receivers as parameters,
+ * such as an extension property declared in a class.
+ *
+ * @param D the type of the first receiver. In case of the extension property in a class this is
+ *        the type of the declaring class of the property, or any subclass of that class.
+ * @param E the type of the second receiver. In case of the extension property in a class this is
+ *        the type of the extension receiver.
+ * @param R the type of the property.
+ */
+public interface KProperty2<D, E, out R> : KProperty<R> {
+    /**
+     * Returns the current value of the property. In case of the extension property in a class,
+     * the instance of the class should be passed first and the instance of the extension receiver second.
+     *
+     * @param receiver1 the instance of the first receiver.
+     * @param receiver2 the instance of the second receiver.
+     */
+    public fun get(receiver1: D, receiver2: E): R
+}
+
+/**
+ * Represents a `var`-property, operations on which take two receivers as parameters.
+ */
+public interface KMutableProperty2<D, E, R> : KProperty2<D, E, R>, KMutableProperty<R> {
+    /**
+     * Modifies the value of the property.
+     *
+     * @param receiver1 the instance of the first receiver.
+     * @param receiver2 the instance of the second receiver.
+     * @param value the new value to be assigned to this property.
+     */
+    public fun set(receiver1: D, receiver2: E, value: R)
+}

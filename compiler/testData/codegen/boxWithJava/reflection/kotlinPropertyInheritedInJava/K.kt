@@ -11,7 +11,7 @@ fun box(): String {
     val j = J()
 
     val prop = J::prop
-    if (prop !is KMutableMemberProperty<*, *>) return "Fail instanceof"
+    if (prop !is KMutableProperty1<*, *>) return "Fail instanceof"
     if (prop.name != "prop") return "Fail name: ${prop.name}"
     if (prop.get(j) != ":(") return "Fail get before: ${prop[j]}"
     prop[j] = ":)"
@@ -27,13 +27,13 @@ fun box(): String {
 
     val prop2 = klass.properties.firstOrNull { it.name == "prop" } ?: "Fail: no 'prop' property in properties"
     if (prop != prop2) return "Fail: property references from :: and from properties differ: $prop != $prop2"
-    if (prop2 !is KMutableMemberProperty<*, *>) return "Fail instanceof 2"
-    (prop2 as KMutableMemberProperty<J, String>).set(j, "::)")
+    if (prop2 !is KMutableProperty1<*, *>) return "Fail instanceof 2"
+    (prop2 as KMutableProperty1<J, String>).set(j, "::)")
     if (prop.get(j) != "::)") return "Fail get after 2: ${prop[j]}"
 
 
     val ext = klass.extensionProperties.firstOrNull { it.name == "ext" } ?: "Fail: no 'ext' property in extensionProperties"
-    ext as KMemberExtensionProperty<J, Int, Int>
+    ext as KProperty2<J, Int, Int>
     val fortyTwo = ext.get(j, 42)
     if (fortyTwo != 42) return "Fail ext get: $fortyTwo"
 

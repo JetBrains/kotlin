@@ -6,7 +6,7 @@ class A(var g: A) {
     val f: Int = 0
 
     fun test() {
-        val fRef: KMemberProperty<A, Int> = ::f
-        val gRef: KMutableMemberProperty<A, A> = ::g
+        val fRef: KProperty1<A, Int> = ::f
+        val gRef: KMutableProperty1<A, A> = ::g
     }
 }

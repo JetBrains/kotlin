@@ -18,10 +18,10 @@ package kotlin.reflect.jvm.internal
 
 import java.lang.reflect.Method
 import kotlin.reflect.IllegalPropertyAccessException
-import kotlin.reflect.KMutableTopLevelVariable
-import kotlin.reflect.KTopLevelVariable
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty0
 
-open class KTopLevelVariableImpl<out R> : DescriptorBasedProperty, KTopLevelVariable<R>, KVariableImpl<R> {
+open class KProperty0Impl<out R> : DescriptorBasedProperty, KProperty0<R>, KPropertyImpl<R> {
     constructor(container: KPackageImpl, name: String) : super(container, name, null)
 
     override val name: String get() = descriptor.getName().asString()
@@ -39,10 +39,10 @@ open class KTopLevelVariableImpl<out R> : DescriptorBasedProperty, KTopLevelVari
     }
 }
 
-class KMutableTopLevelVariableImpl<R> : KTopLevelVariableImpl<R>, KMutableTopLevelVariable<R>, KMutableVariableImpl<R> {
+class KMutableProperty0Impl<R> : KProperty0Impl<R>, KMutableProperty0<R>, KMutablePropertyImpl<R> {
     constructor(container: KPackageImpl, name: String) : super(container, name)
 
-    override val setter: Method get() = super<KTopLevelVariableImpl>.setter!!
+    override val setter: Method get() = super<KProperty0Impl>.setter!!
 
     override fun set(value: R) {
         try {

@@ -17,8 +17,8 @@
 package kotlin.reflect.jvm
 
 import kotlin.reflect.KProperty
-import kotlin.reflect.jvm.internal.KMemberPropertyImpl
-import kotlin.reflect.jvm.internal.KMutableMemberPropertyImpl
+import kotlin.reflect.jvm.internal.KProperty1Impl
+import kotlin.reflect.jvm.internal.KMutableProperty1Impl
 
 /**
  * Provides a way to suppress JVM access checks for a property.
@@ -34,11 +34,11 @@ import kotlin.reflect.jvm.internal.KMutableMemberPropertyImpl
 public var <R> KProperty<R>.accessible: Boolean
         get() {
             return when (this) {
-                is KMutableMemberPropertyImpl<*, R> ->
+                is KMutableProperty1Impl<*, R> ->
                         field?.isAccessible() ?: true &&
                         getter?.isAccessible() ?: true &&
                         setter?.isAccessible() ?: true
-                is KMemberPropertyImpl<*, R> ->
+                is KProperty1Impl<*, R> ->
                         field?.isAccessible() ?: true &&
                         getter?.isAccessible() ?: true
                 else -> {
@@ -49,12 +49,12 @@ public var <R> KProperty<R>.accessible: Boolean
         }
         set(value) {
             when (this) {
-                is KMutableMemberPropertyImpl<*, R> -> {
+                is KMutableProperty1Impl<*, R> -> {
                     field?.setAccessible(value)
                     getter?.setAccessible(value)
                     setter?.setAccessible(value)
                 }
-                is KMemberPropertyImpl<*, R> -> {
+                is KProperty1Impl<*, R> -> {
                     field?.setAccessible(value)
                     getter?.setAccessible(value)
                 }

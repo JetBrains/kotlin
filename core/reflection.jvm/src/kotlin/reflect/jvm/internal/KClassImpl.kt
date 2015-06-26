@@ -75,22 +75,22 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
         }
     }
 
-    override val properties: Collection<KMemberProperty<T, *>>
+    override val properties: Collection<KProperty1<T, *>>
             get() = getProperties(declared = false)
 
-    override val extensionProperties: Collection<KMemberExtensionProperty<T, *, *>>
+    override val extensionProperties: Collection<KProperty2<T, *, *>>
             get() = getExtensionProperties(declared = false)
 
-    fun getProperties(declared: Boolean): Collection<KMemberProperty<T, *>> =
+    fun getProperties(declared: Boolean): Collection<KProperty1<T, *>> =
             getProperties(extension = false, declared = declared) { descriptor ->
-                if (descriptor.isVar()) KMutableMemberPropertyImpl<T, Any?>(this, descriptor)
-                else KMemberPropertyImpl<T, Any?>(this, descriptor)
+                if (descriptor.isVar()) KMutableProperty1Impl<T, Any?>(this, descriptor)
+                else KProperty1Impl<T, Any?>(this, descriptor)
             }
 
-    fun getExtensionProperties(declared: Boolean): Collection<KMemberExtensionProperty<T, *, *>> =
+    fun getExtensionProperties(declared: Boolean): Collection<KProperty2<T, *, *>> =
             getProperties(extension = true, declared = declared) { descriptor ->
-                if (descriptor.isVar()) KMutableMemberExtensionPropertyImpl<T, Any?, Any?>(this, descriptor)
-                else KMemberExtensionPropertyImpl<T, Any?, Any?>(this, descriptor)
+                if (descriptor.isVar()) KMutableProperty2Impl<T, Any?, Any?>(this, descriptor)
+                else KProperty2Impl<T, Any?, Any?>(this, descriptor)
             }
 
     private fun <P : KProperty<*>> getProperties(extension: Boolean, declared: Boolean, create: (PropertyDescriptor) -> P): Collection<P> =
@@ -104,11 +104,11 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
                     .map(create)
                     .toList()
 
-    fun memberProperty(name: String): KMemberProperty<T, *> =
-            KMemberPropertyImpl<T, Any>(this, name)
+    fun memberProperty(name: String): KProperty1<T, *> =
+            KProperty1Impl<T, Any>(this, name, null)
 
-    fun mutableMemberProperty(name: String): KMutableMemberProperty<T, *> =
-            KMutableMemberPropertyImpl<T, Any>(this, name)
+    fun mutableMemberProperty(name: String): KMutableProperty1<T, *> =
+            KMutableProperty1Impl<T, Any>(this, name, null)
 
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass

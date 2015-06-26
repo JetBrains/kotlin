@@ -50,32 +50,32 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     // Properties
 
     @Override
-    public KMemberProperty memberProperty(String name, KClass owner) {
+    public KProperty1 memberProperty(String name, KClass owner) {
         return ((KClassImpl) owner).memberProperty(name);
     }
 
     @Override
-    public KMutableMemberProperty mutableMemberProperty(String name, KClass owner) {
+    public KMutableProperty1 mutableMemberProperty(String name, KClass owner) {
         return ((KClassImpl) owner).mutableMemberProperty(name);
     }
 
     @Override
-    public KTopLevelVariable topLevelVariable(String name, KPackage owner) {
+    public KProperty0 topLevelVariable(String name, KPackage owner) {
         return ((KPackageImpl) owner).topLevelVariable(name);
     }
 
     @Override
-    public KMutableTopLevelVariable mutableTopLevelVariable(String name, KPackage owner) {
+    public KMutableProperty0 mutableTopLevelVariable(String name, KPackage owner) {
         return ((KPackageImpl) owner).mutableTopLevelVariable(name);
     }
 
     @Override
-    public KTopLevelExtensionProperty topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
+    public KProperty1 topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
         return ((KPackageImpl) owner).topLevelExtensionProperty(name, receiver);
     }
 
     @Override
-    public KMutableTopLevelExtensionProperty mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
+    public KMutableProperty1 mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
         return ((KPackageImpl) owner).mutableTopLevelExtensionProperty(name, receiver);
     }
 }

@@ -44,12 +44,10 @@ public class AsmTypes {
 
     public static final Type K_FUNCTION = reflect("KFunction");
 
-    public static final Type K_MEMBER_PROPERTY_TYPE = reflect("KMemberProperty");
-    public static final Type K_MUTABLE_MEMBER_PROPERTY_TYPE = reflect("KMutableMemberProperty");
-    public static final Type K_TOP_LEVEL_VARIABLE_TYPE = reflect("KTopLevelVariable");
-    public static final Type K_MUTABLE_TOP_LEVEL_VARIABLE_TYPE = reflect("KMutableTopLevelVariable");
-    public static final Type K_TOP_LEVEL_EXTENSION_PROPERTY_TYPE = reflect("KTopLevelExtensionProperty");
-    public static final Type K_MUTABLE_TOP_LEVEL_EXTENSION_PROPERTY_TYPE = reflect("KMutableTopLevelExtensionProperty");
+    public static final Type K_PROPERTY0_TYPE = reflect("KProperty0");
+    public static final Type K_PROPERTY1_TYPE = reflect("KProperty1");
+    public static final Type K_MUTABLE_PROPERTY0_TYPE = reflect("KMutableProperty0");
+    public static final Type K_MUTABLE_PROPERTY1_TYPE = reflect("KMutableProperty1");
 
     public static final String REFLECTION = "kotlin/jvm/internal/Reflection";
 

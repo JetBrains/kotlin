@@ -1,7 +1,7 @@
-import kotlin.reflect.KExtensionProperty
+import kotlin.reflect.KProperty1
 import kotlin.test.assertEquals
 
-fun check(expected: String, p: KExtensionProperty<*, *>) {
+fun check(expected: String, p: KProperty1<*, *>) {
     var s = p.toString()
 
     // Strip "val" or "var"

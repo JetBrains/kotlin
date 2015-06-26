@@ -1,6 +1,6 @@
 import kotlin.reflect.jvm.kotlin
-import kotlin.reflect.KMemberProperty
-import kotlin.reflect.KMemberExtensionProperty
+import kotlin.reflect.KProperty1
+import kotlin.reflect.KProperty2
 
 class A {
     val foo: String = "member"
@@ -9,15 +9,15 @@ class A {
 
 fun box(): String {
     run {
-        val foo: KMemberProperty<A, *> = javaClass<A>().kotlin.properties.single()
+        val foo: KProperty1<A, *> = javaClass<A>().kotlin.properties.single()
         assert(foo.name == "foo") { "Fail name: $foo (${foo.name})" }
         assert(foo.get(A()) == "member") { "Fail value: ${foo[A()]}" }
     }
 
     run {
-        val foo: KMemberExtensionProperty<A, *, *> = javaClass<A>().kotlin.extensionProperties.single()
+        val foo: KProperty2<A, *, *> = javaClass<A>().kotlin.extensionProperties.single()
         assert(foo.name == "foo") { "Fail name: $foo (${foo.name})" }
-        foo as KMemberExtensionProperty<A, Unit, *>
+        foo as KProperty2<A, Unit, *>
         assert(foo.get(A(), Unit) == "extension") { "Fail value: ${foo[A(), Unit]}" }
     }
 
