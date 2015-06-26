@@ -56,12 +56,12 @@ public object KotlinNameSuggester {
         val bindingContext = expression.analyze(BodyResolveMode.FULL)
         val jetType = bindingContext.getType(expression)
         if (jetType != null) {
-            addNamesByType(result, jetType, validator)
+            result.addNamesByType(jetType, validator)
         }
-        addNamesByExpression(result, expression, validator)
+        result.addNamesByExpression(expression, validator)
 
         if (result.isEmpty()) {
-            addName(result, defaultName, validator)
+            result.addName(defaultName, validator)
         }
 
         return ArrayUtil.toStringArray(result)
@@ -70,10 +70,10 @@ public object KotlinNameSuggester {
     public fun suggestNamesByType(type: JetType, validator: (String) -> Boolean, defaultName: String? = null): Array<String> {
         val result = ArrayList<String>()
 
-        addNamesByType(result, type, validator)
+        result.addNamesByType(type, validator)
 
         if (result.isEmpty()) {
-            addName(result, defaultName, validator)
+            result.addName(defaultName, validator)
         }
 
         return ArrayUtil.toStringArray(result)
@@ -82,10 +82,10 @@ public object KotlinNameSuggester {
     public fun suggestNamesByExpressionOnly(expression: JetExpression, validator: (String) -> Boolean, defaultName: String? = null): Array<String> {
         val result = ArrayList<String>()
 
-        addNamesByExpression(result, expression, validator)
+        result.addNamesByExpression(expression, validator)
 
         if (result.isEmpty()) {
-            addName(result, defaultName, validator)
+            result.addName(defaultName, validator)
         }
 
         return ArrayUtil.toStringArray(result)
@@ -133,73 +133,73 @@ public object KotlinNameSuggester {
         }
     }
 
-    private fun addNamesByType(result: ArrayList<String>, type: JetType, validator: (String) -> Boolean) {
+    private fun MutableCollection<String>.addNamesByType(type: JetType, validator: (String) -> Boolean) {
         var type = TypeUtils.makeNotNullable(type) // wipe out '?'
         val builtIns = KotlinBuiltIns.getInstance()
         val typeChecker = JetTypeChecker.DEFAULT
         if (ErrorUtils.containsErrorType(type)) return
 
         if (typeChecker.equalTypes(builtIns.getBooleanType(), type)) {
-            addName(result, "b", validator)
+            addName("b", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getIntType(), type)) {
-            addName(result, "i", validator)
+            addName("i", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getByteType(), type)) {
-            addName(result, "byte", validator)
+            addName("byte", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getLongType(), type)) {
-            addName(result, "l", validator)
+            addName("l", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getFloatType(), type)) {
-            addName(result, "fl", validator)
+            addName("fl", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getDoubleType(), type)) {
-            addName(result, "d", validator)
+            addName("d", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getShortType(), type)) {
-            addName(result, "sh", validator)
+            addName("sh", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getCharType(), type)) {
-            addName(result, "c", validator)
+            addName("c", validator)
         }
         else if (typeChecker.equalTypes(builtIns.getStringType(), type)) {
-            addName(result, "s", validator)
+            addName("s", validator)
         }
         else if (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) {
             val elementType = KotlinBuiltIns.getInstance().getArrayElementType(type)
             if (typeChecker.equalTypes(builtIns.getBooleanType(), elementType)) {
-                addName(result, "booleans", validator)
+                addName("booleans", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getIntType(), elementType)) {
-                addName(result, "ints", validator)
+                addName("ints", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getByteType(), elementType)) {
-                addName(result, "bytes", validator)
+                addName("bytes", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getLongType(), elementType)) {
-                addName(result, "longs", validator)
+                addName("longs", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getFloatType(), elementType)) {
-                addName(result, "floats", validator)
+                addName("floats", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getDoubleType(), elementType)) {
-                addName(result, "doubles", validator)
+                addName("doubles", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getShortType(), elementType)) {
-                addName(result, "shorts", validator)
+                addName("shorts", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getCharType(), elementType)) {
-                addName(result, "chars", validator)
+                addName("chars", validator)
             }
             else if (typeChecker.equalTypes(builtIns.getStringType(), elementType)) {
-                addName(result, "strings", validator)
+                addName("strings", validator)
             }
             else {
                 val classDescriptor = TypeUtils.getClassDescriptor(elementType)
                 if (classDescriptor != null) {
                     val className = classDescriptor.getName()
-                    addName(result, "arrayOf" + StringUtil.capitalize(className.asString()) + "s", validator)
+                    addName("arrayOf" + StringUtil.capitalize(className.asString()) + "s", validator)
                 }
             }
         }
@@ -208,7 +208,7 @@ public object KotlinNameSuggester {
             if (descriptor != null) {
                 val className = descriptor.getName()
                 if (!className.isSpecial()) {
-                    addCamelNames(result, className.asString(), validator)
+                    addCamelNames(className.asString(), validator)
                 }
             }
         }
@@ -218,11 +218,11 @@ public object KotlinNameSuggester {
 
     public fun getCamelNames(name: String, validator: (String) -> Boolean, startLowerCase: Boolean): List<String> {
         val result = ArrayList<String>()
-        addCamelNames(result, name, validator, startLowerCase)
+        result.addCamelNames(name, validator, startLowerCase)
         return result
     }
 
-    private fun addCamelNames(result: ArrayList<String>, name: String, validator: (String) -> Boolean, startLowerCase: Boolean = true) {
+    private fun MutableCollection<String>.addCamelNames(name: String, validator: (String) -> Boolean, startLowerCase: Boolean = true) {
         if (name === "") return
         var s = deleteNonLetterFromString(name)
 
@@ -242,12 +242,12 @@ public object KotlinNameSuggester {
             val upperCaseLetter = Character.isUpperCase(c)
 
             if (i == 0) {
-                addName(result, if (startLowerCase) decapitalize(s) else s, validator)
+                addName(if (startLowerCase) decapitalize(s) else s, validator)
             }
             else {
                 if (upperCaseLetter && !upperCaseLetterBefore) {
                     val substring = s.substring(i)
-                    addName(result, if (startLowerCase) decapitalize(substring) else substring, validator)
+                    addName(if (startLowerCase) decapitalize(substring) else substring, validator)
                 }
             }
 
@@ -282,44 +282,39 @@ public object KotlinNameSuggester {
         return matcher.replaceAll("")
     }
 
-    private fun addNamesByExpression(result: ArrayList<String>, expression: JetExpression?, validator: (String) -> Boolean) {
+    private fun MutableCollection<String>.addNamesByExpression(expression: JetExpression?, validator: (String) -> Boolean) {
         if (expression == null) return
 
-        expression.accept(object : JetVisitorVoid() {
-            override fun visitQualifiedExpression(expression: JetQualifiedExpression) {
-                val selectorExpression = expression.getSelectorExpression()
-                addNamesByExpression(result, selectorExpression, validator)
-            }
-
-            override fun visitSimpleNameExpression(expression: JetSimpleNameExpression) {
+        when (expression) {
+            is JetSimpleNameExpression -> {
                 val referenceName = expression.getReferencedName()
                 if (referenceName == referenceName.toUpperCase()) {
-                    addName(result, referenceName, validator)
+                    addName(referenceName, validator)
                 }
                 else {
-                    addCamelNames(result, referenceName, validator)
+                    addCamelNames(referenceName, validator)
                 }
             }
 
-            override fun visitCallExpression(expression: JetCallExpression) {
-                addNamesByExpression(result, expression.getCalleeExpression(), validator)
-            }
+            is JetQualifiedExpression -> addNamesByExpression(expression.getSelectorExpression(), validator)
 
-            override fun visitPostfixExpression(expression: JetPostfixExpression) {
-                addNamesByExpression(result, expression.getBaseExpression(), validator)
-            }
-        })
+            is JetCallExpression -> addNamesByExpression(expression.getCalleeExpression(), validator)
+
+            is JetPostfixExpression -> addNamesByExpression(expression.getBaseExpression(), validator)
+        }
     }
 
-    private fun addName(result: ArrayList<String>, name: String?, validator: (String) -> Boolean) {
-        var name = name ?: return
-        if ("class" == name) name = "clazz"
-        if (!isIdentifier(name)) return
-        result.add(suggestNameByName(name, validator))
+    private fun MutableCollection<String>.addName(name: String?, validator: (String) -> Boolean) {
+        if (name == null) return
+        val correctedName = when {
+            isIdentifier(name) -> name!!
+            name == "class" -> "clazz"
+            else -> return
+        }
+        add(suggestNameByName(correctedName, validator))
     }
 
     public fun isIdentifier(name: String?): Boolean {
-        ApplicationManager.getApplication().assertReadAccessAllowed()
         if (name == null || name.isEmpty()) return false
 
         val lexer = JetLexer()
@@ -332,7 +327,7 @@ public object KotlinNameSuggester {
 
 public class CollectingNameValidator @jvmOverloads constructor(
         existingNames: Collection<String> = Collections.emptySet(),
-        val filter: (String) -> Boolean = { true }
+        private val filter: (String) -> Boolean = { true }
 ): (String) -> Boolean {
     private val existingNames = HashSet(existingNames)
 
