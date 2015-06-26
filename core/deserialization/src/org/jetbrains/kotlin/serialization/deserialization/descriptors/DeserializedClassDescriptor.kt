@@ -139,6 +139,10 @@ public class DeserializedClassDescriptor(
         return supertypes
     }
 
+    internal fun hasNestedClass(name: Name): Boolean {
+        return name in nestedClasses.nestedClassNames
+    }
+
     override fun toString() = "deserialized class ${getName().toString()}" // not using descriptor render to preserve laziness
 
     override fun getSource() = SourceElement.NO_SOURCE
@@ -241,9 +245,9 @@ public class DeserializedClassDescriptor(
     }
 
     private inner class NestedClassDescriptors {
-        private val nestedClassNames = nestedClassNames()
+        internal val nestedClassNames = nestedClassNames()
 
-        val findNestedClass = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
+        internal val findNestedClass = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
             if (name in nestedClassNames) {
                 c.components.deserializeClass(classId.createNestedClassId(name))

@@ -20,12 +20,11 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.get
 import java.io.InputStream
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -50,15 +49,19 @@ public abstract class DeserializedPackageFragment(
         this.components = components
     }
 
-    private val memberScopeLazyValue: NotNullLazyValue<JetScope> = storageManager.createLazyValue {
+    internal val deserializedMemberScope by storageManager.createLazyValue {
         val packageStream = loadResourceSure(serializedResourcePaths.getPackageFilePath(fqName))
         val packageProto = ProtoBuf.Package.parseFrom(packageStream, serializedResourcePaths.EXTENSION_REGISTRY)
-        DeserializedPackageMemberScope(this, packageProto, nameResolver, components, classNames = { loadClassNames(fqName, packageProto) })
+        DeserializedPackageMemberScope(this, packageProto, nameResolver, components, classNames = { loadClassNames(packageProto) })
     }
 
-    override fun getMemberScope() = memberScopeLazyValue()
+    override fun getMemberScope() = deserializedMemberScope
 
-    protected abstract fun loadClassNames(fqName: FqName, packageProto: ProtoBuf.Package): Collection<Name>
+    internal fun hasTopLevelClass(name: Name): Boolean {
+        return name in getMemberScope().classNames
+    }
+
+    protected abstract fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name>
 
     protected fun loadResourceSure(path: String): InputStream =
             loadResource(path) ?: throw IllegalStateException("Resource not found in classpath: $path")

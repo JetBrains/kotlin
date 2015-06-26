@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
@@ -32,7 +32,7 @@ public class BuiltinsPackageFragment(
         loadResource: (path: String) -> InputStream?
 ) : DeserializedPackageFragment(fqName, storageManager, module, BuiltInsSerializedResourcePaths, loadResource) {
 
-    protected override fun loadClassNames(fqName: FqName, packageProto: ProtoBuf.Package): Collection<Name> {
+    protected override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
         return packageProto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
     }
 }

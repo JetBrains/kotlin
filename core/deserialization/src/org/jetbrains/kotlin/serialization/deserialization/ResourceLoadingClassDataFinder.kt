@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassData
@@ -30,22 +29,14 @@ public open class ResourceLoadingClassDataFinder(
         private val loadResource: (path: String) -> InputStream?
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
-        val packageFragment = packageFragmentProvider.getPackageFragments(classId.getPackageFqName()).singleOrNull() ?: return null
+        val packageFragment = packageFragmentProvider.getPackageFragments(classId.getPackageFqName()).singleOrNull()
+                                      as? DeserializedPackageFragment ?: return null
 
         val stream = loadResource(serializedResourcePaths.getClassMetadataPath(classId)) ?: return null
 
-        val classProto = ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.EXTENSION_REGISTRY)
-        val nameResolver =
-                (packageFragment as? DeserializedPackageFragment ?: error("Not a deserialized package fragment: $packageFragment")).nameResolver
-
-        val expectedShortName = classId.getShortClassName()
-        val actualShortName = nameResolver.getClassId(classProto.getFqName()).getShortClassName()
-        if (!actualShortName.isSpecial() && actualShortName != expectedShortName) {
-            // Workaround for case-insensitive file systems,
-            // otherwise we'd find "Collection" for "collection" etc
-            return null
-        }
-
-        return ClassData(nameResolver, classProto)
+        return ClassData(
+                packageFragment.nameResolver,
+                ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.EXTENSION_REGISTRY)
+        )
     }
 }

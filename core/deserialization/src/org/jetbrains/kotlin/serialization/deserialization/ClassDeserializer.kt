@@ -35,12 +35,24 @@ public class ClassDeserializer(private val components: DeserializationComponents
 
         val classData = key.classData ?: components.classDataFinder.findClassData(classId) ?: return null
         val outerContext = if (classId.isNestedClass()) {
-            (deserializeClass(classId.getOuterClassId()) as? DeserializedClassDescriptor)?.c ?: return null
+            val outerClass = deserializeClass(classId.getOuterClassId()) as? DeserializedClassDescriptor ?: return null
+
+            // Find the outer class first and check if he knows anything about the nested class we're looking for
+            if (!outerClass.hasNestedClass(classId.getShortClassName())) return null
+
+            outerClass.c
         }
         else {
             val fragments = components.packageFragmentProvider.getPackageFragments(classId.getPackageFqName())
             assert(fragments.size() == 1) { "There should be exactly one package: $fragments, class id is $classId" }
-            components.createContext(fragments.single(), classData.getNameResolver())
+
+            val fragment = fragments.single()
+            if (fragment is DeserializedPackageFragment) {
+                // Similarly, verify that the containing package has information about this class
+                if (!fragment.hasTopLevelClass(classId.getShortClassName())) return null
+            }
+
+            components.createContext(fragment, classData.getNameResolver())
         }
 
         return DeserializedClassDescriptor(outerContext, classData.getClassProto(), classData.getNameResolver())
