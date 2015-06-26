@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.JetElement
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -43,35 +44,30 @@ public class NameValidatorImpl(
     override fun invoke(name: String): Boolean {
         val visitedScopes = HashSet<JetScope>()
 
-        var sibling: PsiElement?
-        if (anchor != null) {
-            sibling = anchor
+        val identifier = Name.identifier(name)
+
+        val sibling = if (anchor != null) {
+            anchor
         }
         else {
             if (container is JetExpression) {
-                return checkElement(name, container, visitedScopes)
+                return !hasConflict(identifier, container, visitedScopes)
             }
-            sibling = container.getFirstChild()
+            container.getFirstChild() ?: return true
         }
 
-        while (sibling != null) {
-            if (!checkElement(name, sibling, visitedScopes)) return false
-            sibling = sibling.getNextSibling()
-        }
-
-        return true
+        return sibling.siblings().none { hasConflict(identifier, it, visitedScopes) }
     }
 
-    private fun checkElement(name: String, sibling: PsiElement, visitedScopes: MutableSet<JetScope>): Boolean {
-        if (sibling !is JetElement) return true
+    private fun hasConflict(name: Name, sibling: PsiElement, visitedScopes: MutableSet<JetScope>): Boolean {
+        if (sibling !is JetElement) return false
 
         val context = sibling.analyze(BodyResolveMode.FULL)
-        val identifier = Name.identifier(name)
 
-        val result = Ref(true)
-        val visitor = object : JetVisitorVoid() {
+        var conflictFound = false
+        sibling.accept(object : JetVisitorVoid() {
             override fun visitElement(element: PsiElement) {
-                if (result.get()) {
+                if (!conflictFound) {
                     element.acceptChildren(this)
                 }
             }
@@ -81,23 +77,19 @@ public class NameValidatorImpl(
 
                 if (!visitedScopes.add(resolutionScope)) return
 
-                val noConflict: Boolean
-                if (target === Target.PROPERTIES) {
-                    noConflict = resolutionScope.getProperties(identifier).isEmpty() && resolutionScope.getLocalVariable(identifier) == null
-                }
-                else {
-                    noConflict = resolutionScope.getFunctions(identifier).isEmpty() && resolutionScope.getClassifier(identifier) == null
-                }
+                val conflict =  if (target === Target.PROPERTIES)
+                    resolutionScope.getProperties(name).isNotEmpty() || resolutionScope.getLocalVariable(name) != null
+                else
+                    resolutionScope.getFunctions(name).isNotEmpty() || resolutionScope.getClassifier(name) != null
 
-                if (!noConflict) {
-                    result.set(false)
+                if (conflict) {
+                    conflictFound = true
                     return
                 }
 
                 super.visitExpression(expression)
             }
-        }
-        sibling.accept(visitor)
-        return result.get()
+        })
+        return conflictFound
     }
 }
