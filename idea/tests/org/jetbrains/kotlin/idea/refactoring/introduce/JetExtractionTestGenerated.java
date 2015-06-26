@@ -175,6 +175,12 @@ public class JetExtractionTestGenerated extends AbstractJetExtractionTest {
             doIntroduceVariableTest(fileName);
         }
 
+        @TestMetadata("NameSuggestionCheckVisibility.kt")
+        public void testNameSuggestionCheckVisibility() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/NameSuggestionCheckVisibility.kt");
+            doIntroduceVariableTest(fileName);
+        }
+
         @TestMetadata("noConflictWithInnerVariable.kt")
         public void testNoConflictWithInnerVariable() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/noConflictWithInnerVariable.kt");

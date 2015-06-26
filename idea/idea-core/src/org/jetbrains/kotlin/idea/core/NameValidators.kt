@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.name.Name
@@ -25,11 +27,13 @@ import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.siblings
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
+import java.util.Collections
+import java.util.HashSet
 
 public class CollectingNameValidator @jvmOverloads constructor(
         existingNames: Collection<String> = Collections.emptySet(),
@@ -82,9 +86,18 @@ public class NewDeclarationNameValidator(
     }
 
     private fun JetScope.hasConflict(name: Name): Boolean {
+        val inDeclaration = getContainingDeclaration()
+
+        fun DeclarationDescriptor.isVisible(): Boolean {
+            return when (this) {
+                is DeclarationDescriptorWithVisibility -> isVisible(inDeclaration)
+                else -> true
+            }
+        }
+
         return when(target) {
-            Target.VARIABLES -> getProperties(name).any { !it.isExtension } || getLocalVariable(name) != null
-            Target.FUNCTIONS_AND_CLASSES -> getFunctions(name).any { !it.isExtension } || getClassifier(name) != null
+            Target.VARIABLES -> getProperties(name).any { !it.isExtension && it.isVisible() } || getLocalVariable(name) != null
+            Target.FUNCTIONS_AND_CLASSES -> getFunctions(name).any { !it.isExtension && it.isVisible() } || getClassifier(name)?.let { it.isVisible() } ?: false
         }
     }
 
