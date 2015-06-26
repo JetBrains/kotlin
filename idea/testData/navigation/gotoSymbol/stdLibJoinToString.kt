@@ -12,4 +12,3 @@
 // REF: (for LongArray in kotlin).joinToString(String,String,String,Int,String,((Long) -> String)?)
 // REF: (for Sequence<T> in kotlin).joinToString(String,String,String,Int,String,((T) -> String)?)
 // REF: (for ShortArray in kotlin).joinToString(String,String,String,Int,String,((Short) -> String)?)
-// REF: (for Stream<T> in kotlin).joinToString(String,String,String,Int,String,((T) -> String)?)

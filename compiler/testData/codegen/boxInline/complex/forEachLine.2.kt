@@ -17,4 +17,3 @@ public inline fun Input.forEachLine(block: (String) -> Unit): Unit {
 public inline fun Input.useLines(block2: (Iterator<String>) -> Unit): Unit {
         this.use{ block2(it.iterator()) }
 }
-
