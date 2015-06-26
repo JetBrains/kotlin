@@ -34,13 +34,6 @@ import java.util.regex.Pattern
 
 public object KotlinNameSuggester {
 
-    private fun addName(result: ArrayList<String>, name: String?, validator: (String) -> Boolean) {
-        var name = name ?: return
-        if ("class" == name) name = "clazz"
-        if (!isIdentifier(name)) return
-        result.add(suggestNameByName(name, validator))
-    }
-
     /**
      * Name suggestion types:
      * 1. According to type:
@@ -106,6 +99,38 @@ public object KotlinNameSuggester {
             result.add(suggestNameByMultipleNames(COMMON_TYPE_PARAMETER_NAMES, validator))
         }
         return ArrayUtil.toStringArray(result)
+    }
+
+    /**
+     * Validates name, and slightly improves it by adding number to name in case of conflicts
+     * @param name to check it in scope
+     * @return name or nameI, where I is number
+     */
+    public fun suggestNameByName(name: String, validator: (String) -> Boolean): String {
+        if (validator(name)) return name
+        var i = 1
+        while (!validator(name + i)) {
+            ++i
+        }
+
+        return name + i
+    }
+
+    /**
+     * Validates name using set of variants which are tried in succession (and extended with suffixes if necessary)
+     * For example, when given sequence of a, b, c possible names are tried out in the following order: a, b, c, a1, b1, c1, a2, b2, c2, ...
+     * @param names to check it in scope
+     * @return name or nameI, where name is one of variants and I is a number
+     */
+    public fun suggestNameByMultipleNames(names: Collection<String>, validator: (String) -> Boolean): String {
+        var i = 0
+        while (true) {
+            for (name in names) {
+                val candidate = if (i > 0) name + i else name
+                if (validator(candidate)) return candidate
+            }
+            i++
+        }
     }
 
     private fun addNamesByType(result: ArrayList<String>, type: JetType, validator: (String) -> Boolean) {
@@ -286,6 +311,13 @@ public object KotlinNameSuggester {
         })
     }
 
+    private fun addName(result: ArrayList<String>, name: String?, validator: (String) -> Boolean) {
+        var name = name ?: return
+        if ("class" == name) name = "clazz"
+        if (!isIdentifier(name)) return
+        result.add(suggestNameByName(name, validator))
+    }
+
     public fun isIdentifier(name: String?): Boolean {
         ApplicationManager.getApplication().assertReadAccessAllowed()
         if (name == null || name.isEmpty()) return false
@@ -295,38 +327,6 @@ public object KotlinNameSuggester {
         if (lexer.getTokenType() !== JetTokens.IDENTIFIER) return false
         lexer.advance()
         return lexer.getTokenType() == null
-    }
-
-    /**
-     * Validates name, and slightly improves it by adding number to name in case of conflicts
-     * @param name to check it in scope
-     * @return name or nameI, where I is number
-     */
-    public fun suggestNameByName(name: String, validator: (String) -> Boolean): String {
-        if (validator(name)) return name
-        var i = 1
-        while (!validator(name + i)) {
-            ++i
-        }
-
-        return name + i
-    }
-
-    /**
-     * Validates name using set of variants which are tried in succession (and extended with suffixes if necessary)
-     * For example, when given sequence of a, b, c possible names are tried out in the following order: a, b, c, a1, b1, c1, a2, b2, c2, ...
-     * @param names to check it in scope
-     * @return name or nameI, where name is one of variants and I is a number
-     */
-    public fun suggestNameByMultipleNames(names: Collection<String>, validator: (String) -> Boolean): String {
-        var i = 0
-        while (true) {
-            for (name in names) {
-                val candidate = if (i > 0) name + i else name
-                if (validator(candidate)) return candidate
-            }
-            i++
-        }
     }
 }
 
