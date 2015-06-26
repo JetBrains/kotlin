@@ -117,10 +117,6 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         }
     }
 
-    protected fun SuspendContextImpl.stepInto() {
-        this.stepInto(false, null)
-    }
-
     protected var evaluationContext: EvaluationContextImpl by Delegates.notNull()
     protected var debuggerContext: DebuggerContextImpl by Delegates.notNull()
 
