@@ -20,10 +20,10 @@ class MyClass {
 }
 
 // EXPRESSION: publicTopLevelObject
-// RESULT: instance of ceAnonymousObject.CeAnonymousObjectPackage$ceAnonymousObject$@packagePartHASH$publicTopLevelObject$1(id=ID): LceAnonymousObject/CeAnonymousObjectPackage$ceAnonymousObject$@packagePartHASH$publicTopLevelObject$1;
+// RESULT: instance of ceAnonymousObject.CeAnonymousObject$publicTopLevelObject$1(id=ID): LceAnonymousObject/CeAnonymousObject$publicTopLevelObject$1;
 
 // EXPRESSION: privateTopLevelObject
-// RESULT: instance of ceAnonymousObject.CeAnonymousObjectPackage$ceAnonymousObject$@packagePartHASH$privateTopLevelObject$1(id=ID): LceAnonymousObject/CeAnonymousObjectPackage$ceAnonymousObject$@packagePartHASH$privateTopLevelObject$1;
+// RESULT: instance of ceAnonymousObject.CeAnonymousObject$privateTopLevelObject$1(id=ID): LceAnonymousObject/CeAnonymousObject$privateTopLevelObject$1;
 
 // EXPRESSION: publicObject
 // RESULT: instance of ceAnonymousObject.MyClass$publicObject$1(id=ID): LceAnonymousObject/MyClass$publicObject$1;

@@ -27,8 +27,8 @@ fun A.foo() {
 
 // EXPRESSION: myFun()
 // RESULT: 1: I
- frame    = foo():14, FrameExtensionFunPackage$@packagePartHASH {frameExtensionFun}
-   static   = static = frameExtensionFun.FrameExtensionFunPackage$@packagePartHASH
+ frame    = foo():14, FrameExtensionFun {frameExtensionFun}
+   static   = static = frameExtensionFun.FrameExtensionFun
    local    = $receiver: frameExtensionFun.A = {frameExtensionFun.A@uniqueID} (sp = null)
      field    = prop: int = 1 (sp = frameExtensionFun.kt, 8)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'

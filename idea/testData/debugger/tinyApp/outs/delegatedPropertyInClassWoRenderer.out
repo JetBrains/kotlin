@@ -22,8 +22,8 @@ class MyDelegate {
 
 // RENDER_DELEGATED_PROPERTIES: false
 // PRINT_FRAME
- frame    = main():8, DelegatedPropertyInClassWoRendererPackage$@packagePartHASH {delegatedPropertyInClassWoRenderer}
-   static   = static = delegatedPropertyInClassWoRenderer.DelegatedPropertyInClassWoRendererPackage$@packagePartHASH
+ frame    = main():8, DelegatedPropertyInClassWoRenderer {delegatedPropertyInClassWoRenderer}
+   static   = static = delegatedPropertyInClassWoRenderer.DelegatedPropertyInClassWoRenderer
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 5)
    local    = a: delegatedPropertyInClassWoRenderer.A = {delegatedPropertyInClassWoRenderer.A@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 6)
      field    = prop: delegatedPropertyInClassWoRenderer.MyDelegate = {delegatedPropertyInClassWoRenderer.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 12)

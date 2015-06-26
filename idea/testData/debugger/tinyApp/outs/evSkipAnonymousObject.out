@@ -28,8 +28,8 @@ interface T {
 fun foo(i: Int) {}
 
 // PRINT_FRAME
- frame    = main():12, EvSkipAnonymousObjectPackage$@packagePartHASH {evSkipAnonymousObject}
-   static   = static = evSkipAnonymousObject.EvSkipAnonymousObjectPackage$@packagePartHASH
+ frame    = main():12, EvSkipAnonymousObject {evSkipAnonymousObject}
+   static   = static = evSkipAnonymousObject.EvSkipAnonymousObject
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evSkipAnonymousObject.kt, 7)
    local    = a1: evSkipAnonymousObject.A = {evSkipAnonymousObject.A@uniqueID} (sp = evSkipAnonymousObject.kt, 8)
      field    = prop: int = 1 (sp = evSkipAnonymousObject.kt, 4)
