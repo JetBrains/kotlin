@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -37,6 +38,8 @@ public class BuiltInFictitiousFunctionClassFactory(
 
     companion object {
         platformStatic public fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
+            // There is no functions in kotlin.annotation package
+            if (packageFqName == KotlinBuiltIns.ANNOTATION_PACKAGE_FQ_NAME) return null
             val kind = FunctionClassDescriptor.Kind.byPackage(packageFqName) ?: return null
 
             val prefix = kind.classNamePrefix

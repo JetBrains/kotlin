@@ -58,6 +58,7 @@ public enum TopDownAnalyzerFacadeForJVM {
         List<ImportPath> list = new ArrayList<ImportPath>();
         list.add(new ImportPath("java.lang.*"));
         list.add(new ImportPath("kotlin.*"));
+        list.add(new ImportPath("kotlin.annotation.*"));
         list.add(new ImportPath("kotlin.jvm.*"));
         list.add(new ImportPath("kotlin.io.*"));
         // all classes from package "kotlin" mapped to java classes are imported explicitly so that they take priority over classes from java.lang

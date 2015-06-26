@@ -2,6 +2,7 @@
     <fileset id="kotlin.builtin.files" dir="${basedir}/core/builtins">
         <include name="native/kotlin/Iterator.kt"/>
         <include name="native/kotlin/Collections.kt"/>
+        <include name="src/kotlin/annotation/Annotations.kt"/>
         <include name="src/kotlin/Function.kt"/>
         <include name="src/kotlin/Iterators.kt"/>
         <include name="src/kotlin/Range.kt"/>
@@ -16,6 +17,7 @@
 
         <fileset dir="${basedir}/core/builtins/src">
             <include name="kotlin/reflect/**/*.kt"/>
+            <include name="kotlin/annotation/Annotations.kt"/>
         </fileset>
 
         <fileset dir="${basedir}/libraries/stdlib/src">
