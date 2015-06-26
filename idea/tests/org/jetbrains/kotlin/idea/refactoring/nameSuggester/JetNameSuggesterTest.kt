@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.idea.refactoring.nameSuggester
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtil
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.JetExpression
 import org.jetbrains.kotlin.psi.JetFile
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.JetTestUtils
-
-import java.util.Arrays
 import kotlin.test.assertEquals
 
 public class JetNameSuggesterTest : LightCodeInsightFixtureTestCase() {
@@ -69,7 +69,7 @@ public class JetNameSuggesterTest : LightCodeInsightFixtureTestCase() {
         try {
             JetRefactoringUtil.selectExpression(myFixture.getEditor(), file, object : JetRefactoringUtil.SelectExpressionCallback {
                 override fun run(expression: JetExpression) {
-                    val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression, { true }, "value").sort()
+                    val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression, expression.analyze(BodyResolveMode.PARTIAL), { true }, "value").sort()
                     val result = StringUtil.join(names, "\n").trim()
                     assertEquals(expectedResultText, result)
                 }

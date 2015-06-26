@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -197,12 +198,13 @@ public class KotlinIntroduceVariableHandler extends KotlinIntroduceHandlerBase {
                         calculateAnchor(commonParent, commonContainer, allReplaces),
                         NameValidatorImpl.Target.PROPERTIES
                 );
-                final List<String> suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, validator, "value");
+                final Collection<String> suggestedNames = KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(
+                        expression, ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL), validator, "value");
                 final Ref<JetProperty> propertyRef = new Ref<JetProperty>();
                 final ArrayList<JetExpression> references = new ArrayList<JetExpression>();
                 final Ref<JetExpression> reference = new Ref<JetExpression>();
                 final Runnable introduceRunnable = introduceVariable(
-                        expression, suggestedNames.get(0), allReplaces, commonContainer,
+                        expression, suggestedNames.iterator().next(), allReplaces, commonContainer,
                         commonParent, replaceOccurrence, propertyRef, references,
                         reference, finalNoTypeInference, expressionType, bindingContext);
                 CommandProcessor.getInstance().executeCommand(project, new Runnable() {

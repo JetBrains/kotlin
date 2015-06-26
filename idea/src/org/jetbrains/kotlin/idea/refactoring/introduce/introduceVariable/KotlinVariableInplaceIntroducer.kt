@@ -44,7 +44,7 @@ public class KotlinVariableInplaceIntroducer(
         val addedVariable: JetProperty,
         val originalExpression: JetExpression?,
         val occurrencesToReplace: Array<JetExpression>,
-        suggestedNames: List<String>,
+        suggestedNames: Collection<String>,
         val isVar: Boolean,
         val doNotChangeVar: Boolean,
         val expressionType: JetType?,

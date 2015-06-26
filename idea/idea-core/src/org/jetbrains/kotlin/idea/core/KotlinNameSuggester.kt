@@ -16,15 +16,12 @@
 
 package org.jetbrains.kotlin.idea.core
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.JetLexer
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -50,14 +47,14 @@ public object KotlinNameSuggester {
      * *
      * @return possible names
      */
-    public fun suggestNamesByExpressionAndType(expression: JetExpression, validator: (String) -> Boolean, defaultName: String?): List<String> {
-        val result = ArrayList<String>()
+    public fun suggestNamesByExpressionAndType(expression: JetExpression, bindingContext: BindingContext, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
+        val result = LinkedHashSet<String>()
 
-        val bindingContext = expression.analyze(BodyResolveMode.FULL)
-        val jetType = bindingContext.getType(expression)
-        if (jetType != null) {
-            result.addNamesByType(jetType, validator)
+        val type = bindingContext.getType(expression)
+        if (type != null) {
+            result.addNamesByType(type, validator)
         }
+
         result.addNamesByExpression(expression, validator)
 
         if (result.isEmpty()) {

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.JetValVar;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
@@ -105,10 +106,12 @@ public abstract class ChangeFunctionSignatureFix extends JetIntentionAction<PsiE
             return KotlinNameSuggester.INSTANCE$.suggestNameByName(argumentName.getAsName().asString(), validator);
         }
         else if (expression != null) {
-            return KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, validator, "param").get(0);
+            BindingContext bindingContext = ResolvePackage.analyze(expression, BodyResolveMode.PARTIAL);
+            return KotlinNameSuggester.INSTANCE$.suggestNamesByExpressionAndType(expression, bindingContext, validator, "param").iterator().next();
         }
-
-        return KotlinNameSuggester.INSTANCE$.suggestNameByName("param", validator);
+        else {
+            return KotlinNameSuggester.INSTANCE$.suggestNameByName("param", validator);
+        }
     }
 
     protected static JetParameterInfo getNewParameterInfo(
