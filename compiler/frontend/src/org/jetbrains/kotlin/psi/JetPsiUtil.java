@@ -549,9 +549,8 @@ public class JetPsiUtil {
         IElementType parentOperation = getOperation(parentExpression);
 
         // 'return (@label{...})' case
-        if (parentExpression instanceof JetReturnExpression && innerExpression instanceof JetLabeledExpression) {
-            return true;
-        }
+        if (parentExpression instanceof JetReturnExpression
+            && (innerExpression instanceof JetLabeledExpression || innerExpression instanceof JetAnnotatedExpression)) return true;
 
         // '(x: Int) < y' case
         if (innerExpression instanceof JetBinaryExpressionWithTypeRHS && parentOperation == JetTokens.LT) {

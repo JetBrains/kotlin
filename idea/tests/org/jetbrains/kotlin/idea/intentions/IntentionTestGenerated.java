@@ -3523,6 +3523,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertToBlockBody"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("annotatedExpr.kt")
+        public void testAnnotatedExpr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/annotatedExpr.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("explicitlyNonUnitFun.kt")
         public void testExplicitlyNonUnitFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/explicitlyNonUnitFun.kt");
@@ -3586,6 +3592,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("implicitlyUnitFun.kt")
         public void testImplicitlyUnitFun() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/implicitlyUnitFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("labeledExpr.kt")
+        public void testLabeledExpr() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("idea/testData/intentions/convertToBlockBody/labeledExpr.kt");
             doTest(fileName);
         }
 
