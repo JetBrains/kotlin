@@ -1,0 +1,4 @@
+VARIABLES T
+
+SUBTYPE T Int
+SUBTYPE T String weak

@@ -37,7 +37,7 @@ import java.util.regex.Pattern
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     private val typePattern = """([\w|<|>|\(|\)]+)"""
-    val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE)\s+${typePattern}\s+${typePattern}\s+(weak)?""", Pattern.MULTILINE)
+    val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE)\s+$typePattern\s+$typePattern\s*(weak)?""")
     val variablesPattern = Pattern.compile("VARIABLES\\s+(.*)")
 
     private var _typeResolver: TypeResolver? = null
@@ -78,19 +78,19 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
     }
 
     public fun doTest(filePath: String) {
-        val file = File(filePath)
-        val fileText = JetTestUtils.doLoadFile(file)!!
+        val constraintsFile = File(filePath)
+        val constraintsFileText = JetTestUtils.doLoadFile(constraintsFile)!!
 
         val constraintSystem = ConstraintSystemImpl()
 
         val typeParameterDescriptors = LinkedHashMap<TypeParameterDescriptor, Variance>()
-        val variables = parseVariables(fileText)
+        val variables = parseVariables(constraintsFileText)
         for (variable in variables) {
             typeParameterDescriptors.put(testDeclarations.getParameterDescriptor(variable), Variance.INVARIANT)
         }
         constraintSystem.registerTypeVariables(typeParameterDescriptors)
 
-        val constraints = parseConstraints(fileText)
+        val constraints = parseConstraints(constraintsFileText)
         for (constraint in constraints) {
             val firstType = testDeclarations.getType(constraint.firstType)
             val secondType = testDeclarations.getType(constraint.secondType)
@@ -112,7 +112,8 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
             result append "${typeParameter.getName()}=${resultType?.let{ DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}\n"
         }
 
-        JetTestUtils.assertEqualsToFile(file, "${getConstraintsText(fileText)}${resultingStatus}\n\n${result}\n")
+        val boundsFile = File(filePath.replace("constraints", "bounds"))
+        JetTestUtils.assertEqualsToFile(boundsFile, "$constraintsFileText\n\n$resultingStatus\n\n$result\n")
     }
 
     class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String, val isWeak: Boolean)
@@ -142,6 +143,4 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         }
         return constraints
     }
-
-    private fun getConstraintsText(text: String) = text.substring(0, text.indexOf("type parameter bounds"))
 }

@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest {
     public void testAllFilesPresentInConstraintSystem() throws Exception {
-        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem"), Pattern.compile("^(.+)\\.bounds$"), true);
+        JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem"), Pattern.compile("^(.+)\\.constraints$"), true);
     }
 
     @TestMetadata("compiler/testData/constraintSystem/checkStatus")
@@ -40,36 +40,36 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class CheckStatus extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInCheckStatus() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/checkStatus"), Pattern.compile("^(.+)\\.bounds$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/checkStatus"), Pattern.compile("^(.+)\\.constraints$"), true);
         }
 
-        @TestMetadata("conflictingConstraints.bounds")
+        @TestMetadata("conflictingConstraints.constraints")
         public void testConflictingConstraints() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/conflictingConstraints.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/conflictingConstraints.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("successful.bounds")
+        @TestMetadata("successful.constraints")
         public void testSuccessful() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/successful.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/successful.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("typeConstructorMismatch.bounds")
+        @TestMetadata("typeConstructorMismatch.constraints")
         public void testTypeConstructorMismatch() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/typeConstructorMismatch.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/typeConstructorMismatch.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("unknownParameters.bounds")
+        @TestMetadata("unknownParameters.constraints")
         public void testUnknownParameters() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/unknownParameters.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/unknownParameters.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("violatedUpperBound.bounds")
+        @TestMetadata("violatedUpperBound.constraints")
         public void testViolatedUpperBound() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/violatedUpperBound.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/checkStatus/violatedUpperBound.constraints");
             doTest(fileName);
         }
     }
@@ -79,30 +79,30 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ComputeValues extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInComputeValues() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/computeValues"), Pattern.compile("^(.+)\\.bounds$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/computeValues"), Pattern.compile("^(.+)\\.constraints$"), true);
         }
 
-        @TestMetadata("contradiction.bounds")
+        @TestMetadata("contradiction.constraints")
         public void testContradiction() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/computeValues/contradiction.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/computeValues/contradiction.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("subTypeOfUpperBounds.bounds")
+        @TestMetadata("subTypeOfUpperBounds.constraints")
         public void testSubTypeOfUpperBounds() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/computeValues/subTypeOfUpperBounds.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/computeValues/subTypeOfUpperBounds.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("superTypeOfLowerBounds1.bounds")
+        @TestMetadata("superTypeOfLowerBounds1.constraints")
         public void testSuperTypeOfLowerBounds1() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/computeValues/superTypeOfLowerBounds1.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/computeValues/superTypeOfLowerBounds1.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("superTypeOfLowerBounds2.bounds")
+        @TestMetadata("superTypeOfLowerBounds2.constraints")
         public void testSuperTypeOfLowerBounds2() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/computeValues/superTypeOfLowerBounds2.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/computeValues/superTypeOfLowerBounds2.constraints");
             doTest(fileName);
         }
     }
@@ -112,54 +112,54 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class IntegerValueTypes extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInIntegerValueTypes() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/integerValueTypes"), Pattern.compile("^(.+)\\.bounds$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/integerValueTypes"), Pattern.compile("^(.+)\\.constraints$"), true);
         }
 
-        @TestMetadata("byteOverflow.bounds")
+        @TestMetadata("byteOverflow.constraints")
         public void testByteOverflow() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/byteOverflow.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/byteOverflow.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("defaultLong.bounds")
+        @TestMetadata("defaultLong.constraints")
         public void testDefaultLong() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/defaultLong.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/defaultLong.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("numberAndAny.bounds")
+        @TestMetadata("numberAndAny.constraints")
         public void testNumberAndAny() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/numberAndAny.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/numberAndAny.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("numberAndString.bounds")
+        @TestMetadata("numberAndString.constraints")
         public void testNumberAndString() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/numberAndString.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/numberAndString.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("severalNumbers.bounds")
+        @TestMetadata("severalNumbers.constraints")
         public void testSeveralNumbers() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/severalNumbers.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/severalNumbers.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("simpleByte.bounds")
+        @TestMetadata("simpleByte.constraints")
         public void testSimpleByte() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/simpleByte.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/simpleByte.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("simpleInt.bounds")
+        @TestMetadata("simpleInt.constraints")
         public void testSimpleInt() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/simpleInt.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/simpleInt.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("simpleShort.bounds")
+        @TestMetadata("simpleShort.constraints")
         public void testSimpleShort() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/simpleShort.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/integerValueTypes/simpleShort.constraints");
             doTest(fileName);
         }
     }
@@ -169,12 +169,12 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class SeveralVariables extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInSeveralVariables() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables"), Pattern.compile("^(.+)\\.bounds$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables"), Pattern.compile("^(.+)\\.constraints$"), true);
         }
 
-        @TestMetadata("simpleDependency.bounds")
+        @TestMetadata("simpleDependency.constraints")
         public void testSimpleDependency() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/simpleDependency.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/simpleDependency.constraints");
             doTest(fileName);
         }
     }
@@ -184,24 +184,24 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Variance extends AbstractConstraintSystemTest {
         public void testAllFilesPresentInVariance() throws Exception {
-            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/variance"), Pattern.compile("^(.+)\\.bounds$"), true);
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/variance"), Pattern.compile("^(.+)\\.constraints$"), true);
         }
 
-        @TestMetadata("consumer.bounds")
+        @TestMetadata("consumer.constraints")
         public void testConsumer() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/variance/consumer.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/variance/consumer.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("invariant.bounds")
+        @TestMetadata("invariant.constraints")
         public void testInvariant() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/variance/invariant.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/variance/invariant.constraints");
             doTest(fileName);
         }
 
-        @TestMetadata("producer.bounds")
+        @TestMetadata("producer.constraints")
         public void testProducer() throws Exception {
-            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/variance/producer.bounds");
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/variance/producer.constraints");
             doTest(fileName);
         }
     }

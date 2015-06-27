@@ -1,0 +1,3 @@
+VARIABLES T
+
+SUBTYPE My<T> My<A>

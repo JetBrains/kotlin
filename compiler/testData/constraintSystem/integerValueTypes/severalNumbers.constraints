@@ -1,0 +1,4 @@
+VARIABLES T
+
+SUPERTYPE T IntegerValueType(1)
+SUPERTYPE T IntegerValueType(1000)
