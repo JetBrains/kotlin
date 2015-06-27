@@ -12,6 +12,7 @@ status:
 -hasContradiction: true
 -hasErrorInConstrainingTypes: false
 -hasTypeConstructorMismatch: false
+-hasTypeInferenceIncorporationError: true
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: false

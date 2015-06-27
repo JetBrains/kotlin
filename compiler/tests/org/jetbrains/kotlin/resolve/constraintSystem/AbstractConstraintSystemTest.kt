@@ -105,15 +105,14 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
         val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM_SHORT.render(constraintSystem)
 
         val resultingSubstitutor = constraintSystem.getResultingSubstitutor()
-        val result = StringBuilder() append "result:\n"
-        for (typeParameter in typeParameterDescriptors) {
-            val parameterType = testDeclarations.getType(typeParameter.getName().asString())
+        val result = typeParameterDescriptors.map {
+            val parameterType = testDeclarations.getType(it.getName().asString())
             val resultType = resultingSubstitutor.substitute(parameterType, Variance.INVARIANT)
-            result append "${typeParameter.getName()}=${resultType?.let{ DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}\n"
-        }
+            "${it.getName()}=${resultType?.let{ DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}"
+        }.join("\n", prefix = "result:\n")
 
         val boundsFile = File(filePath.replace("constraints", "bounds"))
-        JetTestUtils.assertEqualsToFile(boundsFile, "$constraintsFileText\n\n$resultingStatus\n\n$result\n")
+        JetTestUtils.assertEqualsToFile(boundsFile, "$constraintsFileText\n\n$resultingStatus\n\n$result")
     }
 
     class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String, val isWeak: Boolean)

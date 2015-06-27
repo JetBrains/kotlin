@@ -3,8 +3,8 @@ VARIABLES T P
 SUBTYPE T Int
 
 type parameter bounds:
-T <: Int
-P <: Int
+T >: P, <: Int
+P <: T, <: Int
 
 status:
 -hasCannotCaptureTypesError: false
@@ -12,6 +12,7 @@ status:
 -hasContradiction: false
 -hasErrorInConstrainingTypes: false
 -hasTypeConstructorMismatch: false
+-hasTypeInferenceIncorporationError: false
 -hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: true
