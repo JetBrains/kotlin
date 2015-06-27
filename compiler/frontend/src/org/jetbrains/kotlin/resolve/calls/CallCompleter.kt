@@ -264,13 +264,9 @@ public class CallCompleter(
             expression: JetExpression,
             context: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<*>? {
-        if (!ExpressionTypingUtils.dependsOnExpectedType(expression)) return null
+        val cachedData = getResolutionResultsCachedData(expression, context) ?: return null
+        val (cachedResolutionResults, cachedContext, tracing) = cachedData
 
-        val argumentCall = expression.getCall(context.trace.getBindingContext()) ?: return null
-
-        val cachedDataForCall = context.resolutionResultsCache[argumentCall] ?: return null
-
-        val (cachedResolutionResults, cachedContext, tracing) = cachedDataForCall
         @suppress("UNCHECKED_CAST")
         val cachedResults = cachedResolutionResults as OverloadResolutionResultsImpl<CallableDescriptor>
         val contextForArgument = cachedContext.replaceBindingTrace(context.trace)

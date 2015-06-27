@@ -29,12 +29,15 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver.getLastElementDep
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
 import org.jetbrains.kotlin.resolve.calls.CallResolverUtil.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -140,11 +143,54 @@ class GenericCandidateResolver(
         val typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, resolveFunctionArgumentBodies)
         context.candidateCall.getDataFlowInfoForArguments().updateInfo(valueArgument, typeInfoForCall.dataFlowInfo)
 
+        val constraintPosition = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex())
+
+        if (addConstraintForNestedCall(argumentExpression, constraintPosition, constraintSystem, newContext, effectiveExpectedType)) return
+
         val type = updateResultTypeForSmartCasts(typeInfoForCall.type, argumentExpression, context.replaceDataFlowInfo(dataFlowInfoForArgument))
-        constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.getIndex()))
+        constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, constraintPosition)
     }
 
-    private fun updateResultTypeForSmartCasts(type: JetType?, argumentExpression: JetExpression?, context: ResolutionContext<*>): JetType? {
+    private fun addConstraintForNestedCall(
+            argumentExpression: JetExpression?,
+            constraintPosition: ConstraintPosition,
+            constraintSystem: ConstraintSystem,
+            context: CallCandidateResolutionContext<*>,
+            effectiveExpectedType: JetType
+    ): Boolean {
+        val resolutionResults = getResolutionResultsCachedData(argumentExpression, context)?.resolutionResults
+        if (resolutionResults == null || !resolutionResults.isSingleResult()) return false
+
+        val resultingCall = resolutionResults.getResultingCall()
+        if (resultingCall.isCompleted()) return false
+
+        val argumentConstraintSystem = resultingCall.getConstraintSystem() as ConstraintSystemImpl? ?: return false
+
+        val candidateDescriptor = resultingCall.getCandidateDescriptor()
+        val returnType = candidateDescriptor.getReturnType() ?: return false
+
+        val nestedTypeVariables = with (argumentConstraintSystem) {
+            returnType.getNestedTypeVariables()
+        }
+        // we add an additional type variable only if no information is inferred for it.
+        // otherwise we add currently inferred return type as before
+        if (nestedTypeVariables.any { argumentConstraintSystem.getTypeBounds(it).bounds.isNotEmpty() }) return false
+
+        val candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidateDescriptor)
+        val conversion = candidateDescriptor.getTypeParameters().zip(candidateWithFreshVariables.getTypeParameters()).toMap()
+
+        val freshVariables = nestedTypeVariables.map { conversion[it] }.filterNotNull()
+        constraintSystem.registerTypeVariables(freshVariables, { Variance.INVARIANT }, external = true)
+
+        constraintSystem.addSubtypeConstraint(candidateWithFreshVariables.getReturnType(), effectiveExpectedType, constraintPosition)
+        return true
+    }
+
+    private fun updateResultTypeForSmartCasts(
+            type: JetType?,
+            argumentExpression: JetExpression?,
+            context: ResolutionContext<*>
+    ): JetType? {
         val deparenthesizedArgument = getLastElementDeparenthesized(argumentExpression, context)
         if (deparenthesizedArgument == null || type == null) return type
 
@@ -227,4 +273,11 @@ class GenericCandidateResolver(
         val type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, position)
     }
+}
+
+fun getResolutionResultsCachedData(expression: JetExpression?, context: ResolutionContext<*>): ResolutionResultsCache.CachedData? {
+    if (!ExpressionTypingUtils.dependsOnExpectedType(expression)) return null
+    val argumentCall = expression?.getCall(context.trace.getBindingContext()) ?: return null
+
+    return context.resolutionResultsCache[argumentCall]
 }

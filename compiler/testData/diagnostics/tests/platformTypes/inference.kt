@@ -21,5 +21,5 @@ fun <T, C: Base<T>> convert(src: HS<T>, dest: C): C = throw Exception("$src $des
 fun test(l: HS<Int>) {
     //todo should be inferred
     val r = convert(l, HS())
-    checkSubtype<Base<Int>>(r)
+    r checkType { _<HS<Int>>() }
 }

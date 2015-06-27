@@ -8,5 +8,5 @@ fun <T, C: Collection<T>> convert(src: Collection<T>, dest: C): C = throw Except
 fun test(l: List<Int>) {
     //todo should be inferred
     val r = convert(l, HashSet())
-    checkSubtype<Collection<Int>>(r)
+    r checkType { _<HashSet<Int>>() }
 }
