@@ -84,4 +84,9 @@ public trait ConstraintSystemStatus {
      * in invocation <tt>foo(array)</tt> where array has type <tt>Array&lt;Array&lt;out Int&gt;&gt;</tt>.
      */
     public fun hasCannotCaptureTypesError(): Boolean
+
+    /**
+     * Returns <tt>true</tt> if there's an error in constraint system incorporation.
+     */
+    public fun hasTypeInferenceIncorporationError(): Boolean
 }

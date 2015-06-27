@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.constraintPosition
 
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import java.util.*
 
 public enum class ConstraintPositionKind {
     RECEIVER_POSITION,
@@ -56,9 +57,14 @@ private data class ConstraintPositionWithIndex(override val kind: ConstraintPosi
 class CompoundConstraintPosition(
         vararg positions: ConstraintPosition
 ) : ConstraintPositionImpl(ConstraintPositionKind.COMPOUND_CONSTRAINT_POSITION) {
-    val positions: Collection<ConstraintPosition> = positions.toList()
+    val positions: Collection<ConstraintPosition> =
+            positions.flatMap { if (it is CompoundConstraintPosition) it.positions else listOf(it) }.toCollection(LinkedHashSet<ConstraintPosition>())
 
     override fun isStrong() = positions.any { it.isStrong() }
 
-    override fun toString() = "$kind(${positions.joinToString()}"
+    override fun toString() = "$kind(${positions.joinToString()})"
+}
+
+fun ConstraintPosition.equalsOrContains(position: ConstraintPosition): Boolean {
+    return if (this !is CompoundConstraintPosition) this == position else positions.any { it == position }
 }

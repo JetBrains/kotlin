@@ -44,6 +44,9 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.DataFlowUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.util.ArrayList
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
+import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.ErrorUtils
 
 public class CallCompleter(
         val argumentTypeResolver: ArgumentTypeResolver,
@@ -151,8 +154,6 @@ public class CallCompleter(
             }
         }
 
-        (getConstraintSystem() as ConstraintSystemImpl).processDeclaredBoundConstraints()
-
         if (returnType != null && expectedType === TypeUtils.UNIT_EXPECTED_TYPE) {
             updateSystemIfSuccessful {
                 system ->
@@ -160,6 +161,9 @@ public class CallCompleter(
                 system.getStatus().isSuccessful()
             }
         }
+
+        val constraintSystem = getConstraintSystem() as ConstraintSystemImpl
+        constraintSystem.fixVariables()
 
         setResultingSubstitutor(getConstraintSystem()!!.getResultingSubstitutor())
     }
@@ -280,7 +284,8 @@ public class CallCompleter(
             argumentExpression: JetExpression,
             trace: BindingTrace
     ): JetType? {
-        if (recordedType == updatedType || updatedType == null) return updatedType
+        //workaround for KT-8218
+        if ((!ErrorUtils.containsErrorType(recordedType) && recordedType == updatedType) || updatedType == null) return updatedType
 
         fun deparenthesizeOrGetSelector(expression: JetExpression?): JetExpression? {
             val deparenthesized = JetPsiUtil.deparenthesizeOnce(expression, /* deparenthesizeBinaryExpressionWithTypeRHS = */ false)

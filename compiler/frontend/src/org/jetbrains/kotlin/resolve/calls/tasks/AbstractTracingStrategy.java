@@ -233,6 +233,9 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         else if (status.hasConflictingConstraints()) {
             trace.report(TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS.on(reference, data));
         }
+        else if (status.hasTypeInferenceIncorporationError()) {
+            trace.report(TYPE_INFERENCE_INCORPORATION_ERROR.on(reference));
+        }
         else {
             assert status.hasUnknownParameters();
             trace.report(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(reference, data));

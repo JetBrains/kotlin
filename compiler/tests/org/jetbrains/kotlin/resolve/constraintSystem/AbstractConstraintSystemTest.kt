@@ -36,9 +36,10 @@ import java.util.LinkedHashMap
 import java.util.regex.Pattern
 
 abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
-    private val typePattern = """([\w|<|>|\(|\)]+)"""
-    val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE)\s+$typePattern\s+$typePattern\s*(weak)?""")
+    private val typePattern = """([\w|<|\,|>|?|\(|\)]+)"""
+    val constraintPattern = Pattern.compile("""(SUBTYPE|SUPERTYPE|EQUAL)\s+$typePattern\s+$typePattern\s*(weak)?""")
     val variablesPattern = Pattern.compile("VARIABLES\\s+(.*)")
+    val fixVariablesPattern = "FIX_VARIABLES"
 
     private var _typeResolver: TypeResolver? = null
     private val typeResolver: TypeResolver
@@ -83,12 +84,10 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
 
         val constraintSystem = ConstraintSystemImpl()
 
-        val typeParameterDescriptors = LinkedHashMap<TypeParameterDescriptor, Variance>()
         val variables = parseVariables(constraintsFileText)
-        for (variable in variables) {
-            typeParameterDescriptors.put(testDeclarations.getParameterDescriptor(variable), Variance.INVARIANT)
-        }
-        constraintSystem.registerTypeVariables(typeParameterDescriptors)
+        val fixVariables = constraintsFileText.contains(fixVariablesPattern)
+        val typeParameterDescriptors = variables.map { testDeclarations.getParameterDescriptor(it) }
+        constraintSystem.registerTypeVariables(typeParameterDescriptors, { Variance.INVARIANT })
 
         val constraints = parseConstraints(constraintsFileText)
         for (constraint in constraints) {
@@ -98,17 +97,18 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
             when (constraint.kind) {
                 MyConstraintKind.SUBTYPE -> constraintSystem.addSubtypeConstraint(firstType, secondType, position)
                 MyConstraintKind.SUPERTYPE -> constraintSystem.addSupertypeConstraint(firstType, secondType, position)
+                MyConstraintKind.EQUAL -> constraintSystem.addConstraint(ConstraintSystemImpl.ConstraintKind.EQUAL, firstType, secondType, position)
             }
         }
-        constraintSystem.processDeclaredBoundConstraints()
+        if (fixVariables) constraintSystem.fixVariables()
 
         val resultingStatus = Renderers.RENDER_CONSTRAINT_SYSTEM_SHORT.render(constraintSystem)
 
         val resultingSubstitutor = constraintSystem.getResultingSubstitutor()
         val result = StringBuilder() append "result:\n"
-        for ((typeParameter, variance) in typeParameterDescriptors) {
+        for (typeParameter in typeParameterDescriptors) {
             val parameterType = testDeclarations.getType(typeParameter.getName().asString())
-            val resultType = resultingSubstitutor.substitute(parameterType, variance)
+            val resultType = resultingSubstitutor.substitute(parameterType, Variance.INVARIANT)
             result append "${typeParameter.getName()}=${resultType?.let{ DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}\n"
         }
 
@@ -118,7 +118,7 @@ abstract public class AbstractConstraintSystemTest() : JetLiteFixture() {
 
     class MyConstraint(val kind: MyConstraintKind, val firstType: String, val secondType: String, val isWeak: Boolean)
     enum class MyConstraintKind {
-        SUBTYPE, SUPERTYPE
+        SUBTYPE, SUPERTYPE, EQUAL
     }
 
     private fun parseVariables(text: String): List<String> {

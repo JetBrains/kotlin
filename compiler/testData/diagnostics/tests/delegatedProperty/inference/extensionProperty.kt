@@ -1,10 +1,10 @@
 package foo
 
 open class A {
-    val B.w: Int by <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>MyProperty<!>()
+    val B.w: Int by <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyProperty<!>()
 }
 
-val B.r: Int by <!TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>MyProperty<!>()
+val B.r: Int by <!TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyProperty<!>()
 
 val A.e: Int by MyProperty()
 

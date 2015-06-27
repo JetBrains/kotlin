@@ -70,11 +70,9 @@ class GenericCandidateResolver(
         // Thus, we replace the parameters of our descriptor with fresh objects (perform alpha-conversion)
         val candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidate)
 
-        val typeVariables = Maps.newLinkedHashMap<TypeParameterDescriptor, Variance>()
-        for (typeParameterDescriptor in candidateWithFreshVariables.getTypeParameters()) {
-            typeVariables.put(typeParameterDescriptor, Variance.INVARIANT) // TODO: variance of the occurrences
-        }
-        constraintSystem.registerTypeVariables(typeVariables)
+        val backConversion = candidateWithFreshVariables.getTypeParameters().zip(candidate.getTypeParameters()).toMap()
+
+        constraintSystem.registerTypeVariables(candidateWithFreshVariables.getTypeParameters(), { Variance.INVARIANT })
 
         val substituteDontCare = makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE)
 
@@ -111,9 +109,7 @@ class GenericCandidateResolver(
         }
 
         // Restore type variables before alpha-conversion
-        val constraintSystemWithRightTypeParameters = constraintSystem.substituteTypeVariables {
-            candidate.getTypeParameters().get(it.getIndex())
-        }
+        val constraintSystemWithRightTypeParameters = constraintSystem.substituteTypeVariables { backConversion.get(it) }
         candidateCall.setConstraintSystem(constraintSystemWithRightTypeParameters)
 
 
@@ -174,7 +170,7 @@ class GenericCandidateResolver(
             val valueParameterDescriptor = entry.getKey()
 
             for (valueArgument in resolvedValueArgument.getArguments()) {
-                addConstraintForFunctionLiteral<D>(valueArgument, valueParameterDescriptor, constraintSystem, context)
+                addConstraintForFunctionLiteral(valueArgument, valueParameterDescriptor, constraintSystem, context)
             }
         }
         resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor())

@@ -228,7 +228,7 @@ public object Renderers {
 
         return result
                 .text(newText().normal("Not enough information to infer parameter ")
-                              .strong(firstUnknownParameter!!.getName())
+                              .strong(firstUnknownParameter.getName())
                               .normal(" in "))
                 .table(newTable()
                                .descriptor(inferenceErrorData.descriptor)
@@ -246,7 +246,7 @@ public object Renderers {
 
         val systemWithoutWeakConstraints = constraintSystem.getSystemWithoutWeakConstraints()
         val typeParameterDescriptor = inferenceErrorData.descriptor.getTypeParameters().firstOrNull { 
-            !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, true) 
+            !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, true)
         }
         if (typeParameterDescriptor == null && status.hasConflictingConstraints()) {
             return renderConflictingSubstitutionsInferenceError(inferenceErrorData, result)
