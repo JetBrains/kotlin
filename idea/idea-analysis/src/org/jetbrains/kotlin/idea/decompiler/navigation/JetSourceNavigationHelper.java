@@ -443,6 +443,7 @@ public class JetSourceNavigationHelper {
                 break;
             case SOURCES_TO_CLASS_FILES:
                 if (from.getContainingJetFile().isCompiled()) return from;
+                if (!ProjectRootsUtil.isInContent(from, false, true, false)) return from;
                 if (JetPsiUtil.isLocal(from)) return from;
                 break;
         }
