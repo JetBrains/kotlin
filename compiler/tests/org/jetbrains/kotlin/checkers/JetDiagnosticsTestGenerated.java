@@ -7142,6 +7142,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                     JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/substitutions"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("delegationAndInference.kt")
+                public void testDelegationAndInference() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/substitutions/delegationAndInference.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("kt6081SubstituteIntoClassCorrectly.kt")
                 public void testKt6081SubstituteIntoClassCorrectly() throws Exception {
                     String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/substitutions/kt6081SubstituteIntoClassCorrectly.kt");

@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckValueArgumentsMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.FROM_COMPLETER
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -132,8 +131,8 @@ public class CallCompleter(
             expectedType: JetType,
             trace: BindingTrace
     ) {
-        fun updateSystemIfSuccessful(update: (ConstraintSystem) -> Boolean) {
-            val copy = (getConstraintSystem() as ConstraintSystemImpl).copy()
+        fun updateSystemIfSuccessful(update: (ConstraintSystemImpl) -> Boolean) {
+            val copy = (getConstraintSystem() as ConstraintSystemImpl).copy() as ConstraintSystemImpl
             if (update(copy)) {
                 setConstraintSystem(copy)
             }
@@ -146,11 +145,13 @@ public class CallCompleter(
 
         val constraintSystemCompleter = trace[CONSTRAINT_SYSTEM_COMPLETER, getCall().getCalleeExpression()]
         if (constraintSystemCompleter != null) {
-            //todo improve error reporting with errors in constraints from completer
+            // todo improve error reporting with errors in constraints from completer
+            // todo add constraints from completer unconditionally; improve constraints from completer for generic methods
+            // add the constraints only if they don't lead to errors (except errors from upper bounds to improve diagnostics)
             updateSystemIfSuccessful {
                 system ->
                 constraintSystemCompleter.completeConstraintSystem(system, this)
-                !system.getStatus().hasOnlyErrorsFromPosition(FROM_COMPLETER.position())
+                !system.filterConstraintsOut(TYPE_BOUND_POSITION).getStatus().hasOnlyErrorsDerivedFrom(FROM_COMPLETER)
             }
         }
 
