@@ -57,6 +57,7 @@ public abstract class ElementResolver protected constructor(
             = throw UnsupportedOperationException("Cannot use partial body resolve with no Nothing-functions index");
 
     public fun resolveToElement(jetElement: JetElement, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
+        @suppress("NAME_SHADOWING")
         var jetElement = jetElement
 
         val elementOfAdditionalResolve = findElementOfAdditionalResolve(jetElement)
