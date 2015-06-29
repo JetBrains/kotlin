@@ -7,5 +7,5 @@ internal final annotation class Anno : kotlin.Annotation {
 }
 
 internal final class Constructor {
-    /*primary*/ test.Anno(value = "string": kotlin.String) public constructor Constructor()
+    /*primary*/ test.Anno(value = "string") public constructor Constructor()
 }

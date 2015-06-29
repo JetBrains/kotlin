@@ -35,7 +35,7 @@ internal final annotation class AString : kotlin.Annotation {
     internal final val value: kotlin.String
 }
 
-test.AString(value = "Test": kotlin.String) test.AChar(value = \u0063 ('c'): kotlin.Char) test.AInt(value = 10: kotlin.Int) test.AByte(value = 11: kotlin.Int) test.ALong(value = 12.toLong(): kotlin.Long) test.ADouble(value = 1.2.toDouble(): kotlin.Double) test.AFloat(value = 1.3.toFloat(): kotlin.Float) public open class AnnotationTrait {
+test.AString(value = "Test") test.AChar(value = \u0063 ('c')) test.AInt(value = 10) test.AByte(value = 11) test.ALong(value = 12.toLong()) test.ADouble(value = 1.2.toDouble()) test.AFloat(value = 1.3.toFloat()) public open class AnnotationTrait {
     public constructor AnnotationTrait()
 }
 

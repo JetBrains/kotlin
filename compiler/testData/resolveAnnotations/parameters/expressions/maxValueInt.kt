@@ -16,4 +16,4 @@ Ann(
     p5 = 1.toInt() + 1.toInt()
 ) class MyClass
 
-// EXPECTED: Ann(p1 = -2147483648: Int, p2 = IntegerValueType(2): IntegerValueType(2), p3 = -2147483648: Int, p4 = 2: Int, p5 = 2: Int)
+// EXPECTED: Ann(p1 = -2147483648, p2 = IntegerValueType(2), p3 = -2147483648, p4 = 2, p5 = 2)

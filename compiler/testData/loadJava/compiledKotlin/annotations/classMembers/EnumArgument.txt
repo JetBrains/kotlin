@@ -8,8 +8,8 @@ internal final annotation class Anno : kotlin.Annotation {
 
 internal final class Class {
     /*primary*/ public constructor Class()
-    test.Anno(t = ElementType.FIELD: java.lang.annotation.ElementType) internal final var bar: kotlin.Int
+    test.Anno(t = ElementType.FIELD) internal final var bar: kotlin.Int
         internal final fun <get-bar>(): kotlin.Int
         internal final fun <set-bar>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
-    test.Anno(t = ElementType.METHOD: java.lang.annotation.ElementType) internal final fun foo(): kotlin.Unit
+    test.Anno(t = ElementType.METHOD) internal final fun foo(): kotlin.Unit
 }

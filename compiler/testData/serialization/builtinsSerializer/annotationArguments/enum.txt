@@ -1,10 +1,10 @@
 package test
 
-test.JustEnum(weapon = Weapon.SCISSORS: test.Weapon) test.EnumArray(enumArray = {}: kotlin.Array<test.Weapon>) internal final class C1 {
+test.JustEnum(weapon = Weapon.SCISSORS) test.EnumArray(enumArray = {}) internal final class C1 {
     public constructor C1()
 }
 
-test.EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}: kotlin.Array<test.Weapon>) internal final class C2 {
+test.EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) internal final class C2 {
     public constructor C2()
 }
 

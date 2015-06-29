@@ -1,9 +1,9 @@
 package test
 
-test.Anno(t = {"prosper"}: kotlin.Array<out kotlin.String>) internal val bar: kotlin.Int = 42
+test.Anno(t = {"prosper"}) internal val bar: kotlin.Int = 42
     internal fun <get-bar>(): kotlin.Int
-test.Anno(t = {}: kotlin.Array<out kotlin.String>) internal fun baz(): kotlin.Unit
-test.Anno(t = {"live", "long"}: kotlin.Array<out kotlin.String>) internal fun foo(): kotlin.Unit
+test.Anno(t = {}) internal fun baz(): kotlin.Unit
+test.Anno(t = {"live", "long"}) internal fun foo(): kotlin.Unit
 
 internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ vararg t: kotlin.String /*kotlin.Array<out kotlin.String>*/)

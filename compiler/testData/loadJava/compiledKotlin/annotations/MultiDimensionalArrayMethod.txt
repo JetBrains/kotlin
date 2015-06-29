@@ -7,7 +7,7 @@ internal final annotation class Anno : kotlin.Annotation {
 }
 
 internal interface T {
-    test.Anno(s = "bar": kotlin.String) internal abstract val bar: kotlin.Array<kotlin.Array<kotlin.BooleanArray>>
+    test.Anno(s = "bar") internal abstract val bar: kotlin.Array<kotlin.Array<kotlin.BooleanArray>>
         internal abstract fun <get-bar>(): kotlin.Array<kotlin.Array<kotlin.BooleanArray>>
-    test.Anno(s = "foo": kotlin.String) internal abstract fun foo(): kotlin.Array<kotlin.Array<kotlin.Array<test.T>>>
+    test.Anno(s = "foo") internal abstract fun foo(): kotlin.Array<kotlin.Array<kotlin.Array<test.T>>>
 }

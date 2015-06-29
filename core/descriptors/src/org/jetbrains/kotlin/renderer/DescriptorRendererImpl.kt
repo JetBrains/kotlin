@@ -369,8 +369,7 @@ internal class DescriptorRendererImpl(
                 .map { entry ->
                     val name = entry.key.getName().asString()
                     val value = renderConstant(entry.value)
-                    val type = renderType(entry.value.getType(KotlinBuiltIns.getInstance()))
-                    "$name = $value: $type"
+                    "$name = $value"
                 }
                 .sort()
     }

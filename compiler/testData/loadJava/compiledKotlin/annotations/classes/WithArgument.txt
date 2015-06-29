@@ -18,7 +18,7 @@ internal final annotation class CharAnno : kotlin.Annotation {
         internal final fun <get-value>(): kotlin.Char
 }
 
-test.IntAnno(value = 42: kotlin.Int) test.ShortAnno(value = 42.toShort(): kotlin.Short) test.ByteAnno(value = 42.toByte(): kotlin.Byte) test.LongAnno(value = 42.toLong(): kotlin.Long) test.CharAnno(value = \u0041 ('A'): kotlin.Char) test.BooleanAnno(value = false: kotlin.Boolean) test.FloatAnno(value = 3.14.toFloat(): kotlin.Float) test.DoubleAnno(value = 3.14.toDouble(): kotlin.Double) internal final class Class {
+test.IntAnno(value = 42) test.ShortAnno(value = 42.toShort()) test.ByteAnno(value = 42.toByte()) test.LongAnno(value = 42.toLong()) test.CharAnno(value = \u0041 ('A')) test.BooleanAnno(value = false) test.FloatAnno(value = 3.14.toFloat()) test.DoubleAnno(value = 3.14.toDouble()) internal final class Class {
     /*primary*/ public constructor Class()
 }
 

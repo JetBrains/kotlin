@@ -1,6 +1,6 @@
 package test
 
 kotlin.inline() internal fun a(): kotlin.Unit
-kotlin.inline(strategy = InlineStrategy.AS_FUNCTION: kotlin.InlineStrategy) internal fun b(): kotlin.Unit
-kotlin.inline(strategy = InlineStrategy.IN_PLACE: kotlin.InlineStrategy) internal fun c(): kotlin.Unit
-kotlin.inline(strategy = InlineStrategy.IN_PLACE: kotlin.InlineStrategy) internal fun d(): kotlin.Unit
+kotlin.inline(strategy = InlineStrategy.AS_FUNCTION) internal fun b(): kotlin.Unit
+kotlin.inline(strategy = InlineStrategy.IN_PLACE) internal fun c(): kotlin.Unit
+kotlin.inline(strategy = InlineStrategy.IN_PLACE) internal fun d(): kotlin.Unit

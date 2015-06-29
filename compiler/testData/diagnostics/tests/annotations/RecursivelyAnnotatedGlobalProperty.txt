@@ -1,6 +1,6 @@
 package
 
-ann(x = 1: kotlin.Int) internal val x: kotlin.Int = 1
+ann(x = 1) internal val x: kotlin.Int = 1
 
 internal final annotation class ann : kotlin.Annotation {
     public constructor ann(/*0*/ x: kotlin.Int)

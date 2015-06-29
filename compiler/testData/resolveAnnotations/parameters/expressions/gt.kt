@@ -14,4 +14,4 @@ val b = 2
 
 Ann(1 > 2, 1.0 > 2.0, 2 > a, b > a, 'b' > 'a', "a" > "b") class MyClass
 
-// EXPECTED: Ann(b1 = false: Boolean, b2 = false: Boolean, b3 = true: Boolean, b4 = true: Boolean, b5 = true: Boolean, b6 = false: Boolean)
+// EXPECTED: Ann(b1 = false, b2 = false, b3 = true, b4 = true, b5 = true, b6 = false)

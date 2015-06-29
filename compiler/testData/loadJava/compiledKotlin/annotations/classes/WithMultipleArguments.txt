@@ -10,6 +10,6 @@ internal final annotation class Anno : kotlin.Annotation {
         internal final fun <get-string>(): kotlin.String
 }
 
-test.Anno(double = 3.14.toDouble(): kotlin.Double, int = 42: kotlin.Int, string = "OK": kotlin.String) internal final class Class {
+test.Anno(double = 3.14.toDouble(), int = 42, string = "OK") internal final class Class {
     /*primary*/ public constructor Class()
 }

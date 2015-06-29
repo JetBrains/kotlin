@@ -6,18 +6,18 @@ internal final annotation class Anno : kotlin.Annotation {
         internal final fun <get-t>(): java.lang.annotation.ElementType
 }
 
-test.Anno(t = ElementType.METHOD: java.lang.annotation.ElementType) internal final class Class {
+test.Anno(t = ElementType.METHOD) internal final class Class {
     /*primary*/ public constructor Class()
 
-    test.Anno(t = ElementType.ANNOTATION_TYPE: java.lang.annotation.ElementType) public companion object Companion {
+    test.Anno(t = ElementType.ANNOTATION_TYPE) public companion object Companion {
         /*primary*/ private constructor Companion()
     }
 
-    test.Anno(t = ElementType.PARAMETER: java.lang.annotation.ElementType) internal final inner class Inner {
+    test.Anno(t = ElementType.PARAMETER) internal final inner class Inner {
         /*primary*/ public constructor Inner()
     }
 
-    test.Anno(t = ElementType.TYPE: java.lang.annotation.ElementType) internal final class Nested {
+    test.Anno(t = ElementType.TYPE) internal final class Nested {
         /*primary*/ public constructor Nested()
     }
 }

@@ -10,5 +10,5 @@ internal final annotation class Ann : kotlin.Annotation {
 
 internal final class TypeAnnotationWithArguments {
     /*primary*/ public constructor TypeAnnotationWithArguments()
-    internal final fun foo(/*0*/ param: @[test.Ann(x = "param": kotlin.String, y = 3.14.toDouble(): kotlin.Double)] kotlin.IntRange): @[test.Ann(x = "fun": kotlin.String, y = 2.72.toDouble(): kotlin.Double)] kotlin.Unit
+    internal final fun foo(/*0*/ param: @[test.Ann(x = "param", y = 3.14.toDouble())] kotlin.IntRange): @[test.Ann(x = "fun", y = 2.72.toDouble())] kotlin.Unit
 }

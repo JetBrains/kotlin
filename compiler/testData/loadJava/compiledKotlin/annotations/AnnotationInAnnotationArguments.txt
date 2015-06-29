@@ -1,6 +1,6 @@
 package test
 
-test.OptionGroups(o1 = test.StringOptions(option = {"abc", "d", "ef"}: kotlin.Array<out kotlin.String>): test.StringOptions, o2 = test.EnumOption(option = E.ENTRY: test.E): test.EnumOption) public final class AnnotationInAnnotationArguments {
+test.OptionGroups(o1 = test.StringOptions(option = {"abc", "d", "ef"}), o2 = test.EnumOption(option = E.ENTRY)) public final class AnnotationInAnnotationArguments {
     /*primary*/ public constructor AnnotationInAnnotationArguments()
 }
 

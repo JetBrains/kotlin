@@ -11,21 +11,21 @@ public final annotation class A : kotlin.Annotation {
     public abstract fun x(): kotlin.Int
 }
 
-A(value = kotlin.String::class: kotlin.reflect.KClass<kotlin.String>, x = IntegerValueType(2): IntegerValueType(2)) internal final class MyClass1 {
+A(value = kotlin.String::class, x = IntegerValueType(2)) internal final class MyClass1 {
     public constructor MyClass1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-A(value = kotlin.String::class: kotlin.reflect.KClass<kotlin.String>, x = IntegerValueType(4): IntegerValueType(4)) internal final class MyClass2 {
+A(value = kotlin.String::class, x = IntegerValueType(4)) internal final class MyClass2 {
     public constructor MyClass2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-A(x = IntegerValueType(5): IntegerValueType(5)) internal final class MyClass3 {
+A(x = IntegerValueType(5)) internal final class MyClass3 {
     public constructor MyClass3()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

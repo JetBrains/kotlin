@@ -7,4 +7,4 @@ annotation class Ann(
 
 Ann(true || false, true || true) class MyClass
 
-// EXPECTED: Ann(b1 = true: Boolean, b2 = true: Boolean)
+// EXPECTED: Ann(b1 = true, b2 = true)

@@ -1,10 +1,10 @@
 package test
 
-test.JustString(string = "kotlin": kotlin.String) test.StringArray(stringArray = {}: kotlin.Array<kotlin.String>) internal final class C1 {
+test.JustString(string = "kotlin") test.StringArray(stringArray = {}) internal final class C1 {
     public constructor C1()
 }
 
-test.StringArray(stringArray = {"java", ""}: kotlin.Array<kotlin.String>) internal final class C2 {
+test.StringArray(stringArray = {"java", ""}) internal final class C2 {
     public constructor C2()
 }
 

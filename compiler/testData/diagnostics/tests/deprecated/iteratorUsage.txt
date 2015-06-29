@@ -6,7 +6,7 @@ internal final class Iter {
     public constructor Iter()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    kotlin.deprecated(value = "text": kotlin.String) internal final fun iterator(): Iter.IterIterator
+    kotlin.deprecated(value = "text") internal final fun iterator(): Iter.IterIterator
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     internal final class IterIterator {
@@ -29,9 +29,9 @@ internal final class Iter2 {
     internal final class Iter2Iterator {
         public constructor Iter2Iterator()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        kotlin.deprecated(value = "text": kotlin.String) internal final fun hasNext(): kotlin.Boolean
+        kotlin.deprecated(value = "text") internal final fun hasNext(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        kotlin.deprecated(value = "text": kotlin.String) internal final fun next(): kotlin.String
+        kotlin.deprecated(value = "text") internal final fun next(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

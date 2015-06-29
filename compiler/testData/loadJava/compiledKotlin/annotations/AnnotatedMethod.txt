@@ -2,5 +2,5 @@ package test
 
 public open class AnnotatedMethod {
     /*primary*/ public constructor AnnotatedMethod()
-    kotlin.deprecated(value = "Deprecated in Java": kotlin.String) public open fun f(): kotlin.Unit
+    kotlin.deprecated(value = "Deprecated in Java") public open fun f(): kotlin.Unit
 }

@@ -1,6 +1,6 @@
 package
 
-A(x = IntegerValueType(1): IntegerValueType(1), y = "2": kotlin.String) internal fun test(): kotlin.Unit
+A(x = IntegerValueType(1), y = "2") internal fun test(): kotlin.Unit
 
 public final annotation class A : kotlin.Annotation {
     public constructor A(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String)

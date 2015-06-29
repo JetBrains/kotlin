@@ -22,14 +22,14 @@ internal final annotation class AnnAnn : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) Ann(i = {}: kotlin.IntArray) Ann(i = {1}: kotlin.IntArray) internal final class Test {
+Ann(i = {}) Ann(i = {1}) Ann(i = {}) Ann(i = {1}) Ann(i = {}) Ann(i = {1}) Ann(i = {}) Ann(i = {1}) internal final class Test {
     public constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-AnnAnn(i = {Ann(i = {IntegerValueType(1)}: kotlin.IntArray)}: kotlin.Array<Ann>) AnnAnn(i = {}: kotlin.Array<Ann>) internal final class TestAnn {
+AnnAnn(i = {Ann(i = {IntegerValueType(1)})}) AnnAnn(i = {}) internal final class TestAnn {
     public constructor TestAnn()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

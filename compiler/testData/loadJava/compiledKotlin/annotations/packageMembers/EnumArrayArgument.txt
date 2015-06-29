@@ -1,9 +1,9 @@
 package test
 
-test.Anno(t = {ElementType.PACKAGE}: kotlin.Array<out java.lang.annotation.ElementType>) internal val bar: kotlin.Int = 42
+test.Anno(t = {ElementType.PACKAGE}) internal val bar: kotlin.Int = 42
     internal fun <get-bar>(): kotlin.Int
-test.Anno(t = {}: kotlin.Array<out java.lang.annotation.ElementType>) internal fun baz(): kotlin.Unit
-test.Anno(t = {ElementType.METHOD, ElementType.FIELD}: kotlin.Array<out java.lang.annotation.ElementType>) internal fun foo(): kotlin.Unit
+test.Anno(t = {}) internal fun baz(): kotlin.Unit
+test.Anno(t = {ElementType.METHOD, ElementType.FIELD}) internal fun foo(): kotlin.Unit
 
 internal final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ vararg t: java.lang.annotation.ElementType /*kotlin.Array<out java.lang.annotation.ElementType>*/)

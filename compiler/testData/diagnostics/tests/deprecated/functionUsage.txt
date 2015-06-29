@@ -1,12 +1,12 @@
 package
 
-kotlin.deprecated(value = "message": kotlin.String) internal fun Obsolete(/*0*/ param: kotlin.Int = ...): UsefulClass
+kotlin.deprecated(value = "message") internal fun Obsolete(/*0*/ param: kotlin.Int = ...): UsefulClass
 internal fun block(): kotlin.Unit
 internal fun expression(): UsefulClass
 internal fun invoker(): kotlin.Unit
 internal fun reflection(): kotlin.reflect.KFunction1<kotlin.Int, UsefulClass>
 internal fun reflection2(): kotlin.reflect.KMemberFunction0<UsefulClass, kotlin.Unit>
-kotlin.deprecated(value = "does nothing good": kotlin.String) internal fun kotlin.Any.doNothing(): kotlin.String
+kotlin.deprecated(value = "does nothing good") internal fun kotlin.Any.doNothing(): kotlin.String
 
 internal final class Delegation {
     public constructor Delegation()
@@ -29,7 +29,7 @@ internal final class Invocable {
     public constructor Invocable()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    kotlin.deprecated(value = "message": kotlin.String) internal final fun invoke(): kotlin.Unit
+    kotlin.deprecated(value = "message") internal final fun invoke(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -47,7 +47,7 @@ internal final class UsefulClass {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     internal final fun get(/*0*/ instance: kotlin.Any, /*1*/ property: kotlin.PropertyMetadata): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    kotlin.deprecated(value = "message": kotlin.String) internal final fun member(): kotlin.Unit
+    kotlin.deprecated(value = "message") internal final fun member(): kotlin.Unit
     internal final fun set(/*0*/ instance: kotlin.Any, /*1*/ property: kotlin.PropertyMetadata, /*2*/ value: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

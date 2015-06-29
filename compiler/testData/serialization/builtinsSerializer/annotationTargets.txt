@@ -1,22 +1,22 @@
 package test
 
-test.anno(x = "top level property": kotlin.String) internal val p1: kotlin.Nothing?
-test.anno(x = "extension property": kotlin.String) internal val kotlin.Double.p2: kotlin.Double
-test.anno(x = "top level function": kotlin.String) internal fun f1(/*0*/ test.anno(x = "top level function parameter": kotlin.String) p: kotlin.Int): kotlin.Unit
-test.anno(x = "extension function": kotlin.String) internal fun kotlin.Long.f2(/*0*/ test.anno(x = "extension function parameter": kotlin.String) p: kotlin.Int): kotlin.Unit
+test.anno(x = "top level property") internal val p1: kotlin.Nothing?
+test.anno(x = "extension property") internal val kotlin.Double.p2: kotlin.Double
+test.anno(x = "top level function") internal fun f1(/*0*/ test.anno(x = "top level function parameter") p: kotlin.Int): kotlin.Unit
+test.anno(x = "extension function") internal fun kotlin.Long.f2(/*0*/ test.anno(x = "extension function parameter") p: kotlin.Int): kotlin.Unit
 
-test.anno(x = "top level class": kotlin.String) internal final class C1 {
-    test.anno(x = "constructor": kotlin.String) public constructor C1()
-    test.anno(x = "member property": kotlin.String) internal final val p3: kotlin.Nothing?
-    test.anno(x = "member extension property": kotlin.String) internal final val kotlin.Int.v4: kotlin.Int
-    test.anno(x = "member function": kotlin.String) internal final fun f3(/*0*/ test.anno(x = "member function parameter": kotlin.String) p: kotlin.Int): kotlin.Unit
-    test.anno(x = "member extension function": kotlin.String) internal final fun kotlin.String.f4(): kotlin.Unit
+test.anno(x = "top level class") internal final class C1 {
+    test.anno(x = "constructor") public constructor C1()
+    test.anno(x = "member property") internal final val p3: kotlin.Nothing?
+    test.anno(x = "member extension property") internal final val kotlin.Int.v4: kotlin.Int
+    test.anno(x = "member function") internal final fun f3(/*0*/ test.anno(x = "member function parameter") p: kotlin.Int): kotlin.Unit
+    test.anno(x = "member extension function") internal final fun kotlin.String.f4(): kotlin.Unit
 
-    test.anno(x = "nested class": kotlin.String) internal final class C2 {
+    test.anno(x = "nested class") internal final class C2 {
         public constructor C2()
     }
 
-    test.anno(x = "companion object": kotlin.String) public companion object Companion {
+    test.anno(x = "companion object") public companion object Companion {
         private constructor Companion()
     }
 }

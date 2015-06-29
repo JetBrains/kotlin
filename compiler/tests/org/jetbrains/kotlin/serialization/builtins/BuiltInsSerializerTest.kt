@@ -92,4 +92,8 @@ public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     fun testEnum() {
         doTest("annotationArguments/enum.kt")
     }
+
+    fun testVarArgs() {
+        doTest("annotationArguments/varargs.kt")
+    }
 }

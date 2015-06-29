@@ -16,4 +16,4 @@ Ann(
     p5 = 1.toByte() + 1.toByte()
 ) class MyClass
 
-// EXPECTED: Ann(p1 = 128: Int, p2 = IntegerValueType(2): IntegerValueType(2), p3 = 128: Int, p4 = 2: Int, p5 = 2: Int)
+// EXPECTED: Ann(p1 = 128, p2 = IntegerValueType(2), p3 = 128, p4 = 2, p5 = 2)

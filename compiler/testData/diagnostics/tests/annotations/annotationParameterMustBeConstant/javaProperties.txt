@@ -1,6 +1,6 @@
 package
 
-Ann(i = {1, 1, 1}: kotlin.IntArray) internal final class A {
+Ann(i = {1, 1, 1}) internal final class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -2,10 +2,10 @@ package
 
 my() internal fun foo(): kotlin.Unit
 my1() internal fun foo2(): kotlin.Unit
-my1(i = IntegerValueType(2): IntegerValueType(2)) internal fun foo3(): kotlin.Unit
+my1(i = IntegerValueType(2)) internal fun foo3(): kotlin.Unit
 my2() internal fun foo4(): kotlin.Unit
 my2() internal fun foo41(): kotlin.Unit
-my2(i = IntegerValueType(2): IntegerValueType(2)) internal fun foo42(): kotlin.Unit
+my2(i = IntegerValueType(2)) internal fun foo42(): kotlin.Unit
 
 internal final annotation class my : kotlin.Annotation {
     public constructor my()

@@ -5,11 +5,11 @@ internal final annotation class AnnotationArray : kotlin.Annotation {
     internal final val annotationArray: kotlin.Array<test.JustAnnotation>
 }
 
-test.JustAnnotation(annotation = test.Empty(): test.Empty) test.AnnotationArray(annotationArray = {}: kotlin.Array<test.JustAnnotation>) internal final class C1 {
+test.JustAnnotation(annotation = test.Empty()) test.AnnotationArray(annotationArray = {}) internal final class C1 {
     public constructor C1()
 }
 
-test.AnnotationArray(annotationArray = {test.JustAnnotation(annotation = test.Empty(): test.Empty), test.JustAnnotation(annotation = test.Empty(): test.Empty)}: kotlin.Array<test.JustAnnotation>) internal final class C2 {
+test.AnnotationArray(annotationArray = {test.JustAnnotation(annotation = test.Empty()), test.JustAnnotation(annotation = test.Empty())}) internal final class C2 {
     public constructor C2()
 }
 

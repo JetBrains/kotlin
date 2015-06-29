@@ -1,6 +1,6 @@
 package
 
-internal fun foo(): @[My(x = IntegerValueType(42): IntegerValueType(42))] kotlin.Int
+internal fun foo(): @[My(x = IntegerValueType(42))] kotlin.Int
 
 internal final annotation class My : kotlin.Annotation {
     public constructor My(/*0*/ x: kotlin.Int)

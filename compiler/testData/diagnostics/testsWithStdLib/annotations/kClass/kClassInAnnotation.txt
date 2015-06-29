@@ -40,7 +40,7 @@ internal final annotation class Ann3 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-Ann1(arg = A1::class: kotlin.reflect.KClass<A1>) Ann2(arg = {A1::class, A2::class}: kotlin.Array<out kotlin.reflect.KClass<*>>) Ann3(arg = {A1::class, A2::class}: kotlin.Array<kotlin.reflect.KClass<*>>) internal final class MyClass1 {
+Ann1(arg = A1::class) Ann2(arg = {A1::class, A2::class}) Ann3(arg = {A1::class, A2::class}) internal final class MyClass1 {
     public constructor MyClass1()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

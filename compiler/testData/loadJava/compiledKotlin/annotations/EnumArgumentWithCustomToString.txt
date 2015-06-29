@@ -26,7 +26,7 @@ internal final annotation class EnumAnno : kotlin.Annotation {
 
 public final class EnumArgumentWithCustomToString {
     /*primary*/ public constructor EnumArgumentWithCustomToString()
-    test.EnumAnno(value = E.CAKE: test.E) test.EnumArrayAnno(value = {E.CAKE, E.CAKE}: kotlin.Array<out test.E>) internal final fun annotated(): kotlin.Unit
+    test.EnumAnno(value = E.CAKE) test.EnumArrayAnno(value = {E.CAKE, E.CAKE}) internal final fun annotated(): kotlin.Unit
 }
 
 internal final annotation class EnumArrayAnno : kotlin.Annotation {

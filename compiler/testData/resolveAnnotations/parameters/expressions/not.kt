@@ -8,4 +8,4 @@ annotation class Ann(
 
 Ann(!true, !false) class MyClass
 
-// EXPECTED: Ann(b1 = false: Boolean, b2 = true: Boolean)
+// EXPECTED: Ann(b1 = false, b2 = true)
