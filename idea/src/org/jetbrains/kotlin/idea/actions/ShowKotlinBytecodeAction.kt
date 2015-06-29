@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.idea.actions
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.util.IconLoader
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.ContentFactory
 import org.jetbrains.kotlin.idea.JetFileType
+import org.jetbrains.kotlin.idea.JetIcons
 import org.jetbrains.kotlin.idea.internal.KotlinBytecodeToolWindow
 
 public class ShowKotlinBytecodeAction(): AnAction() {
@@ -36,7 +36,7 @@ public class ShowKotlinBytecodeAction(): AnAction() {
         var toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID)
         if (toolWindow == null) {
             toolWindow = toolWindowManager.registerToolWindow("Kotlin Bytecode", true, ToolWindowAnchor.RIGHT)
-            toolWindow.setIcon(IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin13.png"))
+            toolWindow.setIcon(JetIcons.SMALL_LOGO_13)
 
             val contentManager = toolWindow.getContentManager()
             val contentFactory = ContentFactory.SERVICE.getInstance()
