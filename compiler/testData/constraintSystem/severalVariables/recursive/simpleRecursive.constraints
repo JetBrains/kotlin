@@ -1,0 +1,4 @@
+VARIABLES T
+
+EQUAL T Int
+EQUAL T My<T>

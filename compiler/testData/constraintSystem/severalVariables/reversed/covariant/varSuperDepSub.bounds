@@ -1,10 +1,11 @@
 VARIABLES T P
 
-SUBTYPE T Int
+SUBTYPE P Producer<T>
+SUPERTYPE T Int
 
 type parameter bounds:
-T <: Int
-P
+T >: Int
+P <: Producer<T>*
 
 status:
 -hasCannotCaptureTypesError: false

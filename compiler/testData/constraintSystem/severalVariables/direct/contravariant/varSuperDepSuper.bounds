@@ -1,10 +1,11 @@
 VARIABLES T P
 
-SUBTYPE T Int
+SUPERTYPE T Int
+SUPERTYPE P Consumer<T>
 
 type parameter bounds:
-T <: Int
-P
+T >: Int
+P >: Consumer<T>*
 
 status:
 -hasCannotCaptureTypesError: false

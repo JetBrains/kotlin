@@ -1,10 +1,11 @@
 VARIABLES T P
 
+SUBTYPE P My<T>
 SUBTYPE T Int
 
 type parameter bounds:
 T <: Int
-P
+P <: My<T>*
 
 status:
 -hasCannotCaptureTypesError: false

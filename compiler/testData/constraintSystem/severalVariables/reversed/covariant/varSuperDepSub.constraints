@@ -1,0 +1,4 @@
+VARIABLES T P
+
+SUBTYPE P Producer<T>
+SUPERTYPE T Int

@@ -1,0 +1,4 @@
+VARIABLES T P
+
+EQUAL T My<P>
+EQUAL P Two<T,P>

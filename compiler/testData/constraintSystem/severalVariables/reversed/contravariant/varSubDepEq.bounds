@@ -1,10 +1,11 @@
 VARIABLES T P
 
+EQUAL P Consumer<T>
 SUBTYPE T Int
 
 type parameter bounds:
 T <: Int
-P
+P := Consumer<T>*, >: Consumer<Int>
 
 status:
 -hasCannotCaptureTypesError: false
@@ -13,10 +14,10 @@ status:
 -hasErrorInConstrainingTypes: false
 -hasTypeConstructorMismatch: false
 -hasTypeInferenceIncorporationError: false
--hasUnknownParameters: true
+-hasUnknownParameters: false
 -hasViolatedUpperBound: false
--isSuccessful: false
+-isSuccessful: true
 
 result:
 T=Int
-P=???
+P=Consumer<Int>

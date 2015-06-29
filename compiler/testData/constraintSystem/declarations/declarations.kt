@@ -1,4 +1,4 @@
-fun foo<T, P: T>() = 42
+fun foo<T, P, E>() = 42
 
 interface A
 interface B : A
@@ -8,3 +8,6 @@ interface Consumer<in T>
 interface Producer<out T>
 
 interface My<T>
+interface Successor<T> : My<T>
+
+interface Two<T, P>

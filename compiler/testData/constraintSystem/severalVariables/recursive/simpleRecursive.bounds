@@ -1,22 +1,21 @@
-VARIABLES T P
+VARIABLES T
 
-SUBTYPE T Int
+EQUAL T Int
+EQUAL T My<T>
 
 type parameter bounds:
-T <: Int
-P
+T := Int, := My<T>*
 
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
--hasContradiction: false
+-hasContradiction: true
 -hasErrorInConstrainingTypes: false
 -hasTypeConstructorMismatch: false
--hasTypeInferenceIncorporationError: false
--hasUnknownParameters: true
+-hasTypeInferenceIncorporationError: true
+-hasUnknownParameters: false
 -hasViolatedUpperBound: false
 -isSuccessful: false
 
 result:
 T=Int
-P=???
