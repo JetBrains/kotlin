@@ -283,6 +283,7 @@ public object KotlinNameSuggester {
     private fun MutableCollection<String>.addNamesByExpression(expression: JetExpression?, validator: (String) -> Boolean) {
         if (expression == null) return
 
+        val expression = JetPsiUtil.safeDeparenthesize(expression)
         when (expression) {
             is JetSimpleNameExpression -> addCamelNames(expression.getReferencedName(), validator)
 
@@ -291,8 +292,6 @@ public object KotlinNameSuggester {
             is JetCallExpression -> addNamesByExpression(expression.getCalleeExpression(), validator)
 
             is JetPostfixExpression -> addNamesByExpression(expression.getBaseExpression(), validator)
-
-            is JetParenthesizedExpression -> addNamesByExpression(expression.getExpression(), validator)
         }
     }
 
