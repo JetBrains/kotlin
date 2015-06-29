@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DUPLICATE_CLASS_NAMES
 //KT-2438 Prohibit inner classes with the same name
 
 package kt2438
