@@ -14040,6 +14040,18 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExhaustiveEnumIs.kt")
+            public void testExhaustiveEnumIs() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveEnumMixed.kt")
+            public void testExhaustiveEnumMixed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveEnumMixed.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExhaustiveInitialization.kt")
             public void testExhaustiveInitialization() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt");

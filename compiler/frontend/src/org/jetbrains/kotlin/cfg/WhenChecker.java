@@ -92,16 +92,13 @@ public final class WhenChecker {
     ) {
         assert isEnumClass(enumClassDescriptor) :
                 "isWhenOnEnumExhaustive should be called with an enum class descriptor";
-        boolean notEmpty = false;
+        Set<ClassDescriptor> entryDescriptors = new HashSet<ClassDescriptor>();
         for (DeclarationDescriptor descriptor : enumClassDescriptor.getUnsubstitutedInnerClassesScope().getAllDescriptors()) {
             if (isEnumEntry(descriptor)) {
-                notEmpty = true;
-                if (!containsEnumEntryCase(expression, (ClassDescriptor) descriptor, trace)) {
-                    return false;
-                }
+                entryDescriptors.add((ClassDescriptor) descriptor);
             }
         }
-        return notEmpty;
+        return !entryDescriptors.isEmpty() && containsAllClassCases(expression, entryDescriptors, trace);
     }
 
     private static void collectNestedSubclasses(
@@ -187,25 +184,6 @@ public final class WhenChecker {
         return false;
     }
 
-    private static boolean containsEnumEntryCase(
-            @NotNull JetWhenExpression whenExpression,
-            @NotNull ClassDescriptor enumEntry,
-            @NotNull BindingTrace trace
-    ) {
-        assert enumEntry.getKind() == ClassKind.ENUM_ENTRY;
-        for (JetWhenEntry whenEntry : whenExpression.getEntries()) {
-            for (JetWhenCondition condition : whenEntry.getConditions()) {
-                if (!(condition instanceof JetWhenConditionWithExpression)) {
-                    continue;
-                }
-                if (isCheckForEnumEntry((JetWhenConditionWithExpression) condition, enumEntry, trace)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     private static boolean containsAllClassCases(
             @NotNull JetWhenExpression whenExpression,
             @NotNull Set<ClassDescriptor> memberDescriptors,
@@ -215,27 +193,35 @@ public final class WhenChecker {
         for (JetWhenEntry whenEntry : whenExpression.getEntries()) {
             for (JetWhenCondition condition : whenEntry.getConditions()) {
                 boolean negated = false;
-                JetType checkedType = null;
+                ClassDescriptor checkedDescriptor = null;
                 if (condition instanceof JetWhenConditionIsPattern) {
                     JetWhenConditionIsPattern conditionIsPattern = (JetWhenConditionIsPattern) condition;
-                    checkedType = trace.get(BindingContext.TYPE, conditionIsPattern.getTypeReference());
+                    JetType checkedType = trace.get(BindingContext.TYPE, conditionIsPattern.getTypeReference());
+                    if (checkedType != null) {
+                        checkedDescriptor = TypeUtils.getClassDescriptor(checkedType);
+                    }
                     negated = conditionIsPattern.isNegated();
                 }
                 else if (condition instanceof JetWhenConditionWithExpression) {
                     JetWhenConditionWithExpression conditionWithExpression = (JetWhenConditionWithExpression) condition;
                     if (conditionWithExpression.getExpression() != null) {
-                        checkedType = trace.getBindingContext().getType(conditionWithExpression.getExpression());
+                        JetSimpleNameExpression reference = getReference(conditionWithExpression.getExpression());
+                        if (reference != null) {
+                            DeclarationDescriptor target = trace.get(BindingContext.REFERENCE_TARGET, reference);
+                            if (target instanceof ClassDescriptor) {
+                                checkedDescriptor = (ClassDescriptor) target;
+                            }
+                        }
                     }
                 }
-                if (checkedType == null) {
-                    continue;
-                }
-                ClassDescriptor checkedDescriptor = TypeUtils.getClassDescriptor(checkedType);
+
                 // Checks are important only for nested subclasses of the sealed class
                 // In additional, check without "is" is important only for objects
                 if (checkedDescriptor == null
                     || !memberDescriptors.contains(checkedDescriptor)
-                    || (condition instanceof JetWhenConditionWithExpression && !DescriptorUtils.isObject(checkedDescriptor))) {
+                    || (condition instanceof JetWhenConditionWithExpression
+                        && !DescriptorUtils.isObject(checkedDescriptor)
+                        && !DescriptorUtils.isEnumEntry(checkedDescriptor))) {
                     continue;
                 }
                 if (negated) {
@@ -266,18 +252,6 @@ public final class WhenChecker {
             }
         }
         return false;
-    }
-
-    private static boolean isCheckForEnumEntry(
-            @NotNull JetWhenConditionWithExpression whenExpression,
-            @NotNull ClassDescriptor enumEntry,
-            @NotNull BindingTrace trace
-    ) {
-        JetSimpleNameExpression reference = getReference(whenExpression.getExpression());
-        if (reference == null) return false;
-
-        DeclarationDescriptor target = trace.get(BindingContext.REFERENCE_TARGET, reference);
-        return target == enumEntry;
     }
 
     @Nullable
