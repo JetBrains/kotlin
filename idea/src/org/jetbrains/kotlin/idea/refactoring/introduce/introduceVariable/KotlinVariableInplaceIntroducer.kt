@@ -147,7 +147,9 @@ public class KotlinVariableInplaceIntroducer(
     override fun getComponent() = myWholePanel
 
     override fun performIntroduce() {
-        val replacement = JetPsiFactory(myProject).createExpression(addedVariable.getName() ?: return)
+        val newName = getInputName() ?: return
+        addedVariable.setName(newName)
+        val replacement = JetPsiFactory(myProject).createExpression(newName)
         getOccurrences().forEach {
             if (it.isValid()) {
                 it.replace(replacement)
