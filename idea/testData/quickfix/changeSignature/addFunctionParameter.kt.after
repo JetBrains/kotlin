@@ -2,8 +2,8 @@
 // DISABLE-ERRORS
 
 fun foo(x: Int, i: Int) {
-    foo(, 4);
+    foo();
     foo(1, 4);
     foo(1, 4);
-    foo(2, 4);
+    foo(2, 3, sdsd);
 }

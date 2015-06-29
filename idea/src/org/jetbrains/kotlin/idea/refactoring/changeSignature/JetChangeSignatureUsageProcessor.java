@@ -750,6 +750,20 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
                 if (changeSignatureData != originalJavaMethodDescriptor) {
                     originalJavaMethodDescriptor = changeSignatureData;
                 }
+
+                // This change info is used as a placeholder before primary method update
+                // It gets replaced with real change info afterwards
+                JetChangeInfo dummyChangeInfo =
+                        new JetChangeInfo(originalJavaMethodDescriptor, "", null, "", Visibilities.INTERNAL, Collections.<JetParameterInfo>emptyList(), null, changeInfo.getMethod());
+                for (int i = 0; i < usages.length; i++) {
+                    UsageInfo oldUsageInfo = usages[i];
+                    if (!isJavaMethodUsage(oldUsageInfo)) continue;
+
+                    UsageInfo newUsageInfo = createReplacementUsage(oldUsageInfo, dummyChangeInfo);
+                    if (newUsageInfo != null) {
+                        usages[i] = newUsageInfo;
+                    }
+                }
             }
 
             return true;
@@ -758,20 +772,13 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
         PsiElement element = usageInfo.getElement();
         if (element == null) return false;
 
-        if (isJavaMethodUsage && originalJavaMethodDescriptor != null) {
+        if (originalJavaMethodDescriptor != null) {
             JetChangeInfo javaMethodChangeInfo = ChangeSignaturePackage.toJetChangeInfo(changeInfo, originalJavaMethodDescriptor);
             originalJavaMethodDescriptor = null;
 
-            for (int i = 0; i < usages.length; i++) {
-                UsageInfo oldUsageInfo = usages[i];
-                if (!isJavaMethodUsage(oldUsageInfo)) continue;
-
-                UsageInfo newUsageInfo = createReplacementUsage(oldUsageInfo, javaMethodChangeInfo);
-                if (newUsageInfo != null) {
-                    usages[i] = newUsageInfo;
-                    if (oldUsageInfo == usageInfo) {
-                        usageInfo = newUsageInfo;
-                    }
+            for (UsageInfo info : usages) {
+                if (info instanceof JavaMethodKotlinUsageWithDelegate) {
+                    ((JavaMethodKotlinUsageWithDelegate) info).setJavaMethodChangeInfo(javaMethodChangeInfo);
                 }
             }
         }

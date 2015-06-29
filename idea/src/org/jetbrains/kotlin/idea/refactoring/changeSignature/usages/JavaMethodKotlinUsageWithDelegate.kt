@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 
 public abstract class JavaMethodKotlinUsageWithDelegate<T: PsiElement>(
         val psiElement: T,
-        val javaMethodChangeInfo: JetChangeInfo): UsageInfo(psiElement) {
+        var javaMethodChangeInfo: JetChangeInfo): UsageInfo(psiElement) {
     protected abstract val delegateUsage: JetUsageInfo<T>
 
     fun processUsage(): Boolean = delegateUsage.processUsage(javaMethodChangeInfo, psiElement)

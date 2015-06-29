@@ -5,7 +5,7 @@ open class Base() {
     val y = Base();
 
     fun f() {
-        val base = Base();
+        val base = Base(1, 2);
     }
 }
 

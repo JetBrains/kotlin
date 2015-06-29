@@ -45,9 +45,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
@@ -92,6 +90,8 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
 
     @Override
     public boolean processUsage(JetChangeInfo changeInfo, JetCallElement element) {
+        if (shouldSkipUsage(element)) return true;
+
         changeNameIfNeeded(changeInfo, element);
 
         if (element.getValueArgumentList() != null) {
@@ -114,6 +114,22 @@ public class JetFunctionCallUsage extends JetUsageInfo<JetCallElement> {
         }
 
         return true;
+    }
+
+    private boolean shouldSkipUsage(JetCallElement element) {
+        // TODO: We probable need more clever processing of invalid calls, but for now default to Java-like behaviour
+        // TODO: Investigate why resolved call is not recorded for enum constructor call
+        if (resolvedCall == null && !(element instanceof JetDelegatorToSuperCall)) return true;
+        if (resolvedCall != null && !resolvedCall.getStatus().isSuccess()) {
+            for (ValueArgument valueArgument : resolvedCall.getCall().getValueArguments()) {
+                if (!(resolvedCall.getArgumentMapping(valueArgument) instanceof ArgumentMatch)) return true;
+            }
+            Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = resolvedCall.getValueArguments();
+            for (ValueParameterDescriptor valueParameter : resolvedCall.getResultingDescriptor().getValueParameters()) {
+                if (!arguments.containsKey(valueParameter)) return true;
+            }
+        }
+        return false;
     }
 
     private boolean isPropertyJavaUsage() {
