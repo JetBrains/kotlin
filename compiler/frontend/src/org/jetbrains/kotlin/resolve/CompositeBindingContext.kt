@@ -60,6 +60,10 @@ public class CompositeBindingContext private constructor(
         return CompositeDiagnostics(delegates.map { it.getDiagnostics() })
     }
 
+    override fun addOwnDataTo(trace: BindingTrace, commitDiagnostics: Boolean) {
+        // Do nothing
+    }
+
     private class CompositeDiagnostics(
             private val delegates: List<Diagnostics>
     ) : Diagnostics {

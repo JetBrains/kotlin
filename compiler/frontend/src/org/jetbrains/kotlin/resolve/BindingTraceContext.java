@@ -70,6 +70,11 @@ public class BindingTraceContext implements BindingTrace {
         public JetType getType(@NotNull JetExpression expression) {
             return BindingTraceContext.this.getType(expression);
         }
+
+        @Override
+        public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
+            BindingContextUtils.addOwnDataTo(trace, null, commitDiagnostics, map, mutableDiagnostics);
+        }
     };
 
     public BindingTraceContext() {

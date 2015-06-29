@@ -80,6 +80,11 @@ public interface BindingContext {
         public JetType getType(@NotNull JetExpression expression) {
             return null;
         }
+
+        @Override
+        public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
+            // Do nothing
+        }
     };
 
     WritableSlice<AnnotationDescriptor, JetAnnotationEntry> ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT = Slices.createSimpleSlice();
@@ -264,4 +269,6 @@ public interface BindingContext {
 
     @Nullable
     JetType getType(@NotNull JetExpression expression);
+
+    void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics);
 }

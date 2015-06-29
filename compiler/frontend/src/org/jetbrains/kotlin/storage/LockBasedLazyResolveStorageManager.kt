@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
+import org.jetbrains.kotlin.resolve.TraceEntryFilter
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.psi.JetExpression
@@ -45,6 +46,10 @@ public class LockBasedLazyResolveStorageManager(private val storageManager: Stor
         override fun <K, V> get(slice: ReadOnlySlice<K, V>, key: K) = storageManager.compute { context.get<K, V>(slice, key) }
 
         override fun <K, V> getKeys(slice: WritableSlice<K, V>) = storageManager.compute { context.getKeys<K, V>(slice) }
+
+        override fun addOwnDataTo(trace: BindingTrace, commitDiagnostics: Boolean) {
+            storageManager.compute { context.addOwnDataTo(trace, commitDiagnostics) }
+        }
 
         TestOnly
         override fun <K, V> getSliceContents(slice: ReadOnlySlice<K, V>) = storageManager.compute { context.getSliceContents<K, V>(slice) }

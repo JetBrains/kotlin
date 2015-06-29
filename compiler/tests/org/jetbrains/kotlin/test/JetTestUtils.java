@@ -150,6 +150,11 @@ public class JetTestUtils {
                 public JetType getType(@NotNull JetExpression expression) {
                     return DUMMY_TRACE.getType(expression);
                 }
+
+                @Override
+                public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
+                    // do nothing
+                }
             };
         }
 
@@ -227,6 +232,11 @@ public class JetTestUtils {
                 @Override
                 public JetType getType(@NotNull JetExpression expression) {
                     return DUMMY_EXCEPTION_ON_ERROR_TRACE.getType(expression);
+                }
+
+                @Override
+                public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
+                    // do nothing
                 }
             };
         }

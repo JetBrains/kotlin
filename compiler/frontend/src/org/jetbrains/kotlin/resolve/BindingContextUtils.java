@@ -20,19 +20,24 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.util.Pair;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilPackage;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression;
 import org.jetbrains.kotlin.types.JetType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.expressions.JetTypeInfo;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryPackage;
+import org.jetbrains.kotlin.util.slicedMap.MutableSlicedMap;
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice;
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
 
 import java.util.Collection;
 
@@ -204,5 +209,30 @@ public class BindingContextUtils {
             @NotNull ConstructorDescriptor constructorDescriptor
     ) {
         return bindingContext.get(CONSTRUCTOR_RESOLVED_DELEGATION_CALL, constructorDescriptor);
+    }
+
+    static void addOwnDataTo(
+            @NotNull final BindingTrace trace, @Nullable final TraceEntryFilter filter, boolean commitDiagnostics,
+            @NotNull MutableSlicedMap map, MutableDiagnosticsWithSuppression diagnostics
+    ) {
+        map.forEach(new Function3<WritableSlice, Object, Object, Void>() {
+            @Override
+            public Void invoke(WritableSlice slice, Object key, Object value) {
+                if (filter == null || filter.accept(slice, key)) {
+                    trace.record(slice, key, value);
+                }
+
+                return null;
+            }
+        });
+
+        if (!commitDiagnostics) return;
+
+        for (Diagnostic diagnostic : diagnostics.getOwnDiagnostics()) {
+            if (filter == null || filter.accept(null, diagnostic.getPsiElement())) {
+                trace.report(diagnostic);
+            }
+        }
+
     }
 }

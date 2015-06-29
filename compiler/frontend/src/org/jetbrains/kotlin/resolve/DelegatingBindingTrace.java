@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -67,7 +66,11 @@ public class DelegatingBindingTrace implements BindingTrace {
         @Override
         public <K, V> Collection<K> getKeys(WritableSlice<K, V> slice) {
             return DelegatingBindingTrace.this.getKeys(slice);
+        }
 
+        @Override
+        public void addOwnDataTo(@NotNull BindingTrace trace, boolean commitDiagnostics) {
+            BindingContextUtils.addOwnDataTo(trace, null, commitDiagnostics, map, mutableDiagnostics);
         }
 
         @NotNull
@@ -162,25 +165,8 @@ public class DelegatingBindingTrace implements BindingTrace {
         clear();
     }
 
-    public void addAllMyDataTo(@NotNull final BindingTrace trace, @Nullable final TraceEntryFilter filter, boolean commitDiagnostics) {
-        map.forEach(new Function3<WritableSlice, Object, Object, Void>() {
-            @Override
-            public Void invoke(WritableSlice slice, Object key, Object value) {
-                if (filter == null || filter.accept(slice, key)) {
-                    trace.record(slice, key, value);
-                }
-
-                return null;
-            }
-        });
-
-        if (!commitDiagnostics) return;
-
-        for (Diagnostic diagnostic : mutableDiagnostics.getOwnDiagnostics()) {
-            if (filter == null || filter.accept(null, diagnostic.getPsiElement())) {
-                trace.report(diagnostic);
-            }
-        }
+    public void addAllMyDataTo(@NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics) {
+        BindingContextUtils.addOwnDataTo(trace, filter, commitDiagnostics, map, mutableDiagnostics);
     }
 
     public void clear() {
