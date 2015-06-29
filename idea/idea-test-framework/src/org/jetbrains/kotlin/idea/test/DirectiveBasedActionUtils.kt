@@ -61,7 +61,7 @@ public object DirectiveBasedActionUtils {
         return actions.filter { !isIrrelevantAction(it) }
     }
 
-    private fun isIrrelevantAction(action: String) = IRRELEVANT_ACTION_PREFIXES.any { action.startsWith(it) }
+    private fun isIrrelevantAction(action: String) = action.isEmpty() || IRRELEVANT_ACTION_PREFIXES.any { action.startsWith(it) }
 
     private val IRRELEVANT_ACTION_PREFIXES = listOf(
             "Disable ",
