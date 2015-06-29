@@ -39,12 +39,12 @@ public class TemporaryBindingTrace extends DelegatingBindingTrace {
     }
 
     public void commit() {
-        addAllMyDataTo(trace);
+        addOwnDataTo(trace);
         clear();
     }
 
     public void commit(@NotNull TraceEntryFilter filter, boolean commitDiagnostics) {
-        addAllMyDataTo(trace, filter, commitDiagnostics);
+        addOwnDataTo(trace, filter, commitDiagnostics);
         clear();
     }
 }

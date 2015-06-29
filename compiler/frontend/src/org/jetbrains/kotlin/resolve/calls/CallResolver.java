@@ -439,7 +439,7 @@ public class CallResolver {
             ResolutionResultsCache.CachedData data = context.resolutionResultsCache.get(call);
             if (data != null) {
                 DelegatingBindingTrace deltasTraceForResolve = data.getResolutionTrace();
-                deltasTraceForResolve.addAllMyDataTo(traceToResolveCall);
+                deltasTraceForResolve.addOwnDataTo(traceToResolveCall);
                 //noinspection unchecked
                 results = (OverloadResolutionResultsImpl<F>) data.getResolutionResults();
             }
@@ -450,7 +450,7 @@ public class CallResolver {
             results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
             DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
             if (deltasTraceForTypeInference != null) {
-                deltasTraceForTypeInference.addAllMyDataTo(traceToResolveCall);
+                deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
             }
             completeTypeInferenceDependentOnFunctionLiterals(newContext, results, tracing);
             cacheResults(context, results, traceToResolveCall, tracing);
@@ -493,7 +493,7 @@ public class CallResolver {
 
         DelegatingBindingTrace deltasTraceToCacheResolve = new DelegatingBindingTrace(
                 BindingContext.EMPTY, "delta trace for caching resolve of", context.call);
-        traceToResolveCall.addAllMyDataTo(deltasTraceToCacheResolve);
+        traceToResolveCall.addOwnDataTo(deltasTraceToCacheResolve);
 
         context.resolutionResultsCache.record(call, results, context, tracing, deltasTraceToCacheResolve);
     }

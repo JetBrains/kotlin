@@ -156,16 +156,16 @@ public class DelegatingBindingTrace implements BindingTrace {
         record(BindingContext.EXPRESSION_TYPE_INFO, expression, typeInfo);
     }
 
-    public void addAllMyDataTo(@NotNull BindingTrace trace) {
-        addAllMyDataTo(trace, null, true);
+    public void addOwnDataTo(@NotNull BindingTrace trace) {
+        addOwnDataTo(trace, null, true);
     }
 
     public void moveAllMyDataTo(@NotNull BindingTrace trace) {
-        addAllMyDataTo(trace, null, true);
+        addOwnDataTo(trace, null, true);
         clear();
     }
 
-    public void addAllMyDataTo(@NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics) {
+    public void addOwnDataTo(@NotNull BindingTrace trace, @Nullable TraceEntryFilter filter, boolean commitDiagnostics) {
         BindingContextUtils.addOwnDataTo(trace, filter, commitDiagnostics, map, mutableDiagnostics);
     }
 
