@@ -90,7 +90,7 @@ public class LazyScriptDescriptor(
         return ChainedScope(
                 this,
                 "Scope for body resolution for " + this,
-                resolveSession.getScopeProvider().getFileScope(jetScript.getContainingJetFile()),
+                resolveSession.getFileScopeProvider().getFileScope(jetScript.getContainingJetFile()),
                 parametersScope
         )
     }

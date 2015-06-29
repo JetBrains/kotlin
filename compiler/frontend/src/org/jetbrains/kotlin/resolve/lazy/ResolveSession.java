@@ -64,8 +64,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private final MemoizedFunctionToNotNull<JetFile, LazyAnnotations> fileAnnotations;
     private final MemoizedFunctionToNotNull<JetFile, LazyAnnotations> danglingAnnotations;
 
-    private ScopeProvider scopeProvider;
-
     private JetImportsFactory jetImportFactory;
     private AnnotationResolver annotationResolve;
     private DescriptorResolver descriptorResolver;
@@ -74,6 +72,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private QualifiedExpressionResolver qualifiedExpressionResolver;
     private ScriptBodyResolver scriptBodyResolver;
     private LazyDeclarationResolver lazyDeclarationResolver;
+    private FileScopeProvider fileScopeProvider;
+    private DeclarationScopeProvider declarationScopeProvider;
 
     @Inject
     public void setJetImportFactory(JetImportsFactory jetImportFactory) {
@@ -106,11 +106,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     }
 
     @Inject
-    public void setScopeProvider(ScopeProvider scopeProvider) {
-        this.scopeProvider = scopeProvider;
-    }
-
-    @Inject
     public void setScriptBodyResolver(ScriptBodyResolver scriptBodyResolver) {
         this.scriptBodyResolver = scriptBodyResolver;
     }
@@ -118,6 +113,16 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setLazyDeclarationResolver(LazyDeclarationResolver lazyDeclarationResolver) {
         this.lazyDeclarationResolver = lazyDeclarationResolver;
+    }
+
+    @Inject
+    public void setFileScopeProvider(@NotNull FileScopeProviderImpl fileScopeProvider) {
+        this.fileScopeProvider = fileScopeProvider;
+    }
+
+    @Inject
+    public void setDeclarationScopeProvider(@NotNull DeclarationScopeProviderImpl declarationScopeProvider) {
+        this.declarationScopeProvider = declarationScopeProvider;
     }
 
     // Only calls from injectors expected
@@ -197,7 +202,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     }
 
     private LazyAnnotations createAnnotations(JetFile file, List<JetAnnotationEntry> annotationEntries) {
-        JetScope scope = getScopeProvider().getFileScope(file);
+        JetScope scope = fileScopeProvider.getFileScope(file);
         LazyAnnotationsContextImpl lazyAnnotationContext = new LazyAnnotationsContextImpl(annotationResolve, storageManager, trace, scope);
         return new LazyAnnotations(lazyAnnotationContext, annotationEntries);
     }
@@ -349,12 +354,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         }
     }
 
-    @Override
-    @NotNull
-    public ScopeProvider getScopeProvider() {
-        return scopeProvider;
-    }
-
     @NotNull
     public JetImportsFactory getJetImportsFactory() {
         return jetImportFactory;
@@ -387,5 +386,17 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public FunctionDescriptorResolver getFunctionDescriptorResolver() {
         return functionDescriptorResolver;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationScopeProvider getDeclarationScopeProvider() {
+        return declarationScopeProvider;
+    }
+
+    @Override
+    @NotNull
+    public FileScopeProvider getFileScopeProvider() {
+        return fileScopeProvider;
     }
 }

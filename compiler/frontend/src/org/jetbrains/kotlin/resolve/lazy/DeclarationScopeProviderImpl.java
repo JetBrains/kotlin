@@ -24,21 +24,18 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 
-import javax.inject.Inject;
-
 public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
 
     private final LazyDeclarationResolver lazyDeclarationResolver;
 
-    private FileScopeProvider fileScopeProvider;
+    private final FileScopeProvider fileScopeProvider;
 
-    @Inject
-    public void setFileScopeProvider(@NotNull FileScopeProvider fileScopeProvider) {
-        this.fileScopeProvider = fileScopeProvider;
-    }
-
-    public DeclarationScopeProviderImpl(@NotNull LazyDeclarationResolver lazyDeclarationResolver) {
+    public DeclarationScopeProviderImpl(
+            @NotNull LazyDeclarationResolver lazyDeclarationResolver,
+            @NotNull FileScopeProvider fileScopeProvider
+    ) {
         this.lazyDeclarationResolver = lazyDeclarationResolver;
+        this.fileScopeProvider = fileScopeProvider;
     }
 
     @Override

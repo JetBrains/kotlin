@@ -16,17 +16,15 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import com.google.common.base.Function
-import com.google.common.base.Functions
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.computeTypeInContext
 import org.jetbrains.kotlin.cfg.JetFlowInformationProvider
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,8 +38,6 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.storage.LockBasedLazyResolveStorageManager
-import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -138,7 +134,7 @@ public abstract class ElementResolver protected constructor(
             is JetInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as JetEnumEntry, file)
 
             is JetImportDirective -> {
-                val scope = resolveSession.getScopeProvider().getFileScope(resolveElement.getContainingJetFile())
+                val scope = resolveSession.getFileScopeProvider().getFileScope(resolveElement.getContainingJetFile())
                 scope.forceResolveAllImports()
                 resolveSession.getTrace()
             }
@@ -237,7 +233,7 @@ public abstract class ElementResolver protected constructor(
 
         if (scopeForContextElement == null) return trace
 
-        val codeFragmentScope = resolveSession.getScopeProvider().getFileScope(codeFragment)
+        val codeFragmentScope = resolveSession.getFileScopeProvider().getFileScope(codeFragment)
         val chainedScope = ChainedScope(scopeForContextElement.getContainingDeclaration(),
                                         "Scope for resolve code fragment", scopeForContextElement, codeFragmentScope)
 
@@ -323,7 +319,7 @@ public abstract class ElementResolver protected constructor(
 
     private fun propertyAdditionalResolve(resolveSession: ResolveSession, jetProperty: JetProperty, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(jetProperty)
-        val propertyResolutionScope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(jetProperty)
+        val propertyResolutionScope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(jetProperty)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         val descriptor = resolveSession.resolveToDescriptor(jetProperty) as PropertyDescriptor
@@ -341,7 +337,7 @@ public abstract class ElementResolver protected constructor(
 
         val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, { declaration ->
             assert(declaration.getParent() == jetProperty) { "Must be called only for property accessors, but called for $declaration" }
-            resolveSession.getScopeProvider().getResolutionScopeForDeclaration(declaration)
+            resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(declaration)
         })
 
         bodyResolver.resolvePropertyAccessors(bodyResolveContext, jetProperty, descriptor)
@@ -356,7 +352,7 @@ public abstract class ElementResolver protected constructor(
     private fun functionAdditionalResolve(resolveSession: ResolveSession, namedFunction: JetNamedFunction, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(namedFunction)
 
-        val scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(namedFunction)
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(namedFunction)
         val functionDescriptor = resolveSession.resolveToDescriptor(namedFunction) as FunctionDescriptor
         ForceResolveUtil.forceResolveAllContents(functionDescriptor)
 
@@ -369,7 +365,7 @@ public abstract class ElementResolver protected constructor(
     private fun secondaryConstructorAdditionalResolve(resolveSession: ResolveSession, constructor: JetSecondaryConstructor, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(constructor)
 
-        val scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(constructor)
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(constructor)
         val constructorDescriptor = resolveSession.resolveToDescriptor(constructor) as ConstructorDescriptor
         ForceResolveUtil.forceResolveAllContents(constructorDescriptor)
 
@@ -381,7 +377,7 @@ public abstract class ElementResolver protected constructor(
 
     private fun constructorAdditionalResolve(resolveSession: ResolveSession, klass: JetClass, file: JetFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(klass)
-        val scope = resolveSession.getScopeProvider().getResolutionScopeForDeclaration(klass)
+        val scope = resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(klass)
 
         val classDescriptor = resolveSession.resolveToDescriptor(klass) as ClassDescriptor
         val constructorDescriptor = classDescriptor.getUnsubstitutedPrimaryConstructor()
@@ -420,12 +416,11 @@ public abstract class ElementResolver protected constructor(
     }
 
     private fun getExpressionResolutionScope(resolveSession: ResolveSession, expression: JetExpression): JetScope {
-        val provider = resolveSession.getScopeProvider()
         val parentDeclaration = expression.getParentOfType<JetDeclaration>(true)
         if (parentDeclaration == null) {
-            return provider.getFileScope(expression.getContainingJetFile())
+            return resolveSession.getFileScopeProvider().getFileScope(expression.getContainingJetFile())
         }
-        return provider.getResolutionScopeForDeclaration(parentDeclaration)
+        return resolveSession.getDeclarationScopeProvider().getResolutionScopeForDeclaration(parentDeclaration)
     }
 
     private fun getExpressionMemberScope(resolveSession: ResolveSession, expression: JetExpression): JetScope? {

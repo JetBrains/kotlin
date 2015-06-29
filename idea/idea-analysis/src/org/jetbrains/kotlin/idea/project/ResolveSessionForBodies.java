@@ -26,12 +26,9 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
 import org.jetbrains.kotlin.resolve.BodyResolveCache;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer;
-import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
-import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
+import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver;
+import org.jetbrains.kotlin.resolve.lazy.*;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.storage.ExceptionTracker;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -119,10 +116,16 @@ public class ResolveSessionForBodies implements KotlinCodeAnalyzer {
         return resolveSession.getScriptDescriptor(script);
     }
 
-    @Override
     @NotNull
-    public ScopeProvider getScopeProvider() {
-        return resolveSession.getScopeProvider();
+    @Override
+    public DeclarationScopeProvider getDeclarationScopeProvider() {
+        return resolveSession.getDeclarationScopeProvider();
+    }
+
+    @NotNull
+    @Override
+    public FileScopeProvider getFileScopeProvider() {
+        return resolveSession.getFileScopeProvider();
     }
 
     @NotNull

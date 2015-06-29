@@ -29,9 +29,8 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver.LookupMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.util.collectionUtils.concat
-import java.util.HashSet
+import org.jetbrains.kotlin.utils.Printer
 import java.util.LinkedHashSet
 import kotlin.properties.Delegates
 
@@ -127,7 +126,7 @@ class LazyImportResolver(
 
         val status = importedScopesProvider(importDirective).importResolveStatus
         if (status != null && !status.descriptors.isEmpty()) {
-            val fileScope = resolveSession.getScopeProvider().getFileScope(importDirective.getContainingJetFile())
+            val fileScope = resolveSession.getFileScopeProvider().getFileScope(importDirective.getContainingJetFile())
             reportConflictingImport(importDirective, fileScope, status.descriptors, traceForImportResolve)
         }
     }

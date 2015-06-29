@@ -56,8 +56,8 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
+import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
-import org.jetbrains.kotlin.resolve.lazy.ScopeProvider;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
@@ -111,7 +111,7 @@ public class ReplInterpreter {
 
         scriptDeclarationFactory = new ScriptMutableDeclarationProviderFactory();
 
-        ScopeProvider.AdditionalFileScopeProvider scopeProvider = new ScopeProvider.AdditionalFileScopeProvider() {
+        FileScopeProvider.AdditionalScopes scopeProvider = new FileScopeProvider.AdditionalScopes() {
             @NotNull
             @Override
             public List<JetScope> scopes(@NotNull JetFile file) {
@@ -128,7 +128,7 @@ public class ReplInterpreter {
         );
 
         this.topDownAnalysisContext = new TopDownAnalysisContext(TopDownAnalysisMode.LocalDeclarations, DataFlowInfo.EMPTY,
-                                                                 container.getResolveSession().getScopeProvider());
+                                                                 container.getResolveSession().getDeclarationScopeProvider());
         this.topDownAnalyzer = container.getLazyTopDownAnalyzerForTopLevel();
         this.resolveSession = container.getResolveSession();
 

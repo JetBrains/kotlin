@@ -92,7 +92,7 @@ public class LazyTopDownAnalyzerForTopLevel {
     }
 
     private static void resolveAndCheckImports(@NotNull JetFile file, @NotNull KotlinCodeAnalyzer resolveSession) {
-        LazyFileScope fileScope = resolveSession.getScopeProvider().getFileScope(file);
+        LazyFileScope fileScope = resolveSession.getFileScopeProvider().getFileScope(file);
         fileScope.forceResolveAllImports();
     }
 }

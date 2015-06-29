@@ -29,11 +29,11 @@ import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.analyzeInContext
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.project.ResolveSessionForBodies
@@ -299,7 +299,7 @@ private object KotlinResolveDataProvider {
 
         if (scopeForContextElement == null) return BindingContext.EMPTY
 
-        val codeFragmentScope = resolveSession.getScopeProvider().getFileScope(codeFragment)
+        val codeFragmentScope = resolveSession.getFileScopeProvider().getFileScope(codeFragment)
         val chainedScope = ChainedScope(
                                 scopeForContextElement.getContainingDeclaration(),
                                 "Scope for resolve code fragment",

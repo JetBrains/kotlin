@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
+import org.jetbrains.kotlin.storage.StorageManager
 
 public trait LazyClassContext {
-    val scopeProvider: DeclarationScopeProvider
+    val declarationScopeProvider: DeclarationScopeProvider
 
     val storageManager: StorageManager
     val trace: BindingTrace

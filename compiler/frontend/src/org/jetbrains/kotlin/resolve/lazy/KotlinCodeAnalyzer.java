@@ -17,17 +17,13 @@
 package org.jetbrains.kotlin.resolve.lazy;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.JetClassOrObject;
 import org.jetbrains.kotlin.psi.JetDeclaration;
 import org.jetbrains.kotlin.resolve.BindingContext;
-
-import java.util.Collection;
 
 public interface KotlinCodeAnalyzer extends TopLevelDescriptorProvider {
 
@@ -44,7 +40,10 @@ public interface KotlinCodeAnalyzer extends TopLevelDescriptorProvider {
     DeclarationDescriptor resolveToDescriptor(@NotNull JetDeclaration declaration);
 
     @NotNull
-    ScopeProvider getScopeProvider();
+    DeclarationScopeProvider getDeclarationScopeProvider();
+
+    @NotNull
+    FileScopeProvider getFileScopeProvider();
 
     /**
      * Forces all descriptors to be resolved.

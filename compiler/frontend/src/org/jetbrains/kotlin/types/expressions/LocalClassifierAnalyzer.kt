@@ -18,23 +18,20 @@ package org.jetbrains.kotlin.types.expressions
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyLocalClassifierAnalyzer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.JetClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
-import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider
-import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProviderImpl
-import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
-import org.jetbrains.kotlin.resolve.lazy.LazyDeclarationResolver
+import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
@@ -114,7 +111,7 @@ class LocalClassDescriptorHolder(
         if (classDescriptor == null) {
             classDescriptor = LazyClassDescriptor(
                     object : LazyClassContext {
-                        override val scopeProvider = declarationScopeProvider
+                        override val declarationScopeProvider = declarationScopeProvider
                         override val storageManager = this@LocalClassDescriptorHolder.storageManager
                         override val trace = expressionTypingContext.trace
                         override val moduleDescriptor = this@LocalClassDescriptorHolder.moduleDescriptor
@@ -167,8 +164,9 @@ class LocalLazyDeclarationResolver(
 
 class DeclarationScopeProviderForLocalClassifierAnalyzer(
         lazyDeclarationResolver: LazyDeclarationResolver,
+        fileScopeProvider: FileScopeProvider,
         val localClassDescriptorManager: LocalClassDescriptorHolder
-) : DeclarationScopeProviderImpl(lazyDeclarationResolver) {
+) : DeclarationScopeProviderImpl(lazyDeclarationResolver, fileScopeProvider) {
     override fun getResolutionScopeForDeclaration(elementOfDeclaration: PsiElement): JetScope {
         if (localClassDescriptorManager.isMyClass(elementOfDeclaration)) {
             return localClassDescriptorManager.getResolutionScopeForClass(elementOfDeclaration as JetClassOrObject)

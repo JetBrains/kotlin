@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzerForTopLevel
 import org.jetbrains.kotlin.resolve.jvm.JavaClassFinderPostConstruct
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JavaLazyAnalyzerPostConstruct
+import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.ScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
 public fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentScope: GlobalSearchScope, project: Project) {
@@ -78,7 +78,7 @@ public fun createContainerForLazyResolveWithJava(
 
     useInstance(declarationProviderFactory)
     useInstance(BodyResolveCache.ThrowException)
-    useImpl<ScopeProvider>()
+    useImpl<FileScopeProviderImpl>()
     useImpl<LazyResolveToken>()
 }.let {
     it.javaAnalysisInit()
@@ -98,7 +98,7 @@ public fun createContainerForTopDownAnalyzerForJvm(
     useInstance(BodyResolveCache.ThrowException)
 
     useImpl<SingleModuleClassResolver>()
-    useImpl<ScopeProvider>()
+    useImpl<FileScopeProviderImpl>()
 }.let {
     it.javaAnalysisInit()
 

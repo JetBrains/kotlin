@@ -19,12 +19,19 @@ package org.jetbrains.kotlin.resolve.lazy
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.resolve.scopes.JetScope
 
-public trait FileScopeProvider {
-    fun getFileScope(jetFile: JetFile): JetScope
-}
+public interface FileScopeProvider {
+    fun getFileScope(file: JetFile): LazyFileScope
 
-public object NoFileScopeProvider : FileScopeProvider {
-    override fun getFileScope(jetFile: JetFile): JetScope {
-        throw UnsupportedOperationException("Should not be called")
+    public object ThrowException : FileScopeProvider {
+        override fun getFileScope(file: JetFile): LazyFileScope {
+            throw UnsupportedOperationException("Should not be called")
+        }
+    }
+
+    public open class AdditionalScopes {
+        public open fun scopes(file: JetFile): List<JetScope> {
+            return emptyList()
+        }
     }
 }
+

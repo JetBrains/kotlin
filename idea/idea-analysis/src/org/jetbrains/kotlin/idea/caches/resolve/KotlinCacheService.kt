@@ -222,7 +222,7 @@ private class ResolutionFacadeImpl(private val project: Project, private val cac
     }
 
     override fun getFileTopLevelScope(file: JetFile): JetScope {
-        return cache.getLazyResolveSession(file).getScopeProvider().getFileScope(file)
+        return cache.getLazyResolveSession(file).getFileScopeProvider().getFileScope(file)
     }
 
     override fun resolveImportReference(moduleDescriptor: ModuleDescriptor, fqName: FqName): Collection<DeclarationDescriptor> {
