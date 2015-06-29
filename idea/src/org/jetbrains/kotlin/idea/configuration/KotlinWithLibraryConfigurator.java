@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.configuration;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
@@ -76,7 +77,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
     @Override
     public void configure(@NotNull Project project) {
-        String defaultPathToJar = getDefaultPathToJarFile(project);
+        final String defaultPathToJar = getDefaultPathToJarFile(project);
         boolean showPathToJarPanel = needToChooseJarPath(project);
 
         List<Module> nonConfiguredModules =
@@ -102,9 +103,19 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
             copyLibraryIntoPath = dialog.getCopyIntoPath();
         }
 
-        for (Module module : modulesToConfigure) {
-            configureModuleWithLibrary(module, defaultPathToJar, copyLibraryIntoPath);
-        }
+        final List<Module> finalModulesToConfigure = modulesToConfigure;
+        final String finalCopyLibraryIntoPath = copyLibraryIntoPath;
+
+        // The first root modification enters dumb mode, and we need to be able to perform isKotlinLibrary() checks
+        // after that, and those checks use findClass(). Therefore, we need to enable alternative resolve here.
+        DumbService.getInstance(project).withAlternativeResolveEnabled(new Runnable() {
+            @Override
+            public void run() {
+                for (Module module : finalModulesToConfigure) {
+                    configureModuleWithLibrary(module, defaultPathToJar, finalCopyLibraryIntoPath);
+                }
+            }
+        });
     }
 
     protected void configureModuleWithLibrary(
