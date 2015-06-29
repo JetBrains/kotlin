@@ -4,8 +4,8 @@ enum class MyEnum {
 
 fun foo(x: MyEnum): Int {
     return when (x) {
-        is MyEnum.A -> 1
-        is MyEnum.B -> 2
-        is MyEnum.C -> 3
+        is <!IS_ENUM_ENTRY!>MyEnum.A<!> -> 1
+        is <!IS_ENUM_ENTRY!>MyEnum.B<!> -> 2
+        is <!IS_ENUM_ENTRY!>MyEnum.C<!> -> 3
     }
 }

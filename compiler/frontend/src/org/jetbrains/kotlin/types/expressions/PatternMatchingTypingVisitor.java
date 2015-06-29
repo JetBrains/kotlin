@@ -22,9 +22,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cfg.WhenChecker;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.PossiblyBareType;
 import org.jetbrains.kotlin.resolve.TypeResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -310,6 +312,10 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
 
         if (TypesPackage.isDynamic(targetType)) {
             context.trace.report(DYNAMIC_NOT_ALLOWED.on(typeReferenceAfterIs));
+        }
+        ClassDescriptor targetDescriptor = TypeUtils.getClassDescriptor(targetType);
+        if (targetDescriptor != null && DescriptorUtils.isEnumEntry(targetDescriptor)) {
+            context.trace.report(IS_ENUM_ENTRY.on(typeReferenceAfterIs));
         }
 
         if (!subjectType.isMarkedNullable() && targetType.isMarkedNullable()) {

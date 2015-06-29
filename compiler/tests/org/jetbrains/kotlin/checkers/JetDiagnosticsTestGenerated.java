@@ -4965,6 +4965,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ifEnumEntry.kt")
+            public void testIfEnumEntry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/ifEnumEntry.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("importEnumFromJava.kt")
             public void testImportEnumFromJava() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/importEnumFromJava.kt");
@@ -4992,6 +4998,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
             @TestMetadata("InsideSecondaryConstructorCall.kt")
             public void testInsideSecondaryConstructorCall() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/InsideSecondaryConstructorCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("isEnumEntry.kt")
+            public void testIsEnumEntry() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/enum/isEnumEntry.kt");
                 doTest(fileName);
             }
 

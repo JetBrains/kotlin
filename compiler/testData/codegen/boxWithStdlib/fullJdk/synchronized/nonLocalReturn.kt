@@ -29,13 +29,13 @@ class TestLocal(val name: String, val executionType: ExecutionType) : Callable<S
     override fun call(): String {
         startSignal.await()
         return when (executionType) {
-            is ExecutionType.LOCAL -> local()
-            is ExecutionType.NON_LOCAL_SIMPLE -> nonLocalSimple()
-            is ExecutionType.NON_LOCAL_EXCEPTION -> nonLocalWithException()
-            is ExecutionType.NON_LOCAL_FINALLY -> nonLocalWithFinally()
-            is ExecutionType.NON_LOCAL_EXCEPTION_AND_FINALLY -> nonLocalWithExceptionAndFinally()
-            is ExecutionType.NON_LOCAL_EXCEPTION_AND_FINALLY_WITH_RETURN -> nonLocalWithExceptionAndFinallyWithReturn()
-            is ExecutionType.NON_LOCAL_NESTED -> nonLocalNested()
+            ExecutionType.LOCAL -> local()
+            ExecutionType.NON_LOCAL_SIMPLE -> nonLocalSimple()
+            ExecutionType.NON_LOCAL_EXCEPTION -> nonLocalWithException()
+            ExecutionType.NON_LOCAL_FINALLY -> nonLocalWithFinally()
+            ExecutionType.NON_LOCAL_EXCEPTION_AND_FINALLY -> nonLocalWithExceptionAndFinally()
+            ExecutionType.NON_LOCAL_EXCEPTION_AND_FINALLY_WITH_RETURN -> nonLocalWithExceptionAndFinallyWithReturn()
+            ExecutionType.NON_LOCAL_NESTED -> nonLocalNested()
             else -> "fail"
         }
     }
