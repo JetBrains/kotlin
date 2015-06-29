@@ -26,10 +26,13 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.JetNodeTypes
 import org.jetbrains.kotlin.lexer.JetTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 import java.util.ArrayList
 import java.util.Collections
 import kotlin.test.assertTrue
@@ -373,3 +376,11 @@ public fun JetNamedDeclaration.getValueParameterList(): JetParameterList? {
         else -> null
     }
 }
+
+public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): Name? {
+    val callExpression = getParent() as JetCallExpression
+    val resolvedCall = callExpression.getResolvedCall(bindingContext)
+    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()
+}
+
+

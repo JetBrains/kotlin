@@ -22,6 +22,7 @@ import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getFunctionLiteralArgumentName
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
@@ -41,12 +42,6 @@ public fun <T: PsiElement> T.copied(): T = copy() as T
 
 public fun JetFunctionLiteralArgument.moveInsideParentheses(bindingContext: BindingContext): JetCallExpression {
     return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
-}
-
-public fun JetFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): Name? {
-    val callExpression = getParent() as JetCallExpression
-    val resolvedCall = callExpression.getResolvedCall(bindingContext)
-    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()
 }
 
 public fun JetFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
