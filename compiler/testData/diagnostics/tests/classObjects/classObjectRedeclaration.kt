@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DUPLICATE_CLASS_NAMES
 package test
 
 class A {

@@ -1,3 +1,4 @@
+// !DIAGNOSTICS: -DUPLICATE_CLASS_NAMES
 package Jet86
 
 class A {
