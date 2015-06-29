@@ -40,8 +40,8 @@ public trait TypeBounds {
 
     public enum class BoundKind {
         LOWER_BOUND,
-        UPPER_BOUND,
-        EXACT_BOUND
+        EXACT_BOUND,
+        UPPER_BOUND
     }
 
     public class Bound(

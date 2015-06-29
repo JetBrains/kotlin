@@ -67,15 +67,10 @@ private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound)
     val newType = new.constrainingType
     val position = CompoundConstraintPosition(old.position, new.position)
 
-    when (old.kind to new.kind) {
-        LOWER_BOUND to UPPER_BOUND, LOWER_BOUND to EXACT_BOUND, EXACT_BOUND to UPPER_BOUND ->
-            addConstraint(SUB_TYPE, oldType, newType, position)
-
-        UPPER_BOUND to LOWER_BOUND, UPPER_BOUND to EXACT_BOUND, EXACT_BOUND to LOWER_BOUND ->
-            addConstraint(SUB_TYPE, newType, oldType, position)
-
-        EXACT_BOUND to EXACT_BOUND ->
-            addConstraint(EQUAL, oldType, newType, position)
+    when {
+        old.kind.ordinal() < new.kind.ordinal() -> addConstraint(SUB_TYPE, oldType, newType, position)
+        old.kind.ordinal() > new.kind.ordinal() -> addConstraint(SUB_TYPE, newType, oldType, position)
+        old.kind == new.kind && old.kind == EXACT_BOUND -> addConstraint(EQUAL, oldType, newType, position)
     }
 }
 
