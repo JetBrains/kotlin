@@ -18,23 +18,25 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
-import org.jetbrains.kotlin.descriptors.impl.*
-import org.jetbrains.org.objectweb.asm.Opcodes.*
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.MutableClassDescriptor
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverrideResolver
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import java.util.LinkedHashSet
-import org.jetbrains.kotlin.name.Name
-import java.util.ArrayList
-import org.jetbrains.kotlin.types.checker.JetTypeChecker
-import java.util.HashSet
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.scopes.JetScope
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.JetTypeChecker
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_ABSTRACT
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_SYNTHETIC
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import java.util.ArrayList
+import java.util.HashSet
+import java.util.LinkedHashSet
 
 /**
  * Generates exception-throwing stubs for methods from mutable collection classes not implemented in Kotlin classes which inherit only from
@@ -127,7 +129,7 @@ class CollectionStubMethodGenerator(
     private fun findRelevantSuperCollectionClasses(): Collection<CollectionClassPair> {
         fun pair(readOnlyClass: ClassDescriptor, mutableClass: ClassDescriptor) = CollectionClassPair(readOnlyClass, mutableClass)
 
-        val collectionClasses = with(KotlinBuiltIns.getInstance()) {
+        val collectionClasses = with(descriptor.builtIns) {
             listOf(
                     pair(getCollection(), getMutableCollection()),
                     pair(getSet(), getMutableSet()),

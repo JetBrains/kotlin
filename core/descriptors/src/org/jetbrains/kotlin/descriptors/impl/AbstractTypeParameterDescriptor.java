@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.descriptors.impl;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.ReadOnly;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
@@ -35,6 +34,8 @@ import org.jetbrains.kotlin.types.checker.JetTypeChecker;
 
 import java.util.Collections;
 import java.util.Set;
+
+import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getBuiltIns;
 
 public abstract class AbstractTypeParameterDescriptor extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
     private final Variance variance;
@@ -135,7 +136,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         Set<JetType> upperBounds = getUpperBounds();
         assert !upperBounds.isEmpty() : "Upper bound list is empty in " + getName();
         JetType upperBoundsAsType = TypeUtils.intersect(JetTypeChecker.DEFAULT, upperBounds);
-        return upperBoundsAsType != null ? upperBoundsAsType : KotlinBuiltIns.getInstance().getNothingType();
+        return upperBoundsAsType != null ? upperBoundsAsType : getBuiltIns(this).getNothingType();
     }
 
     @NotNull
@@ -153,7 +154,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     @NotNull
     @Override
     public Set<JetType> getLowerBounds() {
-        return Collections.singleton(KotlinBuiltIns.getInstance().getNothingType());
+        return Collections.singleton(getBuiltIns(this).getNothingType());
     }
 
     @NotNull

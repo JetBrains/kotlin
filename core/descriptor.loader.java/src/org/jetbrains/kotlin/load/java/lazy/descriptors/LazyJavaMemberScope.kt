@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -180,7 +179,7 @@ public abstract class LazyJavaMemberScope(
                         val paramType = javaParameter.getType() as? JavaArrayType
                                         ?: throw AssertionError("Vararg parameter should be an array: $javaParameter")
                         val outType = c.typeResolver.transformArrayType(paramType, typeUsage, true)
-                        outType to KotlinBuiltIns.getInstance().getArrayElementType(outType)
+                        outType to c.module.builtIns.getArrayElementType(outType)
                     }
                     else {
                         c.typeResolver.transformJavaType(javaParameter.getType(), typeUsage) to null
@@ -188,7 +187,7 @@ public abstract class LazyJavaMemberScope(
 
             val name = if (function.getName().asString() == "equals" &&
                            jValueParameters.size() == 1 &&
-                           KotlinBuiltIns.getInstance().getNullableAnyType() == outType) {
+                           c.module.builtIns.getNullableAnyType() == outType) {
                 // This is a hack to prevent numerous warnings on Kotlin classes that inherit Java classes: if you override "equals" in such
                 // class without this hack, you'll be warned that in the superclass the name is "p0" (regardless of the fact that it's
                 // "other" in Any)

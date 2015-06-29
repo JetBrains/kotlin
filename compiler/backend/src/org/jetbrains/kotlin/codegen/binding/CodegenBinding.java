@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.binding;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
 import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilPackage;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage;
 import org.jetbrains.kotlin.resolve.scopes.JetScope;
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
 import org.jetbrains.kotlin.util.slicedMap.Slices;
@@ -207,7 +207,8 @@ public class CodegenBinding {
         String simpleName = asmType.getInternalName().substring(asmType.getInternalName().lastIndexOf('/') + 1);
         ClassDescriptorImpl classDescriptor =
                 new ClassDescriptorImpl(descriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
-                                        Collections.singleton(KotlinBuiltIns.getInstance().getAnyType()), toSourceElement(script));
+                                        Collections.singleton(DescriptorUtilPackage.getBuiltIns(descriptor).getAnyType()),
+                                        toSourceElement(script));
         classDescriptor.initialize(JetScope.Empty.INSTANCE$, Collections.<ConstructorDescriptor>emptySet(), null);
 
         recordClosure(trace, classDescriptor, null, asmType);
