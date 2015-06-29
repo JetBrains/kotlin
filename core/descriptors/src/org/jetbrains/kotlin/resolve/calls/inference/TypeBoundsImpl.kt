@@ -49,7 +49,9 @@ public class TypeBoundsImpl(
 
     public fun addBound(bound: Bound) {
         resultValues = null
-        bound.typeVariable = typeVariable
+        assert(bound.typeVariable == typeVariable) {
+            "$bound is added for incorrect type variable ${bound.typeVariable.getName()}. Expected: ${typeVariable.getName()}"
+        }
         bounds.add(bound)
     }
 
@@ -202,9 +204,7 @@ fun Collection<Bound>.substitute(substituteTypeVariable: (TypeParameterDescripto
             it.constrainingType
         }
         substitutedType?.let { type ->
-            val newBound = Bound(type, it.kind, it.position, it.isProper)
-            newBound.typeVariable = substituteTypeVariable(it.typeVariable) ?: it.typeVariable
-            newBound
+            Bound(substituteTypeVariable(it.typeVariable) ?: it.typeVariable, type, it.kind, it.position, it.isProper)
         }
     }.filterNotNull()
 }

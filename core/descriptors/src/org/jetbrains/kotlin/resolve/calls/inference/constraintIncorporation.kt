@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.typeUtil.getNestedTypeArguments
 import java.util.ArrayList
 
-fun ConstraintSystemImpl.incorporateBound(variable: JetType, newBound: Bound) {
-    val typeVariable = getMyTypeVariable(variable)!!
+fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
+    val typeVariable = newBound.typeVariable
     val typeBounds = getTypeBounds(typeVariable)
 
     for (oldBoundIndex in typeBounds.bounds.indices) {
@@ -44,20 +44,18 @@ fun ConstraintSystemImpl.incorporateBound(variable: JetType, newBound: Bound) {
     val boundsUsedIn = getBoundsUsedIn(typeVariable)
     for (index in boundsUsedIn.indices) {
         val boundUsedIn = boundsUsedIn[index]
-        val type = JetTypeImpl(Annotations.EMPTY, boundUsedIn.typeVariable.getTypeConstructor(), false, listOf(), JetScope.Empty)
-        generateNewBound(type, boundUsedIn, newBound)
+        generateNewBound(boundUsedIn, newBound)
     }
 
     val constrainingType = newBound.constrainingType
     if (isMyTypeVariable(constrainingType)) {
-        val bound = Bound(variable, newBound.kind.reverse(), newBound.position, isProper = false)
-        addBound(constrainingType, bound)
+        addBound(getMyTypeVariable(constrainingType)!!, typeVariable.correspondingType, newBound.kind.reverse(), newBound.position)
         return
     }
     constrainingType.getNestedTypeVariables().forEach {
         val boundsForNestedVariable = getTypeBounds(it).bounds
         for (index in boundsForNestedVariable.indices) {
-            generateNewBound(variable, newBound, boundsForNestedVariable[index])
+            generateNewBound(newBound, boundsForNestedVariable[index])
         }
     }
 }
@@ -82,7 +80,6 @@ private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound)
 }
 
 private fun ConstraintSystemImpl.generateNewBound(
-        variable: JetType,
         bound: Bound,
         substitution: Bound
 ) {
@@ -110,7 +107,7 @@ private fun ConstraintSystemImpl.generateNewBound(
     if (nestedTypeVariables.contains(bound.typeVariable) || nestedTypeVariables.contains(substitution.typeVariable)) return
 
     val position = CompoundConstraintPosition(bound.position, substitution.position)
-    addBound(variable, Bound(newConstrainingType, newKind, position, newConstrainingType.isProper()))
+    addBound(bound.typeVariable, newConstrainingType, newKind, position)
 }
 
 private fun computeKindOfNewBound(constrainingKind: BoundKind, substitutionVariance: Variance, substitutionKind: BoundKind): BoundKind? {

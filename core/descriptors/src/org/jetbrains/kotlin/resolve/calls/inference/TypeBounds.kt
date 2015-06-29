@@ -45,19 +45,19 @@ public trait TypeBounds {
     }
 
     public class Bound(
+            public val typeVariable: TypeParameterDescriptor,
             public val constrainingType: JetType,
             public val kind: BoundKind,
             public val position: ConstraintPosition,
             public val isProper: Boolean = true
     ) {
-        public var typeVariable: TypeParameterDescriptor by Delegates.notNull()
-
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other == null || javaClass != other.javaClass) return false
 
             val bound = other as Bound
 
+            if (typeVariable != bound.typeVariable) return false
             if (constrainingType != bound.constrainingType) return false
             if (kind != bound.kind) return false
 
@@ -67,7 +67,8 @@ public trait TypeBounds {
         }
 
         override fun hashCode(): Int {
-            var result = constrainingType.hashCode()
+            var result = typeVariable.hashCode();
+            result = 31 * result + constrainingType.hashCode()
             result = 31 * result + kind.hashCode()
             result = 31 * result + if (position.isStrong()) 1 else 0
             return result
