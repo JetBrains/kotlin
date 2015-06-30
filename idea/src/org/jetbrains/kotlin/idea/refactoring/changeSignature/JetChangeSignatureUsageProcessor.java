@@ -40,6 +40,7 @@ import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.HashSet;
 import com.intellij.util.containers.MultiMap;
+import jet.runtime.typeinfo.JetValueParameter;
 import kotlin.KotlinPackage;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -55,6 +56,7 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.codeInsight.JetFileReferencesResolver;
 import org.jetbrains.kotlin.idea.core.refactoring.RefactoringPackage;
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*;
+import org.jetbrains.kotlin.idea.refactoring.rename.UnresolvableConventionViolationUsageInfo;
 import org.jetbrains.kotlin.idea.references.JetSimpleNameReference;
 import org.jetbrains.kotlin.idea.search.usagesSearch.UsagesSearchPackage;
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName;
@@ -381,9 +383,24 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
     public MultiMap<PsiElement, String> findConflicts(ChangeInfo info, Ref<UsageInfo[]> refUsages) {
         MultiMap<PsiElement, String> result = new MultiMap<PsiElement, String>();
 
-        if (!(info instanceof JetChangeInfo)) {
-            return result;
+        // Delete OverriderUsageInfo for Kotlin declarations since they can't be processed correctly
+        // TODO: Drop when OverriderUsageInfo.getElement() gets deleted
+        UsageInfo[] usageInfos = refUsages.get();
+        List<UsageInfo> adjustedUsages = KotlinPackage.filterNot(
+                usageInfos,
+                new Function1<UsageInfo, Boolean>() {
+                    @Override
+                    public Boolean invoke(UsageInfo info) {
+                        return info instanceof OverriderUsageInfo &&
+                               ((OverriderUsageInfo) info).getOverridingMethod() instanceof KotlinLightMethod;
+                    }
+                }
+        );
+        if (adjustedUsages.size() < usageInfos.length) {
+            refUsages.set(adjustedUsages.toArray(new UsageInfo[adjustedUsages.size()]));
         }
+
+        if (!(info instanceof JetChangeInfo)) return result;
 
         Set<String> parameterNames = new HashSet<String>();
         JetChangeInfo changeInfo = (JetChangeInfo) info;
