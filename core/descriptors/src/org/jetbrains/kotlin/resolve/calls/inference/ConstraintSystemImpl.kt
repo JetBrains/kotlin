@@ -346,9 +346,10 @@ public class ConstraintSystemImpl : ConstraintSystem {
             typeVariable: TypeParameterDescriptor,
             constrainingType: JetType,
             kind: TypeBounds.BoundKind,
-            position: ConstraintPosition
+            position: ConstraintPosition,
+            derivedFrom: Set<TypeParameterDescriptor> = emptySet()
     ) {
-        val bound = Bound(typeVariable, constrainingType, kind, position, constrainingType.isProper())
+        val bound = Bound(typeVariable, constrainingType, kind, position, constrainingType.isProper(), derivedFrom)
         val typeBounds = getTypeBounds(typeVariable)
         if (typeBounds.bounds.contains(bound)) return
 

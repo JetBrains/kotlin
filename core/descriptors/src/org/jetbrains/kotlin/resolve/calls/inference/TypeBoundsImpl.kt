@@ -194,7 +194,8 @@ fun Collection<Bound>.substitute(substituteTypeVariable: (TypeParameterDescripto
             it.constrainingType
         }
         substitutedType?.let { type ->
-            Bound(substituteTypeVariable(it.typeVariable) ?: it.typeVariable, type, it.kind, it.position, it.isProper)
+            Bound(substituteTypeVariable(it.typeVariable) ?: it.typeVariable, type, it.kind, it.position, it.isProper,
+                  it.derivedFrom.map { substituteTypeVariable(it) ?: it }.toSet())
         }
     }.filterNotNull()
 }

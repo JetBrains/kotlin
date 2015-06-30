@@ -441,6 +441,12 @@ public class ConstraintSystemTestGenerated extends AbstractConstraintSystemTest 
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/constraintSystem/severalVariables/recursive"), Pattern.compile("^(.+)\\.constraints$"), true);
             }
 
+            @TestMetadata("implicitlyRecursive.constraints")
+            public void testImplicitlyRecursive() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/recursive/implicitlyRecursive.constraints");
+                doTest(fileName);
+            }
+
             @TestMetadata("mutuallyRecursive.constraints")
             public void testMutuallyRecursive() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/constraintSystem/severalVariables/recursive/mutuallyRecursive.constraints");

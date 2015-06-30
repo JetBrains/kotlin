@@ -49,7 +49,9 @@ public trait TypeBounds {
             public val constrainingType: JetType,
             public val kind: BoundKind,
             public val position: ConstraintPosition,
-            public val isProper: Boolean = true
+            public val isProper: Boolean,
+            // to prevent infinite recursion in incorporation we store the variables that was substituted to derive this bound
+            public val derivedFrom: Set<TypeParameterDescriptor>
     ) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

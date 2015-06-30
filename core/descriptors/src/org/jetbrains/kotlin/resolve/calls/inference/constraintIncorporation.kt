@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import org.jetbrains.kotlin.types.typeUtil.getNestedTypeArguments
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import java.util.*
 
 fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
     val typeVariable = newBound.typeVariable
@@ -92,9 +93,14 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
     fun addNewBound(newConstrainingType: JetType, newBoundKind: BoundKind) {
         // We don't generate new recursive constraints
         val nestedTypeVariables = newConstrainingType.getNestedTypeVariables()
-        if (nestedTypeVariables.contains(bound.typeVariable) || nestedTypeVariables.contains(substitution.typeVariable)) return
+        if (nestedTypeVariables.contains(bound.typeVariable)) return
 
-        addBound(bound.typeVariable, newConstrainingType, newBoundKind, position)
+        // We don't generate constraint if a type variable was substituted twice
+        val derivedFrom = HashSet(bound.derivedFrom + substitution.derivedFrom)
+        if (derivedFrom.contains(substitution.typeVariable)) return
+
+        derivedFrom.add(substitution.typeVariable)
+        addBound(bound.typeVariable, newConstrainingType, newBoundKind, position, derivedFrom)
     }
 
     if (substitution.kind == EXACT_BOUND) {
