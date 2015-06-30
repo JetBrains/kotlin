@@ -75,8 +75,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA, "Enum argument can be null in Java, but exhaustive when contains no null branch");
 
         MAP.put(ErrorsJvm.INAPPLICABLE_PUBLIC_FIELD, "publicField annotation is not applicable to this declaration");
-
-        MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Class names ''{0}'' conflict with package name (facade or part)", Renderers.TO_STRING);
+        MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", Renderers.TO_STRING, Renderers.TO_STRING);
     }
 
     @NotNull

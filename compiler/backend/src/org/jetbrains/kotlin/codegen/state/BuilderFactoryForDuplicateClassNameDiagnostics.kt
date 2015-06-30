@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.load.java.descriptors.SamAdapterDescriptor
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.join
 import java.util.*
 
 
@@ -43,25 +45,18 @@ class BuilderFactoryForDuplicateClassNameDiagnostics(
 
     override fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin) {
         val another = className.getOrPut(internalName, { origin })
+        //workaround for inlined anonymous objects
         if (origin.element != another.element) {
-            if (origin.originKind == JvmDeclarationOriginKind.PACKAGE_FACADE || another.originKind == JvmDeclarationOriginKind.PACKAGE_FACADE) {
-                if (origin.originKind == JvmDeclarationOriginKind.PACKAGE_FACADE) {
-                    reportError(another, internalName)
-                } else {
-                    reportError(another, internalName)
-                }
-            } else {
-                if (origin.element != null) {
-                    reportError(origin, internalName)
-                }
-                if (another.element != null) {
-                    reportError(another, internalName)
-                }
-            }
+            reportError(internalName, origin, another)
         }
     }
 
-    private fun reportError(another: JvmDeclarationOrigin, internalName: String) {
-        diagnostics.report(ErrorsJvm.DUPLICATE_CLASS_NAMES.on(another.element, internalName))
+    private fun reportError(internalName: String, vararg another: JvmDeclarationOrigin) {
+        val fromString = another.map { it.descriptor }.filterNotNull().
+                joinToString { DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.render(it) }
+
+        another.map { it.element }.filterNotNull().forEach {
+            diagnostics.report(ErrorsJvm.DUPLICATE_CLASS_NAMES.on(it, internalName, fromString))
+        }
     }
 }
