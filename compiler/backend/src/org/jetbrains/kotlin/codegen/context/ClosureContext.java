@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.anonymousClassForFunction;
+import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.anonymousClassForCallable;
 
 public class ClosureContext extends ClassContext {
     private final FunctionDescriptor functionDescriptor;
@@ -33,7 +33,7 @@ public class ClosureContext extends ClassContext {
             @Nullable CodegenContext parentContext,
             @NotNull LocalLookup localLookup
     ) {
-        super(typeMapper, anonymousClassForFunction(typeMapper.getBindingContext(), functionDescriptor),
+        super(typeMapper, anonymousClassForCallable(typeMapper.getBindingContext(), functionDescriptor),
               OwnerKind.IMPLEMENTATION, parentContext, localLookup);
 
         this.functionDescriptor = functionDescriptor;

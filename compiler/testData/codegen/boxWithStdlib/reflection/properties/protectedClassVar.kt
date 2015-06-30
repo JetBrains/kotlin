@@ -1,10 +1,11 @@
 import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.jvm.accessible
+import kotlin.reflect.KMutableProperty1
 
 class A(param: String) {
     protected var v: String = param
 
-    fun ref() = ::v
+    fun ref() = A::class.properties.single() as KMutableProperty1<A, String>
 }
 
 fun box(): String {

@@ -532,4 +532,16 @@ public abstract class MemberCodegen<T extends JetElement/* TODO: & JetDeclaratio
         }
         return sourceMapper;
     }
+
+    protected void generateConstInstance(@NotNull Type asmType) {
+        v.newField(OtherOrigin(element), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(), null, null);
+
+        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
+            InstructionAdapter iv = createOrGetClInitCodegen().v;
+            iv.anew(asmType);
+            iv.dup();
+            iv.invokespecial(asmType.getInternalName(), "<init>", "()V", false);
+            iv.putstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
+        }
+    }
 }

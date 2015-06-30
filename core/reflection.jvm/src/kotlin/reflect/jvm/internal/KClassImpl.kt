@@ -104,12 +104,6 @@ class KClassImpl<T>(override val jClass: Class<T>) : KCallableContainerImpl(), K
                     .map(create)
                     .toList()
 
-    fun memberProperty(name: String): KProperty1<T, *> =
-            KProperty1Impl<T, Any>(this, name, null)
-
-    fun mutableMemberProperty(name: String): KMutableProperty1<T, *> =
-            KMutableProperty1Impl<T, Any>(this, name, null)
-
     override fun equals(other: Any?): Boolean =
             other is KClassImpl<*> && jClass == other.jClass
 

@@ -30,17 +30,17 @@ import java.lang.reflect.Method
 abstract class DescriptorBasedProperty protected constructor(
         container: KCallableContainerImpl,
         name: String,
-        receiverParameterDesc: String?,
+        signature: String,
         descriptorInitialValue: PropertyDescriptor?
 ) {
-    constructor(container: KCallableContainerImpl, name: String, receiverParameterClass: Class<*>?) : this(
-            container, name, receiverParameterClass?.desc, null
+    constructor(container: KCallableContainerImpl, name: String, signature: String) : this(
+            container, name, signature, null
     )
 
     constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : this(
             container,
             descriptor.getName().asString(),
-            descriptor.getExtensionReceiverParameter()?.getType()?.let { type -> RuntimeTypeMapper.mapTypeToJvmDesc(type) },
+            RuntimeTypeMapper.mapPropertySignature(descriptor),
             descriptor
     )
 
@@ -51,7 +51,7 @@ abstract class DescriptorBasedProperty protected constructor(
     )
 
     protected val descriptor: PropertyDescriptor by ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
-        container.findPropertyDescriptor(name, receiverParameterDesc)
+        container.findPropertyDescriptor(name, signature)
     }
 
     // null if this is a property declared in a foreign (Java) class

@@ -43,20 +43,16 @@ abstract class KCallableContainerImpl : KDeclarationContainer {
 
     abstract val scope: JetScope
 
-    fun findPropertyDescriptor(name: String, receiverDesc: String? = null): PropertyDescriptor {
+    fun findPropertyDescriptor(name: String, signature: String): PropertyDescriptor {
         val properties = scope
                 .getProperties(Name.guess(name))
                 .filter { descriptor ->
                     descriptor is PropertyDescriptor &&
-                    descriptor.getName().asString() == name &&
-                    with(descriptor.getExtensionReceiverParameter()) {
-                        (this == null && receiverDesc == null) ||
-                        (this != null && RuntimeTypeMapper.mapTypeToJvmDesc(getType()) == receiverDesc)
-                    }
+                    RuntimeTypeMapper.mapPropertySignature(descriptor) == signature
                 }
 
         if (properties.size() != 1) {
-            val debugText = if (receiverDesc == null) name else "'$receiverDesc.$name'"
+            val debugText = "'$name' (JVM signature: $signature)"
             throw KotlinReflectionInternalError(
                     if (properties.isEmpty()) "Property $debugText not resolved in $this"
                     else "${properties.size()} properties $debugText resolved in $this: $properties"

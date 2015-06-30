@@ -67,27 +67,27 @@ public class Reflection {
 
     // Properties
 
-    public static KProperty1 memberProperty(String name, KClass owner) {
-        return factory.memberProperty(name, owner);
+    public static KProperty0 property0(PropertyReference0 p) {
+        return factory.property0(p);
     }
 
-    public static KMutableProperty1 mutableMemberProperty(String name, KClass owner) {
-        return factory.mutableMemberProperty(name, owner);
+    public static KMutableProperty0 mutableProperty0(MutablePropertyReference0 p) {
+        return factory.mutableProperty0(p);
     }
 
-    public static KProperty0 topLevelVariable(String name, KPackage owner) {
-        return factory.topLevelVariable(name, owner);
+    public static KProperty1 property1(PropertyReference1 p) {
+        return factory.property1(p);
     }
 
-    public static KMutableProperty0 mutableTopLevelVariable(String name, KPackage owner) {
-        return factory.mutableTopLevelVariable(name, owner);
+    public static KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
+        return factory.mutableProperty1(p);
     }
 
-    public static KProperty1 topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
-        return factory.topLevelExtensionProperty(name, owner, receiver);
+    public static KProperty2 property2(PropertyReference2 p) {
+        return factory.property2(p);
     }
 
-    public static KMutableProperty1 mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
-        return factory.mutableTopLevelExtensionProperty(name, owner, receiver);
+    public static KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
+        return factory.mutableProperty2(p);
     }
 }

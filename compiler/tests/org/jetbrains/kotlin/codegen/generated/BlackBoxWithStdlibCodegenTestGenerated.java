@@ -795,6 +795,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("kt6870_privatePropertyReference.kt")
+            public void testKt6870_privatePropertyReference() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/kt6870_privatePropertyReference.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("localClassVar.kt")
             public void testLocalClassVar() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/localClassVar.kt");
@@ -810,24 +816,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("platformNamedAccessors.kt")
             public void testPlatformNamedAccessors() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/platformNamedAccessors.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("privateClassVal.kt")
-            public void testPrivateClassVal() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/privateClassVal.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("privateClassVar.kt")
-            public void testPrivateClassVar() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/privateClassVar.kt");
-                doTestWithStdlib(fileName);
-            }
-
-            @TestMetadata("protectedClassVar.kt")
-            public void testProtectedClassVar() throws Exception {
-                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/protectedClassVar.kt");
                 doTestWithStdlib(fileName);
             }
 
@@ -3222,6 +3210,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("privateClassVal.kt")
+            public void testPrivateClassVal() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privateClassVal.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("privateClassVar.kt")
+            public void testPrivateClassVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privateClassVar.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("privateFakeOverrideFromSuperclass.kt")
             public void testPrivateFakeOverrideFromSuperclass() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/privateFakeOverrideFromSuperclass.kt");
@@ -3237,6 +3237,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("propertyOfNestedClassAndArrayType.kt")
             public void testPropertyOfNestedClassAndArrayType() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/propertyOfNestedClassAndArrayType.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("protectedClassVar.kt")
+            public void testProtectedClassVar() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/protectedClassVar.kt");
                 doTestWithStdlib(fileName);
             }
 

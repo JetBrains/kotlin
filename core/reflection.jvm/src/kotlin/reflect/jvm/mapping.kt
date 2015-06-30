@@ -95,17 +95,10 @@ public val Field.kotlin: KProperty<*>?
     get() {
         if (isSynthetic()) return null
 
-        val clazz = getDeclaringClass()
-        val name = getName()
-        val modifiers = getModifiers()
-        val static = Modifier.isStatic(modifiers)
-        val final = Modifier.isFinal(modifiers)
-        if (static) {
-            val kPackage = clazz.kotlinPackage
-            return if (final) Reflection.topLevelVariable(name, kPackage) else Reflection.mutableTopLevelVariable(name, kPackage)
-        }
-        else {
-            val kClass = clazz.kotlin
-            return if (final) Reflection.memberProperty(name, kClass) else Reflection.mutableMemberProperty(name, kClass)
+        val clazz = getDeclaringClass().kotlin as KClassImpl
+
+        // TODO: optimize (search by name)
+        return clazz.properties.firstOrNull { p: KProperty<*> ->
+            (p as KPropertyImpl<*>).field == this
         }
     }

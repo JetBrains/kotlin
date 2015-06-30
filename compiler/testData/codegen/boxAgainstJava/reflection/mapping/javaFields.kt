@@ -10,8 +10,8 @@ fun box(): String {
     val s = J::s
 
     // Check that correct reflection objects are created
-    assert(i.javaClass.getSimpleName() == "KProperty1Impl", "Fail i class")
-    assert(s.javaClass.getSimpleName() == "KMutableProperty1Impl", "Fail s class")
+    assert(i !is KMutableProperty<*>, "Fail i class: ${i.javaClass}")
+    assert(s is KMutableProperty<*>, "Fail s class: ${s.javaClass}")
 
     // Check that no Method objects are created for such properties
     assert(i.javaGetter == null, "Fail i getter")

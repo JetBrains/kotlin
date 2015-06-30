@@ -16,8 +16,7 @@
 
 package kotlin.reflect.jvm.internal;
 
-import kotlin.jvm.internal.FunctionReference;
-import kotlin.jvm.internal.ReflectionFactory;
+import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
 
 /**
@@ -50,32 +49,34 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     // Properties
 
     @Override
-    public KProperty1 memberProperty(String name, KClass owner) {
-        return ((KClassImpl) owner).memberProperty(name);
+    public KProperty0 property0(PropertyReference0 p) {
+        return new KProperty0FromReferenceImpl(p);
     }
 
     @Override
-    public KMutableProperty1 mutableMemberProperty(String name, KClass owner) {
-        return ((KClassImpl) owner).mutableMemberProperty(name);
+    public KMutableProperty0 mutableProperty0(MutablePropertyReference0 p) {
+        return new KMutableProperty0FromReferenceImpl(p);
     }
 
     @Override
-    public KProperty0 topLevelVariable(String name, KPackage owner) {
-        return ((KPackageImpl) owner).topLevelVariable(name);
+    public KProperty1 property1(PropertyReference1 p) {
+        return new KProperty1FromReferenceImpl(p);
     }
 
     @Override
-    public KMutableProperty0 mutableTopLevelVariable(String name, KPackage owner) {
-        return ((KPackageImpl) owner).mutableTopLevelVariable(name);
+    public KMutableProperty1 mutableProperty1(MutablePropertyReference1 p) {
+        return new KMutableProperty1FromReferenceImpl(p);
     }
 
     @Override
-    public KProperty1 topLevelExtensionProperty(String name, KPackage owner, Class receiver) {
-        return ((KPackageImpl) owner).topLevelExtensionProperty(name, receiver);
+    public KProperty2 property2(PropertyReference2 p) {
+        // TODO: support member extension property references
+        return p;
     }
 
     @Override
-    public KMutableProperty1 mutableTopLevelExtensionProperty(String name, KPackage owner, Class receiver) {
-        return ((KPackageImpl) owner).mutableTopLevelExtensionProperty(name, receiver);
+    public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
+        // TODO: support member extension property references
+        return p;
     }
 }

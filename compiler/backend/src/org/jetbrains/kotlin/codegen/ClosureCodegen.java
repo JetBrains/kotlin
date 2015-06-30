@@ -202,7 +202,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
-            generateConstInstance();
+            generateConstInstance(asmType);
         }
 
         genClosureFields(closure, v, typeMapper);
@@ -251,30 +251,12 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         );
     }
 
-    private void generateConstInstance() {
-        MethodVisitor mv = v.newMethod(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_SYNTHETIC, "<clinit>", "()V", null,
-                                       ArrayUtil.EMPTY_STRING_ARRAY);
-        InstructionAdapter iv = new InstructionAdapter(mv);
-
-        v.newField(OtherOrigin(element, funDescriptor), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, asmType.getDescriptor(),
-                   null, null);
-
-        if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            mv.visitCode();
-            iv.anew(asmType);
-            iv.dup();
-            iv.invokespecial(asmType.getInternalName(), "<init>", "()V", false);
-            iv.putstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, asmType.getDescriptor());
-            mv.visitInsn(RETURN);
-            FunctionCodegen.endVisit(mv, "<clinit>", element);
-        }
-    }
-
     private void generateBridge(@NotNull Method bridge, @NotNull Method delegate) {
         if (bridge.equals(delegate)) return;
 
         MethodVisitor mv =
-                v.newMethod(OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE, bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
+                v.newMethod(OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE,
+                            bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
 
@@ -306,6 +288,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         FunctionCodegen.endVisit(mv, "bridge", element);
     }
 
+    // TODO: ImplementationBodyCodegen.markLineNumberForSyntheticFunction?
     private void generateFunctionReferenceMethods(@NotNull FunctionDescriptor descriptor) {
         int flags = ACC_PUBLIC | ACC_FINAL;
         boolean generateBody = state.getClassBuilderMode() == ClassBuilderMode.FULL;
@@ -316,7 +299,7 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
             if (generateBody) {
                 mv.visitCode();
                 InstructionAdapter iv = new InstructionAdapter(mv);
-                generateFunctionReferenceDeclarationContainer(iv, descriptor, typeMapper);
+                generateCallableReferenceDeclarationContainer(iv, descriptor, typeMapper);
                 iv.areturn(K_DECLARATION_CONTAINER_TYPE);
                 FunctionCodegen.endVisit(iv, "function reference getOwner", element);
             }
@@ -347,9 +330,9 @@ public class ClosureCodegen extends MemberCodegen<JetElement> {
         }
     }
 
-    private static void generateFunctionReferenceDeclarationContainer(
+    public static void generateCallableReferenceDeclarationContainer(
             @NotNull InstructionAdapter iv,
-            @NotNull FunctionDescriptor descriptor,
+            @NotNull CallableDescriptor descriptor,
             @NotNull JetTypeMapper typeMapper
     ) {
         DeclarationDescriptor container = descriptor.getContainingDeclaration();

@@ -1,31 +1,29 @@
 import kotlin.reflect.IllegalPropertyAccessException
-import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.KProperty1
 import kotlin.reflect.jvm.accessible
 
-class A {
-    private var value = 0
+class Result {
+    private val value = "OK"
 
-    fun ref(): KMutableProperty1<A, Int> = ::value
+    fun ref() = Result::class.properties.single() as KProperty1<Result, String>
 }
 
 fun box(): String {
-    val a = A()
-    val p = a.ref()
+    val p = Result().ref()
     try {
-        p.set(a, 1)
+        p.get(Result())
         return "Fail: private property is accessible by default"
     } catch(e: IllegalPropertyAccessException) { }
 
     p.accessible = true
 
-    p.set(a, 2)
-    p.get(a)
+    val r = p.get(Result())
 
     p.accessible = false
     try {
-        p.set(a, 3)
+        p.get(Result())
         return "Fail: setAccessible(false) had no effect"
     } catch(e: IllegalPropertyAccessException) { }
 
-    return "OK"
+    return r
 }

@@ -24,7 +24,7 @@ import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.KProperty2
 
 open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty, KProperty2<D, E, R>, KPropertyImpl<R> {
-    constructor(container: KClassImpl<D>, name: String, receiverParameterClass: Class<E>) : super(container, name, receiverParameterClass)
+    constructor(container: KClassImpl<D>, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KClassImpl<D>, descriptor: PropertyDescriptor) : super(container, descriptor)
 
@@ -47,7 +47,7 @@ open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty, KProperty2<D, 
 
 
 class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutableProperty2<D, E, R>, KMutablePropertyImpl<R> {
-    constructor(container: KClassImpl<D>, name: String, receiverParameterClass: Class<E>) : super(container, name, receiverParameterClass)
+    constructor(container: KClassImpl<D>, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KClassImpl<D>, descriptor: PropertyDescriptor) : super(container, descriptor)
 

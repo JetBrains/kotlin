@@ -21,11 +21,11 @@ import java.lang.reflect.Modifier
 import kotlin.reflect.IllegalPropertyAccessException
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
+import kotlin.jvm.internal.MutablePropertyReference1
+import kotlin.jvm.internal.PropertyReference1
 
 open class KProperty1Impl<T, out R> : DescriptorBasedProperty, KProperty1<T, R>, KPropertyImpl<R> {
-    constructor(container: KCallableContainerImpl, name: String, receiverParameterClass: Class<*>?) : super(
-            container, name, receiverParameterClass
-    )
+    constructor(container: KCallableContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
@@ -56,10 +56,8 @@ open class KProperty1Impl<T, out R> : DescriptorBasedProperty, KProperty1<T, R>,
 }
 
 
-class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R>, KMutablePropertyImpl<R> {
-    constructor(container: KCallableContainerImpl, name: String, receiverParameterClass: Class<*>?) : super(
-            container, name, receiverParameterClass
-    )
+open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R>, KMutablePropertyImpl<R> {
+    constructor(container: KCallableContainerImpl, name: String, signature: String) : super(container, name, signature)
 
     constructor(container: KCallableContainerImpl, descriptor: PropertyDescriptor) : super(container, descriptor)
 
@@ -84,5 +82,35 @@ class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1<T, R
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
         }
+    }
+}
+
+
+class KProperty1FromReferenceImpl(
+        val reference: PropertyReference1
+) : KProperty1Impl<Any?, Any?>(
+        reference.getOwner() as KCallableContainerImpl,
+        reference.getName(),
+        reference.getSignature()
+) {
+    override val name: String get() = reference.getName()
+
+    override fun get(receiver: Any?): Any? = reference.get(receiver)
+}
+
+
+class KMutableProperty1FromReferenceImpl(
+        val reference: MutablePropertyReference1
+) : KMutableProperty1Impl<Any?, Any?>(
+        reference.getOwner() as KCallableContainerImpl,
+        reference.getName(),
+        reference.getSignature()
+) {
+    override val name: String get() = reference.getName()
+
+    override fun get(receiver: Any?): Any? = reference.get(receiver)
+
+    override fun set(receiver: Any?, value: Any?) {
+        reference.set(receiver, value)
     }
 }
