@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/classAndTraitClash.kt:3:1: error: duplicate JVM class name 'test/T1$$TImpl' generated from: `T1$$TImpl`, T1
+interface  T1 {
+^
+compiler/testData/cli/jvm/classAndTraitClash.kt:7:1: error: duplicate JVM class name 'test/T1$$TImpl' generated from: `T1$$TImpl`, T1
+class `T1$$TImpl` {
+^
+COMPILATION_ERROR

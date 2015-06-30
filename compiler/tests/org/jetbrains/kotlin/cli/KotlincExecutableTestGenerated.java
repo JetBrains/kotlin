@@ -37,6 +37,24 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), false);
         }
 
+        @TestMetadata("classAndFacadeClash.args")
+        public void testClassAndFacadeClash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/classAndFacadeClash.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("classAndPartClash.args")
+        public void testClassAndPartClash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/classAndPartClash.args");
+            doJvmTest(fileName);
+        }
+
+        @TestMetadata("classAndTraitClash.args")
+        public void testClassAndTraitClash() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/classAndTraitClash.args");
+            doJvmTest(fileName);
+        }
+
         @TestMetadata("classpath.args")
         public void testClasspath() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("compiler/testData/cli/jvm/classpath.args");

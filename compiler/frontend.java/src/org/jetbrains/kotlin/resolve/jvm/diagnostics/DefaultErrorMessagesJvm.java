@@ -85,7 +85,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ErrorsJvm.JAVA_TYPE_MISMATCH,
                 "Java type mismatch expected {1} but found {0}. Use explicit cast", Renderers.RENDER_TYPE, Renderers.RENDER_TYPE);
 
-        MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Class names ''{0}'' conflict with package name (facade or part)", Renderers.TO_STRING);
+        MAP.put(ErrorsJvm.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", Renderers.TO_STRING, Renderers.TO_STRING);
     }
 
     @NotNull
