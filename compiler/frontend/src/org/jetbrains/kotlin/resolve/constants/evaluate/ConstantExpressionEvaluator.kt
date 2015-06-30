@@ -151,7 +151,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
             else {
                 if (!constant.canBeUsedInAnnotations()) canBeUsedInAnnotation = false
                 if (constant.usesVariableAsConstant()) usesVariableAsConstant = true
-                sb.append(constant.getValue())
+                sb.append(constant.value)
             }
         }
         return if (!interupted)
@@ -180,8 +180,8 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
             val rightConstant = evaluate(rightExpression, booleanType)
             if (rightConstant == null) return null
 
-            val leftValue = leftConstant.getValue()
-            val rightValue = rightConstant.getValue()
+            val leftValue = leftConstant.value
+            val rightValue = rightConstant.value
 
             if (leftValue !is Boolean || rightValue !is Boolean) return null
             val result = when(operationToken) {
@@ -341,7 +341,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
                         if (compileTimeConstant is IntegerValueTypeConstant)
                             compileTimeConstant.getValue(expectedType ?: TypeUtils.NO_EXPECTED_TYPE)
                         else
-                            compileTimeConstant.getValue()
+                            compileTimeConstant.value
                 return createCompileTimeConstant(value, expectedType, isPure = false,
                                                  canBeUsedInAnnotation = isPropertyCompileTimeConstant(callableDescriptor),
                                                  usesVariableAsConstant = true)
@@ -462,7 +462,7 @@ public class ConstantExpressionEvaluator private constructor(val trace: BindingT
             return OperationArgument(evaluationResultWithNewType, compileTimeType, expression)
         }
 
-        val evaluationResult = evaluatedConstant.getValue()
+        val evaluationResult = evaluatedConstant.value
         if (evaluationResult == null) return null
 
         return OperationArgument(evaluationResult, compileTimeType, expression)
@@ -580,7 +580,7 @@ private fun createStringConstant(value: CompileTimeConstant<*>?): StringValue? {
         is CharValue,
         is DoubleValue, is FloatValue,
         is BooleanValue,
-        is NullValue -> StringValue("${value.getValue()}", value.canBeUsedInAnnotations(), value.usesVariableAsConstant())
+        is NullValue -> StringValue("${value.value}", value.canBeUsedInAnnotations(), value.usesVariableAsConstant())
         else -> null
     }
 }

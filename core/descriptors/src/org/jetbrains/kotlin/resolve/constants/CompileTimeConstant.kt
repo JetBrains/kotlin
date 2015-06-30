@@ -14,57 +14,45 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-public abstract class CompileTimeConstant<T> {
-    protected final T value;
-    private final int flags;
+public abstract class CompileTimeConstant<T> protected constructor(public open val value: T, canBeUsedInAnnotations: Boolean, isPure: Boolean, usesVariableAsConstant: Boolean) {
+    private val flags: Int
 
-   /*
+    init {
+        flags = (if (isPure) IS_PURE_MASK else 0) or (if (canBeUsedInAnnotations) CAN_BE_USED_IN_ANNOTATIONS_MASK else 0) or (if (usesVariableAsConstant) USES_VARIABLE_AS_CONSTANT_MASK else 0)
+    }
+
+    public fun canBeUsedInAnnotations(): Boolean {
+        return (flags and CAN_BE_USED_IN_ANNOTATIONS_MASK) != 0
+    }
+
+    public fun isPure(): Boolean {
+        return (flags and IS_PURE_MASK) != 0
+    }
+
+    public fun usesVariableAsConstant(): Boolean {
+        return (flags and USES_VARIABLE_AS_CONSTANT_MASK) != 0
+    }
+
+    public abstract fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType
+
+    public abstract fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R
+
+    companion object {
+
+        /*
     * if is pure is false then constant type cannot be changed
     * ex1. val a: Long = 1.toInt() (TYPE_MISMATCH error, 1.toInt() isn't pure)
     * ex2. val b: Int = a (TYPE_MISMATCH error, a isn't pure)
     *
     */
-    private static final int IS_PURE_MASK = 1;
-    private static final int CAN_BE_USED_IN_ANNOTATIONS_MASK = 1 << 1;
-    private static final int USES_VARIABLE_AS_CONSTANT_MASK = 1 << 2;
-
-    protected CompileTimeConstant(T value,
-                                  boolean canBeUsedInAnnotations,
-                                  boolean isPure,
-                                  boolean usesVariableAsConstant) {
-        this.value = value;
-        flags = (isPure ? IS_PURE_MASK : 0) |
-                (canBeUsedInAnnotations ? CAN_BE_USED_IN_ANNOTATIONS_MASK : 0) |
-                (usesVariableAsConstant ? USES_VARIABLE_AS_CONSTANT_MASK : 0);
+        private val IS_PURE_MASK = 1
+        private val CAN_BE_USED_IN_ANNOTATIONS_MASK = 1 shl 1
+        private val USES_VARIABLE_AS_CONSTANT_MASK = 1 shl 2
     }
-
-    public boolean canBeUsedInAnnotations() {
-        return (flags & CAN_BE_USED_IN_ANNOTATIONS_MASK) != 0;
-    }
-
-    public boolean isPure() {
-        return (flags & IS_PURE_MASK) != 0;
-    }
-
-    public boolean usesVariableAsConstant() {
-        return (flags & USES_VARIABLE_AS_CONSTANT_MASK) != 0;
-    }
-
-    @Nullable
-    public T getValue() {
-        return value;
-    }
-
-    @NotNull
-    public abstract JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns);
-
-    public abstract <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data);
 }

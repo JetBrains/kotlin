@@ -14,83 +14,58 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-import java.util.List;
+public class ArrayValue(value: List<CompileTimeConstant<*>>, private val type: JetType, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<List<CompileTimeConstant<*>>>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
 
-public class ArrayValue extends CompileTimeConstant<List<CompileTimeConstant<?>>> {
-
-    private final JetType type;
-
-    public ArrayValue(@NotNull List<CompileTimeConstant<?>> value,
-                      @NotNull JetType type,
-                      boolean canBeUsedInAnnotations,
-                      boolean usesVariableAsConstant) {
-        super(value, canBeUsedInAnnotations, false, usesVariableAsConstant);
-        assert KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)
-                : "Type should be an array, but was " + type + ": " + value;
-        this.type = type;
+    init {
+        assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) { "Type should be an array, but was " + type + ": " + value }
     }
 
-    @NotNull
-    @Override
-    public List<CompileTimeConstant<?>> getValue() {
-        List<CompileTimeConstant<?>> value = super.getValue();
-        assert value != null : "Guaranteed by constructor";
-        return value;
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return type
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return type;
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitArrayValue(this, data)
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitArrayValue(this, data);
+    override fun toString(): String {
+        return value.toString()
     }
 
-    @Override
-    public String toString() {
-       return value.toString();
-    }
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || javaClass != o.javaClass) return false
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ArrayValue that = (ArrayValue) o;
+        val that = o as? ArrayValue ?: return false
 
         if (value == null) {
-            return that.value == null;
+            return that.value == null
         }
 
-        int i = 0;
-        for (Object thisObject : value) {
-            if (!thisObject.equals(that.value.get(i))) {
-                return false;
+        var i = 0
+        for (thisObject in value) {
+            if (thisObject != that.value.get(i)) {
+                return false
             }
-            i++;
+            i++
         }
 
-        return true;
+        return true
     }
 
-    @Override
-    public int hashCode() {
-        int hashCode = 0;
-        if (value == null) return hashCode;
-        for (Object o : value) {
-            hashCode += o.hashCode();
+    override fun hashCode(): Int {
+        var hashCode = 0
+        if (value == null) return hashCode
+        for (o in value) {
+            hashCode += o.hashCode()
         }
-        return hashCode;
+        return hashCode
     }
 }
 

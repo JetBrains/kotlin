@@ -99,7 +99,7 @@ public object AnnotationTargetChecker {
                                     ?: return DEFAULT_TARGET_LIST
         val valueArguments = targetEntryDescriptor.getAllValueArguments()
         val valueArgument = valueArguments.entrySet().firstOrNull()?.getValue() as? ArrayValue ?: return DEFAULT_TARGET_LIST
-        return valueArgument.getValue().filterIsInstance<EnumValue>().map { it.getValue().getName().asString() }
+        return valueArgument.value.filterIsInstance<EnumValue>().map { it.value.getName().asString() }
     }
 
     private fun checkAnnotationEntry(entry: JetAnnotationEntry, actualTargets: List<Target>, trace: BindingTrace) {

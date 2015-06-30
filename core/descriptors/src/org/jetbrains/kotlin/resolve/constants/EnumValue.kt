@@ -14,64 +14,43 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.utils.sure
 
-import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilPackage.getClassObjectType;
+public class EnumValue(value: ClassDescriptor, usesVariableAsConstant: Boolean) : CompileTimeConstant<ClassDescriptor>(value, true, false, usesVariableAsConstant) {
 
-public class EnumValue extends CompileTimeConstant<ClassDescriptor> {
-
-    public EnumValue(@NotNull ClassDescriptor value, boolean usesVariableAsConstant) {
-        super(value, true, false, usesVariableAsConstant);
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return getType()
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return getType();
+    private fun getType(): JetType {
+        val type = value.classObjectType
+        return type.sure { "Enum entry must have a class object type: " + value }
     }
 
-    @NotNull
-    private JetType getType() {
-        JetType type = getClassObjectType(value);
-        assert type != null : "Enum entry must have a class object type: " + value;
-        return type;
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitEnumValue(this, data)
     }
 
-    @NotNull
-    @Override
-    public ClassDescriptor getValue() {
-        ClassDescriptor value = super.getValue();
-        assert value != null : "Guaranteed by constructor";
-        return value;
+    override fun toString(): String {
+        return "${getType()}.${value.getName()}"
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitEnumValue(this, data);
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || javaClass != o.javaClass) return false
+
+        return value == (o as? EnumValue)?.value
     }
 
-    @Override
-    public String toString() {
-        return getType() + "." + value.getName();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        return value.equals(((EnumValue) o).value);
-    }
-
-    @Override
-    public int hashCode() {
-        return value.hashCode();
+    override fun hashCode(): Int {
+        return value.hashCode()
     }
 }
 

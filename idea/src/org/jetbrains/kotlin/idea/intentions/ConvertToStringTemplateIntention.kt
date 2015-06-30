@@ -95,7 +95,7 @@ public class ConvertToStringTemplateIntention : JetSelfTargetingOffsetIndependen
                     constant.getValue(type).toString()
                 }
                 else {
-                    constant?.getValue().toString()
+                    constant?.value.toString()
                 }
             }
 

@@ -14,33 +14,24 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-public class ShortValue extends IntegerValueConstant<Short> {
+public class ShortValue(value: Short, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Short>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
 
-    public ShortValue(short value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVariableAsConstant) {
-        super(value, canBeUsedInAnnotations, pure, usesVariableAsConstant);
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return kotlinBuiltIns.getShortType()
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return kotlinBuiltIns.getShortType();
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitShortValue(this, data)
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitShortValue(this, data);
-    }
-
-    @Override
-    public String toString() {
-        return value + ".toShort()";
+    override fun toString(): String {
+        return "$value.toShort()"
     }
 
 }

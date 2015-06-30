@@ -14,74 +14,59 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.*
 
-import java.util.Collections;
+import java.util.Collections
 
-public class IntegerValueTypeConstant extends IntegerValueConstant<Number> {
+public class IntegerValueTypeConstant(value: Number, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Number>(value, canBeUsedInAnnotations, true, usesVariableAsConstant) {
 
-    private final IntegerValueTypeConstructor typeConstructor;
+    private val typeConstructor: IntegerValueTypeConstructor
 
-    public IntegerValueTypeConstant(@NotNull Number value, boolean canBeUsedInAnnotations, boolean usesVariableAsConstant) {
-        super(value, canBeUsedInAnnotations, true, usesVariableAsConstant);
-        this.typeConstructor = new IntegerValueTypeConstructor(value.longValue());
+    init {
+        this.typeConstructor = IntegerValueTypeConstructor(value.toLong())
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return new JetTypeImpl(
-                Annotations.EMPTY, typeConstructor,
-                false, Collections.<TypeProjection>emptyList(),
-                ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true));
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return JetTypeImpl(Annotations.EMPTY, typeConstructor, false, emptyList<TypeProjection>(), ErrorUtils.createErrorScope("Scope for number value type (" + typeConstructor.toString() + ")", true))
     }
 
-    @Nullable
-    @Override
-    @Deprecated
-    public Number getValue() {
-        throw new UnsupportedOperationException("Use IntegerValueTypeConstant.getValue(expectedType) instead");
+    deprecated("")
+    override val value: Number
+        get() = throw UnsupportedOperationException("Use IntegerValueTypeConstant.getValue(expectedType) instead")
+
+    public fun getType(expectedType: JetType): JetType {
+        return TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType)
     }
 
-    @NotNull
-    public JetType getType(@NotNull JetType expectedType) {
-        return TypeUtils.getPrimitiveNumberType(typeConstructor, expectedType);
-    }
+    public fun getValue(expectedType: JetType): Number {
+        val numberValue = typeConstructor.getValue()
+        val builtIns = KotlinBuiltIns.getInstance()
 
-    @NotNull
-    public Number getValue(@NotNull JetType expectedType) {
-        Number numberValue = typeConstructor.getValue();
-        KotlinBuiltIns builtIns = KotlinBuiltIns.getInstance();
-
-        JetType valueType = getType(expectedType);
-        if (valueType.equals(builtIns.getIntType())) {
-            return numberValue.intValue();
+        val valueType = getType(expectedType)
+        if (valueType == builtIns.getIntType()) {
+            return numberValue.toInt()
         }
-        else if (valueType.equals(builtIns.getByteType())) {
-            return numberValue.byteValue();
+        else if (valueType == builtIns.getByteType()) {
+            return numberValue.toByte()
         }
-        else if (valueType.equals(builtIns.getShortType())) {
-            return numberValue.shortValue();
+        else if (valueType == builtIns.getShortType()) {
+            return numberValue.toShort()
         }
         else {
-            return numberValue.longValue();
+            return numberValue.toLong()
         }
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitNumberTypeValue(this, data);
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitNumberTypeValue(this, data)
     }
 
-    @Override
-    public String toString() {
-        return typeConstructor.toString();
+    override fun toString(): String {
+        return typeConstructor.toString()
     }
 }

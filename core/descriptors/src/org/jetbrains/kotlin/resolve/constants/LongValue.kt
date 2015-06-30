@@ -14,32 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-public class LongValue extends IntegerValueConstant<Long> {
+public class LongValue(value: Long, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Long>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
 
-    public LongValue(long value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVariableAsConstant) {
-        super(value, canBeUsedInAnnotations, pure, usesVariableAsConstant);
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return kotlinBuiltIns.getLongType()
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return kotlinBuiltIns.getLongType();
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitLongValue(this, data)
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitLongValue(this, data);
-    }
-
-    @Override
-    public String toString() {
-        return value + ".toLong()";
+    override fun toString(): String {
+        return "$value.toLong()"
     }
 }

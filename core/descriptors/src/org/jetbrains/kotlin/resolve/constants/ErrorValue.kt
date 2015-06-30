@@ -14,56 +14,40 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.JetType
 
-public abstract class ErrorValue extends CompileTimeConstant<Void> {
+public abstract class ErrorValue : CompileTimeConstant<Unit>(Unit, true, false, false) {
 
-    public ErrorValue() {
-        super(null, true, false, false);
-    }
-
-    @Override
-    @Deprecated // Should not be called, for this is not a real value, but a indication of an error
-    public Void getValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitErrorValue(this, data);
-    }
-
-    @NotNull
-    public static ErrorValue create(@NotNull String message) {
-        return new ErrorValueWithMessage(message);
-    }
-
-    public static class ErrorValueWithMessage extends ErrorValue {
-        private final String message;
-
-        public ErrorValueWithMessage(@NotNull String message) {
-            this.message = message;
+    deprecated("") // Should not be called, for this is not a real value, but a indication of an error
+    override val value: Unit
+        get() {
+            throw UnsupportedOperationException()
         }
 
-        public String getMessage() {
-            return message;
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitErrorValue(this, data)
+    }
+
+    public class ErrorValueWithMessage(public val message: String) : ErrorValue() {
+
+        override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+            return ErrorUtils.createErrorType(message)
         }
 
-        @NotNull
-        @Override
-        public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-            return ErrorUtils.createErrorType(message);
+        override fun toString(): String {
+            return message
         }
+    }
 
-        @Override
-        public String toString() {
-            return getMessage();
+    companion object {
+
+        public fun create(message: String): ErrorValue {
+            return ErrorValueWithMessage(message)
         }
     }
 }

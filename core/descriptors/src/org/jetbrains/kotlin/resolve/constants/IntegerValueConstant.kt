@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-public abstract class IntegerValueConstant<T> extends CompileTimeConstant<T> {
-
-    protected IntegerValueConstant(T value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVariableAsConstant) {
-        super(value, canBeUsedInAnnotations, pure, usesVariableAsConstant);
-    }
-}
+public abstract class IntegerValueConstant<T> protected constructor(value: T, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<T>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant)

@@ -386,9 +386,9 @@ internal class DescriptorRendererImpl(
 
     private fun renderConstant(value: CompileTimeConstant<*>): String {
         return when (value) {
-            is ArrayValue -> value.getValue().map { renderConstant(it) }.joinToString(", ", "{", "}")
-            is AnnotationValue -> renderAnnotation(value.getValue())
-            is KClassValue -> renderType(value.getValue()) + "::class"
+            is ArrayValue -> value.value.map { renderConstant(it) }.joinToString(", ", "{", "}")
+            is AnnotationValue -> renderAnnotation(value.value)
+            is KClassValue -> renderType(value.value) + "::class"
             else -> value.toString()
         }
     }

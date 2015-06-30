@@ -14,32 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-public class DoubleValue extends CompileTimeConstant<Double> {
+public class DoubleValue(value: Double, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<Double>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
 
-    public DoubleValue(double value, boolean canBeUsedInAnnotations, boolean usesVariableAsConstant) {
-        super(value, canBeUsedInAnnotations, false, usesVariableAsConstant);
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return kotlinBuiltIns.getDoubleType()
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return kotlinBuiltIns.getDoubleType();
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitDoubleValue(this, data)
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitDoubleValue(this, data);
-    }
-
-    @Override
-    public String toString() {
-        return value + ".toDouble()";
+    override fun toString(): String {
+        return "$value.toDouble()"
     }
 }

@@ -63,7 +63,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.NOT_AN_ANNOTATION_CLASS;
-import static org.jetbrains.kotlin.resolve.BindingContext.ANNOTATION_DESCRIPTOR_TO_PSI_ELEMENT;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class AnnotationResolver {

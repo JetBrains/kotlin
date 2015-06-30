@@ -14,41 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.types.JetType
 
-public class AnnotationValue extends CompileTimeConstant<AnnotationDescriptor> {
-    
-    public AnnotationValue(@NotNull AnnotationDescriptor value) {
-        super(value, true, false, false);
+public class AnnotationValue(value: AnnotationDescriptor) : CompileTimeConstant<AnnotationDescriptor>(value, true, false, false) {
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return value.getType()
     }
 
-    @NotNull
-    @Override
-    public AnnotationDescriptor getValue() {
-        AnnotationDescriptor value = super.getValue();
-        assert value != null : "Guaranteed by constructor";
-        return value;
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitAnnotationValue(this, data)
     }
 
-    @Override
-    @NotNull
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return value.getType();
-    }
-
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitAnnotationValue(this, data);
-    }
-
-    @Override
-    public String toString() {
-        return value.toString();
+    override fun toString(): String {
+        return value.toString()
     }
 }

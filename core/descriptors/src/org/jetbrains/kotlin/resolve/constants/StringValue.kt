@@ -14,49 +14,38 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-public class StringValue extends CompileTimeConstant<String> {
+public class StringValue(value: String, canBeUsedInAnnotations: Boolean, usesVariableAsConstant: Boolean) : CompileTimeConstant<String>(value, canBeUsedInAnnotations, false, usesVariableAsConstant) {
 
-    public StringValue(String value, boolean canBeUsedInAnnotations, boolean usesVariableAsConstant) {
-        super(value, canBeUsedInAnnotations, false, usesVariableAsConstant);
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return kotlinBuiltIns.getStringType()
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return kotlinBuiltIns.getStringType();
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitStringValue(this, data)
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitStringValue(this, data);
+    override fun toString(): String {
+        return "\"" + value + "\""
     }
 
-    @Override
-    public String toString() {
-        return "\"" + value + "\"";
+    override fun equals(o: Any?): Boolean {
+        if (this === o) return true
+        if (o == null || javaClass != o.javaClass) return false
+
+        val that = o as? StringValue ?: return false
+
+        if (if (value != null) value != that.value else that.value != null) return false
+
+        return true
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        StringValue that = (StringValue) o;
-
-        if (value != null ? !value.equals(that.value) : that.value != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return value != null ? value.hashCode() : 0;
+    override fun hashCode(): Int {
+        return if (value != null) value.hashCode() else 0
     }
 }

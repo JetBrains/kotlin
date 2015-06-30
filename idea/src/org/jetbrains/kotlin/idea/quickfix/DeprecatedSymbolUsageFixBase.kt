@@ -112,7 +112,7 @@ public abstract class DeprecatedSymbolUsageFixBase(
             if (pattern.isEmpty()) return null
             val importValues = replaceWithValue.argumentValue("imports"/*TODO: kotlin.ReplaceWith::imports.name*/) as? List<*> ?: return null
             if (importValues.any { it !is StringValue }) return null
-            val imports = importValues.map { (it as StringValue).getValue()!! }
+            val imports = importValues.map { (it as StringValue).value }
 
             // should not be available for descriptors with optional parameters if we cannot fetch default values for them (currently for library with no sources)
             if (descriptor is CallableDescriptor &&

@@ -36,7 +36,7 @@ public abstract class AbstractEvaluateExpressionTest : AbstractAnnotationDescrip
             property, context ->
             val compileTimeConstant = property.getCompileTimeInitializer()
             if (compileTimeConstant is StringValue) {
-                "\\\"${compileTimeConstant.getValue()}\\\""
+                "\\\"${compileTimeConstant.value}\\\""
             } else {
                 "$compileTimeConstant"
             }

@@ -14,83 +14,65 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.types.JetType;
-import org.jetbrains.kotlin.types.TypeConstructor;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.types.JetType
+import org.jetbrains.kotlin.types.TypeConstructor
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList
+import java.util.Collections
 
-public class IntegerValueTypeConstructor implements TypeConstructor {
-    private final long value;
-    private final Collection<JetType> supertypes = new ArrayList<JetType>(4);
+public class IntegerValueTypeConstructor(private val value: Long) : TypeConstructor {
+    private val supertypes = ArrayList<JetType>(4)
 
-    public IntegerValueTypeConstructor(long value) {
-        // order of types matters
-        // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
-        // for expected type 'Any' result type 'Int' should be returned
-        this.value = value;
-        checkBoundsAndAddSuperType(value, (long) Integer.MIN_VALUE, (long) Integer.MAX_VALUE, KotlinBuiltIns.getInstance().getIntType());
-        checkBoundsAndAddSuperType(value, (long) Byte.MIN_VALUE, (long) Byte.MAX_VALUE, KotlinBuiltIns.getInstance().getByteType());
-        checkBoundsAndAddSuperType(value, (long) Short.MIN_VALUE, (long) Short.MAX_VALUE, KotlinBuiltIns.getInstance().getShortType());
-        supertypes.add(KotlinBuiltIns.getInstance().getLongType());
-    }
+    init {
+        checkBoundsAndAddSuperType(value, Integer.MIN_VALUE.toLong(), Integer.MAX_VALUE.toLong(), KotlinBuiltIns.getInstance().getIntType())
+        checkBoundsAndAddSuperType(value, java.lang.Byte.MIN_VALUE.toLong(), java.lang.Byte.MAX_VALUE.toLong(), KotlinBuiltIns.getInstance().getByteType())
+        checkBoundsAndAddSuperType(value, java.lang.Short.MIN_VALUE.toLong(), java.lang.Short.MAX_VALUE.toLong(), KotlinBuiltIns.getInstance().getShortType())
+        supertypes.add(KotlinBuiltIns.getInstance().getLongType())
+    }// order of types matters
+    // 'getPrimitiveNumberType' returns first of supertypes that is a subtype of expected type
+    // for expected type 'Any' result type 'Int' should be returned
 
-    private void checkBoundsAndAddSuperType(long value, long minValue, long maxValue, JetType kotlinType) {
+    private fun checkBoundsAndAddSuperType(value: Long, minValue: Long, maxValue: Long, kotlinType: JetType) {
         if (value >= minValue && value <= maxValue) {
-            supertypes.add(kotlinType);
+            supertypes.add(kotlinType)
         }
     }
 
-    @NotNull
-    @Override
-    public Collection<JetType> getSupertypes() {
-        return supertypes;
+    override fun getSupertypes(): Collection<JetType> {
+        return supertypes
     }
 
-    @NotNull
-    @Override
-    public List<TypeParameterDescriptor> getParameters() {
-        return Collections.emptyList();
+    override fun getParameters(): List<TypeParameterDescriptor> {
+        return emptyList()
     }
 
-    @Override
-    public boolean isFinal() {
-        return false;
+    override fun isFinal(): Boolean {
+        return false
     }
 
-    @Override
-    public boolean isDenotable() {
-        return false;
+    override fun isDenotable(): Boolean {
+        return false
     }
 
-    @Nullable
-    @Override
-    public ClassifierDescriptor getDeclarationDescriptor() {
-        return null;
+    override fun getDeclarationDescriptor(): ClassifierDescriptor? {
+        return null
     }
 
-    @NotNull
-    @Override
-    public Annotations getAnnotations() {
-        return Annotations.EMPTY;
+    override fun getAnnotations(): Annotations {
+        return Annotations.EMPTY
     }
 
-    public Long getValue() {
-        return value;
+    public fun getValue(): Long {
+        return value
     }
 
-    @Override
-    public String toString() {
-        return "IntegerValueType(" + value + ")";
+    override fun toString(): String {
+        return "IntegerValueType(" + value + ")"
     }
 }

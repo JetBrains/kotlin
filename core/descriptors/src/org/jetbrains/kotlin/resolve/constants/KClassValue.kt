@@ -21,9 +21,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.types.JetType
 
 
-public class KClassValue(type: JetType) : CompileTimeConstant<JetType>(type, true, false, false) {
-    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = value
-    override fun getValue(): JetType = value.getArguments().single().getType()
+public class KClassValue(private val type: JetType) : CompileTimeConstant<JetType>(type, true, false, false) {
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns) = type
+    override val value: JetType
+        get() = type.getArguments().single().getType()
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitKClassValue(this, data)
 }

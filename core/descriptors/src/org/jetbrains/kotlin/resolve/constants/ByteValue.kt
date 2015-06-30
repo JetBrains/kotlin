@@ -14,32 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-public class ByteValue extends IntegerValueConstant<Byte> {
+public class ByteValue(value: Byte, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVaraiableAsConstant: Boolean) : IntegerValueConstant<Byte>(value, canBeUsedInAnnotations, pure, usesVaraiableAsConstant) {
 
-    public ByteValue(byte value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVaraiableAsConstant) {
-        super(value, canBeUsedInAnnotations, pure, usesVaraiableAsConstant);
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return kotlinBuiltIns.getByteType()
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return kotlinBuiltIns.getByteType();
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitByteValue(this, data)
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitByteValue(this, data);
-    }
-
-    @Override
-    public String toString() {
-        return value + ".toByte()";
+    override fun toString(): String {
+        return "$value.toByte()"
     }
 }

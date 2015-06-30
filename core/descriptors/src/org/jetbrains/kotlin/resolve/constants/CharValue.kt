@@ -14,55 +14,44 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.constants;
+package org.jetbrains.kotlin.resolve.constants
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor;
-import org.jetbrains.kotlin.types.JetType;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
+import org.jetbrains.kotlin.types.JetType
 
-public class CharValue extends IntegerValueConstant<Character> {
+public class CharValue(value: Char, canBeUsedInAnnotations: Boolean, pure: Boolean, usesVariableAsConstant: Boolean) : IntegerValueConstant<Char>(value, canBeUsedInAnnotations, pure, usesVariableAsConstant) {
 
-    public CharValue(char value, boolean canBeUsedInAnnotations, boolean pure, boolean usesVariableAsConstant) {
-        super(value, canBeUsedInAnnotations, pure, usesVariableAsConstant);
+    override fun getType(kotlinBuiltIns: KotlinBuiltIns): JetType {
+        return kotlinBuiltIns.getCharType()
     }
 
-    @NotNull
-    @Override
-    public JetType getType(@NotNull KotlinBuiltIns kotlinBuiltIns) {
-        return kotlinBuiltIns.getCharType();
+    override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R {
+        return visitor.visitCharValue(this, data)
     }
 
-    @Override
-    public <R, D> R accept(AnnotationArgumentVisitor<R, D> visitor, D data) {
-        return visitor.visitCharValue(this, data);
-    }
+    override fun toString() = "\\u%04X ('%s')".format(value.toInt(), getPrintablePart(value))
 
-    @Override
-    public String toString() {
-        return String.format("\\u%04X ('%s')", (int) value, getPrintablePart(value));
-    }
-
-    private static String getPrintablePart(char c) {
-        switch (c) {
-            case '\b':
-                return "\\b";
-            case '\t':
-                return "\\t";
-            case '\n':
-                return "\\n";
-            case '\f':
-                return "\\f";
-            case '\r':
-                return "\\r";
-            default:
-                return isPrintableUnicode(c) ? Character.toString(c) : "?";
+    private fun getPrintablePart(c: Char): String {
+        when (c) {
+            '\b' -> return "\\b"
+            '\t' -> return "\\t"
+            '\n' -> return "\\n"
+            //TODO_R: can't escape form feed in Kotlin
+            12.toChar() -> return "\\f"
+            '\r' -> return "\\r"
+            else -> return if (isPrintableUnicode(c)) Character.toString(c) else "?"
         }
     }
 
-    private static boolean isPrintableUnicode(char c) {
-        int t = Character.getType(c);
-        return t != Character.UNASSIGNED && t != Character.LINE_SEPARATOR && t != Character.PARAGRAPH_SEPARATOR &&
-               t != Character.CONTROL && t != Character.FORMAT && t != Character.PRIVATE_USE && t != Character.SURROGATE;
+    private fun isPrintableUnicode(c: Char): Boolean {
+        val t = Character.getType(c).toByte()
+        return t != Character.UNASSIGNED &&
+               t != Character.LINE_SEPARATOR &&
+               t != Character.PARAGRAPH_SEPARATOR &&
+               t != Character.CONTROL &&
+               t != Character.FORMAT &&
+               t != Character.PRIVATE_USE &&
+               t != Character.SURROGATE
     }
 }
