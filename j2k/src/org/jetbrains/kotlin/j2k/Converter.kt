@@ -427,7 +427,7 @@ class Converter private constructor(
 
         if (function == null) return null
 
-        if (function.parameterList.parameters.any { it.defaultValue != null }) {
+        if (function.parameterList.parameters.any { it.defaultValue != null } && !function.modifiers.isPrivate) {
             function.annotations += Annotations(
                     listOf(Annotation(Identifier("jvmOverloads").assignNoPrototype(),
                                       listOf(),

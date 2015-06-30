@@ -3520,6 +3520,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("Private.java")
+        public void testPrivate() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Private.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("Simple.java")
         public void testSimple() throws Exception {
             String fileName = JetTestUtils.navigationMetadata("j2k/testData/fileOrElement/overloads/Simple.java");
