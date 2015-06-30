@@ -66,7 +66,7 @@ class TestClientComponent2() : TestClientComponentInterface {
 
 class ComponentContainerTest {
     Test fun should_throw_when_not_composed() {
-        val container = createContainer("test") {}
+        val container = StorageComponentContainer("test")
         fails {
             container.resolve<TestComponentInterface>()
         }
