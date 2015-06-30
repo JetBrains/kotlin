@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.stubindex.JetSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.JetNamedDeclaration
 import org.jetbrains.kotlin.psi.JetNamedFunction
 import org.jetbrains.kotlin.psi.JetProperty
 import org.jetbrains.kotlin.psi.JetSimpleNameExpression
@@ -57,8 +58,6 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
         replaceWith: ReplaceWith,
         private val text: String
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith) {
-
-    private val LOG = Logger.getInstance(javaClass<DeprecatedSymbolUsageInWholeProjectFix>());
 
     override fun getFamilyName() = "Replace deprecated symbol usage in whole project"
 
@@ -81,73 +80,12 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
     ) {
         val psiElement = element.getReference()!!.resolve()!!
 
-        ProgressManager.getInstance().run(
-                object : Task.Modal(project, "Applying '$text'", true) {
-                    override fun run(indicator: ProgressIndicator) {
-                        val usages = runReadAction {
-                            val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project)
-                            val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(psiElement, false)!!
-                            val processor = CommonProcessors.CollectProcessor<UsageInfo>()
-                            val options = createFindUsagesOptions(psiElement, searchScope, project)
-                            findUsagesHandler.processElementUsages(psiElement, processor, options)
-                            processor.getResults().map { it.getElement() }.filterIsInstance<JetSimpleNameExpression>()
-                        }
-                        replaceUsages(project, usages, replacement)
-                    }
-                })
-    }
-
-    private fun createFindUsagesOptions(element: PsiElement, searchScope: GlobalSearchScope, project: Project): FindUsagesOptions {
-        val options: FindUsagesOptions = when (element) {
-            is JetNamedFunction -> {
-                with(KotlinFunctionFindUsagesOptions(project)) {
-                    isSkipImportStatements = true
-                    isOverridingMethods = false
-                    isImplementingMethods = false
-                    isIncludeInherited = false
-                    isIncludeOverloadUsages = false
-                    this
-                }
-            }
-
-            is JetProperty -> {
-                with(KotlinPropertyFindUsagesOptions(project)) {
-                    isSkipImportStatements = true
-                    this
-                }
-            }
-
-            else -> throw IllegalArgumentException(element.toString()) //TODO?
-        }
-
-        options.searchScope = searchScope
-        options.isSearchForTextOccurrences = false
-        return options
-    }
-
-    private fun replaceUsages(project: Project, usages: Collection<JetSimpleNameExpression>, replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression) {
-        UIUtil.invokeLaterIfNeeded {
-            project.executeCommand(getText()) {
-                runWriteAction {
-                    for (usage in usages) {
-                        try {
-                            if (!usage.isValid()) continue // TODO: nested calls
-                            val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
-                            val resolvedCall = usage.getResolvedCall(bindingContext) ?: continue
-                            if (!resolvedCall.getStatus().isSuccess()) continue
-                            // copy replacement expression because it is modified by performReplacement
-                            DeprecatedSymbolUsageFixBase.performReplacement(usage, bindingContext, resolvedCall, replacement.copy())
-                        }
-                        catch (e: Throwable) {
-                            LOG.error(e)
-                        }
-                    }
-                }
-            }
-        }
+        findAndReplaceUsages(project, psiElement as JetNamedDeclaration, replacement, text, false)
     }
 
     companion object : JetSingleIntentionActionFactory() {
+        private val LOG = Logger.getInstance(javaClass<DeprecatedSymbolUsageInWholeProjectFix>());
+
         //TODO: better rendering needed
         private val RENDERER = DescriptorRenderer.withOptions {
             modifiers = emptySet()
@@ -168,5 +106,85 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
             return DeprecatedSymbolUsageInWholeProjectFix(nameExpression, replacement, "Replace usages of '$descriptorName' in whole project")
         }
 
+        // TODO extract the following code
+        public fun findAndReplaceUsages(
+                project: Project,
+                declaration: JetNamedDeclaration,
+                replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression,
+                text: String,
+                deleteDeclaration: Boolean
+        ) {
+            ProgressManager.getInstance().run(
+                    object : Task.Modal(project, "Applying '$text'", true) {
+                        override fun run(indicator: ProgressIndicator) {
+                            val usages = runReadAction {
+                                val searchScope = JetSourceFilterScope.kotlinSources(GlobalSearchScope.projectScope(project), project) // TODO maybe use scope instead of project scope?
+                                val findUsagesHandler = KotlinFindUsagesHandlerFactory(project).createFindUsagesHandler(declaration, false)!!
+                                val processor = CommonProcessors.CollectProcessor<UsageInfo>()
+                                val options = createFindUsagesOptions(declaration, searchScope, project)
+                                findUsagesHandler.processElementUsages(declaration, processor, options)
+                                processor.getResults().map { it.getElement() }.filterIsInstance<JetSimpleNameExpression>()
+                            }
+                            replaceUsages(project, usages, replacement, text, if (deleteDeclaration) declaration else null)
+                        }
+                    })
+        }
+
+        private fun createFindUsagesOptions(element: PsiElement, searchScope: GlobalSearchScope, project: Project): FindUsagesOptions {
+            val options: FindUsagesOptions = when (element) {
+                is JetNamedFunction -> {
+                    with(KotlinFunctionFindUsagesOptions(project)) {
+                        isSkipImportStatements = true
+                        isOverridingMethods = false
+                        isImplementingMethods = false
+                        isIncludeInherited = false
+                        isIncludeOverloadUsages = false
+                        this
+                    }
+                }
+
+                is JetProperty -> {
+                    with(KotlinPropertyFindUsagesOptions(project)) {
+                        isSkipImportStatements = true
+                        this
+                    }
+                }
+
+                else -> throw IllegalArgumentException(element.toString()) //TODO?
+            }
+
+            options.searchScope = searchScope
+            options.isSearchForTextOccurrences = false
+            return options
+        }
+
+        private fun replaceUsages(
+                project: Project,
+                usages: Collection<JetSimpleNameExpression>,
+                replacement: ReplaceWithAnnotationAnalyzer.ReplacementExpression,
+                commandText: String,
+                declarationToDelete: JetNamedDeclaration?
+        ) {
+            UIUtil.invokeLaterIfNeeded {
+                project.executeCommand(commandText) {
+                    runWriteAction {
+                        for (usage in usages) {
+                            try {
+                                if (!usage.isValid()) continue // TODO: nested calls
+                                val bindingContext = usage.analyze(BodyResolveMode.PARTIAL)
+                                val resolvedCall = usage.getResolvedCall(bindingContext) ?: continue
+                                if (!resolvedCall.getStatus().isSuccess()) continue
+                                // copy replacement expression because it is modified by performReplacement
+                                DeprecatedSymbolUsageFixBase.performReplacement(usage, bindingContext, resolvedCall, replacement.copy())
+                            }
+                            catch (e: Throwable) {
+                                LOG.error(e)
+                            }
+                        }
+                        declarationToDelete?.delete()
+                    }
+                }
+            }
+        }
     }
 }

@@ -16,13 +16,16 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline;
 
-import com.intellij.codeInsight.TargetElementUtilBase;
+import com.intellij.codeInsight.TargetElementUtil;
+import com.intellij.lang.refactoring.InlineActionHandler;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.JetLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.JetWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
@@ -35,6 +38,17 @@ import static com.intellij.codeInsight.TargetElementUtilBase.ELEMENT_NAME_ACCEPT
 import static com.intellij.codeInsight.TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED;
 
 public abstract class AbstractInlineTest extends JetLightCodeInsightFixtureTestCase {
+    @Nullable
+    private static InlineActionHandler findSuitableHandler(@NotNull PsiElement psiElement) {
+        InlineActionHandler[] inlineActionHandlers = Extensions.getExtensions(InlineActionHandler.EP_NAME);
+        for (InlineActionHandler handler : inlineActionHandlers) {
+            if (handler.canInlineElement(psiElement)) {
+                return handler;
+            }
+        }
+        return null;
+    }
+
     protected void doTest(@NotNull String path) throws IOException {
         File afterFile = new File(path + ".after");
 
@@ -43,11 +57,14 @@ public abstract class AbstractInlineTest extends JetLightCodeInsightFixtureTestC
         boolean afterFileExists = afterFile.exists();
 
         final PsiElement targetElement =
-                TargetElementUtilBase.findTargetElement(myFixture.getEditor(), ELEMENT_NAME_ACCEPTED | REFERENCED_ELEMENT_ACCEPTED);
-        final KotlinInlineValHandler handler = new KotlinInlineValHandler();
+                TargetElementUtil.findTargetElement(myFixture.getEditor(), ELEMENT_NAME_ACCEPTED | REFERENCED_ELEMENT_ACCEPTED);
+
+        assertNotNull(targetElement);
+
+        final InlineActionHandler handler = findSuitableHandler(targetElement);
 
         List<String> expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.getFile().getText(), "// ERROR: ");
-        if (handler.canInlineElement(targetElement)) {
+        if (handler != null) {
             try {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     @Override

@@ -416,6 +416,54 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
     }
 
+    @TestMetadata("idea/testData/refactoring/inline/function")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Function extends AbstractInlineTest {
+        public void testAllFilesPresentInFunction() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("idea/testData/refactoring/inline/function/expressionBody")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ExpressionBody extends AbstractInlineTest {
+            public void testAllFilesPresentInExpressionBody() throws Exception {
+                JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/function/expressionBody"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ComplexArgumentNotUsed.kt")
+            public void testComplexArgumentNotUsed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/ComplexArgumentNotUsed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ComplexArgumentUsedTwice.kt")
+            public void testComplexArgumentUsedTwice() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/ComplexArgumentUsedTwice.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Constant.kt")
+            public void testConstant() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/Constant.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("FunctionalParameterPassed.kt")
+            public void testFunctionalParameterPassed() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/FunctionalParameterPassed.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("idea/testData/refactoring/inline/function/expressionBody/Simple.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/refactoring/inline/property")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
