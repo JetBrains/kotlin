@@ -11,7 +11,7 @@ status:
 -hasContradiction: true
 -hasErrorInConstrainingTypes: false
 -hasTypeConstructorMismatch: true
--hasTypeInferenceIncorporationError: false
+-hasTypeInferenceIncorporationError: true
 -hasUnknownParameters: true
 -hasViolatedUpperBound: false
 -isSuccessful: false

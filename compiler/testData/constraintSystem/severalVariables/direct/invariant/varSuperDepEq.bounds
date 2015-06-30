@@ -10,10 +10,10 @@ P := My<T>*
 status:
 -hasCannotCaptureTypesError: false
 -hasConflictingConstraints: false
--hasContradiction: false
+-hasContradiction: true
 -hasErrorInConstrainingTypes: false
 -hasTypeConstructorMismatch: false
--hasTypeInferenceIncorporationError: false
+-hasTypeInferenceIncorporationError: true
 -hasUnknownParameters: true
 -hasViolatedUpperBound: false
 -isSuccessful: false
