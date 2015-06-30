@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.context.CompilationCanceledStatus
-import org.jetbrains.kotlin.context.CompilationCanceledException
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.incremental.IncrementalCacheImpl.RecompilationDecision.DO_NOTHING
@@ -282,8 +282,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.cache.")
                     || className == "org.jetbrains.kotlin.config.Services"
                     || className.startsWith("org.apache.log4j.") // For logging from compiler
-                    || className == "org.jetbrains.kotlin.context.CompilationCanceledStatus"
-                    || className == "org.jetbrains.kotlin.context.CompilationCanceledException"
+                    || className == "org.jetbrains.kotlin.progress.CompilationCanceledStatus"
+                    || className == "org.jetbrains.kotlin.progress.CompilationCanceledException"
                 },
                 compilerServices
         )
