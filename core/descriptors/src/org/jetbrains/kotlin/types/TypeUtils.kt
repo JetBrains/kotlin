@@ -99,18 +99,7 @@ fun JetType.getNestedTypeArguments(): List<TypeProjection> {
 
         result.add(typeProjection)
 
-        val type = typeProjection.getType()
-
-        type.getConstructor().getParameters().zip(type.getArguments()).forEach {
-            val (parameter, argument) = it
-            val newTypeProjection = if (argument.getProjectionKind() == Variance.INVARIANT && parameter.getVariance() != Variance.INVARIANT) {
-                TypeProjectionImpl(parameter.getVariance(), argument.getType())
-            }
-            else {
-                argument
-            }
-            stack.add(newTypeProjection)
-        }
+        typeProjection.getType().getArguments().forEach { stack.add(it) }
     }
     return result
 }

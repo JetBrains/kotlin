@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
@@ -26,13 +24,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_B
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
-import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.typeUtil.getNestedTypeArguments
-import java.util.ArrayList
+import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 
 fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
     val typeVariable = newBound.typeVariable
@@ -74,57 +69,49 @@ private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound)
     }
 }
 
-private fun ConstraintSystemImpl.generateNewBound(
-        bound: Bound,
-        substitution: Bound
-) {
-    // Let's have a variable T, a bound 'T <=> My<R>', and a substitution 'R <=> Type'.
+private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bound) {
+    // Let's have a bound 'T <=> My<R>', and a substitution 'R <=> Type'.
     // Here <=> means lower_bound, upper_bound or exact_bound constraint.
-    // Then a new bound 'T <=> My<Type>' can be generated.
-
-    // A variance of R in 'My<R>' (with respect to both use-site and declaration-site variance).
-    val substitutionVariance: Variance = bound.constrainingType.getNestedTypeArguments().firstOrNull {
-        getMyTypeVariable(it.getType()) === substitution.typeVariable
-    }?.getProjectionKind() ?: return
+    // Then a new bound 'T <=> My<_/in/out Type>' can be generated.
 
     // We don't substitute anything into recursive constraints
     if (substitution.typeVariable == bound.typeVariable) return
 
-    //todo  variance checker
-    val newKind = computeKindOfNewBound(bound.kind, substitutionVariance, substitution.kind) ?: return
+    val substitutedType = when (substitution.kind) {
+        EXACT_BOUND -> substitution.constrainingType
+        UPPER_BOUND -> CapturedType(TypeProjectionImpl(Variance.OUT_VARIANCE, substitution.constrainingType))
+        LOWER_BOUND -> CapturedType(TypeProjectionImpl(Variance.IN_VARIANCE, substitution.constrainingType))
+    }
 
-    val newTypeProjection = TypeProjectionImpl(substitutionVariance, substitution.constrainingType)
+    val newTypeProjection = TypeProjectionImpl(substitutedType)
     val substitutor = TypeSubstitutor.create(mapOf(substitution.typeVariable.getTypeConstructor() to newTypeProjection))
-    val newConstrainingType = substitutor.substitute(bound.constrainingType, INVARIANT)!!
-
-    // We don't generate new recursive constraints
-    val nestedTypeVariables = newConstrainingType.getNestedTypeVariables()
-    if (nestedTypeVariables.contains(bound.typeVariable) || nestedTypeVariables.contains(substitution.typeVariable)) return
+    val type = substitutor.substitute(bound.constrainingType, INVARIANT) ?: return
 
     val position = CompoundConstraintPosition(bound.position, substitution.position)
-    addBound(bound.typeVariable, newConstrainingType, newKind, position)
-}
 
-private fun computeKindOfNewBound(constrainingKind: BoundKind, substitutionVariance: Variance, substitutionKind: BoundKind): BoundKind? {
-    // In examples below: List<out T>, MutableList<T>, Comparator<in T>, the variance of My<T> may be any.
+    fun addNewBound(newConstrainingType: JetType, newBoundKind: BoundKind) {
+        // We don't generate new recursive constraints
+        val nestedTypeVariables = newConstrainingType.getNestedTypeVariables()
+        if (nestedTypeVariables.contains(bound.typeVariable) || nestedTypeVariables.contains(substitution.typeVariable)) return
 
-    // T <=> My<R>, R <=> Type -> T <=> My<Type>
+        addBound(bound.typeVariable, newConstrainingType, newBoundKind, position)
+    }
 
-    // T < My<R>, R = Int -> T < My<Int>
-    if (substitutionKind == EXACT_BOUND) return constrainingKind
-
-    // T < MutableList<R>, R < Number - nothing can be inferred (R might become 'Int' later)
-    // todo T < MutableList<R>, R < Int => T < MutableList<out Int>
-    if (substitutionVariance == INVARIANT) return null
-
-    val kind = if (substitutionVariance == IN_VARIANCE) substitutionKind.reverse() else substitutionKind
-
-    // T = List<R>, R < Int -> T < List<Int>; T = Consumer<R>, R < Int -> T > Consumer<Int>
-    if (constrainingKind == EXACT_BOUND) return kind
-
-    // T < List<R>, R < Int -> T < List<Int>; T < Consumer<R>, R > Int -> T < Consumer<Int>
-    if (constrainingKind == kind) return kind
-
-    // otherwise we can generate no new constraints
-    return null
+    if (substitution.kind == EXACT_BOUND) {
+        addNewBound(type, bound.kind)
+        return
+    }
+    val approximationBounds = approximateCapturedTypes(type)
+    // todo
+    // if we allow non-trivial type projections, we bump into errors like
+    // "Empty intersection for types [MutableCollection<in ('Int'..'Int?')>, MutableCollection<out Any?>, MutableCollection<in Int>]"
+    fun JetType.containsConstrainingTypeWithoutProjection() = this.getNestedTypeArguments().any {
+        it.getType().getConstructor() == substitution.constrainingType.getConstructor() && it.getProjectionKind() == Variance.INVARIANT
+    }
+    if (approximationBounds.upper.containsConstrainingTypeWithoutProjection() && bound.kind != LOWER_BOUND) {
+        addNewBound(approximationBounds.upper, UPPER_BOUND)
+    }
+    if (approximationBounds.lower.containsConstrainingTypeWithoutProjection() && bound.kind != UPPER_BOUND) {
+        addNewBound(approximationBounds.lower, LOWER_BOUND)
+    }
 }
