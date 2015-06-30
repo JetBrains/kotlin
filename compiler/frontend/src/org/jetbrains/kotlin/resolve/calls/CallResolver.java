@@ -21,7 +21,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.JetTokens;
 import org.jetbrains.kotlin.name.Name;

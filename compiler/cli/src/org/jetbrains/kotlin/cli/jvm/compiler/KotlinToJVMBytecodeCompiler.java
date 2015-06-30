@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.Progress;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.ModuleContext;
-import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.idea.MainFunctionDetector;
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
 import org.jetbrains.kotlin.load.kotlin.incremental.cache.IncrementalCache;

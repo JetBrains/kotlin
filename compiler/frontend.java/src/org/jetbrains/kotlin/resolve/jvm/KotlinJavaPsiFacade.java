@@ -39,7 +39,7 @@ import com.intellij.util.messages.MessageBus;
 import kotlin.KotlinPackage;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.name.ClassId;
 
 import java.util.ArrayList;

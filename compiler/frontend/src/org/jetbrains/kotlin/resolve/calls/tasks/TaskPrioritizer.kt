@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.tasks
 
 import com.google.common.collect.Lists
 import com.google.common.collect.Sets
-import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.Call

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
-import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
 import org.jetbrains.kotlin.js.config.Config;

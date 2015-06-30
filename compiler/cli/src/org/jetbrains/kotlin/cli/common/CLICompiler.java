@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentException;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.Services;
-import org.jetbrains.kotlin.context.CompilationCanceledException;
-import org.jetbrains.kotlin.context.CompilationCanceledStatus;
-import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.progress.CompilationCanceledException;
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 
 import java.io.PrintStream;
 import java.util.List;

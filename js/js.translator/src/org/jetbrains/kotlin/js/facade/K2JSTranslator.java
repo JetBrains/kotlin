@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.facade;
 import com.google.dart.compiler.backend.js.ast.JsProgram;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.context.ProgressIndicatorAndCompilationCanceledStatus;
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
