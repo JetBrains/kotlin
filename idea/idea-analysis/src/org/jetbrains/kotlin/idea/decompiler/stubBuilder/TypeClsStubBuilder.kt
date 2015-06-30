@@ -77,7 +77,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
 
         val classId = c.nameResolver.getClassId(type.getConstructor().getId())
-        if (KotlinBuiltIns.isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())) {
+        val shouldBuildAsFunctionType = KotlinBuiltIns.isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
+                                        && type.getArgumentList().none { it.getProjection() == Projection.STAR }
+        if (shouldBuildAsFunctionType) {
             val extension = annotations.any { annotation -> annotation.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extension }
             createFunctionTypeStub(parent, type, extension)
             return
