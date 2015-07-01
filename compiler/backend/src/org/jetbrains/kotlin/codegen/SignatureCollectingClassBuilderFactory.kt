@@ -26,9 +26,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 
 public abstract class SignatureCollectingClassBuilderFactory(
-        private val delegate: ClassBuilderFactory
-
-) : ClassBuilderFactory by delegate {
+        delegate: ClassBuilderFactory
+) : DelegatingClassBuilderFactory(delegate) {
 
     protected abstract fun handleClashingSignatures(data: ConflictingJvmDeclarationsData)
     protected abstract fun onClassDone(classOrigin: JvmDeclarationOrigin,
@@ -37,18 +36,6 @@ public abstract class SignatureCollectingClassBuilderFactory(
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin): SignatureCollectingClassBuilder {
         return SignatureCollectingClassBuilder(origin, delegate.newClassBuilder(origin))
-    }
-
-    public override fun asBytes(builder: ClassBuilder?): ByteArray? {
-        return delegate.asBytes((builder as SignatureCollectingClassBuilder)._delegate)
-    }
-
-    public override fun asText(builder: ClassBuilder?): String? {
-        return delegate.asText((builder as SignatureCollectingClassBuilder)._delegate)
-    }
-
-    public override fun close() {
-        delegate.close()
     }
 
     private inner class SignatureCollectingClassBuilder(

@@ -20,41 +20,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.ClassBuilder;
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory;
 import org.jetbrains.kotlin.codegen.ClassBuilderMode;
+import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 
-public class OptimizationClassBuilderFactory implements ClassBuilderFactory {
-    private final ClassBuilderFactory delegate;
+public class OptimizationClassBuilderFactory extends DelegatingClassBuilderFactory {
     private final boolean disableOptimization;
 
     public OptimizationClassBuilderFactory(ClassBuilderFactory delegate, boolean disableOptimization) {
-        this.delegate = delegate;
+        super(delegate);
         this.disableOptimization = disableOptimization;
     }
 
     @NotNull
     @Override
-    public ClassBuilderMode getClassBuilderMode() {
-        return delegate.getClassBuilderMode();
-    }
-
-    @NotNull
-    @Override
-    public ClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
-        return new OptimizationClassBuilder(delegate.newClassBuilder(origin), disableOptimization);
-    }
-
-    @Override
-    public String asText(ClassBuilder builder) {
-        return delegate.asText(((OptimizationClassBuilder) builder).getDelegate());
-    }
-
-    @Override
-    public byte[] asBytes(ClassBuilder builder) {
-        return delegate.asBytes(((OptimizationClassBuilder) builder).getDelegate());
-    }
-
-    @Override
-    public void close() {
-        delegate.close();
+    public OptimizationClassBuilder newClassBuilder(@NotNull JvmDeclarationOrigin origin) {
+        return new OptimizationClassBuilder(getDelegate().newClassBuilder(origin), disableOptimization);
     }
 }
