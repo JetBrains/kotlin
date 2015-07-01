@@ -2,15 +2,15 @@ import java.lang.Override;
 import java.lang.String;
 
 class A {
-    int <caret>foo(String s) {
-        return 0;
+    String <caret>foo(int x) {
+        return x.length() * 2;
     }
 }
 
 class B extends A {
     @Override
-    int foo(String s) {
-        return super.foo(s);
+    String foo(int x) {
+        return super.foo(x + "_");
     }
 }
 

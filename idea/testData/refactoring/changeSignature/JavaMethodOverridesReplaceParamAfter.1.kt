@@ -1,18 +1,18 @@
 open class X: A() {
     fun foo(x: Int): String? {
-        return super.foo(1)
+        return super.foo(1) + 1
     }
 }
 
 open class Y: B() {
     fun foo(x: Int): String? {
-        return 0
+        return s.length() * 2
     }
 }
 
 open class Z: X() {
     fun foo(x: Int): String? {
-        return 0
+        return s.length()
     }
 }
 

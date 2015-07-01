@@ -26,10 +26,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.OverridingMethodsSearch;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.changeSignature.ChangeInfo;
-import com.intellij.refactoring.changeSignature.ChangeSignatureUsageProcessor;
-import com.intellij.refactoring.changeSignature.JavaChangeInfo;
-import com.intellij.refactoring.changeSignature.OverriderUsageInfo;
+import com.intellij.refactoring.changeSignature.*;
 import com.intellij.refactoring.rename.ResolveSnapshotProvider;
 import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.refactoring.util.MoveRenameUsageInfo;
@@ -373,6 +370,57 @@ public class JetChangeSignatureUsageProcessor implements ChangeSignatureUsagePro
             FunctionDescriptor functionDescriptor = (FunctionDescriptor) ResolvePackage.resolveToDescriptor(function);
 
             result.add(new DeferredJavaMethodOverrideOrSAMUsage(function, functionDescriptor, null));
+
+            findDeferredUsagesOfParameters(changeInfo, result, function, functionDescriptor);
+        }
+    }
+
+    private static void findDeferredUsagesOfParameters(
+            ChangeInfo changeInfo,
+            Set<UsageInfo> result,
+            JetNamedFunction function,
+            FunctionDescriptor functionDescriptor
+    ) {
+        final JetCallableDefinitionUsage<?> functionInfoForParameters =
+                new JetCallableDefinitionUsage<PsiElement>(function, functionDescriptor, null, null);
+        List<JetParameter> oldParameters = PsiUtilPackage.getValueParameters(function);
+        ParameterInfo[] parameters = changeInfo.getNewParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            final int paramIndex = i;
+            ParameterInfo parameterInfo = parameters[paramIndex];
+            if (parameterInfo.getOldIndex() >= 0 && parameterInfo.getOldIndex() < oldParameters.size()) {
+                JetParameter oldParam = oldParameters.get(parameterInfo.getOldIndex());
+                String oldParamName = oldParam.getName();
+
+                if (oldParamName != null && !oldParamName.equals(parameterInfo.getName())) {
+                    for (PsiReference reference : ReferencesSearch.search(oldParam, oldParam.getUseScope())) {
+                        final PsiElement element = reference.getElement();
+
+                        if ((element instanceof JetSimpleNameExpression || element instanceof KDocName) &&
+                            !(element.getParent() instanceof JetValueArgumentName)) // Usages in named arguments of the calls usage will be changed when the function call is changed
+                        {
+                            result.add(
+                                    new JavaMethodDeferredKotlinUsage<JetElement>((JetElement) element) {
+                                        @NotNull
+                                        @Override
+                                        public JavaMethodKotlinUsageWithDelegate<JetElement> resolve(@NotNull JetChangeInfo javaMethodChangeInfo) {
+                                            return new JavaMethodKotlinUsageWithDelegate<JetElement>((JetElement) element,
+                                                                                                     javaMethodChangeInfo) {
+                                                @NotNull
+                                                @Override
+                                                protected JetUsageInfo<JetElement> getDelegateUsage() {
+                                                    return new JetParameterUsage((JetElement) element,
+                                                                                 getJavaMethodChangeInfo().getNewParameters()[paramIndex],
+                                                                                 functionInfoForParameters);
+                                                }
+                                            };
+                                        }
+                                    }
+                            );
+                        }
+                    }
+                }
+            }
         }
     }
 

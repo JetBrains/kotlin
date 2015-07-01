@@ -3,7 +3,7 @@ import java.lang.String;
 
 class A {
     String foo(int x) {
-        return 0;
+        return s.length() * 2;
     }
 }
 
