@@ -5,12 +5,21 @@ import java.util.LinkedHashMap
 import java.util.Properties
 import java.util.SortedMap
 import java.util.TreeMap
+import java.util.concurrent.ConcurrentMap
 
 /**
  * Allows to use the index operator for storing values in a mutable map.
  */
 // this code is JVM-specific, because JS has native set function
 public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
+
+/**
+ * getOrPut is not supported on [ConcurrentMap] since it cannot be implemented correctly in terms of concurrency.
+ * Use [ConcurrentMap.putIfAbsent] instead, or cast this to a [MutableMap] if you want to sacrifice the concurrent-safety.
+ */
+deprecated("Use putIfAbsent instead or cast this map to MutableMap.")
+public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): Nothing =
+    throw UnsupportedOperationException("getOrPut is not supported on ConcurrentMap.")
 
 /**
  * Converts this [Map] to a [SortedMap] so iteration order will be in key order.

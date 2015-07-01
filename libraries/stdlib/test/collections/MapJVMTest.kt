@@ -1,5 +1,6 @@
 package test.collections
 
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.test.*
 import org.junit.Test as test
 
@@ -36,5 +37,16 @@ class MapJVMTest {
         assertEquals(2, prop.size())
         assertEquals("A", prop.getProperty("a", "fail"))
         assertEquals("B", prop.getProperty("b", "fail"))
+    }
+
+    test fun getOrPutFailsOnConcurrentMap() {
+        val map = ConcurrentHashMap<String, Int>()
+
+        fails {
+            map.getOrPut("x") { 1 }
+        }
+        expect(1) {
+            (map as MutableMap<String, Int>).getOrPut("x") { 1 }
+        }
     }
 }
