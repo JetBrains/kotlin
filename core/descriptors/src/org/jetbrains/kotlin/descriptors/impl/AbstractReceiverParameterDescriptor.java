@@ -44,7 +44,7 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
         JetType substitutedType = substitutor.substitute(getType(), Variance.INVARIANT);
         if (substitutedType == null) return null;
 
-        return new ReceiverParameterDescriptorImpl(getContainingDeclaration(), substitutedType, new TransientReceiver(substitutedType));
+        return new ReceiverParameterDescriptorImpl(getContainingDeclaration(), new TransientReceiver(substitutedType));
     }
 
     @Override
@@ -74,6 +74,12 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
     @Override
     public JetType getReturnType() {
         return getType();
+    }
+
+    @NotNull
+    @Override
+    public JetType getType() {
+        return getValue().getType();
     }
 
     @NotNull

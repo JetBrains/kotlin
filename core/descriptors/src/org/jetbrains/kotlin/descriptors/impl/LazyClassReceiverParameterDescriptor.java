@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.types.JetType;
 
 public class LazyClassReceiverParameterDescriptor extends AbstractReceiverParameterDescriptor {
     private final ClassDescriptor descriptor;
@@ -30,12 +29,6 @@ public class LazyClassReceiverParameterDescriptor extends AbstractReceiverParame
     public LazyClassReceiverParameterDescriptor(@NotNull ClassDescriptor descriptor) {
         this.descriptor = descriptor;
         this.receiverValue = new ClassReceiver(descriptor);
-    }
-
-    @NotNull
-    @Override
-    public JetType getType() {
-        return descriptor.getDefaultType();
     }
 
     @NotNull

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
@@ -56,7 +55,7 @@ public class LazyScriptDescriptor(
         resolveSession.getTrace().record(BindingContext.SCRIPT, jetScript, this)
     }
 
-    private val implicitReceiver = ReceiverParameterDescriptorImpl(this, KotlinBuiltIns.getInstance().getAnyType(), ScriptReceiver(this))
+    private val implicitReceiver = ReceiverParameterDescriptorImpl(this, ScriptReceiver(this))
 
     override fun getThisAsReceiverParameter() = implicitReceiver
 
@@ -81,7 +80,7 @@ public class LazyScriptDescriptor(
     override fun getScriptCodeDescriptor() = scriptCodeDescriptor()
 
     override fun getScopeForBodyResolution(): JetScope {
-        val parametersScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.DO_NOTHING, "Parameters of " + this, implicitReceiver)
+        val parametersScope = WritableScopeImpl(JetScope.Empty, this, RedeclarationHandler.DO_NOTHING, "Parameters of $this", implicitReceiver)
         for (valueParameterDescriptor in getScriptCodeDescriptor().getValueParameters()) {
             parametersScope.addVariableDescriptor(valueParameterDescriptor)
         }

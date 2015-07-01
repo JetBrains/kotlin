@@ -571,7 +571,6 @@ public class JetTypeCheckerTest extends JetLiteFixture {
             public List<ReceiverParameterDescriptor> getImplicitReceiversHierarchy() {
                 return Lists.<ReceiverParameterDescriptor>newArrayList(new ReceiverParameterDescriptorImpl(
                         getContainingDeclaration(),
-                        thisType,
                         new ExpressionReceiver(JetPsiFactory(getProject()).createExpression(expression), thisType)
                 ));
             }
