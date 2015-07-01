@@ -92,6 +92,9 @@ public class JetChangeSignatureData(
         return JetParameterInfo(callableDescriptor = baseDescriptor, name = receiverName, type = receiverType)
     }
 
+    override val original: JetMethodDescriptor
+        get() = this
+
     override val primaryCallables: Collection<JetCallableDefinitionUsage<PsiElement>> by Delegates.lazy {
         descriptorsForSignatureChange.map {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.getProject(), it)

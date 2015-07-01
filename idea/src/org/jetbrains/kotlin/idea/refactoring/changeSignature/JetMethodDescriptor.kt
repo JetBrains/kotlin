@@ -41,6 +41,8 @@ public trait JetMethodDescriptor : MethodDescriptor<JetParameterInfo, Visibility
         }
     }
 
+    val original: JetMethodDescriptor
+
     val baseDeclaration: PsiElement
     val baseDescriptor: CallableDescriptor
 

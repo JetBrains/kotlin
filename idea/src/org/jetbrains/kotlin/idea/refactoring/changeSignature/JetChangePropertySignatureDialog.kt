@@ -141,22 +141,22 @@ public class JetChangePropertySignatureDialog(
     }
 
     override fun doAction() {
-        val descriptor = (methodDescriptor as? JetMutableMethodDescriptor)?.original ?: methodDescriptor
+        val originalDescriptor = methodDescriptor.original
 
         val receiver = if (receiverTypeCheckBox?.isSelected() ?: false) {
-            descriptor.receiver ?: JetParameterInfo(callableDescriptor = descriptor.baseDescriptor,
-                                                    name = "receiver",
-                                                    defaultValueForCall = getDefaultReceiverValue())
+            originalDescriptor.receiver ?: JetParameterInfo(callableDescriptor = originalDescriptor.baseDescriptor,
+                                                            name = "receiver",
+                                                            defaultValueForCall = getDefaultReceiverValue())
         } else null
         receiver?.currentTypeText = receiverTypeField.getText()
-        val changeInfo = JetChangeInfo(descriptor,
+        val changeInfo = JetChangeInfo(originalDescriptor,
                                        nameField.getText(),
                                        null,
                                        returnTypeField.getText(),
                                        visibilityCombo.getSelectedItem() as Visibility,
                                        emptyList(),
                                        receiver,
-                                       descriptor.getMethod())
+                                       originalDescriptor.getMethod())
 
         invokeRefactoring(JetChangeSignatureProcessor(myProject, changeInfo, commandName ?: getTitle()))
     }
@@ -167,7 +167,7 @@ public class JetChangePropertySignatureDialog(
                 commandName: String,
                 descriptor: JetMethodDescriptor
         ): BaseRefactoringProcessor {
-            val originalDescriptor = (descriptor as? JetMutableMethodDescriptor)?.original ?: descriptor
+            val originalDescriptor = descriptor.original
             val changeInfo = JetChangeInfo(methodDescriptor = originalDescriptor, context = originalDescriptor.getMethod())
             changeInfo.setNewName(descriptor.getName())
             changeInfo.receiverParameterInfo = descriptor.receiver
