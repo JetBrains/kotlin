@@ -30,14 +30,14 @@ open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty, KProperty2<D, 
 
     override val name: String get() = descriptor.getName().asString()
 
-    override val getter: Method get() = super<DescriptorBasedProperty>.getter!!
+    override val javaGetter: Method get() = super.javaGetter!!
 
-    override val field: Field? get() = null
+    override val javaField: Field? get() = null
 
     override fun get(receiver1: D, receiver2: E): R {
         try {
             @suppress("UNCHECKED_CAST")
-            return getter.invoke(receiver1, receiver2) as R
+            return javaGetter.invoke(receiver1, receiver2) as R
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
@@ -51,11 +51,11 @@ class KMutableProperty2Impl<D, E, R> : KProperty2Impl<D, E, R>, KMutableProperty
 
     constructor(container: KClassImpl<D>, descriptor: PropertyDescriptor) : super(container, descriptor)
 
-    override val setter: Method get() = super<KProperty2Impl>.setter!!
+    override val javaSetter: Method get() = super.javaSetter!!
 
     override fun set(receiver1: D, receiver2: E, value: R) {
         try {
-            setter.invoke(receiver1, receiver2, value)
+            javaSetter.invoke(receiver1, receiver2, value)
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)

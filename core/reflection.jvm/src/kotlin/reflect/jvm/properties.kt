@@ -35,12 +35,12 @@ public var <R> KProperty<R>.accessible: Boolean
         get() {
             return when (this) {
                 is KMutableProperty1Impl<*, R> ->
-                        field?.isAccessible() ?: true &&
-                        getter?.isAccessible() ?: true &&
-                        setter?.isAccessible() ?: true
+                        javaField?.isAccessible() ?: true &&
+                        javaGetter?.isAccessible() ?: true &&
+                        javaSetter?.isAccessible() ?: true
                 is KProperty1Impl<*, R> ->
-                        field?.isAccessible() ?: true &&
-                        getter?.isAccessible() ?: true
+                        javaField?.isAccessible() ?: true &&
+                        javaGetter?.isAccessible() ?: true
                 else -> {
                     // Non-member properties always have public visibility on JVM, thus accessible has no effect on them
                     true
@@ -50,13 +50,13 @@ public var <R> KProperty<R>.accessible: Boolean
         set(value) {
             when (this) {
                 is KMutableProperty1Impl<*, R> -> {
-                    field?.setAccessible(value)
-                    getter?.setAccessible(value)
-                    setter?.setAccessible(value)
+                    javaField?.setAccessible(value)
+                    javaGetter?.setAccessible(value)
+                    javaSetter?.setAccessible(value)
                 }
                 is KProperty1Impl<*, R> -> {
-                    field?.setAccessible(value)
-                    getter?.setAccessible(value)
+                    javaField?.setAccessible(value)
+                    javaGetter?.setAccessible(value)
                 }
             }
         }

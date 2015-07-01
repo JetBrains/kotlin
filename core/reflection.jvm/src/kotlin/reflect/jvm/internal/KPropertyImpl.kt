@@ -20,12 +20,12 @@ import java.lang.reflect.*
 import kotlin.reflect.*
 
 interface KPropertyImpl<out R> : KProperty<R>, KCallableImpl<R> {
-    val field: Field?
+    val javaField: Field?
 
-    val getter: Method?
+    val javaGetter: Method?
 }
 
 
 interface KMutablePropertyImpl<R> : KMutableProperty<R>, KPropertyImpl<R> {
-    val setter: Method?
+    val javaSetter: Method?
 }

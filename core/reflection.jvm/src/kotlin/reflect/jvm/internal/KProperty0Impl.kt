@@ -28,12 +28,12 @@ open class KProperty0Impl<out R> : DescriptorBasedProperty, KProperty0<R>, KProp
 
     override val name: String get() = descriptor.getName().asString()
 
-    override val getter: Method get() = super<DescriptorBasedProperty>.getter!!
+    override val javaGetter: Method get() = super.javaGetter!!
 
     override fun get(): R {
         try {
             @suppress("UNCHECKED_CAST")
-            return getter.invoke(null) as R
+            return javaGetter.invoke(null) as R
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)
@@ -44,11 +44,11 @@ open class KProperty0Impl<out R> : DescriptorBasedProperty, KProperty0<R>, KProp
 open class KMutableProperty0Impl<R> : KProperty0Impl<R>, KMutableProperty0<R>, KMutablePropertyImpl<R> {
     constructor(container: KCallableContainerImpl, name: String, signature: String) : super(container, name, signature)
 
-    override val setter: Method get() = super<KProperty0Impl>.setter!!
+    override val javaSetter: Method get() = super.javaSetter!!
 
     override fun set(value: R) {
         try {
-            setter.invoke(null, value)
+            javaSetter.invoke(null, value)
         }
         catch (e: IllegalAccessException) {
             throw IllegalPropertyAccessException(e)

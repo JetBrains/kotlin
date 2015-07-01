@@ -35,8 +35,8 @@ open class KProperty1Impl<T, out R> : DescriptorBasedProperty, KProperty1<T, R>,
     @suppress("UNCHECKED_CAST")
     override fun get(receiver: T): R {
         try {
-            val getter = getter ?:
-                         return field!!.get(receiver) as R
+            val getter = javaGetter ?:
+                         return javaField!!.get(receiver) as R
 
             if (Modifier.isStatic(getter.getModifiers())) {
                 // Workaround the case of platformStatic property in object, getter of which doesn't take a receiver
@@ -63,8 +63,8 @@ open class KMutableProperty1Impl<T, R> : KProperty1Impl<T, R>, KMutableProperty1
 
     override fun set(receiver: T, value: R) {
         try {
-            val setter = setter ?:
-                         return field!!.set(receiver, value)
+            val setter = javaSetter ?:
+                         return javaField!!.set(receiver, value)
 
             if (Modifier.isStatic(setter.getModifiers())) {
                 // Workaround the case of platformStatic property in object, setter of which doesn't take a receiver

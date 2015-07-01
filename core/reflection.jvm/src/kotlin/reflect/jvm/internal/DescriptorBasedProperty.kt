@@ -66,21 +66,21 @@ abstract class DescriptorBasedProperty protected constructor(
         null
     }
 
-    open val field: Field? by ReflectProperties.lazySoft {
+    open val javaField: Field? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null) container.jClass.getField(name)
         else if (!proto.signature.hasField()) null
         else container.findFieldBySignature(proto.proto, proto.signature.getField(), proto.nameResolver)
     }
 
-    open val getter: Method? by ReflectProperties.lazySoft {
+    open val javaGetter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null || !proto.signature.hasGetter()) null
         else container.findMethodBySignature(proto.signature.getGetter(), proto.nameResolver,
                                              descriptor.getGetter()?.getVisibility()?.let { Visibilities.isPrivate(it) } ?: false)
     }
 
-    open val setter: Method? by ReflectProperties.lazySoft {
+    open val javaSetter: Method? by ReflectProperties.lazySoft {
         val proto = protoData
         if (proto == null || !proto.signature.hasSetter()) null
         else container.findMethodBySignature(proto.signature.getSetter(), proto.nameResolver,
