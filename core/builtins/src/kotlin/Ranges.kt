@@ -36,7 +36,7 @@ public class ByteRange(override val start: Byte, override val end: Byte) : Range
         start == other.start && end == other.end)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * start.toInt() + end)
+        if (isEmpty()) -1 else (31 * start.toInt() + end.toInt())
 
     companion object {
         /** An empty range of values of type Byte. */
@@ -62,7 +62,7 @@ public class CharRange(override val start: Char, override val end: Char) : Range
         start == other.start && end == other.end)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * start.toInt() + end)
+        if (isEmpty()) -1 else (31 * start.toInt() + end.toInt())
 
     companion object {
         /** An empty range of values of type Char. */
@@ -88,7 +88,7 @@ public class ShortRange(override val start: Short, override val end: Short) : Ra
         start == other.start && end == other.end)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * start.toInt() + end)
+        if (isEmpty()) -1 else (31 * start.toInt() + end.toInt())
 
     companion object {
         /** An empty range of values of type Short. */

@@ -46,7 +46,7 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
             val hashCode = when (kind) {
                 BYTE, CHAR, SHORT -> "=\n" +
-                "        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end) + increment)"
+                "        if (isEmpty()) -1 else (31 * (31 * start.toInt() + end.toInt()) + increment)"
                 INT -> "=\n" +
                 "        if (isEmpty()) -1 else (31 * (31 * start + end) + increment)"
                 LONG -> "=\n" +
