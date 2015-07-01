@@ -26,19 +26,17 @@ public interface CompilationCanceledStatus {
     fun checkCanceled(): Unit
 }
 
-public class ProgressIndicatorAndCompilationCanceledStatus {
-    companion object {
-        private var canceledStatus: CompilationCanceledStatus? = null
+public object ProgressIndicatorAndCompilationCanceledStatus {
+    private var canceledStatus: CompilationCanceledStatus? = null
 
-        platformStatic
-        synchronized public fun setCompilationCanceledStatus(newCanceledStatus: CompilationCanceledStatus?): Unit {
-            canceledStatus = newCanceledStatus
-        }
+    platformStatic
+    synchronized public fun setCompilationCanceledStatus(newCanceledStatus: CompilationCanceledStatus?): Unit {
+        canceledStatus = newCanceledStatus
+    }
 
-        platformStatic
-        public fun checkCanceled(): Unit {
-            ProgressIndicatorProvider.checkCanceled()
-            canceledStatus?.checkCanceled()
-        }
+    platformStatic
+    public fun checkCanceled(): Unit {
+        ProgressIndicatorProvider.checkCanceled()
+        canceledStatus?.checkCanceled()
     }
 }
