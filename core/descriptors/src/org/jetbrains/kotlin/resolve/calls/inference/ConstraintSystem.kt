@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.types.Variance
 
 public trait ConstraintSystem {
 
@@ -30,7 +30,8 @@ public trait ConstraintSystem {
      */
     public fun registerTypeVariables(
             typeVariables: Collection<TypeParameterDescriptor>,
-            typeVariableVariance: (TypeParameterDescriptor) -> Variance,
+            variance: (TypeParameterDescriptor) -> Variance,
+            mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor,
             external: Boolean = false
     )
 

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
@@ -62,6 +63,7 @@ class GenericCandidateResolver(
         val candidate = candidateCall.getCandidateDescriptor()
 
         val constraintSystem = ConstraintSystemImpl()
+        candidateCall.setConstraintSystem(constraintSystem)
 
         // If the call is recursive, e.g.
         //   fun foo<T>(t : T) : T = foo(t)
@@ -71,16 +73,15 @@ class GenericCandidateResolver(
         // Thus, we replace the parameters of our descriptor with fresh objects (perform alpha-conversion)
         val candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidate)
 
-        val backConversion = candidateWithFreshVariables.getTypeParameters().zip(candidate.getTypeParameters()).toMap()
+        val conversionToOriginal = candidateWithFreshVariables.getTypeParameters().zip(candidate.getTypeParameters()).toMap()
+        constraintSystem.registerTypeVariables(candidateWithFreshVariables.getTypeParameters(), { Variance.INVARIANT }, { conversionToOriginal[it]!! })
 
-        constraintSystem.registerTypeVariables(candidateWithFreshVariables.getTypeParameters(), { Variance.INVARIANT })
-
-        val substituteDontCare = makeConstantSubstitutor(candidateWithFreshVariables.getTypeParameters(), DONT_CARE)
+        val substituteDontCare = makeConstantSubstitutor(candidate.getTypeParameters(), DONT_CARE)
 
         // Value parameters
         for (entry in candidateCall.getValueArguments().entrySet()) {
             val resolvedValueArgument = entry.getValue()
-            val valueParameterDescriptor = candidateWithFreshVariables.getValueParameters().get(entry.getKey().getIndex())
+            val valueParameterDescriptor = candidate.getValueParameters().get(entry.getKey().getIndex())
 
 
             for (valueArgument in resolvedValueArgument.getArguments()) {
@@ -97,7 +98,7 @@ class GenericCandidateResolver(
         // Receiver
         // Error is already reported if something is missing
         val receiverArgument = candidateCall.getExtensionReceiver()
-        val receiverParameter = candidateWithFreshVariables.getExtensionReceiverParameter()
+        val receiverParameter = candidate.getExtensionReceiverParameter()
         if (receiverArgument.exists() && receiverParameter != null) {
             var receiverType: JetType? = if (context.candidateCall.isSafeCall())
                 TypeUtils.makeNotNullable(receiverArgument.getType())
@@ -108,11 +109,6 @@ class GenericCandidateResolver(
             }
             constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), RECEIVER_POSITION.position())
         }
-
-        // Restore type variables before alpha-conversion
-        val constraintSystemWithRightTypeParameters = constraintSystem.substituteTypeVariables { backConversion.get(it) }
-        candidateCall.setConstraintSystem(constraintSystemWithRightTypeParameters)
-
 
         // Solution
         val hasContradiction = constraintSystem.getStatus().hasContradiction()
@@ -168,7 +164,7 @@ class GenericCandidateResolver(
         val returnType = candidateDescriptor.getReturnType() ?: return false
 
         val nestedTypeVariables = with (argumentConstraintSystem) {
-            returnType.getNestedTypeVariables()
+            returnType.getNestedTypeVariables(original = true)
         }
         // we add an additional type variable only if no information is inferred for it.
         // otherwise we add currently inferred return type as before
@@ -178,7 +174,7 @@ class GenericCandidateResolver(
         val conversion = candidateDescriptor.getTypeParameters().zip(candidateWithFreshVariables.getTypeParameters()).toMap()
 
         val freshVariables = nestedTypeVariables.map { conversion[it] }.filterNotNull()
-        constraintSystem.registerTypeVariables(freshVariables, { Variance.INVARIANT }, external = true)
+        constraintSystem.registerTypeVariables(freshVariables, { Variance.INVARIANT }, { it }, external = true)
 
         constraintSystem.addSubtypeConstraint(candidateWithFreshVariables.getReturnType(), effectiveExpectedType, constraintPosition)
         return true

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_B
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.equalsOrContains
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -70,6 +72,12 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     private val initialConstraints = ArrayList<Constraint>()
 
+    private val originalToVariablesSubstitutor: TypeSubstitutor by lazy {
+        createTypeSubstitutor { originalToVariables[it] }
+    }
+    private val originalToVariables = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
+    private val variablesToOriginal = LinkedHashMap<TypeParameterDescriptor, TypeParameterDescriptor>()
+
     private val constraintSystemStatus = object : ConstraintSystemStatus {
         // for debug ConstraintsUtil.getDebugMessageForStatus might be used
 
@@ -101,7 +109,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     private fun getParameterToInferredValueMap(
             typeParameterBounds: Map<TypeParameterDescriptor, TypeBoundsImpl>,
-            getDefaultTypeProjection: (TypeParameterDescriptor) -> TypeProjection
+            getDefaultTypeProjection: (TypeParameterDescriptor) -> TypeProjection,
+            substituteOriginal: Boolean
     ): Map<TypeParameterDescriptor, TypeProjection> {
         val substitutionContext = HashMap<TypeParameterDescriptor, TypeProjection>()
         for ((typeParameter, typeBounds) in typeParameterBounds) {
@@ -113,34 +122,34 @@ public class ConstraintSystemImpl : ConstraintSystem {
             else {
                 typeProjection = getDefaultTypeProjection(typeParameter)
             }
-            substitutionContext.put(typeParameter, typeProjection)
+            substitutionContext.put(if (substituteOriginal) variablesToOriginal[typeParameter]!! else typeParameter, typeProjection)
         }
         return substitutionContext
     }
 
-    private fun replaceUninferredBy(getDefaultValue: (TypeParameterDescriptor) -> TypeProjection): TypeSubstitutor {
-        return TypeUtils.makeSubstitutorForTypeParametersMap(getParameterToInferredValueMap(allTypeParameterBounds, getDefaultValue))
-    }
-
-    private fun replaceUninferredBy(defaultValue: JetType): TypeSubstitutor {
-        return replaceUninferredBy { TypeProjectionImpl(defaultValue) }
-    }
-
-    private fun replaceUninferredBySpecialErrorType(): TypeSubstitutor {
-        return replaceUninferredBy { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
+    private fun replaceUninferredBy(
+            getDefaultValue: (TypeParameterDescriptor) -> TypeProjection,
+            substituteOriginal: Boolean
+    ): TypeSubstitutor {
+        val parameterToInferredValueMap = getParameterToInferredValueMap(allTypeParameterBounds, getDefaultValue, substituteOriginal)
+        return TypeUtils.makeSubstitutorForTypeParametersMap(parameterToInferredValueMap)
     }
 
     override fun getStatus(): ConstraintSystemStatus = constraintSystemStatus
 
     override fun registerTypeVariables(
             typeVariables: Collection<TypeParameterDescriptor>,
-            typeVariableVariance: (TypeParameterDescriptor) -> Variance,
+            variance: (TypeParameterDescriptor) -> Variance,
+            mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor,
             external: Boolean
     ) {
         if (external) externalTypeParameters.addAll(typeVariables)
 
         for (typeVariable in typeVariables) {
-            allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable, typeVariableVariance(typeVariable)))
+            allTypeParameterBounds.put(typeVariable, TypeBoundsImpl(typeVariable, variance(typeVariable)))
+            val original = mapToOriginal(typeVariable)
+            originalToVariables[original] = typeVariable
+            variablesToOriginal[typeVariable] = original
         }
         for ((typeVariable, typeBounds) in allTypeParameterBounds) {
             for (declaredUpperBound in typeVariable.getUpperBounds()) {
@@ -160,11 +169,10 @@ public class ConstraintSystemImpl : ConstraintSystem {
         type -> type.getConstructor().getDeclarationDescriptor() in getAllTypeVariables()
     }
 
-    fun JetType.getNestedTypeVariables(): List<TypeParameterDescriptor> {
+    fun JetType.getNestedTypeVariables(original: Boolean = false): List<TypeParameterDescriptor> {
         return getNestedTypeArguments().map { typeProjection ->
             typeProjection.getType().getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
-
-        }.filterNotNull().filter { it in getAllTypeVariables() }
+        }.filterNotNull().filter { if (original) it in originalToVariables.keySet() else it in getAllTypeVariables() }
     }
 
     public fun copy(): ConstraintSystem = createNewConstraintSystemFromThis({ it }, { true })
@@ -216,17 +224,21 @@ public class ConstraintSystemImpl : ConstraintSystem {
             val newSuperType = typeSubstitutor.substitute(it.superType, Variance.INVARIANT)
             if (newSubType != null && newSuperType != null) Constraint(it.kind, newSubType, newSuperType, it.position) else null
         })
+        newSystem.originalToVariables.putAll(originalToVariables)
+        newSystem.variablesToOriginal.putAll(variablesToOriginal)
         return newSystem
     }
 
     override fun addSupertypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition) {
         if (constrainingType != null && TypeUtils.noExpectedType(constrainingType)) return
 
-        addConstraint(SUB_TYPE, subjectType, constrainingType, constraintPosition)
+        val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
+        addConstraint(SUB_TYPE, newSubjectType, constrainingType, constraintPosition)
     }
 
     override fun addSubtypeConstraint(constrainingType: JetType?, subjectType: JetType, constraintPosition: ConstraintPosition) {
-        addConstraint(SUB_TYPE, constrainingType, subjectType, constraintPosition)
+        val newSubjectType = originalToVariablesSubstitutor.substitute(subjectType, Variance.INVARIANT)
+        addConstraint(SUB_TYPE, constrainingType, newSubjectType, constraintPosition)
     }
 
     fun addConstraint(constraintKind: ConstraintKind, subType: JetType?, superType: JetType?, constraintPosition: ConstraintPosition) {
@@ -429,22 +441,21 @@ public class ConstraintSystemImpl : ConstraintSystem {
         addBound(typeVariable, capturedType, EXACT_BOUND, constraintPosition)
     }
 
-    override fun getTypeVariables() = typeParameterBounds.keySet()
+    override fun getTypeVariables() = originalToVariables.keySet()
 
     fun getAllTypeVariables() = allTypeParameterBounds.keySet()
 
     fun getBoundsUsedIn(typeVariable: TypeParameterDescriptor): List<Bound> = usedInBounds[typeVariable] ?: emptyList()
 
     override fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBoundsImpl {
+        val variableForOriginal = originalToVariables[typeVariable]
+        if (variableForOriginal != null && variableForOriginal != typeVariable) {
+            return getTypeBounds(variableForOriginal)
+        }
         if (!isMyTypeVariable(typeVariable)) {
             throw IllegalArgumentException("TypeParameterDescriptor is not a type variable for constraint system: $typeVariable")
         }
         return allTypeParameterBounds[typeVariable]!!
-    }
-
-    fun getTypeBounds(parameterType: JetType): TypeBoundsImpl {
-        assert (isMyTypeVariable(parameterType)) { "Type is not a type variable for constraint system: $parameterType" }
-        return getTypeBounds(getMyTypeVariable(parameterType)!!)
     }
 
     fun isMyTypeVariable(typeVariable: TypeParameterDescriptor) = allTypeParameterBounds.contains(typeVariable)
@@ -456,9 +467,14 @@ public class ConstraintSystemImpl : ConstraintSystem {
         return if (typeParameterDescriptor != null && isMyTypeVariable(typeParameterDescriptor)) typeParameterDescriptor else null
     }
 
-    override fun getResultingSubstitutor() = replaceUninferredBySpecialErrorType().setApproximateCapturedTypes()
+    override fun getResultingSubstitutor() =
+            getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
 
-    override fun getCurrentSubstitutor() = replaceUninferredBy(TypeUtils.DONT_CARE).setApproximateCapturedTypes()
+    override fun getCurrentSubstitutor() =
+            getSubstitutor(substituteOriginal = true) { TypeProjectionImpl(TypeUtils.DONT_CARE) }
+
+    private fun getSubstitutor(substituteOriginal: Boolean, getDefaultValue: (TypeParameterDescriptor) -> TypeProjection) =
+            replaceUninferredBy(getDefaultValue, substituteOriginal).setApproximateCapturedTypes()
 
     private fun storeInitialConstraint(constraintKind: ConstraintKind, subType: JetType, superType: JetType, position: ConstraintPosition) {
         if (position is CompoundConstraintPosition) return
@@ -467,7 +483,8 @@ public class ConstraintSystemImpl : ConstraintSystem {
 
     private fun satisfyInitialConstraints(): Boolean {
         fun JetType.substituteAndMakeNotNullable(): JetType? {
-            val result = getResultingSubstitutor().substitute(this, Variance.INVARIANT) ?: return null
+            val substitutor = getSubstitutor(substituteOriginal = false) { TypeProjectionImpl(ErrorUtils.createUninferredParameterType(it)) }
+            val result = substitutor.substitute(this, Variance.INVARIANT) ?: return null
             return TypeUtils.makeNotNullable(result)
         }
         return initialConstraints.all {
@@ -538,5 +555,12 @@ private class SubstitutionWithCapturedTypeApproximation(val substitution: TypeSu
 }
 
 public fun ConstraintSystemImpl.registerTypeVariables(typeVariables: Map<TypeParameterDescriptor, Variance>) {
-    registerTypeVariables(typeVariables.keySet(), { typeVariables[it]!! })
+    registerTypeVariables(typeVariables.keySet(), { typeVariables[it]!! }, { it })
+}
+
+public fun ConstraintSystemImpl.registerTypeVariables(
+        typeVariables: Collection<TypeParameterDescriptor>,
+        variance: (TypeParameterDescriptor) -> Variance
+) {
+    registerTypeVariables(typeVariables, variance, { it })
 }
