@@ -26,26 +26,13 @@ import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
 public abstract class ClassNameCollectionClassBuilderFactory(
-        private val delegate: ClassBuilderFactory
-
-) : ClassBuilderFactory by delegate {
+        delegate: ClassBuilderFactory
+) : DelegatingClassBuilderFactory(delegate) {
 
     protected abstract fun handleClashingNames(internalName: String, origin: JvmDeclarationOrigin)
 
     override fun newClassBuilder(origin: JvmDeclarationOrigin): ClassNameCollectionClassBuilder {
         return ClassNameCollectionClassBuilder(origin, delegate.newClassBuilder(origin))
-    }
-
-    public override fun asBytes(builder: ClassBuilder?): ByteArray? {
-        return delegate.asBytes((builder as ClassNameCollectionClassBuilder)._delegate)
-    }
-
-    public override fun asText(builder: ClassBuilder?): String? {
-        return delegate.asText((builder as ClassNameCollectionClassBuilder)._delegate)
-    }
-
-    public override fun close() {
-        delegate.close()
     }
 
     private inner class ClassNameCollectionClassBuilder(
