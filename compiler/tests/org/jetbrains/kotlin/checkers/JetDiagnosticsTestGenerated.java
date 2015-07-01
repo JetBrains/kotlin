@@ -6696,6 +6696,63 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/inference/commonSystem")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CommonSystem extends AbstractJetDiagnosticsTest {
+                public void testAllFilesPresentInCommonSystem() throws Exception {
+                    JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/inference/commonSystem"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("boundOnNullableVariable.kt")
+                public void testBoundOnNullableVariable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/commonSystem/boundOnNullableVariable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("dontCaptureTypeVariable.kt")
+                public void testDontCaptureTypeVariable() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/commonSystem/dontCaptureTypeVariable.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("fixVariablesInRightOrder.kt")
+                public void testFixVariablesInRightOrder() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/commonSystem/fixVariablesInRightOrder.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("genericCandidateInGenericClass.kt")
+                public void testGenericCandidateInGenericClass() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/commonSystem/genericCandidateInGenericClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inferenceWithUpperBoundsInLambda.kt")
+                public void testInferenceWithUpperBoundsInLambda() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/commonSystem/inferenceWithUpperBoundsInLambda.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt3372toCollection.kt")
+                public void testKt3372toCollection() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/commonSystem/kt3372toCollection.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nestedLambdas.kt")
+                public void testNestedLambdas() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/commonSystem/nestedLambdas.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("theSameFunctionInArgs.kt")
+                public void testTheSameFunctionInArgs() throws Exception {
+                    String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/commonSystem/theSameFunctionInArgs.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/inference/constraints")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -11085,9 +11142,27 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ambiguityWithTwoCorrespondingFunctionTypes.kt")
+            public void testAmbiguityWithTwoCorrespondingFunctionTypes() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/ambiguityWithTwoCorrespondingFunctionTypes.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("incompleteConstructorInvocation.kt")
             public void testIncompleteConstructorInvocation() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/incompleteConstructorInvocation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inferenceInLinkedLambdas.kt")
+            public void testInferenceInLinkedLambdas() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/inferenceInLinkedLambdas.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inferenceInLinkedLambdasDependentOnExpectedType.kt")
+            public void testInferenceInLinkedLambdasDependentOnExpectedType() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/inferenceInLinkedLambdasDependentOnExpectedType.kt");
                 doTest(fileName);
             }
 
