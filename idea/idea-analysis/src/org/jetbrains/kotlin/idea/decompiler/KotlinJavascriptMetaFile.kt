@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledTextFromJ
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
-public class KotlinJavascriptMetaFile(provider: FileViewProvider) : KotlinClsFileBase(provider) {
+public class KotlinJavascriptMetaFile(provider: KotlinClassFileViewProvider) : KotlinClsFileBase(provider) {
     protected override val decompiledText: LockedClearableLazyValue<DecompiledText> = LockedClearableLazyValue(Any()) {
         buildDecompiledTextFromJsMetadata(getVirtualFile())
     }

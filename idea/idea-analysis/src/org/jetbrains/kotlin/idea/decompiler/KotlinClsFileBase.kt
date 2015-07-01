@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.JetDeclaration
 import org.jetbrains.kotlin.psi.JetFile
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
-public abstract class KotlinClsFileBase(provider: FileViewProvider) : JetFile(provider, true) {
+public abstract class KotlinClsFileBase(val provider: KotlinClassFileViewProvider) : JetFile(provider, true) {
     protected abstract val decompiledText: LockedClearableLazyValue<DecompiledText>
 
     public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): JetDeclaration? {
@@ -67,6 +67,7 @@ public abstract class KotlinClsFileBase(provider: FileViewProvider) : JetFile(pr
     override fun onContentReload() {
         super.onContentReload()
 
+        provider.content.drop()
         decompiledText.drop()
     }
 
