@@ -358,11 +358,11 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
     }
 
     private <T extends PsiElement> void findUsagesAndCheckResults(
-            String mainFileText,
-            String prefix,
-            String rootPath,
-            T caretElement,
-            FindUsagesOptions options
+            @NotNull String mainFileText,
+            @NotNull String prefix,
+            @NotNull String rootPath,
+            @NotNull T caretElement,
+            @Nullable FindUsagesOptions options
     ) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         Collection<UsageInfo> usageInfos = findUsages(caretElement, options);
 
@@ -419,7 +419,7 @@ public abstract class AbstractJetFindUsagesTest extends JetLightCodeInsightFixtu
         JetTestUtils.assertEqualsToFile(new File(rootPath, prefix + "results.txt"), StringUtil.join(finalUsages, "\n"));
     }
 
-    private Collection<UsageInfo> findUsages(@NotNull PsiElement targetElement, @Nullable FindUsagesOptions options) {
+    protected Collection<UsageInfo> findUsages(@NotNull PsiElement targetElement, @Nullable FindUsagesOptions options) {
         Project project = getProject();
         FindUsagesHandler handler =
                 ((FindManagerImpl) FindManager.getInstance(project)).getFindUsagesManager().getFindUsagesHandler(targetElement, false);

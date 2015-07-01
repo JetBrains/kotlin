@@ -182,7 +182,7 @@ public class JetParameter extends JetNamedDeclarationStub<KotlinParameterStub> i
         PsiElement parent = getParent();
         if (parent != null) {
             PsiElement grandparent = parent.getParent();
-            if (grandparent instanceof JetNamedFunction) {
+            if (grandparent instanceof JetFunction && !(grandparent instanceof JetFunctionLiteral)) {
                 return grandparent.getUseScope();
             }
         }

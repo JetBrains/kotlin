@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
+import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.lexer.JetTokens
 import org.jetbrains.kotlin.name.Name
@@ -88,5 +89,9 @@ public abstract class JetConstructor<T : JetConstructor<T>> : JetDeclarationStub
         return getConstructorKeyword()?.getTextOffset()
                ?: getValueParameterList()?.getTextOffset()
                ?: super<JetDeclarationStub>.getTextOffset()
+    }
+
+    override fun getUseScope(): SearchScope {
+        return getContainingClassOrObject().getUseScope()
     }
 }

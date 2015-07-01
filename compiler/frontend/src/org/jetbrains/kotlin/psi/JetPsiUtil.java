@@ -775,9 +775,9 @@ public class JetPsiUtil {
         else if (declaration instanceof JetParameter) {
             PsiElement parent = declaration.getParent();
 
-            // val/var parameter of primary constructor should not be considered as local
+            // val/var parameter of primary constructor should be considered as local according to containing class
             if (((JetParameter) declaration).hasValOrVar() && parent != null && parent.getParent() instanceof JetPrimaryConstructor) {
-                return null;
+                return getEnclosingElementForLocalDeclaration(((JetPrimaryConstructor) parent.getParent()).getContainingClassOrObject(), skipParameters);
             }
 
             else if (skipParameters && parent != null && parent.getParent() instanceof JetNamedFunction) {
