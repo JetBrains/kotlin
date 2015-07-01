@@ -13371,6 +13371,12 @@ public class JetDiagnosticsTestGenerated extends AbstractJetDiagnosticsTest {
                 JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/subtyping"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("findClosestCorrespondingSupertype.kt")
+            public void testFindClosestCorrespondingSupertype() throws Exception {
+                String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/findClosestCorrespondingSupertype.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt2069.kt")
             public void testKt2069() throws Exception {
                 String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/subtyping/kt2069.kt");
