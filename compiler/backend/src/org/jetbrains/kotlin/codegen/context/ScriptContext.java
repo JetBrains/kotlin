@@ -61,4 +61,9 @@ public class ScriptContext extends FieldOwnerContext<ClassDescriptor> {
         }
         return "script$" + (index + 1);
     }
+
+    @Override
+    public String toString() {
+        return "Script: " + getContextDescriptor().getName().asString();
+    }
 }
