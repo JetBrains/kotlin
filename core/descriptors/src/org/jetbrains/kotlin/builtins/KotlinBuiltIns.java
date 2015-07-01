@@ -225,8 +225,16 @@ public class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
+        ClassDescriptor classDescriptor = getBuiltInClassByNameNullable(simpleName);
+        assert classDescriptor != null : "Must be a class descriptor " + simpleName + ", but was null";
+        return classDescriptor;
+    }
+
+    @Nullable
+    public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
         ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getClassifier(simpleName);
-        assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
+        assert classifier == null ||
+               classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
     }
 

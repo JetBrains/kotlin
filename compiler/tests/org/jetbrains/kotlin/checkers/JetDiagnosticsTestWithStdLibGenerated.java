@@ -611,6 +611,69 @@ public class JetDiagnosticsTestWithStdLibGenerated extends AbstractJetDiagnostic
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class PurelyImplementedCollection extends AbstractJetDiagnosticsTestWithStdLib {
+        public void testAllFilesPresentInPurelyImplementedCollection() throws Exception {
+            JetTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("arrayList.kt")
+        public void testArrayList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/arrayList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("arrayListNullable.kt")
+        public void testArrayListNullable() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/arrayListNullable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("customClassMutableCollection.kt")
+        public void testCustomClassMutableCollection() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/customClassMutableCollection.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("customClassMutableList.kt")
+        public void testCustomClassMutableList() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/customClassMutableList.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("maps.kt")
+        public void testMaps() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/maps.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapsWithNullableKey.kt")
+        public void testMapsWithNullableKey() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/mapsWithNullableKey.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapsWithNullableValues.kt")
+        public void testMapsWithNullableValues() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/mapsWithNullableValues.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sets.kt")
+        public void testSets() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/sets.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("wrongTypeParametersCount.kt")
+        public void testWrongTypeParametersCount() throws Exception {
+            String fileName = JetTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/purelyImplementedCollection/wrongTypeParametersCount.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/regression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

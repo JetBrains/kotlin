@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase
+import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -30,11 +32,12 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.resolve.scopes.JetScope
-import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
-import org.jetbrains.kotlin.types.JetType
-import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.ArrayList
 
@@ -121,16 +124,25 @@ class LazyJavaClassDescriptor(
             val result = ArrayList<JetType>(javaTypes.size())
             val incomplete = ArrayList<JavaType>(0)
 
+            val purelyImplementedSupertype: JetType? = getPurelyImplementedSupertype()
+
             for (javaType in javaTypes) {
                 val jetType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
                 if (jetType.isError()) {
                     incomplete.add(javaType)
                     continue
                 }
+
+                if (jetType.getConstructor() == purelyImplementedSupertype?.getConstructor()) {
+                    continue
+                }
+
                 if (!KotlinBuiltIns.isAnyOrNullableAny(jetType)) {
                     result.add(jetType)
                 }
             }
+
+            result.addIfNotNull(purelyImplementedSupertype)
 
             if (incomplete.isNotEmpty()) {
                 c.errorReporter.reportIncompleteHierarchy(getDeclarationDescriptor(), incomplete.map { javaType ->
@@ -139,6 +151,40 @@ class LazyJavaClassDescriptor(
             }
 
             if (result.isNotEmpty()) result.toReadOnlyList() else listOf(c.module.builtIns.getAnyType())
+        }
+
+        private fun getPurelyImplementedSupertype(): JetType? {
+            val purelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()
+                                          ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqName)
+                                          ?: return null
+
+            if (purelyImplementedFqName.parent() != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) return null
+
+            val classDescriptor = KotlinBuiltIns.getInstance().getBuiltInClassByNameNullable(purelyImplementedFqName.shortName())
+                                  ?: return null
+
+            if (classDescriptor.getTypeConstructor().getParameters().size() != getParameters().size()) return null
+
+            val parametersAsTypeProjections = getParameters().map {
+                parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.getDefaultType())
+            }
+
+            return JetTypeImpl(
+                    Annotations.EMPTY, classDescriptor.getTypeConstructor(),
+                    /* nullable =*/ false, parametersAsTypeProjections,
+                    classDescriptor.getMemberScope(parametersAsTypeProjections)
+            )
+        }
+
+        private fun getPurelyImplementsFqNameFromAnnotation(): FqName? {
+            val annotation = this@LazyJavaClassDescriptor.
+                    getAnnotations().
+                    findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION) ?: return null
+
+            val fqNameString = (annotation.getAllValueArguments().values().singleOrNull() as? StringValue)?.getValue() ?: return null
+            if (!isValidJavaFqName(fqNameString)) return null
+
+            return FqName(fqNameString)
         }
 
         override fun getSupertypes(): Collection<JetType> = supertypes()
