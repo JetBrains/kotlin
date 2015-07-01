@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_BOUND
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_B
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
-import org.jetbrains.kotlin.resolve.scopes.JetScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.JetTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -72,18 +70,6 @@ public class TypeBoundsImpl(
             }
         }
         return result
-    }
-
-    fun copy(substituteTypeVariable: ((TypeParameterDescriptor) -> TypeParameterDescriptor?)? = null): TypeBoundsImpl {
-        val typeBounds = TypeBoundsImpl(substituteTypeVariable?.invoke(typeVariable) ?: typeVariable, varianceOfPosition)
-        if (substituteTypeVariable == null) {
-            typeBounds.bounds.addAll(bounds)
-        }
-        else {
-            typeBounds.bounds.addAll(bounds.substitute(substituteTypeVariable))
-        }
-        typeBounds.resultValues = resultValues
-        return typeBounds
     }
 
     public fun filter(condition: (ConstraintPosition) -> Boolean): TypeBoundsImpl {
@@ -182,33 +168,4 @@ public class TypeBoundsImpl(
         }
         return true
     }
-}
-
-fun Collection<Bound>.substitute(substituteTypeVariable: (TypeParameterDescriptor) -> TypeParameterDescriptor?): List<Bound> {
-    val typeSubstitutor = createTypeSubstitutor(substituteTypeVariable)
-    return map {
-        //todo captured types
-        val substitutedType = if (it.constrainingType.getConstructor().isDenotable()) {
-            typeSubstitutor.substitute(it.constrainingType, Variance.INVARIANT)
-        } else {
-            it.constrainingType
-        }
-        substitutedType?.let { type ->
-            Bound(substituteTypeVariable(it.typeVariable) ?: it.typeVariable, type, it.kind, it.position, it.isProper,
-                  it.derivedFrom.map { substituteTypeVariable(it) ?: it }.toSet())
-        }
-    }.filterNotNull()
-}
-
-fun createTypeSubstitutor(substituteTypeVariable: (TypeParameterDescriptor) -> TypeParameterDescriptor?): TypeSubstitutor {
-    return TypeSubstitutor.create(object : TypeSubstitution() {
-        override fun get(key: TypeConstructor): TypeProjection? {
-            val descriptor = key.getDeclarationDescriptor()
-            if (descriptor !is TypeParameterDescriptor) return null
-            val typeParameterDescriptor = substituteTypeVariable(descriptor) ?: return null
-
-            val type = JetTypeImpl(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), JetScope.Empty)
-            return TypeProjectionImpl(type)
-        }
-    })
 }

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_B
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.JetType
 import org.jetbrains.kotlin.types.Variance
-import kotlin.properties.Delegates
 
 public trait TypeBounds {
     public val varianceOfPosition: Variance

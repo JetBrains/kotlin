@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_B
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.TYPE_BOUND_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.equalsOrContains
 import org.jetbrains.kotlin.resolve.scopes.JetScope
@@ -175,19 +173,14 @@ public class ConstraintSystemImpl : ConstraintSystem {
         }.filterNotNull().filter { if (original) it in originalToVariables.keySet() else it in getAllTypeVariables() }
     }
 
-    public fun copy(): ConstraintSystem = createNewConstraintSystemFromThis({ it }, { true })
-
-    public fun substituteTypeVariables(typeVariablesMap: (TypeParameterDescriptor) -> TypeParameterDescriptor?): ConstraintSystem {
-        // type bounds are proper types and don't contain other variables
-        return createNewConstraintSystemFromThis(typeVariablesMap, { true })
-    }
+    public fun copy(): ConstraintSystem = createNewConstraintSystemFromThis { true }
 
     public fun filterConstraintsOut(excludePosition: ConstraintPosition): ConstraintSystem {
         return filterConstraints { !it.equalsOrContains(excludePosition) }
     }
 
     public fun filterConstraints(condition: (ConstraintPosition) -> Boolean): ConstraintSystem {
-        return createNewConstraintSystemFromThis({ it }, condition)
+        return createNewConstraintSystemFromThis(condition)
     }
 
     public fun getSystemWithoutWeakConstraints(): ConstraintSystem {
@@ -201,29 +194,20 @@ public class ConstraintSystemImpl : ConstraintSystem {
     }
 
     private fun createNewConstraintSystemFromThis(
-            substituteTypeVariable: (TypeParameterDescriptor) -> TypeParameterDescriptor?,
             filterConstraintPosition: (ConstraintPosition) -> Boolean
     ): ConstraintSystem {
         val newSystem = ConstraintSystemImpl()
         for ((typeParameter, typeBounds) in allTypeParameterBounds) {
-            val newTypeParameter = substituteTypeVariable(typeParameter) ?: typeParameter
-            newSystem.allTypeParameterBounds.put(newTypeParameter, typeBounds.copy(substituteTypeVariable).filter(filterConstraintPosition))
+            newSystem.allTypeParameterBounds.put(typeParameter, typeBounds.filter(filterConstraintPosition))
         }
-        for ((typeVariable, bounds) in usedInBounds) {
-            if (bounds.isNotEmpty()) {
-                val newTypeVariable = substituteTypeVariable(typeVariable) ?: typeVariable
-                newSystem.usedInBounds.put(newTypeVariable, ArrayList(bounds.substitute(substituteTypeVariable)))
-            }
-        }
-        newSystem.externalTypeParameters.addAll(externalTypeParameters.map { substituteTypeVariable(it) ?: it })
-        newSystem.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) }.map { it.substituteTypeVariable(substituteTypeVariable) })
+        newSystem.usedInBounds.putAll(usedInBounds.map {
+            val (variable, bounds) = it
+            variable to bounds.filterTo(arrayListOf<Bound>()) { filterConstraintPosition(it.position )}
+        }.toMap())
+        newSystem.externalTypeParameters.addAll(externalTypeParameters )
+        newSystem.errors.addAll(errors.filter { filterConstraintPosition(it.constraintPosition) })
 
-        val typeSubstitutor = createTypeSubstitutor(substituteTypeVariable)
-        newSystem.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) }.map {
-            val newSubType = typeSubstitutor.substitute(it.subtype, Variance.INVARIANT)
-            val newSuperType = typeSubstitutor.substitute(it.superType, Variance.INVARIANT)
-            if (newSubType != null && newSuperType != null) Constraint(it.kind, newSubType, newSuperType, it.position) else null
-        })
+        newSystem.initialConstraints.addAll(initialConstraints.filter { filterConstraintPosition(it.position) })
         newSystem.originalToVariables.putAll(originalToVariables)
         newSystem.variablesToOriginal.putAll(variablesToOriginal)
         return newSystem
@@ -563,4 +547,17 @@ public fun ConstraintSystemImpl.registerTypeVariables(
         variance: (TypeParameterDescriptor) -> Variance
 ) {
     registerTypeVariables(typeVariables, variance, { it })
+}
+
+public fun createTypeSubstitutor(conversion: (TypeParameterDescriptor) -> TypeParameterDescriptor?): TypeSubstitutor {
+    return TypeSubstitutor.create(object : TypeSubstitution() {
+        override fun get(key: TypeConstructor): TypeProjection? {
+            val descriptor = key.getDeclarationDescriptor()
+            if (descriptor !is TypeParameterDescriptor) return null
+            val typeParameterDescriptor = conversion(descriptor) ?: return null
+
+            val type = JetTypeImpl(Annotations.EMPTY, typeParameterDescriptor.getTypeConstructor(), false, listOf(), JetScope.Empty)
+            return TypeProjectionImpl(type)
+        }
+    })
 }
