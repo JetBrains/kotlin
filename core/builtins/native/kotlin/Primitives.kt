@@ -32,13 +32,6 @@ public class Byte private () : Number, Comparable<Byte> {
  */
     public override fun compareTo(other: Byte): Int
 /**
- * Compares this value with the character code of the specified character for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun compareTo(other: Char): Int
-/**
  * Compares this value with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
@@ -72,9 +65,6 @@ public class Byte private () : Number, Comparable<Byte> {
     /** Adds the other value to this value. */
     public fun plus(other: Byte): Int
     /** Adds the other value to this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun plus(other: Char): Int
-    /** Adds the other value to this value. */
     public fun plus(other: Short): Int
     /** Adds the other value to this value. */
     public fun plus(other: Int): Int
@@ -87,9 +77,6 @@ public class Byte private () : Number, Comparable<Byte> {
 
     /** Subtracts the other value from this value. */
     public fun minus(other: Byte): Int
-    /** Subtracts the other value from this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun minus(other: Char): Int
     /** Subtracts the other value from this value. */
     public fun minus(other: Short): Int
     /** Subtracts the other value from this value. */
@@ -104,9 +91,6 @@ public class Byte private () : Number, Comparable<Byte> {
     /** Multiplies this value by the other value. */
     public fun times(other: Byte): Int
     /** Multiplies this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun times(other: Char): Int
-    /** Multiplies this value by the other value. */
     public fun times(other: Short): Int
     /** Multiplies this value by the other value. */
     public fun times(other: Int): Int
@@ -120,9 +104,6 @@ public class Byte private () : Number, Comparable<Byte> {
     /** Divides this value by the other value. */
     public fun div(other: Byte): Int
     /** Divides this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun div(other: Char): Int
-    /** Divides this value by the other value. */
     public fun div(other: Short): Int
     /** Divides this value by the other value. */
     public fun div(other: Int): Int
@@ -135,9 +116,6 @@ public class Byte private () : Number, Comparable<Byte> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun mod(other: Char): Int
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
@@ -160,9 +138,6 @@ public class Byte private () : Number, Comparable<Byte> {
 
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Byte): ByteRange
-     /** Creates a range from this value to the specified [other] value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun rangeTo(other: Char): CharRange
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Short): ShortRange
      /** Creates a range from this value to the specified [other] value. */
@@ -197,13 +172,6 @@ public class Short private () : Number, Comparable<Short> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the character code of the specified character for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun compareTo(other: Char): Int
-/**
  * Compares this value with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
@@ -237,9 +205,6 @@ public class Short private () : Number, Comparable<Short> {
     /** Adds the other value to this value. */
     public fun plus(other: Byte): Int
     /** Adds the other value to this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun plus(other: Char): Int
-    /** Adds the other value to this value. */
     public fun plus(other: Short): Int
     /** Adds the other value to this value. */
     public fun plus(other: Int): Int
@@ -252,9 +217,6 @@ public class Short private () : Number, Comparable<Short> {
 
     /** Subtracts the other value from this value. */
     public fun minus(other: Byte): Int
-    /** Subtracts the other value from this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun minus(other: Char): Int
     /** Subtracts the other value from this value. */
     public fun minus(other: Short): Int
     /** Subtracts the other value from this value. */
@@ -269,9 +231,6 @@ public class Short private () : Number, Comparable<Short> {
     /** Multiplies this value by the other value. */
     public fun times(other: Byte): Int
     /** Multiplies this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun times(other: Char): Int
-    /** Multiplies this value by the other value. */
     public fun times(other: Short): Int
     /** Multiplies this value by the other value. */
     public fun times(other: Int): Int
@@ -285,9 +244,6 @@ public class Short private () : Number, Comparable<Short> {
     /** Divides this value by the other value. */
     public fun div(other: Byte): Int
     /** Divides this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun div(other: Char): Int
-    /** Divides this value by the other value. */
     public fun div(other: Short): Int
     /** Divides this value by the other value. */
     public fun div(other: Int): Int
@@ -300,9 +256,6 @@ public class Short private () : Number, Comparable<Short> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun mod(other: Char): Int
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
@@ -325,9 +278,6 @@ public class Short private () : Number, Comparable<Short> {
 
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Byte): ShortRange
-     /** Creates a range from this value to the specified [other] value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun rangeTo(other: Char): ShortRange
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Short): ShortRange
      /** Creates a range from this value to the specified [other] value. */
@@ -362,13 +312,6 @@ public class Int private () : Number, Comparable<Int> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the character code of the specified character for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun compareTo(other: Char): Int
-/**
  * Compares this value with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
@@ -402,9 +345,6 @@ public class Int private () : Number, Comparable<Int> {
     /** Adds the other value to this value. */
     public fun plus(other: Byte): Int
     /** Adds the other value to this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun plus(other: Char): Int
-    /** Adds the other value to this value. */
     public fun plus(other: Short): Int
     /** Adds the other value to this value. */
     public fun plus(other: Int): Int
@@ -417,9 +357,6 @@ public class Int private () : Number, Comparable<Int> {
 
     /** Subtracts the other value from this value. */
     public fun minus(other: Byte): Int
-    /** Subtracts the other value from this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun minus(other: Char): Int
     /** Subtracts the other value from this value. */
     public fun minus(other: Short): Int
     /** Subtracts the other value from this value. */
@@ -434,9 +371,6 @@ public class Int private () : Number, Comparable<Int> {
     /** Multiplies this value by the other value. */
     public fun times(other: Byte): Int
     /** Multiplies this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun times(other: Char): Int
-    /** Multiplies this value by the other value. */
     public fun times(other: Short): Int
     /** Multiplies this value by the other value. */
     public fun times(other: Int): Int
@@ -450,9 +384,6 @@ public class Int private () : Number, Comparable<Int> {
     /** Divides this value by the other value. */
     public fun div(other: Byte): Int
     /** Divides this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun div(other: Char): Int
-    /** Divides this value by the other value. */
     public fun div(other: Short): Int
     /** Divides this value by the other value. */
     public fun div(other: Int): Int
@@ -465,9 +396,6 @@ public class Int private () : Number, Comparable<Int> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Byte): Int
-    /** Calculates the remainder of dividing this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun mod(other: Char): Int
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Short): Int
     /** Calculates the remainder of dividing this value by the other value. */
@@ -490,9 +418,6 @@ public class Int private () : Number, Comparable<Int> {
 
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Byte): IntRange
-     /** Creates a range from this value to the specified [other] value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun rangeTo(other: Char): IntRange
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Short): IntRange
      /** Creates a range from this value to the specified [other] value. */
@@ -542,13 +467,6 @@ public class Long private () : Number, Comparable<Long> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the character code of the specified character for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun compareTo(other: Char): Int
-/**
  * Compares this value with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
@@ -582,9 +500,6 @@ public class Long private () : Number, Comparable<Long> {
     /** Adds the other value to this value. */
     public fun plus(other: Byte): Long
     /** Adds the other value to this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun plus(other: Char): Long
-    /** Adds the other value to this value. */
     public fun plus(other: Short): Long
     /** Adds the other value to this value. */
     public fun plus(other: Int): Long
@@ -597,9 +512,6 @@ public class Long private () : Number, Comparable<Long> {
 
     /** Subtracts the other value from this value. */
     public fun minus(other: Byte): Long
-    /** Subtracts the other value from this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun minus(other: Char): Long
     /** Subtracts the other value from this value. */
     public fun minus(other: Short): Long
     /** Subtracts the other value from this value. */
@@ -614,9 +526,6 @@ public class Long private () : Number, Comparable<Long> {
     /** Multiplies this value by the other value. */
     public fun times(other: Byte): Long
     /** Multiplies this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun times(other: Char): Long
-    /** Multiplies this value by the other value. */
     public fun times(other: Short): Long
     /** Multiplies this value by the other value. */
     public fun times(other: Int): Long
@@ -630,9 +539,6 @@ public class Long private () : Number, Comparable<Long> {
     /** Divides this value by the other value. */
     public fun div(other: Byte): Long
     /** Divides this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun div(other: Char): Long
-    /** Divides this value by the other value. */
     public fun div(other: Short): Long
     /** Divides this value by the other value. */
     public fun div(other: Int): Long
@@ -645,9 +551,6 @@ public class Long private () : Number, Comparable<Long> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Byte): Long
-    /** Calculates the remainder of dividing this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun mod(other: Char): Long
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Short): Long
     /** Calculates the remainder of dividing this value by the other value. */
@@ -670,9 +573,6 @@ public class Long private () : Number, Comparable<Long> {
 
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Byte): LongRange
-     /** Creates a range from this value to the specified [other] value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun rangeTo(other: Char): LongRange
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Short): LongRange
      /** Creates a range from this value to the specified [other] value. */
@@ -722,13 +622,6 @@ public class Float private () : Number, Comparable<Float> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the character code of the specified character for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun compareTo(other: Char): Int
-/**
  * Compares this value with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
@@ -762,9 +655,6 @@ public class Float private () : Number, Comparable<Float> {
     /** Adds the other value to this value. */
     public fun plus(other: Byte): Float
     /** Adds the other value to this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun plus(other: Char): Float
-    /** Adds the other value to this value. */
     public fun plus(other: Short): Float
     /** Adds the other value to this value. */
     public fun plus(other: Int): Float
@@ -777,9 +667,6 @@ public class Float private () : Number, Comparable<Float> {
 
     /** Subtracts the other value from this value. */
     public fun minus(other: Byte): Float
-    /** Subtracts the other value from this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun minus(other: Char): Float
     /** Subtracts the other value from this value. */
     public fun minus(other: Short): Float
     /** Subtracts the other value from this value. */
@@ -794,9 +681,6 @@ public class Float private () : Number, Comparable<Float> {
     /** Multiplies this value by the other value. */
     public fun times(other: Byte): Float
     /** Multiplies this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun times(other: Char): Float
-    /** Multiplies this value by the other value. */
     public fun times(other: Short): Float
     /** Multiplies this value by the other value. */
     public fun times(other: Int): Float
@@ -810,9 +694,6 @@ public class Float private () : Number, Comparable<Float> {
     /** Divides this value by the other value. */
     public fun div(other: Byte): Float
     /** Divides this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun div(other: Char): Float
-    /** Divides this value by the other value. */
     public fun div(other: Short): Float
     /** Divides this value by the other value. */
     public fun div(other: Int): Float
@@ -825,9 +706,6 @@ public class Float private () : Number, Comparable<Float> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Byte): Float
-    /** Calculates the remainder of dividing this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun mod(other: Char): Float
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Short): Float
     /** Calculates the remainder of dividing this value by the other value. */
@@ -850,9 +728,6 @@ public class Float private () : Number, Comparable<Float> {
 
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Byte): FloatRange
-     /** Creates a range from this value to the specified [other] value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun rangeTo(other: Char): FloatRange
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Short): FloatRange
      /** Creates a range from this value to the specified [other] value. */
@@ -887,13 +762,6 @@ public class Double private () : Number, Comparable<Double> {
  */
     public fun compareTo(other: Byte): Int
 /**
- * Compares this value with the character code of the specified character for order.
- * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
- * or a positive number if its greater than other.
- */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun compareTo(other: Char): Int
-/**
  * Compares this value with the specified value for order.
  * Returns zero if this value is equal to the specified other value, a negative number if its less than other, 
  * or a positive number if its greater than other.
@@ -927,9 +795,6 @@ public class Double private () : Number, Comparable<Double> {
     /** Adds the other value to this value. */
     public fun plus(other: Byte): Double
     /** Adds the other value to this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun plus(other: Char): Double
-    /** Adds the other value to this value. */
     public fun plus(other: Short): Double
     /** Adds the other value to this value. */
     public fun plus(other: Int): Double
@@ -942,9 +807,6 @@ public class Double private () : Number, Comparable<Double> {
 
     /** Subtracts the other value from this value. */
     public fun minus(other: Byte): Double
-    /** Subtracts the other value from this value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun minus(other: Char): Double
     /** Subtracts the other value from this value. */
     public fun minus(other: Short): Double
     /** Subtracts the other value from this value. */
@@ -959,9 +821,6 @@ public class Double private () : Number, Comparable<Double> {
     /** Multiplies this value by the other value. */
     public fun times(other: Byte): Double
     /** Multiplies this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun times(other: Char): Double
-    /** Multiplies this value by the other value. */
     public fun times(other: Short): Double
     /** Multiplies this value by the other value. */
     public fun times(other: Int): Double
@@ -975,9 +834,6 @@ public class Double private () : Number, Comparable<Double> {
     /** Divides this value by the other value. */
     public fun div(other: Byte): Double
     /** Divides this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun div(other: Char): Double
-    /** Divides this value by the other value. */
     public fun div(other: Short): Double
     /** Divides this value by the other value. */
     public fun div(other: Int): Double
@@ -990,9 +846,6 @@ public class Double private () : Number, Comparable<Double> {
 
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Byte): Double
-    /** Calculates the remainder of dividing this value by the other value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun mod(other: Char): Double
     /** Calculates the remainder of dividing this value by the other value. */
     public fun mod(other: Short): Double
     /** Calculates the remainder of dividing this value by the other value. */
@@ -1015,9 +868,6 @@ public class Double private () : Number, Comparable<Double> {
 
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Byte): DoubleRange
-     /** Creates a range from this value to the specified [other] value. */
-    deprecated("This operation doesn't make sense and shall be removed in M13. Consider converting Char operand to Int.")
-    public fun rangeTo(other: Char): DoubleRange
      /** Creates a range from this value to the specified [other] value. */
     public fun rangeTo(other: Short): DoubleRange
      /** Creates a range from this value to the specified [other] value. */
